@@ -1,1 +1,163 @@
-../../../../../components/camel-printer/src/main/docs/lpr-component.adoc
+= Printer Component
+
+*Available as of Camel version 2.1*
+
+
+The Printer component provides a way to direct payloads on a route to
+a printer. Obviously the payload has to be a formatted piece of payload
+in order for the component to appropriately print it. The objective is
+to be able to direct specific payloads as jobs to a line printer in a
+camel flow.
+
+This component only supports a camel producer endpoint.
+
+The functionality allows for the payload to be printed on a default
+printer, named local, remote or wireless linked printer using the
+javax printing API under the covers.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-printer</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+Since the URI scheme for a printer has not been standardized (the
+nearest thing to a standard being the IETF print standard) and therefore
+not uniformly applied by vendors, we have chosen *"lpr"* as the scheme.
+
+[source,java]
+-----------------------------------------------
+lpr://localhost/default[?options]
+lpr://remotehost:port/path/to/printer[?options]
+-----------------------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+
+// component options: START
+The Printer component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Printer endpoint is configured using URI syntax:
+
+----
+lpr:hostname:port/printername
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hostname* | *Required* Hostname of the printer |  | String
+| *port* | Port number of the printer |  | int
+| *printername* | Name of the printer |  | String
+|===
+
+
+==== Query Parameters (11 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *copies* (producer) | Number of copies to print | 1 | int
+| *docFlavor* (producer) | Sets DocFlavor to use. |  | DocFlavor
+| *flavor* (producer) | Sets DocFlavor to use. |  | String
+| *mediaSize* (producer) | Sets the stationary as defined by enumeration names in the javax.print.attribute.standard.MediaSizeName API. The default setting is to use North American Letter sized stationary. The value's case is ignored, e.g. values of iso_a4 and ISO_A4 may be used. | na-letter | String
+| *mediaTray* (producer) | Sets MediaTray supported by the javax.print.DocFlavor API, for example upper,middle etc. |  | String
+| *mimeType* (producer) | Sets mimeTypes supported by the javax.print.DocFlavor API |  | String
+| *orientation* (producer) | Sets the page orientation. | portrait | String
+| *printerPrefix* (producer) | Sets the prefix name of the printer, it is useful when the printer name does not start with //hostname/printer |  | String
+| *sendToPrinter* (producer) | etting this option to false prevents sending of the print data to the printer | true | boolean
+| *sides* (producer) | Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API | one-sided | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.lpr.enabled* | Enable lpr component | true | Boolean
+| *camel.component.lpr.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+== Sending Messages to a Printer
+
+=== Printer Producer
+
+Sending data to the printer is very straightforward and involves
+creating a producer endpoint that can be sent message exchanges on in
+route.
+
+== Usage Samples
+
+=== Example 1: Printing text based payloads on a Default printer using letter stationary and one-sided mode
+
+[source,java]
+-----------------------------------------------
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+       from(file://inputdir/?delete=true)
+       .to("lpr://localhost/default?copies=2" +
+           "&flavor=DocFlavor.INPUT_STREAM&" +
+           "&mimeType=AUTOSENSE" +
+           "&mediaSize=NA_LETTER" +
+           "&sides=one-sided")
+    }};
+-----------------------------------------------
+
+=== Example 2: Printing GIF based payloads on a Remote printer using A4 stationary and one-sided mode
+
+[source,java]
+--------------------------------------------------
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+       from(file://inputdir/?delete=true)
+       .to("lpr://remotehost/sales/salesprinter" +
+           "?copies=2&sides=one-sided" +
+           "&mimeType=GIF&mediaSize=ISO_A4" +
+           "&flavor=DocFlavor.INPUT_STREAM")
+   }};
+--------------------------------------------------
+
+=== Example 3: Printing JPEG based payloads on a Remote printer using Japanese Postcard stationary and one-sided mode
+
+[source,java]
+--------------------------------------------------
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+       from(file://inputdir/?delete=true)
+       .to("lpr://remotehost/sales/salesprinter" +
+           "?copies=2&sides=one-sided" +
+           "&mimeType=JPEG" +
+           "&mediaSize=JAPANESE_POSTCARD" +
+           "&flavor=DocFlavor.INPUT_STREAM")
+    }};
+--------------------------------------------------

@@ -1,1 +1,403 @@
-../../../../../components/camel-csv/src/main/docs/csv-dataformat.adoc
+= CSV DataFormat
+
+*Available as of Camel version 1.3*
+
+
+The CSV Data Format uses
+http://commons.apache.org/proper/commons-csv/[Apache Commons CSV] to
+handle CSV payloads (Comma Separated Values) such as those
+exported/imported by Excel.
+
+
+== Options
+
+// dataformat options: START
+The CSV dataformat supports 28 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| formatRef |  | String | The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT
+| formatName |  | String | The name of the format to use, the default value is CSVFormat.DEFAULT
+| commentMarkerDisabled | false | Boolean | Disables the comment marker of the reference format.
+| commentMarker |  | String | Sets the comment marker of the reference format.
+| delimiter |  | String | Sets the delimiter to use. The default value is , (comma)
+| escapeDisabled | false | Boolean | Use for disabling using escape character
+| escape |  | String | Sets the escape character to use
+| headerDisabled | false | Boolean | Use for disabling headers
+| header |  | List | To configure the CSV headers
+| allowMissingColumnNames | false | Boolean | Whether to allow missing column names.
+| ignoreEmptyLines | false | Boolean | Whether to ignore empty lines.
+| ignoreSurroundingSpaces | false | Boolean | Whether to ignore surrounding spaces
+| nullStringDisabled | false | Boolean | Used to disable null strings
+| nullString |  | String | Sets the null string
+| quoteDisabled | false | Boolean | Used to disable quotes
+| quote |  | String | Sets the quote which by default is
+| recordSeparatorDisabled |  | String | Used for disabling record separator
+| recordSeparator |  | String | Sets the record separator (aka new line) which by default is new line characters (CRLF)
+| skipHeaderRecord | false | Boolean | Whether to skip the header record in the output
+| quoteMode |  | String | Sets the quote mode
+| ignoreHeaderCase | false | Boolean | Sets whether or not to ignore case when accessing header names.
+| trim | false | Boolean | Sets whether or not to trim leading and trailing blanks.
+| trailingDelimiter | false | Boolean | Sets whether or not to add a trailing delimiter.
+| lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.
+| useMaps | false | Boolean | Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to have header (either defined or collected).
+| useOrderedMaps | false | Boolean | Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected).
+| recordConverterRef |  | String | Refers to a custom CsvRecordConverter to lookup from the registry to use.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 29 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.csv.allow-missing-column-names* | Whether to allow missing column names. | false | Boolean
+| *camel.dataformat.csv.comment-marker* | Sets the comment marker of the reference format. |  | String
+| *camel.dataformat.csv.comment-marker-disabled* | Disables the comment marker of the reference format. | false | Boolean
+| *camel.dataformat.csv.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.csv.delimiter* | Sets the delimiter to use. The default value is , (comma) |  | String
+| *camel.dataformat.csv.enabled* | Enable csv dataformat | true | Boolean
+| *camel.dataformat.csv.escape* | Sets the escape character to use |  | String
+| *camel.dataformat.csv.escape-disabled* | Use for disabling using escape character | false | Boolean
+| *camel.dataformat.csv.format-name* | The name of the format to use, the default value is CSVFormat.DEFAULT |  | String
+| *camel.dataformat.csv.format-ref* | The reference format to use, it will be updated with the other format options, the default value is CSVFormat.DEFAULT |  | String
+| *camel.dataformat.csv.header* | To configure the CSV headers |  | List
+| *camel.dataformat.csv.header-disabled* | Use for disabling headers | false | Boolean
+| *camel.dataformat.csv.ignore-empty-lines* | Whether to ignore empty lines. | false | Boolean
+| *camel.dataformat.csv.ignore-header-case* | Sets whether or not to ignore case when accessing header names. | false | Boolean
+| *camel.dataformat.csv.ignore-surrounding-spaces* | Whether to ignore surrounding spaces | false | Boolean
+| *camel.dataformat.csv.lazy-load* | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. | false | Boolean
+| *camel.dataformat.csv.null-string* | Sets the null string |  | String
+| *camel.dataformat.csv.null-string-disabled* | Used to disable null strings | false | Boolean
+| *camel.dataformat.csv.quote* | Sets the quote which by default is |  | String
+| *camel.dataformat.csv.quote-disabled* | Used to disable quotes | false | Boolean
+| *camel.dataformat.csv.quote-mode* | Sets the quote mode |  | String
+| *camel.dataformat.csv.record-converter-ref* | Refers to a custom CsvRecordConverter to lookup from the registry to use. |  | String
+| *camel.dataformat.csv.record-separator* | Sets the record separator (aka new line) which by default is new line characters (CRLF) |  | String
+| *camel.dataformat.csv.record-separator-disabled* | Used for disabling record separator |  | String
+| *camel.dataformat.csv.skip-header-record* | Whether to skip the header record in the output | false | Boolean
+| *camel.dataformat.csv.trailing-delimiter* | Sets whether or not to add a trailing delimiter. | false | Boolean
+| *camel.dataformat.csv.trim* | Sets whether or not to trim leading and trailing blanks. | false | Boolean
+| *camel.dataformat.csv.use-maps* | Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to have header (either defined or collected). | false | Boolean
+| *camel.dataformat.csv.use-ordered-maps* | Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected). | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+ND
+
+
+
+== Marshalling a Map to CSV
+
+The component allows you to marshal a Java Map (or any other message
+type that can be converted in a Map) into a
+CSV payload.
+
+Considering the following body 
+
+[source,java]
+-------------------------------------------------------
+Map<String, Object> body = new LinkedHashMap<>();
+body.put("foo", "abc");
+body.put("bar", 123);
+-------------------------------------------------------
+
+and this Java route definition 
+
+[source,java]
+-------------------------------------------------------
+from("direct:start")
+    .marshal().csv()
+    .to("mock:result");
+-------------------------------------------------------
+
+or this XML route definition 
+
+[source,xml]
+-------------------------------------------------------
+<route>
+    <from uri="direct:start" />
+    <marshal>
+        <csv />
+    </marshal>
+    <to uri="mock:result" />
+</route>
+-------------------------------------------------------
+
+
+then it will produce 
+
+----
+abc,123
+----
+
+== Unmarshalling a CSV message into a Java List
+
+Unmarshalling will transform a CSV messsage into a Java List with CSV
+file lines (containing another List with all the field values).
+
+An example: we have a CSV file with names of persons, their IQ and their
+current activity.
+
+[source,text]
+-----------------------------------------------------
+Jack Dalton, 115, mad at Averell
+Joe Dalton, 105, calming Joe
+William Dalton, 105, keeping Joe from killing Averell
+Averell Dalton, 80, playing with Rantanplan
+Lucky Luke, 120, capturing the Daltons
+-----------------------------------------------------
+
+We can now use the CSV component to unmarshal this file:
+
+[source,java]
+---------------------------------------------------------------
+from("file:src/test/resources/?fileName=daltons.csv&noop=true")
+    .unmarshal().csv()
+    .to("mock:daltons");
+---------------------------------------------------------------
+
+The resulting message will contain a `List<List<String>>` like...
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------
+List<List<String>> data = (List<List<String>>) exchange.getIn().getBody();
+for (List<String> line : data) {
+    LOG.debug(String.format("%s has an IQ of %s and is currently %s", line.get(0), line.get(1), line.get(2)));
+}
+--------------------------------------------------------------------------------------------------------------
+
+== Marshalling a List<Map> to CSV
+
+*Available as of Camel 2.1*
+
+If you have multiple rows of data you want to be marshalled into CSV
+format you can now store the message payload as a
+`List<Map<String, Object>>` object where the list contains a Map for
+each row.
+
+== File Poller of CSV, then unmarshaling
+
+Given a bean which can handle the incoming data...
+
+*MyCsvHandler.java*
+
+[source,java]
+-------------------------------------------------------
+// Some comments here
+public void doHandleCsvData(List<List<String>> csvData)
+{
+    // do magic here
+}
+-------------------------------------------------------
+
+... your route then looks as follows
+
+[source,xml]
+------------------------------------------------------------------------------------------------
+<route>
+        <!-- poll every 10 seconds -->
+        <from uri="file:///some/path/to/pickup/csvfiles?delete=true&amp;consumer.delay=10000" />
+        <unmarshal><csv /></unmarshal>
+        <to uri="bean:myCsvHandler?method=doHandleCsvData" />
+</route>
+------------------------------------------------------------------------------------------------
+
+== Marshaling with a pipe as delimiter
+Considering the following body
+
+[source,java]
+-------------------------------------------------------
+Map<String, Object> body = new LinkedHashMap<>();
+body.put("foo", "abc");
+body.put("bar", 123);
+------------------------------------------------------- 
+
+
+and this Java route definition 
+
+[source,java]
+-------------------------------------------------------
+from("direct:start")
+    .marshal(new CsvDataFormat().setDelimiter(&#39;|&#39;))
+    .to("mock:result")
+------------------------------------------------------- 
+
+or this XML route definition 
+
+[source,xml]
+-------------------------------------------------------
+<route>
+  <from uri="direct:start" />
+  <marshal>
+    <csv delimiter="|" />
+  </marshal>
+  <to uri="mock:result" />
+</route>
+------------------------------------------------------- 
+
+then it will produce 
+
+-------------------------------------------------------
+abc|123
+------------------------------------------------------- 
+
+[[CSV-UsingautogenColumns,configRefandstrategyRefattributesinsideXMLDSL]]
+Using autogenColumns, configRef and strategyRef attributes inside XML
+== DSL
+
+*Available as of Camel 2.9.2 / 2.10 and deleted for Camel 2.15*
+
+You can customize the CSV Data Format to make use
+of your own `CSVConfig` and/or `CSVStrategy`. Also note that the default
+value of the `autogenColumns` option is true. The following example
+should illustrate this customization.
+
+[source,xml]
+-----------------------------------------------------------------------------------------------------------------------------
+<route>
+  <from uri="direct:start" />
+  <marshal>
+    <!-- make use of a strategy other than the default one which is 'org.apache.commons.csv.CSVStrategy.DEFAULT_STRATEGY' -->
+    <csv autogenColumns="false" delimiter="|" configRef="csvConfig" strategyRef="excelStrategy" />
+  </marshal>
+  <convertBodyTo type="java.lang.String" />
+  <to uri="mock:result" />
+</route>
+
+<bean id="csvConfig" class="org.apache.commons.csv.writer.CSVConfig">
+  <property name="fields">
+    <list>
+      <bean class="org.apache.commons.csv.writer.CSVField">
+        <property name="name" value="orderId" />
+      </bean>
+      <bean class="org.apache.commons.csv.writer.CSVField">
+        <property name="name" value="amount" />
+      </bean>
+    </list>
+  </property>
+</bean>
+
+<bean id="excelStrategy" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+  <property name="staticField" value="org.apache.commons.csv.CSVStrategy.EXCEL_STRATEGY" />
+</bean>
+-----------------------------------------------------------------------------------------------------------------------------
+
+== Using skipFirstLine option while unmarshaling
+
+*Available as of Camel 2.10 and deleted for Camel 2.15*
+
+You can instruct the CSV Data Format to skip the
+first line which contains the CSV headers. Using the Spring/XML DSL:
+
+[source,xml]
+---------------------------------------------------
+<route>
+  <from uri="direct:start" />
+  <unmarshal>
+    <csv skipFirstLine="true" />
+  </unmarshal>
+  <to uri="bean:myCsvHandler?method=doHandleCsv" />
+</route>
+---------------------------------------------------
+
+Or the Java DSL:
+
+[source,java]
+--------------------------------------------
+CsvDataFormat csv = new CsvDataFormat();
+csv.setSkipFirstLine(true);
+
+from("direct:start")
+  .unmarshal(csv)
+.to("bean:myCsvHandler?method=doHandleCsv");
+--------------------------------------------
+
+== Unmarshaling with a pipe as delimiter
+
+Using the Spring/XML DSL:
+
+[source,xml]
+---------------------------------------------------
+<route>
+  <from uri="direct:start" />
+  <unmarshal>
+    <csv delimiter="|" />
+  </unmarshal>
+  <to uri="bean:myCsvHandler?method=doHandleCsv" />
+</route>
+---------------------------------------------------
+
+Or the Java DSL:
+
+[source,java]
+----------------------------------------------------
+CsvDataFormat csv = new CsvDataFormat();
+CSVStrategy strategy = CSVStrategy.DEFAULT_STRATEGY;
+strategy.setDelimiter('|');
+csv.setStrategy(strategy);
+
+from("direct:start")
+  .unmarshal(csv)
+  .to("bean:myCsvHandler?method=doHandleCsv");
+----------------------------------------------------
+
+[source,java]
+----------------------------------------------
+CsvDataFormat csv = new CsvDataFormat();
+csv.setDelimiter("|");
+
+from("direct:start")
+  .unmarshal(csv)
+  .to("bean:myCsvHandler?method=doHandleCsv");
+----------------------------------------------
+
+[source,java]
+----------------------------------------------
+CsvDataFormat csv = new CsvDataFormat();
+CSVConfig csvConfig = new CSVConfig();
+csvConfig.setDelimiter(";");
+csv.setConfig(csvConfig);
+
+from("direct:start")
+  .unmarshal(csv)
+  .to("bean:myCsvHandler?method=doHandleCsv");
+----------------------------------------------
+
+*Issue in CSVConfig*
+
+It looks like that
+
+[source,java]
+--------------------------------------
+CSVConfig csvConfig = new CSVConfig();
+csvConfig.setDelimiter(';');
+--------------------------------------
+
+doesn't work. You have to set the delimiter as a String!
+
+== Dependencies
+
+To use CSV in your Camel routes you need to add a dependency on
+*camel-csv*, which implements this data format.
+
+If you use Maven you can just add the following to your pom.xml,
+substituting the version number for the latest and greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-csv</artifactId>
+  <version>x.x.x</version>
+</dependency>
+-------------------------------------

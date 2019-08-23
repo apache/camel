@@ -1,1 +1,258 @@
-../../../../../components/camel-splunk/src/main/docs/splunk-component.adoc
+= Splunk Component
+
+*Available as of Camel version 2.13*
+
+
+The Splunk component provides access to
+http://docs.splunk.com/Documentation/Splunk/latest[Splunk] using the
+Splunk provided https://github.com/splunk/splunk-sdk-java[client] api,
+and it enables you to publish and search for events in Splunk.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+---------------------------------------------
+ <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-splunk</artifactId>
+        <version>${camel-version}</version>
+    </dependency>
+---------------------------------------------
+
+== URI format
+
+[source,java]
+-------------------------------
+  splunk://[endpoint]?[options]
+-------------------------------
+
+== Producer Endpoints:
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Endpoint |Description
+
+|stream |Streams data to a named index or the default if not specified.
+When using stream mode be aware of that Splunk has some internal buffer
+(about 1MB or so) before events gets to the index. 
+If you need realtime, better use submit or tcp mode.
+
+|submit |submit mode. Uses Splunk rest api to publish events to a named index or
+the default if not specified.
+
+|tcp |tcp mode. Streams data to a tcp port, and requires a open receiver port
+in Splunk.
+|=======================================================================
+
+When publishing events the message body should contain a
+SplunkEvent.  See comment under message body.
+
+*Example*
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------
+      from("direct:start").convertBodyTo(SplunkEvent.class)
+          .to("splunk://submit?username=user&password=123&index=myindex&sourceType=someSourceType&source=mySource")...
+----------------------------------------------------------------------------------------------------------------------
+
+In this example a converter is required to convert to a SplunkEvent
+class.
+
+== Consumer Endpoints:
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Endpoint |Description
+
+|normal |Performs normal search and requires a search query in the search option.
+
+|savedsearch |Performs search based on a search query saved in splunk and requires the
+name of the query in the savedSearch option.
+|=======================================================================
+
+*Example*
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------------
+      from("splunk://normal?delay=5s&username=user&password=123&initEarliestTime=-10s&search=search index=myindex sourcetype=someSourcetype")
+          .to("direct:search-result");
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+camel-splunk creates a route exchange per search result with a
+SplunkEvent in the body.
+
+== URI Options
+
+
+
+// component options: START
+The Splunk component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *splunkConfiguration Factory* (advanced) | To use the SplunkConfigurationFactory |  | SplunkConfiguration Factory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The Splunk endpoint is configured using URI syntax:
+
+----
+splunk:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Name has no purpose |  | String
+|===
+
+
+==== Query Parameters (42 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *app* (common) | Splunk app |  | String
+| *connectionTimeout* (common) | Timeout in MS when connecting to Splunk server | 5000 | int
+| *host* (common) | Splunk host. | localhost | String
+| *owner* (common) | Splunk owner |  | String
+| *port* (common) | Splunk port | 8089 | int
+| *scheme* (common) | Splunk scheme | https | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *count* (consumer) | A number that indicates the maximum number of entities to return. |  | int
+| *earliestTime* (consumer) | Earliest time of the search time window. |  | String
+| *initEarliestTime* (consumer) | Initial start offset of the first search |  | String
+| *latestTime* (consumer) | Latest time of the search time window. |  | String
+| *savedSearch* (consumer) | The name of the query saved in Splunk to run |  | String
+| *search* (consumer) | The Splunk query to run |  | String
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *streaming* (consumer) | Sets streaming mode. Streaming mode sends exchanges as they are received, rather than in a batch. |  | Boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *eventHost* (producer) | Override the default Splunk event host field |  | String
+| *index* (producer) | Splunk index to write to |  | String
+| *raw* (producer) | Should the payload be inserted raw | false | boolean
+| *source* (producer) | Splunk source argument |  | String
+| *sourceType* (producer) | Splunk sourcetype argument |  | String
+| *tcpReceiverPort* (producer) | Splunk tcp receiver port |  | int
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *password* (security) | Password for Splunk |  | String
+| *sslProtocol* (security) | Set the ssl protocol to use | TLSv1.2 | SSLSecurityProtocol
+| *username* (security) | Username for Splunk |  | String
+| *useSunHttpsHandler* (security) | Use sun.net.www.protocol.https.Handler Https handler to establish the Splunk Connection. Can be useful when running in application servers to avoid app. server https handling. | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.splunk.enabled* | Enable splunk component | true | Boolean
+| *camel.component.splunk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.splunk.splunk-configuration-factory* | To use the SplunkConfigurationFactory. The option is a org.apache.camel.component.splunk.SplunkConfigurationFactory type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Message body
+
+Splunk operates on data in key/value pairs. The SplunkEvent class is a
+placeholder for such data, and should be in the message body for the producer. 
+Likewise it will be returned in the body per search
+result for the consumer.
+
+You can send raw data to Splunk by setting the raw
+option on the producer endpoint. This is useful for eg. json/xml and
+other payloads where Splunk has build in support. 
+
+== Use Cases
+
+Search Twitter for tweets with music and publish events to Splunk
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------------------------------
+      from("twitter://search?type=polling&keywords=music&delay=10&consumerKey=abc&consumerSecret=def&accessToken=hij&accessTokenSecret=xxx")
+          .convertBodyTo(SplunkEvent.class)
+          .to("splunk://submit?username=foo&password=bar&index=camel-tweets&sourceType=twitter&source=music-tweets");
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+To convert a Tweet to a SplunkEvent you could use a converter like
+
+[source,java]
+----------------------------------------------------------------------------------
+@Converter
+public class Tweet2SplunkEvent {
+    @Converter
+    public static SplunkEvent convertTweet(Status status) {
+        SplunkEvent data = new SplunkEvent("twitter-message", null);
+        //data.addPair("source", status.getSource());
+        data.addPair("from_user", status.getUser().getScreenName());
+        data.addPair("in_reply_to", status.getInReplyToScreenName());
+        data.addPair(SplunkEvent.COMMON_START_TIME, status.getCreatedAt());
+        data.addPair(SplunkEvent.COMMON_EVENT_ID, status.getId());
+        data.addPair("text", status.getText());
+        data.addPair("retweet_count", status.getRetweetCount());
+        if (status.getPlace() != null) {
+            data.addPair("place_country", status.getPlace().getCountry());
+            data.addPair("place_name", status.getPlace().getName());
+            data.addPair("place_street", status.getPlace().getStreetAddress());
+        }
+        if (status.getGeoLocation() != null) {
+            data.addPair("geo_latitude", status.getGeoLocation().getLatitude());
+            data.addPair("geo_longitude", status.getGeoLocation().getLongitude());
+        }
+        return data;
+    }
+}
+----------------------------------------------------------------------------------
+
+Search Splunk for tweets
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------------------
+      from("splunk://normal?username=foo&password=bar&initEarliestTime=-2m&search=search index=camel-tweets sourcetype=twitter")
+          .log("${body}");
+--------------------------------------------------------------------------------------------------------------------------------
+
+== Other comments
+
+Splunk comes with a variety of options for leveraging machine generated
+data with prebuilt apps for analyzing and displaying this.  +
+ For example the jmx app. could be used to publish jmx attributes, eg.
+route and jvm metrics to Splunk, and displaying this on a dashboard.

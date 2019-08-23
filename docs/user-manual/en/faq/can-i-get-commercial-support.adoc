@@ -1,4 +1,0 @@
-[[CanIgetcommercialsupport-CanIgetcommercialsupport]]
-=== Can I get commercial support?
-
-Absolutely, see our link:../support.adoc[Support] page for more details.

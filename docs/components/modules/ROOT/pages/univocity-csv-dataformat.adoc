@@ -1,1 +1,202 @@
-../../../../../components/camel-univocity-parsers/src/main/docs/univocity-csv-dataformat.adoc
+= uniVocity CSV DataFormat
+
+*Available as of Camel version 2.15*
+
+This xref:manual::data-format.adoc[Data
+Format] uses http://www.univocity.com/pages/about-parsers[uniVocity-parsers]
+for reading and writing 3 kinds of tabular data text files:
+
+* CSV (Comma Separated Values), where the values are separated by a
+symbol (usually a comma)
+* fixed-width, where the values have known sizes
+* TSV (Tabular Separated Values), where the fields are separated by a
+tabulation
+
+Thus there are 3 data formats based on uniVocity-parsers.
+
+If you use Maven you can just add the following to your pom.xml,
+substituting the version number for the latest and greatest release.
+
+[source,xml]
+----------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-univocity-parsers</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----------------------------------------------------
+
+== Options
+
+Most configuration options of the uniVocity-parsers are available in the
+data formats. If you want more information about a particular option,
+please refer to their
+http://www.univocity.com/pages/parsers-documentation[documentation
+page].
+
+The 3 data formats share common options and have dedicated ones, this
+section presents them all.
+
+== Options
+
+
+// dataformat options: START
+The uniVocity CSV dataformat supports 18 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| quoteAllFields | false | Boolean | Whether or not all values must be quoted when writing them.
+| quote | " | String | The quote symbol.
+| quoteEscape | " | String | The quote escape symbol
+| delimiter | , | String | The delimiter of values
+| nullValue |  | String | The string representation of a null value. The default value is null
+| skipEmptyLines | true | Boolean | Whether or not the empty lines must be ignored. The default value is true
+| ignoreTrailingWhitespaces | true | Boolean | Whether or not the trailing white spaces must ignored. The default value is true
+| ignoreLeadingWhitespaces | true | Boolean | Whether or not the leading white spaces must be ignored. The default value is true
+| headersDisabled | false | Boolean | Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which indicates that there is no header. The default value is false
+| headerExtractionEnabled | false | Boolean | Whether or not the header must be read in the first line of the test document The default value is false
+| numberOfRecordsToRead |  | Integer | The maximum number of record to read.
+| emptyValue |  | String | The String representation of an empty value
+| lineSeparator |  | String | The line separator of the files The default value is to use the JVM platform line separator
+| normalizedLineSeparator | 
+ | String | The normalized line separator of the files The default value is a new line character.
+| comment | # | String | The comment symbol. The default value is #
+| lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. The default value is false
+| asMap | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 19 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.univocity-csv.as-map* | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false | false | Boolean
+| *camel.dataformat.univocity-csv.comment* | The comment symbol. The default value is # | # | String
+| *camel.dataformat.univocity-csv.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.univocity-csv.delimiter* | The delimiter of values | , | String
+| *camel.dataformat.univocity-csv.empty-value* | The String representation of an empty value |  | String
+| *camel.dataformat.univocity-csv.enabled* | Enable univocity-csv dataformat | true | Boolean
+| *camel.dataformat.univocity-csv.header-extraction-enabled* | Whether or not the header must be read in the first line of the test document The default value is false | false | Boolean
+| *camel.dataformat.univocity-csv.headers-disabled* | Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which indicates that there is no header. The default value is false | false | Boolean
+| *camel.dataformat.univocity-csv.ignore-leading-whitespaces* | Whether or not the leading white spaces must be ignored. The default value is true | true | Boolean
+| *camel.dataformat.univocity-csv.ignore-trailing-whitespaces* | Whether or not the trailing white spaces must ignored. The default value is true | true | Boolean
+| *camel.dataformat.univocity-csv.lazy-load* | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. The default value is false | false | Boolean
+| *camel.dataformat.univocity-csv.line-separator* | The line separator of the files The default value is to use the JVM platform line separator |  | String
+| *camel.dataformat.univocity-csv.normalized-line-separator* | The normalized line separator of the files The default value is a new line character. |  | String
+| *camel.dataformat.univocity-csv.null-value* | The string representation of a null value. The default value is null |  | String
+| *camel.dataformat.univocity-csv.number-of-records-to-read* | The maximum number of record to read. |  | Integer
+| *camel.dataformat.univocity-csv.quote* | The quote symbol. | " | String
+| *camel.dataformat.univocity-csv.quote-all-fields* | Whether or not all values must be quoted when writing them. | false | Boolean
+| *camel.dataformat.univocity-csv.quote-escape* | The quote escape symbol | " | String
+| *camel.dataformat.univocity-csv.skip-empty-lines* | Whether or not the empty lines must be ignored. The default value is true | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Marshalling usages
+
+The marshalling accepts either:
+
+* A list of maps (L`ist<Map<String, ?>>`), one for each line
+* A single map (`Map<String, ?>`), for a single line
+
+Any other body will throws an exception.
+
+=== Usage example: marshalling a Map into CSV format
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:input"/>
+    <marshal>
+        <univocity-csv/>
+    </marshal>
+    <to uri="mock:result"/>
+</route>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+=== Usage example: marshalling a Map into fixed-width format
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:input"/>
+    <marshal>
+        <univocity-fixed padding="_">
+            <univocity-header length="5"/>
+            <univocity-header length="5"/>
+            <univocity-header length="5"/>
+        </univocity-fixed>
+    </marshal>
+    <to uri="mock:result"/>
+</route>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+=== Usage example: marshalling a Map into TSV format
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:input"/>
+    <marshal>
+        <univocity-tsv/>
+    </marshal>
+    <to uri="mock:result"/>
+</route>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+== Unmarshalling usages
+
+The unmarshalling uses an `InputStream` in order to read the data.
+
+Each row produces either:
+
+* a list with all the values in it (`asMap` option with `false`);
+* A map with all the values indexed by the
+headers (`asMap` option with `true`).
+
+All the rows can either:
+
+* be collected at once into a list (`lazyLoad` option with `false`);
+* be read on the fly using an iterator (`lazyLoad` option with `true`).
+
+=== Usage example: unmarshalling a CSV format into maps with automatic headers
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:input"/>
+    <unmarshal>
+        <univocity-csv headerExtractionEnabled="true" asMap="true"/>
+    </unmarshal>
+    <to uri="mock:result"/>
+</route>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+=== Usage example: unmarshalling a fixed-width format into lists
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:input"/>
+    <unmarshal>
+        <univocity-fixed>
+            <univocity-header length="5"/>
+            <univocity-header length="5"/>
+            <univocity-header length="5"/>
+        </univocity-fixed>
+    </unmarshal>
+    <to uri="mock:result"/>
+</route>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------

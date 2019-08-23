@@ -1,1 +1,106 @@
-../../../../../components/camel-jing/src/main/docs/jing-component.adoc
+= Jing Component
+
+*Available as of Camel version 1.1*
+
+
+The Jing component uses the
+http://www.thaiopensource.com/relaxng/jing.html[Jing Library] to perform
+XML validation of the message body using either
+
+* http://relaxng.org/[RelaxNG XML Syntax]
+* http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
+Syntax]
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,java]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jing</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+Note that the xref:msv-component.adoc[MSV] component can also support RelaxNG XML
+syntax.
+
+== URI format
+
+[source,java]
+------------------------------
+jing:someLocalOrRemoteResource
+------------------------------
+
+The component uses jing as name, and you can use the
+option compactSyntax to turn on either RNG or RNC mode.
+
+== Options
+
+
+// component options: START
+The Jing component has no options.
+// component options: END
+
+
+
+
+// endpoint options: START
+The Jing endpoint is configured using URI syntax:
+
+----
+jing:resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the schema to validate against. |  | String
+|===
+
+
+==== Query Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *compactSyntax* (producer) | Whether to validate using RelaxNG compact syntax or not. By default this is false for using RelaxNG XML Syntax (rng) And true is for using RelaxNG Compact Syntax (rnc) | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jing.enabled* | Enable jing component | true | Boolean
+| *camel.component.jing.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Example
+
+The following
+http://svn.apache.org/repos/asf/camel/trunk/components/camel-jing/src/test/resources/org/apache/camel/component/validator/jing/rnc-context.xml[example]
+shows how to configure a route from the endpoint *direct:start* which
+then goes to one of two endpoints, either *mock:valid* or *mock:invalid*
+based on whether or not the XML matches the given
+http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
+Syntax] schema (which is supplied on the classpath).

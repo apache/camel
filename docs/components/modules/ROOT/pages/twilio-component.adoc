@@ -1,1 +1,221 @@
-../../../../../components/camel-twilio/src/main/docs/twilio-component.adoc
+= Twilio Component
+
+*Available as of Camel version 2.20*
+
+
+The Twilio component provides access to Version 2010-04-01 of Twilio REST APIs accessible
+using https://github.com/twilio/twilio-java[Twilio Java SDK].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,java]
+-------------------------------------------------
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-twilio</artifactId>
+        <version>${camel-version}</version>
+    </dependency>
+-------------------------------------------------
+
+
+== Twilio Options
+
+// component options: START
+The Twilio component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | To use the shared configuration |  | TwilioConfiguration
+| *restClient* (advanced) | To use the shared REST client |  | TwilioRestClient
+| *username* (security) | The account to use. |  | String
+| *password* (security) | Auth token for the account. |  | String
+| *accountSid* (security) | The account SID to use. |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Twilio endpoint is configured using URI syntax:
+
+----
+twilio:apiName/methodName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apiName* | *Required* What kind of operation to perform |  | TwilioApiName
+| *methodName* | *Required* What sub operation to use for the selected operation |  | String
+|===
+
+
+==== Query Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.twilio.account-sid* | The account SID to use. |  | String
+| *camel.component.twilio.configuration.api-name* | What kind of operation to perform |  | TwilioApiName
+| *camel.component.twilio.configuration.method-name* | What sub operation to use for the selected operation |  | String
+| *camel.component.twilio.enabled* | Enable twilio component | true | Boolean
+| *camel.component.twilio.password* | Auth token for the account. |  | String
+| *camel.component.twilio.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.twilio.rest-client* | To use the shared REST client. The option is a com.twilio.http.TwilioRestClient type. |  | String
+| *camel.component.twilio.username* | The account to use. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== URI format
+
+[source,java]
+-------------------------------------------------
+    twilio://endpoint-prefix/endpoint?[options]
+-------------------------------------------------
+
+Endpoint prefix can be one of:
+
+* account
+* address
+* address-dependent-phone-number
+* application
+* available-phone-number-country
+* available-phone-number-country-local
+* available-phone-number-country-mobile
+* available-phone-number-country-toll-free
+* call
+* call-feedback
+* call-feedback-summary
+* call-notification
+* call-recording
+* conference
+* conference-participant
+* connect-app
+* incoming-phone-number
+* incoming-phone-number-local
+* incoming-phone-number-mobile
+* incoming-phone-number-toll-free
+* key
+* message
+* message-feedback
+* message-media
+* new-key
+* new-signing-key
+* notification
+* outgoing-caller-id
+* queue
+* queue-member
+* recording
+* recording-add-on-result
+* recording-add-on-result-payload
+* recording-transcription
+* short-code
+* signing-key
+* sip-credential-list
+* sip-credential-list-credential
+* sip-domain
+* sip-domain-credential-list-mapping
+* sip-domain-ip-access-control-list-mapping
+* sip-ip-access-control-list
+* sip-ip-access-control-list-ip-address
+* token
+* transcription
+* usage-record
+* usage-record-all-time
+* usage-record-daily
+* usage-record-last-month
+* usage-record-monthly
+* usage-record-this-month
+* usage-record-today
+* usage-record-yearly
+* usage-record-yesterday
+* usage-trigger
+* validation-request
+
+
+== Producer Endpoints:
+
+Producer endpoints can use endpoint prefixes followed by endpoint names
+and associated options described next. A shorthand alias can be used for
+all of the endpoints. The endpoint URI MUST contain a prefix.
+
+Any of the endpoint options can be provided in either the endpoint URI,
+or dynamically in a message header. The message header name must be of
+the format *`CamelTwilio.<option>`*. Note that the *`inBody`* option
+overrides message header, i.e. the endpoint option *`inBody=option`*
+would override a *`CamelTwilio.option`* header.
+
+Endpoint can be one of:
+
+[width="100%",cols="20%,20%,60%",options="header"]
+|=======================================================================
+| Endpoint  | Shorthand Alias | Description
+| *creator* | create          | Make the request to the Twilio API to perform the create
+| *deleter* | delete          | Make the request to the Twilio API to perform the delete
+| *fetcher* | fetch           | Make the request to the Twilio API to perform the fetch
+| *reader*  | read            | Make the request to the Twilio API to perform the read
+| *updater* | update          | Make the request to the Twilio API to perform the update
+|=======================================================================
+
+Available endpoints differ depending on the endpoint prefixes.
+
+For more information on the endpoints and options see API documentation at:
+https://www.twilio.com/docs/libraries/reference/twilio-java/index.html
+
+
+== Consumer Endpoints:
+
+Any of the producer endpoints can be used as a consumer endpoint.
+Consumer endpoints can use
+http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
+Poll Consumer Options] with a `consumer.` prefix to schedule endpoint
+invocation. Consumer endpoints that return an array or collection will
+generate one exchange per element, and their routes will be executed
+once for each exchange.
+
+If you want to receive calls or messages from Twilio and respond to them
+using a Camel consumer endpoint, you can use other HTTP-based components
+such as *camel-servlet*, *camel-undertow*, *camel-jetty*, and *camel-netty-http*
+to respond with https://www.twilio.com/docs/api/twiml[TwiML].
+
+
+== Message header
+
+Any of the options can be provided in a message header for producer
+endpoints with *CamelTwilio.* prefix.
+
+
+== Message body
+
+All result message bodies utilize objects provided by the Twilio Java SDK.
+Producer endpoints can specify the option name for incoming message body
+in the *inBody* endpoint parameter.

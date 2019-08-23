@@ -1,1 +1,170 @@
-../../../../../components/camel-azure/src/main/docs/azure-queue-component.adoc
+= Azure Storage Queue Service Component
+
+*Available as of Camel version 2.19*
+
+
+The Azure Queue component supports storing and retrieving the messages to/from
+https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] service.
+
+Prerequisites
+
+You must have a valid Microsoft Azure account. More information is available at
+https://azure.microsoft.com/en-us/free/[Azure Portal].
+
+== URI Format
+
+[source,java]
+------------------------------
+azure-queue://accountName/queueName[?options]
+------------------------------
+
+The queue will be created if it does not already exist. +
+ You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+For example in order to get a message content from the queue `messageQueue` 
+in the `camelazure` storage account and, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-queue:/camelazure/messageQueue").
+to("file://queuedirectory");
+--------------------------------------------------------------------------------
+
+== URI Options
+
+
+// component options: START
+The Azure Storage Queue Service component has no options.
+// component options: END
+
+
+
+
+
+
+
+
+
+
+
+// endpoint options: START
+The Azure Storage Queue Service endpoint is configured using URI syntax:
+
+----
+azure-queue:containerAndQueueUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *containerAndQueueUri* | *Required* Container Queue compact Uri |  | String
+|===
+
+
+==== Query Parameters (10 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *azureQueueClient* (common) | The queue service client |  | CloudQueue
+| *credentials* (common) | Set the storage credentials, required in most cases |  | StorageCredentials
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *messageTimeToLive* (producer) | Message Time To Live in seconds |  | int
+| *messageVisibilityDelay* (producer) | Message Visibility Delay in seconds |  | int
+| *operation* (producer) | Queue service operation hint to the producer | listQueues | QueueServiceOperations
+| *queuePrefix* (producer) | Set a prefix which can be used for listing the queues |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.azure-queue.enabled* | Enable azure-queue component | true | Boolean
+| *camel.component.azure-queue.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+Required Azure Storage Queue Service component options
+
+You have to provide the containerAndQueue URI  and the credentials.
+
+== Usage
+
+=== Azure Queue Service operations
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`listQueues`  |List the queues.
+|`createQueue`  |Create the queue.
+|`deleteQueue`  |Delete the queue.
+|`addMessage`  |Add a message to the queue.
+|`retrieveMessage`  |Retrieve a message from the queue.
+|`peekMessage`  |View the message inside the queue, for example, to determine whether the message arrived at the correct queue.
+|`updateMessage`  |Update the message in the queue.
+|`deleteMessage`  |Delete the message in the queue.
+
+|===
+
+
+
+=== Azure Queue Client configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the Azure Queue Client configuration, you can
+create your own instance:
+
+[source,java]
+--------------------------------------------------------------------------------------
+StorageCredentials credentials = new StorageCredentialsAccountAndKey("camelazure", "thekey");
+
+CloudQueue client = new CloudQueue("camelazure", credentials);
+
+registry.bind("azureQueueClient", client);
+--------------------------------------------------------------------------------------
+
+and refer to it in your Camel azure-queue component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-queue:/camelazure/messageQueue?azureQueueClient=#client")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-azure</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel.

@@ -1,1 +1,239 @@
-../../../../../components/camel-guava-eventbus/src/main/docs/guava-eventbus-component.adoc
+= Guava EventBus Component
+
+*Available as of Camel version 2.10*
+
+
+The
+https://google.github.io/guava/releases/19.0/api/docs/com/google/common/eventbus/EventBus.html[Google
+Guava EventBus] allows publish-subscribe-style communication between
+components without requiring the components to explicitly register with
+one another (and thus be aware of each other). The *guava-eventbus:*
+component provides integration bridge between Camel and
+https://google.github.io/guava/releases/19.0/api/docs/com/google/common/eventbus/EventBus.html[Google
+Guava EventBus] infrastructure. With the latter component, messages
+exchanged with the Guava `EventBus` can be transparently forwarded to
+the Camel routes. EventBus component allows also to route body of Camel
+exchanges to the Guava `EventBus`.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-guava-eventbus</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+--------------------------------
+guava-eventbus:busName[?options]
+--------------------------------
+
+Where *busName* represents the name of the
+`com.google.common.eventbus.EventBus` instance located in the Camel
+registry.
+
+== Options
+
+
+
+
+
+// component options: START
+The Guava EventBus component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *eventBus* (common) | To use the given Guava EventBus instance |  | EventBus
+| *listenerInterface* (common) | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option. |  | Class
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The Guava EventBus endpoint is configured using URI syntax:
+
+----
+guava-eventbus:eventBusRef
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *eventBusRef* | To lookup the Guava EventBus from the registry with the given name |  | String
+|===
+
+
+==== Query Parameters (6 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *eventClass* (common) | If used on the consumer side of the route, will filter events received from the EventBus to the instances of the class and superclasses of eventClass. Null value of this option is equal to setting it to the java.lang.Object i.e. the consumer will capture all messages incoming to the event bus. This option cannot be used together with listenerInterface option. |  | Class
+| *listenerInterface* (common) | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option. |  | Class
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.guava-eventbus.enabled* | Enable guava-eventbus component | true | Boolean
+| *camel.component.guava-eventbus.event-bus* | To use the given Guava EventBus instance. The option is a com.google.common.eventbus.EventBus type. |  | String
+| *camel.component.guava-eventbus.listener-interface* | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option. |  | Class
+| *camel.component.guava-eventbus.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Usage
+
+Using `guava-eventbus` component on the consumer side of the route will
+capture messages sent to the Guava `EventBus` and forward them to the
+Camel route. Guava EventBus consumer processes incoming messages
+http://camel.apache.org/asynchronous-routing-engine.html[asynchronously].
+
+[source,java]
+-------------------------------------------------------
+SimpleRegistry registry = new SimpleRegistry();
+EventBus eventBus = new EventBus();
+registry.put("busName", eventBus);
+CamelContext camel = new DefaultCamelContext(registry);
+
+from("guava-eventbus:busName").to("seda:queue");
+
+eventBus.post("Send me to the SEDA queue.");
+-------------------------------------------------------
+
+Using `guava-eventbus` component on the producer side of the route will
+forward body of the Camel exchanges to the Guava `EventBus` instance.
+
+[source,java]
+----------------------------------------------------------------------
+SimpleRegistry registry = new SimpleRegistry();
+EventBus eventBus = new EventBus();
+registry.put("busName", eventBus);
+CamelContext camel = new DefaultCamelContext(registry);
+
+from("direct:start").to("guava-eventbus:busName");
+
+ProducerTemplate producerTemplate = camel.createProducerTemplate();
+producer.sendBody("direct:start", "Send me to the Guava EventBus.");
+
+eventBus.register(new Object(){
+  @Subscribe
+  public void messageHander(String message) {
+    System.out.println("Message received from the Camel: " + message);
+  }
+});
+----------------------------------------------------------------------
+
+== DeadEvent considerations
+
+Keep in mind that due to the limitations caused by the design of the
+Guava EventBus, you cannot specify event class to be received by the
+listener without creating class annotated with `@Subscribe` method. This
+limitation implies that endpoint with `eventClass` option specified
+actually listens to all possible events (`java.lang.Object`) and filter
+appropriate messages programmatically at runtime. The snipped below
+demonstrates an appropriate excerpt from the Camel code base.
+
+[source,java]
+----------------------------------------------------------------------------
+@Subscribe
+public void eventReceived(Object event) {
+  if (eventClass == null || eventClass.isAssignableFrom(event.getClass())) {
+    doEventReceived(event);
+...
+----------------------------------------------------------------------------
+
+This drawback of this approach is that `EventBus` instance used by Camel
+will never generate `com.google.common.eventbus.DeadEvent`
+notifications. If you want Camel to listen only to the precisely
+specified event (and therefore enable `DeadEvent` support), use
+`listenerInterface` endpoint option. Camel will create dynamic proxy
+over the interface you specify with the latter option and listen only to
+messages specified by the interface handler methods. The example of the
+listener interface with single method handling only `SpecificEvent`
+instances is demonstrated below.
+
+[source,java]
+------------------------------------------
+package com.example;
+
+public interface CustomListener {
+
+  @Subscribe
+  void eventReceived(SpecificEvent event);
+
+}
+------------------------------------------
+
+The listener presented above could be used in the endpoint definition as
+follows.
+
+[source,java]
+---------------------------------------------------------------------------------------------
+from("guava-eventbus:busName?listenerInterface=com.example.CustomListener").to("seda:queue");
+---------------------------------------------------------------------------------------------
+
+== Consuming multiple type of events
+
+In order to define multiple type of events to be consumed by Guava
+EventBus consumer use `listenerInterface` endpoint option, as listener
+interface could provide multiple methods marked with the `@Subscribe`
+annotation.
+
+[source,java]
+------------------------------------------------
+package com.example;
+
+public interface MultipleEventsListener {
+
+  @Subscribe
+  void someEventReceived(SomeEvent event);
+
+  @Subscribe
+  void anotherEventReceived(AnotherEvent event);
+
+}
+------------------------------------------------
+
+The listener presented above could be used in the endpoint definition as
+follows.
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+from("guava-eventbus:busName?listenerInterface=com.example.MultipleEventsListener").to("seda:queue");
+-----------------------------------------------------------------------------------------------------

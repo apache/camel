@@ -1,1 +1,151 @@
-../../../../../components/camel-stringtemplate/src/main/docs/string-template-component.adoc
+= String Template Component
+
+*Available as of Camel version 1.2*
+
+
+The String Template component allows you to process a message using a
+http://www.stringtemplate.org/[String Template]. This can be ideal when
+using Templating to generate responses for
+requests.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-stringtemplate</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+--------------------------------------
+string-template:templateName[?options]
+--------------------------------------
+
+Where *templateName* is the classpath-local URI of the template to
+invoke; or the complete URL of the remote template.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+
+// component options: START
+The String Template component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The String Template endpoint is configured using URI syntax:
+
+----
+string-template:resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
+|===
+
+
+==== Query Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *delimiterStart* (producer) | The variable start delimiter | < | char
+| *delimiterStop* (producer) | The variable end delimiter | > | char
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.string-template.enabled* | Enable string-template component | true | Boolean
+| *camel.component.string-template.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Headers
+
+Camel will store a reference to the resource in the message header with
+key, `org.apache.camel.stringtemplate.resource`. The Resource is an
+`org.springframework.core.io.Resource` object.
+
+== Hot reloading
+
+The string template resource is by default hot-reloadable for both file
+and classpath resources (expanded jar). If you set `contentCache=true`,
+Camel loads the resource only once and hot-reloading is not possible.
+This scenario can be used in production when the resource never changes.
+
+== StringTemplate Attributes
+
+You can define the custom context map by setting the
+message header "*CamelStringTemplateVariableMap*" just like the below
+code.
+
+[source,java]
+--------------------------------------------------------------------------
+Map<String, Object> variableMap = new HashMap<String, Object>();
+Map<String, Object> headersMap = new HashMap<String, Object>();
+headersMap.put("name", "Willem");
+variableMap.put("headers", headersMap);
+variableMap.put("body", "Monday");
+variableMap.put("exchange", exchange);
+exchange.getIn().setHeader("CamelStringTemplateVariableMap", variableMap);
+--------------------------------------------------------------------------
+
+== Samples
+
+For example you could use a string template as follows in order to
+formulate a response to a message:
+
+[source,java]
+-----------------------------------------------
+from("activemq:My.Queue").
+  to("string-template:com/acme/MyResponse.tm");
+-----------------------------------------------
+
+== The Email Sample
+
+In this sample we want to use a string template to send an order
+confirmation email. The email template is laid out in `StringTemplate`
+as:
+
+[source,java]
+--------------------------------------------
+Dear <headers.lastName>, <headers.firstName>
+
+Thanks for the order of <headers.item>.
+
+Regards Camel Riders Bookstore
+<body>
+--------------------------------------------
+
+And the java code is as follows:

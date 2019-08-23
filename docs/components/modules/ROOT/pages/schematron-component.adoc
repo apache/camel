@@ -1,1 +1,201 @@
-../../../../../components/camel-schematron/src/main/docs/schematron-component.adoc
+= Schematron Component
+
+*Available as of Camel version 2.15*
+
+
+http://www.schematron.com/index.html[Schematron] is an XML-based
+language for validating XML instance documents. It is used to make
+assertions about data in an XML document and it is also used to express
+operational and business rules. Schematron is
+an http://standards.iso.org/ittf/PubliclyAvailableStandards/index.html[ISO
+Standard]. The schematron component uses the leading
+http://www.schematron.com/implementation.html[implementation] of ISO
+schematron. It is an XSLT based implementation. The schematron rules is
+run through http://www.schematron.com/implementation.html[four XSLT
+pipelines], which generates a final XSLT which will be used as the basis
+for running the assertion against the XML document. The component is
+written in a way that Schematron rules are loaded at the start of the
+endpoint (only once) this is to minimise the overhead of instantiating a
+Java Templates object representing the rules.
+
+== URI format
+
+[source,java]
+---------------------------
+schematron://path?[options]
+---------------------------
+
+== URI options
+
+
+// component options: START
+The Schematron component has no options.
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The Schematron endpoint is configured using URI syntax:
+
+----
+schematron:path
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *path* | *Required* The path to the schematron rules file. Can either be in class path or location in the file system. |  | String
+|===
+
+
+==== Query Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *abort* (producer) | Flag to abort the route and throw a schematron validation exception. | false | boolean
+| *rules* (producer) | To use the given schematron rules instead of loading from the path |  | Templates
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *uriResolver* (advanced) | Set the URIResolver to be used for resolving schematron includes in the rules file. |  | URIResolver
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.schematron.enabled* | Enable schematron component | true | Boolean
+| *camel.component.schematron.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+== Headers
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Name |Description |Type |In/Out
+
+|CamelSchematronValidationStatus |The schematron validation status: SUCCESS / FAILED |String |IN
+
+|CamelSchematronValidationReport |The schematrion report body in XML format. See an example below |String |IN
+|=======================================================================
+
+== URI and path syntax
+
+The following example shows how to invoke the schematron processor in
+Java DSL. The schematron rules file is sourced from the class path:
+
+[source,java]
+----------------------------------------------------------------------------
+from("direct:start").to("schematron://sch/schematron.sch").to("mock:result")
+----------------------------------------------------------------------------
+
+ 
+
+The following example shows how to invoke the schematron processor in
+XML DSL. The schematrion rules file is sourced from the file system:
+
+[source,xml]
+-----------------------------------------------------------------------------------------------
+<route>
+   <from uri="direct:start" />
+   <to uri="schematron:///usr/local/sch/schematron.sch" />
+   <log message="Schematron validation status: ${in.header.CamelSchematronValidationStatus}" />
+   <choice>
+      <when>
+         <simple>${in.header.CamelSchematronValidationStatus} == 'SUCCESS'</simple>
+         <to uri="mock:success" />
+      </when>
+      <otherwise>
+         <log message="Failed schematron validation" />
+         <setBody>
+            <header>CamelSchematronValidationReport</header>
+         </setBody>
+         <to uri="mock:failure" />
+      </otherwise>
+   </choice>
+</route>
+-----------------------------------------------------------------------------------------------
+
+TIP: *Where to store schematron rules?*
+Schematron rules can change with business requirement, as such it is
+recommended to store these rules somewhere in file system. When the
+schematron component endpoint is started, the rules are compiled into
+XSLT as a  Java Templates Object. This is done only once to minimise the
+overhead of instantiating Java Templates object, which can be an
+expensive operation for large set of rules and given that the process
+goes through four pipelines
+of http://www.schematron.com/implementation.html[XSLT transformations].
+So if you happen to store the rules in the file system, in the event of
+an update, all you need is to restart the route or the component. No
+harm in storing these rules in the class path though, but you will have
+to build and deploy the component to pick up the changes.
+
+== Schematron rules and report samples
+
+Here is an example of schematron rules
+
+[source,xml]
+--------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://purl.oclc.org/dsdl/schematron">
+   <title>Check Sections 12/07</title>
+   <pattern id="section-check">
+      <rule context="section">
+         <assert test="title">This section has no title</assert>
+         <assert test="para">This section has no paragraphs</assert>
+      </rule>
+   </pattern>
+</schema>
+--------------------------------------------------------------------
+
+Here is an example of schematron report:
+
+[source,xml]
+------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<svrl:schematron-output xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+ xmlns:iso="http://purl.oclc.org/dsdl/schematron"
+ xmlns:saxon="http://saxon.sf.net/"
+ xmlns:schold="http://www.ascc.net/xml/schematron"
+ xmlns:xhtml="http://www.w3.org/1999/xhtml"
+ xmlns:xs="http://www.w3.org/2001/XMLSchema"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema" schemaVersion="" title="">
+   
+   <svrl:active-pattern document="" />
+   <svrl:fired-rule context="chapter" />
+   <svrl:failed-assert test="title" location="/doc[1]/chapter[1]">
+      <svrl:text>A chapter should have a title</svrl:text>
+   </svrl:failed-assert>
+   <svrl:fired-rule context="chapter" />
+   <svrl:failed-assert test="title" location="/doc[1]/chapter[2]">
+      <svrl:text>A chapter should have a title</svrl:text>
+   </svrl:failed-assert>
+   <svrl:fired-rule context="chapter" />
+</svrl:schematron-output>
+------------------------------------------------------------------------
+
+TIP: *Useful Links and resources*
+* http://www.mulberrytech.com/papers/schematron-Philly.pdf[Introduction
+to Schematron] by Mulleberry technologies. An excellent document in PDF
+to get you started on Schematron.
+* http://www.schematron.com[Schematron official site]. This contains
+links to other resources

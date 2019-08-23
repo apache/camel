@@ -1,1 +1,80 @@
-../../../../../components/camel-ignite/src/main/docs/ignite-events-component.adoc
+= Ignite Events Component
+
+*Available as of Camel version 2.17*
+
+
+The Ignite Events endpoint is one of camel-ignite endpoints which allows you to https://apacheignite.readme.io/docs/events[receive events] from the Ignite cluster by creating a local event listener.
+
+This endpoint only supports consumers.
+The Exchanges created by this consumer put the received Event object into the body of the IN message.
+
+== Options
+
+// component options: START
+The Ignite Events component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *ignite* (consumer) | Sets the Ignite instance. |  | Ignite
+| *configurationResource* (consumer) | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. |  | Object
+| *igniteConfiguration* (consumer) | Allows the user to set a programmatic IgniteConfiguration. |  | IgniteConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Ignite Events endpoint is configured using URI syntax:
+
+----
+ignite-events:endpointId
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *endpointId* | The endpoint ID (not used). |  | String
+|===
+
+
+==== Query Parameters (8 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *clusterGroupExpression* (consumer) | The cluster group expression. |  | ClusterGroupExpression
+| *events* (consumer) | The event IDs to subscribe to as a Set directly where the IDs are the different constants in org.apache.ignite.events.EventType. | EventType.EVTS_ALL | SetOrString
+| *propagateIncomingBodyIfNo ReturnValue* (consumer) | Sets whether to propagate the incoming body if the return type of the underlying Ignite operation is void. | true | boolean
+| *treatCollectionsAsCache Objects* (consumer) | Sets whether to treat Collections as cache objects or as Collections of items to insert/update/compute, etc. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.ignite-events.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
+| *camel.component.ignite-events.enabled* | Enable ignite-events component | true | Boolean
+| *camel.component.ignite-events.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
+| *camel.component.ignite-events.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
+| *camel.component.ignite-events.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END

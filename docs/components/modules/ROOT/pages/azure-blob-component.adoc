@@ -1,1 +1,231 @@
-../../../../../components/camel-azure/src/main/docs/azure-blob-component.adoc
+= Azure Storage Blob Service Component
+
+*Available as of Camel version 2.19*
+
+
+The Azure Blob component supports storing and retrieving the blobs to/from
+https://azure.microsoft.com/services/storage/blobs/[Azure Storage Blob] service.
+
+Prerequisites
+
+You must have a valid Windows Azure Storage account. More information is available at
+https://docs.microsoft.com/azure/[Azure Documentation Portal].
+
+== URI Format
+
+[source,java]
+------------------------------
+azure-blob://accountName/containerName[/blobName][?options]
+------------------------------
+
+In most cases a blobName is required and the blob will be created if it does not already exist. +
+ You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+For example in order to download a blob content from the public block blob `blockBlob` 
+located on the `container1` in the `camelazure` storage account, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-blob:/camelazure/container1/blockBlob").
+to("file://blobdirectory");
+--------------------------------------------------------------------------------
+
+== URI Options
+
+
+// component options: START
+The Azure Storage Blob Service component has no options.
+// component options: END
+
+
+
+
+
+
+
+
+
+
+
+// endpoint options: START
+The Azure Storage Blob Service endpoint is configured using URI syntax:
+
+----
+azure-blob:containerOrBlobUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *containerOrBlobUri* | *Required* Container or Blob compact Uri |  | String
+|===
+
+
+==== Query Parameters (19 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *azureBlobClient* (common) | The blob service client |  | CloudBlob
+| *blobOffset* (common) | Set the blob offset for the upload or download operations, default is 0 | 0 | Long
+| *blobType* (common) | Set a blob type, 'blockblob' is default | blockblob | BlobType
+| *closeStreamAfterRead* (common) | Close the stream after read or keep it open, default is true | true | boolean
+| *credentials* (common) | Set the storage credentials, required in most cases |  | StorageCredentials
+| *dataLength* (common) | Set the data length for the download or page blob upload operations |  | Long
+| *fileDir* (common) | Set the file directory where the downloaded blobs will be saved to |  | String
+| *publicForRead* (common) | Storage resources can be public for reading their content, if this property is enabled then the credentials do not have to be set | false | boolean
+| *streamReadSize* (common) | Set the minimum read size in bytes when reading the blob content |  | int
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *blobMetadata* (producer) | Set the blob meta-data |  | Map
+| *blobPrefix* (producer) | Set a prefix which can be used for listing the blobs |  | String
+| *closeStreamAfterWrite* (producer) | Close the stream after write or keep it open, default is true | true | boolean
+| *operation* (producer) | Blob service operation hint to the producer | listBlobs | BlobServiceOperations
+| *streamWriteSize* (producer) | Set the size of the buffer for writing block and page blocks |  | int
+| *useFlatListing* (producer) | Specify if the flat or hierarchical blob listing should be used | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.azure-blob.enabled* | Enable azure-blob component | true | Boolean
+| *camel.component.azure-blob.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+Required Azure Storage Blob Service component options
+
+You have to provide the containerOrBlob name and the credentials if the private blob needs to be accessed.
+
+== Usage
+
+=== Message headers set by the Azure Storage Blob Service producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+|`CamelFileName` |`String` |The file name for the downloaded blob content.
+|=======================================================================
+
+=== Message headers set by the Azure Storage Blob Service producer consumer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+|`CamelFileName` |`String` |The file name for the downloaded blob content.
+|=======================================================================
+
+
+=== Azure Blob Service operations
+
+*Operations common to all block types*
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`getBlob`  |Get the content of the blob. You can restrict the output of this operation to a blob range.
+|`deleteBlob`  |Delete the blob.
+|`listBlobs`  |List the blobs.
+
+|===
+
+*Block blob operations*
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`updateBlockBlob`  |Put block blob content that either creates a new block blob or overwrites the existing block blob content.
+|`uploadBlobBlocks`  |Upload block blob content, by first generating a sequence of blob blocks and then committing them to a blob. If you enable the message *CommitBlockListLater* property, you can execute the commit later with the `commitBlobBlockList` operation. You can later update individual block blobs.
+|`commitBlobBlockList`  |Commit a sequence of blob blocks to the block list that you previously uploaded to the blob service (by using the `updateBlockBlob` operation with the message *CommitBlockListLater* property enabled).
+|`getBlobBlockList`  |Get the block blob list.
+
+|===
+
+*Append blob operations*
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`createAppendBlob`  |Create an append block. By default, if the block already exists then it is not reset. Note that you can alternately create an append blob by enabling the message *AppendBlobCreated* property and using the `updateAppendBlob` operation. 
+
+|`updateAppendBlob`  |Append the new content to the blob. This operation also creates the blob if it does not already exist and if you enabled a message *AppendBlobCreated* property.
+
+|===
+
+
+*Page Block operations*
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`createPageBlob`  |Create a page block. By default, if the block already exists then it is not reset. Note that you can also create a page blob (and set its contents) by enabling a message *PageBlobCreated* property and by using the `updatePageBlob` operation.
+|`updatePageBlob`  |Create a page block (unless you enable a message *PageBlobCreated* property and the identically named block already exists) and set the content of this blob.
+|`resizePageBlob`  |Resize the page blob.
+|`clearPageBlob`  |Clear the page blob.
+|`getPageBlobRanges`  |Get the page blob page ranges.
+
+|===
+
+
+
+=== Azure Blob Client configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the Azure Blob Client configuration, you can
+create your own instance:
+
+[source,java]
+--------------------------------------------------------------------------------------
+StorageCredentials credentials = new StorageCredentialsAccountAndKey("camelazure", Base64.encode("thekey".getBytes()));
+CloudBlob client = new CloudBlockBlob("camelazure", credentials);
+registry.bind("azureBlobClient", client);
+--------------------------------------------------------------------------------------
+
+and refer to it in your Camel azure-blob component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-blob://camelazure/container1/blockBlob?azureBlobClient=#client")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-azure</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel.

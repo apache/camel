@@ -1,1 +1,266 @@
-../../../../../components/camel-mllp/src/main/docs/mllp-component.adoc
+= MLLP Component
+
+*Available as of Camel version 2.17*
+
+
+The MLLP component is specifically designed to handle the nuances of the
+MLLP protocol and provide the functionality required by Healthcare
+providers to communicate with other systems using the MLLP protocol.
+ The MLLP component  provides a simple configuration URI, automated HL7
+acknowledgment generation and automatic acknowledgement interrogation.
+
+The MLLP protocol does not typically use a large number of concurrent
+TCP connections - a single active TCP connection is the normal case.
+ Therefore, the MLLP component uses a simple thread-per-connection model
+based an standard Java Sockets. This keeps the implementation simple
+and eliminates the dependencies other than Camel itself.
+
+The component supports the following:
+
+* A Camel consumer using a TCP Server
+* A Camel producer using a TCP Client
+
+The MLLP component uses byte[] payloads, and relies on Camel Type
+Conversion to convert byte[] to other types.  
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+---------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-mllp</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------------------------
+
+== MLLP Options
+
+
+
+// component options: START
+The MLLP component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *logPhi* (advanced) | Set the component to log PHI data. | true | Boolean
+| *logPhiMaxBytes* (advanced) | Set the maximum number of bytes of PHI that will be logged in a log entry. | 5120 | Integer
+| *defaultCharset* (advanced) | Set the default character set to use for byte to/from String conversions. | ISO-8859-1 | String
+| *configuration* (common) | Sets the default configuration to use when creating MLLP endpoints. |  | MllpConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+
+
+// endpoint options: START
+The MLLP endpoint is configured using URI syntax:
+
+----
+mllp:hostname:port
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hostname* | *Required* Hostname or IP for connection for the TCP connection. The default value is null, which means any local IP address |  | String
+| *port* | *Required* Port number for the TCP connection |  | int
+|===
+
+
+==== Query Parameters (27 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *autoAck* (common) | Enable/Disable the automatic generation of a MLLP Acknowledgement MLLP Consumers only | true | boolean
+| *bufferWrites* (common) | *Deprecated* Enable/Disable the buffering of HL7 payloads before writing to the socket. | false | boolean
+| *hl7Headers* (common) | Enable/Disable the automatic generation of message headers from the HL7 Message MLLP Consumers only | true | boolean
+| *requireEndOfData* (common) | Enable/Disable strict compliance to the MLLP standard. The MLLP standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA, however, some systems do not send the final END_OF_DATA byte. This setting controls whether or not the final END_OF_DATA byte is required or optional. | true | boolean
+| *stringPayload* (common) | Enable/Disable converting the payload to a String. If enabled, HL7 Payloads received from external systems will be validated converted to a String. If the charsetName property is set, that character set will be used for the conversion. If the charsetName property is not set, the value of MSH-18 will be used to determine th appropriate character set. If MSH-18 is not set, then the default ISO-8859-1 character set will be use. | true | boolean
+| *validatePayload* (common) | Enable/Disable the validation of HL7 Payloads If enabled, HL7 Payloads received from external systems will be validated (see Hl7Util.generateInvalidPayloadExceptionMessage for details on the validation). If and invalid payload is detected, a MllpInvalidMessageException (for consumers) or a MllpInvalidAcknowledgementException will be thrown. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to receive incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. If disabled, the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions by logging them at WARN or ERROR level and ignored. | true | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. | InOut | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used (this component only supports synchronous operations). | true | boolean
+| *backlog* (tcp) | The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused. | 5 | Integer
+| *lenientBind* (tcp) | TCP Server Only - Allow the endpoint to start before the TCP ServerSocket is bound. In some environments, it may be desirable to allow the endpoint to start before the TCP ServerSocket is bound. | false | boolean
+| *maxConcurrentConsumers* (tcp) | The maximum number of concurrent MLLP Consumer connections that will be allowed. If a new connection is received and the maximum is number are already established, the new connection will be reset immediately. | 5 | int
+| *reuseAddress* (tcp) | Enable/disable the SO_REUSEADDR socket option. | false | Boolean
+| *acceptTimeout* (timeout) | Timeout (in milliseconds) while waiting for a TCP connection TCP Server Only | 60000 | int
+| *bindRetryInterval* (timeout) | TCP Server Only - The number of milliseconds to wait between bind attempts | 5000 | int
+| *bindTimeout* (timeout) | TCP Server Only - The number of milliseconds to retry binding to a server port | 30000 | int
+| *connectTimeout* (timeout) | Timeout (in milliseconds) for establishing for a TCP connection TCP Client only | 30000 | int
+| *idleTimeout* (timeout) | The approximate idle time allowed before the Client TCP Connection will be reset. A null value or a value less than or equal to zero will disable the idle timeout. |  | Integer
+| *maxReceiveTimeouts* (timeout) | *Deprecated* The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
+| *keepAlive* (tcp) | Enable/disable the SO_KEEPALIVE socket option. | true | Boolean
+| *receiveBufferSize* (tcp) | Sets the SO_RCVBUF option to the specified value (in bytes) | 8192 | Integer
+| *sendBufferSize* (tcp) | Sets the SO_SNDBUF option to the specified value (in bytes) | 8192 | Integer
+| *tcpNoDelay* (tcp) | Enable/disable the TCP_NODELAY socket option. | true | Boolean
+| *readTimeout* (timeout) | The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received | 5000 | int
+| *receiveTimeout* (timeout) | The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame | 15000 | int
+| *charsetName* (codec) | Set the CamelCharsetName property on the exchange |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 31 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mllp.configuration.accept-timeout* | Timeout (in milliseconds) while waiting for a TCP connection TCP Server Only | 60000 | Integer
+| *camel.component.mllp.configuration.auto-ack* | Enable/Disable the automatic generation of a MLLP Acknowledgement MLLP Consumers only | true | Boolean
+| *camel.component.mllp.configuration.backlog* | The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused. | 5 | Integer
+| *camel.component.mllp.configuration.bind-retry-interval* | TCP Server Only - The number of milliseconds to wait between bind attempts | 5000 | Integer
+| *camel.component.mllp.configuration.bind-timeout* | TCP Server Only - The number of milliseconds to retry binding to a server port | 30000 | Integer
+| *camel.component.mllp.configuration.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to receive incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. If disabled, the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions by logging them at WARN or ERROR level and ignored. | true | Boolean
+| *camel.component.mllp.configuration.charset-name* | Set the CamelCharsetName property on the exchange |  | String
+| *camel.component.mllp.configuration.connect-timeout* | Timeout (in milliseconds) for establishing for a TCP connection TCP Client only | 30000 | Integer
+| *camel.component.mllp.configuration.exchange-pattern* | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *camel.component.mllp.configuration.hl7-headers* | Enable/Disable the automatic generation of message headers from the HL7 Message MLLP Consumers only | true | Boolean
+| *camel.component.mllp.configuration.idle-timeout* | The approximate idle time allowed before the Client TCP Connection will be reset. A null value or a value less than or equal to zero will disable the idle timeout. |  | Integer
+| *camel.component.mllp.configuration.keep-alive* | Enable/disable the SO_KEEPALIVE socket option. | true | Boolean
+| *camel.component.mllp.configuration.lenient-bind* | TCP Server Only - Allow the endpoint to start before the TCP ServerSocket is bound. In some environments, it may be desirable to allow the endpoint to start before the TCP ServerSocket is bound. | false | Boolean
+| *camel.component.mllp.configuration.max-concurrent-consumers* | The maximum number of concurrent MLLP Consumer connections that will be allowed. If a new connection is received and the maximum is number are already established, the new connection will be reset immediately. | 5 | Integer
+| *camel.component.mllp.configuration.read-timeout* | The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received | 5000 | Integer
+| *camel.component.mllp.configuration.receive-buffer-size* | Sets the SO_RCVBUF option to the specified value (in bytes) | 8192 | Integer
+| *camel.component.mllp.configuration.receive-timeout* | The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame | 15000 | Integer
+| *camel.component.mllp.configuration.require-end-of-data* | Enable/Disable strict compliance to the MLLP standard. The MLLP standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA, however, some systems do not send the final END_OF_DATA byte. This setting controls whether or not the final END_OF_DATA byte is required or optional. | true | Boolean
+| *camel.component.mllp.configuration.reuse-address* | Enable/disable the SO_REUSEADDR socket option. | false | Boolean
+| *camel.component.mllp.configuration.send-buffer-size* | Sets the SO_SNDBUF option to the specified value (in bytes) | 8192 | Integer
+| *camel.component.mllp.configuration.string-payload* | Enable/Disable converting the payload to a String. If enabled, HL7 Payloads received from external systems will be validated converted to a String. If the charsetName property is set, that character set will be used for the conversion. If the charsetName property is not set, the value of MSH-18 will be used to determine th appropriate character set. If MSH-18 is not set, then the default ISO-8859-1 character set will be use. | true | Boolean
+| *camel.component.mllp.configuration.synchronous* | Sets whether synchronous processing should be strictly used (this component only supports synchronous operations). | true | Boolean
+| *camel.component.mllp.configuration.tcp-no-delay* | Enable/disable the TCP_NODELAY socket option. | true | Boolean
+| *camel.component.mllp.configuration.validate-payload* | Enable/Disable the validation of HL7 Payloads If enabled, HL7 Payloads received from external systems will be validated (see Hl7Util.generateInvalidPayloadExceptionMessage for details on the validation). If and invalid payload is detected, a MllpInvalidMessageException (for consumers) or a MllpInvalidAcknowledgementException will be thrown. | false | Boolean
+| *camel.component.mllp.default-charset* | Set the default character set to use for byte to/from String conversions. | ISO-8859-1 | String
+| *camel.component.mllp.enabled* | Enable mllp component | true | Boolean
+| *camel.component.mllp.log-phi* | Set the component to log PHI data. | true | Boolean
+| *camel.component.mllp.log-phi-max-bytes* | Set the maximum number of bytes of PHI that will be logged in a log entry. | 5120 | Integer
+| *camel.component.mllp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.mllp.configuration.buffer-writes* | Enable/Disable the buffering of HL7 payloads before writing to the socket. | false | Boolean
+| *camel.component.mllp.configuration.max-receive-timeouts* | The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+
+
+
+== MLLP Consumer
+
+The MLLP Consumer supports receiving MLLP-framed messages and sending
+HL7 Acknowledgements.  The MLLP Consumer can automatically generate the
+HL7 Acknowledgement (HL7 Application Acknowledgements only - AA, AE and
+AR), or the acknowledgement can be specified using
+the CamelMllpAcknowledgement exchange property.  Additionally, the type
+of acknowledgement that will be generated can be controlled by setting
+the CamelMllpAcknowledgementType exchange property.
+
+== *Message Headers*
+
+The MLLP Consumer adds these headers on the Camel message:
+
+[width="100%",cols="<34%,<33%,<33%",]
+|===========================================
+|*Key* |*Description* |
+|CamelMllpLocalAddress | The local TCP Address of the Socket |
+|CamelMllpRemoteAddress | The local TCP Address of the Socket |
+|CamelMllpSendingApplication | MSH-3 value |
+|CamelMllpSendingFacility | MSH-4 value |
+|CamelMllpReceivingApplication | MSH-5 value |
+|CamelMllpReceivingFacility | MSH-6 value |
+|CamelMllpTimestamp | MSH-7 value |
+|CamelMllpSecurity | MSH-8 value |
+|CamelMllpMessageType | MSH-9 value |
+|CamelMllpEventType | MSH-9-1 value |
+|CamelMllpTriggerEvent | MSH-9-2 value |
+|CamelMllpMessageControlId | MSH-10 value |
+|CamelMllpProcessingId | MSH-11 value |
+|CamelMllpVersionId | MSH-12 value |
+|CamelMllpCharset | MSH-18 value |
+|===========================================
+
+All headers are String types. If a header value is missing, its value
+is null.
+
+== *Exchange Properties*
+
+The type of acknowledgment the MLLP Consumer generates and state of the TCP Socket can be controlled
+by these properties on the Camel exchange:
+
+[width="100%",cols="<34%,<33%,<33%",]
+|====================================
+|*Key* |*Type* |*Description*
+|CamelMllpAcknowledgement | byte[] | If present, this property will we sent to client as the MLLP Acknowledgement
+|CamelMllpAcknowledgementString | String | If present and CamelMllpAcknowledgement is not present, this property will we sent to client as the MLLP Acknowledgement
+|CamelMllpAcknowledgementMsaText | String | If neither CamelMllpAcknowledgement or CamelMllpAcknowledgementString are present and autoAck is true, this property can be used to specify the contents of MSA-3 in the generated HL7 acknowledgement
+|CamelMllpAcknowledgementType | String  | If neither CamelMllpAcknowledgement or CamelMllpAcknowledgementString are present and autoAck is true, this property can be used to specify the HL7 acknowledgement type (i.e. AA, AE, AR)
+|CamelMllpAutoAcknowledge | Boolean | Overrides the autoAck query parameter
+
+|CamelMllpCloseConnectionBeforeSend | Boolean | If true, the Socket will be closed before sending data
+|CamelMllpResetConnectionBeforeSend | Boolean | If true, the Socket will be reset before sending data
+|CamelMllpCloseConnectionAfterSend | Boolean | If true, the Socket will be closed immediately after sending data
+|CamelMllpResetConnectionAfterSend | Boolean | If true, the Socket will be reset immediately after sending any data
+|====================================
+
+// REVISIT - Empty section is bad for AsciiDoc build
+//=== Consumer Configuration
+
+== MLLP Producer
+
+The MLLP Producer supports sending MLLP-framed messages and receiving
+HL7 Acknowledgements.  The MLLP Producer interrogates the HL7
+Acknowledgments and raises exceptions if a negative acknowledgement is
+received.  The received acknowledgement is interrogated and an exception
+is raised in the event of a negative acknowledgement.
+
+== *Message Headers*
+
+The MLLP Producer adds these headers on the Camel message:
+
+[width="100%",cols="<34%,<33%,<33%",]
+|===================================
+|*Key* |*Description* |
+|CamelMllpLocalAddress | The local TCP Address of the Socket | 
+|CamelMllpRemoteAddress | The remote TCP Address of the Socket | 
+|CamelMllpAcknowledgement | The HL7 Acknowledgment byte[] received | 
+|CamelMllpAcknowledgementString | The HL7 Acknowledgment received, converted to a String | 
+|CamelMllpAcknowledgementType | The HL7 acknowledgement type (AA, AE, AR, etc)
+|===================================
+
+== *Exchange Properties*
+
+The state of the TCP Socket can be controlled by these properties on the Camel exchange:
+
+[width="100%",cols="<34%,<33%,<33%",]
+|====================================
+|*Key* |*Type* |*Description*
+|CamelMllpCloseConnectionBeforeSend | Boolean | If true, the Socket will be closed before sending data
+|CamelMllpResetConnectionBeforeSend | Boolean | If true, the Socket will be reset before sending data
+|CamelMllpCloseConnectionAfterSend | Boolean | If true, the Socket will be closed immediately after sending data
+|CamelMllpResetConnectionAfterSend | Boolean | If true, the Socket will be reset immediately after sending any data
+|====================================

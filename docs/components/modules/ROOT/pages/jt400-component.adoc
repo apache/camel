@@ -1,1 +1,213 @@
-../../../../../components/camel-jt400/src/main/docs/jt400-component.adoc
+= JT400 Component
+
+*Available as of Camel version 1.5*
+
+
+The JT400 component allows you to exchanges messages with an AS/400
+system using data queues.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jt400</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+----------------------------------------------------------------------
+jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ[?options]
+----------------------------------------------------------------------
+
+To call remote program
+
+[source,java]
+-----------------------------------------------------------------------
+jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/program.PGM[?options]
+-----------------------------------------------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== JT400 options
+
+// component options: START
+The JT400 component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionPool* (advanced) | Returns the default connection pool used by this component. |  | AS400ConnectionPool
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The JT400 endpoint is configured using URI syntax:
+
+----
+jt400:userID:password/systemName/objectPath.type
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *userID* | *Required* Returns the ID of the AS/400 user. |  | String
+| *password* | *Required* Returns the password of the AS/400 user. |  | String
+| *systemName* | *Required* Returns the name of the AS/400 system. |  | String
+| *objectPath* | *Required* Returns the fully qualified integrated file system path name of the target object of this endpoint. |  | String
+| *type* | *Required* Whether to work with data queues or remote program call |  | Jt400Type
+|===
+
+
+==== Query Parameters (30 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *ccsid* (common) | Sets the CCSID to use for the connection with the AS/400 system. |  | int
+| *format* (common) | Sets the data format for sending messages. | text | Format
+| *guiAvailable* (common) | Sets whether AS/400 prompting is enabled in the environment running Camel. | false | boolean
+| *keyed* (common) | Whether to use keyed or non-keyed data queues. | false | boolean
+| *outputFieldsIdxArray* (common) | Specifies which fields (program parameters) are output parameters. |  | Integer[]
+| *outputFieldsLengthArray* (common) | Specifies the fields (program parameters) length as in the AS/400 program definition. |  | Integer[]
+| *searchKey* (common) | Search key for keyed data queues. |  | String
+| *searchType* (common) | Search type such as EQ for equal etc. | EQ | SearchType
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *readTimeout* (consumer) | Timeout in millis the consumer will wait while trying to read a new message of the data queue. | 30000 | int
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *procedureName* (procedureName) | Procedure name from a service program to call |  | String
+| *secured* (security) | Whether connections to AS/400 are secured with SSL. | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jt400.connection-pool* | Returns the default connection pool used by this component. The option is a com.ibm.as400.access.AS400ConnectionPool type. |  | String
+| *camel.component.jt400.enabled* | Enable jt400 component | true | Boolean
+| *camel.component.jt400.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Usage
+
+When configured as a consumer endpoint, the endpoint will poll a data
+queue on a remote system. For every entry on the data queue, a new
+`Exchange` is sent with the entry's data in the _In_ message's body,
+formatted either as a `String` or a `byte[]`, depending on the format.
+For a provider endpoint, the _In_ message body contents will be put on
+the data queue as either raw bytes or text.
+
+== Connection pool
+
+*Available as of Camel 2.10*
+
+You can explicit configure a connection pool on the Jt400Component, or as an uri option
+on the endpoint.
+
+=== Remote program call (*Camel 2.7*)
+
+This endpoint expects the input to be either a String array or byte[]
+array (depending on format) and handles all the CCSID handling through
+the native jt400 library mechanisms. A parameter can be _omitted_ by
+passing null as the value in its position (the remote program has to
+support it). After the program execution the endpoint returns either a
+String array or byte[] array with the values as they were returned by
+the program (the input only parameters will contain the same data as the
+beginning of the invocation). This endpoint does not implement a provider endpoint!
+
+== Example
+
+In the snippet below, the data for an exchange sent to the
+`direct:george` endpoint will be put in the data queue `PENNYLANE` in
+library `BEATLES` on a system named `LIVERPOOL`.  +
+ Another user connects to the same data queue to receive the information
+from the data queue and forward it to the `mock:ringo` endpoint.
+
+[source,java]
+-------------------------------------------------------------------------------------------------------
+public class Jt400RouteBuilder extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+       from("direct:george").to("jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ");
+       from("jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ").to("mock:ringo");
+    }
+}
+-------------------------------------------------------------------------------------------------------
+
+=== Remote program call example
+
+In the snippet below, the data Exchange sent to the direct:work endpoint
+will contain three string that will be used as the arguments for the
+program “compute” in the library “assets”. This program will write the
+output values in the 2nd and 3rd parameters. All the parameters will be
+sent to the direct:play endpoint.
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+public class Jt400RouteBuilder extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+       from("direct:work").to("jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&ouputFieldsIdx=2,3").to(“direct:play”);
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+=== Writing to keyed data queues
+
+[source,java]
+------------------------------------------------------------------------
+from("jms:queue:input")
+.to("jt400://username:password@system/lib.lib/MSGINDQ.DTAQ?keyed=true");
+------------------------------------------------------------------------
+
+=== Reading from keyed data queues
+
+[source,java]
+-------------------------------------------------------------------------------------------------------
+from("jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ?keyed=true&searchKey=MYKEY&searchType=GE")
+.to("jms:queue:output");
+-------------------------------------------------------------------------------------------------------

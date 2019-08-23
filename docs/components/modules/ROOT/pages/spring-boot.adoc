@@ -1,1 +1,628 @@
-../../../../../components/camel-spring-boot/src/main/docs/spring-boot.adoc
+[[SpringBoot-SpringBoot]]
+= Spring Boot
+
+*Available as of Camel 2.15*
+
+Spring Boot component provides auto-configuration for Apache Camel. Our
+opinionated auto-configuration of the Camel context auto-detects Camel
+routes available in the Spring context and registers the key Camel
+utilities (like producer template, consumer template and the type
+converter) as beans.
+
+Maven users will need to add the following dependency to their `pom.xml`
+in order to use this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-boot</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+`camel-spring-boot` jar comes with the `spring.factories` file, so as
+soon as you add that dependency into your classpath, Spring Boot will
+automatically auto-configure Camel for you.
+
+[[SpringBoot-CamelSpringBootStarter]]
+== Camel Spring Boot Starter
+
+*Available as of Camel 2.17*
+
+Apache Camel ships
+a https://github.com/spring-projects/spring-boot/tree/master/spring-boot-project/spring-boot-starters[Spring
+Boot Starter] module that allows you to develop Spring Boot applications
+using starters. There is a
+https://github.com/apache/camel/tree/master/examples/camel-example-spring-boot[sample
+application] in the source code also.
+
+To use the starter, add the following to your spring boot pom.xml file:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-boot-starter</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+Then you can just add classes with your Camel routes such as:
+
+[source,java]
+----
+package com.example;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyRoute extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        from("timer:foo").to("log:bar");
+    }
+}
+----
+
+Then these routes will be started automatically.
+
+You can customize the Camel application in the `application.properties`
+or `application.yml` file. 
+
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 140 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.cloud.enabled* | Global option to enable/disable Camel cloud support, default is true. | true | Boolean
+| *camel.cloud.load-balancer.enabled* | Global option to enable/disable Camel cloud load balancer, default is true. | true | Boolean
+| *camel.cloud.service-call.component* | The Camel component to use for calling the service. The default is http4 component. |  | String
+| *camel.cloud.service-call.default-load-balancer* | Determine if the default load balancer should be used instead of any auto discovered one. | false | Boolean
+| *camel.cloud.service-call.expression* | The expression to use. |  | String
+| *camel.cloud.service-call.expression-language* | The expression language to use, default is ref. | ref | String
+| *camel.cloud.service-call.load-balancer* | A reference to the org.apache.camel.cloud.ServiceLoadBalancer to use. |  | String
+| *camel.cloud.service-call.service-chooser* | A reference to the org.apache.camel.cloud.ServiceChooser to use. |  | String
+| *camel.cloud.service-call.service-discovery* | A reference to the org.apache.camel.cloud.ServiceDiscovery to use. |  | String
+| *camel.cloud.service-call.service-filter* | A reference to the org.apache.camel.cloud.ServiceFilter to use. |  | String
+| *camel.cloud.service-call.uri* | The uri of the endpoint to send to. The uri can be dynamic computed using the simple language expression. |  | String
+| *camel.cloud.service-chooser.enabled* | Global option to enable/disable Camel cloud service chooser, default is true. | true | Boolean
+| *camel.cloud.service-discovery.cache-timeout* | Configure cache timeout (in millis). |  | String
+| *camel.cloud.service-discovery.configurations* | Configure the service discovery rules. |  | Map
+| *camel.cloud.service-discovery.enabled* | Global option to enable/disable Camel cloud service discovery, default is true. | true | Boolean
+| *camel.cloud.service-discovery.services* | Configure service discoveries. |  | Map
+| *camel.cloud.service-filter.blacklist* | Configure service filter blacklists. |  | Map
+| *camel.cloud.service-filter.configurations* | Configure the service filtering rules. |  | Map
+| *camel.cloud.service-filter.enabled* | Global option to enable/disable Camel cloud service filter, default is true. | true | Boolean
+| *camel.cloud.service-registry.enabled* | Configure if service registry should be enabled or not, default true. | true | Boolean
+| *camel.cloud.service-registry.service-host* | Configure the service listening address. |  | String
+| *camel.clustered.controller.cluster-service* | The cluster service. |  | CamelClusterService
+| *camel.clustered.controller.enabled* | Global option to enable/disable Camel clustered route controller, default is false. | false | Boolean
+| *camel.clustered.controller.initial-delay* | Set the amount of time (in millis) the route controller should wait before to start the routes after the camel context is started or after the route is initialized if the route is created after the camel context is started. |  | String
+| *camel.clustered.controller.namespace* | The default namespace. |  | String
+| *camel.clustered.controller.routes* | Routes configuration. |  | Map
+| *camel.component.enabled* | Global option to enable/disable component auto-configuration, default is true. | true | Boolean
+| *camel.dataformat.enabled* | Global option to enable/disable dataformat auto-configuration, default is true. | true | Boolean
+| *camel.health.check.routes.enabled* | Global option to enable/disable Camel extended health check for routes, default is false. | false | Boolean
+| *camel.health.check.routes.threshold* | General health check configurations. |  | Map
+| *camel.health.check.routes.thresholds.exchanges-failed* | Number of failed exchanges. |  | Long
+| *camel.health.check.routes.thresholds.exchanges-inflight* | Number of inflight exchanges. |  | Long
+| *camel.health.check.routes.thresholds.external-redeliveries* | Number of external initiated redeliveries (such as from JMS broker). |  | Long
+| *camel.health.check.routes.thresholds.last-processing-time.failures* | The threshold of number of failures. |  | Integer
+| *camel.health.check.routes.thresholds.last-processing-time.threshold* | The threshold value. |  | String
+| *camel.health.check.routes.thresholds.max-processing-time.failures* | The threshold of number of failures. |  | Integer
+| *camel.health.check.routes.thresholds.max-processing-time.threshold* | The threshold value. |  | String
+| *camel.health.check.routes.thresholds.mean-processing-time.failures* | The threshold of number of failures. |  | Integer
+| *camel.health.check.routes.thresholds.mean-processing-time.threshold* | The threshold value. |  | String
+| *camel.health.check.routes.thresholds.min-processing-time.failures* | The threshold of number of failures. |  | Integer
+| *camel.health.check.routes.thresholds.min-processing-time.threshold* | The threshold value. |  | String
+| *camel.health.check.routes.thresholds.redeliveries* | Number of redeliveries (internal only). |  | Long
+| *camel.health.check.service.check-interval* | The interval between checks. |  | String
+| *camel.health.check.service.checks* | Configuration of health checks |  | Map
+| *camel.health.check.service.enabled* | Global option to enable/disable extended Camel health checks, default is false. | false | Boolean
+| *camel.health.enabled* | Global option to enable/disable camel health bean, default is true. | true | Boolean
+| *camel.language.enabled* | Global option to enable/disable language auto-configuration, default is true. | true | Boolean
+| *camel.springboot.allow-use-original-message* | Sets whether to allow access to the original message from Camel's error handler, or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage(). Turning this off can optimize performance, as defensive copy of the original message is not needed. Default is false. | false | Boolean
+| *camel.springboot.auto-startup* | Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes is started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.startRoute(String). Default is true to always start up. | true | Boolean
+| *camel.springboot.consumer-template-cache-size* | Consumer template endpoints cache size. | 1000 | Integer
+| *camel.springboot.duration-max-idle-seconds* | To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this to run Spring Boot for a short while. | 0 | Integer
+| *camel.springboot.duration-max-messages* | To specify how many messages to process by Camel before automatic terminating the JVM. You can use this to run Spring Boot for a short while. | 0 | Integer
+| *camel.springboot.duration-max-seconds* | To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use this to run Spring Boot for a short while. | 0 | Integer
+| *camel.springboot.endpoint-runtime-statistics-enabled* | Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints). The default value is false. | false | Boolean
+| *camel.springboot.file-configurations* | Directory to load additional configuration files that contains configuration values that takes precedence over any other configuration. This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers. You must use either file: or classpath: as prefix to load from file system or classpath. Then you can specify a pattern to load from sub directories and a name pattern such as file:/var/app/secret/*.properties |  | String
+| *camel.springboot.handle-fault* | Sets whether fault handling is enabled or not. Default is false. | false | Boolean
+| *camel.springboot.include-non-singletons* | Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances. By default only singleton beans is included in the context scan. | false | Boolean
+| *camel.springboot.java-routes-exclude-pattern* | Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42; To exclude all routes form a specific package use: com/mycompany/bar/&#42; To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42; And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42; |  | String
+| *camel.springboot.java-routes-include-pattern* | Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to include all classes starting with Foo use: &#42;&#42;/Foo* To include all routes form a specific package use: com/mycompany/foo/&#42; To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42; And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42; |  | String
+| *camel.springboot.jmx-create-connector* | Whether JMX connector is created, allowing clients to connect remotely The default value is false. | false | Boolean
+| *camel.springboot.jmx-enabled* | Enable JMX in your Camel application. | true | Boolean
+| *camel.springboot.jmx-management-name-pattern* | The naming pattern for creating the CamelContext JMX management name. The default pattern is #name# | #name# | String
+| *camel.springboot.jmx-management-statistics-level* | Sets the JMX statistics level The level can be set to Extended to gather additional information The default value is Default. |  | ManagementStatistics Level
+| *camel.springboot.load-type-converters* | Sets whether to load custom type converters by scanning classpath. This can be turned off if you are only using Camel components that does not provide type converters which is needed at runtime. In such situations setting this option to false, can speedup starting Camel. | true | Boolean
+| *camel.springboot.log-debug-max-chars* | Is used to limit the maximum length of the logging Camel message bodies. If the message body is longer than the limit, the log message is clipped. Use -1 to have unlimited length. Use for example 1000 to log at most 1000 characters. | 0 | Integer
+| *camel.springboot.log-exhausted-message-body* | Sets whether to log exhausted message body with message history. Default is false. | false | Boolean
+| *camel.springboot.log-mask* | Sets whether log mask is enabled or not. Default is false. | false | Boolean
+| *camel.springboot.main-run-controller* | Whether to use the main run controller to ensure the Spring-Boot application keeps running until being stopped or the JVM terminated. You typically only need this if you run Spring-Boot standalone. If you run Spring-Boot with spring-boot-starter-web then the web container keeps the JVM running. | false | Boolean
+| *camel.springboot.message-history* | Sets whether message history is enabled or not. Default is true. | true | Boolean
+| *camel.springboot.name* | Sets the name of the CamelContext. |  | String
+| *camel.springboot.producer-template-cache-size* | Producer template endpoints cache size. | 1000 | Integer
+| *camel.springboot.shutdown-log-inflight-exchanges-on-timeout* | Sets whether to log information about the inflight Exchanges which are still running during a shutdown which didn't complete without the given timeout. | true | Boolean
+| *camel.springboot.shutdown-now-on-timeout* | Sets whether to force shutdown of all consumers when a timeout occurred and thus not all consumers was shutdown within that period. You should have good reasons to set this option to false as it means that the routes keep running and is halted abruptly when CamelContext has been shutdown. | true | Boolean
+| *camel.springboot.shutdown-routes-in-reverse-order* | Sets whether routes should be shutdown in reverse or the same order as they where started. | true | Boolean
+| *camel.springboot.shutdown-suppress-logging-on-timeout* | Whether Camel should try to suppress logging during shutdown and timeout was triggered, meaning forced shutdown is happening. And during forced shutdown we want to avoid logging errors/warnings et all in the logs as a side-effect of the forced timeout. Notice the suppress is a best effort as there may still be some logs coming from 3rd party libraries and whatnot, which Camel cannot control. This option is default false. | false | Boolean
+| *camel.springboot.shutdown-timeout* | Timeout in seconds to graceful shutdown Camel. | 300 | Integer
+| *camel.springboot.stream-caching-any-spool-rules* | Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true then shouldSpoolCache(long) returns true, to allow spooling to disk. If this option is false, then all the org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true. The default value is false which means that all the rules must return true. | false | Boolean
+| *camel.springboot.stream-caching-buffer-size* | Sets the stream caching buffer size to use when allocating in-memory buffers used for in-memory stream caches. The default size is 4096. | 0 | Integer
+| *camel.springboot.stream-caching-enabled* | Sets whether stream caching is enabled or not. Default is false. | false | Boolean
+| *camel.springboot.stream-caching-remove-spool-directory-when-stopping* | Whether to remove stream caching temporary directory when stopping. This option is default true. | true | Boolean
+| *camel.springboot.stream-caching-spool-cipher* | Sets a stream caching cipher name to use when spooling to disk to write with encryption. By default the data is not encrypted. |  | String
+| *camel.springboot.stream-caching-spool-directory* | Sets the stream caching spool (temporary) directory to use for overflow and spooling to disk. If no spool directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir directory. |  | String
+| *camel.springboot.stream-caching-spool-threshold* | Stream caching threshold in bytes when overflow to disk is activated. The default threshold is 128kb. Use -1 to disable overflow to disk. | 0 | Long
+| *camel.springboot.stream-caching-spool-used-heap-memory-limit* | Sets what the upper bounds should be when streamCachingSpoolUsedHeapMemoryThreshold is in use. |  | String
+| *camel.springboot.stream-caching-spool-used-heap-memory-threshold* | Sets a percentage (1-99) of used heap memory threshold to activate stream caching spooling to disk. | 0 | Integer
+| *camel.springboot.stream-caching-statistics-enabled* | Sets whether stream caching statistics is enabled. | false | Boolean
+| *camel.springboot.thread-name-pattern* | Sets the thread name pattern used for creating the full thread name. The default pattern is: Camel (#camelId#) thread ##counter# - #name# Where #camelId# is the name of the CamelContext. and #counter# is a unique incrementing counter. and #name# is the regular thread name. You can also use #longName# which is the long thread name which can includes endpoint parameters etc. |  | String
+| *camel.springboot.trace-formatter-show-body* | Tracer should output message body | true | Boolean
+| *camel.springboot.trace-formatter-show-bread-crumb* | Tracer should output breadcrumb | true | Boolean
+| *camel.springboot.trace-formatter-show-exception* | Tracer should output exception | true | Boolean
+| *camel.springboot.trace-formatter-show-exchange-id* | Tracer should output exchange id | false | Boolean
+| *camel.springboot.trace-formatter-show-exchange-pattern* | Tracer should output message exchange pattern (MEP) | true | Boolean
+| *camel.springboot.trace-formatter-show-headers* | Tracer should output message headers | true | Boolean
+| *camel.springboot.trace-formatter-show-node* | Tracer should output EIP node | true | Boolean
+| *camel.springboot.trace-formatter-show-properties* | Tracer should output exchange properties | false | Boolean
+| *camel.springboot.trace-formatter-show-route-id* | Tracer should output route id | true | Boolean
+| *camel.springboot.trace-formatter-show-short-exchange-id* | Tracer should output short exchange id | false | Boolean
+| *camel.springboot.tracer-formatter-bread-crumb-length* | Tracer maximum length of breadcrumb ids |  | Integer
+| *camel.springboot.tracer-formatter-max-chars* | Tracer maximum characters in total | 10000 | Integer
+| *camel.springboot.tracer-formatter-node-length* | Tracer maximum length of node |  | Integer
+| *camel.springboot.tracer-formatter-show-body-type* | Tracer should output message body type | true | Boolean
+| *camel.springboot.tracing* | Sets whether tracing is enabled or not. Default is false. | false | Boolean
+| *camel.springboot.type-conversion* | Enables enhanced Camel/Spring type conversion. | true | Boolean
+| *camel.springboot.use-breadcrumb* | Set whether breadcrumb is enabled. The default value is true. | true | Boolean
+| *camel.springboot.use-data-type* | Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has been explicit configured with input and output types. Otherwise data type is default off. | false | Boolean
+| *camel.springboot.use-mdc-logging* | To turn on MDC logging | false | Boolean
+| *camel.springboot.xml-rests* | Directory to scan for adding additional XML rests. You can turn this off by setting the value to false. Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml Multiple directories can be specified and separated by comma, such as: file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml | classpath:camel-rest/*.xml | String
+| *camel.springboot.xml-routes* | Directory to scan for adding additional XML routes. You can turn this off by setting the value to false. Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml Multiple directories can be specified and separated by comma, such as: file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml | classpath:camel/*.xml | String
+| *camel.springboot.xml-routes-reload-directory* | To watch the directory for file changes which triggers a live reload of the Camel routes on-the-fly. For example configure this to point to the source code where the Camel XML files are located such as: src/main/resources/camel/ |  | String
+| *camel.ssl.cert-alias* | An optional certificate alias to use. This is useful when the keystore has multiple certificates. |  | String
+| *camel.ssl.cipher-suites* | The optional explicitly configured cipher suites for this configuration. |  | CipherSuitesParameters
+| *camel.ssl.cipher-suites-filter* | The optional cipher suite filter configuration for this configuration. |  | FilterParameters
+| *camel.ssl.client-parameters* | The optional configuration options to be applied purely to the client side settings of the SSLContext. Settings specified here override any duplicate settings provided at the overall level by this class. These parameters apply to SSLSocketFactory and SSLEngine produced by the SSLContext produced from this class as well as to the SSLContext itself. |  | SSLContextClient Parameters
+| *camel.ssl.config* | Global Camel security configuration. |  | SSLContextParameters
+| *camel.ssl.key-managers* | The optional key manager configuration for creating the KeyManager used in constructing an SSLContext. |  | KeyManagersParameters
+| *camel.ssl.provider* | The optional provider identifier for the JSSE implementation to use when constructing an SSLContext. |  | String
+| *camel.ssl.secure-random* | The optional secure random configuration options to use for constructing the SecureRandom used in the creation of an SSLContext. |  | SecureRandomParameters
+| *camel.ssl.secure-socket-protocol* | The optional protocol for the secure sockets created by the SSLContext represented by this instance's configuration. See Appendix A in the Java Secure Socket Extension Reference Guide for information about standard protocol names. |  | String
+| *camel.ssl.secure-socket-protocols* | The optional explicitly configured secure socket protocol names for this configuration. |  | SecureSocketProtocols Parameters
+| *camel.ssl.secure-socket-protocols-filter* | The option secure socket protocol name filter configuration for this configuration. |  | FilterParameters
+| *camel.ssl.server-parameters* | The optional configuration options to be applied purely to the server side settings of the SSLContext. Settings specified here override any duplicate settings provided at the overall level by this class. These parameters apply to SSLServerSocketFactory and SSLEngine produced by the SSLContext produced from this class as well as to the SSLContext itself. |  | SSLContextServer Parameters
+| *camel.ssl.session-timeout* | The optional SSLSessionContext timeout time for javax.net.ssl.SSLSession in seconds. |  | String
+| *camel.ssl.trust-managers* | The optional trust manager configuration for creating the TrustManager used in constructing an SSLContext. |  | TrustManagersParameters
+| *camel.supervising.controller.default-back-off.delay* | The delay to wait before retry the operation. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). |  | String
+| *camel.supervising.controller.default-back-off.max-attempts* | The maximum number of attempts after which the back-off is exhausted. |  | Long
+| *camel.supervising.controller.default-back-off.max-delay* | The maximum back-off time. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). |  | String
+| *camel.supervising.controller.default-back-off.max-elapsed-time* | The maximum elapsed time after which the back-off is exhausted. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). |  | String
+| *camel.supervising.controller.default-back-off.multiplier* | The value to multiply the current interval by for each retry attempt. |  | Double
+| *camel.supervising.controller.enabled* | Global option to enable/disable this org.apache.camel.spi.RouteController, default is false. | false | Boolean
+| *camel.supervising.controller.initial-delay* | Set the amount of time the route controller should wait before to start the routes after the camel context is started or after the route is initialized if the route is created after the camel context is started. |  | String
+| *camel.supervising.controller.routes* | Routes configuration. |  | Map
+| *management.endpoint.camelroutecontroller.cache.time-to-live* | Maximum time that a response can be cached. | 0ms | Duration
+| *management.endpoint.camelroutecontroller.enabled* | To turn on or off information about Camel Route Controller via actuator endpoint. | true | Boolean
+| *management.endpoint.camelroutes.cache.time-to-live* | Maximum time that a response can be cached. | 0ms | Duration
+| *management.endpoint.camelroutes.enabled* | To turn on or off information about Camel Routes via actuator endpoint. | true | Boolean
+| *management.endpoint.camelroutes.read-only* | Whether Camel Routes actuator is in read-only mode. If not in read-only mode then operations to start/stop routes would be enabled. | true | Boolean
+| *management.info.camel.enabled* | Whether to enable Camel info. | true | Boolean
+| *camel.springboot.stream-caching* | Sets whether stream caching is enabled or not (deprecated use stream-caching-enabled instead). Default is false. | false | Boolean
+| *camel.springboot.stream-caching-spool-chiper* | Sets a stream caching chiper name to use when spooling to disk to write with encryption. By default the data is not encrypted. @deprecated use streamCachingSpoolCipher |  | String
+| *camel.springboot.use-m-d-c-logging* | To turn on MDC logging (deprecated use use-mdc-logging instead) | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+[[SpringBoot-Auto-configuredCamelcontext]]
+== Auto-configured Camel context
+
+The most important piece of functionality provided by the Camel
+auto-configuration is `CamelContext` instance.
+Camel auto-configuration creates a `SpringCamelContext` for you and
+takes care of the proper initialization and shutdown of that context.
+The created Camel context is also registered in the Spring application
+context (under `camelContext` bean name), so you can access it just as
+ any other Spring bean.
+
+[source,java]
+----
+@Configuration
+public class MyAppConfig {
+
+  @Autowired
+  CamelContext camelContext;
+
+  @Bean
+  MyService myService() {
+    return new DefaultMyService(camelContext);
+  }
+
+}
+----
+
+[[SpringBoot-Auto-detectingCamelroutes]]
+== Auto-detecting Camel routes
+
+Camel auto-configuration collects all the `RouteBuilder` instances from
+the Spring context and automatically injects them into the provided
+`CamelContext`. That means that creating new Camel route with the Spring
+Boot starter is as simple as adding the `@Component` annotated class to
+your classpath:
+
+[source,java]
+----
+@Component
+public class MyRouter extends RouteBuilder {
+
+  @Override
+  public void configure() throws Exception {
+    from("jms:invoices").to("file:/invoices");
+  }
+
+}
+----
+
+Or creating a new route `RouteBuilder` bean in your `@Configuration` class:
+
+[source,java]
+----
+@Configuration
+public class MyRouterConfiguration {
+
+  @Bean
+  RoutesBuilder myRouter() {
+    return new RouteBuilder() {
+
+      @Override
+      public void configure() throws Exception {
+        from("jms:invoices").to("file:/invoices");
+      }
+
+    };
+  }
+
+}
+----
+
+[[SpringBoot-Camelproperties]]
+== Camel properties
+
+Spring Boot auto-configuration automatically connects
+to http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config[Spring
+Boot external configuration] (like properties placeholders, OS
+environment variables or system properties) with
+the Camel properties support. It basically means
+that any property defined in `application.properties` file:  
+
+[source,text]
+----
+route.from = jms:invoices
+----
+
+Or set via system property:
+
+[source,text]
+----
+java -Droute.to=jms:processed.invoices -jar mySpringApp.jar
+----
+
+...can be used as placeholders in Camel route:
+
+[source,java]
+----
+@Component
+public class MyRouter extends RouteBuilder {
+
+  @Override
+  public void configure() throws Exception {
+    from("{{route.from}}").to("{{route.to}}");
+  }
+
+}
+----
+
+[[SpringBoot-CustomCamelcontextconfiguration]]
+== Custom Camel context configuration
+
+If you would like to perform some operations on `CamelContext` bean
+created by Camel auto-configuration,
+register `CamelContextConfiguration` instance in your Spring context:
+
+[source,java]
+----
+@Configuration
+public class MyAppConfig {
+
+  @Bean
+  CamelContextConfiguration contextConfiguration() {
+    return new CamelContextConfiguration() {
+      @Override
+      void beforeApplicationStart(CamelContext context) {
+        // your custom configuration goes here
+      }
+    };
+  }
+
+}
+----
+
+Method beforeApplicationStart` will
+be called just before the Spring context is started, so the
+`CamelContext` instance passed to this callback is
+fully auto-configured. You can add many instances of
+`CamelContextConfiguration` into your Spring context - all of them will
+be executed.
+
+[[SpringBoot-DisablingJMX]]
+== Disabling JMX
+
+To disable JMX of the auto-configured `CamelContext` use
+`camel.springboot.jmxEnabled` property (JMX is enabled by default). For
+example you could add the following property to your
+`application.properties` file:
+
+[source,text]
+----
+camel.springboot.jmx-enabled = false
+----
+
+[[SpringBoot-Auto-configuredconsumerandproducertemplates]]
+== Auto-configured consumer and producer templates
+
+Camel auto-configuration provides pre-configured `ConsumerTemplate` and
+`ProducerTemplate` instances. You can simply inject them into your
+Spring-managed beans:
+
+[source,java]
+----
+@Component
+public class InvoiceProcessor {
+
+  @Autowired
+  private ProducerTemplate producerTemplate;
+
+  @Autowired
+  private ConsumerTemplate consumerTemplate;
+
+  public void processNextInvoice() {
+    Invoice invoice = consumerTemplate.receiveBody("jms:invoices", Invoice.class);
+    ...
+    producerTemplate.sendBody("netty-http:http://invoicing.com/received/" + invoice.id());
+  }
+
+}
+----
+
+By default consumer templates and producer templates come with the
+endpoint cache sizes set to 1000. You can change those values via the
+following Spring properties:
+
+[source,text]
+----
+camel.springboot.consumer-template-cache-size = 100
+camel.springboot.producer-template-cache-size = 200
+----
+
+[[SpringBoot-Auto-configuredTypeConverter]]
+== Auto-configured TypeConverter
+
+Camel auto-configuration registers a `TypeConverter` instance named
+`typeConverter` in the Spring context.
+
+[source,java]
+----
+@Component
+public class InvoiceProcessor {
+
+  @Autowired
+  private TypeConverter typeConverter;
+
+  public long parseInvoiceValue(Invoice invoice) {
+    String invoiceValue = invoice.grossValue();
+    return typeConverter.convertTo(Long.class, invoiceValue);
+  }
+
+}
+----
+
+[[SpringBoot-SpringtypeconversionAPIbridge]]
+=== Spring type conversion API bridge
+
+Spring comes with
+the powerful http://docs.spring.io/spring/docs/current/spring-framework-reference/html/validation.html#core-convert[type
+conversion API]. Spring API happens to be very similar to the Camel
+type converter API. As those APIs are so
+similar, Camel Spring Boot automatically registers a bridge converter
+(`SpringTypeConverter`) that delegates to the Spring conversion API.That
+means that out-of-the-box Camel will treat Spring Converters like Camel
+ones. With this approach you can enjoy both Camel and Spring converters
+accessed via Camel `TypeConverter` API:
+
+[source,java]
+----
+@Component
+public class InvoiceProcessor {
+
+  @Autowired
+  private TypeConverter typeConverter;
+
+  public UUID parseInvoiceId(Invoice invoice) {
+    // Using Spring's StringToUUIDConverter
+    UUID id = invoice.typeConverter.convertTo(UUID.class, invoice.getId());
+  }
+
+}
+----
+
+Under the hood Camel Spring Boot delegates conversion to the Spring's
+`ConversionService` instances available in the application context. If
+no `ConversionService` instance is available, Camel Spring Boot
+auto-configuration will create one for you.
+
+[[SpringBoot-Disablingtypeconversionsfeatures]]
+== Disabling type conversions features
+
+If you don't want Camel Spring Boot to register type-conversions related
+features (like `TypeConverter` instance or Spring bridge) set the
+`camel.springboot.type-conversion` property to `false`.
+
+[source,text]
+----
+camel.springboot.type-conversion = false
+----
+
+
+[[SpringBoot-Keepingapplicationalive]]
+== Keeping the application alive
+
+Camel applications having this feature enabled launch a new thread on startup for the sole purpose of
+keeping the application alive by preventing JVM termination.
+It means that after you start a Camel application with Spring Boot, your
+application waits for a Ctrl+C signal and does not exit immediately.
+
+The controller thread can be activated using the `camel.springboot.main-run-controller` to `true`.
+
+[source,text]
+----
+camel.springboot.main-run-controller = true
+----
+
+Applications using web modules (e.g. importing the `org.springframework.boot:spring-boot-web-starter` module),
+usually don't need to use this feature because the application is kept alive by the presence of other non-daemon threads.
+
+[[SpringBoot-AddingXMLroutes]]
+== Adding XML routes
+
+By default you can put Camel XML routes in the classpath under the
+directory camel, which camel-spring-boot will auto detect and include.
+You can configure the directory name or turn
+this off using the configuration option
+
+[source,text]
+----
+// turn off
+camel.springboot.xml-routes = false
+// scan in the com/foo/routes classpath
+camel.springboot.xml-routes = classpath:com/foo/routes/*.xml
+----
+
+The XML files should be Camel XML routes (not CamelContext) such as
+
+[source,xml]
+----
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="test">
+        <from uri="timer://trigger"/>
+        <transform>
+            <simple>ref:myBean</simple>
+        </transform>
+        <to uri="log:out"/>
+    </route>
+</routes>
+----
+
+[[SpringBoot-AddingREST]]
+== Adding XML Rest-DSL
+
+By default you can put Camel Rest-DSL XML routes in the classpath under the
+directory camel-rest, which camel-spring-boot will auto detect and include.
+You can configure the directory name or turn this off using the configuration option
+
+[source,text]
+----
+// turn off
+camel.springboot.xml-rests = false
+// scan in the com/foo/routes classpath
+camel.springboot.xml-rests = classpath:com/foo/rests/*.xml
+----
+
+The Rest-DSL XML files should be Camel XML rests (not CamelContext) such as
+
+[source,xml]
+----
+<rests xmlns="http://camel.apache.org/schema/spring">
+  <rest>
+     <post uri="/persons">
+        <to uri="direct:postPersons"/>
+     </post>
+     <get uri="/persons">
+        <to uri="direct:getPersons"/>
+     </get>
+     <get uri="/persons/{personId}">
+         <to uri="direct:getPersionId"/>
+     </get>
+     <put uri="/persons/{personId}">
+         <to uri="direct:putPersionId"/>
+     </put>
+     <delete uri="/persons/{personId}">
+         <to uri="direct:deletePersionId"/>
+     </delete>
+  </rest>
+</rests>
+----
+
+[[SpringBoot-Testing]]
+== Testing
+For testing, Maven users will need to add the following dependencies to their `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <version>${spring-boot.version}</version> <!-- Use the same version as your Spring Boot version -->
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-spring</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+    <scope>test</scope>
+</dependency>
+----
+
+To test a Camel Spring Boot application, annotate your test class(es) with
+`@RunWith(CamelSpringBootRunner.class)`. This brings Camel's Spring Test
+support to your application, so that you can write tests using
+https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html[Spring Boot test conventions].
+
+To get the `CamelContext` or `ProducerTemplate`, you can inject them into the class in the normal Spring manner, using `@Autowired`.
+
+You can also use xref:manual::spring-testing.adoc[Camel Spring test annotations] to configure tests declaratively. This example uses the `@MockEndpoints` annotation to auto-mock an endpoint:
+
+[source,java]
+----
+@RunWith(CamelSpringBootRunner.class)
+@SpringBootTest
+@MockEndpoints("direct:end")
+public class MyApplicationTest {
+
+    @Autowired
+    private ProducerTemplate template;
+
+    @EndpointInject("mock:direct:end")
+    MockEndpoint mock;
+
+    @Test
+    public void testReceive() throws Exception {
+        mock.expectedBodiesReceived("Hello");
+        template.sendBody("direct:start", "Hello");
+        mock.assertIsSatisfied();
+    }
+
+}
+----

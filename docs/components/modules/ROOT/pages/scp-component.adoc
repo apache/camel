@@ -1,1 +1,141 @@
-../../../../../components/camel-jsch/src/main/docs/scp-component.adoc
+= SCP Component
+
+*Available as of Camel version 2.10*
+
+
+The Camel-Jsch component supports the
+http://en.wikipedia.org/wiki/Secure_copy[SCP protocol] using the Client
+API of the http://www.jcraft.com/jsch/[Jsch] project. Jsch is already
+used in camel by the xref:ftp-component.adoc[FTP] component for the *sftp:*
+protocol.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jsch</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+---------------------------------------
+scp://host[:port]/destination[?options]
+---------------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+The file name can be specified either in the <path> part of the URI or
+as a "CamelFileName" header on the message (`Exchange.FILE_NAME` if used
+in code).
+
+== Options
+
+
+
+
+// component options: START
+The SCP component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *verboseLogging* (producer) | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again. | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+
+
+
+// endpoint options: START
+The SCP endpoint is configured using URI syntax:
+
+----
+scp:host:port/directoryName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* | *Required* Hostname of the FTP server |  | String
+| *port* | Port of the FTP server |  | int
+| *directoryName* | The starting directory |  | String
+|===
+
+
+==== Query Parameters (22 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *disconnect* (common) | Whether or not to disconnect from remote FTP server right after use. Disconnect will only disconnect the current connection to the FTP server. If you have a consumer which you want to stop, then you need to stop the consumer/route instead. | false | boolean
+| *chmod* (producer) | Allows you to set chmod on the stored file. For example chmod=664. | 664 | String
+| *fileName* (producer) | Use Expression such as File Language to dynamically set the filename. For consumers, it's used as a filename filter. For producers, it's used to evaluate the filename to write. If an expression is set, it take precedence over the CamelFileName header. (Note: The header itself can also be an Expression). The expression options support both String and Expression types. If the expression is a String type, it is always evaluated using the File Language. If the expression is an Expression type, the specified Expression type is used - this allows you, for instance, to use OGNL expressions. For the consumer, you can use it to filter filenames, so you can for instance consume today's file using the File Language syntax: mydata-$date:now:yyyyMMdd.txt. The producers support the CamelOverruleFileName header which takes precedence over any existing CamelFileName header; the CamelOverruleFileName is a header that is used only once, and makes it easier as this avoids to temporary store CamelFileName and have to restore it afterwards. |  | String
+| *flatten* (producer) | Flatten is used to flatten the file name path to strip any leading paths, so it's just the file name. This allows you to consume recursively into sub-directories, but when you eg write the files to another directory they will be written in a single directory. Setting this to true on the producer enforces that any file name in CamelFileName header will be stripped for any leading paths. | false | boolean
+| *jailStartingDirectory* (producer) | Used for jailing (restricting) writing files to the starting directory (and sub) only. This is enabled by default to not allow Camel to write files to outside directories (to be more secured out of the box). You can turn this off to allow writing files to directories outside the starting directory, such as parent or root folders. | true | boolean
+| *strictHostKeyChecking* (producer) | Sets whether to use strict host key checking. Possible values are: no, yes | no | String
+| *allowNullBody* (producer) | Used to specify if a null body is allowed during file writing. If set to true then an empty file will be created, when set to false, and attempting to send a null body to the file component, a GenericFileWriteException of 'Cannot write null body to file.' will be thrown. If the fileExist option is set to 'Override', then the file will be truncated, and if set to append the file will remain unchanged. | false | boolean
+| *disconnectOnBatchComplete* (producer) | Whether or not to disconnect from remote FTP server right after a Batch upload is complete. disconnectOnBatchComplete will only disconnect the current connection to the FTP server. | false | boolean
+| *moveExistingFileStrategy* (producer) | Strategy (Custom Strategy) used to move file with special naming token to use when fileExist=Move is configured. By default, there is an implementation used if no custom strategy is provided |  | FileMoveExisting Strategy
+| *connectTimeout* (advanced) | Sets the connect timeout for waiting for a connection to be established Used by both FTPClient and JSCH | 10000 | int
+| *soTimeout* (advanced) | Sets the so timeout Used only by FTPClient | 300000 | int
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *timeout* (advanced) | Sets the data timeout for waiting for reply Used only by FTPClient | 30000 | int
+| *knownHostsFile* (security) | Sets the known_hosts file, so that the jsch endpoint can do host key verification. You can prefix with classpath: to load the file from classpath instead of file system. |  | String
+| *password* (security) | Password to use for login |  | String
+| *preferredAuthentications* (security) | Set a comma separated list of authentications that will be used in order of preference. Possible authentication methods are defined by JCraft JSCH. Some examples include: gssapi-with-mic,publickey,keyboard-interactive,password If not specified the JSCH and/or system defaults will be used. |  | String
+| *privateKeyBytes* (security) | Set the private key bytes to that the endpoint can do private key verification. This must be used only if privateKeyFile wasn't set. Otherwise the file will have the priority. |  | byte[]
+| *privateKeyFile* (security) | Set the private key file to that the endpoint can do private key verification. You can prefix with classpath: to load the file from classpath instead of file system. |  | String
+| *privateKeyFilePassphrase* (security) | Set the private key file passphrase to that the endpoint can do private key verification. |  | String
+| *username* (security) | Username to use for login |  | String
+| *useUserKnownHostsFile* (security) | If knownHostFile has not been explicit configured, then use the host file from System.getProperty(user.home) /.ssh/known_hosts | true | boolean
+| *ciphers* (security) | Set a comma separated list of ciphers that will be used in order of preference. Possible cipher names are defined by JCraft JSCH. Some examples include: aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used. |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.scp.enabled* | Enable scp component | true | Boolean
+| *camel.component.scp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.scp.verbose-logging* | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+== Limitations
+
+Currently camel-jsch only supports a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
+(i.e. copy files to another host). 

@@ -1,1 +1,452 @@
-../../../../../components/camel-ahc/src/main/docs/ahc-component.adoc
+= AHC Component
+
+*Available as of Camel version 2.8*
+
+
+The AHC component provides HTTP based endpoints
+for consuming external HTTP resources (as a client to call external
+servers using HTTP).
+The component uses the
+https://github.com/AsyncHttpClient/async-http-client[Async Http Client]
+library.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ahc</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+---------------------------------------------------
+ahc:http://hostname[:port][/resourceUri][?options]
+ahc:https://hostname[:port][/resourceUri][?options]
+---------------------------------------------------
+
+Will by default use port 80 for HTTP and 443 for HTTPS.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Ahc Endpoint Options
+
+
+
+
+
+
+
+// endpoint options: START
+The AHC endpoint is configured using URI syntax:
+
+----
+ahc:httpUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *httpUri* | *Required* The URI to use such as http://hostname:port/path |  | URI
+|===
+
+
+==== Query Parameters (13 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeEndpoint* (producer) | If the option is true, then the Exchange.HTTP_URI header is ignored, and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the AhcProducer send all the fault response back. | false | boolean
+| *bufferSize* (producer) | The initial in-memory buffer size used when transferring data between Camel and AHC Client. | 4096 | int
+| *connectionClose* (producer) | Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default | false | boolean
+| *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
+| *headerFilterStrategy* (producer) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *throwExceptionOnFailure* (producer) | Option to disable throwing the AhcOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | boolean
+| *transferException* (producer) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or Servlet Camel components). On the producer side the exception will be deserialized and thrown as is, instead of the AhcOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| *binding* (advanced) | To use a custom AhcBinding which allows to control how to bind between AHC and Camel. |  | AhcBinding
+| *clientConfig* (advanced) | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance. |  | AsyncHttpClientConfig
+| *clientConfigOptions* (advanced) | To configure the AsyncHttpClientConfig using the key/values from the Map. |  | Map
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *clientConfigRealmOptions* (security) | To configure the AsyncHttpClientConfig Realm using the key/values from the Map. |  | Map
+| *sslContextParameters* (security) | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. See Using the JSSE Configuration Utility. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. |  | SSLContextParameters
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.ahc.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
+| *camel.component.ahc.binding* | To use a custom AhcBinding which allows to control how to bind between AHC and Camel. The option is a org.apache.camel.component.ahc.AhcBinding type. |  | String
+| *camel.component.ahc.client* | To use a custom AsyncHttpClient. The option is a org.asynchttpclient.AsyncHttpClient type. |  | String
+| *camel.component.ahc.client-config* | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance. The option is a org.asynchttpclient.AsyncHttpClientConfig type. |  | String
+| *camel.component.ahc.enabled* | Enable ahc component | true | Boolean
+| *camel.component.ahc.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.ahc.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.ahc.ssl-context-parameters* | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.ahc.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+
+
+
+
+== AhcComponent Options
+
+
+
+
+
+
+
+
+
+// component options: START
+The AHC component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *client* (advanced) | To use a custom AsyncHttpClient |  | AsyncHttpClient
+| *binding* (advanced) | To use a custom AhcBinding which allows to control how to bind between AHC and Camel. |  | AhcBinding
+| *clientConfig* (advanced) | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance. |  | AsyncHttpClientConfig
+| *sslContextParameters* (security) | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. |  | SSLContextParameters
+| *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+
+
+
+Notice that setting any of the options on the `AhcComponent` will
+propagate those options to
+`AhcEndpoints` being created. However the `AhcEndpoint` can also
+configure/override a custom option. Options set on endpoints will always
+take precedence over options from the `AhcComponent`.
+
+== Message Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+|`Exchange.HTTP_URI` |`String` |URI to call. Will override existing URI set directly on the endpoint.
+
+|`Exchange.HTTP_PATH` |`String` |Request URI's path, the header will be used to build the request URI
+with the HTTP_URI. If the path is start with "/", http producer will try
+to find the relative path based on the Exchange.HTTP_BASE_URI header or
+the `exchange.getFromEndpoint().getEndpointUri();`
+
+|`Exchange.HTTP_QUERY` |`String` |*Camel 2.11 onwards:* URI parameters. Will override existing URI
+parameters set directly on the endpoint.
+
+|`Exchange.HTTP_RESPONSE_CODE` |`int` |The HTTP response code from the external server. Is 200 for OK.
+
+|`Exchange.HTTP_CHARACTER_ENCODING` |`String` |Character encoding.
+
+|`Exchange.CONTENT_TYPE` |`String` |The HTTP content type. Is set on both the IN and OUT message to provide
+a content type, such as `text/html`.
+
+|`Exchange.CONTENT_ENCODING` |`String` |The HTTP content encoding. Is set on both the IN and OUT message to
+provide a content encoding, such as `gzip`.
+|=======================================================================
+
+== Message Body
+
+Camel will store the HTTP response from the external server on the OUT
+body. All headers from the IN message will be copied to the OUT message,
+so headers are preserved during routing. Additionally Camel will add the
+HTTP response headers as well to the OUT message headers.
+
+== Response code
+
+Camel will handle according to the HTTP response code:
+
+* Response code is in the range 100..299, Camel regards it as a success
+response.
+* Response code is in the range 300..399, Camel regards it as a
+redirection response and will throw a `AhcOperationFailedException` with
+the information.
+* Response code is 400+, Camel regards it as an external server failure
+and will throw a `AhcOperationFailedException` with the information.
++
+throwExceptionOnFailure
++
+The option, `throwExceptionOnFailure`, can be set to `false` to prevent
+the `AhcOperationFailedException` from being thrown for failed response
+codes. This allows you to get any response from the remote server.
+
+== AhcOperationFailedException
+
+This exception contains the following information:
+
+* The HTTP status code
+* The HTTP status line (text of the status code)
+* Redirect location, if server returned a redirect
+* Response body as a `java.lang.String`, if server provided a body as
+response
+
+== Calling using GET or POST
+
+The following algorithm is used to determine if either `GET` or `POST`
+HTTP method should be used: +
+ 1. Use method provided in header. +
+ 2. `GET` if query string is provided in header. +
+ 3. `GET` if endpoint is configured with a query string. +
+ 4. `POST` if there is data to send (body is not null). +
+ 5. `GET` otherwise.
+
+== Configuring URI to call
+
+You can set the HTTP producer's URI directly form the endpoint URI. In
+the route below, Camel will call out to the external server, `oldhost`,
+using HTTP.
+
+[source,java]
+----------------------------------
+from("direct:start")
+        .to("ahc:http://oldhost");
+----------------------------------
+
+And the equivalent Spring sample:
+
+[source,xml]
+---------------------------------------------------------------------
+<camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <to uri="ahc:http://oldhost"/>
+  </route>
+</camelContext>
+---------------------------------------------------------------------
+
+You can override the HTTP endpoint URI by adding a header with the key,
+`Exchange.HTTP_URI`, on the message.
+
+[source,java]
+-------------------------------------------------------------
+from("direct:start")
+    .setHeader(Exchange.HTTP_URI, constant("http://newhost"))
+    .to("ahc:http://oldhost");
+-------------------------------------------------------------
+
+== Configuring URI Parameters
+
+The *ahc* producer supports URI parameters to be sent to the HTTP
+server. The URI parameters can either be set directly on the endpoint
+URI or as a header with the key `Exchange.HTTP_QUERY` on the message.
+
+[source,java]
+---------------------------------------------------------
+from("direct:start")
+        .to("ahc:http://oldhost?order=123&detail=short");
+---------------------------------------------------------
+
+Or options provided in a header:
+
+[source,java]
+-------------------------------------------------------------------------------
+from("direct:start")
+            .setHeader(Exchange.HTTP_QUERY, constant("order=123&detail=short"))
+        .to("ahc:http://oldhost");
+-------------------------------------------------------------------------------
+
+== How to set the http method to the HTTP producer
+
+The HTTP component provides a way to set the HTTP request method by
+setting the message header. Here is an example;
+
+[source,java]
+--------------------------------------------------------------
+from("direct:start")
+            .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+        .to("ahc:http://www.google.com")
+            .to("mock:results");
+--------------------------------------------------------------
+
+And the equivalent Spring sample:
+
+[source,xml]
+---------------------------------------------------------------------
+<camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <setHeader name="CamelHttpMethod">
+        <constant>POST</constant>
+    </setHeader>
+    <to uri="ahc:http://www.google.com"/>
+    <to uri="mock:results"/>
+  </route>
+</camelContext>
+---------------------------------------------------------------------
+
+== Configuring charset
+
+If you are using `POST` to send data you can configure the `charset`
+using the `Exchange` property:
+
+[source,java]
+----------------------------------------------------------
+exchange.setProperty(Exchange.CHARSET_NAME, "iso-8859-1");
+----------------------------------------------------------
+
+=== URI Parameters from the endpoint URI
+
+In this sample we have the complete URI endpoint that is just what you
+would have typed in a web browser. Multiple URI parameters can of course
+be set using the `&` character as separator, just as you would in the
+web browser. Camel does no tricks here.
+
+[source,java]
+--------------------------------------------------------------------
+// we query for Camel at the Google page
+template.sendBody("ahc:http://www.google.com/search?q=Camel", null);
+--------------------------------------------------------------------
+
+=== URI Parameters from the Message
+
+[source,java]
+---------------------------------------------------------------------
+Map headers = new HashMap();
+headers.put(Exchange.HTTP_QUERY, "q=Camel&lr=lang_en");
+// we query for Camel and English language at Google
+template.sendBody("ahc:http://www.google.com/search", null, headers);
+---------------------------------------------------------------------
+
+In the header value above notice that it should *not* be prefixed with
+`?` and you can separate parameters as usual with the `&` char.
+
+=== Getting the Response Code
+
+You can get the HTTP response code from the AHC component by getting the
+value from the Out message header with `Exchange.HTTP_RESPONSE_CODE`.
+
+[source,java]
+----------------------------------------------------------------------------------------------
+Exchange exchange = template.send("ahc:http://www.google.com/search", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_QUERY, constant("hl=en&q=activemq"));
+            }
+   });
+   Message out = exchange.getOut();
+   int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+----------------------------------------------------------------------------------------------
+
+== Configuring AsyncHttpClient
+
+The `AsyncHttpClient` client uses a `AsyncHttpClientConfig` to configure
+the client. See the documentation at +
+ http://github.com/sonatype/async-http-client[Async Http Client] for
+more details.
+
+The example below shows how to use a builder to create the
+`AsyncHttpClientConfig` which we configure on the `AhcComponent`.
+
+The `AsyncHttpClientConfigBean` class provides getters and setters for
+the configuration options available in `AsyncHttpClientConfig`. An
+instance of `AsyncHttpClientConfigBean` may be passed directly to the
+AHC component or referenced in an endpoint URI using the `clientConfig`
+URI parameter.
+
+There is the ability to set configuration
+options directly in the URI. URI parameters starting with
+"clientConfig." can be used to set the various configurable properties
+of `AsyncHttpClientConfig`. The properties specified in the endpoint URI
+are merged with those specified in the configuration referenced by the
+"clientConfig" URI parameter with those being set using the
+"clientConfig." parameter taking priority. The `AsyncHttpClientConfig`
+instance referenced is always copied for each endpoint such that
+settings on one endpoint will remain independent of settings on any
+previously created endpoints. The example below shows how to configure
+the AHC component using the "clientConfig." type URI parameters.
+
+[source,java]
+---------------------------------------------------------------------------------------------------------
+from("direct:start")
+    .to("ahc:http://localhost:8080/foo?clientConfig.maxRequestRetry=3&clientConfig.followRedirects=true")
+---------------------------------------------------------------------------------------------------------
+
+== SSL Support (HTTPS)
+
+[[AHC-UsingtheJSSEConfigurationUtility]]
+Using the JSSE Configuration Utility
+
+The AHC component supports SSL/TLS configuration
+through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
+Configuration Utility].  This utility greatly decreases the amount of
+component specific code you need to write and is configurable at the
+endpoint and component levels.  The following examples demonstrate how
+to use the utility with the AHC component.
+
+[[AHC-Programmaticconfigurationofthecomponent]]
+Programmatic configuration of the component
+
+[source,java]
+-------------------------------------------------------------------------
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setResource("/users/home/server/keystore.jks");
+ksp.setPassword("keystorePassword");
+
+KeyManagersParameters kmp = new KeyManagersParameters();
+kmp.setKeyStore(ksp);
+kmp.setKeyPassword("keyPassword");
+
+SSLContextParameters scp = new SSLContextParameters();
+scp.setKeyManagers(kmp);
+
+AhcComponent component = context.getComponent("ahc", AhcComponent.class);
+component.setSslContextParameters(scp));
+-------------------------------------------------------------------------
+
+[[AHC-SpringDSLbasedconfigurationofendpoint]]
+Spring DSL based configuration of endpoint
+
+[source,xml]
+----------------------------------------------------------------------------------
+...
+  <camel:sslContextParameters
+      id="sslContextParameters">
+    <camel:keyManagers
+        keyPassword="keyPassword">
+      <camel:keyStore
+          resource="/users/home/server/keystore.jks"
+          password="keystorePassword"/>
+    </camel:keyManagers>
+  </camel:sslContextParameters>...
+...
+  <to uri="ahc:https://localhost/foo?sslContextParameters=#sslContextParameters"/>
+...
+----------------------------------------------------------------------------------

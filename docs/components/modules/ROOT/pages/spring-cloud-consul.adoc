@@ -1,1 +1,3 @@
-../../../../../components/camel-spring-cloud-consul/src/main/docs/spring-cloud-consul.adoc
+= Spring Cloud Consul
+
+*Available as of Camel 2.22*

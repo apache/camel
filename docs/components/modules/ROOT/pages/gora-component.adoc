@@ -1,1 +1,280 @@
-../../../../../components/camel-gora/src/main/docs/gora-component.adoc
+= Gora Component
+
+*Available as of Camel version 2.14*
+
+
+*Camel-Gora* is an http://camel.apache.org/[Apache Camel] component that
+allows you to work with NoSQL databases using the
+http://gora.apache.org/[Apache Gora] framework.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+---------------------------------------------------------
+<dependency>
+ <groupId>org.apache.camel</groupId>
+ <artifactId>camel-gora</artifactId>
+ <!-- use the same version as your Camel core version -->
+ <version>x.x.x</version>
+</dependency>
+---------------------------------------------------------
+
+== Apache Gora Overview
+
+The http://gora.apache.org/[Apache Gora] open source framework provides
+an in-memory data model and persistence for big data. Gora supports
+persisting to column stores, key value stores, document stores and
+RDBMSs, and analyzing the data with extensive
+http://hadoop.apache.org/[Apache Hadoop™ MapReduce] support. Gora uses
+the http://www.apache.org/licenses/LICENSE-2.0.html[Apache Software
+License v2.0] and graduated from the Apache Incubator in Janauary 2012
+to become a top-level Apache project.
+
+Apache Gora currently supports the following datastores:
+http://hbase.apache.org/[Apache HBase],
+http://cassandra.apache.org/[Apache Cassandra],
+http://accumulo.apache.org/[Apache Accumulo],
+https://aws.amazon.com/dynamodb/[Amazon DynamoDB] and SQL databases such
+as http://hsqldb.org/[hsqldb], http://www.mysql.com/[MySQL] and more.
+
+== URI format
+
+[source,text]
+---------------------------
+gora:instanceName[?options]
+---------------------------
+
+Hbase examples with mandatory options :
+
+_XML_
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_Java DSL_
+
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+to("gora:foobar?keyClass=java.lang.Long&valueClass=org.apache.camel.component.gora.generated.Pageview&dataStoreClass=org.apache.gora.hbase.store.HBaseStore")
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+== Configuratiion
+
+Using camel-gora needs some configuration. This mainly involve to
+configure the _AvroStore_ through the _gora.properties_ file and to
+define the relevant mappings as part of the
+_http://gora.apache.org/current/gora-core.html[gora-core]_ module.
+
+Extensive information for this configuration can be found in the apache
+http://gora.apache.org/current/index.html[gora documentation] and the
+http://gora.apache.org/current/gora-conf.html[gora-conf] page.
+
+== Options
+
+
+// component options: START
+The Gora component has no options.
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The Gora endpoint is configured using URI syntax:
+
+----
+gora:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Instance name |  | String
+|===
+
+
+==== Query Parameters (21 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *dataStoreClass* (common) | The type of the dataStore |  | String
+| *keyClass* (common) | The type class of the key |  | String
+| *valueClass* (common) | The type of the value |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *concurrentConsumers* (consumer) | Number of concurrent consumers | 1 | int
+| *endKey* (consumer) | The End Key |  | Object
+| *endTime* (consumer) | The End Time |  | long
+| *fields* (consumer) | The Fields |  | Strings
+| *keyRangeFrom* (consumer) | The Key Range From |  | Object
+| *keyRangeTo* (consumer) | The Key Range To |  | Object
+| *limit* (consumer) | The Limit |  | long
+| *startKey* (consumer) | The Start Key |  | Object
+| *startTime* (consumer) | The Start Time |  | long
+| *timeRangeFrom* (consumer) | The Time Range From |  | long
+| *timeRangeTo* (consumer) | The Time Range To |  | long
+| *timestamp* (consumer) | The Timestamp |  | long
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *flushOnEveryOperation* (producer) | Flush on every operation | true | boolean
+| *hadoopConfiguration* (advanced) | Hadoop Configuration |  | Configuration
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.gora.enabled* | Enable gora component | true | Boolean
+| *camel.component.gora.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+== Supported Gora Operations
+
+Supported operations include : *put*, *get*, *delete*, *getSchemaName*,
+*deleteSchema*, *createSchema*, *query*, *deleteByQuery*,
+*schemaExists*.
+
+Some of the operations require arguments while some others no. The
+arguments to operations could be either the _body_ of the _in_ message
+or defined in a header property. Below there is a list with some
+additional info for each operation.
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Property |Description
+
+|put |_Inserts the persistent object with the given key._
+
+|get |_Returns the object corresponding to the given key fetching all the
+fields._
+
+|delete |_Deletes the object with the given key._
+
+|getSchemaName |_Returns the schema name given to this DataStore._
+
+|deleteSchema |_Deletes the underlying schema or table (or similar) in the datastore
+that holds the objects._
+
+|createSchema |_Creates the optional schema or table (or similar) in the datastore to
+hold the objects._
+
+|query |_Executes the given query and returns the results._
+
+|deleteByQuery |_Deletes all the objects matching the query._
+
+|schemaExists |_Returns whether the schema that holds the data exists in the
+datastore._
+|=======================================================================
+
+== Gora Headers
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Property |Description
+
+|GoraOperation |_Used in order to define the operation to execute._
+
+|GoraKey | _Used in order to define the datum key for the operations need it._
+|=======================================================================
+
+== Usage examples
+
+*Create Schema* _(XML DSL)_:
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<setHeader name="GoraOperation">
+ <constant>CreateSchema</constant>
+</setHeader>
+<to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*SchemaExists* _(XML DSL)_:
+
+[source,xml]
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<setHeader name="GoraOperation">
+ <constant>SchemaExists</constant>
+</setHeader>
+ <to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*Put* _(XML DSL)_:
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<setHeader name="GoraOperation">
+ <constant>put</constant>
+</setHeader>
+<setHeader name="GoraKey">
+ <constant>22222</constant>
+</setHeader>
+<to uri="gora:foo?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*Get* _(XML DSL)_:
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<setHeader name="GoraOperation">
+ <constant>GET</constant>
+</setHeader>
+<setHeader name="GoraKey">
+ <constant>10101</constant>
+</setHeader>
+<to uri="gora:bar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*Delete* _(XML DSL)_:
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<setHeader name="GoraOperation">
+ <constant>DELETE</constant>
+</setHeader>
+<setHeader name="GoraKey">
+ <constant>22222</constant>
+</setHeader>
+<to uri="gora:bar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*Query* _(XML DSL)_:
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The full usage examples in the form of integration tests can be found at
+https://github.com/ipolyzos/camel-gora-examples/[camel-gora-examples]
+repository.
+
+== More resources
+
+For more please information and in depth configuration refer to the
+http://gora.apache.org/current/overview.html[Apache Gora Documentation]
+and the http://gora.apache.org/current/tutorial.html[Apache Gora
+Tutorial].

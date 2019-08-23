@@ -1,1 +1,452 @@
-../../../../../components/camel-jpa/src/main/docs/jpa-component.adoc
+= JPA Component
+
+*Available as of Camel version 1.0*
+
+
+The JPA component enables you to store and retrieve Java objects from
+persistent storage using EJB 3's Java Persistence Architecture (JPA),
+which is a standard interface layer that wraps Object/Relational Mapping
+(ORM) products such as OpenJPA, Hibernate, TopLink, and so on.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jpa</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== Sending to the endpoint
+
+You can store a Java entity bean in a database by sending it to a JPA
+producer endpoint. The body of the _In_ message is assumed to be an
+entity bean (that is, a POJO with an
+http://java.sun.com/javaee/5/docs/api/javax/persistence/Entity.html[@Entity]
+annotation on it) or a collection or array of entity beans.
+
+If the body is a List of entities, make sure to use
+*entityType=java.util.ArrayList* as a configuration passed to the
+producer endpoint.
+
+If the body does not contain one of the previous listed types, put a
+Message Translator in front of the
+endpoint to perform the necessary conversion first.
+
+You can use `query`, `namedQuery` or `nativeQuery`
+for the producer as well. Also in the value of the `parameters`, you can use
+Simple expression which allows you to retrieve parameter values from Message body, header
+and etc. Those query can be used for retrieving a set of data with using `SELECT`
+JPQL/SQL statement as well as executing bulk update/delete with using `UPDATE`/`DELETE`
+JPQL/SQL statement. Please note that you need to specify `useExecuteUpdate` to `true`
+if you execute `UPDATE`/`DELETE` with `namedQuery` as camel don't look into the
+named query unlike `query` and `nativeQuery`.
+
+
+== Consuming from the endpoint
+
+Consuming messages from a JPA consumer endpoint removes (or updates)
+entity beans in the database. This allows you to use a database table as
+a logical queue: consumers take messages from the queue and then
+delete/update them to logically remove them from the queue.
+
+If you do not wish to delete the entity bean when it has been processed
+(and when routing is done), you can specify `consumeDelete=false` on the
+URI. This will result in the entity being processed each poll.
+
+If you would rather perform some update on the entity to mark it as
+processed (such as to exclude it from a future query) then you can
+annotate a method with
+http://camel.apache.org/maven/current/camel-jpa/apidocs/org/apache/camel/component/jpa/Consumed.html[@Consumed]
+which will be invoked on your entity bean when the entity bean when it
+has been processed (and when routing is done).
+
+You can use http://camel.apache.org/maven/current/camel-jpa/apidocs/org/apache/camel/component/jpa/PreConsumed.html[@PreConsumed]
+which will be invoked on your entity bean before it has been processed
+(before routing).
+
+If you are consuming a lot (100K+) of rows and experience OutOfMemory
+problems you should set the maximumResults to sensible value.
+
+== URI format
+
+[source,java]
+-----------------------------
+jpa:entityClassName[?options]
+-----------------------------
+
+For sending to the endpoint, the _entityClassName_ is optional. If
+specified, it helps the http://camel.apache.org/type-converter.html[Type Converter] to
+ensure the body is of the correct type.
+
+For consuming, the _entityClassName_ is mandatory.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+
+
+
+// component options: START
+The JPA component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *entityManagerFactory* (common) | To use the EntityManagerFactory. This is strongly recommended to configure. |  | EntityManagerFactory
+| *transactionManager* (common) | To use the PlatformTransactionManager for managing transactions. |  | PlatformTransaction Manager
+| *joinTransaction* (common) | The camel-jpa component will join transaction by default. You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent, instead of having to set it on all endpoints. | true | boolean
+| *sharedEntityManager* (common) | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager. | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+
+
+// endpoint options: START
+The JPA endpoint is configured using URI syntax:
+
+----
+jpa:entityType
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *entityType* | *Required* The JPA annotated class to use as entity. |  | Class
+|===
+
+
+==== Query Parameters (42 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *joinTransaction* (common) | The camel-jpa component will join transaction by default. You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent, instead of having to set it on all endpoints. | true | boolean
+| *maximumResults* (common) | Set the maximum number of results to retrieve on the Query. | -1 | int
+| *namedQuery* (common) | To use a named query. |  | String
+| *nativeQuery* (common) | To use a custom native query. You may want to use the option resultClass also when using native queries. |  | String
+| *parameters* (common) | This key/value mapping is used for building the query parameters. It is expected to be of the generic type java.util.Map where the keys are the named parameters of a given JPA query and the values are their corresponding effective values you want to select for. When it's used for producer, Simple expression can be used as a parameter value. It allows you to retrieve parameter values from the message body, header and etc. |  | Map
+| *persistenceUnit* (common) | *Required* The JPA persistence unit used by default. | camel | String
+| *query* (common) | To use a custom query. |  | String
+| *resultClass* (common) | Defines the type of the returned payload (we will call entityManager.createNativeQuery(nativeQuery, resultClass) instead of entityManager.createNativeQuery(nativeQuery)). Without this option, we will return an object array. Only has an affect when using in conjunction with native query when consuming data. |  | Class
+| *sharedEntityManager* (common) | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *consumeDelete* (consumer) | If true, the entity is deleted after it is consumed; if false, the entity is not deleted. | true | boolean
+| *consumeLockEntity* (consumer) | Specifies whether or not to set an exclusive lock on each entity bean while processing the results from polling. | true | boolean
+| *deleteHandler* (consumer) | To use a custom DeleteHandler to delete the row after the consumer is done processing the exchange |  | DeleteHandler
+| *lockModeType* (consumer) | To configure the lock mode on the consumer. | PESSIMISTIC_WRITE | LockModeType
+| *maxMessagesPerPoll* (consumer) | An integer value to define the maximum number of messages to gather per poll. By default, no maximum is set. Can be used to avoid polling many thousands of messages when starting up the server. Set a value of 0 or negative to disable. |  | int
+| *preDeleteHandler* (consumer) | To use a custom Pre-DeleteHandler to delete the row after the consumer has read the entity. |  | DeleteHandler
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *skipLockedEntity* (consumer) | To configure whether to use NOWAIT on lock and silently skip the entity. | false | boolean
+| *transacted* (consumer) | Whether to run the consumer in transacted mode, by which all messages will either commit or rollback, when the entire batch has been processed. The default behavior (false) is to commit all the previously successfully processed messages, and only rollback the last failed message. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *flushOnSend* (producer) | Flushes the EntityManager after the entity bean has been persisted. | true | boolean
+| *remove* (producer) | Indicates to use entityManager.remove(entity). | false | boolean
+| *useExecuteUpdate* (producer) | To configure whether to use executeUpdate() when producer executes a query. When you use INSERT, UPDATE or DELETE statement as a named query, you need to specify this option to 'true'. |  | Boolean
+| *usePassedInEntityManager* (producer) | If set to true, then Camel will use the EntityManager from the header JpaConstants.ENTITY_MANAGER instead of the configured entity manager on the component/endpoint. This allows end users to control which entity manager will be in use. | false | boolean
+| *usePersist* (producer) | Indicates to use entityManager.persist(entity) instead of entityManager.merge(entity). Note: entityManager.persist(entity) doesn't work for detached entities (where the EntityManager has to execute an UPDATE instead of an INSERT query)! | false | boolean
+| *entityManagerProperties* (advanced) | Additional properties for the entity manager to use. |  | Map
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jpa.enabled* | Enable jpa component | true | Boolean
+| *camel.component.jpa.entity-manager-factory* | To use the EntityManagerFactory. This is strongly recommended to configure. The option is a javax.persistence.EntityManagerFactory type. |  | String
+| *camel.component.jpa.join-transaction* | The camel-jpa component will join transaction by default. You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent, instead of having to set it on all endpoints. | true | Boolean
+| *camel.component.jpa.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.jpa.shared-entity-manager* | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager. | false | Boolean
+| *camel.component.jpa.transaction-manager* | To use the PlatformTransactionManager for managing transactions. The option is a org.springframework.transaction.PlatformTransactionManager type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+
+== Message Headers
+
+Camel adds the following message headers to the exchange:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelEntityManager` |`EntityManager` |The JPA `EntityManager` object being used by `JpaConsumer` or `JpaProducer`.
+
+|`CamelJpaParameters` |`Map<String, Object>` |Alternative way for passing query parameters as an Exchange header.
+
+|=======================================================================
+
+== Configuring EntityManagerFactory
+
+Its strongly advised to configure the JPA component to use a specific
+`EntityManagerFactory` instance. If failed to do so each `JpaEndpoint`
+will auto create their own instance of `EntityManagerFactory` which most
+often is not what you want.
+
+For example, you can instantiate a JPA component that references the
+`myEMFactory` entity manager factory, as follows:
+
+[source,xml]
+-------------------------------------------------------------------
+<bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
+   <property name="entityManagerFactory" ref="myEMFactory"/>
+</bean>
+-------------------------------------------------------------------
+
+The `JpaComponent` looks up automatically the
+`EntityManagerFactory` from the Registry which means
+you do not need to configure this on the `JpaComponent` as shown above.
+You only need to do so if there is ambiguity, in which case Camel will
+log a WARN.
+
+== Configuring TransactionManager
+
+The `JpaComponent` looks up automatically the
+`TransactionManager` from the Registry. If Camel
+won't find any `TransactionManager` instance registered, it will also
+look up for the `TransactionTemplate` and try to
+extract `TransactionManager` from it.
+
+If none `TransactionTemplate` is available in the registry,
+`JpaEndpoint` will auto create their own instance of
+`TransactionManager` which most often is not what you want.
+
+If more than single instance of the `TransactionManager` is found, Camel
+will log a WARN. In such cases you might want to instantiate and
+explicitly configure a JPA component that references the
+`myTransactionManager` transaction manager, as follows:
+
+[source,xml]
+-------------------------------------------------------------------
+<bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
+   <property name="entityManagerFactory" ref="myEMFactory"/>
+   <property name="transactionManager" ref="myTransactionManager"/>
+</bean>
+-------------------------------------------------------------------
+
+== Using a consumer with a named query
+
+For consuming only selected entities, you can use the
+`consumer.namedQuery` URI query option. First, you have to define the
+named query in the JPA Entity class:
+
+[source,java]
+----------------------------------------------------------------------------------
+@Entity
+@NamedQuery(name = "step1", query = "select x from MultiSteps x where x.step = 1")
+public class MultiSteps {
+   ...
+}
+----------------------------------------------------------------------------------
+
+After that you can define a consumer uri like this one:
+
+[source,java]
+----------------------------------------------------------------------------
+from("jpa://org.apache.camel.examples.MultiSteps?consumer.namedQuery=step1")
+.to("bean:myBusinessLogic");
+----------------------------------------------------------------------------
+
+== Using a consumer with a query
+
+For consuming only selected entities, you can use the `consumer.query`
+URI query option. You only have to define the query option:
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------
+from("jpa://org.apache.camel.examples.MultiSteps?consumer.query=select o from org.apache.camel.examples.MultiSteps o where o.step = 1")
+.to("bean:myBusinessLogic");
+---------------------------------------------------------------------------------------------------------------------------------------
+
+== Using a consumer with a native query
+
+For consuming only selected entities, you can use the
+`consumer.nativeQuery` URI query option. You only have to define the
+native query option:
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------
+from("jpa://org.apache.camel.examples.MultiSteps?consumer.nativeQuery=select * from MultiSteps where step = 1")
+.to("bean:myBusinessLogic");
+---------------------------------------------------------------------------------------------------------------
+
+If you use the native query option, you will receive an object array in
+the message body.
+
+
+== Using a producer with a named query
+
+For retrieving selected entities or execute bulk update/delete, you can use the
+`namedQuery` URI query option. First, you have to define the
+named query in the JPA Entity class:
+
+[source,java]
+----------------------------------------------------------------------------------
+@Entity
+@NamedQuery(name = "step1", query = "select x from MultiSteps x where x.step = 1")
+public class MultiSteps {
+   ...
+}
+----------------------------------------------------------------------------------
+
+After that you can define a producer uri like this one:
+
+[source,java]
+----------------------------------------------------------------------------
+from("direct:namedQuery")
+.to("jpa://org.apache.camel.examples.MultiSteps?namedQuery=step1");
+----------------------------------------------------------------------------
+
+Note that you need to specify `useExecuteUpdate` option to `true` to execute `UPDATE`/`DELETE` statement
+as a named query.
+
+== Using a producer with a query
+
+For retrieving selected entities or execute bulk update/delete, you can use the `query`
+URI query option. You only have to define the query option:
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------
+from("direct:query")
+.to("jpa://org.apache.camel.examples.MultiSteps?query=select o from org.apache.camel.examples.MultiSteps o where o.step = 1");
+---------------------------------------------------------------------------------------------------------------------------------------
+
+== Using a producer with a native query
+
+For retrieving selected entities or execute bulk update/delete, you can use the
+`nativeQuery` URI query option. You only have to define the
+native query option:
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------
+from("direct:nativeQuery")
+.to("jpa://org.apache.camel.examples.MultiSteps?resultClass=org.apache.camel.examples.MultiSteps&nativeQuery=select * from MultiSteps where step = 1");
+---------------------------------------------------------------------------------------------------------------
+
+If you use the native query option without specifying `resultClass`, you will receive an object array in
+the message body.
+
+== Example
+
+See http://camel.apache.org/tracer-example.html[Tracer Example] for an example using
+xref:jpa-component.adoc[JPA] to store traced messages into a database.
+
+== Using the JPA-Based Idempotent Repository
+
+The Idempotent Consumer from the http://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
+
+To use the JPA based idempotent repository.
+
+.Procedure
+
+. Set up a `persistence-unit` in the persistence.xml file:
+
+. Set up a `org.springframework.orm.jpa.JpaTemplate`
+which is used by the
+`org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository`:
+
+. Configure the error formatting macro: snippet: java.lang.IndexOutOfBoundsException:
+Index: 20, Size: 20
+
+. Configure the idempotent repository:
+`org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository`:
+
+. Create the JPA idempotent repository in the Spring XML file:
+
+[source,xml]
+---------------------------------------------------------------
+<camelContext xmlns="http://camel.apache.org/schema/spring">   
+    <route id="JpaMessageIdRepositoryTest">
+        <from uri="direct:start" />
+        <idempotentConsumer messageIdRepositoryRef="jpaStore">
+            <header>messageId</header>
+            <to uri="mock:result" />
+        </idempotentConsumer>
+    </route>
+</camelContext>
+---------------------------------------------------------------
+
+*When running this Camel component tests inside your IDE*
+
+If you run the
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-jpa/src/test[tests
+of this component] directly inside your IDE, and not through
+Maven, then you could see exceptions like these:
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+org.springframework.transaction.CannotCreateTransactionException: Could not open JPA EntityManager for transaction; nested exception is
+<openjpa-2.2.1-r422266:1396819 nonfatal user error> org.apache.openjpa.persistence.ArgumentException: This configuration disallows runtime optimization,
+but the following listed types were not enhanced at build time or at class load time with a javaagent: "org.apache.camel.examples.SendEmail".
+    at org.springframework.orm.jpa.JpaTransactionManager.doBegin(JpaTransactionManager.java:427)
+    at org.springframework.transaction.support.AbstractPlatformTransactionManager.getTransaction(AbstractPlatformTransactionManager.java:371)
+    at org.springframework.transaction.support.TransactionTemplate.execute(TransactionTemplate.java:127)
+    at org.apache.camel.processor.jpa.JpaRouteTest.cleanupRepository(JpaRouteTest.java:96)
+    at org.apache.camel.processor.jpa.JpaRouteTest.createCamelContext(JpaRouteTest.java:67)
+    at org.apache.camel.test.junit4.CamelTestSupport.doSetUp(CamelTestSupport.java:238)
+    at org.apache.camel.test.junit4.CamelTestSupport.setUp(CamelTestSupport.java:208)
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The problem here is that the source has been compiled or recompiled through
+your IDE and not through Maven, which would
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-jpa/pom.xml[enhance
+the byte-code at build time]. To overcome this you need to enable
+http://openjpa.apache.org/entity-enhancement.html#dynamic-enhancement[dynamic
+byte-code enhancement of OpenJPA]. For example, assuming the current
+OpenJPA version being used in Camel is 2.2.1, to run the 
+tests inside your IDE you would need to pass the following
+argument to the JVM:
+
+[source,java]
+-------------------------------------------------------------------------------------------
+ 
+-javaagent:<path_to_your_local_m2_cache>/org/apache/openjpa/openjpa/2.2.1/openjpa-2.2.1.jar
+-------------------------------------------------------------------------------------------

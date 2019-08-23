@@ -1,1 +1,208 @@
-../../../../../components/camel-atmosphere-websocket/src/main/docs/atmosphere-websocket-component.adoc
+= Atmosphere Websocket Component
+
+*Available as of Camel version 2.14*
+
+
+The Atmosphere-Websocket component provides Websocket
+based endpoints for a servlet communicating with
+external clients over Websocket (as a servlet accepting websocket
+connections from external clients). +
+The component uses the xref:servlet-component.adoc[SERVLET] component and uses
+the https://github.com/Atmosphere/atmosphere[Atmosphere] library to
+support the Websocket transport in various Servlet containers (e..g.,
+Jetty, Tomcat, ...).
+
+Unlike the
+xref:websocket-component.adoc[Websocket]
+component that starts the embedded Jetty server, this component uses the
+servlet provider of the container.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-atmosphere-websocket</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== Atmosphere-Websocket Options
+
+
+
+// component options: START
+The Atmosphere Websocket component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *servletName* (consumer) | Default name of servlet to use. The default name is CamelServlet. | CamelServlet | String
+| *httpRegistry* (consumer) | To use a custom org.apache.camel.component.servlet.HttpRegistry. |  | HttpRegistry
+| *attachmentMultipart Binding* (consumer) | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | boolean
+| *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
+| *httpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
+| *httpConfiguration* (advanced) | To use the shared HttpConfiguration as base configuration. |  | HttpConfiguration
+| *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The Atmosphere Websocket endpoint is configured using URI syntax:
+
+----
+atmosphere-websocket:servicePath
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *servicePath* | *Required* Name of websocket endpoint |  | String
+|===
+
+
+==== Query Parameters (38 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *chunked* (common) | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response | true | boolean
+| *disableStreamCache* (common) | Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a in memory/overflow to file, Stream caching) cache. By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance, in case you do not need to read the message payload multiple times. The http/http4 producer will by default cache the response body stream. If setting this option to true, then the producers will not cache the response body stream but use the response stream as-is as the message body. | false | boolean
+| *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *sendToAll* (common) | Whether to send to all (broadcast) or send to a single receiver. | false | boolean
+| *transferException* (common) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| *useStreaming* (common) | To enable streaming to send data as multiple text fragments. | false | boolean
+| *httpBinding* (common) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
+| *async* (consumer) | Configure the consumer to work in async mode | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *httpMethodRestrict* (consumer) | Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma. |  | String
+| *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
+| *responseBufferSize* (consumer) | To use a custom buffer size on the javax.servlet.ServletResponse. |  | Integer
+| *servletName* (consumer) | Name of the servlet to use | CamelServlet | String
+| *attachmentMultipartBinding* (consumer) | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | boolean
+| *eagerCheckContentAvailable* (consumer) | Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present. This can be turned on in case HTTP clients do not send streamed data. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
+| *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
+| *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
+| *bridgeEndpoint* (producer) | If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back. | false | boolean
+| *connectionClose* (producer) | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false. | false | boolean
+| *copyHeaders* (producer) | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers). | true | boolean
+| *httpMethod* (producer) | Configure the HTTP method to use. The HttpMethod header cannot override this option if set. |  | HttpMethods
+| *ignoreResponseBody* (producer) | If this option is true, The http producer won't read response body and cache the input stream | false | boolean
+| *preserveHostHeader* (producer) | If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, this allows applications which use the Host header to generate accurate URL's for a proxied service | false | boolean
+| *throwExceptionOnFailure* (producer) | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | boolean
+| *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
+| *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included. | 200-299 | String
+| *urlRewrite* (producer) | *Deprecated* Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html |  | UrlRewrite
+| *mapHttpMessageBody* (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
+| *mapHttpMessageFormUrl EncodedBody* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
+| *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *proxyAuthScheme* (proxy) | Proxy authentication scheme to use |  | String
+| *proxyHost* (proxy) | Proxy hostname to use |  | String
+| *proxyPort* (proxy) | Proxy port to use |  | int
+| *authHost* (security) | Authentication host to use with NTML |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.atmosphere-websocket.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
+| *camel.component.atmosphere-websocket.attachment-multipart-binding* | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | Boolean
+| *camel.component.atmosphere-websocket.enabled* | Enable atmosphere-websocket component | true | Boolean
+| *camel.component.atmosphere-websocket.file-name-ext-whitelist* | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
+| *camel.component.atmosphere-websocket.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.atmosphere-websocket.http-binding* | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. The option is a org.apache.camel.http.common.HttpBinding type. |  | String
+| *camel.component.atmosphere-websocket.http-configuration* | To use the shared HttpConfiguration as base configuration. The option is a org.apache.camel.http.common.HttpConfiguration type. |  | String
+| *camel.component.atmosphere-websocket.http-registry* | To use a custom org.apache.camel.component.servlet.HttpRegistry. The option is a org.apache.camel.component.servlet.HttpRegistry type. |  | String
+| *camel.component.atmosphere-websocket.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.atmosphere-websocket.servlet-name* | Default name of servlet to use. The default name is CamelServlet. | CamelServlet | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== URI Format
+
+[source,java]
+-----------------------------------------------
+atmosphere-websocket:///relative path[?options]
+-----------------------------------------------
+
+== Reading and Writing Data over Websocket
+
+An atmopshere-websocket endpoint can either write data to the socket or
+read from the socket, depending on whether the endpoint is configured as
+the producer or the consumer, respectively.
+
+== Configuring URI to Read or Write Data
+
+In the route below, Camel will read from the specified websocket
+connection.
+
+[source,java]
+-------------------------------------------
+from("atmosphere-websocket:///servicepath")
+        .to("direct:next");
+-------------------------------------------
+
+And the equivalent Spring sample:
+
+[source,xml]
+------------------------------------------------------------
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="atmosphere-websocket:///servicepath"/>
+    <to uri="direct:next"/>
+  </route>
+</camelContext>
+------------------------------------------------------------
+
+In the route below, Camel will read from the specified websocket
+connection.
+
+[source,java]
+---------------------------------------------------
+from("direct:next")
+        .to("atmosphere-websocket:///servicepath");
+---------------------------------------------------
+
+And the equivalent Spring sample:
+
+[source,xml]
+------------------------------------------------------------
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:next"/>
+    <to uri="atmosphere-websocket:///servicepath"/>
+  </route>
+</camelContext>
+------------------------------------------------------------
+
+ 

@@ -1,1 +1,162 @@
-../../../../../components/camel-optaplanner/src/main/docs/optaplanner-component.adoc
+= OptaPlanner Component
+
+*Available as of Camel version 2.13*
+
+
+The Optaplanner component solves the planning problem contained in a
+message with http://www.optaplanner.org/[OptaPlanner]. +
+ For example: feed it an unsolved Vehicle Routing problem and it solves
+it.
+
+The component supports consumer as BestSolutionChangedEvent listener and
+producer for processing Solution and ProblemFactChange
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-optaplanner</artifactId>
+    <version>x.x.x</version><!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------------------------------
+
+== URI format
+
+[source,java]
+----------------------------------
+optaplanner:solverConfig[?options]
+----------------------------------
+
+The *solverConfig* is the classpath-local URI of the solverConfig, for
+example `/org/foo/barSolverConfig.xml`.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== OptaPlanner Options
+
+
+// component options: START
+The OptaPlanner component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The OptaPlanner endpoint is configured using URI syntax:
+
+----
+optaplanner:configFile
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configFile* | *Required* Specifies the location to the solver file |  | String
+|===
+
+
+==== Query Parameters (7 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *solverId* (common) | Specifies the solverId to user for the solver instance key | DEFAULT_SOLVER | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *async* (producer) | Specifies to perform operations in async mode | false | boolean
+| *threadPoolSize* (producer) | Specifies the thread pool size to use when async is true | 10 | int
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.optaplanner.enabled* | Enable optaplanner component | true | Boolean
+| *camel.component.optaplanner.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Message Headers
+
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
+|=======================================================================
+|Name |Default Value |Type |Context |Description
+
+|CamelOptaPlannerSolverId |null |String |Shared |Specifies the solverId to use
+
+|CamelOptaPlannerIsAsync |PUT |String |Producer |Specify whether to use another thread for submitting Solution instances
+rather than blocking the current thread.
+|=======================================================================
+
+== Message Body
+
+Camel takes the planning problem for the IN body, solves it and returns
+it on the OUT body. The IN body object supports the following use cases:
+
+* If the body is instance of Solution, then it will be solved using the
+solver identified by solverId and either synchronously or
+asynchronously.
+* If the body is instance of ProblemFactChange, then it will trigger
+addProblemFactChange. If the processing is asynchronously, then it will
+wait till isEveryProblemFactChangeProcessed before returning result.
+* If the body is none of the above types, then the producer will return
+the best result from the solver identified by solverId
+
+== Termination
+
+The solving will take as long as specified in the `solverConfig`.
+
+[source,xml]
+-----------------------------------------------------------------------------
+<solver>
+  ...
+  <termination>
+    <!-- Terminate after 10 seconds, unless it's not feasible by then yet -->
+    <terminationCompositionStyle>AND</terminationCompositionStyle>
+    <secondsSpentLimit>10</secondsSpentLimit>
+    <bestScoreLimit>-1hard/0soft</bestScoreLimit>
+  </termination>
+  ...
+<solver>
+-----------------------------------------------------------------------------
+
+ 
+
+=== Samples
+
+Solve an planning problem that's on the ActiveMQ queue with OptaPlanner:
+
+[source,java]
+--------------------------------------------------
+from("activemq:My.Queue").
+  .to("optaplanner:/org/foo/barSolverConfig.xml");
+--------------------------------------------------
+
+Expose OptaPlanner as a REST service:
+
+[source,java]
+-------------------------------------------------------
+from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
+  .to("optaplanner:/org/foo/barSolverConfig.xml");
+-------------------------------------------------------

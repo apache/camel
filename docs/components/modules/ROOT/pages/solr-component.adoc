@@ -1,1 +1,227 @@
-../../../../../components/camel-solr/src/main/docs/solr-component.adoc
+= Solr Component
+
+*Available as of Camel version 2.9*
+
+
+The Solr component allows you to interface with an
+http://lucene.apache.org/solr/[Apache Lucene Solr] server (based on
+SolrJ 3.5.0).
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-solr</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+--------------------------------------
+solr://host[:port]/solr?[options]
+solrs://host[:port]/solr?[options]
+solrCloud://host[:port]/solr?[options]
+--------------------------------------
+
+== Solr Options
+
+
+// component options: START
+The Solr component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Solr endpoint is configured using URI syntax:
+
+----
+solr:url
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *url* | *Required* Hostname and port for the solr server |  | String
+|===
+
+
+==== Query Parameters (15 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *allowCompression* (producer) | Server side must support gzip or deflate for this to have any effect |  | Boolean
+| *connectionTimeout* (producer) | connectionTimeout on the underlying HttpConnectionManager |  | Integer
+| *defaultMaxConnectionsPer Host* (producer) | maxConnectionsPerHost on the underlying HttpConnectionManager |  | Integer
+| *followRedirects* (producer) | indicates whether redirects are used to get to the Solr server |  | Boolean
+| *maxRetries* (producer) | Maximum number of retries to attempt in the event of transient errors |  | Integer
+| *maxTotalConnections* (producer) | maxTotalConnection on the underlying HttpConnectionManager |  | Integer
+| *requestHandler* (producer) | Set the request handler to be used |  | String
+| *soTimeout* (producer) | Read timeout on the underlying HttpConnectionManager. This is desirable for queries, but probably not for indexing |  | Integer
+| *streamingQueueSize* (producer) | Set the queue size for the StreamingUpdateSolrServer | 10 | int
+| *streamingThreadCount* (producer) | Set the number of threads for the StreamingUpdateSolrServer | 2 | int
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *password* (security) | Sets password for basic auth plugin enabled servers |  | String
+| *username* (security) | Sets username for basic auth plugin enabled servers |  | String
+| *collection* (solrCloud) | Set the collection name which the solrCloud server could use |  | String
+| *zkHost* (solrCloud) | Set the ZooKeeper host information which the solrCloud could use, such as zkhost=localhost:8123. |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.solr.enabled* | Enable solr component | true | Boolean
+| *camel.component.solr.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Message Operations
+
+The following Solr operations are currently supported. Simply set an
+exchange header with a key of "SolrOperation" and a value set to one of
+the following. Some operations also require the message body to be set.
+
+* the INSERT operations use the
+http://lucene.apache.org/solr/api/org/apache/solr/client/solrj/impl/CommonsHttpSolrServer.html[CommonsHttpSolrServer]
+* the INSERT_STREAMING operations use the
+http://lucene.apache.org/solr/api/org/apache/solr/client/solrj/impl/StreamingUpdateSolrServer.html[StreamingUpdateSolrServer]
+(*Camel 2.9.2*)
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Operation |Message body |Description
+
+|INSERT/INSERT_STREAMING |n/a |adds an index using message headers (must be prefixed with "SolrField.")
+
+|INSERT/INSERT_STREAMING |File |adds an index using the given File (using ContentStreamUpdateRequest)
+
+|INSERT/INSERT_STREAMING |SolrInputDocument |updates index based on the given SolrInputDocument
+
+|INSERT/INSERT_STREAMING |String XML |updates index based on the given XML (must follow
+SolrInputDocument format)
+
+|ADD_BEAN |bean instance |adds an index based on values in an
+http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated
+bean]
+
+|ADD_BEANS |collection<bean> |adds index based on a collection of
+http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated
+bean]
+
+|DELETE_BY_ID |index id to delete |delete a record by ID
+
+|DELETE_BY_QUERY |query string |delete a record by a query
+
+|COMMIT |n/a |performs a commit on any pending index changes
+
+|ROLLBACK |n/a |performs a rollback on any pending index changes
+
+|OPTIMIZE |n/a |performs a commit on any pending index changes and then runs the
+optimize command
+|=======================================================================
+
+== Example
+
+Below is a simple INSERT, DELETE and COMMIT example
+
+[source,java]
+---------------------------------------------------------------------------------------
+from("direct:insert")
+    .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_INSERT))
+    .setHeader(SolrConstants.FIELD + "id", body())
+    .to("solr://localhost:8983/solr");
+
+from("direct:delete")
+    .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_DELETE_BY_ID))
+    .to("solr://localhost:8983/solr");
+
+from("direct:commit")
+    .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_COMMIT))
+    .to("solr://localhost:8983/solr");
+---------------------------------------------------------------------------------------
+
+[source,xml]
+------------------------------------------
+<route>
+    <from uri="direct:insert"/>
+    <setHeader name="SolrOperation">
+        <constant>INSERT</constant>
+    </setHeader>
+    <setHeader name="SolrField.id">
+        <simple>${body}</simple>
+    </setHeader>
+    <to uri="solr://localhost:8983/solr"/>
+</route>
+<route>
+    <from uri="direct:delete"/>
+    <setHeader name="SolrOperation">
+        <constant>DELETE_BY_ID</constant>
+    </setHeader>
+    <to uri="solr://localhost:8983/solr"/>
+</route>
+<route>
+    <from uri="direct:commit"/>
+    <setHeader name="SolrOperation">
+        <constant>COMMIT</constant>
+    </setHeader>
+    <to uri="solr://localhost:8983/solr"/>
+</route>
+------------------------------------------
+
+A client would simply need to pass a body message to the insert or
+delete routes and then call the commit route.
+
+[source,java]
+-----------------------------------------------
+    template.sendBody("direct:insert", "1234");
+    template.sendBody("direct:commit", null);
+    template.sendBody("direct:delete", "1234");
+    template.sendBody("direct:commit", null);
+-----------------------------------------------
+
+== Querying Solr
+
+Currently, this component doesn't support querying data natively (may be
+added later). For now, you can query Solr using xref:http-component.adoc[HTTP] as
+follows:
+
+[source,java]
+--------------------------------------------------------------------------------
+//define the route to perform a basic query
+from("direct:query")
+    .recipientList(simple("http://localhost:8983/solr/select/?q=${body}"))
+    .convertBodyTo(String.class);
+...
+//query for an id of '1234' (url encoded)
+String responseXml = (String) template.requestBody("direct:query", "id%3A1234");
+--------------------------------------------------------------------------------
+
+For more information, see these resources...
+
+http://lucene.apache.org/solr/tutorial.html#Querying+Data[Solr Query
+Tutorial]
+
+http://wiki.apache.org/solr/SolrQuerySyntax[Solr Query Syntax]

@@ -1,1 +1,323 @@
-../../../../../components/camel-apns/src/main/docs/apns-component.adoc
+= APNS Component
+
+*Available as of Camel version 2.8*
+
+
+The APNS component is used for sending notifications to iOS devices.
+The APNS components use https://github.com/notnoop/java-apns[javapns]
+library. +
+ The component supports sending notifications to Apple Push Notification
+Servers (APNS) and consuming feedback from the servers.
+
+The consumer is configured with 3600 seconds for polling by default
+because it is a best practice to consume feedback stream from Apple Push
+Notification Servers only from time to time. For example: every 1 hour
+to avoid flooding the servers.
+
+The feedback stream gives informations about inactive devices. You only
+need to get this informations every some hours if your mobile
+application is not a heavily used one.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-apns</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+To send notifications:
+
+[source,java]
+---------------------
+apns:notify[?options]
+---------------------
+
+To consume feedback:
+
+[source,java]
+-----------------------
+apns:consumer[?options]
+-----------------------
+
+== Options
+
+
+
+// component options: START
+The APNS component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apnsService* (common) | *Required* The ApnsService to use. The org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to build a ApnsService |  | ApnsService
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The APNS endpoint is configured using URI syntax:
+
+----
+apns:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | Name of the endpoint |  | String
+|===
+
+
+==== Query Parameters (20 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *tokens* (common) | Configure this property in case you want to statically declare tokens related to devices you want to notify. Tokens are separated by comma. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.apns.apns-service* | The ApnsService to use. The org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to build a ApnsService. The option is a com.notnoop.apns.ApnsService type. |  | String
+| *camel.component.apns.enabled* | Enable apns component | true | Boolean
+| *camel.component.apns.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+=== Component
+
+The `ApnsComponent` must be configured with a
+`com.notnoop.apns.ApnsService`. The service can be created and
+configured using the
+`org.apache.camel.component.apns.factory.ApnsServiceFactory`. See
+further below for an example. And as well in the
+https://github.com/apache/camel/tree/master/components/camel-apns[test
+source code].
+
+==== SSL Setting
+In order to use secure connection, an instance of `org.apache.camel.support.jsse.SSLContextParameters`
+ should be injected to `org.apache.camel.component.apns.factory.ApnsServiceFactory` which is
+ used to configure the component. See the test resources for an example.
+ https://github.com/apache/camel/blob/master/components/camel-apns/src/test/resources/org/apache/camel/component/apns/spring/SpringApnsConsumerTest-context.xml[ssl example]
+
+== Exchange data format
+
+When Camel will fetch feedback data corresponding to inactive devices,
+it will retrieve a List of InactiveDevice objects. Each InactiveDevice
+object of the retrieved list will be setted as the In body, and then
+processed by the consumer endpoint.
+
+== Message Headers
+
+Camel Apns uses these headers.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Property |Default |Description
+|`CamelApnsTokens` | |Empty by default.
+|`CamelApnsMessageType` |`STRING, PAYLOAD, APNS_NOTIFICATION`  |In case you choose PAYLOAD for the message type, then the message will
+be considered as a APNS payload and sent as is. In case you choose
+STRING, message will be converted as a APNS payload. From *Camel 2.16*
+onwards APNS_NOTIFICATION is used for sending message body as
+com.notnoop.apns.ApnsNotification types.
+|=======================================================================
+
+== ApnsServiceFactory builder callback
+
+`ApnsServiceFactory` comes with the empty callback method that could be
+used to configure (or even replace) the default `ApnsServiceBuilder`
+instance. The signature of the method could look as follows:
+
+[source,java]
+----------------------------------------------------------------------------------------
+protected ApnsServiceBuilder configureServiceBuilder(ApnsServiceBuilder serviceBuilder);
+----------------------------------------------------------------------------------------
+
+And could be used like as follows:
+
+[source,java]
+-------------------------------------------------------------------------------------------
+ApnsServiceFactory proxiedApnsServiceFactory = new ApnsServiceFactory(){
+  
+  @Override
+  protected ApnsServiceBuilder configureServiceBuilder(ApnsServiceBuilder serviceBuilder) {
+    return serviceBuilder.withSocksProxy("my.proxy.com", 6666);
+  }
+
+};
+-------------------------------------------------------------------------------------------
+
+== Samples
+
+=== Camel Xml route
+
+[source,xml]
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <!-- Replace by desired values -->
+    <bean id="apnsServiceFactory" class="org.apache.camel.component.apns.factory.ApnsServiceFactory">
+
+        <!-- Optional configuration of feedback host and port -->
+        <!-- <property name="feedbackHost" value="localhost" /> -->
+        <!-- <property name="feedbackPort" value="7843" /> -->
+
+        <!-- Optional configuration of gateway host and port -->
+        <!-- <property name="gatewayHost" value="localhost" /> -->
+        <!-- <property name="gatewayPort" value="7654" /> -->
+
+        <!-- Declaration of certificate used -->
+                <!-- from Camel 2.11 onwards you can use prefix: classpath:, file: to refer to load the certificate from classpath or file. Default it classpath -->
+        <property name="certificatePath" value="certificate.p12" />
+        <property name="certificatePassword" value="MyCertPassword" />
+
+        <!-- Optional connection strategy - By Default: No need to configure -->
+        <!-- Possible options: NON_BLOCKING, QUEUE, POOL or Nothing -->
+        <!-- <property name="connectionStrategy" value="POOL" /> -->
+        <!-- Optional pool size -->
+        <!-- <property name="poolSize" value="15" /> -->
+
+        <!-- Optional connection strategy - By Default: No need to configure -->
+        <!-- Possible options: EVERY_HALF_HOUR, EVERY_NOTIFICATION or Nothing (Corresponds to NEVER javapns option) -->
+        <!-- <property name="reconnectionPolicy" value="EVERY_HALF_HOUR" /> -->
+    </bean>
+
+    <bean id="apnsService" factory-bean="apnsServiceFactory" factory-method="getApnsService" />
+
+    <!-- Replace this declaration by wanted configuration -->
+    <bean id="apns" class="org.apache.camel.component.apns.ApnsComponent">
+        <property name="apnsService" ref="apnsService" />
+    </bean>
+
+    <camelContext id="camel-apns-test" xmlns="http://camel.apache.org/schema/spring">
+            <route id="apns-test">
+                    <from uri="apns:consumer?initialDelay=10&amp;delay=3600&amp;timeUnit=SECONDS" />
+                    <to uri="log:org.apache.camel.component.apns?showAll=true&amp;multiline=true" />
+                    <to uri="mock:result" />
+            </route>
+    </camelContext>
+
+</beans>
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+=== Camel Java route
+
+[[APNS-Createcamelcontextanddeclareapnscomponentprogrammatically]]
+Create camel context and declare apns component programmatically
+
+[source,java]
+----------------------------------------------------------------------------------
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+
+        ApnsServiceFactory apnsServiceFactory = new ApnsServiceFactory();
+        apnsServiceFactory.setCertificatePath("classpath:/certificate.p12");
+        apnsServiceFactory.setCertificatePassword("MyCertPassword");
+
+        ApnsService apnsService = apnsServiceFactory.getApnsService(camelContext);
+
+        ApnsComponent apnsComponent = new ApnsComponent(apnsService);
+        camelContext.addComponent("apns", apnsComponent);
+
+        return camelContext;
+    }
+----------------------------------------------------------------------------------
+
+[[APNS-ApnsProducer-iOStargetdevicedynamicallyconfiguredviaheader:"CamelApnsTokens"]]
+ApnsProducer - iOS target device dynamically configured via header:
+`"CamelApnsTokens"`
+
+[source,java]
+---------------------------------------------------------------------------------------
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from("direct:test")
+                    .setHeader(ApnsConstants.HEADER_TOKENS, constant(IOS_DEVICE_TOKEN))
+                    .to("apns:notify");
+                }
+        }
+    }
+---------------------------------------------------------------------------------------
+
+[[APNS-ApnsProducer-iOStargetdevicestaticallyconfiguredviauri]]
+ApnsProducer - iOS target device statically configured via uri
+
+[source,java]
+------------------------------------------------------------------
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from("direct:test").
+                to("apns:notify?tokens=" + IOS_DEVICE_TOKEN);
+            }
+        };
+    }
+------------------------------------------------------------------
+
+[[APNS-ApnsConsumer]]
+ApnsConsumer
+
+[source,java]
+--------------------------------------------------------------------------
+from("apns:consumer?initialDelay=10&delay=3600&timeUnit=SECONDS")
+    .to("log:com.apache.camel.component.apns?showAll=true&multiline=true")
+    .to("mock:result");
+--------------------------------------------------------------------------

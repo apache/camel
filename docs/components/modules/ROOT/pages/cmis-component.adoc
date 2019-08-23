@@ -1,1 +1,155 @@
-../../../../../components/camel-cmis/src/main/docs/cmis-component.adoc
+= CMIS Component
+
+*Available as of Camel version 2.11*
+
+
+The cmis component uses the
+http://chemistry.apache.org/java/opencmis.html[Apache Chemistry] client
+API and allows you to add/read nodes to/from a CMIS compliant content
+repositories.
+
+== URI Format
+
+[source,java]
+------------------------------
+cmis://cmisServerUrl[?options]
+------------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== CMIS Options
+
+
+// component options: START
+The CMIS component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *sessionFacadeFactory* (common) | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances |  | CMISSessionFacade Factory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+// endpoint options: START
+The CMIS endpoint is configured using URI syntax:
+
+----
+cmis:cmsUrl
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cmsUrl* | *Required* URL to the cmis repository |  | String
+|===
+
+
+==== Query Parameters (13 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pageSize* (common) | Number of nodes to retrieve per page | 100 | int
+| *readContent* (common) | If set to true, the content of document node will be retrieved in addition to the properties | false | boolean
+| *readCount* (common) | Max number of nodes to read |  | int
+| *repositoryId* (common) | The Id of the repository to use. If not specified the first available repository is used |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *query* (consumer) | The cmis query to execute against the repository. If not specified, the consumer will retrieve every node from the content repository by iterating the content tree recursively |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *queryMode* (producer) | If true, will execute the cmis query from the message body and return result, otherwise will create a node in the cmis repository | false | boolean
+| *sessionFacadeFactory* (advanced) | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances |  | CMISSessionFacade Factory
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *password* (security) | Password for the cmis repository |  | String
+| *username* (security) | Username for the cmis repository |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.cmis.enabled* | Enable cmis component | true | Boolean
+| *camel.component.cmis.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.cmis.session-facade-factory* | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances. The option is a org.apache.camel.component.cmis.CMISSessionFacadeFactory type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Usage
+
+=== Message headers evaluated by the producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Default Value |Description
+
+|`CamelCMISFolderPath` |`/` |The current folder to use during the execution. If not specified will
+use the root folder
+
+|`CamelCMISRetrieveContent` |`false` |In `queryMode` this header will force the producer to retrieve the
+content of document nodes.
+
+|`CamelCMISReadSize` |`0` |Max number of nodes to read.
+
+|`cmis:path` |`null` |If `CamelCMISFolderPath` is not set, will try to find out the path of
+the node from this cmis property and it is name
+
+|`cmis:name` |`null` |If `CamelCMISFolderPath` is not set, will try to find out the path of
+the node from this cmis property and it is path
+
+|`cmis:objectTypeId` |`null` |The type of the node
+
+|`cmis:contentStreamMimeType` |`null` |The mimetype to set for a document
+|=======================================================================
+
+=== Message headers set during querying Producer operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelCMISResultCount` |`Integer` |Number of nodes returned from the query.
+|=======================================================================
+
+The message body will contain a list of maps, where each entry in the
+map is cmis property and its value. If `CamelCMISRetrieveContent` header is set to true, one additional
+entry in the map with key `CamelCMISContent` will contain `InputStream`
+of the document type of nodes.
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-cmis</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.11 or higher).

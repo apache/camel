@@ -1,1 +1,213 @@
-../../../../../components/camel-undertow/src/main/docs/undertow-component.adoc
+= Undertow Component
+
+*Available as of Camel version 2.16*
+
+The Undertow component provides HTTP and WebSocket based endpoints for consuming
+and producing HTTP/WebSocket requests.
+
+That is, the Undertow component behaves as a simple Web server.
+Undertow can also be used as a http client which mean you can also use
+it with Camel as a producer.
+
+Since the component also supports WebSocket
+connections, it can serve as a drop-in replacement for Camel websocket
+component or atmosphere-websocket component.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-undertow</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+[source,text]
+----
+undertow:http://hostname[:port][/resourceUri][?options]
+undertow:https://hostname[:port][/resourceUri][?options]
+undertow:ws://hostname[:port][/resourceUri][?options]
+undertow:wss://hostname[:port][/resourceUri][?options]
+----
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+// component options: START
+The Undertow component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *undertowHttpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | UndertowHttpBinding
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *hostOptions* (advanced) | To configure common options, such as thread pools |  | UndertowHostOptions
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The Undertow endpoint is configured using URI syntax:
+
+----
+undertow:httpURI
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *httpURI* | *Required* The url of the HTTP endpoint to use. |  | URI
+|===
+
+
+==== Query Parameters (21 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *useStreaming* (common) | For HTTP endpoint: if true, text and binary messages will be wrapped as java.io.InputStream before they are passed to an Exchange; otherwise they will be passed as byte. For WebSocket endpoint: if true, text and binary messages will be wrapped as java.io.Reader and java.io.InputStream respectively before they are passed to an Exchange; otherwise they will be passed as String and byte respectively. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *httpMethodRestrict* (consumer) | Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma. |  | String
+| *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | Boolean
+| *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
+| *keepAlive* (producer) | Setting to ensure socket is not closed due to inactivity | true | Boolean
+| *options* (producer) | Sets additional channel options. The options that can be used are defined in org.xnio.Options. To configure from endpoint uri, then prefix each option with option., such as option.close-abort=true&option.send-buffer=8192 |  | Map
+| *reuseAddresses* (producer) | Setting to facilitate socket multiplexing | true | Boolean
+| *tcpNoDelay* (producer) | Setting to improve TCP protocol performance | true | Boolean
+| *throwExceptionOnFailure* (producer) | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | Boolean
+| *transferException* (producer) | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
+| *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *undertowHttpBinding* (advanced) | To use a custom UndertowHttpBinding to control the mapping between Camel message and undertow. |  | UndertowHttpBinding
+| *fireWebSocketChannelEvents* (websocket) | if true, the consumer will post notifications to the route when a new WebSocket peer connects, disconnects, etc. See UndertowConstants.EVENT_TYPE and EventType. | false | boolean
+| *sendTimeout* (websocket) | Timeout in milliseconds when sending to a websocket channel. The default timeout is 30000 (30 seconds). | 30000 | Integer
+| *sendToAll* (websocket) | To send to all websocket subscribers. Can be used to configure on endpoint level, instead of having to use the UndertowConstants.SEND_TO_ALL header on the message. |  | Boolean
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.undertow.enabled* | Enable undertow component | true | Boolean
+| *camel.component.undertow.host-options.buffer-size* | The buffer size of the Undertow host. |  | Integer
+| *camel.component.undertow.host-options.direct-buffers* | Set if the Undertow host should use direct buffers. |  | Boolean
+| *camel.component.undertow.host-options.http2-enabled* | Set if the Undertow host should use http2 protocol. |  | Boolean
+| *camel.component.undertow.host-options.io-threads* | The number of io threads to use in a Undertow host. |  | Integer
+| *camel.component.undertow.host-options.worker-threads* | The number of worker threads to use in a Undertow host. |  | Integer
+| *camel.component.undertow.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.undertow.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.undertow.undertow-http-binding* | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. The option is a org.apache.camel.component.undertow.UndertowHttpBinding type. |  | String
+| *camel.component.undertow.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Message Headers
+
+Camel uses the same message headers as the xref:http-component.adoc[HTTP]
+component. It also uses `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
+the chunked encoding on the camel-undertow consumer.
+
+Camel also populates *all* request.parameter and request.headers. For
+example, given a client request with the URL,
+`\http://myserver/myserver?orderid=123`, the exchange will contain a
+header named `orderid` with the value 123.
+
+== HTTP Producer Example
+
+The following is a basic example of how to send an HTTP request to an
+existing HTTP endpoint.
+
+in Java DSL
+
+[source,java]
+----
+from("direct:start")
+    .to("undertow:http://www.google.com");
+----
+
+or in XML
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="undertow:http://www.google.com"/>
+<route>
+----
+
+== HTTP Consumer Example
+
+In this sample we define a route that exposes a HTTP service at
+`\http://localhost:8080/myapp/myservice`:
+
+[source,xml]
+----
+<route>
+  <from uri="undertow:http://localhost:8080/myapp/myservice"/>
+  <to uri="bean:myBean"/>
+</route>
+----
+
+== WebSocket Example
+
+In this sample we define a route that exposes a WebSocket service at
+`\http://localhost:8080/myapp/mysocket` and returns back a response to the same channel:
+
+[source,xml]
+----
+<route>
+  <from uri="undertow:ws://localhost:8080/myapp/mysocket"/>
+  <transform><simple>Echo ${body}</simple></transform>
+  <to uri="undertow:ws://localhost:8080/myapp/mysocket"/>
+</route>
+----
+
+== Using localhost as host
+
+When you specify `localhost` in a URL, Camel exposes the endpoint only
+on the local TCP/IP network interface, so it cannot be accessed from
+outside the machine it operates on.
+
+If you need to expose an Undertow endpoint on a specific network interface,
+the numerical IP address of this interface should be used as the host.
+If you need to expose an Undertow endpoint on all network interfaces, the
+`0.0.0.0` address should be used.
+
+To listen across an entire URI prefix, see
+xref:manual::faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
+
+If you actually want to expose routes by HTTP and already have a
+Servlet, you should instead refer to the
+xref:servlet-component.adoc[Servlet Transport].

@@ -1,1 +1,255 @@
-../../../../../components/camel-freemarker/src/main/docs/freemarker-component.adoc
+= Freemarker Component
+
+*Available as of Camel version 2.10*
+
+
+The *freemarker:* component allows for processing a message using a
+http://freemarker.org/[FreeMarker] template. This can be ideal when
+using Templating to generate responses for
+requests.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+-------------------------------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-freemarker</artifactId>
+    <version>x.x.x</version> <!-- use the same version as your Camel core version -->
+</dependency>
+-------------------------------------------------------------------------------------
+
+== URI format
+
+[source,java]
+---------------------------------
+freemarker:templateName[?options]
+---------------------------------
+
+Where *templateName* is the classpath-local URI of the template to
+invoke; or the complete URL of the remote template (eg:
+`\file://folder/myfile.ftl`).
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+
+
+
+// component options: START
+The Freemarker component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | To use an existing freemarker.template.Configuration instance as the configuration. |  | Configuration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The Freemarker endpoint is configured using URI syntax:
+
+----
+freemarker:resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
+|===
+
+
+==== Query Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (producer) | Sets the Freemarker configuration to use |  | Configuration
+| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *encoding* (producer) | Sets the encoding to be used for loading the template file. |  | String
+| *templateUpdateDelay* (producer) | Number of seconds the loaded template resource will remain in the cache. |  | int
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.freemarker.configuration* | To use an existing freemarker.template.Configuration instance as the configuration. The option is a freemarker.template.Configuration type. |  | String
+| *camel.component.freemarker.enabled* | Enable freemarker component | true | Boolean
+| *camel.component.freemarker.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Headers
+
+Headers set during the FreeMarker evaluation are returned to the message
+and added as headers. This provides a mechanism for the FreeMarker
+component to return values to the Message.
+
+An example: Set the header value of `fruit` in the FreeMarker template:
+
+[source,java]
+--------------------------------------
+${request.setHeader('fruit', 'Apple')}
+--------------------------------------
+
+The header, `fruit`, is now accessible from the `message.out.headers`.
+
+== FreeMarker Context
+
+Camel will provide exchange information in the FreeMarker context (just
+a `Map`). The `Exchange` is transferred as:
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|key |value
+
+|`exchange` |The `Exchange` itself.
+
+|`exchange.properties` |The `Exchange` properties.
+
+|`headers` |The headers of the In message.
+
+|`camelContext` |The Camel Context.
+
+|`request` |The In message.
+
+|`body` |The In message body.
+
+|`response` |The Out message (only for InOut message exchange pattern).
+|=======================================================================
+
+You can setup your custom FreeMarker context in the
+message header with the key "*CamelFreemarkerDataModel*" just like this
+
+[source,java]
+--------------------------------------------------------------------
+Map<String, Object> variableMap = new HashMap<String, Object>();
+variableMap.put("headers", headersMap);
+variableMap.put("body", "Monday");
+variableMap.put("exchange", exchange);
+exchange.getIn().setHeader("CamelFreemarkerDataModel", variableMap);
+--------------------------------------------------------------------
+
+== Hot reloading
+
+The FreeMarker template resource is by default *not* hot reloadable for
+both file and classpath resources (expanded jar). If you set
+`contentCache=false`, then Camel will not cache the resource and hot
+reloading is thus enabled. This scenario can be used in development.
+
+== Dynamic templates
+
+Camel provides two headers by which you can define a different resource
+location for a template or the template content itself. If any of these
+headers is set then Camel uses this over the endpoint configured
+resource. This allows you to provide a dynamic template at runtime.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|FreemarkerConstants.FREEMARKER_RESOURCE |org.springframework.core.io.Resource |The template resource.
+
+|FreemarkerConstants.FREEMARKER_RESOURCE_URI |String |A URI for the template resource to use instead of the endpoint
+configured.
+
+|FreemarkerConstants.FREEMARKER_TEMPLATE |String |The template to use instead of the endpoint configured.
+|=======================================================================
+
+== Samples
+
+For example you could use something like:
+
+[source,java]
+-------------------------------------------
+from("activemq:My.Queue").
+  to("freemarker:com/acme/MyResponse.ftl");
+-------------------------------------------
+
+To use a FreeMarker template to formulate a response for a message for
+InOut message exchanges (where there is a `JMSReplyTo` header).
+
+If you want to use InOnly and consume the message and send it to another
+destination you could use:
+
+[source,java]
+-------------------------------------------
+from("activemq:My.Queue").
+  to("freemarker:com/acme/MyResponse.ftl").
+  to("activemq:Another.Queue");
+-------------------------------------------
+
+And to disable the content cache, e.g. for development usage where the
+`.ftl` template should be hot reloaded:
+
+[source,java]
+--------------------------------------------------------------
+from("activemq:My.Queue").
+  to("freemarker:com/acme/MyResponse.ftl?contentCache=false").
+  to("activemq:Another.Queue");
+--------------------------------------------------------------
+
+And a file-based resource:
+
+[source,java]
+---------------------------------------------------------------------
+from("activemq:My.Queue").
+  to("freemarker:file://myfolder/MyResponse.ftl?contentCache=false").
+  to("activemq:Another.Queue");
+---------------------------------------------------------------------
+
+It's possible to specify what template the component
+should use dynamically via a header, so for example:
+
+[source,java]
+---------------------------------------------------------------------------------------------
+from("direct:in").
+  setHeader(FreemarkerConstants.FREEMARKER_RESOURCE_URI).constant("path/to/my/template.ftl").
+  to("freemarker:dummy");
+---------------------------------------------------------------------------------------------
+
+== The Email Sample
+
+In this sample we want to use FreeMarker templating for an order
+confirmation email. The email template is laid out in FreeMarker as:
+
+[source,java]
+----------------------------------------------
+Dear ${headers.lastName}, ${headers.firstName}
+
+Thanks for the order of ${headers.item}.
+
+Regards Camel Riders Bookstore
+${body}
+----------------------------------------------
+
+And the java code:

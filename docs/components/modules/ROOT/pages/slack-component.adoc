@@ -1,1 +1,181 @@
-../../../../../components/camel-slack/src/main/docs/slack-component.adoc
+= Slack Component
+
+*Available as of Camel version 2.16*
+
+
+The Slack component allows you to connect to an instance
+of http://www.slack.com/[Slack] and delivers a message contained in the
+message body via a pre
+established https://api.slack.com/incoming-webhooks[Slack incoming
+webhook].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-slack</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+To send a message to a channel.
+
+[source,java]
+------------------------
+slack:#channel[?options]
+------------------------
+
+To send a direct message to a slackuser.
+
+[source,java]
+-------------------------
+slack:@username[?options]
+-------------------------
+
+== Options
+
+
+
+// component options: START
+The Slack component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *webhookUrl* (common) | The incoming webhook URL |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The Slack endpoint is configured using URI syntax:
+
+----
+slack:channel
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *channel* | *Required* The channel name (syntax #name) or slackuser (syntax userName) to send a message directly to an user. |  | String
+|===
+
+
+==== Query Parameters (26 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *maxResults* (consumer) | The Max Result for the poll | 10 | String
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *serverUrl* (consumer) | The Server URL of the Slack instance | https://slack.com | String
+| *token* (consumer) | The token to use |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *iconEmoji* (producer) | Use a Slack emoji as an avatar |  | String
+| *iconUrl* (producer) | The avatar that the component will use when sending message to a channel or user. |  | String
+| *username* (producer) | This is the username that the bot will have when sending messages to a channel or user. |  | String
+| *webhookUrl* (producer) | The incoming webhook URL |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.slack.enabled* | Enable slack component | true | Boolean
+| *camel.component.slack.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.slack.webhook-url* | The incoming webhook URL |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== SlackComponent
+
+The SlackComponent with XML must be configured as a Spring or Blueprint
+bean that contains the incoming webhook url for the integration as a
+parameter.
+
+[source,xml]
+-----------------------------------------------------------------------------------------------------------------------
+<bean id="slack" class="org.apache.camel.component.slack.SlackComponent">
+    <property name="webhookUrl" value="https://hooks.slack.com/services/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"/>
+</bean>
+-----------------------------------------------------------------------------------------------------------------------
+
+For Java you can configure this using Java code.
+
+== Example
+
+A CamelContext with Blueprint could be as:
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
+
+    <bean id="slack" class="org.apache.camel.component.slack.SlackComponent">
+        <property name="webhookUrl" value="https://hooks.slack.com/services/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"/>
+    </bean>
+
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+        <route>
+            <from uri="direct:test"/>
+            <to uri="slack:#channel?iconEmoji=:camel:&amp;username=CamelTest"/>
+        </route>
+    </camelContext>
+
+</blueprint>
+---------------------------------------------------------------------------------------------------------------------------
+
+== Consumer
+
+You can use also a consumer for messages in channel
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------
+from("slack://general?token=RAW(<YOUR_TOKEN>)&maxResults=1")
+    .to("mock:result");
+---------------------------------------------------------------------------------------------------------------------------
+
+In this way you'll get the last message from general channel. The consumer will take track of the timestamp of the last message consumed and in the next poll it will check from that timestamp.

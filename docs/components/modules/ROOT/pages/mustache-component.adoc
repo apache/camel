@@ -1,1 +1,198 @@
-../../../../../components/camel-mustache/src/main/docs/mustache-component.adoc
+= Mustache Component
+
+*Available as of Camel version 2.12*
+
+
+The Mustache component allows for processing a message using a
+http://mustache.github.io/[Mustache] template. This can be ideal when
+using Templating to generate responses for
+requests.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+---------------------------------------------------------------------------------
+<dependency>
+<groupId>org.apache.camel</groupId>
+<artifactId>camel-mustache</artifactId>
+<version>x.x.x</version> <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------------------------------------------------
+
+== URI format
+
+[source,java]
+-------------------------------
+mustache:templateName[?options]
+-------------------------------
+
+Where *templateName* is the classpath-local URI of the template to
+invoke; or the complete URL of the remote template (eg:
+\file://folder/myfile.mustache).
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+
+// component options: START
+The Mustache component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *mustacheFactory* (advanced) | To use a custom MustacheFactory |  | MustacheFactory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+
+
+// endpoint options: START
+The Mustache endpoint is configured using URI syntax:
+
+----
+mustache:resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
+|===
+
+
+==== Query Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *encoding* (producer) | Character encoding of the resource content. |  | String
+| *endDelimiter* (producer) | Characters used to mark template code end. | }} | String
+| *startDelimiter* (producer) | Characters used to mark template code beginning. | {{ | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mustache.enabled* | Enable mustache component | true | Boolean
+| *camel.component.mustache.mustache-factory* | To use a custom MustacheFactory. The option is a com.github.mustachejava.MustacheFactory type. |  | String
+| *camel.component.mustache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Mustache Context
+
+Camel will provide exchange information in the Mustache context (just a
+`Map`). The `Exchange` is transferred as:
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|key |value
+
+|`exchange` |The `Exchange` itself.
+
+|`exchange.properties` |The `Exchange` properties.
+
+|`headers` |The headers of the In message.
+
+|`camelContext` |The Camel Context.
+
+|`request` |The In message.
+
+|`body` |The In message body.
+
+|`response` |The Out message (only for InOut message exchange pattern).
+|=======================================================================
+
+== Dynamic templates
+
+Camel provides two headers by which you can define a different resource
+location for a template or the template content itself. If any of these
+headers is set then Camel uses this over the endpoint configured
+resource. This allows you to provide a dynamic template at runtime.
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Header |Type |Description |Support Version
+
+|MustacheConstants.MUSTACHE_RESOURCE_URI |String |A URI for the template resource to use instead of the endpoint
+configured. | 
+
+|MustacheConstants.MUSTACHE_TEMPLATE |String |The template to use instead of the endpoint configured. |
+|=======================================================================
+
+== Samples
+
+For example you could use something like:
+
+[source,java]
+--------------------------------------------
+from("activemq:My.Queue").
+to("mustache:com/acme/MyResponse.mustache");
+--------------------------------------------
+
+To use a Mustache template to formulate a response for a message for
+InOut message exchanges (where there is a `JMSReplyTo` header).
+
+If you want to use InOnly and consume the message and send it to another
+destination you could use:
+
+[source,java]
+--------------------------------------------
+from("activemq:My.Queue").
+to("mustache:com/acme/MyResponse.mustache").
+to("activemq:Another.Queue");
+--------------------------------------------
+
+It's possible to specify what template the component should use
+dynamically via a header, so for example:
+
+[source,java]
+--------------------------------------------------------------------------------------------
+from("direct:in").
+setHeader(MustacheConstants.MUSTACHE_RESOURCE_URI).constant("path/to/my/template.mustache").
+to("mustache:dummy");
+--------------------------------------------------------------------------------------------
+
+== The Email Sample
+
+In this sample we want to use Mustache templating for an order
+confirmation email. The email template is laid out in Mustache as:
+
+[source,java]
+-------------------------------------------------
+Dear {{headers.lastName}}}, {{headers.firstName}}
+
+Thanks for the order of {{headers.item}}.
+
+Regards Camel Riders Bookstore
+{{body}}
+-------------------------------------------------

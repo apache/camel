@@ -1,1 +1,255 @@
-../../../../../components/camel-soap/src/main/docs/soapjaxb-dataformat.adoc
+= SOAP DataFormat
+
+*Available as of Camel version 2.3*
+
+
+SOAP is a Data Format which uses JAXB2 and JAX-WS
+annotations to marshal and unmarshal SOAP payloads. It provides the
+basic features of Apache CXF without need for the CXF Stack.
+
+*Namespace prefix mapping*
+
+See xref:jaxb-dataformat.adoc[JAXB] for details how you can control namespace
+prefix mappings when marshalling using SOAP data format.
+
+== SOAP Options
+
+
+// dataformat options: START
+The SOAP dataformat supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| contextPath |  | String | Package name where your JAXB classes are located.
+| encoding |  | String | To overrule and use a specific encoding
+| elementNameStrategyRef |  | String | Refers to an element strategy to lookup from the registry. An element name strategy is used for two purposes. The first is to find a xml element name for a given object and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given soap fault name. The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed qName that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name and namespace from the XMLType annotation of the given type. If no namespace is set then package-info is used. Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice interface to determine the type name and to find the exception class for a SOAP fault All three classes is located in the package name org.apache.camel.dataformat.soap.name If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use QNameStrategy or TypeNameStrategy.
+| version | 1.1 | String | SOAP version should either be 1.1 or 1.2. Is by default 1.1
+| namespacePrefixRef |  | String | When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.
+| schema |  | String | To validate against an existing schema. Your can use the prefix classpath:, file: or http: to specify how the resource should by resolved. You can separate multiple schema files by using the ',' character.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.soapjaxb.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.soapjaxb.context-path* | Package name where your JAXB classes are located. |  | String
+| *camel.dataformat.soapjaxb.element-name-strategy-ref* | Refers to an element strategy to lookup from the registry. An element name strategy is used for two purposes. The first is to find a xml element name for a given object and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given soap fault name. The following three element strategy class name is provided out of the box. QNameStrategy - Uses a fixed qName that is configured on instantiation. Exception lookup is not supported TypeNameStrategy - Uses the name and namespace from the XMLType annotation of the given type. If no namespace is set then package-info is used. Exception lookup is not supported ServiceInterfaceStrategy - Uses information from a webservice interface to determine the type name and to find the exception class for a SOAP fault All three classes is located in the package name org.apache.camel.dataformat.soap.name If you have generated the web service stub code with cxf-codegen or a similar tool then you probably will want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use QNameStrategy or TypeNameStrategy. |  | String
+| *camel.dataformat.soapjaxb.enabled* | Enable soapjaxb dataformat | true | Boolean
+| *camel.dataformat.soapjaxb.encoding* | To overrule and use a specific encoding |  | String
+| *camel.dataformat.soapjaxb.namespace-prefix-ref* | When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes, such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping. |  | String
+| *camel.dataformat.soapjaxb.schema* | To validate against an existing schema. Your can use the prefix classpath:, file: or http: to specify how the resource should by resolved. You can separate multiple schema files by using the ',' character. |  | String
+| *camel.dataformat.soapjaxb.version* | SOAP version should either be 1.1 or 1.2. Is by default 1.1 | 1.1 | String
+|===
+// spring-boot-auto-configure options: END
+ND
+
+
+
+== ElementNameStrategy
+
+An element name strategy is used for two purposes. The first is to find
+a xml element name for a given object and soap action when marshaling
+the object into a SOAP message. The second is to find an Exception class
+for a given soap fault name.
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Strategy |Usage
+
+|QNameStrategy |Uses a fixed qName that is configured on instantiation. Exception lookup
+is not supported
+
+|TypeNameStrategy |Uses the name and namespace from the @XMLType annotation of the given
+type. If no namespace is set then package-info is used. Exception lookup
+is not supported
+
+|ServiceInterfaceStrategy |Uses information from a webservice interface to determine the type name
+and to find the exception class for a SOAP fault
+|=======================================================================
+
+If you have generated the web service stub code with cxf-codegen or a
+similar tool then you probably will want to use the
+ServiceInterfaceStrategy. In the case you have no annotated service
+interface you should use QNameStrategy or TypeNameStrategy.
+
+== Using the Java DSL
+
+The following example uses a named DataFormat of _soap_ which is
+configured with the package com.example.customerservice to initialize
+the
+http://java.sun.com/javase/6/docs/api/javax/xml/bind/JAXBContext.html[JAXBContext].
+The second parameter is the ElementNameStrategy. The route is able to
+marshal normal objects as well as exceptions. (Note the below just sends
+a SOAP Envelope to a queue. A web service provider would actually need
+to be listening to the queue for a SOAP call to actually occur, in which
+case it would be a one way SOAP request. If you need request reply then
+you should look at the next example.)
+
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------------------
+SoapJaxbDataFormat soap = new SoapJaxbDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
+from("direct:start")
+  .marshal(soap)
+  .to("jms:myQueue");
+-------------------------------------------------------------------------------------------------------------------------------------
+
+TIP: *See also*
+As the SOAP dataformat inherits from the xref:jaxb-dataformat.adoc[JAXB] dataformat
+most settings apply here as well
+
+
+=== Using SOAP 1.2
+
+*Available as of Camel 2.11*
+
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------------------
+SoapJaxbDataFormat soap = new SoapJaxbDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
+soap.setVersion("1.2");
+from("direct:start")
+  .marshal(soap)
+  .to("jms:myQueue");
+-------------------------------------------------------------------------------------------------------------------------------------
+
+When using XML DSL there is a version attribute you can set on the
+<soapjaxb> element.
+
+[source,xml]
+-----------------------------------------------------------------------------------------------------
+    <!-- Defining a ServiceInterfaceStrategy for retrieving the element name when marshalling -->
+    <bean id="myNameStrategy" class="org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy">
+        <constructor-arg value="com.example.customerservice.CustomerService"/>
+    <constructor-arg value="true"/>
+    </bean>
+-----------------------------------------------------------------------------------------------------
+
+And in the Camel route
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------
+<route>
+  <from uri="direct:start"/>
+  <marshal>
+    <soapjaxb contentPath="com.example.customerservice" version="1.2" elementNameStrategyRef="myNameStrategy"/>
+  </marshal>
+  <to uri="jms:myQueue"/>
+</route>
+---------------------------------------------------------------------------------------------------------------
+
+== Multi-part Messages
+
+*Available as of Camel 2.8.1*
+
+Multi-part SOAP messages are supported by the ServiceInterfaceStrategy.
+The ServiceInterfaceStrategy must be initialized with a service
+interface definition that is annotated in accordance with JAX-WS 2.2 and
+meets the requirements of the Document Bare style. The target method
+must meet the following criteria, as per the JAX-WS specification: 1) it
+must have at most one `in` or `in/out` non-header parameter, 2) if it
+has a return type other than `void` it must have no `in/out` or `out`
+non-header parameters, 3) if it it has a return type of `void` it must
+have at most one `in/out` or `out` non-header parameter.
+
+The ServiceInterfaceStrategy should be initialized with a boolean
+parameter that indicates whether the mapping strategy applies to the
+request parameters or response parameters.
+
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------------------------
+ServiceInterfaceStrategy strat =  new ServiceInterfaceStrategy(com.example.customerservice.multipart.MultiPartCustomerService.class, true);
+SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat("com.example.customerservice.multipart", strat);
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+=== Holder Object mapping
+
+JAX-WS specifies the use of a type-parameterized `javax.xml.ws.Holder`
+object for `In/Out` and `Out` parameters. You may use an instance of the
+parameterized-type directly. The camel-soap DataFormat marshals Holder
+values in accordance with the JAXB mapping for the class of the
+`Holder`'s value. No mapping is provided for `Holder` objects in an
+unmarshalled response.
+
+== Examples
+
+=== Webservice client
+
+The following route supports marshalling the request and unmarshalling a
+response or fault.
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------
+String WS_URI = "cxf://http://myserver/customerservice?serviceClass=com.example.customerservice&dataFormat=RAW";
+SoapJaxbDataFormat soapDF = new SoapJaxbDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
+from("direct:customerServiceClient")
+  .onException(Exception.class)
+    .handled(true)
+    .unmarshal(soapDF)
+  .end()
+  .marshal(soapDF)
+  .to(WS_URI)
+  .unmarshal(soapDF);
+---------------------------------------------------------------------------------------------------------------------------------------
+
+The below snippet creates a proxy for the service interface and makes a
+SOAP call to the above route.
+
+[source,java]
+---------------------------------------------------------------------------------------------------
+import org.apache.camel.Endpoint;
+import org.apache.camel.component.bean.ProxyHelper;
+...
+
+Endpoint startEndpoint = context.getEndpoint("direct:customerServiceClient");
+ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+// CustomerService below is the service endpoint interface, *not* the javax.xml.ws.Service subclass
+CustomerService proxy = ProxyHelper.createProxy(startEndpoint, classLoader, CustomerService.class);
+GetCustomersByNameResponse response = proxy.getCustomersByName(new GetCustomersByName());
+---------------------------------------------------------------------------------------------------
+
+=== Webservice Server
+
+Using the following route sets up a webservice server that listens on
+jms queue customerServiceQueue and processes requests using the class
+CustomerServiceImpl. The customerServiceImpl of course should implement
+the interface CustomerService. Instead of directly instantiating the
+server class it could be defined in a spring context as a regular bean.
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------
+SoapJaxbDataFormat soapDF = new SoapJaxbDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
+CustomerService serverBean = new CustomerServiceImpl();
+from("jms://queue:customerServiceQueue")
+  .onException(Exception.class)
+    .handled(true)
+    .marshal(soapDF)
+  .end()
+  .unmarshal(soapDF)
+  .bean(serverBean)
+  .marshal(soapDF);
+---------------------------------------------------------------------------------------------------------------------------------------
+
+== Dependencies
+
+To use the SOAP dataformat in your camel routes you need to add the
+following dependency to your pom.
+
+[source,xml]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-soap</artifactId>
+  <version>x.y.z</version>
+</dependency>
+-------------------------------------

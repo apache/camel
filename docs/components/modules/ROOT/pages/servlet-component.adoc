@@ -1,1 +1,479 @@
-../../../../../components/camel-servlet/src/main/docs/servlet-component.adoc
+= Servlet Component
+
+*Available as of Camel version 2.0*
+
+
+The Servlet component provides HTTP based
+endpoints for consuming HTTP requests that arrive at
+a HTTP endpoint that is bound to a published Servlet.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+---------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-servlet</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------------------------------
+
+
+[NOTE]
+====
+*Stream*
+
+Servlet is stream based, which means the input it receives is submitted
+to Camel as a stream. That means you will only be able to read the
+content of the stream *once*. If you find a situation where the message
+body appears to be empty or you need to access the data multiple times
+(eg: doing multicasting, or redelivery error handling) you should use
+Stream caching or convert the message body to
+a `String` which is safe to be read multiple times.
+====
+
+== URI format
+
+[source,java]
+---------------------------------
+servlet://relative_path[?options]
+---------------------------------
+
+You can append query options to the URI in the following format:
+`?option=value&option=value&...`
+
+== Options
+
+// component options: START
+The Servlet component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *servletName* (consumer) | Default name of servlet to use. The default name is CamelServlet. | CamelServlet | String
+| *httpRegistry* (consumer) | To use a custom org.apache.camel.component.servlet.HttpRegistry. |  | HttpRegistry
+| *attachmentMultipart Binding* (consumer) | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | boolean
+| *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
+| *httpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
+| *httpConfiguration* (advanced) | To use the shared HttpConfiguration as base configuration. |  | HttpConfiguration
+| *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Servlet endpoint is configured using URI syntax:
+
+----
+servlet:contextPath
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contextPath* | *Required* The context-path to use |  | String
+|===
+
+
+==== Query Parameters (22 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *disableStreamCache* (common) | Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a in memory/overflow to file, Stream caching) cache. By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance, in case you do not need to read the message payload multiple times. The http/http4 producer will by default cache the response body stream. If setting this option to true, then the producers will not cache the response body stream but use the response stream as-is as the message body. | false | boolean
+| *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *httpBinding* (common) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
+| *async* (consumer) | Configure the consumer to work in async mode | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *chunked* (consumer) | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response | true | boolean
+| *httpMethodRestrict* (consumer) | Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma. |  | String
+| *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
+| *responseBufferSize* (consumer) | To use a custom buffer size on the javax.servlet.ServletResponse. |  | Integer
+| *servletName* (consumer) | Name of the servlet to use | CamelServlet | String
+| *transferException* (consumer) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| *attachmentMultipartBinding* (consumer) | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | boolean
+| *eagerCheckContentAvailable* (consumer) | Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present. This can be turned on in case HTTP clients do not send streamed data. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
+| *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
+| *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
+| *mapHttpMessageBody* (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
+| *mapHttpMessageFormUrl EncodedBody* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
+| *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 13 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.servlet.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
+| *camel.component.servlet.attachment-multipart-binding* | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | Boolean
+| *camel.component.servlet.enabled* | Enable servlet component | true | Boolean
+| *camel.component.servlet.file-name-ext-whitelist* | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
+| *camel.component.servlet.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.servlet.http-binding* | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. The option is a org.apache.camel.http.common.HttpBinding type. |  | String
+| *camel.component.servlet.http-configuration* | To use the shared HttpConfiguration as base configuration. The option is a org.apache.camel.http.common.HttpConfiguration type. |  | String
+| *camel.component.servlet.http-registry* | To use a custom org.apache.camel.component.servlet.HttpRegistry. The option is a org.apache.camel.component.servlet.HttpRegistry type. |  | String
+| *camel.component.servlet.mapping.context-path* | Context path used by the servlet component for automatic mapping. | /camel/* | String
+| *camel.component.servlet.mapping.enabled* | Enables the automatic mapping of the servlet component into the Spring web context. | true | Boolean
+| *camel.component.servlet.mapping.servlet-name* | The name of the Camel servlet. | CamelServlet | String
+| *camel.component.servlet.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.servlet.servlet-name* | Default name of servlet to use. The default name is CamelServlet. | CamelServlet | String
+|===
+// spring-boot-auto-configure options: END
+
+
+== Message Headers
+
+Camel will apply the same Message Headers as the xref:http-component.adoc[HTTP]
+component.
+
+Camel will also populate *all* `request.parameter` and
+`request.headers`. For example, if a client request has the URL,
+http://myserver/myserver?orderid=123, the exchange will contain a
+header named `orderid` with the value 123.
+
+== Usage
+
+You can consume only `from` endpoints generated by the Servlet component.
+Therefore, it should be used only as input into your Camel routes. To
+issue HTTP requests against other HTTP endpoints, use the
+xref:http-component.adoc[HTTP Component].
+
+== Putting Camel JARs in the app server boot classpath
+
+If you put the Camel JARs such as `camel-core`, `camel-servlet`, etc. in
+the boot classpath of your application server (eg usually in its lib
+directory), then mind that the servlet mapping list is now shared
+between multiple deployed Camel application in the app server.
+
+Mind that putting Camel JARs in the boot classpath of the application
+server is generally not best practice!
+
+So in those situations you *must* define a custom and unique servlet
+name in each of your Camel application, eg in the `web.xml` define:
+
+[source,xml]
+---------------------------------------------------------------------------------------------
+<servlet>
+  <servlet-name>MyServlet</servlet-name>
+  <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+  <load-on-startup>1</load-on-startup>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>MyServlet</servlet-name>
+  <url-pattern>/*</url-pattern>
+</servlet-mapping>
+---------------------------------------------------------------------------------------------
+
+And in your Camel endpoints then include the servlet name as well
+
+[source,xml]
+---------------------------------------------------
+<route>
+  <from uri="servlet://foo?servletName=MyServlet"/>
+  ...
+</route>
+---------------------------------------------------
+
+Camel detects this duplicate and fail to
+start the application. You can control to ignore this duplicate by
+setting the servlet init-parameter ignoreDuplicateServletName to true as
+follows:
+
+[source,xml]
+-----------------------------------------------------------------------------------------------
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <display-name>Camel Http Transport Servlet</display-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+    <init-param>
+      <param-name>ignoreDuplicateServletName</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </servlet>
+-----------------------------------------------------------------------------------------------
+
+But it is *strongly advised* to use unique `servlet-name` for each Camel
+application to avoid this duplication clash, as well any unforeseen
+side-effects.
+
+== Sample
+
+Use xref:servlet-component.adoc[Servlet] in Spring web applications for simplicity's sake.
+In this sample, we define a route that exposes a HTTP service at
+http://localhost:8080/camel/services/hello.
+
+First, you need to publish the
+https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+through the normal Web Container, or OSGi Service. Use the `Web.xml` file to publish the
+https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+as follows:
+
+[source,xml]
+-------------------------------------------------------------------------
+<web-app>
+
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <display-name>Camel Http Transport Servlet</display-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>CamelServlet</servlet-name>
+    <url-pattern>/services/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>
+-------------------------------------------------------------------------
+
+
+Then you can define your route as follows:
+
+[source,java]
+-------------------------------------------------------------------------
+from("servlet:hello?matchOnUriPrefix=true").process(new Processor() {
+    public void process(Exchange exchange) throws Exception {
+        String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+        String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+        path = path.substring(path.lastIndexOf("/"));
+
+        assertEquals("Get a wrong content type", CONTENT_TYPE, contentType);
+        // assert camel http header
+        String charsetEncoding = exchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
+        assertEquals("Get a wrong charset name from the message heaer", "UTF-8", charsetEncoding);
+        // assert exchange charset
+        assertEquals("Get a wrong charset naem from the exchange property", "UTF-8", exchange.getProperty(Exchange.CHARSET_NAME));
+        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
+        exchange.getOut().setHeader("PATH", path);
+        exchange.getOut().setBody("<b>Hello World</b>");
+    }
+});
+-------------------------------------------------------------------------
+
+[NOTE]
+====
+*Specify the relative path for camel-servlet endpoint*
+
+Since we are binding the HTTP transport with a published servlet, and we
+don't know the servlet's application context path, the `camel-servlet`
+endpoint uses the relative path to specify the endpoint's URL. A client
+can access the `camel-servlet` endpoint through the servlet publish
+address: `("http://localhost:8080/camel/services") + RELATIVE_PATH("/hello")`
+====
+
+=== Sample when using Spring
+
+When using the Servlet component in a Camel/Spring application it's
+often required to load the Spring ApplicationContext _after_ the Servlet
+component has started. This can be accomplished by using Spring's
+`ContextLoaderServlet` instead of `ContextLoaderListener`. In that case
+you'll need to start `ContextLoaderServlet` after
+https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+like this:
+
+[source,xml]
+-------------------------------------------------------------------------
+<web-app>
+  <servlet>
+        <servlet-name>CamelServlet</servlet-name>
+        <servlet-class>
+            org.apache.camel.component.servlet.CamelHttpTransportServlet
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet>
+        <servlet-name>SpringApplicationContext</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.ContextLoaderServlet
+        </servlet-class>
+        <load-on-startup>2</load-on-startup>
+  </servlet>
+<web-app>
+-------------------------------------------------------------------------
+
+=== Sample when using OSGi
+
+You can publish the
+https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+as an OSGi service with Blueprint like this:
+
+[source,xml]
+-------------------------------------------------------------------------
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+           http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+    <bean id="camelServlet" class="org.apache.camel.component.servlet.CamelHttpTransportServlet" />
+
+    <!--
+        Enlist it in OSGi service registry.
+        This will cause two things:
+        1) As the pax web whiteboard extender is running the CamelServlet will
+           be registered with the OSGi HTTP Service
+        2) It will trigger the HttpRegistry in other bundles so the servlet is
+           made known there too
+    -->
+    <service ref="camelServlet">
+        <interfaces>
+            <value>javax.servlet.Servlet</value>
+            <value>org.apache.camel.http.common.CamelServlet</value>
+        </interfaces>
+        <service-properties>
+            <entry key="alias" value="/camel/services" />
+            <entry key="matchOnUriPrefix" value="true" />
+            <entry key="servlet-name" value="CamelServlet" />
+        </service-properties>
+    </service>
+
+</blueprint>
+-------------------------------------------------------------------------
+
+Then use this service in your Camel route like this:
+
+[source,xml]
+-------------------------------------------------------------------------
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+           http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+    <reference id="servletref" ext:proxy-method="classes" interface="org.apache.camel.http.common.CamelServlet">
+        <reference-listener ref="httpRegistry" bind-method="register" unbind-method="unregister" />
+    </reference>
+
+    <bean id="httpRegistry" class="org.apache.camel.component.servlet.DefaultHttpRegistry" />
+
+    <bean id="servlet" class="org.apache.camel.component.servlet.ServletComponent">
+        <property name="httpRegistry" ref="httpRegistry" />
+    </bean>
+
+    <bean id="servletProcessor" class="org.apache.camel.example.servlet.ServletProcessor" />
+
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+        <route>
+            <!-- Notice how we can use the servlet scheme which is that reference above -->
+            <from uri="servlet://hello" />
+            <process ref="servletProcessor" />
+        </route>
+    </camelContext>
+
+</blueprint>
+-------------------------------------------------------------------------
+
+You can use an `Activator` to publish
+the
+https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
+on the OSGi platform:
+
+[source,java]
+-------------------------------------------------------------------------
+import java.util.Dictionary;
+import java.util.Hashtable;
+
+import org.apache.camel.component.servlet.CamelHttpTransportServlet;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.http.HttpContext;
+import org.osgi.service.http.HttpService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.osgi.context.BundleContextAware;
+
+public final class ServletActivator implements BundleActivator, BundleContextAware {
+    private static final Logger LOG = LoggerFactory.getLogger(ServletActivator.class);
+    private static boolean registerService;
+
+    /**
+     * HttpService reference.
+     */
+    private ServiceReference<?> httpServiceRef;
+
+    /**
+     * Called when the OSGi framework starts our bundle
+     */
+    public void start(BundleContext bc) throws Exception {
+        registerServlet(bc);
+    }
+
+    /**
+     * Called when the OSGi framework stops our bundle
+     */
+    public void stop(BundleContext bc) throws Exception {
+        if (httpServiceRef != null) {
+            bc.ungetService(httpServiceRef);
+            httpServiceRef = null;
+        }
+    }
+
+    protected void registerServlet(BundleContext bundleContext) throws Exception {
+        httpServiceRef = bundleContext.getServiceReference(HttpService.class.getName());
+
+        if (httpServiceRef != null && !registerService) {
+            LOG.info("Register the servlet service");
+            final HttpService httpService = (HttpService)bundleContext.getService(httpServiceRef);
+            if (httpService != null) {
+                // create a default context to share between registrations
+                final HttpContext httpContext = httpService.createDefaultHttpContext();
+                // register the hello world servlet
+                final Dictionary<String, String> initParams = new Hashtable<String, String>();
+                initParams.put("matchOnUriPrefix", "false");
+                initParams.put("servlet-name", "CamelServlet");
+                httpService.registerServlet("/camel/services", // alias
+                    new CamelHttpTransportServlet(), // register servlet
+                    initParams, // init params
+                    httpContext // http context
+                );
+                registerService = true;
+            }
+        }
+    }
+
+    public void setBundleContext(BundleContext bc) {
+        try {
+            registerServlet(bc);
+        } catch (Exception e) {
+            LOG.error("Cannot register the servlet, the reason is " + e);
+        }
+    }
+
+}
+-------------------------------------------------------------------------
+
+=== Usage with Spring-Boot
+The _camel-servlet-starter_ library binds automatically all the rest endpoints under the `/camel/*` context path.
+The following table summarizes the additional configuration properties available in the _camel-servlet-starter_ library.
+The automatic mapping of the Camel servlet can also be disabled.
+
+[width="100%",cols="3,1m,6",options="header"]
+|=======================================================================
+| Spring-Boot Property | Default | Description
+| camel.component.servlet.mapping.enabled | true | Enables the automatic mapping of the servlet component into the Spring web context
+| camel.component.servlet.mapping.context-path | /camel/* | Context path used by the servlet component for automatic mapping
+| camel.component.servlet.mapping.servlet-name | CamelServlet | The name of the Camel servlet
+|=======================================================================

@@ -1,1 +1,111 @@
-../../../../../components/camel-jibx/src/main/docs/jibx-dataformat.adoc
+[[jibx-dataformat]]
+= JiBX DataFormat
+
+*Available as of Camel version 2.6*
+
+JiBX is a Data Format which uses the
+http://jibx.sourceforge.net[JiBX library] to marshal and unmarshal Java
+objects to and from XML.
+
+[source,java]
+-----------------------------------------------------------
+// lets turn Object messages into XML then send to MQSeries
+from("activemq:My.Queue").
+  marshal().jibx().
+  to("mqseries:Another.Queue");
+-----------------------------------------------------------
+
+Please note that marshaling process can recognize the message type at
+the runtime. However while unmarshaling message from XML we need to
+specify target class explicitly.
+
+[source,java]
+-------------------------------------------
+// lets turn XML into PurchaseOrder message
+from("mqseries:Another.Queue").
+  unmarshal().jibx(PurchaseOrder.class).
+  to("activemq:My.Queue");
+-------------------------------------------
+
+### Options
+
+// dataformat options: START
+The JiBX dataformat supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| unmarshallClass |  | String | Class name to use when unmarshalling from XML to Java.
+| bindingName |  | String | To use a custom binding factory
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.jibx.binding-name* | To use a custom binding factory |  | String
+| *camel.dataformat.jibx.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.jibx.enabled* | Enable jibx dataformat | true | Boolean
+| *camel.dataformat.jibx.unmarshall-class* | Class name to use when unmarshalling from XML to Java. |  | String
+|===
+// spring-boot-auto-configure options: END
+ND
+
+
+### JiBX Spring DSL
+
+JiBX data format is also supported by Camel Spring DSL.
+
+[source,xml]
+--------------------------------------------------------------------------------------
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+  <!-- Define data formats -->
+  <dataFormats>
+    <jibx id="jibx" unmarshallClass="org.apache.camel.dataformat.jibx.PurchaseOrder"/>
+  </dataFormats>
+
+  <!-- Marshal message to XML -->
+  <route>
+    <from uri="direct:marshal"/>
+    <marshal ref="jibx"/>
+    <to uri="mock:result"/>
+  </route>
+
+  <!-- Unmarshal message from XML -->
+  <route>
+    <from uri="direct:unmarshal"/>
+    <unmarshal ref="jibx"/>
+    <to uri="mock:result"/>
+  </route>
+
+</camelContext>
+--------------------------------------------------------------------------------------
+
+### Dependencies
+
+To use JiBX in your camel routes you need to add the a dependency on
+*camel-jibx* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jibx</artifactId>
+  <version>2.6.0</version>
+</dependency>
+-------------------------------------

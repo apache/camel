@@ -1,1 +1,100 @@
-../../../../../components/camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc
+= JSon Fastjson DataFormat
+
+*Available as of Camel version 2.20*
+
+
+Fastjson is a Data Format which uses the
+https://github.com/alibaba/fastjson[Fastjson Library]
+
+[source,java]
+-------------------------------
+from("activemq:My.Queue").
+  marshal().json(JsonLibrary.Fastjson).
+  to("mqseries:Another.Queue");
+-------------------------------
+
+== Fastjson Options
+
+
+// dataformat options: START
+The JSon Fastjson dataformat supports 19 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| objectMapper |  | String | Lookup and use the existing ObjectMapper with the given id when using Jackson.
+| useDefaultObjectMapper | true | Boolean | Whether to lookup and use default Jackson ObjectMapper from the registry.
+| prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
+| library | XStream | JsonLibrary | Which json library to use.
+| unmarshalTypeName |  | String | Class name of the java type to use when unarmshalling
+| jsonView |  | Class | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations
+| include |  | String | If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL
+| allowJmsType | false | Boolean | Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.
+| collectionTypeName |  | String | Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default.
+| useList | false | Boolean | To unarmshal to a List of Map or a List of Pojo.
+| enableJaxbAnnotationModule | false | Boolean | Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used by Jackson.
+| moduleClassNames |  | String | To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.
+| moduleRefs |  | String | To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
+| enableFeatures |  | String | Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
+| disableFeatures |  | String | Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
+| permissions |  | String | Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow, and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specfy com.foo.. Multiple permissions can be configured separated by comma, such as com.foo.,-com.foo.bar.MySecretBean. The following default permission is always included: -,java.lang.,java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions.
+| allowUnmarshallType | false | Boolean | If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.
+| timezone |  | String | If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on the others Json DataFormat, like gson, fastjson and xstream.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 20 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.json-fastjson.allow-jms-type* | Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to. | false | Boolean
+| *camel.dataformat.json-fastjson.allow-unmarshall-type* | If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used. | false | Boolean
+| *camel.dataformat.json-fastjson.collection-type-name* | Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default. |  | String
+| *camel.dataformat.json-fastjson.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.json-fastjson.disable-features* | Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma |  | String
+| *camel.dataformat.json-fastjson.enable-features* | Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma |  | String
+| *camel.dataformat.json-fastjson.enable-jaxb-annotation-module* | Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used by Jackson. | false | Boolean
+| *camel.dataformat.json-fastjson.enabled* | Whether to enable auto configuration of the json-fastjson data format. This is enabled by default. |  | Boolean
+| *camel.dataformat.json-fastjson.include* | If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL |  | String
+| *camel.dataformat.json-fastjson.json-view* | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations |  | Class
+| *camel.dataformat.json-fastjson.library* | Which json library to use. |  | JsonLibrary
+| *camel.dataformat.json-fastjson.module-class-names* | To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma. |  | String
+| *camel.dataformat.json-fastjson.module-refs* | To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma. |  | String
+| *camel.dataformat.json-fastjson.object-mapper* | Lookup and use the existing ObjectMapper with the given id when using Jackson. |  | String
+| *camel.dataformat.json-fastjson.permissions* | Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow, and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specfy com.foo.. Multiple permissions can be configured separated by comma, such as com.foo.,-com.foo.bar.MySecretBean. The following default permission is always included: -,java.lang.,java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions. |  | String
+| *camel.dataformat.json-fastjson.pretty-print* | To enable pretty printing output nicely formatted. Is by default false. | false | Boolean
+| *camel.dataformat.json-fastjson.timezone* | If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on the others Json DataFormat, like gson, fastjson and xstream. |  | String
+| *camel.dataformat.json-fastjson.unmarshal-type-name* | Class name of the java type to use when unarmshalling |  | String
+| *camel.dataformat.json-fastjson.use-default-object-mapper* | Whether to lookup and use default Jackson ObjectMapper from the registry. | true | Boolean
+| *camel.dataformat.json-fastjson.use-list* | To unarmshal to a List of Map or a List of Pojo. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Dependencies
+
+To use Fastjson in your camel routes you need to add the dependency
+on *camel-fastjson* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-fastjson</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------

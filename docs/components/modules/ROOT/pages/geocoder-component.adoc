@@ -1,1 +1,188 @@
-../../../../../components/camel-geocoder/src/main/docs/geocoder-component.adoc
+= Geocoder Component
+
+*Available as of Camel version 2.12*
+
+
+The Geocoder component is used for looking up geocodes (latitude and
+longitude) for a given address, or reverse lookup. The component uses
+the https://code.google.com/p/geocoder-java/[Java API for Google
+Geocoder] library.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-geocoder</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+--------------------------------------------
+geocoder:address:name[?options]
+geocoder:latlng:latitude,longitude[?options]
+--------------------------------------------
+
+== Options
+
+
+// component options: START
+The Geocoder component has no options.
+// component options: END
+
+
+
+
+// endpoint options: START
+The Geocoder endpoint is configured using URI syntax:
+
+----
+geocoder:address:latlng
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *address* | The geo address which should be prefixed with address: |  | String
+| *latlng* | The geo latitude and longitude which should be prefixed with latlng: |  | String
+|===
+
+
+==== Query Parameters (13 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *headersOnly* (producer) | Whether to only enrich the Exchange with headers, and leave the body as-is. | false | boolean
+| *language* (producer) | The language to use. | en | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *proxyAuthDomain* (proxy) | Domain for proxy NTML authentication |  | String
+| *proxyAuthHost* (proxy) | Optional host for proxy NTML authentication |  | String
+| *proxyAuthMethod* (proxy) | Authentication method for proxy, either as Basic, Digest or NTLM. |  | String
+| *proxyAuthPassword* (proxy) | Password for proxy authentication |  | String
+| *proxyAuthUsername* (proxy) | Username for proxy authentication |  | String
+| *proxyHost* (proxy) | The proxy host name |  | String
+| *proxyPort* (proxy) | The proxy port number |  | Integer
+| *apiKey* (security) | To use google apiKey |  | String
+| *clientId* (security) | To use google premium with this client id |  | String
+| *clientKey* (security) | To use google premium with this client key |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.geocoder.enabled* | Enable geocoder component | true | Boolean
+| *camel.component.geocoder.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Exchange data format
+
+Camel will deliver the body as a
+`com.google.code.geocoder.model.GeocodeResponse` type. +
+ And if the address is `"current"` then the response is a String type
+with a JSON representation of the current location.
+
+If the option `headersOnly` is set to `true` then the message body is
+left as-is, and only headers will be added to the
+Exchange.
+
+== Message Headers
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`CamelGeoCoderStatus` |Mandatory. Status code from the geocoder library. If status is
+`GeocoderStatus.OK` then additional headers is enriched
+
+|`CamelGeoCoderAddress` |The formatted address
+
+|`CamelGeoCoderLat` |The latitude of the location.
+
+|`CamelGeoCoderLng` |The longitude of the location.
+
+|`CamelGeoCoderLatlng` |The latitude and longitude of the location. Separated by comma.
+
+|`CamelGeoCoderCity` |The city long name.
+
+|`CamelGeoCoderRegionCode` |The region code.
+
+|`CamelGeoCoderRegionName` |The region name.
+
+|`CamelGeoCoderCountryLong` |The country long name.
+
+|`CamelGeoCoderCountryShort` |The country short name.
+
+|`CamelGeoCoderPostalCode` |The postal code.
+|=======================================================================
+
+Notice not all headers may be provided depending on available data and
+mode in use (address vs latlng).
+
+== Samples
+
+In the example below we get the latitude and longitude for Paris, France
+
+[source,java]
+-----------------------------------------
+  from("direct:start")
+    .to("geocoder:address:Paris, France")
+-----------------------------------------
+
+If you provide a header with the `CamelGeoCoderAddress` then that
+overrides the endpoint configuration, so to get the location of
+Copenhagen, Denmark we can send a message with a headers as shown:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+template.sendBodyAndHeader("direct:start", "Hello", GeoCoderConstants.ADDRESS, "Copenhagen, Denmark");
+------------------------------------------------------------------------------------------------------
+
+To get the address for a latitude and longitude we can do:
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------------------
+  from("direct:start")
+    .to("geocoder:latlng:40.714224,-73.961452")
+    .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} and in country ${header.CamelGeoCoderCountryShort}")
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Which will log
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------
+Location 285 Bedford Avenue, Brooklyn, NY 11211, USA is at lat/lng: 40.71412890,-73.96140740 and in country US
+--------------------------------------------------------------------------------------------------------------
+
+To get the current location you can use "current" as the address as
+shown:
+
+[source,java]
+-----------------------------------
+  from("direct:start")
+    .to("geocoder:address:current")
+-----------------------------------

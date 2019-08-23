@@ -1,1 +1,291 @@
-../../../../../components/camel-openstack/src/main/docs/openstack-keystone-component.adoc
+= OpenStack Keystone Component
+
+*Available as of Camel version 2.19*
+
+
+The Openstack Keystone component allows messages to be sent to an OpenStack identity services.
+
+*The openstack-keystone component supports only Identity API v3!*
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-openstack</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel.
+
+
+== URI Format
+
+[source,java]
+----------------------------
+openstack-keystone://hosturl[?options]
+----------------------------
+
+You can append query options to the URI in the following format
+`?options=value&option2=value&...`
+
+== URI Options
+
+// component options: START
+The OpenStack Keystone component has no options.
+// component options: END
+
+// endpoint options: START
+The OpenStack Keystone endpoint is configured using URI syntax:
+
+----
+openstack-keystone:host
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* | *Required* OpenStack host url |  | String
+|===
+
+
+==== Query Parameters (8 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *config* (producer) | OpenStack configuration |  | Config
+| *domain* (producer) | Authentication domain | default | String
+| *operation* (producer) | The operation to do |  | String
+| *password* (producer) | *Required* OpenStack password |  | String
+| *project* (producer) | *Required* The project ID |  | String
+| *subsystem* (producer) | *Required* OpenStack Keystone subsystem |  | String
+| *username* (producer) | *Required* OpenStack username |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.openstack-keystone.enabled* | Enable openstack-keystone component | true | Boolean
+| *camel.component.openstack-keystone.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Usage
+You can use following settings for each subsystem:
+
+== domains
+
+=== Operations you can perform with the Domain producer
+[width="100%",cols="20%,80%",options="header",]
+|=========================================================================
+|Operation | Description
+
+|`create` | Create new domain.
+
+|`get` | Get the domain.
+
+|`getAll` | Get all domains.
+
+|`update` | Update the domain.
+
+|`delete` | Delete the domain.
+|=========================================================================
+
+=== Message headers evaluated by the Domain producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=========================================================================
+|Header |Type |Description
+
+|`operation` | `String` | The operation to perform.
+
+|`ID` | `String` | ID of the domain.
+
+|`name` |`String` |The domain name.
+
+|`description` |`String` | Domain description.
+|=========================================================================
+
+If you need more precise domain settings you can create new object of the type *org.openstack4j.model.identity.v3.Domain* and send in the message body.
+
+== groups
+
+=== Operations you can perform with the Group producer
+[width="100%",cols="20%,80%",options="header",]
+|=========================================================================
+|Operation | Description
+
+|`create` | Create new group.
+
+|`get` | Get the group.
+
+|`getAll` | Get all groups.
+
+|`update` | Update the group.
+
+|`delete` | Delete the group.
+
+|`addUserToGroup` | Add the user to the group.
+
+|`checkUserGroup` | Check whether is the user in the group.
+
+|`removeUserFromGroup` | Remove the user from the group.
+|=========================================================================
+
+=== Message headers evaluated by the Group producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=========================================================================
+|Header |Type |Description
+
+|`operation` | `String` | The operation to perform.
+
+|`groupId` | `String` | ID of the group.
+
+|`name` |`String` |The group name.
+
+|`userId` | `String` | ID of the user.
+
+|`domainId` | `String` | ID of the domain.
+
+|`description` |`String` | Group description.
+|=========================================================================
+
+If you need more precise group settings you can create new object of the type *org.openstack4j.model.identity.v3.Group* and send in the message body.
+
+== projects
+
+=== Operations you can perform with the Project producer
+[width="100%",cols="20%,80%",options="header",]
+|=========================================================================
+|Operation | Description
+
+|`create` | Create new project.
+
+|`get` | Get the project.
+
+|`getAll` | Get all projects.
+
+|`update` | Update the project.
+
+|`delete` | Delete the project.
+|=========================================================================
+
+=== Message headers evaluated by the Project producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=========================================================================
+|Header |Type |Description
+
+|`operation` | `String` | The operation to perform.
+
+|`ID` | `String` | ID of the project.
+
+|`name` |`String` |The project name.
+
+|`description` |`String` | Project description.
+
+|`domainId` | `String` | ID of the domain.
+
+|`parentId` | `String` | The parent project ID.
+|=========================================================================
+
+If you need more precise project settings you can create new object of the type *org.openstack4j.model.identity.v3.Project* and send in the message body.
+
+== regions
+
+=== Operations you can perform with the Region producer
+[width="100%",cols="20%,80%",options="header",]
+|=========================================================================
+|Operation | Description
+
+|`create` | Create new region.
+
+|`get` | Get the region.
+
+|`getAll` | Get all regions.
+
+|`update` | Update the region.
+
+|`delete` | Delete the region.
+|=========================================================================
+
+=== Message headers evaluated by the Region producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=========================================================================
+|Header |Type |Description
+
+|`operation` | `String` | The operation to perform.
+
+|`ID` | `String` | ID of the region.
+
+|`description` |`String` | Region description.
+|=========================================================================
+
+If you need more precise region settings you can create new object of the type *org.openstack4j.model.identity.v3.Region* and send in the message body.
+
+== users
+
+=== Operations you can perform with the User producer
+[width="100%",cols="20%,80%",options="header",]
+|=========================================================================
+|Operation | Description
+
+|`create` | Create new user.
+
+|`get` | Get the user.
+
+|`getAll` | Get all users.
+
+|`update` | Update the user.
+
+|`delete` | Delete the user.
+|=========================================================================
+
+=== Message headers evaluated by the User producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=========================================================================
+|Header |Type |Description
+
+|`operation` | `String` | The operation to perform.
+
+|`ID` | `String` | ID of the user.
+
+|`name` |`String` |The user name.
+
+|`description` |`String` | User description.
+
+|`domainId` | `String` | ID of the domain.
+
+|`password` | `String`| User's password.
+
+|`email` | `String`| User's email.
+|=========================================================================
+
+If you need more precise user settings you can create new object of the type *org.openstack4j.model.identity.v3.User* and send in the message body.

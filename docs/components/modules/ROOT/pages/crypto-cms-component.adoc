@@ -1,1 +1,412 @@
-../../../../../components/camel-crypto-cms/src/main/docs/crypto-cms-component.adoc
+= Crypto CMS Component
+
+*Available as of Camel version 2.20*
+
+
+http://tools.ietf.org/html/rfc5652[Cryptographic Message Syntax (CMS)] is a well established standard for signing and encrypting messages. The Apache Crypto CMS component supports the following parts of this standard:
+* Content Type "Enveloped Data" with Key Transport (asymmetric key),
+* Content Type "Signed Data".
+You can create CMS Enveloped Data instances, decrypt CMS Enveloped Data instances, create CMS Signed Data instances, and validate CMS Signed Data instances.
+
+The component uses the https://www.bouncycastle.org/java.html[Bouncy Castle] libraries bcprov-jdk15on and bcpkix-jdk15on.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-crypto-cms</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+We recommend to register the Bouncy Castle security provider in your application before you call an endpoint of this component:
+
+[source,java]
+----
+Security.addProvider(new BouncyCastleProvider());
+----
+
+If the Bouncy Castle security provider is not registered then the Crypto CMS component will register the provider.
+
+== Options
+
+// component options: START
+The Crypto CMS component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *signedDataVerifier Configuration* (advanced) | To configure the shared SignedDataVerifierConfiguration, which determines the uri parameters for the verify operation. |  | SignedDataVerifier Configuration
+| *envelopedDataDecryptor Configuration* (advanced) | To configure the shared EnvelopedDataDecryptorConfiguration, which determines the uri parameters for the decrypt operation. |  | EnvelopedDataDecryptor Configuration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Crypto CMS endpoint is configured using URI syntax:
+
+----
+crypto-cms:cryptoOperation:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cryptoOperation* | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto-cms:sign sets sign as the operation. Possible values: sign, verify, encrypt, or decrypt. |  | CryptoOperation
+| *name* | *Required* The name part in the URI can be chosen by the user to distinguish between different signer/verifier/encryptor/decryptor endpoints within the camel context. |  | String
+|===
+
+
+==== Query Parameters (15 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *keyStore* (common) | Keystore which contains signer private keys, verifier public keys, encryptor public keys, decryptor private keys depending on the operation. Use either this parameter or the parameter 'keyStoreParameters'. |  | KeyStore
+| *keyStoreParameters* (common) | Keystore containing signer private keys, verifier public keys, encryptor public keys, decryptor private keys depending on the operation. Use either this parameter or the parameter 'keystore'. |  | KeyStoreParameters
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *password* (decrypt) | Sets the password of the private keys. It is assumed that all private keys in the keystore have the same password. If not set then it is assumed that the password of the private keys is given by the keystore password given in the KeyStoreParameters. |  | Char[]
+| *fromBase64* (decrypt_verify) | If true then the CMS message is base 64 encoded and must be decoded during the processing. Default value is false. | false | Boolean
+| *contentEncryptionAlgorithm* (encrypt) | Encryption algorithm, for example DESede/CBC/PKCS5Padding. Further possible values: DESede/CBC/PKCS5Padding, AES/CBC/PKCS5Padding, Camellia/CBC/PKCS5Padding, CAST5/CBC/PKCS5Padding. |  | String
+| *originatorInformation Provider* (encrypt) | Provider for the originator info. See https://tools.ietf.org/html/rfc5652#section-6.1. The default value is null. |  | OriginatorInformation Provider
+| *recipient* (encrypt) | Recipient Info: reference to a bean which implements the interface org.apache.camel.component.crypto.cms.api.TransRecipientInfo |  | List
+| *secretKeyLength* (encrypt) | Key length for the secret symmetric key used for the content encryption. Only used if the specified content-encryption algorithm allows keys of different sizes. If contentEncryptionAlgorithm=AES/CBC/PKCS5Padding or Camellia/CBC/PKCS5Padding then 128; if contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding then 192, 128; if strong encryption is enabled then for AES/CBC/PKCS5Padding and Camellia/CBC/PKCS5Padding also the key lengths 192 and 256 are possible. |  | int
+| *unprotectedAttributes GeneratorProvider* (encrypt) | Provider of the generator for the unprotected attributes. The default value is null which means no unprotected attribute is added to the Enveloped Data object. See https://tools.ietf.org/html/rfc5652#section-6.1. |  | AttributesGenerator Provider
+| *toBase64* (encrypt_sign) | Indicates whether the Signed Data or Enveloped Data instance shall be base 64 encoded. Default value is false. | false | Boolean
+| *includeContent* (sign) | Indicates whether the signed content should be included into the Signed Data instance. If false then a detached Signed Data instance is created in the header CamelCryptoCmsSignedData. | true | Boolean
+| *signer* (sign) | Signer information: reference to a bean which implements org.apache.camel.component.crypto.cms.api.SignerInfo |  | List
+| *signedDataHeaderBase64* (verify) | Indicates whether the value in the header CamelCryptoCmsSignedData is base64 encoded. Default value is false. Only relevant for detached signatures. In the detached signature case, the header contains the Signed Data object. | false | Boolean
+| *verifySignaturesOfAll Signers* (verify) | If true then the signatures of all signers contained in the Signed Data object are verified. If false then only one signature whose signer info matches with one of the specified certificates is verified. Default value is true. | true | Boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.crypto-cms.enabled* | Whether to enable auto configuration of the crypto-cms component. This is enabled by default. |  | Boolean
+| *camel.component.crypto-cms.enveloped-data-decryptor-configuration* | To configure the shared EnvelopedDataDecryptorConfiguration, which determines the uri parameters for the decrypt operation. The option is a org.apache.camel.component.crypto.cms.crypt. EnvelopedDataDecryptorConfiguration type. |  | String
+| *camel.component.crypto-cms.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.crypto-cms.signed-data-verifier-configuration* | To configure the shared SignedDataVerifierConfiguration, which determines the uri parameters for the verify operation. The option is a org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+== Enveloped Data
+
+Note, that a `crypto-cms:encypt` endpoint is typically defined in one route and the complimentary `crypto-cms:decrypt` in another, though for simplicity in the
+examples they appear one after the other.
+
+The following example shows how you can create an Enveloped Data message and how you can decrypt an Enveloped Data message.
+
+*Basic Example in Java DSL*
+
+[source,java]
+----
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.component.crypto.cms.crypt.DefaultKeyTransRecipientInfo;
+...
+KeyStoreParameters keystore  = new KeyStoreParameters();
+keystore.setType("JCEKS");
+keystore.setResource("keystore/keystore.jceks);      
+keystore.setPassword("some_password"); // this password will also be used for accessing the private key if not specified in the crypto-cms:decrypt endpoint
+
+DefaultKeyTransRecipientInfo recipient1 = new DefaultKeyTransRecipientInfo();
+recipient1.setCertificateAlias("rsa"); // alias of the public key used for the encryption
+recipient1.setKeyStoreParameters(keystore);
+
+simpleReg.put("keyStoreParameters", keystore); // register keystore in the registry
+simpleReg.put("recipient1", recipient1); // register recipient info in the registry
+
+from("direct:start")
+    .to("crypto-cms:encrypt://testencrpyt?toBase64=true&recipient=#recipient1&contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&secretKeyLength=128")
+    .to("crypto-cms:decrypt://testdecrypt?fromBase64=true&keyStoreParameters=#keyStoreParameters")
+    .to("mock:result");
+----
+
+*Basic Example in Spring XML*
+
+[source,xml]
+----
+   <keyStoreParameters xmlns="http://camel.apache.org/schema/spring"
+        id="keyStoreParameters1" resource="./keystore/keystore.jceks"
+        password="some_password" type="JCEKS" />
+    <bean id="recipient1"
+        class="org.apache.camel.component.crypto.cms.crypt.DefaultKeyTransRecipientInfo">
+        <property name="keyStoreParameters" ref="keyStoreParameters1" />
+        <property name="certificateAlias" value="rsa" />
+    </bean>
+...
+    <route>
+        <from uri="direct:start" />
+        <to uri="crypto-cms:encrypt://testencrpyt?toBase64=true&amp;recipient=#recipient1&amp;contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&amp;secretKeyLength=128" />
+        <to uri="crypto-cms:decrypt://testdecrypt?fromBase64=true&amp;keyStoreParameters=#keyStoreParameters1" />
+         <to uri="mock:result" />
+    </route> 
+----
+
+*Two Recipients in Java DSL*
+
+[source,java]
+----
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.component.crypto.cms.crypt.DefaultKeyTransRecipientInfo;
+...
+KeyStoreParameters keystore  = new KeyStoreParameters();
+keystore.setType("JCEKS");
+keystore.setResource("keystore/keystore.jceks);      
+keystore.setPassword("some_password"); // this password will also be used for accessing the private key if not specified in the crypto-cms:decrypt endpoint
+
+DefaultKeyTransRecipientInfo recipient1 = new DefaultKeyTransRecipientInfo();
+recipient1.setCertificateAlias("rsa"); // alias of the public key used for the encryption
+recipient1.setKeyStoreParameters(keystore);
+
+DefaultKeyTransRecipientInfo recipient2 = new DefaultKeyTransRecipientInfo();
+recipient2.setCertificateAlias("dsa");
+recipient2.setKeyStoreParameters(keystore);
+
+simpleReg.put("keyStoreParameters", keystore); // register keystore in the registry
+simpleReg.put("recipient1", recipient1); // register recipient info in the registry
+
+from("direct:start")
+    .to("crypto-cms:encrypt://testencrpyt?toBase64=true&recipient=#recipient1&recipient=#recipient2&contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&secretKeyLength=128")
+    //the decryptor will automatically choose one of the two private keys depending which one is in the decryptor keystore
+    .to("crypto-cms:decrypt://testdecrypt?fromBase64=true&keyStoreParameters=#keyStoreParameters")
+    .to("mock:result");
+----
+
+*Two Recipients in Spring XML*
+
+[source,xml]
+----
+   <keyStoreParameters xmlns="http://camel.apache.org/schema/spring"
+        id="keyStoreParameters1" resource="./keystore/keystore.jceks"
+        password="some_password" type="JCEKS" />
+    <bean id="recipient1"
+        class="org.apache.camel.component.crypto.cms.crypt.DefaultKeyTransRecipientInfo">
+        <property name="keyStoreParameters" ref="keyStoreParameters1" />
+        <property name="certificateAlias" value="rsa" />
+    </bean>
+    <bean id="recipient2"
+        class="org.apache.camel.component.crypto.cms.crypt.DefaultKeyTransRecipientInfo">
+        <property name="keyStoreParameters" ref="keyStoreParameters1" />
+        <property name="certificateAlias" value="dsa" />
+    </bean>
+...
+    <route>
+        <from uri="direct:start" />
+        <to uri="crypto-cms:encrypt://testencrpyt?toBase64=true&amp;recipient=#recipient1&amp;recipient=#recipient2&amp;contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&amp;secretKeyLength=128" />
+        <!-- the decryptor will automatically choose one of the two private keys depending which one is in the decryptor keystore -->
+        <to uri="crypto-cms:decrypt://testdecrypt?fromBase64=true&amp;keyStoreParameters=#keyStoreParameters1" />
+         <to uri="mock:result" />
+    </route> 
+----
+
+== Signed Data
+
+Note, that a `crypto-cms:sign` endpoint is typically defined in one route and the complimentary `crypto-cms:verify` in another, though for simplicity in the
+examples they appear one after the other.
+
+The following example shows how you can create a Signed Data message and how you can validate a Signed Data message.
+
+*Basic Example in Java DSL*
+
+[source,java]
+----
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo;
+...
+KeyStoreParameters keystore  = new KeyStoreParameters();
+keystore.setType("JCEKS");
+keystore.setResource("keystore/keystore.jceks);      
+keystore.setPassword("some_password"); // this password will also be used for accessing the private key if not specified in the signerInfo1 bean
+
+//Signer Information, by default the following signed attributes are included: contentType, signingTime, messageDigest, and cmsAlgorithmProtect; by default no unsigned attribute is included.
+// If you want to add your own signed attributes or unsigned attributes, see methods DefaultSignerInfo.setSignedAttributeGenerator and DefaultSignerInfo.setUnsignedAttributeGenerator.
+DefaultSignerInfo signerInfo1 = new DefaultSignerInfo();
+signerInfo1.setIncludeCertificates(true); // if set to true then the certificate chain of the private key will be added to the Signed Data object
+signerInfo1.setSignatureAlgorithm("SHA256withRSA"); // signature algorithm; attention, the signature algorithm must fit to the signer private key.
+signerInfo1.setPrivateKeyAlias("rsa"); // alias of the private key used for the signing
+signerInfo1.setPassword("private_key_pw".toCharArray()); // optional parameter, if not set then the password of the KeyStoreParameters will be used for accessing the private key
+signerInfo1.setKeyStoreParameters(keystore);
+
+simpleReg.put("keyStoreParameters", keystore); //register keystore in the registry
+simpleReg.put("signer1", signerInfo1); //register signer info in the registry
+
+from("direct:start")
+    .to("crypto-cms:sign://testsign?signer=#signer1&includeContent=true&toBase64=true")
+    .to("crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters&fromBase64=true"")
+    .to("mock:result");
+----
+
+*Basic Example in Spring XML*
+
+[source,xml]
+----
+   <keyStoreParameters xmlns="http://camel.apache.org/schema/spring"
+        id="keyStoreParameters1" resource="./keystore/keystore.jceks"
+        password="some_password" type="JCEKS" />
+    <bean id="signer1"
+        class="org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo">
+        <property name="keyStoreParameters" ref="keyStoreParameters1" />
+        <property name="privateKeyAlias" value="rsa" />
+        <property name="signatureAlgorithm" value="SHA256withRSA" />
+        <property name="includeCertificates" value="true" />
+        <!-- optional parameter 'password', if not set then the password of the KeyStoreParameters will be used for accessing the private key -->
+        <property name="password" value="private_key_pw" />
+    </bean>
+...
+    <route>
+        <from uri="direct:start" />
+        <to uri="crypto-cms:sign://testsign?signer=#signer1&amp;includeContent=true&amp;toBase64=true" />
+        <to uri="crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters1&amp;fromBase64=true" />
+        <to uri="mock:result" />
+    </route>    
+----
+
+*Example with two Signers in Java DSL*
+
+[source,java]
+----
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo;
+...
+KeyStoreParameters keystore  = new KeyStoreParameters();
+keystore.setType("JCEKS");
+keystore.setResource("keystore/keystore.jceks);      
+keystore.setPassword("some_password"); // this password will also be used for accessing the private key if not specified in the signerInfo1 bean
+
+//Signer Information, by default the following signed attributes are included: contentType, signingTime, messageDigest, and cmsAlgorithmProtect; by default no unsigned attribute is included.
+// If you want to add your own signed attributes or unsigned attributes, see methods DefaultSignerInfo.setSignedAttributeGenerator and DefaultSignerInfo.setUnsignedAttributeGenerator.
+DefaultSignerInfo signerInfo1 = new DefaultSignerInfo();
+signerInfo1.setIncludeCertificates(true); // if set to true then the certificate chain of the private key will be added to the Signed Data object
+signerInfo1.setSignatureAlgorithm("SHA256withRSA"); // signature algorithm; attention, the signature algorithm must fit to the signer private key.
+signerInfo1.setPrivateKeyAlias("rsa"); // alias of the private key used for the signing
+signerInfo1.setPassword("private_key_pw".toCharArray()); // optional parameter, if not set then the password of the KeyStoreParameters will be used for accessing the private key
+signerInfo1.setKeyStoreParameters(keystore);
+
+DefaultSignerInfo signerInfo2 = new DefaultSignerInfo();
+signerInfo2.setIncludeCertificates(true);
+signerInfo2.setSignatureAlgorithm("SHA256withDSA");
+signerInfo2.setPrivateKeyAlias("dsa");
+signerInfo2.setKeyStoreParameters(keystore);
+
+
+simpleReg.put("keyStoreParameters", keystore); //register keystore in the registry
+simpleReg.put("signer1", signerInfo1); //register signer info in the registry
+simpleReg.put("signer2", signerInfo2); //register signer info in the registry
+
+from("direct:start")
+    .to("crypto-cms:sign://testsign?signer=#signer1,#signer2&includeContent=true")
+    .to("crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters")
+    .to("mock:result");
+----
+
+*Example with two Signers in Spring XML*
+
+[source,xml]
+----
+   <keyStoreParameters xmlns="http://camel.apache.org/schema/spring"
+        id="keyStoreParameters1" resource="./keystore/keystore.jceks"
+        password="some_password" type="JCEKS" />
+    <bean id="signer1"
+        class="org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo">
+        <property name="keyStoreParameters" ref="keyStoreParameters1" />
+        <property name="privateKeyAlias" value="rsa" />
+        <property name="signatureAlgorithm" value="SHA256withRSA" />
+        <property name="includeCertificates" value="true" />
+        <!-- optional parameter 'password', if not set then the password of the KeyStoreParameters will be used for accessing the private key -->
+        <property name="password" value="private_key_pw" />
+    </bean>
+    <bean id="signer2"
+        class="org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo">
+        <property name="keyStoreParameters" ref="keyStoreParameters1" />
+        <property name="privateKeyAlias" value="dsa" />
+        <property name="signatureAlgorithm" value="SHA256withDSA" />
+        <!-- optional parameter 'password', if not set then the password of the KeyStoreParameters will be used for accessing the private key -->
+        <property name="password" value="private_key_pw2" />
+    </bean>
+...
+    <route>
+        <from uri="direct:start" />
+        <to uri="crypto-cms:sign://testsign?signer=#signer1,#signer2&amp;includeContent=true" />
+        <to uri="crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters1" />
+        <to uri="mock:result" />
+    </route>    
+----
+
+*Detached Signature Example in Java DSL*
+
+[source,java]
+----
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo;
+...
+KeyStoreParameters keystore  = new KeyStoreParameters();
+keystore.setType("JCEKS");
+keystore.setResource("keystore/keystore.jceks);      
+keystore.setPassword("some_password"); // this password will also be used for accessing the private key if not specified in the signerInfo1 bean
+
+//Signer Information, by default the following signed attributes are included: contentType, signingTime, messageDigest, and cmsAlgorithmProtect; by default no unsigned attribute is included.
+// If you want to add your own signed attributes or unsigned attributes, see methods DefaultSignerInfo.setSignedAttributeGenerator and DefaultSignerInfo.setUnsignedAttributeGenerator.
+DefaultSignerInfo signerInfo1 = new DefaultSignerInfo();
+signerInfo1.setIncludeCertificates(true); // if set to true then the certificate chain of the private key will be added to the Signed Data object
+signerInfo1.setSignatureAlgorithm("SHA256withRSA"); // signature algorithm; attention, the signature algorithm must fit to the signer private key.
+signerInfo1.setPrivateKeyAlias("rsa"); // alias of the private key used for the signing
+signerInfo1.setPassword("private_key_pw".toCharArray()); // optional parameter, if not set then the password of the KeyStoreParameters will be used for accessing the private key
+signerInfo1.setKeyStoreParameters(keystore);
+
+simpleReg.put("keyStoreParameters", keystore); //register keystore in the registry
+simpleReg.put("signer1", signerInfo1); //register signer info in the registry
+
+from("direct:start") 
+     //with the option includeContent=false the SignedData object without the signed text will be written into the header "CamelCryptoCmsSignedData"  
+    .to("crypto-cms:sign://testsign?signer=#signer1&includeContent=false&toBase64=true")
+    //the verifier reads the Signed Data object form the header CamelCryptoCmsSignedData and assumes that the signed content is in the message body
+    .to("crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters&signedDataHeaderBase64=true")
+    .to("mock:result");
+----
+
+*Detached Signature Example in Spring XML*
+
+[source,xml]
+----
+   <keyStoreParameters xmlns="http://camel.apache.org/schema/spring"
+        id="keyStoreParameters1" resource="./keystore/keystore.jceks"
+        password="some_password" type="JCEKS" />
+    <bean id="signer1"
+        class="org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo">
+        <property name="keyStoreParameters" ref="keyStoreParameters1" />
+        <property name="privateKeyAlias" value="rsa" />
+        <property name="signatureAlgorithm" value="SHA256withRSA" />
+        <property name="includeCertificates" value="true" />
+        <!-- optional parameter 'password', if not set then the password of the KeyStoreParameters will be used for accessing the private key -->
+        <property name="password" value="private_key_pw" />
+    </bean>
+...
+    <route>
+        <from uri="direct:start" />
+        <!-- with the option includeContent=false the SignedData object without the signed text will be written into the header "CamelCryptoCmsSignedData" -->
+        <to uri="crypto-cms:sign://testsign?signer=#signer1&amp;includeContent=false&amp;toBase64=true" />
+        <!-- the verifier reads the Signed Data object form the header CamelCryptoCmsSignedData and assumes that the signed content is in the message body -->
+        <to uri="crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters1&amp;signedDataHeaderBase64=true" />
+        <to uri="mock:result" />
+    </route>    
+----

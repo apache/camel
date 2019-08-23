@@ -1,1 +1,288 @@
-../../../../../components/camel-elsql/src/main/docs/elsql-component.adoc
+= ElSQL Component
+
+*Available as of Camel version 2.16*
+
+
+The ELSQL component is an extension to the existing
+xref:sql-component.adoc[SQL Component] that uses
+https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
+
+This component uses `spring-jdbc` behind the scenes for the actual SQL
+handling.
+
+This component can be used as a
+http://camel.apache.org/transactional-client.html[Transactional Client].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-elsql</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+The SQL component uses the following endpoint URI notation:
+
+[source,text]
+----
+sql:elSqlName:resourceUri[?options]
+----
+
+You can append query options to the URI in the following
+format, `?option=value&option=value&...`
+
+The parameters to the SQL queries are named parameters in the elsql
+mapping files, and maps to corresponding keys from the Camel message, in
+the given precedence:
+
+1. from message body if xref:manual::simple-language.adoc[Simple]
+expression.
+
+2. from message body if its a `java.util.Map`
+
+3. from message headers
+
+If a named parameter cannot be resolved, then an exception is thrown.
+
+== Options
+
+// component options: START
+The ElSQL component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *databaseVendor* (common) | To use a vendor specific com.opengamma.elsql.ElSqlConfig |  | ElSqlDatabaseVendor
+| *dataSource* (common) | Sets the DataSource to use to communicate with the database. |  | DataSource
+| *elSqlConfig* (advanced) | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead. |  | ElSqlConfig
+| *resourceUri* (common) | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default, you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint. |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The ElSQL endpoint is configured using URI syntax:
+
+----
+elsql:elsqlName:resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *elsqlName* | *Required* The name of the elsql to use (is NAMED in the elsql file) |  | String
+| *resourceUri* | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default, you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint. |  | String
+|===
+
+
+==== Query Parameters (47 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *allowNamedParameters* (common) | Whether to allow using named parameters in the queries. | true | boolean
+| *databaseVendor* (common) | To use a vendor specific com.opengamma.elsql.ElSqlConfig |  | ElSqlDatabaseVendor
+| *dataSource* (common) | Sets the DataSource to use to communicate with the database. |  | DataSource
+| *dataSourceRef* (common) | *Deprecated* Sets the reference to a DataSource to lookup from the registry, to use for communicating with the database. |  | String
+| *outputClass* (common) | Specify the full package and class name to use as conversion when outputType=SelectOne. |  | String
+| *outputHeader* (common) | Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. |  | String
+| *outputType* (common) | Make the output of consumer or producer to SelectList as List of Map, or SelectOne as single Java object in the following way:a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long object.b) If the query has more than one column, then it will return a Map of that result.c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names.It will assume your class has a default constructor to create instance with.d) If the query resulted in more than one rows, it throws an non-unique result exception.StreamList streams the result of the query using an Iterator. This can be used with the Splitter EIP in streaming mode to process the ResultSet in streaming fashion. | SelectList | SqlOutputType
+| *separator* (common) | The separator to use when parameter values is taken from message body (if the body is a String type), to be inserted at # placeholders.Notice if you use named parameters, then a Map type is used instead. The default value is comma | , | char
+| *breakBatchOnConsumeFail* (consumer) | Sets whether to break batch if onConsume failed. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *expectedUpdateCount* (consumer) | Sets an expected update count to validate when using onConsume. | -1 | int
+| *maxMessagesPerPoll* (consumer) | Sets the maximum number of messages to poll |  | int
+| *onConsume* (consumer) | After processing each row then this query can be executed, if the Exchange was processed successfully, for example to mark the row as processed. The query can have parameter. |  | String
+| *onConsumeBatchComplete* (consumer) | After processing the entire batch, this query can be executed to bulk update rows etc. The query cannot have parameters. |  | String
+| *onConsumeFailed* (consumer) | After processing each row then this query can be executed, if the Exchange failed, for example to mark the row as failed. The query can have parameter. |  | String
+| *routeEmptyResultSet* (consumer) | Sets whether empty resultset should be allowed to be sent to the next hop. Defaults to false. So the empty resultset will be filtered out. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *transacted* (consumer) | Enables or disables transaction. If enabled then if processing an exchange failed then the consumerbreak out processing any further exchanges to cause a rollback eager. | false | boolean
+| *useIterator* (consumer) | Sets how resultset should be delivered to route. Indicates delivery as either a list or individual object. defaults to true. | true | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *processingStrategy* (consumer) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlProcessingStrategy to execute queries when the consumer has processed the rows/batch. |  | SqlProcessingStrategy
+| *batch* (producer) | Enables or disables batch mode | false | boolean
+| *noop* (producer) | If set, will ignore the results of the SQL query and use the existing IN message as the OUT message for the continuation of processing | false | boolean
+| *useMessageBodyForSql* (producer) | Whether to use the message body as the SQL and then headers for parameters. If this option is enabled then the SQL in the uri is not used. | false | boolean
+| *alwaysPopulateStatement* (advanced) | If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked, also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1 or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters. | false | boolean
+| *elSqlConfig* (advanced) | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead. |  | ElSqlConfig
+| *parametersCount* (advanced) | If set greater than zero, then Camel will use this count value of parameters to replace instead of querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count, then user may override instead. |  | int
+| *placeholder* (advanced) | Specifies a character that will be replaced to in SQL query. Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change). | # | String
+| *prepareStatementStrategy* (advanced) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement. |  | SqlPrepareStatement Strategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *templateOptions* (advanced) | Configures the Spring JdbcTemplate with the key/values from the Map |  | Map
+| *usePlaceholder* (advanced) | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. | true | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.elsql.data-source* | Sets the DataSource to use to communicate with the database. The option is a javax.sql.DataSource type. |  | String
+| *camel.component.elsql.database-vendor* | To use a vendor specific com.opengamma.elsql.ElSqlConfig |  | ElSqlDatabaseVendor
+| *camel.component.elsql.el-sql-config* | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead. The option is a com.opengamma.elsql.ElSqlConfig type. |  | String
+| *camel.component.elsql.enabled* | Enable elsql component | true | Boolean
+| *camel.component.elsql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.elsql.resource-uri* | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default, you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+== Result of the query
+
+For `select` operations, the result is an instance of
+`List<Map<String, Object>>` type, as returned by the
+JdbcTemplate.queryForList() method. For `update` operations, the result
+is the number of updated rows, returned as an `Integer`.
+
+By default, the result is placed in the message body.  If the
+outputHeader parameter is set, the result is placed in the header.  This
+is an alternative to using a full message enrichment pattern to add
+headers, it provides a concise syntax for querying a sequence or some
+other small value into a header.  It is convenient to use outputHeader
+and outputType together:
+
+== Header values
+
+When performing `update` operations, the SQL Component stores the update
+count in the following message headers:
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Header |Description
+
+|`CamelSqlUpdateCount` |The number of rows updated for `update` operations, returned as an
+`Integer` object.
+
+|`CamelSqlRowCount` |The number of rows returned for `select` operations, returned as an
+`Integer` object.
+|===
+
+=== Sample
+
+In the given route below, we want to get all the projects from the
+projects table. Notice the SQL query has 2 named parameters, :#lic and
+:#min.
+
+Camel will then lookup for these parameters from the message body or
+message headers. Notice in the example above we set two headers with
+constant value +
+ for the named parameters:
+
+[source,java]
+----
+   from("direct:projects")
+     .setHeader("lic", constant("ASF"))
+     .setHeader("min", constant(123))
+     .to("elsql:projects:com/foo/orders.elsql")
+----
+
+And the https://github.com/OpenGamma/ElSql[elsql] mapping file
+
+[source,sql]
+----
+@NAME(projects)
+  SELECT *
+  FROM projects
+  WHERE license = :lic AND id > :min
+  ORDER BY id
+----
+
+Though if the message body is a `java.util.Map` then the named
+parameters will be taken from the body.
+
+[source,java]
+----
+   from("direct:projects")
+     .to("elsql:projects:com/foo/orders.elsql")
+----
+
+== Using expression parameters in producers
+
+In from Camel 2.16.1 onwards you can use Simple expressions as well,
+which allows to use an OGNL like notation on the message body, where it
+assumes to have `getLicense` and `getMinimum` methods:
+
+[source,sql]
+----
+@NAME(projects)
+  SELECT *
+  FROM projects
+  WHERE license = :${body.license} AND id > :${body.minimum}
+  ORDER BY id
+----
+
+=== Using expression parameters in consumers
+
+*Available as of Camel 2.23*
+
+When using the ElSql component as consumer, you can now also use expression parameters (simple language)
+to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.
+
+For example in the sample below we call the nextId method on the bean myIdGenerator:
+
+[source,sql]
+----
+@NAME(projectsByIdBean)
+  SELECT *
+  FROM projects
+  WHERE id = :${bean#myIdGenerator.nextId}
+----
+
+IMPORTANT: Notice in the bean syntax above, we must use `#` instead of `:` in the simple expression.
+This is because Spring query parameter parser is in-use which will separate parameters on colon.
+Also pay attention that Spring query parser will invoke the bean twice for each query.
+
+And the bean has the following method:
+
+[source,java]
+----
+public static class MyIdGenerator {
+
+    private int id = 1;
+
+    public int nextId() {
+        // spring will call this twice, one for initializing query and 2nd for actual value
+        id++;
+        return id / 2;
+    }
+----
+
+Notice that there is no existing `Exchange` with message body and headers, so
+the simple expression you can use in the consumer are most useable for calling
+bean methods as in this example.

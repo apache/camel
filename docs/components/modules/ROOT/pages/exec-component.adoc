@@ -1,1 +1,250 @@
-../../../../../components/camel-exec/src/main/docs/exec-component.adoc
+= Exec Component
+
+*Available as of Camel version 2.3*
+
+
+The Exec component can be used to execute system commands.
+
+== Dependencies
+
+Maven users need to add the following dependency to their `pom.xml`
+
+[source,xml]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-exec</artifactId>
+  <version>${camel-version}</version>
+</dependency>
+-------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel.
+
+== URI format
+
+[source,xml]
+---------------------------
+exec://executable[?options]
+---------------------------
+
+where `executable` is the name, or file path, of the system command that
+will be executed. If executable name is used (e.g. `exec:java`), the
+executable must in the system path.
+
+== URI options
+
+// component options: START
+The Exec component has no options.
+// component options: END
+
+// endpoint options: START
+The Exec endpoint is configured using URI syntax:
+
+----
+exec:executable
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *executable* | *Required* Sets the executable to be executed. The executable must not be empty or null. |  | String
+|===
+
+
+==== Query Parameters (8 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *args* (producer) | The arguments may be one or many whitespace-separated tokens. |  | String
+| *binding* (producer) | A reference to a org.apache.commons.exec.ExecBinding in the Registry. |  | ExecBinding
+| *commandExecutor* (producer) | A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command execution. The default command executor utilizes the commons-exec library, which adds a shutdown hook for every executed command. |  | ExecCommandExecutor
+| *outFile* (producer) | The name of a file, created by the executable, that should be considered as its output. If no outFile is set, the standard output (stdout) of the executable will be used instead. |  | String
+| *timeout* (producer) | The timeout, in milliseconds, after which the executable should be terminated. If execution has not completed within the timeout, the component will send a termination request. |  | long
+| *useStderrOnEmptyStdout* (producer) | A boolean indicating that when stdout is empty, this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default. | false | boolean
+| *workingDir* (producer) | The directory in which the command should be executed. If null, the working directory of the current process will be used. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.exec.enabled* | Enable exec component | true | Boolean
+| *camel.component.exec.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Message headers
+
+The supported headers are defined in
+`org.apache.camel.component.exec.ExecBinding`.
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Name |Type |Message |Description
+
+|`ExecBinding.EXEC_COMMAND_EXECUTABLE` |`String` |`in` |The name of the system command that will be executed. Overrides
+`executable` in the URI.
+
+|`ExecBinding.EXEC_COMMAND_ARGS` |`java.util.List<String>` |`in` |Command-line arguments to pass to the executed process. The arguments
+are used literally - no quoting is applied. Overrides any existing
+`args` in the URI.
+
+|`ExecBinding.EXEC_COMMAND_ARGS` |`String`| `in` |The arguments of the executable as a Single string where
+each argument is whitespace separated (see `args` in URI option). The
+arguments are used literally, no quoting is applied. Overrides any
+existing `args` in the URI.
+
+|`ExecBinding.EXEC_COMMAND_OUT_FILE` |`String` |`in` |The name of a file, created by the executable, that should be considered
+as its output. Overrides any existing `outFile` in the URI.
+
+|`ExecBinding.EXEC_COMMAND_TIMEOUT` |`long` |`in` |The timeout, in milliseconds, after which the executable should be
+terminated. Overrides any existing `timeout` in the URI.
+
+|`ExecBinding.EXEC_COMMAND_WORKING_DIR` |`String` |`in` |The directory in which the command should be executed. Overrides any
+existing `workingDir` in the URI.
+
+|`ExecBinding.EXEC_EXIT_VALUE` |`int` |`out` |The value of this header is the _exit value_ of the executable. Non-zero
+exit values typically indicate abnormal termination. Note that the exit
+value is OS-dependent.
+
+|`ExecBinding.EXEC_STDERR` |`java.io.InputStream` |`out` |The value of this header points to the standard error stream (stderr) of
+the executable. If no stderr is written, the value is `null`.
+
+|`ExecBinding.EXEC_USE_STDERR_ON_EMPTY_STDOUT` |`boolean` |`in` |Indicates that when `stdout` is empty, this component will populate the
+Camel Message Body with `stderr`. This behavior is disabled (`false`) by
+default.
+|=======================================================================
+
+== Message body
+
+If the `Exec` component receives an `in` message body that is
+convertible to `java.io.InputStream`, it is used to feed input to the
+executable via its stdin. After execution,
+http://camel.apache.org/exchange.html[the message body] is the result of
+the execution,- that is, an
+`org.apache.camel.components.exec.ExecResult` instance containing the
+stdout, stderr, exit value, and out file. This component supports the
+following `ExecResult` http://camel.apache.org/type-converter.html[type
+converters] for convenience:
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|From |To
+
+|`ExecResult` |`java.io.InputStream`
+
+|`ExecResult` |`String`
+
+|`ExecResult` |`byte []`
+
+|`ExecResult` |`org.w3c.dom.Document`
+|=======================================================================
+
+If an out file is specified (in the endpoint via `outFile` or the
+message headers via `ExecBinding.EXEC_COMMAND_OUT_FILE`), converters
+will return the content of the out file. If no out file is used, then
+this component will convert the stdout of the process to the target
+type. For more details, please refer to the xref:exec-component.adoc[usage examples] below.
+
+== Usage examples
+
+=== Executing word count (Linux)
+
+The example below executes `wc` (word count, Linux) to count the words
+in file `/usr/share/dict/words`. The word count (output) is written to
+the standard output stream of `wc`.
+
+[source,java]
+--------------------------------------------------------------------------------------
+from("direct:exec")
+.to("exec:wc?args=--words /usr/share/dict/words")
+.process(new Processor() {
+     public void process(Exchange exchange) throws Exception {
+       // By default, the body is ExecResult instance
+       assertIsInstanceOf(ExecResult.class, exchange.getIn().getBody());
+       // Use the Camel Exec String type converter to convert the ExecResult to String
+       // In this case, the stdout is considered as output
+       String wordCountOutput = exchange.getIn().getBody(String.class);
+       // do something with the word count
+     }
+});
+--------------------------------------------------------------------------------------
+
+=== Executing `java`
+
+The example below executes `java` with 2 arguments: `-server` and
+`-version`, provided that `java` is in the system path.
+
+[source,java]
+--------------------------------------
+from("direct:exec")
+.to("exec:java?args=-server -version")
+--------------------------------------
+
+The example below executes `java` in `c:\temp` with 3 arguments:
+`-server`, `-version` and the sytem property `user.name`.
+
+[source,java]
+----------------------------------------------------------------------------------------------------
+from("direct:exec")
+.to("exec:c:/program files/jdk/bin/java?args=-server -version -Duser.name=Camel&workingDir=c:/temp")
+----------------------------------------------------------------------------------------------------
+
+=== Executing Ant scripts
+
+The following example executes http://ant.apache.org/[Apache Ant]
+(Windows only) with the build file `CamelExecBuildFile.xml`, provided
+that `ant.bat` is in the system path, and that `CamelExecBuildFile.xml`
+is in the current directory.
+
+[source,java]
+--------------------------------------------------
+from("direct:exec")
+.to("exec:ant.bat?args=-f CamelExecBuildFile.xml")
+--------------------------------------------------
+
+In the next example, the `ant.bat` command redirects its output to
+`CamelExecOutFile.txt` with `-l`. The file `CamelExecOutFile.txt` is
+used as the out file with `outFile=CamelExecOutFile.txt`. The example
+assumes that `ant.bat` is in the system path, and that
+`CamelExecBuildFile.xml` is in the current directory.
+
+[source,java]
+-------------------------------------------------------------------------------------------------------
+from("direct:exec")
+.to("exec:ant.bat?args=-f CamelExecBuildFile.xml -l CamelExecOutFile.txt&outFile=CamelExecOutFile.txt")
+.process(new Processor() {
+     public void process(Exchange exchange) throws Exception {
+        InputStream outFile = exchange.getIn().getBody(InputStream.class);
+        assertIsInstanceOf(InputStream.class, outFile);
+        // do something with the out file here
+     }
+  });
+-------------------------------------------------------------------------------------------------------
+
+=== Executing `echo` (Windows)
+
+Commands such as `echo` and `dir` can be executed only with the command
+interpreter of the operating system. This example shows how to execute
+such a command - `echo` - in Windows.
+
+[source,java]
+----------------------------------------------------------
+from("direct:exec").to("exec:cmd?args=/C echo echoString")
+----------------------------------------------------------

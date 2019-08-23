@@ -1,1 +1,290 @@
-../../../../../components/camel-jbpm/src/main/docs/jbpm-component.adoc
+= JBPM Component
+
+*Available as of Camel version 2.6*
+
+
+The JBPM component provides integration with Business Process
+Management http://www.jbpm.org/[jBPM]. It uses
+kie-server-client API to interact with jBPM instance over REST. The
+component supports both producer and consumer.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jbpm</artifactId>
+    <version>x.x.x</version><!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------------------------------
+
+== Consumer
+
+jBPM Consumer allows to attach routes to 
+
+* ProcessEventListeners
+* TaskEventListners
+* CaseEventListeners
+
+== URI format
+
+[source,java]
+---------------------------------------------
+jbpm::events:type:[classifier][?options]
+---------------------------------------------
+
+=== Path Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *events* | Classifier for the consumer to know which type of data it should attach to |  | URL
+| *type* | Type of event listener - supports: process, task, case |  | String
+| *classifier* | Used to distinguish routes for same event type|  | String
+|===
+
+Each route would then receive events when they are being produced by jBPM engine.
+
+Routes can be defined either in global way - on application level or deployed 
+together with business assets projects also knows as KJARs.
+
+Consumers are configured via KieServerExtension that is a pluggable interface to enhance
+jBPM with additional capabilities. It reacts to different life cycle phases of the KIE Server
+and by that is able to configure individual endpoints properly.
+
+== KJAR routes
+
+Create file named `camel-routes.xml` in the root folder of your KJAR (src/main/resources) so it will be automatically 
+discovered and Camel Context for given KJAR will be created.
+
+== Global routes
+
+Create file name `global-camel-routes` in the root of the class path of KIE Server. It will be automatically found and registered
+on every KJAR deployed to KIE Server.
+
+
+Example camel-routes.xml file that can be placed in the KJAR
+
+[source, xml]
+----
+<routes xmlns="http://camel.apache.org/schema/spring">
+    
+    <route id="processes">
+        <from uri="jbpm:events:process:test"/>
+        <filter>
+          <simple>${in.header.EventType} == 'beforeProcessStarted'</simple>
+          <to uri="log:kjar.processes?level=INFO&amp;showBody=true&amp;showHeaders=true"/>
+        </filter>
+    </route>
+    
+    <route id="tasks">
+        <from uri="jbpm:events:task:test"/>
+        <filter>
+          <simple>${in.header.EventType} starts with 'before'</simple>
+          <to uri="log:kjar.tasks?level=INFO&amp;showBody=true&amp;showHeaders=true"/>
+        </filter>
+    </route>
+</routes>
+----
+
+
+== Use of jBPM Component in KIE Server
+
+To make use of camel-jbpm component in a KIE Server it is as simple as just adding two jars into KIE Server application
+
+* camel-core
+* camel-jbpm
+
+then start KIE Server and you will see once booted following information in logs
+
+[source, plain]
+----
+Camel KIE Server extension has been successfully registered as server extension
+....
+
+Route: tasks started and consuming from: jbpm://events:task:test?deploymentId=form-rendering_1.0.0
+Total 2 routes, of which 2 are started
+Apache Camel 2.23.0-SNAPSHOT (CamelContext: KIE Server Camel context for container evaluation_1.0.0) started in 0.378 seconds
+o.k.server.services.impl.KieServerImpl   : Container evaluation_1.0.0 (for release id evaluation:evaluation:1.0.0) successfully started
+----
+
+To make use of jBPM Consumer jBPM deployment descriptor must also define camel specific event listeners of following types
+
+* `new org.apache.camel.component.jbpm.listeners.CamelProcessEventListener()`
+* `new org.apache.camel.component.jbpm.listeners.CamelTaskEventListener()`
+* `new org.apache.camel.component.jbpm.listeners.CamelCaseEventListener()`
+
+These must be set in either server level of kjar deployment descriptor (use MVEL as resolver type) - see jbpm docs for more details about
+deployment descriptors.
+
+== Producer
+
+Producer is dedicated to interact with jBPM via kie-server-client that uses exposed REST api of 
+jBPM (KIE Server).
+
+== URI format
+
+[source,java]
+---------------------------------------------
+jbpm::hostName[:port][/resourceUri][?options]
+---------------------------------------------
+
+== URI Options
+
+
+// component options: START
+The JBPM component has no options.
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The JBPM endpoint is configured using URI syntax:
+
+----
+jbpm:connectionURL
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionURL* | *Required* The URL to the jBPM server. |  | URL
+| *eventListenerType* | Sets the event listener type to attach to |  | String
+|===
+
+
+==== Query Parameters (30 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *attachmentId* (common) | attachId to use when retrieving attachments |  | Long
+| *contentId* (common) | contentId to use when retrieving attachments |  | Long
+| *deploymentId* (common) | *Required* The id of the deployment |  | String
+| *emitterSendItems* (common) | Sets if event produced by emitter should be sent as single items or complete collection |  | Boolean
+| *event* (common) | the data associated with this event when signalEvent operation is performed |  | Object
+| *eventType* (common) | the type of event to use when signalEvent operation is performed |  | String
+| *identifier* (common) | identifier the global identifier |  | String
+| *maxNumber* (common) | the maximum number of rules that should be fired |  | Integer
+| *page* (common) | The page to use when retrieving user tasks |  | Integer
+| *pageSize* (common) | The page size to use when retrieving user tasks |  | Integer
+| *processId* (common) | the id of the process that should be acted upon |  | String
+| *processInstanceId* (common) | the id of the process instance |  | Long
+| *targetUserId* (common) | The targetUserId used when delegating a task |  | String
+| *task* (common) | The task instance to use with task operations |  | Task
+| *taskId* (common) | the id of the task |  | Long
+| *timeout* (common) | A timeout value |  | Integer
+| *userId* (common) | userId to use with task operations |  | String
+| *value* (common) | the value to assign to the global identifier |  | Object
+| *workItemId* (common) | the id of the work item |  | Long
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *operation* (producer) | The operation to perform | startProcess | String
+| *entities* (advanced) | The potentialOwners when nominateTask operation is performed |  | List
+| *extraJaxbClasses* (advanced) | To load additional classes when working with XML |  | Class[]
+| *parameters* (advanced) | the variables that should be set for various operations |  | Map
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *statuses* (filter) | The list of status to use when filtering tasks |  | List
+| *password* (security) | Password for authentication |  | String
+| *userName* (security) | Username for authentication |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jbpm.enabled* | Enable jbpm component | true | Boolean
+| *camel.component.jbpm.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+== Message Headers
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Name |Default Value |Type |Description
+
+|CamelJBPMValue |null |Object |the value to assign to the global identifier
+
+|CamelJBPMOperation |PUT |String |The operation to perform. The operation name must be prefixed with
+CamelJBPMOperation and the name of the operation. See the full list
+above. It is case insensitive.
+
+|CamelJBPMProcessId |null |String |the id of the process that should be acted upon
+
+|CamelJBPMProcessInstanceId |0 |Long |the id of the process instance
+
+|CamelJBPMParameters |null |Map<String, Object> |the variables that should be set for various operations
+
+|CamelJBPMEventType |null |String |the type of event to use when signalEvent operation is performed
+
+|CamelJBPMEvent |null |String |The type of the received event. Possible values defined here
+org.infinispan.notifications.cachelistener.event.Event.Type
+
+|CamelJBPMMaxNumber |null |Integer |the maximum number of rules that should be fired
+
+|CamelJBPMIdentifier |null |long |identifier the global identifier
+
+|CamelJBPMWorkItemId |0 |Long |the id of the work item
+
+|CamelJBPMTaskId |0 |Long |the id of the task
+
+|CamelJBPMTask |null |Task |The task instance to use with task operations
+
+|CamelJBPMUserId |null |String |userId to use with task operations
+
+|CamelJBPMTargetUserId |null |String |The targetUserId used when delegating a task
+
+|CamelJBPMLanguage |null |String |The language to use when filtering user tasks
+
+|CamelJBPMAttachmentId |0 |Long |attachId to use when retrieving attachments
+
+|CamelJBPMContentId |0 |Long |contentId to use when retrieving attachments
+
+|CamelJBPMEntityList |null |List<String> |The potentialOwners when nominateTask operation is performed
+
+|CamelJBPMStatusList |null |List<String> |The list of status to use when filtering tasks
+|=======================================================================
+
+== Example
+
+Below is an example route that starts a business process with id
+evaluation. To run this example you need jBPM to run locally, easiest is to use single zip 
+distribution - downloaded from jbpm.org. Next, start it and import Evaluation sample project, build and deploy.
+Once done this test can be ran out of the box.
+
+[source,java]
+----------------------------------------------------------------------------------------------
+Map<String, Object> params = new HashMap<>();
+params.put("employee", "wbadmin");
+params.put("reason", "Camel asks for it");
+
+from("direct:start")
+        .setHeader(JBPMConstants.PROCESS_ID, constant("evaluation"))
+        .setHeader((JBPMConstants.PARAMETERS, params))
+        .to("jbpm:http://localhost:8080/kie-server/services/rest/server?userName=wbadmin&password=wbadmin
+        &deploymentId=evaluation");
+----------------------------------------------------------------------------------------------

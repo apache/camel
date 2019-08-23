@@ -1,1 +1,158 @@
-../../../../../components/camel-nats/src/main/docs/nats-component.adoc
+= Nats Component
+
+*Available as of Camel version 2.17*
+
+
+http://nats.io/[NATS] is a fast and reliable messaging platform.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-nats</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+----------------------
+nats:servers[?options]
+----------------------
+
+Where *servers* represents the list of NATS servers.
+
+== Options
+
+
+// component options: START
+The Nats component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The Nats endpoint is configured using URI syntax:
+
+----
+nats:servers
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *servers* | *Required* URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers. |  | String
+|===
+
+
+==== Query Parameters (25 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connection* (common) | Reference an already instantiated connection to Nats server |  | Connection
+| *connectionTimeout* (common) | Timeout for connection attempts. (in milliseconds) | 2000 | int
+| *flushConnection* (common) | Define if we want to flush connection or not | false | boolean
+| *flushTimeout* (common) | Set the flush timeout (in milliseconds) | 1000 | int
+| *maxPingsOut* (common) | maximum number of pings have not received a response allowed by the client | 2 | int
+| *maxReconnectAttempts* (common) | Max reconnection attempts | 60 | int
+| *noEcho* (common) | Turn off echo. If supported by the gnatsd version you are connecting to this flag will prevent the server from echoing messages back to the connection if it has subscriptions on the subject being published to. | false | boolean
+| *noRandomizeServers* (common) | Whether or not randomizing the order of servers for the connection attempts | false | boolean
+| *pedantic* (common) | Whether or not running in pedantic mode (this affects performace) | false | boolean
+| *pingInterval* (common) | Ping interval to be aware if connection is still alive (in milliseconds) | 120000 | int
+| *reconnect* (common) | Whether or not using reconnection feature | true | boolean
+| *reconnectTimeWait* (common) | Waiting time before attempts reconnection (in milliseconds) | 2000 | int
+| *requestCleanupInterval* (common) | Interval to clean up cancelled/timed out requests. | 5000 | int
+| *topic* (common) | *Required* The name of topic we want to use |  | String
+| *verbose* (common) | Whether or not running in verbose mode | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *maxMessages* (consumer) | Stop receiving messages from a topic we are subscribing to after maxMessages |  | String
+| *poolSize* (consumer) | Consumer pool size | 10 | int
+| *queueName* (consumer) | The Queue name if we are using nats for a queue configuration |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *replySubject* (producer) | the subject to which subscribers should send response |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *secure* (security) | Set secure option indicating TLS is required | false | boolean
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.nats.enabled* | Enable nats component | true | Boolean
+| *camel.component.nats.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.nats.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+== Headers
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Type |Description
+
+|CamelNatsMessageTimestamp |long |The timestamp of a consumed message.
+|=======================================================================
+ 
+*Producer example:*
+
+[source,java]
+-----------------------------------------------------------
+from("direct:send").to("nats://localhost:4222?topic=test");
+-----------------------------------------------------------
+
+In case of using Authorization you can directly specify your credentials in the server URL
+
+[source,java]
+-----------------------------------------------------------
+from("direct:send").to("nats://username:password@localhost:4222?topic=test");
+-----------------------------------------------------------
+
+or your token
+
+[source,java]
+-----------------------------------------------------------
+from("direct:send").to("nats://token@localhost:4222?topic=test");
+-----------------------------------------------------------
+
+*Consumer example:*
+
+[source,java]
+----------------------------------------------------------------------------------------
+from("nats://localhost:4222?topic=test&maxMessages=5&queueName=test").to("mock:result");
+----------------------------------------------------------------------------------------

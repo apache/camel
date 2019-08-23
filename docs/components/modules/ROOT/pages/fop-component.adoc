@@ -1,1 +1,181 @@
-../../../../../components/camel-fop/src/main/docs/fop-component.adoc
+= FOP Component
+
+*Available as of Camel version 2.10*
+
+
+The FOP component allows you to render a message into different output
+formats using http://xmlgraphics.apache.org/fop/index.html[Apache FOP].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-fop</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+----------------------------
+fop://outputFormat?[options]
+----------------------------
+
+== Output Formats
+
+The primary output format is PDF but other output
+http://xmlgraphics.apache.org/fop/0.95/output.html[formats] are also
+supported:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|name |outputFormat |description
+
+|PDF |application/pdf |Portable Document Format
+
+|PS |application/postscript |Adobe Postscript
+
+|PCL |application/x-pcl |Printer Control Language
+
+|PNG |image/png |PNG images
+
+|JPEG |image/jpeg |JPEG images
+
+|SVG |image/svg+xml |Scalable Vector Graphics
+
+|XML |application/X-fop-areatree |Area tree representation
+
+|MIF |application/mif |FrameMaker's MIF
+
+|RTF |application/rtf |Rich Text Format
+
+|TXT |text/plain |Text
+|=======================================================================
+
+The complete list of valid output formats can be found
+http://svn.apache.org/repos/asf/xmlgraphics/commons/trunk/src/java/org/apache/xmlgraphics/util/MimeConstants.java[here]
+
+== Endpoint Options
+
+// component options: START
+The FOP component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The FOP endpoint is configured using URI syntax:
+
+----
+fop:outputType
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *outputType* | *Required* The primary output format is PDF but other output formats are also supported. |  | FopOutputType
+|===
+
+
+==== Query Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *fopFactory* (producer) | Allows to use a custom configured or implementation of org.apache.fop.apps.FopFactory. |  | FopFactory
+| *userConfigURL* (producer) | The location of a configuration file which can be loaded from classpath or file system. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.fop.enabled* | Enable fop component | true | Boolean
+| *camel.component.fop.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+The location of a configuration file with the following
+http://xmlgraphics.apache.org/fop/1.0/configuration.html[structure].
+The file is loaded from the classpath by
+default. You can use `file:`, or `classpath:` as prefix to load the
+resource from file or classpath. In previous releases the file is always
+loaded from file system.
+
+fopFactory
+
+ 
+
+Allows to use a custom configured or implementation of
+`org.apache.fop.apps.FopFactory`.
+
+== Message Operations
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|name |default value |description
+
+|CamelFop.Output.Format |  | Overrides the output format for that message
+
+|CamelFop.Encrypt.userPassword |  | PDF user password
+
+|CamelFop.Encrypt.ownerPassword |  | PDF owner passoword
+
+|CamelFop.Encrypt.allowPrint | true |Allows printing the PDF
+
+|CamelFop.Encrypt.allowCopyContent |true |Allows copying content of the PDF
+
+|CamelFop.Encrypt.allowEditContent |true |Allows editing content of the PDF
+
+|CamelFop.Encrypt.allowEditAnnotations |true |Allows editing annotation of the PDF
+
+|CamelFop.Render.producer |Apache FOP |Metadata element for the system/software that produces the document
+
+|CamelFop.Render.creator |  | Metadata element for the user that created the document
+
+|CamelFop.Render.creationDate |  | Creation Date
+
+|CamelFop.Render.author |  | Author of the content of the document
+
+|CamelFop.Render.title |  | Title of the document
+
+|CamelFop.Render.subject |  | Subject of the document
+
+|CamelFop.Render.keywords |  | Set of keywords applicable to this document
+|=======================================================================
+
+== Example
+
+Below is an example route that renders PDFs from xml data and xslt
+template and saves the PDF files in target folder:
+
+[source,java]
+---------------------------------
+from("file:source/data/xml")
+    .to("xslt:xslt/template.xsl")
+    .to("fop:application/pdf")
+    .to("file:target/data");
+---------------------------------
+
+For more information, see these resources...

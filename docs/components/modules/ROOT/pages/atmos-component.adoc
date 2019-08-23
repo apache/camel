@@ -1,1 +1,167 @@
-../../../../../components/camel-atmos/src/main/docs/atmos-component.adoc
+= Atmos Component
+
+*Available as of Camel version 2.15*
+
+
+Camel-Atmos is an http://camel.apache.org/[Apache Camel] component that
+allows you to work with ViPR object data services using the
+https://github.com/emcvipr/dataservices-sdk-java[Atmos Client].
+
+[source,java]
+-------------------------------
+from("atmos:foo/get?remotePath=/path").to("mock:test");
+-------------------------------
+
+== Options
+
+
+// component options: START
+The Atmos component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *fullTokenId* (security) | The token id to pass to the Atmos client |  | String
+| *secretKey* (security) | The secret key to pass to the Atmos client |  | String
+| *uri* (advanced) | The URI of the server for the Atmos client to connect to |  | String
+| *sslValidation* (security) | Whether the Atmos client should perform SSL validation | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+// endpoint options: START
+The Atmos endpoint is configured using URI syntax:
+
+----
+atmos:name/operation
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | Atmos name |  | String
+| *operation* | *Required* Operation to perform |  | AtmosOperation
+|===
+
+
+==== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *enableSslValidation* (common) | Atmos SSL validation | false | boolean
+| *fullTokenId* (common) | Atmos client fullTokenId |  | String
+| *localPath* (common) | Local path to put files |  | String
+| *newRemotePath* (common) | New path on Atmos when moving files |  | String
+| *query* (common) | Search query on Atmos |  | String
+| *remotePath* (common) | Where to put files on Atmos |  | String
+| *secretKey* (common) | Atmos shared secret |  | String
+| *uri* (common) | Atomos server uri |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.atmos.enabled* | Enable atmos component | true | Boolean
+| *camel.component.atmos.full-token-id* | The token id to pass to the Atmos client |  | String
+| *camel.component.atmos.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.atmos.secret-key* | The secret key to pass to the Atmos client |  | String
+| *camel.component.atmos.ssl-validation* | Whether the Atmos client should perform SSL validation | false | Boolean
+| *camel.component.atmos.uri* | The URI of the server for the Atmos client to connect to |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Dependencies
+
+To use Atmos in your camel routes you need to add the dependency
+on *camel-atmos* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-atmos</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------
+
+[[Atmos-Integrations]]
+
+== Integrations
+
+When you look at atmos integrations, there is one type of consumer, 
+GetConsumer, which is a type of ScheduledPollConsumer. 
+
+* `Get`
+
+Whereas there are 4 types of producers which are 
+
+* `Get` 
+* `Del` 
+* `Move`
+* `Put`
+
+== Examples
+
+These example are taken from tests:
+
+[source,java]
+-------------------------------
+from("atmos:foo/get?remotePath=/path").to("mock:test");
+-------------------------------
+
+Here, this is a consumer example.
+`remotePath` represents the path from where the data will
+be read and passes the camel exchange to regarding producer
+Underneath, this component uses atmos client API for this and
+every other operations.
+
+[source,java]
+-------------------------------
+from("direct:start")
+.to("atmos://get?remotePath=/dummy/dummy.txt")
+.to("mock:result");
+-------------------------------
+
+Here, this a producer sample.
+`remotePath` represents the path where the operations occur
+on ViPR object data service. In producers, operations(`Get`,`Del`,
+`Move`,`Put`) run on ViPR object data services and results are set 
+on headers of camel exchange.
+
+Regarding the operations, the following headers are set on camel
+exhange
+
+[source,java]
+-------------------------------
+DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, DELETED_PATH, MOVED_PATH;
+-------------------------------

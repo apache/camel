@@ -1,1 +1,870 @@
-../../../../../components/camel-braintree/src/main/docs/braintree-component.adoc
+= Braintree Component
+
+*Available as of Camel version 2.17*
+
+
+The Braintree component provides access to
+https://www.braintreepayments.com/[Braintree Payments] trough through
+theirs https://developers.braintreepayments.com/start/hello-server/java[Java
+SDK].
+
+All client applications need API credential in order to process
+payments. In order to use camel-braintree with your account, you'll need
+to create a new
+https://www.braintreepayments.com/get-started[Sandbox] or https://www.braintreepayments.com/signup[Production]
+account.
+
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+
+[source,xml]
+--------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-braintree</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+--------------------------------------------
+
+ 
+
+== Braintree Options
+
+
+
+
+// component options: START
+The Braintree component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (common) | To use the shared configuration |  | BraintreeConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The Braintree endpoint is configured using URI syntax:
+
+----
+braintree:apiName/methodName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apiName* | *Required* What kind of operation to perform |  | BraintreeApiName
+| *methodName* | What sub operation to use for the selected operation |  | String
+|===
+
+
+==== Query Parameters (14 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *environment* (common) | The environment Either SANDBOX or PRODUCTION |  | String
+| *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| *merchantId* (common) | The merchant id provided by Braintree. |  | String
+| *privateKey* (common) | The private key provided by Braintree. |  | String
+| *publicKey* (common) | The public key provided by Braintree. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *accessToken* (advanced) | The access token granted by a merchant to another in order to process transactions on their behalf. Used in place of environment, merchant id, public key and private key fields. |  | String
+| *httpReadTimeout* (advanced) | Set read timeout for http calls. |  | Integer
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *httpLogLevel* (logging) | Set logging level for http calls, see java.util.logging.Level |  | String
+| *proxyHost* (proxy) | The proxy host |  | String
+| *proxyPort* (proxy) | The proxy port |  | Integer
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 14 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.braintree.configuration.access-token* | The access token granted by a merchant to another in order to process transactions on their behalf. Used in place of environment, merchant id, public key and private key fields. |  | String
+| *camel.component.braintree.configuration.api-name* | What kind of operation to perform |  | BraintreeApiName
+| *camel.component.braintree.configuration.environment* | The environment Either SANDBOX or PRODUCTION |  | String
+| *camel.component.braintree.configuration.http-log-level* | Set logging level for http calls, see java.util.logging.Level |  | Level
+| *camel.component.braintree.configuration.http-log-name* | Set log category to use to log http calls, default "Braintree" |  | String
+| *camel.component.braintree.configuration.http-read-timeout* | Set read timeout for http calls. |  | Integer
+| *camel.component.braintree.configuration.merchant-id* | The merchant id provided by Braintree. |  | String
+| *camel.component.braintree.configuration.method-name* | What sub operation to use for the selected operation |  | String
+| *camel.component.braintree.configuration.private-key* | The private key provided by Braintree. |  | String
+| *camel.component.braintree.configuration.proxy-host* | The proxy host |  | String
+| *camel.component.braintree.configuration.proxy-port* | The proxy port |  | Integer
+| *camel.component.braintree.configuration.public-key* | The public key provided by Braintree. |  | String
+| *camel.component.braintree.enabled* | Enable braintree component | true | Boolean
+| *camel.component.braintree.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== URI format
+
+ 
+
+[source,java]
+---------------------------------------------
+braintree://endpoint-prefix/endpoint?[options]
+---------------------------------------------
+
+ 
+
+Endpoint prefix can be one of:
+
+* addOn
+* address
+* clientToken
+* creditCardverification
+* customer
+* discount
+* dispute
+* documentUpload
+* merchantAccount
+* paymentmethod
+* paymentmethodNonce
+* plan
+* report
+* settlementBatchSummary
+* subscription
+* transaction
+* webhookNotification
+
+ 
+
+== BraintreeComponent
+
+The Braintree Component can be configured with the options below. These
+options can be provided using the component's bean
+property *configuration* of
+type *org.apache.camel.component.braintree.BraintreeConfiguration*.
+
+[cols="<,<,<",options="header",]
+|=======================================================================
+|Option |Type |Description
+|environment |String |Value that specifies where requests should be
+directed – sandbox or production
+
+|merchantId |String |A unique identifier for your gateway account, which
+is different than your merchant account ID
+
+|publicKey |String |User-specific public identifier
+
+|privateKey |String |User-specific secure identifier that should not be
+shared – even with us!
+
+|accessToken |String |Token granted to a merchant using Braintree Auth
+allowing them to process transactions on another's behalf. Used in place
+of the environment, merchantId, publicKey and privateKey options.
+|=======================================================================
+
+All the options above are provided by Braintree Payments
+
+== Producer Endpoints:
+
+Producer endpoints can use endpoint prefixes followed by endpoint names
+and associated options described next. A shorthand alias can be used for
+some endpoints. The endpoint URI MUST contain a prefix.
+
+Endpoint options that are not mandatory are denoted by []. When there
+are no mandatory options for an endpoint, one of the set of [] options
+MUST be provided. Producer endpoints can also use a special
+option *inBody* that in turn should contain the name of the endpoint
+option whose value will be contained in the Camel Exchange In message.
+
+Any of the endpoint options can be provided in either the endpoint URI,
+or dynamically in a message header. The message header name must be of
+the format *CamelBraintree.<option>*. Note that the *inBody* option
+overrides message header, i.e. the endpoint option *inBody=option* would
+override a *CamelBraintree.option* header.
+
+For more information on the endpoints and options see Braintree
+references
+at https://developers.braintreepayments.com/reference/overview[https://developers.braintreepayments.com/reference/overview]
+
+ 
+
+=== Endpoint prefix _addOn_
+
+The following endpoints can be invoked with the prefix *addOn* as
+follows:
+
+ 
+
+[source,java]
+--------------------------
+braintree://addOn/endpoint
+--------------------------
+
+[cols="<,<,<,<",options="header",]
+|====================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|all |  |  |List<com.braintreegateway.Addon>
+|====================================================
+
+=== Endpoint prefix _address_
+
+The following endpoints can be invoked with the prefix *address* as
+follows:
+
+ 
+
+[source,java]
+--------------------------------------
+braintree://address/endpoint?[options]
+--------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|create |  |customerId, request
+|com.braintreegateway.Result<com.braintreegateway.Address>
+
+|delete |  |customerId, id
+|com.braintreegateway.Result<com.braintreegateway.Address> 
+
+|find |  |customerId, id |com.braintreegateway.Address
+
+|update |  |customerId, id, request
+|com.braintreegateway.Result<com.braintreegateway.Address> 
+|=======================================================================
+
+[[Braintree-URIOptionsforaddress]]
+URI Options for _address_
+
+[cols="<,<",options="header",]
+|============================================
+|Name |Type
+|customerId |String
+|request |com.braintreegateway.AddressRequest
+|id |String
+|============================================
+
+=== Endpoint prefix _clientToken_
+
+The following endpoints can be invoked with the prefix *clientToken* as
+follows:
+
+ 
+
+[source,java]
+------------------------------------------
+braintree://clientToken/endpoint?[options]
+------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|====================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|generate |  | request |String
+|====================================================
+
+[[Braintree-URIOptionsforclientToken]]
+URI Options for _clientToken_
+
+[cols="<,<",options="header",]
+|================================================
+|Name |Type
+|request |com.braintreegateway.ClientTokenrequest
+|================================================
+
+=== Endpoint prefix _creditCardVerification_
+
+The following endpoints can be invoked with the
+prefix *creditCardverification* as follows:
+
+ 
+
+[source,java]
+-----------------------------------------------------
+braintree://creditCardVerification/endpoint?[options]
+-----------------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|find |  | id |com.braintreegateway.CreditCardVerification
+
+|search |  |query
+|com.braintreegateway.ResourceCollection<com.braintreegateway.CreditCardVerification>
+|=======================================================================
+
+[[Braintree-URIOptionsforcreditCardVerification]]
+URI Options for _creditCardVerification_
+
+[cols="<,<",options="header",]
+|===============================================================
+|Name |Type
+|id |String
+|query |com.braintreegateway.CreditCardVerificationSearchRequest
+|===============================================================
+
+=== Endpoint prefix _customer_
+
+The following endpoints can be invoked with the prefix *customer* as
+follows:
+
+ 
+
+[source,java]
+---------------------------------------
+braintree://customer/endpoint?[options]
+---------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|all |  |  | 
+
+|create |  |request
+|com.braintreegateway.Result<com.braintreegateway.Customer>
+
+|delete |  |id
+|com.braintreegateway.Result<com.braintreegateway.Customer>
+
+|find |  |id |com.braintreegateway.Customer
+
+|search |  |query
+|com.braintreegateway.ResourceCollection<com.braintreegateway.Customer>
+
+|update |  |id, request
+|com.braintreegateway.Result<com.braintreegateway.Customer>
+|=======================================================================
+
+[[Braintree-URIOptionsforcustomer]]
+URI Options for _customer_
+
+[cols="<,<",options="header",]
+|=================================================
+|Name |Type
+|id |String
+|request |com.braintreegateway.CustomerRequest
+|query |com.braintreegateway.CustomerSearchRequest
+|=================================================
+
+=== Endpoint prefix _discount_
+
+The following endpoints can be invoked with the prefix *discount* as
+follows:
+
+ 
+
+[source,java]
+-----------------------------
+braintree://discount/endpoint
+-----------------------------
+
+[cols="<,<,<,<",options="header",]
+|====================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|all |  |  |List<com.braintreegateway.Discount>
+|====================================================
+
+ +
+
+ +
+
+=== Endpoint prefix _dispute_
+
+The following endpoints can be invoked with the prefix *dispute* as
+follows:
+
+[source,java]
+----------------------------------------------
+braintree://dispute/endpoint?[options]
+----------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|accept |  |id
+|com.braintreegateway.Result
+
+|addFileEvidence |  |disputeId, documentId
+|com.braintreegateway.Result<DisputeEvidence>
+
+|addFileEvidence |  |disputeId, fileEvidenceRequest
+|com.braintreegateway.Result<DisputeEvidence>
+
+|addTextEvidence |  |disputeId, content
+|com.braintreegateway.Result<DisputeEvidence>
+
+|addTextEvidence |  |disputeId, textEvidenceRequest
+|com.braintreegateway.Result<DisputeEvidence>
+
+|finalize |  |id
+|com.braintreegateway.Result
+
+|find |  |id
+|com.braintreegateway.Dispute
+
+|removeEvidence |  |id
+|com.braintreegateway.Result
+
+|search |  | disputeSearchRequest
+|com.braintreegateway.PaginatedCollection<com.braintreegateway.Dispute>
+|=======================================================================
+
+[[Braintree-URIOptionsfordispute]]
+URI Options for _dispute_
+
+[cols="<,<",options="header",]
+|==========================================================
+|Name |Type
+|id |String
+|disputeId |String
+|documentId |String
+|fileEvidenceRequest |com.braintreegateway.FileEvidenceRequest
+|content |String |
+|textEvidenceRequest |com.braintreegateway.TextEvidenceRequest
+|disputeSearchRequest |com.braintreegateway.DisputeSearchRequest
+|==========================================================
+
+
+=== Endpoint prefix _documentUpload_
+
+The following endpoints can be invoked with the prefix *documentUpload* as
+follows:
+
+[source,java]
+----------------------------------------------
+braintree://documentUpload/endpoint?[options]
+----------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|create |  |request
+|com.braintreegateway.Result<com.braintreegateway.DocumentUpload>
+|=======================================================================
+
+[[Braintree-URIOptionsfordocumentUpload]]
+URI Options for _documentUpload_
+
+[cols="<,<",options="header",]
+|==========================================================
+|Name |Type
+|request |com.braintreegateway.DocumentUploadRequest
+|==========================================================
+
+
+=== Endpoint prefix _merchantAccount_
+
+The following endpoints can be invoked with the
+prefix *merchantAccount* as follows:
+
+ 
+
+[source,java]
+----------------------------------------------
+braintree://merchantAccount/endpoint?[options]
+----------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|create |  |request
+|com.braintreegateway.Result<com.braintreegateway.MerchantAccount>
+
+|createForCurrency |  |currencyRequest
+|com.braintreegateway.Result<com.braintreegateway.MerchantAccount>
+
+|find |  |id |com.braintreegateway.MerchantAccount
+
+|update |  |id, request
+|com.braintreegateway.Result<com.braintreegateway.MerchantAccount>
+|=======================================================================
+
+[[Braintree-URIOptionsformerchantAccount]]
+URI Options for _merchantAccount_
+
+[cols="<,<",options="header",]
+|====================================================
+|Name |Type
+|id |String
+|request |com.braintreegateway.MerchantAccountRequest
+|currencyRequest |com.braintreegateway.MerchantAccountCreateForCurrencyRequest
+|====================================================
+
+=== Endpoint prefix _paymentMethod_
+
+The following endpoints can be invoked with the
+prefix *paymentMethod* as follows:
+
+ 
+
+[source,java]
+--------------------------------------------
+braintree://paymentMethod/endpoint?[options]
+--------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|create |  |request
+|com.braintreegateway.Result<com.braintreegateway.PaymentMethod>
+
+|delete |  |token, deleteRequest
+|com.braintreegateway.Result<com.braintreegateway.PaymentMethod>
+
+|find |  |token |com.braintreegateway.PaymentMethod
+
+|update |  |token, request
+|com.braintreegateway.Result<com.braintreegateway.PaymentMethod>
+|=======================================================================
+
+[[Braintree-URIOptionsforpaymentMethod]]
+URI Options for _paymentMethod_
+
+[cols="<,<",options="header",]
+|==================================================
+|Name |Type
+|token |String
+|request |com.braintreegateway.PaymentMethodRequest
+|deleteRequest |com.braintreegateway.PaymentMethodDeleteRequest
+|==================================================
+
+=== Endpoint prefix _paymentMethodNonce_
+
+The following endpoints can be invoked with the
+prefix *paymentMethodNonce* as follows:
+
+ 
+
+[source,java]
+-------------------------------------------------
+braintree://paymentMethodNonce/endpoint?[options]
+-------------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|create |  |paymentMethodToken
+|com.braintreegateway.Result<com.braintreegateway.PaymentMethodNonce>
+
+|find |  |paymentMethodNonce |com.braintreegateway.PaymentMethodNonce
+|=======================================================================
+
+[[Braintree-URIOptionsforpaymentMethodNonce]]
+URI Options for _paymentMethodNonce_
+
+[cols="<,<",options="header",]
+|==========================
+|Name |Type
+|paymentMethodToken |String
+|paymentMethodNonce |String
+|==========================
+
+=== Endpoint prefix _plan_
+
+The following endpoints can be invoked with the prefix *plan* as
+follows:
+
+ 
+
+[source,java]
+-------------------------
+braintree://plan/endpoint
+-------------------------
+
+[cols="<,<,<,<",options="header",]
+|====================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|all |  |  |List<com.braintreegateway.Plan>
+|====================================================
+
+
+=== Endpoint prefix _report_
+
+The following endpoints can be invoked with the prefix *report* as
+follows:
+
+[source,java]
+---------------------------------
+braintree://plan/report?[options]
+---------------------------------
+
+[cols="<,<,<,<",options="header",]
+|==============================================================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|transactionLevelFees |  | request |com.braintreegateway.Result<com.braintreegateway.TransactionLevelFeeReport>
+|==============================================================================================================
+
+[[Braintree-URIOptionsfortreport]]
+URI Options for _report_
+
+[cols="<,<",options="header",]
+|==============================================================
+|Name |Type
+|request |com.braintreegateway.TransactionLevelFeeReportRequest
+|==============================================================
+
+
+=== Endpoint prefix _settlementBatchSummary_
+
+The following endpoints can be invoked with the
+prefix *settlementBatchSummary* as follows:
+
+ 
+
+[source,java]
+-----------------------------------------------------
+braintree://settlementBatchSummary/endpoint?[options]
+-----------------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|generate |  | request
+|com.braintreegateway.Result<com.braintreegateway.SettlementBatchSummary>
+|=======================================================================
+
+[[Braintree-URIOptionsforsettlementBatchSummary]]
+URI Options for _settlementBatchSummary_
+
+[cols="<,<",options="header",]
+|==========================
+|Name |Type
+|settlementDate |Calendar
+|groupByCustomField |String
+|==========================
+
+=== Endpoint prefix _subscription_
+
+The following endpoints can be invoked with the prefix *subscription* as
+follows:
+
+ 
+
+[source,java]
+-------------------------------------------
+braintree://subscription/endpoint?[options]
+-------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|cancel |  | id
+| com.braintreegateway.Result<com.braintreegateway.Subscription>
+
+|create |  |request
+|com.braintreegateway.Result<com.braintreegateway.Subscription>
+
+|delete |  |customerId, id
+|com.braintreegateway.Result<com.braintreegateway.Subscription>
+
+|find |  |id |com.braintreegateway.Subscription
+
+|retryCharge |  |subscriptionId, amount
+|com.braintreegateway.Result<com.braintreegateway.Transaction>
+
+|search |  |searchRequest
+|com.braintreegateway.ResourceCollection<com.braintreegateway.Subscription>
+
+|update |  |id, request
+|com.braintreegateway.Result<com.braintreegateway.Subscription>
+|=======================================================================
+
+[[Braintree-URIOptionsforsubscription]]
+URI Options for _subscription_
+
+[cols="<,<",options="header",]
+|==============================================================
+|Name |Type
+|id |String
+|request |com.braintreegateway.SubscriptionRequest
+|customerId |String
+|subscriptionId |String
+|amount |BigDecimal
+|searchRequest |com.braintreegateway.SubscriptionSearchRequest.
+|==============================================================
+
+ 
+
+=== Endpoint prefix _transaction_
+
+The following endpoints can be invoked with the prefix *transaction* as
+follows:
+
+ 
+
+[source,java]
+------------------------------------------
+braintree://transaction/endpoint?[options]
+------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|cancelRelease |  |id
+|com.braintreegateway.Result<com.braintreegateway.Transaction>
+
+|cloneTransaction |  |id, cloneRequest
+|com.braintreegateway.Result<com.braintreegateway.Transaction>
+
+|credit |  |request
+|com.braintreegateway.Result<com.braintreegateway.Transaction>
+
+|find |  |id |com.braintreegateway.Transaction
+
+|holdInEscrow |  |id
+|com.braintreegateway.Result<com.braintreegateway.Transaction>
+
+|releaseFromEscrow |  |id
+|com.braintreegateway.Result<com.braintreegateway.Transaction>
+
+|refund |  |id, amount, refundRequest
+|com.braintreegateway.Result<com.braintreegateway.Transaction>
+
+|sale |  |request
+|com.braintreegateway.Result<com.braintreegateway.Transaction>
+
+|search |  |query
+|com.braintreegateway.ResourceCollection<com.braintreegateway.Transaction>
+
+|submitForPartialSettlement |  |id, amount
+|com.braintreegateway.Result<com.braintreegateway.Transaction>
+
+|submitForSettlement |  |id, amount, request
+|com.braintreegateway.Result<com.braintreegateway.Transaction>
+
+|voidTransaction |  |id
+|com.braintreegateway.Result<com.braintreegateway.Transaction>
+|=======================================================================
+
+[[Braintree-URIOptionsfortransaction]]
+URI Options for _transaction_
+
+[cols="<,<",options="header",]
+|==========================================================
+|Name |Type
+|id |String
+|request |com.braintreegateway.TransactionCloneRequest
+|cloneRequest |com.braintreegateway.TransactionCloneRequest
+|refundRequest |com.braintreegateway.TransactionRefundRequest
+|amount |BigDecimal
+|query |com.braintreegateway.TransactionSearchRequest
+|==========================================================
+
+=== Endpoint prefix _webhookNotification_
+
+The following endpoints can be invoked with the
+prefix *webhookNotification* as follows:
+
+ 
+
+[source,java]
+--------------------------------------------------
+braintree://webhookNotification/endpoint?[options]
+--------------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|parse |  | signature, payload |com.braintreegateway.WebhookNotification
+|verify |  |challenge |String
+|=======================================================================
+
+[[Braintree-URIOptionsforwebhookNotification]]
+URI Options for _webhookNotification_
+
+[cols="<,<",options="header",]
+|=================
+|Name |Type
+|signature |String
+|payload |String
+|challenge |String
+|=================
+
+ 
+
+== Consumer Endpoints
+
+Any of the producer endpoints can be used as a consumer endpoint.
+Consumer endpoints can
+use http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
+Poll Consumer Options] with a *consumer.* prefix to schedule endpoint
+invocation. By default Consumer endpoints that return an array or
+collection will generate one exchange per element, and their routes will
+be executed once for each exchange. To change this behavior use the
+property *consumer.splitResults=true* to return a single exchange for
+the entire list or array. 
+
+== Message Headers
+
+Any URI option can be provided in a message header for producer
+endpoints with a *CamelBraintree.* prefix.
+
+== Message body
+
+All result message bodies utilize objects provided by the Braintree Java
+SDK. Producer endpoints can specify the option name for incoming message
+body in the *inBody* endpoint parameter.
+
+ 
+
+ 
+
+== Examples
+
+*Blueprint*
+
+[source,xml]
+--------------------------------------------------------------------------------------------------------------------------------------------
+<?xml version="1.0"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+           xsi:schemaLocation="
+             http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+             http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+
+    <cm:property-placeholder id="placeholder" persistent-id="camel.braintree">
+    </cm:property-placeholder>
+
+    <bean id="braintree" class="org.apache.camel.component.braintree.BraintreeComponent">
+        <property name="configuration">
+            <bean class="org.apache.camel.component.braintree.BraintreeConfiguration">
+                <property name="environment" value="${environment}"/>
+                <property name="merchantId" value="${merchantId}"/>
+                <property name="publicKey" value="${publicKey}"/>
+                <property name="privateKey" value="${privateKey}"/>
+            </bean>
+        </property>
+    </bean>
+
+    <camelContext trace="true" xmlns="http://camel.apache.org/schema/blueprint" id="braintree-example-context">
+        <route id="braintree-example-route">
+            <from uri="direct:generateClientToken"/>
+            <to uri="braintree://clientToken/generate"/>
+            <to uri="stream:out"/>
+        </route>
+    </camelContext>
+
+</blueprint>
+--------------------------------------------------------------------------------------------------------------------------------------------

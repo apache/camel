@@ -1,1 +1,202 @@
-../../../../../components/camel-chunk/src/main/docs/chunk-component.adoc
+= Chunk Component
+
+*Available as of Camel version 2.15*
+
+
+The Chunk component allows for processing a message using a
+http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.
+This can be ideal when using Templating to
+generate responses for requests.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+---------------------------------------------------------------------------------
+<dependency>
+<groupId>org.apache.camel</groupId>
+<artifactId>camel-chunk</artifactId>
+<version>x.x.x</version> <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------------------------------------------------
+
+== URI format
+
+[source,java]
+----------------------------
+chunk:templateName[?options]
+----------------------------
+
+Where *templateName* is the classpath-local URI of the template to
+invoke.
+
+You can append query options to the URI in the following
+format, `?option=value&option=value&...`
+
+== Options
+
+
+// component options: START
+The Chunk component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Chunk endpoint is configured using URI syntax:
+
+----
+chunk:resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
+|===
+
+
+==== Query Parameters (7 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *encoding* (producer) | Define the encoding of the body |  | String
+| *extension* (producer) | Define the file extension of the template |  | String
+| *themeFolder* (producer) | Define the themes folder to scan |  | String
+| *themeLayer* (producer) | Define the theme layer to elaborate |  | String
+| *themeSubfolder* (producer) | Define the themes subfolder to scan |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.chunk.enabled* | Enable chunk component | true | Boolean
+| *camel.component.chunk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+Chunk component will look for a specific template in _themes_ folder
+with extensions _.chtml_ or _.cxml. _If you need to specify a different
+folder or extensions, you will need to use the specific options listed
+above.
+
+== Chunk Context
+
+Camel will provide exchange information in the Chunk context (just
+a `Map`). The `Exchange` is transferred as:
+
+ 
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|key |value
+
+|`exchange` |The `Exchange` itself.
+
+|`exchange.properties` |The `Exchange` properties.
+
+|`headers` |The headers of the In message.
+
+|`camelContext` |The Camel Context.
+
+|`request` |The In message.
+
+|`body` |The In message body.
+
+|`response` |The Out message (only for InOut message exchange pattern).
+|=======================================================================
+
+== Dynamic templates
+
+Camel provides two headers by which you can define a different resource
+location for a template or the template content itself. If any of these
+headers is set then Camel uses this over the endpoint configured
+resource. This allows you to provide a dynamic template at runtime.
+
+[width="100%",cols="20%,10%,10%,60%",options="header",]
+|=======================================================================
+|Header |Type |Description |Support Version
+
+|ChunkConstants.CHUNK_RESOURCE_URI |String |A URI for the template resource to use instead of the endpoint
+configured. |
+
+|ChunkConstants.CHUNK_TEMPLATE |String |The template to use instead of the endpoint configured. |
+|=======================================================================
+
+== Samples
+
+For example you could use something like:
+
+[source,java]
+--------------------------
+from("activemq:My.Queue").
+to("chunk:template");
+--------------------------
+
+To use a Chunk template to formulate a response for a message for InOut
+message exchanges (where there is a `JMSReplyTo` header).
+
+If you want to use InOnly and consume the message and send it to another
+destination you could use:
+
+[source,java]
+-----------------------------
+from("activemq:My.Queue").
+to("chunk:template").
+to("activemq:Another.Queue");
+-----------------------------
+
+It's possible to specify what template the component should use
+dynamically via a header, so for example:
+
+[source,java]
+------------------------------------------------------------------
+from("direct:in").
+setHeader(ChunkConstants.CHUNK_RESOURCE_URI).constant("template").
+to("chunk:dummy");
+------------------------------------------------------------------
+
+An example of Chunk component options use:
+
+[source,java]
+---------------------------------------------------------------------------------------
+from("direct:in").
+to("chunk:file_example?themeFolder=template&themeSubfolder=subfolder&extension=chunk");
+---------------------------------------------------------------------------------------
+
+In this example Chunk component will look for the file
+_file_example.chunk_ in the folder _template/subfolder._
+
+== The Email Sample
+
+In this sample we want to use Chunk templating for an order confirmation
+email. The email template is laid out in Chunk as:
+
+[source,java]
+----------------------------------------------
+ 
+Dear {$headers.lastName}, {$headers.firstName}
+
+Thanks for the order of {$headers.item}.
+
+Regards Camel Riders Bookstore
+{$body}
+----------------------------------------------

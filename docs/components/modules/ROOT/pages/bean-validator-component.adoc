@@ -1,1 +1,291 @@
-../../../../../components/camel-bean-validator/src/main/docs/bean-validator-component.adoc
+= Bean Validator Component
+
+*Available as of Camel version 2.3*
+
+
+The Validator component performs bean validation of the message body
+using the Java Bean Validation API
+(http://jcp.org/en/jsr/detail?id=303[JSR 303]). Camel uses the reference
+implementation, which is
+http://docs.jboss.org/hibernate/validator/4.3/reference/en-US/html_single/[Hibernate
+Validator].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-bean-validator</artifactId>
+    <version>x.y.z</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+------------------------------
+bean-validator:label[?options]
+------------------------------
+
+or
+
+[source,java]
+--------------------------------
+bean-validator://label[?options]
+--------------------------------
+
+Where *label* is an arbitrary text value describing the endpoint. +
+ You can append query options to the URI in the following format,
+?option=value&option=value&...
+
+== URI Options
+
+
+// component options: START
+The Bean Validator component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Bean Validator endpoint is configured using URI syntax:
+
+----
+bean-validator:label
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *label* | *Required* Where label is an arbitrary text value describing the endpoint |  | String
+|===
+
+
+==== Query Parameters (6 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *constraintValidatorFactory* (producer) | To use a custom ConstraintValidatorFactory |  | ConstraintValidator Factory
+| *group* (producer) | To use a custom validation group | javax.validation.groups.Default | String
+| *messageInterpolator* (producer) | To use a custom MessageInterpolator |  | MessageInterpolator
+| *traversableResolver* (producer) | To use a custom TraversableResolver |  | TraversableResolver
+| *validationProviderResolver* (producer) | To use a a custom ValidationProviderResolver |  | ValidationProvider Resolver
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.bean-validator.enabled* | Enable bean-validator component | true | Boolean
+| *camel.component.bean-validator.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== OSGi deployment
+
+To use Hibernate Validator in the OSGi environment use dedicated
+`ValidationProviderResolver` implementation, just as
+`org.apache.camel.component.bean.validator.HibernateValidationProviderResolver`.
+The snippet below demonstrates this approach. You can also
+use `HibernateValidationProviderResolver`.
+
+*Using HibernateValidationProviderResolver*
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------------------
+from("direct:test").
+  to("bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
+
+...
+
+<bean id="myValidationProviderResolver" class="org.apache.camel.component.bean.validator.HibernateValidationProviderResolver"/> 
+--------------------------------------------------------------------------------------------------------------------------------
+
+If no custom `ValidationProviderResolver` is defined and the validator
+component has been deployed into the OSGi environment,
+the `HibernateValidationProviderResolver` will be automatically used.
+
+== Example
+
+Assumed we have a java bean with the following annotations
+
+*Car.java*
+
+[source,java]
+-----------------------------------------------------------
+public class Car {
+
+    @NotNull
+    private String manufacturer;
+
+    @NotNull
+    @Size(min = 5, max = 14, groups = OptionalChecks.class)
+    private String licensePlate;
+    
+    // getter and setter
+}
+-----------------------------------------------------------
+
+and an interface definition for our custom validation group
+
+*OptionalChecks.java*
+
+[source,java]
+---------------------------------
+public interface OptionalChecks {
+}
+---------------------------------
+
+with the following Camel route, only the *@NotNull* constraints on the
+attributes manufacturer and licensePlate will be validated (Camel uses
+the default group `javax.validation.groups.Default`).
+
+[source,java]
+-------------------------
+from("direct:start")
+.to("bean-validator://x")
+.to("mock:end")
+-------------------------
+
+If you want to check the constraints from the group `OptionalChecks`,
+you have to define the route like this
+
+[source,java]
+----------------------------------------------
+from("direct:start")
+.to("bean-validator://x?group=OptionalChecks")
+.to("mock:end")
+----------------------------------------------
+
+If you want to check the constraints from both groups, you have to
+define a new interface first
+
+*AllChecks.java*
+
+[source,java]
+-----------------------------------------------------
+@GroupSequence({Default.class, OptionalChecks.class})
+public interface AllChecks {
+}
+-----------------------------------------------------
+
+and then your route definition should looks like this
+
+[source,java]
+-----------------------------------------
+from("direct:start")
+.to("bean-validator://x?group=AllChecks")
+.to("mock:end")
+-----------------------------------------
+
+And if you have to provide your own message interpolator, traversable
+resolver and constraint validator factory, you have to write a route
+like this
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+<bean id="myMessageInterpolator" class="my.ConstraintValidatorFactory" />
+<bean id="myTraversableResolver" class="my.TraversableResolver" />
+<bean id="myConstraintValidatorFactory" class="my.ConstraintValidatorFactory" />
+
+from("direct:start")
+.to("bean-validator://x?group=AllChecks&messageInterpolator=#myMessageInterpolator
+&traversableResolver=#myTraversableResolver&constraintValidatorFactory=#myConstraintValidatorFactory")
+.to("mock:end")
+------------------------------------------------------------------------------------------------------
+
+It's also possible to describe your constraints as XML and not as Java
+annotations. In this case, you have to provide the file
+`META-INF/validation.xml` which could looks like this
+
+*validation.xml*
+
+[source,java]
+------------------------------------------------------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<validation-config
+    xmlns="http://jboss.org/xml/ns/javax/validation/configuration"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/configuration">
+    <default-provider>org.hibernate.validator.HibernateValidator</default-provider>
+    <message-interpolator>org.hibernate.validator.engine.ResourceBundleMessageInterpolator</message-interpolator>
+    <traversable-resolver>org.hibernate.validator.engine.resolver.DefaultTraversableResolver</traversable-resolver>
+    <constraint-validator-factory>org.hibernate.validator.engine.ConstraintValidatorFactoryImpl</constraint-validator-factory>
+    
+    <constraint-mapping>/constraints-car.xml</constraint-mapping>
+</validation-config>
+------------------------------------------------------------------------------------------------------------------------------
+
+and the `constraints-car.xml` file
+
+*constraints-car.xml*
+
+[source,java]
+----------------------------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<constraint-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping validation-mapping-1.0.xsd"
+    xmlns="http://jboss.org/xml/ns/javax/validation/mapping">
+    <default-package>org.apache.camel.component.bean.validator</default-package>
+    
+    <bean class="CarWithoutAnnotations" ignore-annotations="true">
+        <field name="manufacturer">
+            <constraint annotation="javax.validation.constraints.NotNull" />
+        </field>
+        
+        <field name="licensePlate">
+            <constraint annotation="javax.validation.constraints.NotNull" />
+            
+            <constraint annotation="javax.validation.constraints.Size">
+                <groups>
+                    <value>org.apache.camel.component.bean.validator.OptionalChecks</value>
+                </groups>
+                <element name="min">5</element>
+                <element name="max">14</element>
+            </constraint>
+        </field>
+    </bean>
+</constraint-mappings>
+----------------------------------------------------------------------------------------------------
+
+Here is the XML syntax for the example route definition where **OrderedChecks** can be https://github.com/apache/camel/blob/master/components/camel-bean-validator/src/test/java/org/apache/camel/component/bean/validator/OrderedChecks.java 
+
+Note that the body should include an instance of a class to validate.
+
+[source,java]
+----------------------------------------------------------------------------------------------------
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+  
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <to uri="bean-validator://x?group=org.apache.camel.component.bean.validator.OrderedChecks"/>
+        </route>
+    </camelContext>
+</beans>
+----------------------------------------------------------------------------------------------------

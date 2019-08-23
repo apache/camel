@@ -1,5 +1,0 @@
-name: manual
-title: User manual
-version: latest
-nav:
-- modules/ROOT/nav.adoc

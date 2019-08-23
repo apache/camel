@@ -1,1 +1,82 @@
-../../../../../components/camel-chronicle/src/main/docs/chronicle-engine-component.adoc
+[[chronicle-engine-component]]
+= Chronicle Engine Component (deprecated)
+
+*Available as of Camel version 2.18*
+
+*Available as of Camel version 2.18*
+
+
+The camel chronicle-engine component let you leverage the power of OpenHFT's Chronicle-Engine
+
+### URI Format
+
+[source,java]
+----------------------------
+chronicle-engine:addresses/path[?options]
+----------------------------
+
+
+### URI Options
+
+
+// component options: START
+The Chronicle Engine component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Chronicle Engine endpoint is configured using URI syntax:
+
+----
+chronicle-engine:addresses/path
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *addresses* | *Required* Engine addresses. Multiple addresses can be separated by comma. |  | String
+| *path* | *Required* Engine path |  | String
+|===
+
+
+==== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *action* (common) | The default action to perform, valid values are: - PUBLISH - PPUBLISH_AND_INDEX - PPUT - PGET_AND_PUT - PPUT_ALL - PPUT_IF_ABSENT - PGET - PGET_AND_REMOVE - PREMOVE - PIS_EMPTY - PSIZE |  | String
+| *clusterName* (common) | Cluster name for queue |  | String
+| *filteredMapEvents* (common) | A comma separated list of Map event type to filer, valid values are: INSERT, UPDATE, REMOVE. |  | String
+| *persistent* (common) | Enable/disable data persistence | true | boolean
+| *subscribeMapEvents* (common) | Set if consumer should subscribe to Map events, default true. | true | boolean
+| *subscribeTopicEvents* (common) | Set if consumer should subscribe to TopicEvents,d efault false. | false | boolean
+| *subscribeTopologicalEvents* (common) | Set if consumer should subscribe to TopologicalEvents,d efault false. | false | boolean
+| *wireType* (common) | The Wire type to use, default to binary wire. | BINARY | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.chronicle-engine.enabled* | Enable chronicle-engine component | true | Boolean
+| *camel.component.chronicle-engine.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END

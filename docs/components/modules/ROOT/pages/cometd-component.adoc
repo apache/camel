@@ -1,1 +1,227 @@
-../../../../../components/camel-cometd/src/main/docs/cometd-component.adoc
+= CometD Component
+
+*Available as of Camel version 2.0*
+
+
+The Cometd component is a transport for working with the
+http://www.mortbay.org/jetty[jetty] implementation of the
+http://docs.codehaus.org/display/JETTY/Cometd+%28aka+Bayeux%29[cometd/bayeux
+protocol]. +
+ Using this component in combination with the dojo toolkit library it's
+possible to push Camel messages directly into the browser using an AJAX
+based mechanism.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-cometd</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+----------------------------------------
+cometd://host:port/channelName[?options]
+----------------------------------------
+
+The *channelName* represents a topic that can be subscribed to by the
+Camel endpoints.
+
+== Examples
+
+------------------------------------------
+cometd://localhost:8080/service/mychannel
+cometds://localhost:8443/service/mychannel
+------------------------------------------
+
+where `cometds:` represents an SSL configured endpoint.
+
+== Options
+
+
+
+
+// component options: START
+The CometD component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *sslKeyPassword* (security) | The password for the keystore when using SSL. |  | String
+| *sslPassword* (security) | The password when using SSL. |  | String
+| *sslKeystore* (security) | The path to the keystore. |  | String
+| *securityPolicy* (security) | To use a custom configured SecurityPolicy to control authorization |  | SecurityPolicy
+| *extensions* (common) | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests. |  | List
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+// endpoint options: START
+The CometD endpoint is configured using URI syntax:
+
+----
+cometd:host:port/channelName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* | *Required* Hostname |  | String
+| *port* | *Required* Host port number |  | int
+| *channelName* | *Required* The channelName represents a topic that can be subscribed to by the Camel endpoints. |  | String
+|===
+
+
+==== Query Parameters (16 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *allowedOrigins* (common) | The origins domain that support to cross, if the crosssOriginFilterOn is true | * | String
+| *baseResource* (common) | The root directory for the web resources or classpath. Use the protocol file: or classpath: depending if you want that the component loads the resource from file system or classpath. Classpath is required for OSGI deployment where the resources are packaged in the jar |  | String
+| *crossOriginFilterOn* (common) | If true, the server will support for cross-domain filtering | false | boolean
+| *filterPath* (common) | The filterPath will be used by the CrossOriginFilter, if the crosssOriginFilterOn is true |  | String
+| *interval* (common) | The client side poll timeout in milliseconds. How long a client will wait between reconnects |  | int
+| *jsonCommented* (common) | If true, the server will accept JSON wrapped in a comment and will generate JSON wrapped in a comment. This is a defence against Ajax Hijacking. | true | boolean
+| *logLevel* (common) | Logging level. 0=none, 1=info, 2=debug. | 1 | int
+| *maxInterval* (common) | The max client side poll timeout in milliseconds. A client will be removed if a connection is not received in this time. | 30000 | int
+| *multiFrameInterval* (common) | The client side poll timeout, if multiple connections are detected from the same browser. | 1500 | int
+| *timeout* (common) | The server side poll timeout in milliseconds. This is how long the server will hold a reconnect request before responding. | 240000 | int
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sessionHeadersEnabled* (consumer) | Whether to include the server session headers in the Camel message when creating a Camel Message for incoming requests. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *disconnectLocalSession* (producer) | Whether to disconnect local sessions after publishing a message to its channel. Disconnecting local session is needed as they are not swept by default by CometD, and therefore you can run out of memory. | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.cometd.enabled* | Enable cometd component | true | Boolean
+| *camel.component.cometd.extensions* | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests. |  | List
+| *camel.component.cometd.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.cometd.security-policy* | To use a custom configured SecurityPolicy to control authorization. The option is a org.cometd.bayeux.server.SecurityPolicy type. |  | String
+| *camel.component.cometd.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.cometd.ssl-key-password* | The password for the keystore when using SSL. |  | String
+| *camel.component.cometd.ssl-keystore* | The path to the keystore. |  | String
+| *camel.component.cometd.ssl-password* | The password when using SSL. |  | String
+| *camel.component.cometd.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+Here is some examples on How to pass the parameters
+
+For file (for webapp resources located in the Web Application directory
+--> cometd://localhost:8080?resourceBase=file./webapp +
+ For classpath (when by example the web resources are packaged inside
+the webapp folder -->
+cometd://localhost:8080?resourceBase=classpath:webapp
+
+== Authentication
+
+*Available as of Camel 2.8*
+
+You can configure custom `SecurityPolicy` and `Extension`'s to the
+`CometdComponent` which allows you to use authentication as
+http://cometd.org/documentation/howtos/authentication[documented here]
+
+== Setting up SSL for Cometd Component
+
+=== Using the JSSE Configuration Utility
+
+The Cometd component supports SSL/TLS configuration
+through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
+Configuration Utility].  This utility greatly decreases the amount of
+component specific code you need to write and is configurable at the
+endpoint and component levels.  The following examples demonstrate how
+to use the utility with the Cometd component. You need to configure SSL
+on the CometdComponent.
+
+[[Cometd-Programmaticconfigurationofthecomponent]]
+Programmatic configuration of the component
+
+[source,java]
+-----------------------------------------------------------------------------------------------
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setResource("/users/home/server/keystore.jks");
+ksp.setPassword("keystorePassword");
+
+KeyManagersParameters kmp = new KeyManagersParameters();
+kmp.setKeyStore(ksp);
+kmp.setKeyPassword("keyPassword");
+
+TrustManagersParameters tmp = new TrustManagersParameters();
+tmp.setKeyStore(ksp);
+
+SSLContextParameters scp = new SSLContextParameters();
+scp.setKeyManagers(kmp);
+scp.setTrustManagers(tmp);
+
+CometdComponent commetdComponent = getContext().getComponent("cometds", CometdComponent.class);
+commetdComponent.setSslContextParameters(scp);
+-----------------------------------------------------------------------------------------------
+
+[[Cometd-SpringDSLbasedconfigurationofendpoint]]
+Spring DSL based configuration of endpoint
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+...
+  <camel:sslContextParameters
+      id="sslContextParameters">
+    <camel:keyManagers
+        keyPassword="keyPassword">
+      <camel:keyStore
+          resource="/users/home/server/keystore.jks"
+          password="keystorePassword"/>
+    </camel:keyManagers>
+    <camel:trustManagers>
+      <camel:keyStore
+          resource="/users/home/server/keystore.jks"
+          password="keystorePassword"/>
+    </camel:keyManagers>
+  </camel:sslContextParameters>...
+ 
+  <bean id="cometd" class="org.apache.camel.component.cometd.CometdComponent">
+    <property name="sslContextParameters" ref="sslContextParameters"/>
+  </bean>
+...
+  <to uri="cometds://127.0.0.1:443/service/test?baseResource=file:./target/test-classes/webapp&timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2"/>...
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

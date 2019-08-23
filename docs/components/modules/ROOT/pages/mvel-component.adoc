@@ -1,1 +1,193 @@
-../../../../../components/camel-mvel/src/main/docs/mvel-component.adoc
+= MVEL Component
+
+*Available as of Camel version 2.12*
+
+
+The MVEL component allows you to process a message using an
+http://mvel.codehaus.org/[MVEL] template. This can be ideal when using
+Templating to generate responses for requests.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-mvel</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+---------------------------
+mvel:templateName[?options]
+---------------------------
+
+Where *templateName* is the classpath-local URI of the template to
+invoke; or the complete URL of the remote template (eg:
+\file://folder/myfile.mvel).
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+
+// component options: START
+The MVEL component has no options.
+// component options: END
+
+
+
+
+// endpoint options: START
+The MVEL endpoint is configured using URI syntax:
+
+----
+mvel:resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
+|===
+
+
+==== Query Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *encoding* (producer) | Character encoding of the resource content. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mvel.enabled* | Enable mvel component | true | Boolean
+| *camel.component.mvel.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.language.mvel.enabled* | Enable mvel language | true | Boolean
+| *camel.language.mvel.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Message Headers
+
+The mvel component sets a couple headers on the message.
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`CamelMvelResourceUri` |The *templateName* as a `String` object.
+|=======================================================================
+
+== MVEL Context
+
+Camel will provide exchange information in the MVEL context (just a
+`Map`). The `Exchange` is transfered as:
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|key |value
+
+|`exchange` |The `Exchange` itself.
+
+|`exchange.properties` |The `Exchange` properties.
+
+|`headers` |The headers of the In message.
+
+|`camelContext` |The Camel Context intance.
+
+|`request` |The In message.
+
+|`in` |The In message.
+
+|`body` |The In message body.
+
+|`out` |The Out message (only for InOut message exchange pattern).
+
+|`response` |The Out message (only for InOut message exchange pattern).
+|=======================================================================
+
+== Hot reloading
+
+The mvel template resource is, by default, hot reloadable for both file
+and classpath resources (expanded jar). If you set `contentCache=true`,
+Camel will only load the resource once, and thus hot reloading is not
+possible. This scenario can be used in production, when the resource
+never changes.
+
+== Dynamic templates
+
+Camel provides two headers by which you can define a different resource
+location for a template or the template content itself. If any of these
+headers is set then Camel uses this over the endpoint configured
+resource. This allows you to provide a dynamic template at runtime.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|CamelMvelResourceUri |String |A URI for the template resource to use instead of the endpoint
+configured.
+
+|CamelMvelTemplate |String |The template to use instead of the endpoint configured.
+|=======================================================================
+
+== Samples
+
+For example you could use something like
+
+[source,java]
+--------------------------------------
+from("activemq:My.Queue").
+  to("mvel:com/acme/MyResponse.mvel");
+--------------------------------------
+
+To use a MVEL template to formulate a response to a message for InOut
+message exchanges (where there is a `JMSReplyTo` header).
+
+To specify what template the component should use dynamically via a
+header, so for example:
+
+[source,java]
+-------------------------------------------------------------------------
+from("direct:in").
+  setHeader("CamelMvelResourceUri").constant("path/to/my/template.mvel").
+  to("mvel:dummy");
+-------------------------------------------------------------------------
+
+To specify a template directly as a header the component should use
+dynamically via a header, so for example:
+
+[source,java]
+------------------------------------------------------------------------------------------
+from("direct:in").
+  setHeader("CamelMvelTemplate").constant("@{\"The result is \" + request.body * 3}\" }").
+  to("velocity:dummy");
+------------------------------------------------------------------------------------------

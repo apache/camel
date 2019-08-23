@@ -1,1 +1,173 @@
-../../../../../components/camel-stomp/src/main/docs/stomp-component.adoc
+= Stomp Component
+
+*Available as of Camel version 2.12*
+
+
+The Stomp component is used for communicating with
+http://stomp.github.io/[Stomp] compliant message brokers, like
+http://activemq.apache.org[Apache ActiveMQ] or
+http://activemq.apache.org/apollo/[ActiveMQ Apollo]
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-stomp</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+---------------------------------
+stomp:queue:destination[?options]
+---------------------------------
+
+Where *destination* is the name of the queue.
+
+== Options
+
+
+
+// component options: START
+The Stomp component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | To use the shared stomp configuration |  | StompConfiguration
+| *brokerURL* (common) | The URI of the Stomp broker to connect to |  | String
+| *login* (security) | The username |  | String
+| *passcode* (security) | The password |  | String
+| *host* (common) | The virtual host |  | String
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The Stomp endpoint is configured using URI syntax:
+
+----
+stomp:destination
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *destination* | *Required* Name of the queue |  | String
+|===
+
+
+==== Query Parameters (10 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *brokerURL* (common) | *Required* The URI of the Stomp broker to connect to | tcp://localhost:61613 | String
+| *host* (common) | The virtual host name |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *login* (security) | The username |  | String
+| *passcode* (security) | The password |  | String
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 13 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.stomp.broker-u-r-l* | The URI of the Stomp broker to connect to |  | String
+| *camel.component.stomp.configuration.broker-u-r-l* | The URI of the Stomp broker to connect to | tcp://localhost:61613 | String
+| *camel.component.stomp.configuration.host* | The virtual host name |  | String
+| *camel.component.stomp.configuration.login* | The username |  | String
+| *camel.component.stomp.configuration.passcode* | The password |  | String
+| *camel.component.stomp.configuration.ssl-context-parameters* | To configure security using SSLContextParameters |  | SSLContextParameters
+| *camel.component.stomp.enabled* | Enable stomp component | true | Boolean
+| *camel.component.stomp.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.stomp.host* | The virtual host |  | String
+| *camel.component.stomp.login* | The username |  | String
+| *camel.component.stomp.passcode* | The password |  | String
+| *camel.component.stomp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.stomp.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Samples
+
+Sending messages:
+
+[source,java]
+------------------------------------------
+from("direct:foo").to("stomp:queue:test");
+------------------------------------------
+
+Consuming messages:
+
+[source,java]
+------------------------------------------------------------------------------
+from("stomp:queue:test").transform(body().convertToString()).to("mock:result")
+------------------------------------------------------------------------------
+
+== Endpoints
+
+Camel supports the Message Endpoint pattern
+using the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html[Endpoint]
+interface. Endpoints are usually created by a
+Component and Endpoints are usually referred to in
+the DSL via their URIs.
+
+From an Endpoint you can use the following methods
+
+*
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createProducer()[createProducer()]
+will create a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
+for sending message exchanges to the endpoint
+*
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createConsumer(org.apache.camel.Processor)[createConsumer()]
+implements the Event Driven Consumer
+pattern for consuming message exchanges from the endpoint via a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+when creating a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Consumer.html[Consumer]
+*
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createPollingConsumer()[createPollingConsumer()]
+implements the Polling Consumer pattern for
+consuming message exchanges from the endpoint via a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]

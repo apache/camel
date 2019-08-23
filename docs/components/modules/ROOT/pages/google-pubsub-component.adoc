@@ -1,1 +1,177 @@
-../../../../../components/camel-google-pubsub/src/main/docs/google-pubsub-component.adoc
+= Google Pubsub Component
+
+*Available as of Camel version 2.19*
+
+
+The Google Pubsub component provides access
+to https://cloud.google.com/pubsub/[Cloud Pub/Sub Infrastructure] via
+the https://cloud.google.com/apis/docs/client-libraries-explained[Google Client Services API].
+
+The current implementation does not use gRPC.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-pubsub</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
+</dependency>
+
+------------------------------------------------------
+
+== URI Format
+
+The Google Pubsub Component uses the following URI format:
+
+----
+google-pubsub://project-id:destinationName?[options]
+----
+
+Destination Name can be either a topic or a subscription name.
+
+== Options
+
+// component options: START
+The Google Pubsub component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionFactory* (common) | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair |  | GooglePubsubConnection Factory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Google Pubsub endpoint is configured using URI syntax:
+
+----
+google-pubsub:projectId:destinationName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *projectId* | *Required* Project Id |  | String
+| *destinationName* | *Required* Destination Name |  | String
+|===
+
+
+==== Query Parameters (9 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *ackMode* (common) | AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly | AUTO | AckMode
+| *concurrentConsumers* (common) | The number of parallel streams consuming from the subscription | 1 | Integer
+| *connectionFactory* (common) | ConnectionFactory to obtain connection to PubSub Service. If non provided the default will be used. |  | GooglePubsubConnection Factory
+| *loggerId* (common) | Logger ID to use when a match to the parent route required |  | String
+| *maxMessagesPerPoll* (common) | The max number of messages to receive from the server in a single API call | 1 | Integer
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.google-pubsub.enabled* | Enable google-pubsub component | true | Boolean
+| *camel.component.google-pubsub.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Producer Endpoints
+
+Producer endpoints can accept and deliver to PubSub individual and grouped
+exchanges alike. Grouped exchanges have `Exchange.GROUPED_EXCHANGE` property set.
+
+Google PubSub expects the payload to be byte[] array, Producer endpoints will send:
+
+* String body as byte[] encoded as UTF-8
+* byte[] body as is
+* Everything else will be serialised into byte[] array
+
+A Map set as message header `GooglePubsubConstants.ATTRIBUTES` will be sent as PubSub attributes.
+Once exchange has been delivered to PubSub the PubSub Message ID will be assigned to
+the header `GooglePubsubConstants.MESSAGE_ID`.
+
+== Consumer Endpoints
+Google PubSub will redeliver the message if it has not been acknowledged within the time period set
+as a configuration option on the subscription.
+
+The component will acknowledge the message once exchange processing has been completed.
+
+If the route throws an exception, the exchange is marked as failed and the component will NACK the message -
+it will be redelivered immediately.
+
+To ack/nack the message the component uses Acknowledgement ID stored as header `GooglePubsubConstants.ACK_ID`.
+If the header is removed or tampered with, the ack will fail and the message will be redelivered
+again after the ack deadline.
+
+== Message Headers
+Headers set by the consumer endpoints:
+
+* GooglePubsubConstants.MESSAGE_ID
+* GooglePubsubConstants.ATTRIBUTES
+* GooglePubsubConstants.PUBLISH_TIME
+* GooglePubsubConstants.ACK_ID
+
+== Message Body
+
+The consumer endpoint returns the content of the message as byte[] - exactly as the underlying system sends it.
+It is up for the route to convert/unmarshall the contents.
+
+== Authentication Configuration
+
+Google Pubsub component authentication is targeted for use with the GCP Service Accounts.
+For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
+
+Google security credentials can be set explicitly via one of the two options:
+
+* Service Account Email and Service Account Key (PEM format)
+* GCP credentials file location
+
+If both are set, the Service Account Email/Key will take precedence.
+
+Or implicitly, where the connection factory falls back on
+https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
+
+*OBS!* The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
+
+Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
+
+== Rollback and Redelivery
+
+The rollback for Google PubSub relies on the idea of the Acknowledgement Deadline - the time period where Google PubSub expects to receive the acknowledgement.
+If the acknowledgement has not been received, the message is redelivered.
+
+Google provides an API to extend the deadline for a message.
+
+More information in https://cloud.google.com/pubsub/docs/subscriber#ack_deadline[Google PubSub Documentation]
+
+So, rollback is effectively a deadline extension API call with zero value - i.e. deadline is reached now and message can
+be redelivered to the next consumer.
+
+It is possible to delay the message redelivery by setting the acknowledgement deadline explicitly for the rollback by
+setting the message header `GooglePubsubConstants.ACK_DEADLINE` to the value in seconds.

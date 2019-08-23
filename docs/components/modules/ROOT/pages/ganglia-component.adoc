@@ -1,1 +1,187 @@
-../../../../../components/camel-ganglia/src/main/docs/ganglia-component.adoc
+= Ganglia Component
+
+*Available as of Camel version 2.15*
+
+
+Provides a mechanism to send a value (the message body) as a metric to
+the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j
+library.  Can be used in conjunction with standard
+http://ganglia.info[Ganglia] and
+https://github.com/ganglia/jmxetric[JMXetric] for monitoring metrics
+from the OS, JVM and business processes through a single platform.
+
+You should have a Ganglia gmond agent running on the machine where your
+JVM runs.  The gmond sends a heartbeat to the Ganglia infrastructure,
+camel-ganglia can't send the heartbeat itself currently.
+
+On most Linux systems (Debian, Ubuntu, Fedora and RHEL/CentOS with EPEL)
+you can just install the Ganglia agent package and it runs automatically
+using multicast configuration.  You can configure it to use regular UDP
+unicast if you prefer.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+ 
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ganglia</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+[source,java]
+----
+ganglia:address:port[?options]
+----
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Ganglia component and endpoint URI options
+
+
+
+
+
+// component options: START
+The Ganglia component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | To use the shared configuration |  | GangliaConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+// endpoint options: START
+The Ganglia endpoint is configured using URI syntax:
+
+----
+ganglia:host:port
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* | Host name for Ganglia server | 239.2.11.71 | String
+| *port* | Port for Ganglia server | 8649 | int
+|===
+
+
+==== Query Parameters (13 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *dmax* (producer) | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart. | 0 | int
+| *groupName* (producer) | The group that the metric belongs to. | java | String
+| *metricName* (producer) | The name to use for the metric. | metric | String
+| *mode* (producer) | Send the UDP metric packets using MULTICAST or UNICAST | MULTICAST | UDPAddressingMode
+| *prefix* (producer) | Prefix the metric name with this string and an underscore. |  | String
+| *slope* (producer) | The slope | BOTH | GMetricSlope
+| *spoofHostname* (producer) | Spoofing information IP:hostname |  | String
+| *tmax* (producer) | Maximum time in seconds that the value can be considered current. After this, Ganglia considers the value to have expired. | 60 | int
+| *ttl* (producer) | If using multicast, set the TTL of the packets | 5 | int
+| *type* (producer) | The type of value | STRING | GMetricType
+| *units* (producer) | Any unit of measurement that qualifies the metric, e.g. widgets, litres, bytes. Do not include a prefix such as k (kilo) or m (milli), other tools may scale the units later. The value should be unscaled. |  | String
+| *wireFormat31x* (producer) | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier. | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 16 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.ganglia.configuration.dmax* | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart. | 0 | Integer
+| *camel.component.ganglia.configuration.group-name* | The group that the metric belongs to. | java | String
+| *camel.component.ganglia.configuration.host* | Host name for Ganglia server | 239.2.11.71 | String
+| *camel.component.ganglia.configuration.metric-name* | The name to use for the metric. | metric | String
+| *camel.component.ganglia.configuration.mode* | Send the UDP metric packets using MULTICAST or UNICAST |  | GMetric$UDP AddressingMode
+| *camel.component.ganglia.configuration.port* | Port for Ganglia server | 8649 | Integer
+| *camel.component.ganglia.configuration.prefix* | Prefix the metric name with this string and an underscore. |  | String
+| *camel.component.ganglia.configuration.slope* | The slope |  | GMetricSlope
+| *camel.component.ganglia.configuration.spoof-hostname* | Spoofing information IP:hostname |  | String
+| *camel.component.ganglia.configuration.tmax* | Maximum time in seconds that the value can be considered current. After this, Ganglia considers the value to have expired. | 60 | Integer
+| *camel.component.ganglia.configuration.ttl* | If using multicast, set the TTL of the packets | 5 | Integer
+| *camel.component.ganglia.configuration.type* | The type of value |  | GMetricType
+| *camel.component.ganglia.configuration.units* | Any unit of measurement that qualifies the metric, e.g. widgets, litres, bytes. Do not include a prefix such as k (kilo) or m (milli), other tools may scale the units later. The value should be unscaled. |  | String
+| *camel.component.ganglia.configuration.wire-format31x* | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier. | true | Boolean
+| *camel.component.ganglia.enabled* | Enable ganglia component | true | Boolean
+| *camel.component.ganglia.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Message body
+
+Any value (such as a string or numeric type) in the body is sent to the
+Ganglia system.
+
+== Return value / response
+
+Ganglia sends metrics using unidirectional UDP or multicast.  There is
+no response or change to the message body.
+
+== Examples
+
+=== Sending a String metric
+
+The message body will be converted to a String and sent as a metric
+value.  Unlike numeric metrics, String values can't be charted but
+Ganglia makes them available for reporting.  The os_version string at
+the top of every Ganglia host page is an example of a String metric.
+
+[source,java]
+----
+from("direct:string.for.ganglia")
+    .setHeader(GangliaConstants.METRIC_NAME, simple("my_string_metric"))
+    .setHeader(GangliaConstants.METRIC_TYPE, GMetricType.STRING)
+    .to("direct:ganglia.tx");
+
+from("direct:ganglia.tx")
+    .to("ganglia:239.2.11.71:8649?mode=MULTICAST&prefix=test");
+----
+
+=== Sending a numeric metric
+
+[source,java]
+----
+from("direct:value.for.ganglia")
+    .setHeader(GangliaConstants.METRIC_NAME, simple("widgets_in_stock"))
+    .setHeader(GangliaConstants.METRIC_TYPE, GMetricType.UINT32)
+    .setHeader(GangliaConstants.METRIC_UNITS, simple("widgets"))
+    .to("direct:ganglia.tx");
+
+from("direct:ganglia.tx")
+    .to("ganglia:239.2.11.71:8649?mode=MULTICAST&prefix=test");
+----

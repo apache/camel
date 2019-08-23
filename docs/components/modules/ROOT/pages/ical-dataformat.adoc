@@ -1,1 +1,87 @@
-../../../../../components/camel-ical/src/main/docs/ical-dataformat.adoc
+= iCal DataFormat
+
+*Available as of Camel version 2.12*
+
+
+The ICal dataformat is used for working with
+http://en.wikipedia.org/wiki/ICalendar[iCalendar] messages.
+
+A typical iCalendar message looks like:
+
+[source,java]
+----------------------------------------------------------------------
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Events Calendar//iCal4j 1.0//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+DTSTAMP:20130324T180000Z
+DTSTART:20130401T170000
+DTEND:20130401T210000
+SUMMARY:Progress Meeting
+TZID:America/New_York
+UID:00000000
+ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Developer 1:mailto:dev1@mycompany.com
+ATTENDEE;ROLE=OPT-PARTICIPANT;CN=Developer 2:mailto:dev2@mycompany.com
+END:VEVENT
+END:VCALENDAR
+----------------------------------------------------------------------
+
+== Options
+
+// dataformat options: START
+The iCal dataformat supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| validating | false | Boolean | Whether to validate.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.ical.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.ical.enabled* | Enable ical dataformat | true | Boolean
+| *camel.dataformat.ical.validating* | Whether to validate. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+ND
+
+== Basic Usage
+
+To unmarshal and marshal the message shown above, your route will look
+like the following:
+
+[source,java]
+-----------------------------
+from("direct:ical-unmarshal")
+  .unmarshal("ical")
+  .to("mock:unmarshaled")
+  .marshal("ical")
+  .to("mock:marshaled");
+-----------------------------
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ical</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------

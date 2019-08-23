@@ -1,1 +1,380 @@
-../../../../../components/camel-yammer/src/main/docs/yammer-component.adoc
+= Yammer Component
+
+*Available as of Camel version 2.12*
+
+The Yammer component allows you to interact with the
+https://www.yammer.com[Yammer] enterprise social network. Consuming
+messages and users is supported as well as creating
+new messages.
+
+Yammer uses OAuth 2 for all client application authentication. In order
+to use camel-yammer with your account, you'll need to create a new
+application within Yammer and grant the application access to your
+account. Finally, generate your access token. More details are at
+https://developer.yammer.com/authentication/.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-yammer</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+----
+
+== URI format
+
+[source]
+----
+yammer:[function]?[options]
+----
+
+== Component options
+
+The Yammer component can be configured with the Yammer account settings
+which are mandatory to configure before using.
+
+
+
+
+// component options: START
+The Yammer component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *consumerKey* (security) | The consumer key |  | String
+| *consumerSecret* (security) | The consumer secret |  | String
+| *accessToken* (security) | The access token |  | String
+| *config* (advanced) | To use a shared yammer configuration |  | YammerConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+You can also configure these options directly in the endpoint.
+
+== Endpoint options
+
+
+
+// endpoint options: START
+The Yammer endpoint is configured using URI syntax:
+
+----
+yammer:function
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *function* | *Required* The function to use |  | YammerFunctionType
+|===
+
+
+==== Query Parameters (28 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *useJson* (common) | Set to true if you want to use raw JSON rather than converting to POJOs. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *delay* (consumer) | Delay between polling in millis | 5000 | long
+| *limit* (consumer) | Return only the specified number of messages. Works for threaded=true and threaded=extended. | -1 | int
+| *newerThan* (consumer) | Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you're looking at messages, and the most recent message returned is 3516, you can make a request with the parameter newerThan=3516 to ensure that you do not get duplicate copies of messages already on your page. | -1 | int
+| *olderThan* (consumer) | Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages. For example, if you're currently viewing 20 messages and the oldest is number 2912, you could append olderThan=2912 to your request to get the 20 messages prior to those you're seeing. | -1 | int
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *threaded* (consumer) | threaded=true will only return the first message in each thread. This parameter is intended for apps which display message threads collapsed. threaded=extended will return the thread starter messages in order of most recently active as well as the two most recent messages, as they are viewed in the default view on the Yammer web interface. |  | String
+| *userId* (consumer) | The user id |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *accessToken* (security) | *Required* The access token |  | String
+| *consumerKey* (security) | *Required* The consumer key |  | String
+| *consumerSecret* (security) | *Required* The consumer secret |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 18 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.yammer.access-token* | The access token |  | String
+| *camel.component.yammer.config.access-token* | The access token |  | String
+| *camel.component.yammer.config.consumer-key* | The consumer key |  | String
+| *camel.component.yammer.config.consumer-secret* | The consumer secret |  | String
+| *camel.component.yammer.config.delay* | Delay between polling in millis | 5000 | Long
+| *camel.component.yammer.config.function* | The function to use |  | String
+| *camel.component.yammer.config.function-type* | The function to use |  | YammerFunctionType
+| *camel.component.yammer.config.limit* | Return only the specified number of messages. Works for threaded=true and threaded=extended. | -1 | Integer
+| *camel.component.yammer.config.newer-than* | Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you're looking at messages, and the most recent message returned is 3516, you can make a request with the parameter newerThan=3516 to ensure that you do not get duplicate copies of messages already on your page. | -1 | Integer
+| *camel.component.yammer.config.older-than* | Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages. For example, if you're currently viewing 20 messages and the oldest is number 2912, you could append olderThan=2912 to your request to get the 20 messages prior to those you're seeing. | -1 | Integer
+| *camel.component.yammer.config.requestor* |  |  | ApiRequestor
+| *camel.component.yammer.config.threaded* | threaded=true will only return the first message in each thread. This parameter is intended for apps which display message threads collapsed. threaded=extended will return the thread starter messages in order of most recently active as well as the two most recent messages, as they are viewed in the default view on the Yammer web interface. |  | String
+| *camel.component.yammer.config.use-json* | Set to true if you want to use raw JSON rather than converting to POJOs. | false | Boolean
+| *camel.component.yammer.config.user-id* | The user id |  | String
+| *camel.component.yammer.consumer-key* | The consumer key |  | String
+| *camel.component.yammer.consumer-secret* | The consumer secret |  | String
+| *camel.component.yammer.enabled* | Enable yammer component | true | Boolean
+| *camel.component.yammer.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Consuming messages
+
+The Yammer component provides several endpoints for consuming
+messages:
+
+[width="100%",cols="2l,3",options="header",]
+|=======================================================================
+|URI |Description
+| yammer:messages?[options]
+|All public messages in the user's (whose access token is being used to
+make the API call) Yammer network. Corresponds to "All" conversations in
+the Yammer web interface.
+| yammer:my_feed?[options]
+|The user's feed, based on the selection they have made between
+"Following" and "Top" conversations.
+|yammer:algo?[options]
+|The algorithmic feed for the user that corresponds to "Top"
+conversations, which is what the vast majority of users will see in the
+Yammer web interface.
+|yammer:following?[options]
+|The "Following" feed which is conversations involving people, groups
+and topics that the user is following.
+|yammer:sent?[options]
+|All messages sent by the user.
+|yammer:private?[options]
+|Private messages received by the user.
+|yammer:received?[options]
+|All messages received by the user
+|=======================================================================
+
+
+=== Message format
+
+All messages by default are converted to a POJO model provided in the
+`org.apache.camel.component.yammer.model` package. The original message
+coming from yammer is in JSON. For all message consuming and producing
+endpoints, a `Messages` object is returned. Take for example a route like:
+
+[source,java]
+----
+from("yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken")
+    .to("mock:result");
+----
+
+and lets say the yammer server returns:
+
+[source,json]
+----
+{
+    "messages":[
+        {
+            "replied_to_id":null,
+            "network_id":7654,
+            "url":"https://www.yammer.com/api/v1/messages/305298242",
+            "thread_id":305298242,
+            "id":305298242,
+            "message_type":"update",
+            "chat_client_sequence":null,
+            "body":{
+                "parsed":"Testing yammer API...",
+                "plain":"Testing yammer API...",
+                "rich":"Testing yammer API..."
+            },
+            "client_url":"https://www.yammer.com/",
+            "content_excerpt":"Testing yammer API...",
+            "created_at":"2013/06/25 18:14:45 +0000",
+            "client_type":"Web",
+            "privacy":"public",
+            "sender_type":"user",
+            "liked_by":{
+                "count":1,
+                "names":[
+                    {
+                        "permalink":"janstey",
+                        "full_name":"Jonathan Anstey",
+                        "user_id":1499642294
+                    }
+
+                ]
+
+            },
+            "sender_id":1499642294,
+            "language":null,
+            "system_message":false,
+            "attachments":[
+
+            ],
+            "direct_message":false,
+            "web_url":"https://www.yammer.com/redhat.com/messages/305298242"
+        },
+        {
+            "replied_to_id":null,
+            "network_id":7654,
+            "url":"https://www.yammer.com/api/v1/messages/294326302",
+            "thread_id":294326302,
+            "id":294326302,
+            "message_type":"system",
+            "chat_client_sequence":null,
+            "body":{
+                "parsed":"(Principal Software Engineer) has [[tag:14658]] the redhat.com network. Take a moment to welcome Jonathan.",
+                "plain":"(Principal Software Engineer) has #joined the redhat.com network. Take a moment to welcome Jonathan.",
+                "rich":"(Principal Software Engineer) has #joined the redhat.com network. Take a moment to welcome Jonathan."
+            },
+            "client_url":"https://www.yammer.com/",
+            "content_excerpt":"(Principal Software Engineer) has #joined the redhat.com network. Take a moment to welcome Jonathan.",
+            "created_at":"2013/05/10 19:08:29 +0000",
+            "client_type":"Web",
+            "sender_type":"user",
+            "privacy":"public",
+            "liked_by":{
+                "count":0,
+                "names":[
+
+                ]
+
+            }
+        }
+        ]
+
+    }
+----
+
+Camel will marshal that into a `Messages` object containing 2 `Message`
+objects. As shown below there is a rich object model that makes it easy
+to get any information you need:
+
+[source,java]
+----
+Exchange exchange = mock.getExchanges().get(0);
+Messages messages = exchange.getIn().getBody(Messages.class);
+
+assertEquals(2, messages.getMessages().size());
+assertEquals("Testing yammer API...", messages.getMessages().get(0).getBody().getPlain());
+assertEquals("(Principal Software Engineer) has #joined the redhat.com network. Take a moment to welcome Jonathan.", messages.getMessages().get(1).getBody().getPlain());
+----
+
+That said, marshaling this data into POJOs is not free so if you need
+you can switch back to using pure JSON by adding the `useJson=false`
+option to your URI.
+
+== Creating messages
+
+To create a new message in the account of the current user, you can use
+the following URI:
+
+[source]
+----
+yammer:messages?[options]
+----
+
+The current Camel message body is what will be used to set the text of
+the Yammer message. The response body will include the new message
+formatted the same way as when you consume messages (i.e. as a `Messages`
+object by default).
+
+Take this route for instance:
+
+[source,java]
+----
+from("direct:start")
+    .to("yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken")
+    .to("mock:result");
+----
+
+By sending to the `direct:start` endpoint a `"Hi from Camel!"` message body:
+
+[source,java]
+----
+template.sendBody("direct:start", "Hi from Camel!");
+----
+
+a new message will be created in the current user's account on the
+server and also this new message will be returned to Camel and converted
+into a `Messages` object. Like when consuming messages you can interrogate
+the `Messages` object:
+
+[source,java]
+----
+Exchange exchange = mock.getExchanges().get(0);
+Messages messages = exchange.getIn().getBody(Messages.class);
+
+assertEquals(1, messages.getMessages().size());
+assertEquals("Hi from Camel!", messages.getMessages().get(0).getBody().getPlain());
+----
+
+
+== Retrieving users
+
+The Yammer component provides several endpoints for retrieving
+users:
+
+[width="100%",cols="2l,3",options="header",]
+|=====================================================
+|URI |Description
+|yammer:users?[options]
+|Retrieve users in the current user's Yammer network.
+|yammer:current?[options]
+|View data about the current user.
+|=====================================================
+
+
+== Using an enricher
+
+It is helpful sometimes (or maybe always in the case of users
+to use an enricher pattern rather than a route
+initiated with one of the polling consumers in camel-yammer. This is
+because the consumers will fire repeatedly, however often you set the
+delay for. If you just want to look up a user's data, or grab a message
+at a point in time, it is better to call that consumer once and then get
+one with your route.
+
+Lets say you have a route that at some point needs to go out and fetch
+user data for the current user. Rather than polling for this user over
+and over again, use the `pollEnrich` DSL method:
+
+[source,java]
+----
+from("direct:start")
+    .pollEnrich("yammer:current?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken")
+    .to("mock:result");
+----
+
+This will go out and fetch the current user's `User` object and set it as
+the Camel message body.

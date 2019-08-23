@@ -1,1 +1,207 @@
-../../../../../components/camel-aws/src/main/docs/aws-ses-component.adoc
+[[aws-ses-component]]
+= AWS Simple Email Service Component
+
+*Available as of Camel version 2.9*
+
+The ses component supports sending emails with
+http://aws.amazon.com/ses[Amazon's SES] service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon SES. More information are available at
+http://aws.amazon.com/ses[Amazon SES].
+
+### URI Format
+
+[source,java]
+------------------------
+aws-ses://from[?options]
+------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+### URI Options
+
+
+// component options: START
+The AWS Simple Email Service component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS SES default configuration |  | SesConfiguration
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *region* (producer) | The region in which SES client needs to work |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS Simple Email Service endpoint is configured using URI syntax:
+
+----
+aws-ses:from
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *from* | *Required* The sender's email address. |  | String
+|===
+
+
+==== Query Parameters (11 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonSESClient* (producer) | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmail Service
+| *proxyHost* (producer) | To define a proxy host when instantiating the SES client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the SES client |  | Integer
+| *region* (producer) | The region in which SES client needs to work |  | String
+| *replyToAddresses* (producer) | List of reply-to email address(es) for the message, override it using 'CamelAwsSesReplyToAddresses' header. |  | List
+| *returnPath* (producer) | The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header. |  | String
+| *subject* (producer) | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
+| *to* (producer) | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 16 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-ses.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ses.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ses.configuration.amazon-s-e-s-client* | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmail Service
+| *camel.component.aws-ses.configuration.from* | The sender's email address. |  | String
+| *camel.component.aws-ses.configuration.proxy-host* | To define a proxy host when instantiating the SES client |  | String
+| *camel.component.aws-ses.configuration.proxy-port* | To define a proxy port when instantiating the SES client |  | Integer
+| *camel.component.aws-ses.configuration.region* | The region in which SES client needs to work |  | String
+| *camel.component.aws-ses.configuration.reply-to-addresses* | List of reply-to email address(es) for the message, override it using 'CamelAwsSesReplyToAddresses' header. |  | List
+| *camel.component.aws-ses.configuration.return-path* | The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath' header. |  | String
+| *camel.component.aws-ses.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-ses.configuration.subject* | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
+| *camel.component.aws-ses.configuration.to* | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
+| *camel.component.aws-ses.enabled* | Enable aws-ses component | true | Boolean
+| *camel.component.aws-ses.region* | The region in which SES client needs to work |  | String
+| *camel.component.aws-ses.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.aws-ses.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+Required SES component options
+
+You have to provide the amazonSESClient in the
+Registry or your accessKey and secretKey to access
+the http://aws.amazon.com/ses[Amazon's SES].
+
+### Usage
+
+#### Message headers evaluated by the SES producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsSesFrom` |`String` |The sender's email address.
+
+|`CamelAwsSesTo` |`List<String>` |The destination(s) for this email.
+
+|`CamelAwsSesSubject` |`String` |The subject of the message.
+
+|`CamelAwsSesReplyToAddresses` |`List<String>` |The reply-to email address(es) for the message.
+
+|`CamelAwsSesReturnPath` |`String` |The email address to which bounce notifications are to be forwarded.
+
+|`CamelAwsSesHtmlEmail` |`Boolean` |*Since Camel 2.12.3* The flag to show if email content is HTML.
+|=======================================================================
+
+#### Message headers set by the SES producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsSesMessageId` |`String` |The Amazon SES message ID.
+|=======================================================================
+
+#### Advanced AmazonSimpleEmailService configuration
+
+If you need more control over the `AmazonSimpleEmailService` instance
+configuration you can create your own instance and refer to it from the
+URI:
+
+[source,java]
+-------------------------------------------------------------
+from("direct:start")
+.to("aws-ses://example@example.com?amazonSESClient=#client");
+-------------------------------------------------------------
+
+The `#client` refers to a `AmazonSimpleEmailService` in the
+Registry.
+
+For example if your Camel Application is running behind a firewall:
+
+[source,java]
+----------------------------------------------------------------------------------------------------------
+AWSCredentials awsCredentials = new BasicAWSCredentials("myAccessKey", "mySecretKey");
+ClientConfiguration clientConfiguration = new ClientConfiguration();
+clientConfiguration.setProxyHost("http://myProxyHost");
+clientConfiguration.setProxyPort(8080);
+AmazonSimpleEmailService client = new AmazonSimpleEmailServiceClient(awsCredentials, clientConfiguration);
+
+registry.bind("client", client);
+----------------------------------------------------------------------------------------------------------
+
+### Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.8.4 or higher).
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* AWS Component

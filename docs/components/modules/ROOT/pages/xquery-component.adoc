@@ -1,1 +1,310 @@
-../../../../../components/camel-saxon/src/main/docs/xquery-component.adoc
+= XQuery Component
+
+*Available as of Camel version 1.0*
+
+
+Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
+Expression or Predicate to be
+used in the DSL or xref:manual::xml-configuration.adoc[Xml
+Configuration]. For example you could use XQuery to create an
+Predicate in a xref:manual::filter-eip.adoc[Message
+Filter] or as an Expression for a
+Recipient List.
+
+== Options
+
+
+
+// component options: START
+The XQuery component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *moduleURIResolver* (advanced) | To use the custom ModuleURIResolver |  | ModuleURIResolver
+| *configuration* (advanced) | To use a custom Saxon configuration |  | Configuration
+| *configurationProperties* (advanced) | To set custom Saxon configuration properties |  | Map
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The XQuery endpoint is configured using URI syntax:
+
+----
+xquery:resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* The name of the template to load from classpath or file system |  | String
+|===
+
+
+==== Query Parameters (31 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *allowStAX* (common) | Whether to allow using StAX mode | false | boolean
+| *headerName* (common) | To use a Camel Message header as the input source instead of Message body. |  | String
+| *namespacePrefixes* (common) | Allows to control which namespace prefixes to use for a set of namespace mappings |  | Map
+| *resultsFormat* (common) | What output result to use | DOM | ResultFormat
+| *resultType* (common) | What output result to use defined as a class |  | Class
+| *stripsAllWhiteSpace* (common) | Whether to strip all whitespaces | true | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *configuration* (advanced) | To use a custom Saxon configuration |  | Configuration
+| *configurationProperties* (advanced) | To set custom Saxon configuration properties |  | Map
+| *moduleURIResolver* (advanced) | To use the custom ModuleURIResolver |  | ModuleURIResolver
+| *parameters* (advanced) | Additional parameters |  | Map
+| *properties* (advanced) | Properties to configure the serialization parameters |  | Properties
+| *staticQueryContext* (advanced) | To use a custom Saxon StaticQueryContext |  | StaticQueryContext
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.xquery.configuration* | To use a custom Saxon configuration. The option is a net.sf.saxon.Configuration type. |  | String
+| *camel.component.xquery.configuration-properties* | To set custom Saxon configuration properties |  | Map
+| *camel.component.xquery.enabled* | Enable xquery component | true | Boolean
+| *camel.component.xquery.module-u-r-i-resolver* | To use the custom ModuleURIResolver. The option is a net.sf.saxon.lib.ModuleURIResolver type. |  | String
+| *camel.component.xquery.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.language.xquery.enabled* | Enable xquery language | true | Boolean
+| *camel.language.xquery.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
+| *camel.language.xquery.type* | Sets the class name of the result type (type from output) The default result type is NodeSet |  | String
+|===
+// spring-boot-auto-configure options: END
+
+== Examples
+
+[source,java]
+---------------------------
+from("queue:foo").filter().
+  xquery("//foo").
+  to("queue:bar")
+---------------------------
+
+You can also use functions inside your query, in which case you need an
+explicit type conversion (or you will get a org.w3c.dom.DOMException:
+HIERARCHY_REQUEST_ERR) by passing the Class as a second argument to the
+*xquery()* method.
+
+[source,java]
+-----------------------------------------------------------------------------
+from("direct:start").
+  recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
+-----------------------------------------------------------------------------
+
+== Variables
+
+The IN message body will be set as the `contextItem`. Besides this these
+Variables is also added as parameters:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Variable |Type |Description
+
+|exchange |Exchange |The current Exchange
+
+|in.body |Object |The In message's body
+
+|out.body |Object |The OUT message's body (if any)
+
+|in.headers.* |Object |You can access the value of exchange.in.headers with key *foo* by using
+the variable which name is in.headers.foo
+
+|out.headers.* |Object |You can access the value of exchange.out.headers with key *foo* by using
+the variable which name is out.headers.foo variable
+
+|*key name* |Object |Any exchange.properties and exchange.in.headers and any additional
+parameters set using `setParameters(Map)`. These parameters is added
+with they own key name, for instance if there is an IN header with the
+key name *foo* then its added as *foo*.
+|=======================================================================
+
+== Using XML configuration
+
+If you prefer to configure your routes in your Spring
+XML file then you can use XPath expressions as follows
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:foo="http://example.com/person"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="activemq:MyQueue"/>
+      <filter>
+        <xquery>/foo:person[@name='James']</xquery>
+        <to uri="mqseries:SomeOtherQueue"/>
+      </filter>
+    </route>
+  </camelContext>
+</beans>
+---------------------------------------------------------------------------------------------------------------
+
+Notice how we can reuse the namespace prefixes, *foo* in this case, in
+the XPath expression for easier namespace based XQuery expressions!
+
+When you use functions in your XQuery expression you need an explicit
+type conversion which is done in the xml configuration via the *@type*
+attribute:
+
+[source,xml]
+-------------------------------------------------------------------------------
+    <xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
+-------------------------------------------------------------------------------
+
+== Using XQuery as transformation
+
+We can do a message translation using transform or setBody in the route,
+as shown below:
+
+[source,java]
+----------------------------------------
+from("direct:start").
+   transform().xquery("/people/person");
+----------------------------------------
+
+Notice that xquery will use DOMResult by default, so if we want to grab
+the value of the person node, using text() we need to tell xquery to use
+String as result type, as shown:
+
+[source,java]
+-------------------------------------------------------------
+from("direct:start").
+   transform().xquery("/people/person/text()", String.class);
+-------------------------------------------------------------
+
+If you want to use camel variables like headers, you have to explicitly declare them in the xquery expression.
+[source,xml]
+-------------------------------------------------------------
+<transform>
+    <xquery>
+        declare variable $in.headers.foo external;
+        element item {$in.headers.foo}
+    </xquery>
+</transform>
+-------------------------------------------------------------
+
+
+== Using XQuery as an endpoint
+
+Sometimes an XQuery expression can be quite large; it can essentally be
+used for Templating. So you may want to use an
+XQuery Endpoint so you can route using XQuery
+templates.
+
+The following example shows how to take a message of an ActiveMQ queue
+(MyQueue) and transform it using XQuery and send it to MQSeries.
+
+[source,java]
+-------------------------------------------------------------------------
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <from uri="activemq:MyQueue"/>
+      <to uri="xquery:com/acme/someTransform.xquery"/>
+      <to uri="mqseries:SomeOtherQueue"/>
+    </route>
+  </camelContext>
+-------------------------------------------------------------------------
+
+== Examples
+
+Here is a simple
+https://github.com/apache/camel/tree/master/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryFilterTest.java[example]
+using an XQuery expression as a predicate in a
+Message Filter
+
+This
+https://github.com/apache/camel/tree/master/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryWithNamespacesFilterTest.java[example]
+uses XQuery with namespaces as a predicate in a
+Message Filter
+
+== Learning XQuery
+
+XQuery is a very powerful language for querying, searching, sorting and
+returning XML. For help learning XQuery try these tutorials
+
+* Mike Kay's http://www.stylusstudio.com/xquery_primer.html[XQuery
+Primer]
+* the W3Schools http://www.w3schools.com/xquery/default.asp[XQuery
+Tutorial]
+
+You might also find the http://www.w3.org/TR/xpath-functions/[XQuery
+function reference] useful
+
+== Loading script from external resource
+
+*Available as of Camel 2.11*
+
+You can externalize the script and have Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`. +
+ This is done using the following syntax: `"resource:scheme:location"`,
+eg to refer to a file on the classpath you can do:
+
+[source,java]
+------------------------------------------------------------------------------
+.setHeader("myHeader").xquery("resource:classpath:myxquery.txt", String.class)
+------------------------------------------------------------------------------
+
+== Dependencies
+
+To use XQuery in your camel routes you need to add the a dependency on
+*camel-saxon* which implements the XQuery language.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,java]
+--------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-saxon</artifactId>
+  <version>x.x.x</version>
+</dependency>
+--------------------------------------

@@ -1,1 +1,119 @@
-../../../../../components/camel-influxdb/src/main/docs/influxdb-component.adoc
+= InfluxDB Component
+
+*Available as of Camel version 2.18*
+
+
+This component allows you to interact with InfluxDB
+https://influxdata.com/time-series-platform/influxdb/ a time series database. The native body type for this component is
+Point (the native influxdb class), but it can also accept Map<String, Object> as message body and it will get converted
+to Point.class, please note that the map must contain an element with InfluxDbConstants.MEASUREMENT_NAME as key.
+
+Aditionally of course you may register your own Converters to your data type to Point, or use the
+(un)marshalling tools provided by camel.
+
+
+Influxdb component requires at least Java 8.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-influxdb</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+-------------------------------
+influxdb://beanName?[options]
+-------------------------------
+
+== URI Options
+
+The producer allows sending messages to a influxdb
+configured in the registry, using the native java driver.
+
+
+
+// component options: START
+The InfluxDB component has no options.
+// component options: END
+
+
+
+
+// endpoint options: START
+The InfluxDB endpoint is configured using URI syntax:
+
+----
+influxdb:connectionBean
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionBean* | *Required* Connection to the influx database, of class InfluxDB.class |  | String
+|===
+
+
+==== Query Parameters (6 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *batch* (producer) | Define if this operation is a batch operation or not | false | boolean
+| *databaseName* (producer) | The name of the database where the time series will be stored |  | String
+| *operation* (producer) | Define if this operation is an insert or a query | insert | String
+| *query* (producer) | Define the query in case of operation query |  | String
+| *retentionPolicy* (producer) | The string that defines the retention policy to the data created by the endpoint | default | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.influxdb.enabled* | Enable influxdb component | true | Boolean
+| *camel.component.influxdb.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Example
+
+Below is an example route that stores a point into the db (taking the db name from the URI)
+specific key:
+
+[source,java]
+------------------------------------------------------------------------------------
+from("direct:start")
+        .setHeader(InfluxDbConstants.DBNAME_HEADER, constant("myTimeSeriesDB"))
+        .to("influxdb://connectionBean);
+------------------------------------------------------------------------------------
+
+[source,java]
+------------------------------------------------------------------------------------
+from("direct:start")
+        .to("influxdb://connectionBean?databaseName=myTimeSeriesDB");
+------------------------------------------------------------------------------------
+
+For more information, see these resources...

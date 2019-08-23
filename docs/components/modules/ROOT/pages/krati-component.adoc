@@ -1,1 +1,235 @@
-../../../../../components/camel-krati/src/main/docs/krati-component.adoc
+[[krati-component]]
+= Krati Component (deprecated)
+
+*Available as of Camel version 2.9*
+
+This component allows the use krati datastores and datasets inside
+Camel. Krati is a simple persistent data store with very low latency and
+high throughput. It is designed for easy integration with
+read-write-intensive applications with little effort in tuning
+configuration, performance and JVM garbage collection.
+
+Camel provides a producer and consumer for krati datastore_(key/value
+engine)_. It also provides an idempotent repository for filtering out
+duplicate messages.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-krati</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+-------------------------------------------
+krati:[the path of the datastore][?options]
+-------------------------------------------
+
+The *path of the datastore* is the relative path of the folder that
+krati will use for its datastore.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+### Krati Options
+
+
+// component options: START
+The Krati component has no options.
+// component options: END
+
+
+
+
+
+
+// endpoint options: START
+The Krati endpoint is configured using URI syntax:
+
+----
+krati:path
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *path* | *Required* Path of the datastore is the relative path of the folder that krati will use for its datastore. |  | String
+|===
+
+
+==== Query Parameters (29 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hashFunction* (common) | The hash function to use. |  | HashFunction
+| *initialCapacity* (common) | The inital capcity of the store. | 100 | int
+| *keySerializer* (common) | The serializer that will be used to serialize the key. |  | Serializer
+| *segmentFactory* (common) | Sets the segment factory of the target store. |  | SegmentFactory
+| *segmentFileSize* (common) | Data store segments size in MB. | 64 | int
+| *valueSerializer* (common) | The serializer that will be used to serialize the value. |  | Serializer
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *maxMessagesPerPoll* (consumer) | The maximum number of messages which can be received in one poll. This can be used to avoid reading in too much data and taking up too much memory. |  | int
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *key* (producer) | The key. |  | String
+| *operation* (producer) | Specifies the type of operation that will be performed to the datastore. |  | String
+| *value* (producer) | The Value. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.krati.enabled* | Enable krati component | true | Boolean
+| *camel.component.krati.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+
+[source,java]
+------------------------------------------------------------------------------------------------
+krati:/tmp/krati?operation=CamelKratiGet&initialCapacity=10000&keySerializer=#myCustomSerializer
+------------------------------------------------------------------------------------------------
+
+For producer endpoint you can override all of the above URI options by
+passing the appropriate headers to the message.
+
+#### Message Headers for datastore
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`CamelKratiOperation` |The operation to be performed on the datastore. The valid options are CamelKratiAdd, CamelKratiGet, 
+CamelKratiDelete, CamelKratiDeleteAll
+
+|`CamelKratiKey` |The key.
+
+|`CamelKratiValue` |The value.
+|=======================================================================
+
+### Usage Samples
+
+#### Example 1: Putting to the datastore.
+
+This example will show you how you can store any message inside a
+datastore.
+
+[source,java]
+--------------------------------------------------------
+from("direct:put").to("krati:target/test/producertest");
+--------------------------------------------------------
+
+In the above example you can override any of the URI parameters with
+headers on the message. +
+ Here is how the above example would look like using xml to define our
+route.
+
+[source,xml]
+------------------------------------------------------------
+        <route>
+            <from uri="direct:put"/>
+            <to uri="krati:target/test/producerspringtest"/>
+        </route>
+------------------------------------------------------------
+
+#### Example 2: Getting/Reading from a datastore
+
+This example will show you how you can read the contnet of a datastore.
+
+[source,java]
+--------------------------------------------------------------------------------------------
+from("direct:get")
+    .setHeader(KratiConstants.KRATI_OPERATION, constant(KratiConstants.KRATI_OPERATION_GET))
+    .to("krati:target/test/producertest");
+--------------------------------------------------------------------------------------------
+
+In the above example you can override any of the URI parameters with
+headers on the message. +
+ Here is how the above example would look like using xml to define our
+route.
+
+[source,xml]
+-----------------------------------------------------------------------------
+<route>
+     <from uri="direct:get"/>
+     <to uri="krati:target/test/producerspringtest?operation=CamelKratiGet"/>
+</route>
+-----------------------------------------------------------------------------
+
+#### Example 3: Consuming from a datastore
+
+This example will consume all items that are under the specified
+datastore.
+
+[source,java]
+------------------------------------------
+    from("krati:target/test/consumertest")
+        .to("direct:next");
+------------------------------------------
+
+You can achieve the same goal by using xml, as you can see below.
+
+[source,xml]
+------------------------------------------------------
+<route>
+    <from uri="krati:target/test/consumerspringtest"/>
+    <to uri="mock:results"/>
+</route>
+------------------------------------------------------
+
+### Idempotent Repository
+
+As already mentioned this component also offers and idemptonet
+repository which can be used for filtering out duplicate messages.
+
+[source,java]
+-----------------------------------------------------------------------------------------------------------------------------
+from("direct://in").idempotentConsumer(header("messageId"), new KratiIdempotentRepositroy("/tmp/idempotent").to("log://out");
+-----------------------------------------------------------------------------------------------------------------------------
+
+#### See also
+
+http://sna-projects.com/krati/[Krati Website]

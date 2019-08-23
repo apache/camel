@@ -1,1 +1,228 @@
-../../../../../components/camel-stax/src/main/docs/stax-component.adoc
+= StAX Component
+
+*Available as of Camel version 2.9*
+
+
+The StAX component allows messages to be process through a SAX
+http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler]. +
+Another feature of this component is to allow to iterate over JAXB
+records using StAX, for example using the Splitter
+EIP.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-stax</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+--------------------------
+stax:content-handler-class
+--------------------------
+
+example:
+
+[source,java]
+-----------------------------------
+stax:org.superbiz.FooContentHandler
+-----------------------------------
+
+You can lookup a `org.xml.sax.ContentHandler` bean from the Registry
+using the # syntax as shown:
+
+[source,java]
+---------------
+stax:#myHandler
+---------------
+
+== Options
+
+
+// component options: START
+The StAX component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The StAX endpoint is configured using URI syntax:
+
+----
+stax:contentHandlerClass
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentHandlerClass* | *Required* The FQN class name for the ContentHandler implementation to use. |  | String
+|===
+
+
+==== Query Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.stax.enabled* | Enable stax component | true | Boolean
+| *camel.component.stax.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Usage of a content handler as StAX parser
+
+The message body after the handling is the handler itself.
+
+Here an example:
+
+[source,java]
+--------------------------------------------------------------------------------------------------------
+from("file:target/in")
+  .to("stax:org.superbiz.handler.CountingHandler") 
+  // CountingHandler implements org.xml.sax.ContentHandler or extends org.xml.sax.helpers.DefaultHandler
+  .process(new Processor() {
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        CountingHandler handler = exchange.getIn().getBody(CountingHandler.class);
+        // do some great work with the handler
+    }
+  });
+--------------------------------------------------------------------------------------------------------
+
+== Iterate over a collection using JAXB and StAX
+
+First we suppose you have JAXB objects.
+
+For instance a list of records in a wrapper object:
+
+[source,java]
+-------------------------------------------------
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "records")
+public class Records {
+    @XmlElement(required = true)
+    protected List<Record> record;
+
+    public List<Record> getRecord() {
+        if (record == null) {
+            record = new ArrayList<Record>();
+        }
+        return record;
+    }
+}
+-------------------------------------------------
+
+and
+
+[source,java]
+---------------------------------------------------------
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "record", propOrder = { "key", "value" })
+public class Record {
+    @XmlAttribute(required = true)
+    protected String key;
+
+    @XmlAttribute(required = true)
+    protected String value;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+}
+---------------------------------------------------------
+
+Then you get a XML file to process:
+
+[source,xml]
+-------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<records>
+  <record value="v0" key="0"/>
+  <record value="v1" key="1"/>
+  <record value="v2" key="2"/>
+  <record value="v3" key="3"/>
+  <record value="v4" key="4"/>
+  <record value="v5" key="5"/>
+</record>
+-------------------------------------------------------
+
+The StAX component provides an `StAXBuilder` which can be used when
+iterating XML elements with the Camel Splitter
+
+[source,java]
+------------------------------------------
+from("file:target/in")
+    .split(stax(Record.class)).streaming()
+        .to("mock:records");
+------------------------------------------
+
+Where `stax` is a static method on
+`org.apache.camel.component.stax.StAXBuilder` which you can static
+import in the Java code. The stax builder is by default namespace aware
+on the XMLReader it uses. You can turn this
+off by setting the boolean parameter to false, as shown below:
+
+[source,java]
+-------------------------------------------------
+from("file:target/in")
+    .split(stax(Record.class, false)).streaming()
+        .to("mock:records");
+-------------------------------------------------
+
+=== The previous example with XML DSL
+
+The example above could be implemented as follows in XML DSL

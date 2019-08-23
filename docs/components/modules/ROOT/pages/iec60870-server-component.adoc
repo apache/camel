@@ -1,1 +1,124 @@
-../../../../../components/camel-iec60870/src/main/docs/iec60870-server-component.adoc
+= IEC 60870 Server Component
+
+*Available as of Camel version 2.20*
+
+
+The *IEC 60870-5-104 Server* component provides access to IEC 60870 servers using the
+http://eclipse.org/eclipsescada[Eclipse NeoSCADA™] implementation.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-iec60870</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+// component options: START
+The IEC 60870 Server component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *defaultConnection Options* (common) | Default connection options |  | ServerOptions
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+== URI format
+
+The URI syntax of the endpoint is: 
+
+[source]
+----
+iec60870-server:host:port/00-01-02-03-04
+----
+
+The information object address is encoded in the path in the syntax shows above. Please
+note that always the full, 5 octet address format is being used. Unused octets have to be filled
+with zero.
+
+== URI options
+
+
+
+
+// endpoint options: START
+The IEC 60870 Server endpoint is configured using URI syntax:
+
+----
+iec60870-server:uriPath
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uriPath* | *Required* The object information address |  | ObjectAddress
+|===
+
+
+==== Query Parameters (20 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *dataModuleOptions* (common) | Data module options |  | DataModuleOptions
+| *filterNonExecute* (common) | Filter out all requests which don't have the execute bit set | true | boolean
+| *protocolOptions* (common) | Protocol options |  | ProtocolOptions
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *acknowledgeWindow* (connection) | Parameter W - Acknowledgment window. | 10 | short
+| *adsuAddressType* (connection) | The common ASDU address size. May be either SIZE_1 or SIZE_2. |  | ASDUAddressType
+| *causeOfTransmissionType* (connection) | The cause of transmission type. May be either SIZE_1 or SIZE_2. |  | CauseOfTransmission Type
+| *informationObjectAddress Type* (connection) | The information address size. May be either SIZE_1, SIZE_2 or SIZE_3. |  | InformationObject AddressType
+| *maxUnacknowledged* (connection) | Parameter K - Maximum number of un-acknowledged messages. | 15 | short
+| *timeout1* (connection) | Timeout T1 in milliseconds. | 15000 | int
+| *timeout2* (connection) | Timeout T2 in milliseconds. | 10000 | int
+| *timeout3* (connection) | Timeout T3 in milliseconds. | 20000 | int
+| *causeSourceAddress* (data) | Whether to include the source address | true | boolean
+| *ignoreBackgroundScan* (data) | Whether background scan transmissions should be ignored. | true | boolean
+| *ignoreDaylightSavingTime* (data) | Whether to ignore or respect DST | false | boolean
+| *timeZone* (data) | The timezone to use. May be any Java time zone string | UTC | TimeZone
+| *connectionId* (id) | An identifier grouping connection instances |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.iec60870-server.default-connection-options.background-scan-period* | The period in "ms" between background transmission cycles. <p> If this is set to zero or less, background transmissions will be disabled. </p> |  | Integer
+| *camel.component.iec60870-server.default-connection-options.booleans-with-timestamp* | Send booleans with timestamps |  | Boolean
+| *camel.component.iec60870-server.default-connection-options.buffering-period* | A time period in "ms" the protocol layer will buffer change events in order to send out aggregated change messages |  | Integer
+| *camel.component.iec60870-server.default-connection-options.floats-with-timestamp* | Send floats with timestamps |  | Boolean
+| *camel.component.iec60870-server.default-connection-options.spontaneous-duplicates* | Number of spontaneous events to keep in the buffer. <p> When there are more than this number of spontaneous in events in the buffer, then events will be dropped in order to maintain the buffer size. </p> |  | Integer
+| *camel.component.iec60870-server.enabled* | Whether to enable auto configuration of the iec60870-server component. This is enabled by default. |  | Boolean
+| *camel.component.iec60870-server.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END

@@ -1,1 +1,130 @@
-../../../../../components/camel-coap/src/main/docs/coap-component.adoc
+= CoAP Component
+
+*Available as of Camel version 2.16*
+
+
+Camel-CoAP is an http://camel.apache.org/[Apache Camel] component that
+allows you to work with CoAP, a lightweight REST-type protocol for machine-to-machine operation. 
+http://coap.technology/[CoAP], Constrained Application Protocol is a specialized web transfer protocol 
+for use with constrained nodes and constrained networks and it is based on RFC 7252.
+
+Camel supports the DTLS, TCP and TLS protocols via the following URI schemes:
+
+[width="100%",cols="2,5",options="header"]
+|===
+| Scheme | Protocol
+| coap   | UDP
+| coaps  | UDP + DTLS
+| coap+tcp | TCP
+| coaps+tcp | TCP + TLS
+|===
+
+There are a number of different configuration options to configure TLS. For both DTLS (the "coaps" uri scheme)
+and TCP + TLS (the "coaps+tcp" uri scheme), it is possible to use a "sslContextParameters" parameter, from 
+which the camel-coap component will extract the required truststore / keystores etc to set up TLS. In addition,
+the DTLS protocol supports two alternative configuration mechanisms. To use a pre-shared key, configure a 
+pskStore, and to work with raw public keys, configure privateKey + publicKey objects.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+---------------------------------------------------------
+<dependency>
+ <groupId>org.apache.camel</groupId>
+ <artifactId>camel-coap</artifactId>
+ <version>x.x.x</version>
+ <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------------------------
+
+== Options
+
+
+// component options: START
+The CoAP component has no options.
+// component options: END
+
+
+
+
+// endpoint options: START
+The CoAP endpoint is configured using URI syntax:
+
+----
+coap:uri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uri* | The URI for the CoAP endpoint |  | URI
+|===
+
+
+==== Query Parameters (13 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *alias* (common) | Sets the alias used to query the KeyStore for the private key and certificate. This parameter is used when we are enabling TLS with certificates on the service side, and similarly on the client side when TLS is used with certificates and client authentication. If the parameter is not specified then the default behavior is to use the first alias in the keystore that contains a key entry. This configuration parameter does not apply to configuring TLS via a Raw Public Key or a Pre-Shared Key. |  | String
+| *cipherSuites* (common) | Sets the cipherSuites String. This is a comma separated String of ciphersuites to configure. If it is not specified, then it falls back to getting the ciphersuites from the sslContextParameters object. |  | String
+| *clientAuthentication* (common) | Sets the configuration options for server-side client-authentication requirements. The value must be one of NONE, WANT, REQUIRE. If this value is not specified, then it falls back to checking the sslContextParameters.getServerParameters().getClientAuthentication() value. |  | String
+| *privateKey* (common) | Set the configured private key for use with Raw Public Key. |  | PrivateKey
+| *pskStore* (common) | Set the PskStore to use for pre-shared key. |  | PskStore
+| *publicKey* (common) | Set the configured public key for use with Raw Public Key. |  | PublicKey
+| *sslContextParameters* (common) | Set the SSLContextParameters object for setting up TLS. This is required for coapstcp, and for coaps when we are using certificates for TLS (as opposed to RPK or PKS). |  | SSLContextParameters
+| *trustedRpkStore* (common) | Set the TrustedRpkStore to use to determine trust in raw public keys. |  | TrustedRpkStore
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *coapMethodRestrict* (consumer) | Comma separated list of methods that the CoAP consumer will bind to. The default is to bind to all methods (DELETE, GET, POST, PUT). |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.coap.enabled* | Enable coap component | true | Boolean
+| *camel.component.coap.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Message Headers
+
+[width="100%",cols="10%,20%,70%",options="header",]
+|=======================================================================
+|Name |Type |Description
+
+|`CamelCoapMethod` |`String` |The request method that the CoAP producer should use when calling the target CoAP
+server URI. Valid options are DELETE, GET, PING, POST & PUT.
+
+|`CamelCoapResponseCode` |`String` |The CoAP response code sent by the external server. See RFC 7252 for details
+of what each code means.
+
+|`CamelCoapUri` |`String` |The URI of a CoAP server to call. Will override any existing URI configured directly on the endpoint.
+|=======================================================================
+
+=== Configuring the CoAP producer request method
+
+The following rules determine which request method the CoAP producer will use to invoke the target URI:
+
+ 1. The value of the `CamelCoapMethod` header
+ 2. **GET** if a query string is provided on the target CoAP server URI.
+ 3. **POST** if the message exchange body is not null.
+ 4. **GET** otherwise.

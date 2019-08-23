@@ -1,1 +1,235 @@
-../../../../../components/camel-saxon/src/main/docs/xquery-language.adoc
+= XQuery Language
+
+*Available as of Camel version 1.0*
+
+
+Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
+Expression or Predicate to be
+used in the DSL or xref:manual::xml-configuration.adoc[Xml
+Configuration]. For example you could use XQuery to create an
+Predicate in a xref:manual::filter-eip.adoc[Message
+Filter] or as an Expression for a
+Recipient List.
+
+== XQuery Language options
+
+// language options: START
+The XQuery language supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| type |  | String | Sets the class name of the result type (type from output) The default result type is NodeSet
+| headerName |  | String | Name of header to use as input, instead of the message body
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|===
+// language options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.xquery.configuration* | To use a custom Saxon configuration. The option is a net.sf.saxon.Configuration type. |  | String
+| *camel.component.xquery.configuration-properties* | To set custom Saxon configuration properties |  | Map
+| *camel.component.xquery.enabled* | Enable xquery component | true | Boolean
+| *camel.component.xquery.module-u-r-i-resolver* | To use the custom ModuleURIResolver. The option is a net.sf.saxon.lib.ModuleURIResolver type. |  | String
+| *camel.component.xquery.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.language.xquery.enabled* | Enable xquery language | true | Boolean
+| *camel.language.xquery.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
+| *camel.language.xquery.type* | Sets the class name of the result type (type from output) The default result type is NodeSet |  | String
+|===
+// spring-boot-auto-configure options: END
+
+== Examples
+
+[source,java]
+---------------------------
+from("queue:foo").filter().
+  xquery("//foo").
+  to("queue:bar")
+---------------------------
+
+You can also use functions inside your query, in which case you need an
+explicit type conversion (or you will get a org.w3c.dom.DOMException:
+HIERARCHY_REQUEST_ERR) by passing the Class as a second argument to the
+*xquery()* method.
+
+[source,java]
+-----------------------------------------------------------------------------
+from("direct:start").
+  recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
+-----------------------------------------------------------------------------
+
+== Variables
+
+The IN message body will be set as the `contextItem`. Besides this these
+Variables is also added as parameters:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Variable |Type |Description
+
+|exchange |Exchange |The current Exchange
+
+|in.body |Object |The In message's body
+
+|out.body |Object |The OUT message's body (if any)
+
+|in.headers.* |Object |You can access the value of exchange.in.headers with key *foo* by using
+the variable which name is in.headers.foo
+
+|out.headers.* |Object |You can access the value of exchange.out.headers with key *foo* by using
+the variable which name is out.headers.foo variable
+
+|*key name* |Object |Any exchange.properties and exchange.in.headers and any additional
+parameters set using `setParameters(Map)`. These parameters is added
+with they own key name, for instance if there is an IN header with the
+key name *foo* then its added as *foo*.
+|=======================================================================
+
+== Using XML configuration
+
+If you prefer to configure your routes in your Spring
+XML file then you can use XPath expressions as follows
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:foo="http://example.com/person"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <route>
+      <from uri="activemq:MyQueue"/>
+      <filter>
+        <xquery>/foo:person[@name='James']</xquery>
+        <to uri="mqseries:SomeOtherQueue"/>
+      </filter>
+    </route>
+  </camelContext>
+</beans>
+---------------------------------------------------------------------------------------------------------------
+
+Notice how we can reuse the namespace prefixes, *foo* in this case, in
+the XPath expression for easier namespace based XQuery expressions!
+
+When you use functions in your XQuery expression you need an explicit
+type conversion which is done in the xml configuration via the *@type*
+attribute:
+
+[source,xml]
+-------------------------------------------------------------------------------
+    <xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
+-------------------------------------------------------------------------------
+
+== Using XQuery as transformation
+
+We can do a message translation using transform or setBody in the route,
+as shown below:
+
+[source,java]
+----------------------------------------
+from("direct:start").
+   transform().xquery("/people/person");
+----------------------------------------
+
+Notice that xquery will use DOMResult by default, so if we want to grab
+the value of the person node, using text() we need to tell xquery to use
+String as result type, as shown:
+
+[source,java]
+-------------------------------------------------------------
+from("direct:start").
+   transform().xquery("/people/person/text()", String.class);
+-------------------------------------------------------------
+
+ 
+
+== Using XQuery as an endpoint
+
+Sometimes an XQuery expression can be quite large; it can essentally be
+used for Templating. So you may want to use an
+XQuery Endpoint so you can route using XQuery
+templates.
+
+The following example shows how to take a message of an ActiveMQ queue
+(MyQueue) and transform it using XQuery and send it to MQSeries.
+
+[source,java]
+-------------------------------------------------------------------------
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <from uri="activemq:MyQueue"/>
+      <to uri="xquery:com/acme/someTransform.xquery"/>
+      <to uri="mqseries:SomeOtherQueue"/>
+    </route>
+  </camelContext>
+-------------------------------------------------------------------------
+
+== Examples
+
+Here is a simple
+http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryFilterTest.java[example]
+using an XQuery expression as a predicate in a
+Message Filter
+
+This
+http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryWithNamespacesFilterTest.java[example]
+uses XQuery with namespaces as a predicate in a
+Message Filter
+
+== Learning XQuery
+
+XQuery is a very powerful language for querying, searching, sorting and
+returning XML. For help learning XQuery try these tutorials
+
+* Mike Kay's http://www.stylusstudio.com/xquery_primer.html[XQuery
+Primer]
+* the W3Schools http://www.w3schools.com/xquery/default.asp[XQuery
+Tutorial]
+
+You might also find the http://www.w3.org/TR/xpath-functions/[XQuery
+function reference] useful
+
+== Loading script from external resource
+
+*Available as of Camel 2.11*
+
+You can externalize the script and have Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`. +
+ This is done using the following syntax: `"resource:scheme:location"`,
+eg to refer to a file on the classpath you can do:
+
+[source,java]
+------------------------------------------------------------------------------
+.setHeader("myHeader").xquery("resource:classpath:myxquery.txt", String.class)
+------------------------------------------------------------------------------
+
+== Dependencies
+
+To use XQuery in your camel routes you need to add the a dependency on
+*camel-saxon* which implements the XQuery language.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,java]
+--------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-saxon</artifactId>
+  <version>x.x.x</version>
+</dependency>
+--------------------------------------

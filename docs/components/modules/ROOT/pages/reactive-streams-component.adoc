@@ -1,1 +1,431 @@
-../../../../../components/camel-reactive-streams/src/main/docs/reactive-streams-component.adoc
+= Reactive Streams Component
+
+*Available as of Camel version 2.19*
+
+
+The Reactive Streams component allows you to exchange messages with reactive
+stream processing libraries compatible with the
+http://www.reactive-streams.org/[reactive streams] standard.
+
+The component supports backpressure and has been tested using the https://github.com/reactive-streams/reactive-streams-jvm/tree/master/tck[reactive streams technology
+compatibility kit (TCK)].
+
+The Camel module provides a *reactive-streams* component that allows users to define incoming and
+outgoing streams within Camel routes, and a direct client API that allows using Camel endpoints
+ directly into any external reactive framework.
+
+Camel uses an internal implementation of the reactive streams
+ _Publisher_ and _Subscriber_, so it's not tied to any specific framework.
+The following reactive frameworks have been used in the integration tests: https://github.com/reactor/reactor-core[Reactor Core 3], https://github.com/ReactiveX/RxJava[RxJava 2].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-reactive-streams</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+-------------------------------------------------
+reactive-streams://stream?[options]
+-------------------------------------------------
+
+Where *stream* is a logical stream name used to bind Camel routes to the
+external stream processing systems.
+
+== Options
+
+
+// component options: START
+The Reactive Streams component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *internalEngine Configuration* (advanced) | Configures the internal engine for Reactive Streams. |  | ReactiveStreamsEngine Configuration
+| *backpressureStrategy* (producer) | The backpressure strategy to use when pushing events to a slow subscriber. | BUFFER | ReactiveStreams BackpressureStrategy
+| *serviceType* (advanced) | Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the registry or using a ServiceLoader, the default implementation is DefaultCamelReactiveStreamsService |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The Reactive Streams endpoint is configured using URI syntax:
+
+----
+reactive-streams:stream
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *stream* | Name of the stream channel used by the endpoint to exchange messages. |  | String
+|===
+
+
+==== Query Parameters (10 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *concurrentConsumers* (consumer) | Number of threads used to process exchanges in the Camel route. | 1 | int
+| *exchangesRefillLowWatermark* (consumer) | Set the low watermark of requested exchanges to the active subscription as percentage of the maxInflightExchanges. When the number of pending items from the upstream source is lower than the watermark, new items can be requested to the subscription. If set to 0, the subscriber will request items in batches of maxInflightExchanges, only after all items of the previous batch have been processed. If set to 1, the subscriber can request a new item each time an exchange is processed (chatty). Any intermediate value can be used. | 0.25 | double
+| *forwardOnComplete* (consumer) | Determines if onComplete events should be pushed to the Camel route. | false | boolean
+| *forwardOnError* (consumer) | Determines if onError events should be pushed to the Camel route. Exceptions will be set as message body. | false | boolean
+| *maxInflightExchanges* (consumer) | Maximum number of exchanges concurrently being processed by Camel. This parameter controls backpressure on the stream. Setting a non-positive value will disable backpressure. | 128 | Integer
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *backpressureStrategy* (producer) | The backpressure strategy to use when pushing events to a slow subscriber. |  | ReactiveStreams BackpressureStrategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.reactive-streams.backpressure-strategy* | The backpressure strategy to use when pushing events to a slow subscriber. |  | ReactiveStreams BackpressureStrategy
+| *camel.component.reactive-streams.enabled* | Enable reactive-streams component | true | Boolean
+| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-max-size* | The maximum number of threads used by the reactive streams internal engine. |  | Integer
+| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-min-size* | The minimum number of threads used by the reactive streams internal engine. |  | Integer
+| *camel.component.reactive-streams.internal-engine-configuration.thread-pool-name* | The name of the thread pool used by the reactive streams internal engine. |  | String
+| *camel.component.reactive-streams.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.reactive-streams.service-type* | Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the registry or using a ServiceLoader, the default implementation is DefaultCamelReactiveStreamsService |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Usage
+
+The library is aimed to support all the communication modes needed by an application to interact with Camel data:
+
+* *Get* data from Camel routes (In-Only from Camel)
+* *Send* data to Camel routes (In-Only towards Camel)
+* *Request* a transformation to a Camel route (In-Out towards Camel)
+* *Process* data flowing from a Camel route using a reactive processing step (In-Out from Camel)
+
+== Getting data from Camel
+In order to subscribe to data flowing from a Camel route, exchanges should be redirected to
+a named stream, like in the following snippet:
+
+[source,java]
+---------------------------------------------------------
+from("timer:clock")
+.setBody().header(Exchange.TIMER_COUNTER)
+.to("reactive-streams:numbers");
+---------------------------------------------------------
+
+Routes can also be written using the XML DSL.
+
+In the example, an unbounded stream of numbers is associated to the name `numbers`.
+The stream can be accessed using the `CamelReactiveStreams` utility class.
+
+[source,java]
+---------------------------------------------------------
+CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
+
+// Getting a stream of exchanges
+Publisher<Exchange> exchanges = camel.fromStream("numbers");
+
+// Getting a stream of Integers (using Camel standard conversion system)
+Publisher<Integer> numbers = camel.fromStream("numbers", Integer.class);
+---------------------------------------------------------
+
+The stream can be used easily with any reactive streams compatible library.
+Here is an example of how to use it with https://github.com/ReactiveX/RxJava[RxJava 2]
+(although any reactive framework can be used to process events).
+
+[source,java]
+---------------------------------------------------------
+Flowable.fromPublisher(integers)
+    .doOnNext(System.out::println)
+    .subscribe();
+---------------------------------------------------------
+
+The example prints all numbers generated by Camel into `System.out`.
+
+=== Getting data from Camel using the direct API
+
+For short Camel routes and for users that prefer defining the whole processing flow
+using functional constructs of the reactive framework (without using the Camel DSL at all),
+streams can also be defined using Camel URIs.
+
+[source,java]
+---------------------------------------------------------
+CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
+
+// Get a stream from all the files in a directory
+Publisher<String> files = camel.from("file:folder", String.class);
+
+// Use the stream in RxJava
+Flowable.fromPublisher(files)
+    .doOnNext(System.out::println)
+    .subscribe();
+---------------------------------------------------------
+
+== Sending data to Camel
+When an external library needs to push events into a Camel route, the Reactive Streams
+endpoint must be set as consumer.
+
+[source,java]
+---------------------------------------------------------
+from("reactive-streams:elements")
+.to("log:INFO");
+---------------------------------------------------------
+
+A handle to the `elements` stream can be obtained from the `CamelReactiveStreams` utility class.
+
+[source,java]
+---------------------------------------------------------
+CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
+
+Subscriber<String> elements = camel.streamSubscriber("elements", String.class);
+---------------------------------------------------------
+
+The subscriber can be used to push events to the Camel route that consumes from the `elements` stream.
+
+Here is an example of how to use it with https://github.com/ReactiveX/RxJava[RxJava 2]
+(although any reactive framework can be used to publish events).
+
+[source,java]
+---------------------------------------------------------
+Flowable.interval(1, TimeUnit.SECONDS)
+    .map(i -> "Item " + i)
+    .subscribe(elements);
+---------------------------------------------------------
+
+String items are generated every second by RxJava in the example and they are pushed into the Camel route defined above.
+
+=== Sending data to Camel using the direct API
+
+Also in this case, the direct API can be used to obtain a Camel subscriber from an endpoint URI.
+
+[source,java]
+---------------------------------------------------------
+CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
+
+// Send two strings to the "seda:queue" endpoint
+Flowable.just("hello", "world")
+    .subscribe(camel.subscriber("seda:queue", String.class));
+---------------------------------------------------------
+
+== Request a transformation to Camel
+
+Routes defined in some Camel DSL can be used within a reactive stream framework to perform a
+specific transformation (the same mechanism can be also used to eg. just send data to a _http_ endpoint and continue).
+
+The following snippet shows how RxJava functional code can request the task of loading and marshalling files to Camel.
+
+[source,java]
+---------------------------------------------------------
+CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
+
+// Process files starting from their names
+Flowable.just(new File("file1.txt"), new File("file2.txt"))
+    .flatMap(file -> camel.toStream("readAndMarshal", String.class))
+    // Camel output will be converted to String
+    // other steps
+    .subscribe();
+---------------------------------------------------------
+
+In order this to work, a route like the following should be defined in the Camel context:
+
+[source,java]
+---------------------------------------------------------
+from("reactive-streams:readAndMarshal")
+.marshal() // ... other details
+---------------------------------------------------------
+
+=== Request a transformation to Camel using the direct API
+
+An alternative approach consists in using the URI endpoints directly in the reactive flow:
+
+[source,java]
+---------------------------------------------------------
+CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
+
+// Process files starting from their names
+Flowable.just(new File("file1.txt"), new File("file2.txt"))
+    .flatMap(file -> camel.to("direct:process", String.class))
+    // Camel output will be converted to String
+    // other steps
+    .subscribe();
+---------------------------------------------------------
+
+When using the _to()_ method instead of the _toStream_, there is no need to define the
+route using "reactive-streams:" endpoints (although they are used under the hood).
+
+In this case, the Camel transformation can be just:
+
+[source,java]
+---------------------------------------------------------
+from("direct:process")
+.marshal() // ... other details
+---------------------------------------------------------
+
+
+== Process Camel data into the reactive framework
+
+While a reactive streams _Publisher_ allows exchanging data in a unidirectional way,
+Camel routes often use a in-out exchange pattern (eg. to define REST endpoints and, in general,
+where a reply is needed for each request).
+
+In these circumstances, users can add a reactive processing step to the flow, to enhance a Camel route or to
+define the entire transformation using the reactive framework.
+
+For example, given the following route:
+
+[source,java]
+---------------------------------------------------------
+from("timer:clock")
+.setBody().header(Exchange.TIMER_COUNTER)
+.to("direct:reactive")
+.log("Continue with Camel route... n=${body}");
+---------------------------------------------------------
+
+A reactive processing step can be associated to the "direct:reactive" endpoint:
+
+[source,java]
+---------------------------------------------------------
+CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
+
+camel.process("direct:reactive", Integer.class, items ->
+    Flowable.fromPublisher(items) // RxJava
+        .map(n -> -n)); // make every number negative
+---------------------------------------------------------
+
+Data flowing in the Camel route will be processed by the external reactive
+framework then continue the processing flow inside Camel.
+
+This mechanism can also be used to define a In-Out exchange in a completely
+reactive way.
+
+[source,java]
+---------------------------------------------------------
+CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
+
+// requires a rest-capable Camel component
+camel.process("rest:get:orders", exchange ->
+                    Flowable.fromPublisher(exchange)
+                            .flatMap(ex -> allOrders())); // retrieve orders asynchronously
+---------------------------------------------------------
+
+See Camel examples (*camel-example-reactive-streams*) for details.
+
+== Advanced Topics
+=== Controlling Backpressure (producer side)
+
+When routing Camel exchanges to an external subscriber, backpressure is handled by an internal buffer that caches exchanges
+before delivering them.
+If the subscriber is slower than the exchange rate, the buffer may become too big. In many circumstances this must be avoided.
+
+Considering the following route:
+
+[source,java]
+---------------------------------------------------------
+from("jms:queue")
+.to("reactive-streams:flow");
+---------------------------------------------------------
+
+If the JMS queue contains a high number of messages and the Subscriber associated with the `flow` stream is too slow,
+messages are dequeued from JMS and appended to the buffer, possibly causing a "out of memory" error.
+To avoid such problems, a `ThrottlingInflightRoutePolicy` can be set in the route.
+
+[source,java]
+---------------------------------------------------------
+ThrottlingInflightRoutePolicy policy = new ThrottlingInflightRoutePolicy();
+policy.setMaxInflightExchanges(10);
+
+from("jms:queue")
+.routePolicy(policy)
+.to("reactive-streams:flow");
+---------------------------------------------------------
+
+The policy limits the maximum number of active exchanges (and so the maximum size of the buffer),
+keeping it lower than the threshold (`10` in the example).
+When more than `10` messages are in flight, the route is suspended, waiting for the subscriber to process them.
+
+With this mechanism, the subscriber controls the route suspension/resume automatically, through backpressure.
+When multiple subscribers are consuming items from the same stream, the slowest one controls the route status automatically.
+
+In other circumstances, eg. when using a `http` consumer, the route suspension makes the http service unavailable, so
+using the default configuration (no policy, unbounded buffer) should be preferable. Users should try to avoid memory issues
+by limiting the number of requests to the http service (eg. scaling out).
+
+In contexts where a certain amount of data loss is acceptable, setting a backpressure strategy other than `BUFFER` can
+ be a solution for dealing with fast sources.
+
+[source,java]
+---------------------------------------------------------
+from("direct:thermostat")
+.to("reactive-streams:flow?backpressureStrategy=LATEST");
+---------------------------------------------------------
+
+When the `LATEST` backpressure strategy is used, only the last exchange received from the route is kept by the publisher, while older data is discarded (other options are available).
+
+=== Controlling Backpressure (consumer side)
+
+When Camel consumes items from a reactive-streams publisher, the maximum number of inflight exchanges can be set as endpoint option.
+
+The subscriber associated with the consumer interacts with the publisher to keep the number of messages in the route lower than the threshold.
+
+An example of backpressure-aware route:
+
+[source,java]
+---------------------------------------------------------
+from("reactive-streams:numbers?maxInflightExchanges=10")
+.to("direct:endpoint");
+---------------------------------------------------------
+
+The number of items that Camel requests to the source publisher (through the reactive streams backpressure mechanism)
+is always lower than `10`. Messages are processed by a single thread in the Camel side.
+
+The number of concurrent consumers (threads) can also be set as endpoint option (`concurrentConsumers`).
+When using 1 consumer (the default), the order of items in the source stream is maintained.
+When this value is increased, items will be processed concurrently by multiple threads (so not preserving the order).
+
+
+== Camel Reactive Streams Starter
+
+A starter module is available to spring-boot users. When using the starter,
+the `CamelReactiveStreamsService` can be directly injected into Spring components.
+
+To use the starter, add the following to your spring boot pom.xml file:
+
+[source,xml]
+------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-reactive-streams-starter</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------

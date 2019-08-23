@@ -1,1 +1,97 @@
-../../../../../components/camel-pgevent/src/main/docs/pgevent-component.adoc
+= PostgresSQL Event Component
+
+*Available as of Camel version 2.15*
+
+
+This is a component for Apache Camel which allows for
+Producing/Consuming PostgreSQL events related to the LISTEN/NOTIFY
+commands added since PostgreSQL 8.3.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-pgevent</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+URI format
+
+The pgevent component uses the following two styles of endpoint URI
+notation:
+
+[source,java]
+-------------------------------------------------
+pgevent:datasource[?parameters]
+pgevent://host:port/database/channel[?parameters]
+-------------------------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+
+// component options: START
+The PostgresSQL Event component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The PostgresSQL Event endpoint is configured using URI syntax:
+
+----
+pgevent:host:port/database/channel
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* | To connect using hostname and port to the database. | localhost | String
+| *port* | To connect using hostname and port to the database. | 5432 | Integer
+| *database* | *Required* The database name |  | String
+| *channel* | *Required* The channel name |  | String
+|===
+
+
+==== Query Parameters (7 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *datasource* (common) | To connect using the given javax.sql.DataSource instead of using hostname and port. |  | DataSource
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *pass* (security) | Password for login |  | String
+| *user* (security) | Username for login | postgres | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.pgevent.enabled* | Enable pgevent component | true | Boolean
+| *camel.component.pgevent.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END

@@ -1,1 +1,125 @@
-../../../../../components/camel-spring-integration/src/main/docs/spring-integration-component.adoc
+= Spring Integration Component
+
+*Available as of Camel version 1.4*
+
+
+The Spring Integration component provides a bridge for Camel
+components to talk to
+http://www.springsource.org/spring-integration[spring integration
+endpoints].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-integration</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+-----------------------------------------------
+spring-integration:defaultChannelName[?options]
+-----------------------------------------------
+
+Where *defaultChannelName* represents the default channel name which is
+used by the Spring Integration Spring context. It will equal to the
+`inputChannel` name for the Spring Integration consumer and the
+`outputChannel` name for the Spring Integration provider.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+
+// component options: START
+The Spring Integration component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Spring Integration endpoint is configured using URI syntax:
+
+----
+spring-integration:defaultChannel
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *defaultChannel* | *Required* The default channel name which is used by the Spring Integration Spring context. It will equal to the inputChannel name for the Spring Integration consumer and the outputChannel name for the Spring Integration provider. |  | String
+|===
+
+
+==== Query Parameters (7 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *inOut* (common) | The exchange pattern that the Spring integration endpoint should use. If inOut=true then a reply channel is expected, either from the Spring Integration Message header or configured on the endpoint. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *inputChannel* (consumer) | The Spring integration input channel name that this endpoint wants to consume from Spring integration. |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *outputChannel* (producer) | The Spring integration output channel name that is used to send messages to Spring integration. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.spring-integration.enabled* | Enable spring-integration component | true | Boolean
+| *camel.component.spring-integration.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Usage
+
+The Spring integration component is a bridge that connects Camel
+endpoints with Spring integration endpoints through the Spring
+integration's input channels and output channels. Using this component,
+we can send Camel messages to Spring Integration endpoints or receive
+messages from Spring integration endpoints in a Camel routing context.
+
+== Examples
+
+=== Using the Spring integration endpoint
+
+You can set up a Spring integration endpoint using a URI, as follows:
+
+Or directly using a Spring integration channel name:
+
+=== The Source and Target adapter
+
+Spring integration also provides the Spring integration's source and
+target adapters, which can route messages from a Spring integration
+channel to a Camel endpoint or from a Camel endpoint to a Spring
+integration channel.
+
+This example uses the following namespaces:
+
+You can bind your source or target to a Camel endpoint as follows:

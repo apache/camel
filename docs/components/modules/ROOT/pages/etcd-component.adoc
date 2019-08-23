@@ -1,1 +1,121 @@
-../../../../../components/camel-etcd/src/main/docs/etcd-component.adoc
+= etcd Component
+
+*Available as of Camel version 2.18*
+
+
+The camel Etcd component allows you to work with Etcd, a distributed reliable key-value store.
+
+== URI Format
+
+[source,java]
+----------------------------
+etcd:namespace/path[?options]
+----------------------------
+
+== URI Options
+
+// component options: START
+The etcd component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uris* (common) | To set the URIs the client connects. |  | String
+| *sslContextParameters* (common) | To configure security using SSLContextParameters. |  | SSLContextParameters
+| *userName* (common) | The user name to use for basic authentication. |  | String
+| *password* (common) | The password to use for basic authentication. |  | String
+| *configuration* (advanced) | Sets the common configuration shared among endpoints |  | EtcdConfiguration
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The etcd endpoint is configured using URI syntax:
+
+----
+etcd:namespace/path
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *namespace* | *Required* The API namespace to use |  | EtcdNamespace
+| *path* | The path the endpoint refers to |  | String
+|===
+
+
+==== Query Parameters (29 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *recursive* (common) | To apply an action recursively. | false | boolean
+| *servicePath* (common) | The path to look for for service discovery | /services/ | String
+| *timeout* (common) | To set the maximum time an action could take to complete. |  | Long
+| *uris* (common) | To set the URIs the client connects. | http://localhost:2379,http://localhost:4001 | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sendEmptyExchangeOnTimeout* (consumer) | To send an empty message in case of timeout watching for a key. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *fromIndex* (consumer) | The index to watch from | 0 | Long
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *timeToLive* (producer) | To set the lifespan of a key in milliseconds. |  | Integer
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *password* (security) | The password to use for basic authentication. |  | String
+| *sslContextParameters* (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
+| *userName* (security) | The user name to use for basic authentication. |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 17 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.etcd.configuration.from-index* | The index to watch from | 0 | Long
+| *camel.component.etcd.configuration.password* | The password to use for basic authentication. |  | String
+| *camel.component.etcd.configuration.recursive* | To apply an action recursively. | false | Boolean
+| *camel.component.etcd.configuration.send-empty-exchange-on-timeout* | To send an empty message in case of timeout watching for a key. | false | Boolean
+| *camel.component.etcd.configuration.service-path* | The path to look for for service discovery | /services/ | String
+| *camel.component.etcd.configuration.ssl-context-parameters* | To configure security using SSLContextParameters. |  | SSLContextParameters
+| *camel.component.etcd.configuration.time-to-live* | To set the lifespan of a key in milliseconds. |  | Integer
+| *camel.component.etcd.configuration.timeout* | To set the maximum time an action could take to complete. |  | Long
+| *camel.component.etcd.configuration.uris* | To set the URIs the client connects. | http://localhost:2379,http://localhost:4001 | String
+| *camel.component.etcd.configuration.user-name* | The user name to use for basic authentication. |  | String
+| *camel.component.etcd.enabled* | Enable etcd component | true | Boolean
+| *camel.component.etcd.password* | The password to use for basic authentication. |  | String
+| *camel.component.etcd.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.etcd.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.etcd.uris* | To set the URIs the client connects. |  | String
+| *camel.component.etcd.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+| *camel.component.etcd.user-name* | The user name to use for basic authentication. |  | String
+|===
+// spring-boot-auto-configure options: END

@@ -1,1 +1,720 @@
-../../../../../components/camel-mail/src/main/docs/mail-component.adoc
+= Mail Component
+
+*Available as of Camel version 1.0*
+
+
+The Mail component provides access to Email via Spring's Mail support
+and the underlying JavaMail system.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-mail</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+[WARNING]
+====
+*Geronimo mail .jar*
+
+We have discovered that the geronimo mail `.jar` (v1.6) has a bug when
+polling mails with attachments. It cannot correctly identify the
+`Content-Type`. So, if you attach a `.jpeg` file to a mail and you poll
+it, the `Content-Type` is resolved as `text/plain` and not as
+`image/jpeg`. For that reason, we have added an
+`org.apache.camel.component.ContentTypeResolver` SPI interface which
+enables you to provide your own implementation and fix this bug by
+returning the correct Mime type based on the file name. So if the file
+name ends with `jpeg/jpg`, you can return `image/jpeg`.
+====
+
+You can set your custom resolver on the `MailComponent` instance or on
+the `MailEndpoint` instance.
+
+
+[TIP]
+====
+*POP3 or IMAP*
+
+POP3 has some limitations and end users are encouraged to use IMAP if
+possible.
+====
+
+[NOTE]
+====
+*Using mock-mail for testing*
+
+You can use a mock framework for unit testing, which allows you to test
+without the need for a real mail server. However you should remember to
+not include the mock-mail when you go into production or other
+environments where you need to send mails to a real mail server. Just
+the presence of the mock-javamail.jar on the classpath means that it
+will kick in and avoid sending the mails.
+====
+
+== URI format
+
+Mail endpoints can have one of the following URI formats (for the
+protocols, SMTP, POP3, or IMAP, respectively):
+
+[source,java]
+---------------------------------------
+smtp://[username@]host[:port][?options]
+pop3://[username@]host[:port][?options]
+imap://[username@]host[:port][?options]
+---------------------------------------
+
+The mail component also supports secure variants of these protocols
+(layered over SSL). You can enable the secure protocols by adding `s` to
+the scheme:
+
+[source,java]
+----------------------------------------
+smtps://[username@]host[:port][?options]
+pop3s://[username@]host[:port][?options]
+imaps://[username@]host[:port][?options]
+----------------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+
+== Component options
+
+
+// component options: START
+The Mail component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | Sets the Mail configuration |  | MailConfiguration
+| *contentTypeResolver* (advanced) | Resolver to determine Content-Type for file attachments. |  | ContentTypeResolver
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+== Endpoint options
+
+
+// endpoint options: START
+The Mail endpoint is configured using URI syntax:
+
+----
+imap:host:port
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* | *Required* The mail server host name |  | String
+| *port* | The port number of the mail server |  | int
+|===
+
+
+==== Query Parameters (62 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *closeFolder* (consumer) | Whether the consumer should close the folder after polling. Setting this option to false and having disconnect=false as well, then the consumer keep the folder open between polls. | true | boolean
+| *copyTo* (consumer) | After processing a mail message, it can be copied to a mail folder with the given name. You can override this configuration value, with a header with the key copyTo, allowing you to copy messages to folder names configured at runtime. |  | String
+| *delete* (consumer) | Deletes the messages after they have been processed. This is done by setting the DELETED flag on the mail message. If false, the SEEN flag is set instead. As of Camel 2.10 you can override this configuration option by setting a header with the key delete to determine if the mail should be deleted or not. | false | boolean
+| *disconnect* (consumer) | Whether the consumer should disconnect after polling. If enabled this forces Camel to connect on each poll. | false | boolean
+| *handleFailedMessage* (consumer) | If the mail consumer cannot retrieve a given mail message, then this option allows to handle the caused exception by the consumer's error handler. By enable the bridge error handler on the consumer, then the Camel routing error handler can handle the exception instead. The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel. | false | boolean
+| *maxMessagesPerPoll* (consumer) | Specifies the maximum number of messages to gather per poll. By default, no maximum is set. Can be used to set a limit of e.g. 1000 to avoid downloading thousands of files when the server starts up. Set a value of 0 or negative to disable this option. |  | int
+| *mimeDecodeHeaders* (consumer) | This option enables transparent MIME decoding and unfolding for mail headers. | false | boolean
+| *peek* (consumer) | Will mark the javax.mail.Message as peeked before processing the mail message. This applies to IMAPMessage messages types only. By using peek the mail will not be eager marked as SEEN on the mail server, which allows us to rollback the mail message if there is an error processing in Camel. | true | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *skipFailedMessage* (consumer) | If the mail consumer cannot retrieve a given mail message, then this option allows to skip the message and move on to retrieve the next mail message. The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel. | false | boolean
+| *unseen* (consumer) | Whether to limit by unseen mails only. | true | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *fetchSize* (consumer) | Sets the maximum number of messages to consume during a poll. This can be used to avoid overloading a mail server, if a mailbox folder contains a lot of messages. Default value of -1 means no fetch size and all messages will be consumed. Setting the value to 0 is a special corner case, where Camel will not consume any messages at all. | -1 | int
+| *folderName* (consumer) | The folder to poll. | INBOX | String
+| *mailUidGenerator* (consumer) | A pluggable MailUidGenerator that allows to use custom logic to generate UUID of the mail message. |  | MailUidGenerator
+| *mapMailMessage* (consumer) | Specifies whether Camel should map the received mail message to Camel body/headers. If set to true, the body of the mail message is mapped to the body of the Camel IN message and the mail headers are mapped to IN headers. If this option is set to false then the IN message contains a raw javax.mail.Message. You can retrieve this raw message by calling exchange.getIn().getBody(javax.mail.Message.class). | true | boolean
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *postProcessAction* (consumer) | Refers to an MailBoxPostProcessAction for doing post processing tasks on the mailbox once the normal processing ended. |  | MailBoxPostProcess Action
+| *bcc* (producer) | Sets the BCC email address. Separate multiple email addresses with comma. |  | String
+| *cc* (producer) | Sets the CC email address. Separate multiple email addresses with comma. |  | String
+| *from* (producer) | The from email address | camel@localhost | String
+| *replyTo* (producer) | The Reply-To recipients (the receivers of the response mail). Separate multiple email addresses with a comma. |  | String
+| *subject* (producer) | The Subject of the message being sent. Note: Setting the subject in the header takes precedence over this option. |  | String
+| *to* (producer) | Sets the To email address. Separate multiple email addresses with comma. |  | String
+| *javaMailSender* (producer) | To use a custom org.apache.camel.component.mail.JavaMailSender for sending emails. |  | JavaMailSender
+| *additionalJavaMail Properties* (advanced) | Sets additional java mail properties, that will append/override any default properties that is set based on all the other options. This is useful if you need to add some special options but want to keep the others as is. |  | Properties
+| *alternativeBodyHeader* (advanced) | Specifies the key to an IN message header that contains an alternative email body. For example, if you send emails in text/html format and want to provide an alternative mail body for non-HTML email clients, set the alternative mail body with this key as a header. | CamelMailAlternativeBody | String
+| *attachmentsContentTransfer EncodingResolver* (advanced) | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments. |  | AttachmentsContent TransferEncoding Resolver
+| *binding* (advanced) | Sets the binding used to convert from a Camel message to and from a Mail message |  | MailBinding
+| *connectionTimeout* (advanced) | The connection timeout in milliseconds. | 30000 | int
+| *contentType* (advanced) | The mail message content type. Use text/html for HTML mails. | text/plain | String
+| *contentTypeResolver* (advanced) | Resolver to determine Content-Type for file attachments. |  | ContentTypeResolver
+| *debugMode* (advanced) | Enable debug mode on the underlying mail framework. The SUN Mail framework logs the debug messages to System.out by default. | false | boolean
+| *headerFilterStrategy* (advanced) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers. |  | HeaderFilterStrategy
+| *ignoreUnsupportedCharset* (advanced) | Option to let Camel ignore unsupported charset in the local JVM when sending mails. If the charset is unsupported then charset=XXX (where XXX represents the unsupported charset) is removed from the content-type and it relies on the platform default instead. | false | boolean
+| *ignoreUriScheme* (advanced) | Option to let Camel ignore unsupported charset in the local JVM when sending mails. If the charset is unsupported then charset=XXX (where XXX represents the unsupported charset) is removed from the content-type and it relies on the platform default instead. | false | boolean
+| *session* (advanced) | Specifies the mail session that camel should use for all mail interactions. Useful in scenarios where mail sessions are created and managed by some other resource, such as a JavaEE container. If this is not specified, Camel automatically creates the mail session for you. |  | Session
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *useInlineAttachments* (advanced) | Whether to use disposition inline or attachment. | false | boolean
+| *idempotentRepository* (filter) | A pluggable repository org.apache.camel.spi.IdempotentRepository which allows to cluster consuming from the same mailbox, and let the repository coordinate whether a mail message is valid for the consumer to process. By default no repository is in use. |  | IdempotentRepository
+| *idempotentRepositoryRemove OnCommit* (filter) | When using idempotent repository, then when the mail message has been successfully processed and is committed, should the message id be removed from the idempotent repository (default) or be kept in the repository. By default its assumed the message id is unique and has no value to be kept in the repository, because the mail message will be marked as seen/moved or deleted to prevent it from being consumed again. And therefore having the message id stored in the idempotent repository has little value. However this option allows to store the message id, for whatever reason you may have. | true | boolean
+| *searchTerm* (filter) | Refers to a javax.mail.search.SearchTerm which allows to filter mails based on search criteria such as subject, body, from, sent after a certain date etc. |  | SearchTerm
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. | 60000 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *sortTerm* (sort) | Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3 or when IMAP server does not have the SORT capability. |  | String
+| *dummyTrustManager* (security) | To use a dummy security setting for trusting all certificates. Should only be used for development mode, and not production. | false | boolean
+| *password* (security) | The password for login |  | String
+| *sslContextParameters* (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
+| *username* (security) | The username for login |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 48 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mail.configuration.additional-java-mail-properties* | Sets additional java mail properties, that will append/override any default properties that is set based on all the other options. This is useful if you need to add some special options but want to keep the others as is. |  | Properties
+| *camel.component.mail.configuration.alternative-body-header* | Specifies the key to an IN message header that contains an alternative email body. For example, if you send emails in text/html format and want to provide an alternative mail body for non-HTML email clients, set the alternative mail body with this key as a header. | CamelMailAlternativeBody | String
+| *camel.component.mail.configuration.attachments-content-transfer-encoding-resolver* | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments. |  | AttachmentsContent TransferEncoding Resolver
+| *camel.component.mail.configuration.bcc* | Sets the BCC email address. Separate multiple email addresses with comma. |  | String
+| *camel.component.mail.configuration.cc* | Sets the CC email address. Separate multiple email addresses with comma. |  | String
+| *camel.component.mail.configuration.close-folder* | Whether the consumer should close the folder after polling. Setting this option to false and having disconnect=false as well, then the consumer keep the folder open between polls. | true | Boolean
+| *camel.component.mail.configuration.connection-timeout* | The connection timeout in milliseconds. | 30000 | Integer
+| *camel.component.mail.configuration.content-type* | The mail message content type. Use text/html for HTML mails. | text/plain | String
+| *camel.component.mail.configuration.copy-to* | After processing a mail message, it can be copied to a mail folder with the given name. You can override this configuration value, with a header with the key copyTo, allowing you to copy messages to folder names configured at runtime. |  | String
+| *camel.component.mail.configuration.debug-mode* | Enable debug mode on the underlying mail framework. The SUN Mail framework logs the debug messages to System.out by default. | false | Boolean
+| *camel.component.mail.configuration.delete* | Deletes the messages after they have been processed. This is done by setting the DELETED flag on the mail message. If false, the SEEN flag is set instead. As of Camel 2.10 you can override this configuration option by setting a header with the key delete to determine if the mail should be deleted or not. | false | Boolean
+| *camel.component.mail.configuration.disconnect* | Whether the consumer should disconnect after polling. If enabled this forces Camel to connect on each poll. | false | Boolean
+| *camel.component.mail.configuration.dummy-trust-manager* | To use a dummy security setting for trusting all certificates. Should only be used for development mode, and not production. | false | Boolean
+| *camel.component.mail.configuration.fetch-size* | Sets the maximum number of messages to consume during a poll. This can be used to avoid overloading a mail server, if a mailbox folder contains a lot of messages. Default value of -1 means no fetch size and all messages will be consumed. Setting the value to 0 is a special corner case, where Camel will not consume any messages at all. | -1 | Integer
+| *camel.component.mail.configuration.folder-name* | The folder to poll. | INBOX | String
+| *camel.component.mail.configuration.from* | The from email address | camel@localhost | String
+| *camel.component.mail.configuration.handle-failed-message* | If the mail consumer cannot retrieve a given mail message, then this option allows to handle the caused exception by the consumer's error handler. By enable the bridge error handler on the consumer, then the Camel routing error handler can handle the exception instead. The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel. | false | Boolean
+| *camel.component.mail.configuration.host* | The mail server host name |  | String
+| *camel.component.mail.configuration.ignore-unsupported-charset* | Option to let Camel ignore unsupported charset in the local JVM when sending mails. If the charset is unsupported then charset=XXX (where XXX represents the unsupported charset) is removed from the content-type and it relies on the platform default instead. | false | Boolean
+| *camel.component.mail.configuration.ignore-uri-scheme* | Option to let Camel ignore unsupported charset in the local JVM when sending mails. If the charset is unsupported then charset=XXX (where XXX represents the unsupported charset) is removed from the content-type and it relies on the platform default instead. | false | Boolean
+| *camel.component.mail.configuration.java-mail-properties* | Sets the java mail options. Will clear any default properties and only use the properties provided for this method. |  | Properties
+| *camel.component.mail.configuration.java-mail-sender* | To use a custom org.apache.camel.component.mail.JavaMailSender for sending emails. |  | JavaMailSender
+| *camel.component.mail.configuration.map-mail-message* | Specifies whether Camel should map the received mail message to Camel body/headers. If set to true, the body of the mail message is mapped to the body of the Camel IN message and the mail headers are mapped to IN headers. If this option is set to false then the IN message contains a raw javax.mail.Message. You can retrieve this raw message by calling exchange.getIn().getBody(javax.mail.Message.class). | true | Boolean
+| *camel.component.mail.configuration.mime-decode-headers* | This option enables transparent MIME decoding and unfolding for mail headers. | false | Boolean
+| *camel.component.mail.configuration.password* | The password for login |  | String
+| *camel.component.mail.configuration.peek* | Will mark the javax.mail.Message as peeked before processing the mail message. This applies to IMAPMessage messages types only. By using peek the mail will not be eager marked as SEEN on the mail server, which allows us to rollback the mail message if there is an error processing in Camel. | true | Boolean
+| *camel.component.mail.configuration.port* | The port number of the mail server |  | Integer
+| *camel.component.mail.configuration.protocol* | The protocol for communicating with the mail server |  | String
+| *camel.component.mail.configuration.reply-to* | The Reply-To recipients (the receivers of the response mail). Separate multiple email addresses with a comma. |  | String
+| *camel.component.mail.configuration.session* | Specifies the mail session that camel should use for all mail interactions. Useful in scenarios where mail sessions are created and managed by some other resource, such as a JavaEE container. If this is not specified, Camel automatically creates the mail session for you. |  | Session
+| *camel.component.mail.configuration.skip-failed-message* | If the mail consumer cannot retrieve a given mail message, then this option allows to skip the message and move on to retrieve the next mail message. The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel. | false | Boolean
+| *camel.component.mail.configuration.ssl-context-parameters* | To configure security using SSLContextParameters. |  | SSLContextParameters
+| *camel.component.mail.configuration.subject* | The Subject of the message being sent. Note: Setting the subject in the header takes precedence over this option. |  | String
+| *camel.component.mail.configuration.to* | Sets the To email address. Separate multiple email addresses with comma. |  | String
+| *camel.component.mail.configuration.unseen* | Whether to limit by unseen mails only. | true | Boolean
+| *camel.component.mail.configuration.use-inline-attachments* | Whether to use disposition inline or attachment. | false | Boolean
+| *camel.component.mail.configuration.username* | The username for login |  | String
+| *camel.component.mail.content-type-resolver* | Resolver to determine Content-Type for file attachments. The option is a org.apache.camel.component.mail.ContentTypeResolver type. |  | String
+| *camel.component.mail.enabled* | Enable mail component | true | Boolean
+| *camel.component.mail.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.mail.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+| *camel.dataformat.mime-multipart.binary-content* | Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false) Default is false. | false | Boolean
+| *camel.dataformat.mime-multipart.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.mime-multipart.enabled* | Enable mime-multipart dataformat | true | Boolean
+| *camel.dataformat.mime-multipart.headers-inline* | Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false). Default is false. | false | Boolean
+| *camel.dataformat.mime-multipart.include-headers* | A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This will only work if headersInline is set to true. Default is to include no headers |  | String
+| *camel.dataformat.mime-multipart.multipart-sub-type* | Specify the subtype of the MIME Multipart. Default is mixed. | mixed | String
+| *camel.dataformat.mime-multipart.multipart-without-attachment* | Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part). Default is false. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+=== Sample endpoints
+
+Typically, you specify a URI with login credentials as follows (taking
+SMTP as an example):
+
+[source,java]
+------------------------------------------------
+smtp://[username@]host[:port][?password=somepwd]
+------------------------------------------------
+
+Alternatively, it is possible to specify both the user name and the
+password as query options:
+
+[source,java]
+-----------------------------------------------------
+smtp://host[:port]?password=somepwd&username=someuser
+-----------------------------------------------------
+
+For example:
+
+[source,java]
+------------------------------------------------------------
+smtp://mycompany.mailserver:30?password=tiger&username=scott
+------------------------------------------------------------
+
+== Components
+
+- IMAP
+- IMAPs
+- POP3s
+- POP3s
+- SMTP
+- SMTPs
+
+=== Default ports
+
+Default port numbers are supported. If the port number is omitted, Camel
+determines the port number to use based on the protocol.
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Protocol |Default Port Number
+|`SMTP` |`25`
+|`SMTPS` |`465`
+|`POP3` |`110`
+|`POP3S` |`995`
+|`IMAP` |`143`
+|`IMAPS` |`993`
+|=======================================================================
+
+== SSL support
+
+The underlying mail framework is responsible for providing SSL support.
+ You may either configure SSL/TLS support by completely specifying the
+necessary Java Mail API configuration options, or you may provide a
+configured SSLContextParameters through the component or endpoint
+configuration.
+
+=== Using the JSSE Configuration Utility
+
+The mail component supports SSL/TLS configuration
+through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
+Configuration Utility].  This utility greatly decreases the amount of
+component specific code you need to write and is configurable at the
+endpoint and component levels.  The following examples demonstrate how
+to use the utility with the mail component.
+
+[[Mail-Programmaticconfigurationoftheendpoint]]
+Programmatic configuration of the endpoint
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------------------
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setResource("/users/home/server/truststore.jks");
+ksp.setPassword("keystorePassword");
+TrustManagersParameters tmp = new TrustManagersParameters();
+tmp.setKeyStore(ksp);
+SSLContextParameters scp = new SSLContextParameters();
+scp.setTrustManagers(tmp);
+Registry registry = ...
+registry.bind("sslContextParameters", scp);
+...
+from(...)
+&nbsp; &nbsp; .to("smtps://smtp.google.com?username=user@gmail.com&password=password&sslContextParameters=#sslContextParameters");
+----------------------------------------------------------------------------------------------------------------------------------
+
+[[Mail-SpringDSLbasedconfigurationofendpoint]]
+Spring DSL based configuration of endpoint
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------
+...
+<camel:sslContextParameters id="sslContextParameters">
+  <camel:trustManagers>
+    <camel:keyStore resource="/users/home/server/truststore.jks" password="keystorePassword"/>
+  </camel:trustManagers>
+</camel:sslContextParameters>...
+...
+<to uri="smtps://smtp.google.com?username=user@gmail.com&password=password&sslContextParameters=#sslContextParameters"/>...
+---------------------------------------------------------------------------------------------------------------------------
+
+=== Configuring JavaMail Directly
+
+Camel uses SUN JavaMail, which only trusts certificates issued by well
+known Certificate Authorities (the default JVM trust configuration). If
+you issue your own certificates, you have to import the CA certificates
+into the JVM's Java trust/key store files, override the default JVM
+trust/key store files (see `SSLNOTES.txt` in JavaMail for details).
+
+== Mail Message Content
+
+Camel uses the message exchange's IN body as the
+http://java.sun.com/javaee/5/docs/api/javax/mail/internet/MimeMessage.html[MimeMessage]
+text content. The body is converted to `String.class`.
+
+Camel copies all of the exchange's IN headers to the
+http://java.sun.com/javaee/5/docs/api/javax/mail/internet/MimeMessage.html[MimeMessage]
+headers.
+
+The subject of the
+http://java.sun.com/javaee/5/docs/api/javax/mail/internet/MimeMessage.html[MimeMessage]
+can be configured using a header property on the IN message. The code
+below demonstrates this:
+
+The same applies for other MimeMessage headers such as recipients, so
+you can use a header property as `To`:
+
+When using the MailProducer the send the mail to
+server, you should be able to get the message id of the
+http://java.sun.com/javaee/5/docs/api/javax/mail/internet/MimeMessage.html[MimeMessage]
+with the key `CamelMailMessageId` from the Camel message header.
+
+== Headers take precedence over pre-configured recipients
+
+The recipients specified in the message headers always take precedence
+over recipients pre-configured in the endpoint URI. The idea is that if
+you provide any recipients in the message headers, that is what you get.
+The recipients pre-configured in the endpoint URI are treated as a
+fallback.
+
+In the sample code below, the email message is sent to
+`davsclaus@apache.org`, because it takes precedence over the
+pre-configured recipient, `info@mycompany.com`. Any `CC` and `BCC`
+settings in the endpoint URI are also ignored and those recipients will
+not receive any mail. The choice between headers and pre-configured
+settings is all or nothing: the mail component _either_ takes the
+recipients exclusively from the headers or exclusively from the
+pre-configured settings. It is not possible to mix and match headers and
+pre-configured settings.
+
+[source,java]
+------------------------------------------------------------------------------------------------------------
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("to", "davsclaus@apache.org");
+
+        template.sendBodyAndHeaders("smtp://admin@localhost?to=info@mycompany.com", "Hello World", headers);
+------------------------------------------------------------------------------------------------------------
+
+== Multiple recipients for easier configuration
+
+It is possible to set multiple recipients using a comma-separated or a
+semicolon-separated list. This applies both to header settings and to
+settings in an endpoint URI. For example:
+
+[source,java]
+------------------------------------------------------------------------------------------------
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("to", "davsclaus@apache.org ; jstrachan@apache.org ; ningjiang@apache.org");
+------------------------------------------------------------------------------------------------
+
+The preceding example uses a semicolon, `;`, as the separator character.
+
+== Setting sender name and email
+
+You can specify recipients in the format, `name <email>`, to include
+both the name and the email address of the recipient.
+
+For example, you define the following headers on the a
+Message:
+
+[source,java]
+---------------------------------------------------------
+Map headers = new HashMap();
+map.put("To", "Claus Ibsen <davsclaus@apache.org>");
+map.put("From", "James Strachan <jstrachan@apache.org>");
+map.put("Subject", "Camel is cool");
+---------------------------------------------------------
+
+== JavaMail API (ex SUN JavaMail)
+
+https://java.net/projects/javamail/pages/Home[JavaMail API] is used
+under the hood for consuming and producing mails. +
+ We encourage end-users to consult these references when using either
+POP3 or IMAP protocol. Note particularly that POP3 has a much more
+limited set of features than IMAP.
+
+* https://javamail.java.net/nonav/docs/api/com/sun/mail/pop3/package-summary.html[JavaMail
+POP3 API]
+* https://javamail.java.net/nonav/docs/api/com/sun/mail/imap/package-summary.html[JavaMail
+IMAP API]
+* And generally about the
+https://javamail.java.net/nonav/docs/api/javax/mail/Flags.html[MAIL
+Flags]
+
+== Samples
+
+We start with a simple route that sends the messages received from a JMS
+queue as emails. The email account is the `admin` account on
+`mymailserver.com`.
+
+[source,java]
+-------------------------------------------------------------------------------------
+from("jms://queue:subscription").to("smtp://admin@mymailserver.com?password=secret");
+-------------------------------------------------------------------------------------
+
+In the next sample, we poll a mailbox for new emails once every minute.
+Notice that we use the special `consumer` option for setting the poll
+interval, `consumer.delay`, as 60000 milliseconds = 60 seconds.
+
+[source,java]
+-------------------------------------------------------
+from("imap://admin@mymailserver.com
+     password=secret&unseen=true&consumer.delay=60000")
+    .to("seda://mails");
+-------------------------------------------------------
+
+In this sample we want to send a mail to multiple recipients:
+
+== Sending mail with attachment sample
+
+
+[WARNING]
+====
+*Attachments are not support by all Camel components*
+
+The _Attachments API_ is based on the Java Activation Framework and is
+generally only used by the Mail API. Since many of the other Camel
+components do not support attachments, the attachments could potentially
+be lost as they propagate along the route. The rule of thumb, therefore,
+is to add attachments just before sending a message to the mail
+endpoint.
+====
+
+
+The mail component supports attachments. In the sample below, we send a
+mail message containing a plain text message with a logo file
+attachment.
+
+== SSL sample
+
+In this sample, we want to poll our Google mail inbox for mails. To
+download mail onto a local mail client, Google mail requires you to
+enable and configure SSL. This is done by logging into your Google mail
+account and changing your settings to allow IMAP access. Google have
+extensive documentation on how to do this.
+
+[source,java]
+-------------------------------------------------------------------------------------
+from("imaps://imap.gmail.com?username=YOUR_USERNAME@gmail.com&password=YOUR_PASSWORD"
+    + "&delete=false&unseen=true&consumer.delay=60000").to("log:newmail");
+-------------------------------------------------------------------------------------
+
+The preceding route polls the Google mail inbox for new mails once every
+minute and logs the received messages to the `newmail` logger
+category. +
+ Running the sample with `DEBUG` logging enabled, we can monitor the
+progress in the logs:
+
+[source,java]
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2008-05-08 06:32:09,640 DEBUG MailConsumer - Connecting to MailStore imaps//imap.gmail.com:993 (SSL enabled), folder=INBOX
+2008-05-08 06:32:11,203 DEBUG MailConsumer - Polling mailfolder: imaps//imap.gmail.com:993 (SSL enabled), folder=INBOX
+2008-05-08 06:32:11,640 DEBUG MailConsumer - Fetching 1 messages. Total 1 messages.
+2008-05-08 06:32:12,171 DEBUG MailConsumer - Processing message: messageNumber=[332], from=[James Bond <007@mi5.co.uk>], to=YOUR_USERNAME@gmail.com], subject=[...
+2008-05-08 06:32:12,187 INFO  newmail - Exchange[MailMessage: messageNumber=[332], from=[James Bond <007@mi5.co.uk>], to=YOUR_USERNAME@gmail.com], subject=[...
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+== Consuming mails with attachment sample
+
+In this sample we poll a mailbox and store all attachments from the
+mails as files. First, we define a route to poll the mailbox. As this
+sample is based on google mail, it uses the same route as shown in the
+SSL sample:
+
+[source,java]
+---------------------------------------------------------------------------------------
+from("imaps://imap.gmail.com?username=YOUR_USERNAME@gmail.com&password=YOUR_PASSWORD"
+    + "&delete=false&unseen=true&consumer.delay=60000").process(new MyMailProcessor());
+---------------------------------------------------------------------------------------
+
+Instead of logging the mail we use a processor where we can process the
+mail from java code:
+
+[source,java]
+---------------------------------------------------------------------------------
+    public void process(Exchange exchange) throws Exception {
+        // the API is a bit clunky so we need to loop
+        Map<String, DataHandler> attachments = exchange.getIn().getAttachments();
+        if (attachments.size() > 0) {
+            for (String name : attachments.keySet()) {
+                DataHandler dh = attachments.get(name);
+                // get the file name
+                String filename = dh.getName();
+
+                // get the content and convert it to byte[]
+                byte[] data = exchange.getContext().getTypeConverter()
+                                  .convertTo(byte[].class, dh.getInputStream());
+
+                // write the data to a file
+                FileOutputStream out = new FileOutputStream(filename);
+                out.write(data);
+                out.flush();
+                out.close();
+            }
+        }
+   }
+---------------------------------------------------------------------------------
+
+As you can see the API to handle attachments is a bit clunky but it's
+there so you can get the `javax.activation.DataHandler` so you can
+handle the attachments using standard API.
+
+== How to split a mail message with attachments
+
+In this example we consume mail messages which may have a number of
+attachments. What we want to do is to use the
+Splitter EIP per individual attachment, to process
+the attachments separately. For example if the mail message has 5
+attachments, we want the Splitter to process five
+messages, each having a single attachment. To do this we need to provide
+a custom Expression to the
+Splitter where we provide a List<Message> that
+contains the five messages with the single attachment.
+
+The code is provided out of the box in Camel 2.10 onwards in the
+`camel-mail` component. The code is in the class:
+`org.apache.camel.component.mail.SplitAttachmentsExpression`, which you
+can find the source code
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-mail/src/main/java/org/apache/camel/component/mail/SplitAttachmentsExpression.java[here]
+
+In the Camel route you then need to use this
+Expression in the route as shown below:
+
+If you use XML DSL then you need to declare a method call expression in
+the Splitter as shown below
+
+[source,xml]
+---------------------------------------------------------------------------------
+<split>
+  <method beanType="org.apache.camel.component.mail.SplitAttachmentsExpression"/>
+  <to uri="mock:split"/>
+</split>
+---------------------------------------------------------------------------------
+
+ 
+
+From Camel 2.16 onwards you can also split the attachments as byte[] to
+be stored as the message body. This is done by creating the expression
+with boolean true
+
+[source,java]
+--------------------------------------------------------------------
+SplitAttachmentsExpression split = SplitAttachmentsExpression(true);
+--------------------------------------------------------------------
+
+And then use the expression with the splitter eip.
+
+== Using custom SearchTerm
+
+*Available as of Camel 2.11*
+
+You can configure a `searchTerm` on the `MailEndpoint` which allows you
+to filter out unwanted mails.
+
+For example to filter mails to contain Camel in either Subject or Text
+you can do as follows:
+
+[source,xml]
+-------------------------------------------------------------------------------------------------
+<route>
+  <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm.subjectOrBody=Camel"/>
+  <to uri="bean:myBean"/>
+</route>
+-------------------------------------------------------------------------------------------------
+
+Notice we use the `"searchTerm.subjectOrBody"` as parameter key to
+indicate that we want to search on mail subject or body, to contain the
+word "Camel". +
+ The class `org.apache.camel.component.mail.SimpleSearchTerm` has a
+number of options you can configure:
+
+Or to get the new unseen emails going 24 hours back in time you can do.
+Notice the "now-24h" syntax. See the table below for more details.
+
+[source,xml]
+--------------------------------------------------------------------------------------------------
+<route>
+  <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm.fromSentDate=now-24h"/>
+  <to uri="bean:myBean"/>
+</route>
+--------------------------------------------------------------------------------------------------
+
+You can have multiple searchTerm in the endpoint uri configuration. They
+would then be combined together using AND operator, eg so both
+conditions must match. For example to get the last unseen emails going
+back 24 hours which has Camel in the mail subject you can do:
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------
+<route>
+  <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm.subject=Camel&searchTerm.fromSentDate=now-24h"/>
+  <to uri="bean:myBean"/>
+</route>
+---------------------------------------------------------------------------------------------------------------------------
+
+The `SimpleSearchTerm` is designed to be easily configurable from a
+POJO, so you can also configure it using a <bean> style in XML
+
+[source,java]
+---------------------------------------------------------------------------------
+<bean id="mySearchTerm" class="org.apache.camel.component.mail.SimpleSearchTerm">
+  <property name="subject" value="Order"/>
+  <property name="to" value="acme-order@acme.com"/>
+  <property name="fromSentDate" value="now"/>
+ </bean>
+---------------------------------------------------------------------------------
+
+You can then refer to this bean, using #beanId in your Camel route as
+shown:
+
+[source,xml]
+-------------------------------------------------------------------------------------------
+<route>
+  <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm=#mySearchTerm"/>
+  <to uri="bean:myBean"/>
+</route>
+-------------------------------------------------------------------------------------------
+
+In Java there is a builder class to build compound
+`SearchTerms` using the `org.apache.camel.component.mail.SearchTermBuilder`
+class. This allows you to build complex terms such as:
+
+[source,java]
+--------------------------------------------------------------
+// we just want the unseen mails which is not spam
+SearchTermBuilder builder = new SearchTermBuilder();
+
+builder.unseen().body(Op.not, "Spam").subject(Op.not, "Spam")
+  // which was sent from either foo or bar
+  .from("foo@somewhere.com").from(Op.or, "bar@somewhere.com");
+  // .. and we could continue building the terms
+
+SearchTerm term = builder.build();
+--------------------------------------------------------------

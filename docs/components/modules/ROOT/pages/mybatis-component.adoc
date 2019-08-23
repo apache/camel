@@ -1,1 +1,425 @@
-../../../../../components/camel-mybatis/src/main/docs/mybatis-component.adoc
+= MyBatis Component
+
+*Available as of Camel version 2.7*
+
+
+The MyBatis component allows you to query, poll, insert, update and
+delete data in a relational database using http://mybatis.org/[MyBatis].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-mybatis</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+[source,text]
+----
+mybatis:statementName[?options]
+----
+
+Where *statementName* is the statement name in the MyBatis XML mapping
+file which maps to the query, insert, update or delete operation you
+wish to evaluate.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+This component will by default load the MyBatis SqlMapConfig file from
+the root of the classpath with the expected name of
+`SqlMapConfig.xml`. +
+ If the file is located in another location, you will need to configure
+the `configurationUri` option on the `MyBatisComponent` component.
+
+== Options
+
+// component options: START
+The MyBatis component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *sqlSessionFactory* (advanced) | To use the SqlSessionFactory |  | SqlSessionFactory
+| *configurationUri* (common) | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath | SqlMapConfig.xml | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The MyBatis endpoint is configured using URI syntax:
+
+----
+mybatis:statement
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *statement* | *Required* The statement name in the MyBatis XML mapping file which maps to the query, insert, update or delete operation you wish to evaluate. |  | String
+|===
+
+
+==== Query Parameters (29 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *maxMessagesPerPoll* (consumer) | This option is intended to split results returned by the database pool into the batches and deliver them in multiple exchanges. This integer defines the maximum messages to deliver in single exchange. By default, no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files. Set a value of 0 or negative to disable it. | 0 | int
+| *onConsume* (consumer) | Statement to run after data has been processed in the route |  | String
+| *routeEmptyResultSet* (consumer) | Whether allow empty resultset to be routed to the next hop | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *transacted* (consumer) | Enables or disables transaction. If enabled then if processing an exchange failed then the consumer break out processing any further exchanges to cause a rollback eager | false | boolean
+| *useIterator* (consumer) | Process resultset individually or as a list | true | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *processingStrategy* (consumer) | To use a custom MyBatisProcessingStrategy |  | MyBatisProcessing Strategy
+| *executorType* (producer) | The executor type to be used while executing statements. simple - executor does nothing special. reuse - executor reuses prepared statements. batch - executor reuses statements and batches updates. | SIMPLE | ExecutorType
+| *inputHeader* (producer) | User the header value for input parameters instead of the message body. By default, inputHeader == null and the input parameters are taken from the message body. If outputHeader is set, the value is used and query parameters will be taken from the header instead of the body. |  | String
+| *outputHeader* (producer) | Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. Setting outputHeader will also omit populating the default CamelMyBatisResult header since it would be the same as outputHeader all the time. |  | String
+| *statementType* (producer) | Mandatory to specify for the producer to control which kind of operation to invoke. |  | StatementType
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mybatis.configuration-uri* | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath | SqlMapConfig.xml | String
+| *camel.component.mybatis.enabled* | Enable mybatis component | true | Boolean
+| *camel.component.mybatis.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.mybatis.sql-session-factory* | To use the SqlSessionFactory. The option is a org.apache.ibatis.session.SqlSessionFactory type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Message Headers
+
+Camel will populate the result message, either IN or OUT with a header
+with the statement used:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelMyBatisStatementName` |`String` |The *statementName* used (for example: insertAccount).
+
+|`CamelMyBatisResult` |`Object` |The *response* returned from MtBatis in any of the operations. For
+instance an `INSERT` could return the auto-generated key, or number of
+rows etc.
+|=======================================================================
+
+== Message Body
+
+The response from MyBatis will only be set as the body if it's a
+`SELECT` statement. That means, for example, for `INSERT` statements
+Camel will not replace the body. This allows you to continue routing and
+keep the original body. The response from MyBatis is always stored in
+the header with the key `CamelMyBatisResult`.
+
+== Samples
+
+For example if you wish to consume beans from a JMS queue and insert
+them into a database you could do the following:
+
+[source,java]
+----
+from("activemq:queue:newAccount")
+  .to("mybatis:insertAccount?statementType=Insert");
+----
+
+Notice we have to specify the `statementType`, as we need to instruct
+Camel which kind of operation to invoke.
+
+Where *insertAccount* is the MyBatis ID in the SQL mapping file:
+
+[source,xml]
+----
+  <!-- Insert example, using the Account parameter class -->
+  <insert id="insertAccount" parameterType="Account">
+    insert into ACCOUNT (
+      ACC_ID,
+      ACC_FIRST_NAME,
+      ACC_LAST_NAME,
+      ACC_EMAIL
+    )
+    values (
+      #{id}, #{firstName}, #{lastName}, #{emailAddress}
+    )
+  </insert>
+----
+
+== Using StatementType for better control of MyBatis
+
+When routing to an MyBatis endpoint you will want more fine grained
+control so you can control whether the SQL statement to be executed is a
+`SELECT`, `UPDATE`, `DELETE` or `INSERT` etc. So for instance if we want
+to route to an MyBatis endpoint in which the IN body contains parameters
+to a `SELECT` statement we can do:
+
+In the code above we can invoke the MyBatis statement
+`selectAccountById` and the IN body should contain the account id we
+want to retrieve, such as an `Integer` type.
+
+We can do the same for some of the other operations, such as
+`SelectList`:
+
+And the same for `UPDATE`, where we can send an `Account` object as the
+IN body to MyBatis:
+
+=== Using InsertList StatementType
+
+*Available as of Camel 2.10*
+
+MyBatis allows you to insert multiple rows using its for-each batch
+driver. To use this, you need to use the <foreach> in the mapper XML
+file. For example as shown below:
+
+Then you can insert multiple rows, by sending a Camel message to the
+`mybatis` endpoint which uses the `InsertList` statement type, as shown
+below:
+
+=== Using UpdateList StatementType
+
+*Available as of Camel 2.11*
+
+MyBatis allows you to update multiple rows using its for-each batch
+driver. To use this, you need to use the <foreach> in the mapper XML
+file. For example as shown below:
+
+[source,xml]
+----
+<update id="batchUpdateAccount" parameterType="java.util.Map">
+    update ACCOUNT set
+    ACC_EMAIL = #{emailAddress}
+    where
+    ACC_ID in
+    <foreach item="Account" collection="list" open="(" close=")" separator=",">
+        #{Account.id}
+    </foreach>
+</update>
+----
+
+Then you can update multiple rows, by sending a Camel message to the
+mybatis endpoint which uses the UpdateList statement type, as shown
+below:
+
+[source,java]
+----
+from("direct:start")
+    .to("mybatis:batchUpdateAccount?statementType=UpdateList")
+    .to("mock:result");
+----
+
+=== Using DeleteList StatementType
+
+*Available as of Camel 2.11*
+
+MyBatis allows you to delete multiple rows using its for-each batch
+driver. To use this, you need to use the <foreach> in the mapper XML
+file. For example as shown below:
+
+[source,xml]
+----
+<delete id="batchDeleteAccountById" parameterType="java.util.List">
+    delete from ACCOUNT
+    where
+    ACC_ID in
+    <foreach item="AccountID" collection="list" open="(" close=")" separator=",">
+        #{AccountID}
+    </foreach>
+</delete>
+----
+
+Then you can delete multiple rows, by sending a Camel message to the
+mybatis endpoint which uses the DeleteList statement type, as shown
+below:
+
+[source,java]
+----
+from("direct:start")
+    .to("mybatis:batchDeleteAccount?statementType=DeleteList")
+    .to("mock:result");
+----
+
+=== Notice on InsertList, UpdateList and DeleteList StatementTypes
+
+Parameter of any type (List, Map, etc.) can be passed to mybatis and an
+end user is responsible for handling it as required +
+ with the help of http://www.mybatis.org/mybatis-3/dynamic-sql.html[mybatis
+dynamic queries] capabilities.
+
+=== Scheduled polling example
+
+This component supports scheduled polling and can therefore be used as
+a Polling Consumer. For example to poll the
+database every minute:
+
+[source,java]
+----
+from("mybatis:selectAllAccounts?delay=60000")
+  .to("activemq:queue:allAccounts");
+----
+
+See "ScheduledPollConsumer Options"
+on Polling Consumer for more options.
+
+Alternatively you can use another mechanism for triggering the scheduled
+polls, such as the xref:timer-component.adoc[Timer] or xref:timer-component.adoc[Quartz]
+components. In the sample below we poll the database, every 30 seconds
+using the xref:timer-component.adoc[Timer] component and send the data to the JMS
+queue:
+
+[source,java]
+----
+from("timer://pollTheDatabase?delay=30000")
+  .to("mybatis:selectAllAccounts")
+  .to("activemq:queue:allAccounts");
+----
+
+And the MyBatis SQL mapping file used:
+
+[source,xml]
+----
+  <!-- Select with no parameters using the result map for Account class. -->
+  <select id="selectAllAccounts" resultMap="AccountResult">
+    select * from ACCOUNT
+  </select>
+----
+
+=== Using onConsume
+
+This component supports executing statements *after* data have been
+consumed and processed by Camel. This allows you to do post updates in
+the database. Notice all statements must be `UPDATE` statements. Camel
+supports executing multiple statements whose names should be separated
+by commas.
+
+The route below illustrates we execute the *consumeAccount* statement
+data is processed. This allows us to change the status of the row in the
+database to processed, so we avoid consuming it twice or more.
+
+And the statements in the sqlmap file:
+
+=== Participating in transactions
+
+Setting up a transaction manager under camel-mybatis can be a little bit
+fiddly, as it involves externalising the database configuration outside
+the standard MyBatis `SqlMapConfig.xml` file.
+
+The first part requires the setup of a `DataSource`. This is typically a
+pool (either DBCP, or c3p0), which needs to be wrapped in a Spring
+proxy. This proxy enables non-Spring use of the `DataSource` to
+participate in Spring transactions (the MyBatis `SqlSessionFactory` does
+just this).
+
+[source,xml]
+----
+<bean id="dataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+    <constructor-arg>
+        <bean class="com.mchange.v2.c3p0.ComboPooledDataSource">
+            <property name="driverClass" value="org.postgresql.Driver"/>
+            <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/myDatabase"/>
+            <property name="user" value="myUser"/>
+            <property name="password" value="myPassword"/>
+        </bean>
+    </constructor-arg>
+</bean>
+----
+
+This has the additional benefit of enabling the database configuration
+to be externalised using property placeholders.
+
+A transaction manager is then configured to manage the outermost
+`DataSource`:
+
+[source,xml]
+----
+<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSource"/>
+</bean>
+----
+
+A http://www.mybatis.org/spring/index.html[mybatis-spring]
+http://www.mybatis.org/spring/factorybean.html[`SqlSessionFactoryBean`]
+then wraps that same `DataSource`:
+
+[source,xml]
+----
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dataSource"/>
+    <!-- standard mybatis config file -->
+<property name="configLocation" value="/META-INF/SqlMapConfig.xml"/>
+    <!-- externalised mappers -->
+<property name="mapperLocations" value="classpath*:META-INF/mappers/**/*.xml"/>
+</bean>
+----
+
+The camel-mybatis component is then configured with that factory:
+
+[source,xml]
+----
+<bean id="mybatis" class="org.apache.camel.component.mybatis.MyBatisComponent">
+    <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+</bean>
+----
+
+Finally, a transaction policy is defined
+over the top of the transaction manager, which can then be used as
+usual:
+
+[source,xml]
+----
+<bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+    <property name="transactionManager" ref="txManager"/>
+    <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
+</bean>
+
+<camelContext id="my-model-context" xmlns="http://camel.apache.org/schema/spring">
+    <route id="insertModel">
+        <from uri="direct:insert"/>
+        <transacted ref="PROPAGATION_REQUIRED"/>
+        <to uri="mybatis:myModel.insert?statementType=Insert"/>
+    </route>
+</camelContext>
+----

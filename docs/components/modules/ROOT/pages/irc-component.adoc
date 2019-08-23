@@ -1,1 +1,233 @@
-../../../../../components/camel-irc/src/main/docs/irc-component.adoc
+= IRC Component
+
+*Available as of Camel version 1.1*
+
+
+The IRC component implements an
+http://en.wikipedia.org/wiki/Internet_Relay_Chat[IRC] (Internet Relay
+Chat) transport.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-irc</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+---------------------------------------------------------------------
+irc:nick@host[:port]/#room[?options]
+irc:nick@host[:port]?channels=#channel1,#channel2,#channel3[?options]
+---------------------------------------------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+
+// component options: START
+The IRC component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+
+// endpoint options: START
+The IRC endpoint is configured using URI syntax:
+
+----
+irc:hostname:port
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hostname* | *Required* Hostname for the IRC chat server |  | String
+| *port* | Port number for the IRC chat server. If no port is configured then a default port of either 6667, 6668 or 6669 is used. |  | int
+|===
+
+
+==== Query Parameters (25 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *autoRejoin* (common) | Whether to auto re-join when being kicked | true | boolean
+| *commandTimeout* (common) | Delay in milliseconds before sending commands after the connection is established. | 5000 | long
+| *namesOnJoin* (common) | Sends NAMES command to channel after joining it. onReply has to be true in order to process the result which will have the header value irc.num = '353'. | false | boolean
+| *nickname* (common) | The nickname used in chat. |  | String
+| *persistent* (common) | *Deprecated* Use persistent messages. | true | boolean
+| *realname* (common) | The IRC user's actual name. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *colors* (advanced) | Whether or not the server supports color codes. | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *onJoin* (filter) | Handle user join events. | true | boolean
+| *onKick* (filter) | Handle kick events. | true | boolean
+| *onMode* (filter) | Handle mode change events. | true | boolean
+| *onNick* (filter) | Handle nickname change events. | true | boolean
+| *onPart* (filter) | Handle user part events. | true | boolean
+| *onPrivmsg* (filter) | Handle private message events. | true | boolean
+| *onQuit* (filter) | Handle user quit events. | true | boolean
+| *onReply* (filter) | Whether or not to handle general responses to commands or informational messages. | false | boolean
+| *onTopic* (filter) | Handle topic change events. | true | boolean
+| *nickPassword* (security) | Your IRC server nickname password. |  | String
+| *password* (security) | The IRC server password. |  | String
+| *sslContextParameters* (security) | Used for configuring security using SSL. Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. Note that this setting overrides the trustManager option. |  | SSLContextParameters
+| *trustManager* (security) | The trust manager used to verify the SSL server's certificate. |  | SSLTrustManager
+| *username* (security) | The IRC server user name. |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.irc.enabled* | Enable irc component | true | Boolean
+| *camel.component.irc.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.irc.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+
+
+== SSL Support
+
+=== Using the JSSE Configuration Utility
+
+The IRC component supports SSL/TLS configuration
+through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
+Configuration Utility].  This utility greatly decreases the amount of
+component specific code you need to write and is configurable at the
+endpoint and component levels.  The following examples demonstrate how
+to use the utility with the IRC component.
+
+[[IRC-Programmaticconfigurationoftheendpoint]]
+Programmatic configuration of the endpoint
+
+[source,java]
+-----------------------------------------------------------------------------------------------------------------------------------------
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setResource("/users/home/server/truststore.jks");
+ksp.setPassword("keystorePassword");
+
+TrustManagersParameters tmp = new TrustManagersParameters();
+tmp.setKeyStore(ksp);
+
+SSLContextParameters scp = new SSLContextParameters();
+scp.setTrustManagers(tmp);
+
+Registry registry = ...
+registry.bind("sslContextParameters", scp);
+
+...
+
+from(...)
+    .to("ircs://camel-prd-user@server:6669/#camel-test?nickname=camel-prd&password=password&sslContextParameters=#sslContextParameters");
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+[[IRC-SpringDSLbasedconfigurationofendpoint]]
+Spring DSL based configuration of endpoint
+
+[source,xml]
+----------------------------------------------------------------------------------------------------------------------------------------------
+...
+  <camel:sslContextParameters
+      id="sslContextParameters">
+    <camel:trustManagers>
+      <camel:keyStore
+          resource="/users/home/server/truststore.jks"
+          password="keystorePassword"/>
+    </camel:keyManagers>
+  </camel:sslContextParameters>...
+...
+  <to uri="ircs://camel-prd-user@server:6669/#camel-test?nickname=camel-prd&password=password&sslContextParameters=#sslContextParameters"/>...
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+=== Using the legacy basic configuration options
+
+You can also connect to an SSL enabled IRC server, as follows:
+
+[source,java]
+--------------------------------------------------
+ircs:host[:port]/#room?username=user&password=pass
+--------------------------------------------------
+
+By default, the IRC transport uses
+http://moepii.sourceforge.net/irclib/javadoc/org/schwering/irc/lib/ssl/SSLDefaultTrustManager.html[SSLDefaultTrustManager].
+If you need to provide your own custom trust manager, use the
+`trustManager` parameter as follows:
+
+[source,java]
+----------------------------------------------------------------------------------------------
+ircs:host[:port]/#room?username=user&password=pass&trustManager=#referenceToMyTrustManagerBean
+----------------------------------------------------------------------------------------------
+
+== Using keys
+
+*Available as of Camel 2.2*
+
+Some irc rooms requires you to provide a key to be able to join that
+channel. The key is just a secret word.
+
+For example we join 3 channels where as only channel 1 and 3 uses a key.
+
+[source,java]
+-----------------------------------------------------------------------------
+irc:nick@irc.server.org?channels=#chan1,#chan2,#chan3&keys=chan1Key,,chan3key
+-----------------------------------------------------------------------------
+
+== Getting a list of users of the channel
+
+Using the `namesOnJoin` option one can invoke the IRC-`NAMES` command after the component has joined a channel. 
+The server will reply with `irc.num = 353`. So in order to process the result the property `onReply` has to be `true`.
+Furthermore one has to filter the `onReply` exchanges in order to get the names.
+
+For example we want to get all exchanges that contain the usernames of the channel:
+
+[source,java]
+-----------------------------------------------------------------------------
+from("ircs:nick@myserver:1234/#mychannelname?namesOnJoin=true&onReply=true")
+	.choice()
+		.when(header("irc.messageType").isEqualToIgnoreCase("REPLY"))
+			.filter(header("irc.num").isEqualTo("353"))
+			.to("mock:result").stop();
+-----------------------------------------------------------------------------

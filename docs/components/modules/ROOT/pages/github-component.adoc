@@ -1,1 +1,145 @@
-../../../../../components/camel-github/src/main/docs/github-component.adoc
+= GitHub Component
+
+*Available as of Camel version 2.15*
+
+
+The GitHub component interacts with the GitHub API by
+encapsulating http://org.eclipse.egit.github.core[egit-github]. It
+currently provides polling for new pull requests, pull request comments,
+tags, and commits.  It is also able to produce comments on pull
+requests, as well as close the pull request entirely.
+
+Rather than webhooks, this endpoint relies on simple polling. Reasons
+include:
+
+* Concern for reliability/stability
+* The types of payloads we're polling aren't typically large (plus,
+paging is available in the API)
+* The need to support apps running somewhere not publicly accessible
+where a webhook would fail
+
+Note that the GitHub API is fairly expansive.  Therefore, this component
+could be easily expanded to provide additional interactions.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+-----------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-github</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+-----------------------------------------
+
+== URI format
+
+[source,text]
+---------------------------
+github://endpoint[?options]
+---------------------------
+
+== Mandatory Options:
+
+Note that these can be configured directly through the endpoint.
+
+
+// component options: START
+The GitHub component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The GitHub endpoint is configured using URI syntax:
+
+----
+github:type/branchName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *type* | *Required* What git operation to execute |  | GitHubType
+| *branchName* | Name of branch |  | String
+|===
+
+
+==== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *oauthToken* (common) | GitHub OAuth token, required unless username & password are provided |  | String
+| *password* (common) | GitHub password, required unless oauthToken is provided |  | String
+| *repoName* (common) | *Required* GitHub repository name |  | String
+| *repoOwner* (common) | *Required* GitHub repository owner (organization) |  | String
+| *username* (common) | GitHub username, required unless oauthToken is provided |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *encoding* (producer) | To use the given encoding when getting a git commit file |  | String
+| *state* (producer) | To set git commit status state |  | String
+| *targetUrl* (producer) | To set git commit status target url |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.github.enabled* | Enable github component | true | Boolean
+| *camel.component.github.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Consumer Endpoints:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|=======================================================================
+|Endpoint |Context |Body Type
+
+|pullRequest |polling |org.eclipse.egit.github.core.PullRequest
+
+|pullRequestComment |polling |org.eclipse.egit.github.core.Comment (comment on the general pull
+request discussion) or org.eclipse.egit.github.core.CommitComment
+(inline comment on a pull request diff)
+
+|tag |polling |org.eclipse.egit.github.core.RepositoryTag
+
+|commit |polling |org.eclipse.egit.github.core.RepositoryCommit
+|=======================================================================
+
+== Producer Endpoints:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|=======================================================================
+|Endpoint |Body |Message Headers
+
+|pullRequestComment |String (comment text) | - GitHubPullRequest (integer) (REQUIRED): Pull request number.
+
+- GitHubInResponseTo (integer): Required if responding to another inline
+comment on the pull request diff. If left off, a general comment on the
+pull request discussion is assumed.
+
+|closePullRequest |none | - GitHubPullRequest (integer) (REQUIRED): Pull request number.
+
+|createIssue |String (issue body text) | - GitHubIssueTitle (String) (REQUIRED): Issue Title.
+|=======================================================================

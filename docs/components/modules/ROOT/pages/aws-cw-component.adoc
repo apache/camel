@@ -1,1 +1,206 @@
-../../../../../components/camel-aws/src/main/docs/aws-cw-component.adoc
+[[aws-cw-component]]
+= AWS CloudWatch Component
+
+*Available as of Camel version 2.11*
+
+The CW component allows messages to be sent to an
+http://aws.amazon.com/cloudwatch/[Amazon CloudWatch] metrics. The
+implementation of the Amazon API is provided by
+the http://aws.amazon.com/sdkforjava/[AWS SDK].
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon CloudWatch. More information are available at
+http://aws.amazon.com/cloudwatch/[Amazon CloudWatch].
+
+### URI Format
+
+[source,java]
+----------------------------
+aws-cw://namespace[?options]
+----------------------------
+
+The metrics will be created if they don't already exists. +
+ You can append query options to the URI in the following format,
+`?options=value&option2=value&...`
+
+### URI Options
+
+
+// component options: START
+The AWS CloudWatch component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS CW default configuration |  | CwConfiguration
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *region* (producer) | The region in which CW client needs to work |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS CloudWatch endpoint is configured using URI syntax:
+
+----
+aws-cw:namespace
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *namespace* | *Required* The metric namespace |  | String
+|===
+
+
+==== Query Parameters (11 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonCwClient* (producer) | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
+| *name* (producer) | The metric name |  | String
+| *proxyHost* (producer) | To define a proxy host when instantiating the CW client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the CW client |  | Integer
+| *region* (producer) | The region in which CW client needs to work |  | String
+| *timestamp* (producer) | The metric timestamp |  | Date
+| *unit* (producer) | The metric unit |  | String
+| *value* (producer) | The metric value |  | Double
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 16 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-cw.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-cw.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-cw.configuration.amazon-cw-client* | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
+| *camel.component.aws-cw.configuration.name* | The metric name |  | String
+| *camel.component.aws-cw.configuration.namespace* | The metric namespace |  | String
+| *camel.component.aws-cw.configuration.proxy-host* | To define a proxy host when instantiating the CW client |  | String
+| *camel.component.aws-cw.configuration.proxy-port* | To define a proxy port when instantiating the CW client |  | Integer
+| *camel.component.aws-cw.configuration.region* | The region in which CW client needs to work |  | String
+| *camel.component.aws-cw.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-cw.configuration.timestamp* | The metric timestamp |  | Date
+| *camel.component.aws-cw.configuration.unit* | The metric unit |  | String
+| *camel.component.aws-cw.configuration.value* | The metric value |  | Double
+| *camel.component.aws-cw.enabled* | Enable aws-cw component | true | Boolean
+| *camel.component.aws-cw.region* | The region in which CW client needs to work |  | String
+| *camel.component.aws-cw.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.aws-cw.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+Required CW component options
+
+You have to provide the amazonCwClient in the
+Registry or your accessKey and secretKey to access
+the http://aws.amazon.com/cloudwatch/[Amazon's CloudWatch].
+
+### Usage
+
+#### Message headers evaluated by the CW producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsCwMetricName` |`String` |The Amazon CW metric name.
+
+|`CamelAwsCwMetricValue` |`Double` |The Amazon CW metric value.
+
+|`CamelAwsCwMetricUnit` |`String` |The Amazon CW metric unit.
+
+|`CamelAwsCwMetricNamespace` |`String` |The Amazon CW metric namespace.
+
+|`CamelAwsCwMetricTimestamp` |`Date` |The Amazon CW metric timestamp.
+
+|`CamelAwsCwMetricDimensionName` |`String` |*Camel 2.12:* The Amazon CW metric dimension name.
+
+|`CamelAwsCwMetricDimensionValue` |`String` |*Camel 2.12:* The Amazon CW metric dimension value.
+
+|`CamelAwsCwMetricDimensions` |`Map<String, String>` |*Camel 2.12:* A map of dimension names and dimension values.
+|=======================================================================
+
+#### Advanced AmazonCloudWatch configuration
+
+If you need more control over the `AmazonCloudWatch` instance
+configuration you can create your own instance and refer to it from the
+URI:
+
+[source,java]
+-------------------------------------------------
+from("direct:start")
+.to("aws-cw://namepsace?amazonCwClient=#client");
+-------------------------------------------------
+
+The `#client` refers to a `AmazonCloudWatch` in the
+Registry.
+
+For example if your Camel Application is running behind a firewall:
+
+[source,java]
+------------------------------------------------------------------------------------------
+AWSCredentials awsCredentials = new BasicAWSCredentials("myAccessKey", "mySecretKey");
+ClientConfiguration clientConfiguration = new ClientConfiguration();
+clientConfiguration.setProxyHost("http://myProxyHost");
+clientConfiguration.setProxyPort(8080);
+
+AmazonCloudWatch client = new AmazonCloudWatchClient(awsCredentials, clientConfiguration);
+
+registry.bind("client", client);
+------------------------------------------------------------------------------------------
+
+### Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.10 or higher).
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* AWS Component

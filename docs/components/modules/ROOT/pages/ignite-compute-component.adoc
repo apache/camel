@@ -1,1 +1,122 @@
-../../../../../components/camel-ignite/src/main/docs/ignite-compute-component.adoc
+= Ignite Compute Component
+
+*Available as of Camel version 2.17*
+
+
+The Ignite Compute endpoint is one of camel-ignite endpoints which allows you to run https://apacheignite.readme.io/docs/compute-grid[compute operations] on the cluster by passing in an IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of them, along with their parameters if necessary.
+
+This endpoint only supports producers.
+
+The host part of the endpoint URI is a symbolic endpoint ID, it is not used for any purposes.
+
+The endpoint tries to run the object passed in the body of the IN message as the compute job. It expects different payload types depending on the execution type.
+
+== Options
+
+// component options: START
+The Ignite Compute component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *ignite* (producer) | Sets the Ignite instance. |  | Ignite
+| *configurationResource* (producer) | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. |  | Object
+| *igniteConfiguration* (producer) | Allows the user to set a programmatic IgniteConfiguration. |  | IgniteConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Ignite Compute endpoint is configured using URI syntax:
+
+----
+ignite-compute:endpointId
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *endpointId* | *Required* The endpoint ID (not used). |  | String
+|===
+
+
+==== Query Parameters (8 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *clusterGroupExpression* (producer) | An expression that returns the Cluster Group for the IgniteCompute instance. |  | ClusterGroupExpression
+| *computeName* (producer) | The name of the compute job, which will be set via IgniteCompute#withName(String). |  | String
+| *executionType* (producer) | *Required* The compute operation to perform. Possible values: CALL, BROADCAST, APPLY, EXECUTE, RUN, AFFINITY_CALL, AFFINITY_RUN. The component expects different payload types depending on the operation. |  | IgniteComputeExecution Type
+| *propagateIncomingBodyIfNo ReturnValue* (producer) | Sets whether to propagate the incoming body if the return type of the underlying Ignite operation is void. | true | boolean
+| *taskName* (producer) | The task name, only applicable if using the IgniteComputeExecutionType#EXECUTE execution type. |  | String
+| *timeoutMillis* (producer) | The timeout interval for triggered jobs, in milliseconds, which will be set via IgniteCompute#withTimeout(long). |  | Long
+| *treatCollectionsAsCache Objects* (producer) | Sets whether to treat Collections as cache objects or as Collections of items to insert/update/compute, etc. | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.ignite-compute.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
+| *camel.component.ignite-compute.enabled* | Enable ignite-compute component | true | Boolean
+| *camel.component.ignite-compute.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
+| *camel.component.ignite-compute.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
+| *camel.component.ignite-compute.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+=== Expected payload types
+
+Each operation expects the indicated types:
+[width="100%",cols="1,4",options="header"]
+|=======================================================================
+| Operation | Expected payloads
+| CALL | Collection of IgniteCallable, or a single IgniteCallable.
+| BROADCAST | IgniteCallable, IgniteRunnable, IgniteClosure.
+| APPLY | IgniteClosure.
+| EXECUTE | ComputeTask, Class<? extends ComputeTask> or an object representing parameters if the taskName option is not null.
+| RUN | A Collection of IgniteRunnables, or a single IgniteRunnable.
+| AFFINITY_CALL | IgniteCallable.
+| AFFINITY_RUN | IgniteRunnable.
+|=======================================================================
+
+=== Headers used
+
+This endpoint uses the following headers:
+[width="100%",cols="1,1,1,4",options="header"]
+|=======================================================================
+| Header name | Constant | Expected type | Description
+| CamelIgniteComputeExecutionType | IgniteConstants.IGNITE_COMPUTE_EXECUTION_TYPE | IgniteComputeExecutionType enum |
+ Allows you to dynamically change the compute operation to perform.
+
+| CamelIgniteComputeParameters | IgniteConstants.IGNITE_COMPUTE_PARAMS | Any object or Collection of objects. |
+Parameters for APPLY, BROADCAST and EXECUTE operations.
+
+| CamelIgniteComputeReducer | IgniteConstants.IGNITE_COMPUTE_REDUCER | IgniteReducer |
+Reducer for the APPLY and CALL operations.
+
+| CamelIgniteComputeAffinityCacheName | IgniteConstants.IGNITE_COMPUTE_AFFINITY_CACHE_NAME | String |
+Affinity cache name for the AFFINITY_CALL and AFFINITY_RUN operations.
+
+| CamelIgniteComputeAffinityKey | IgniteConstants.IGNITE_COMPUTE_AFFINITY_KEY | Object |
+Affinity key for the AFFINITY_CALL and AFFINITY_RUN operations.
+|=======================================================================

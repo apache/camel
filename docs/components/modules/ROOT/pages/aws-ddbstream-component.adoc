@@ -1,1 +1,233 @@
-../../../../../components/camel-aws/src/main/docs/aws-ddbstream-component.adoc
+[[aws-ddbstream-component]]
+= AWS DynamoDB Streams Component
+
+*Available as of Camel version 2.17*
+
+The DynamoDB Stream component supports receiving messages from
+Amazon DynamoDB Stream service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon DynamoDB Streams. More information are available
+at http://aws.amazon.com/dynamodb/[AWS DynamoDB]
+
+### URI Format
+
+[source,java]
+------------------------------------
+aws-ddbstream://table-name[?options]
+------------------------------------
+
+The stream needs to be created prior to it being used. +
+ You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+### URI Options
+
+
+// component options: START
+The AWS DynamoDB Streams component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS DDB stream default configuration |  | DdbStreamConfiguration
+| *accessKey* (consumer) | Amazon AWS Access Key |  | String
+| *secretKey* (consumer) | Amazon AWS Secret Key |  | String
+| *region* (consumer) | Amazon AWS Region |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+// endpoint options: START
+The AWS DynamoDB Streams endpoint is configured using URI syntax:
+
+----
+aws-ddbstream:tableName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *tableName* | *Required* Name of the dynamodb table |  | String
+|===
+
+
+==== Query Parameters (28 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonDynamoDbStreams Client* (consumer) | Amazon DynamoDB client to use for all requests for this endpoint |  | AmazonDynamoDBStreams
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *iteratorType* (consumer) | Defines where in the DynaboDB stream to start getting records. Note that using TRIM_HORIZON can cause a significant delay before the stream has caught up to real-time. if AT,AFTER_SEQUENCE_NUMBER are used, then a sequenceNumberProvider MUST be supplied. | LATEST | ShardIteratorType
+| *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll |  | int
+| *proxyHost* (consumer) | To define a proxy host when instantiating the DDBStreams client |  | String
+| *proxyPort* (consumer) | To define a proxy port when instantiating the DDBStreams client |  | Integer
+| *region* (consumer) | The region in which DDBStreams client needs to work |  | String
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *sequenceNumberProvider* (consumer) | Provider for the sequence number when using one of the two ShardIteratorType.AT,AFTER_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 15 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-ddbstream.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ddbstream.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ddbstream.configuration.amazon-dynamo-db-streams-client* | Amazon DynamoDB client to use for all requests for this endpoint |  | AmazonDynamoDBStreams
+| *camel.component.aws-ddbstream.configuration.iterator-type* | Defines where in the DynaboDB stream to start getting records. Note that using TRIM_HORIZON can cause a significant delay before the stream has caught up to real-time. if AT,AFTER_SEQUENCE_NUMBER are used, then a sequenceNumberProvider MUST be supplied. |  | ShardIteratorType
+| *camel.component.aws-ddbstream.configuration.max-results-per-request* | Maximum number of records that will be fetched in each poll |  | Integer
+| *camel.component.aws-ddbstream.configuration.proxy-host* | To define a proxy host when instantiating the DDBStreams client |  | String
+| *camel.component.aws-ddbstream.configuration.proxy-port* | To define a proxy port when instantiating the DDBStreams client |  | Integer
+| *camel.component.aws-ddbstream.configuration.region* | The region in which DDBStreams client needs to work |  | String
+| *camel.component.aws-ddbstream.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-ddbstream.configuration.sequence-number-provider* | Provider for the sequence number when using one of the two ShardIteratorType.AT,AFTER_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider
+| *camel.component.aws-ddbstream.configuration.table-name* | Name of the dynamodb table |  | String
+| *camel.component.aws-ddbstream.enabled* | Enable aws-ddbstream component | true | Boolean
+| *camel.component.aws-ddbstream.region* | Amazon AWS Region |  | String
+| *camel.component.aws-ddbstream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.aws-ddbstream.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+
+Required DynampDBStream component options
+
+You have to provide the amazonDynamoDbStreamsClient in the
+Registry with proxies and relevant credentials
+configured.
+
+### Sequence Numbers
+
+You can provide a literal string as the sequence number or provide a
+bean in the registry. An example of using the bean would be to save your
+current position in the change feed and restore it on Camel startup.
+
+It is an error to provide a sequence number that is greater than the
+largest sequence number in the describe-streams result, as this will
+lead to the AWS call returning an HTTP 400.
+
+### Batch Consumer
+
+This component implements the Batch Consumer.
+
+This allows you for instance to know how many messages exists in this
+batch and for instance let the Aggregator
+aggregate this number of messages.
+
+### Usage
+
+#### AmazonDynamoDBStreamsClient configuration
+
+You will need to create an instance of AmazonDynamoDBStreamsClient and
+bind it to the registry
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------
+ClientConfiguration clientConfiguration = new ClientConfiguration();
+clientConfiguration.setProxyHost("http://myProxyHost");
+clientConfiguration.setProxyPort(8080);
+
+Region region = Region.getRegion(Regions.fromName(region));
+region.createClient(AmazonDynamoDBStreamsClient.class, null, clientConfiguration);
+// the 'null' here is the AWSCredentialsProvider which defaults to an instance of DefaultAWSCredentialsProviderChain
+
+registry.bind("kinesisClient", client);
+--------------------------------------------------------------------------------------------------------------------
+
+#### Providing AWS Credentials
+
+It is recommended that the credentials are obtained by using the
+http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html[DefaultAWSCredentialsProviderChain]
+that is the default when creating a new ClientConfiguration instance,
+however, a
+different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
+can be specified when calling createClient(...).
+
+### Coping with Downtime
+
+#### AWS DynamoDB Streams outage of less than 24 hours
+
+The consumer will resume from the last seen sequence number (as
+implemented
+for https://issues.apache.org/jira/browse/CAMEL-9515[CAMEL-9515]), so
+you should receive a flood of events in quick succession, as long as the
+outage did not also include DynamoDB itself.
+
+#### AWS DynamoDB Streams outage of more than 24 hours
+
+Given that AWS only retain 24 hours worth of changes, you will have
+missed change events no matter what mitigations are in place.
+
+### Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.7 or higher).
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* AWS Component +
+ +

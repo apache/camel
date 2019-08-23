@@ -1,1 +1,107 @@
-../../../../../components/camel-bonita/src/main/docs/bonita-component.adoc
+= Bonita Component
+
+*Available as of Camel version 2.19*
+
+
+Used for communicating with a remote Bonita BPM process engine.
+
+== URI format
+
+[source,java]
+------------------------------
+bonita://[operation]?[options]
+------------------------------
+
+Where *operation* is the specific action to perform on Bonita.
+
+== General Options
+
+// component options: START
+The Bonita component has no options.
+// component options: END
+
+
+// endpoint options: START
+The Bonita endpoint is configured using URI syntax:
+
+----
+bonita:operation
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *operation* | *Required* Operation to use |  | BonitaOperation
+|===
+
+
+==== Query Parameters (9 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *hostname* (consumer) | Hostname where Bonita engine runs | localhost | String
+| *port* (consumer) | Port of the server hosting Bonita engine | 8080 | String
+| *processName* (consumer) | Name of the process involved in the operation |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *password* (security) | Password to authenticate to Bonita engine. |  | String
+| *username* (security) | Username to authenticate to Bonita engine. |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.bonita.enabled* | Enable bonita component | true | Boolean
+| *camel.component.bonita.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Body content
+
+For the startCase operation, the input variables are retrieved from the body message. This one has to contains a Map<String,Serializable>.
+
+
+== Examples
+
+The following example start a new case in Bonita:
+
+[source,java]
+----------------------------------------------------------------------
+from("direct:start").to("bonita:startCase?hostname=localhost&amp;port=8080&amp;processName=TestProcess&amp;username=install&amp;password=install")
+----------------------------------------------------------------------
+
+== Dependencies
+
+To use Bonita in your Camel routes you need to add a dependency on
+*camel-bonita*, which implements the component.
+
+If you use Maven you can just add the following to your pom.xml,
+substituting the version number for the latest and greatest release (see
+the download page for the latest versions).
+
+[source,java]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-bonita</artifactId>
+  <version>x.x.x</version>
+</dependency>
+-------------------------------------

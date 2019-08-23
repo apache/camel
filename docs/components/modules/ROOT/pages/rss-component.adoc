@@ -1,1 +1,189 @@
-../../../../../components/camel-rss/src/main/docs/rss-component.adoc
+= RSS Component
+
+*Available as of Camel version 2.0*
+
+
+The RSS component is used for polling RSS feeds. Camel will default
+poll the feed every 60th seconds.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-rss</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+*Note:* The component currently only supports polling (consuming) feeds.
+
+NOTE: Camel-rss internally uses a
+http://svn.apache.org/repos/asf/servicemix/smx4/bundles/trunk/rome-1.0/[patched
+version] of http://rometools.github.io/rome/[ROME] hosted on ServiceMix
+to solve some OSGi https://issues.apache.org/jira/browse/SMX4-510[class
+loading issues].
+
+== URI format
+
+[source,java]
+----------
+rss:rssUri
+----------
+
+Where `rssUri` is the URI to the RSS feed to poll.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+
+// component options: START
+The RSS component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The RSS endpoint is configured using URI syntax:
+
+----
+rss:feedUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *feedUri* | *Required* The URI to the feed to poll. |  | String
+|===
+
+
+==== Query Parameters (27 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *feedHeader* (consumer) | Sets whether to add the feed object as a header | true | boolean
+| *filter* (consumer) | Sets whether to use filtering or not of the entries. | true | boolean
+| *lastUpdate* (consumer) | Sets the timestamp to be used for filtering entries from the atom feeds. This options is only in conjunction with the splitEntries. |  | Date
+| *password* (consumer) | Sets the password to be used for basic authentication when polling from a HTTP feed |  | String
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *sortEntries* (consumer) | Sets whether to sort entries by published date. Only works when splitEntries = true. | false | boolean
+| *splitEntries* (consumer) | Sets whether or not entries should be sent individually or whether the entire feed should be sent as a single message | true | boolean
+| *throttleEntries* (consumer) | Sets whether all entries identified in a single feed poll should be delivered immediately. If true, only one entry is processed per consumer.delay. Only applicable when splitEntries = true. | true | boolean
+| *username* (consumer) | Sets the username to be used for basic authentication when polling from a HTTP feed |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.rss.enabled* | Enable rss component | true | Boolean
+| *camel.component.rss.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.dataformat.rss.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.rss.enabled* | Enable rss dataformat | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Exchange data types
+
+Camel initializes the In body on the Exchange with a ROME `SyndFeed`.
+Depending on the value of the `splitEntries` flag, Camel returns either
+a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Option |Value |Behavior
+
+|`splitEntries` |`true` |A single entry from the current feed is set in the exchange.
+
+|`splitEntries` |`false` |The entire list of entries from the current feed is set in the exchange.
+|=======================================================================
+
+== Message Headers
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`CamelRssFeed` |The entire `SyncFeed` object.
+|=======================================================================
+
+== RSS Dataformat
+
+The RSS component ships with an RSS dataformat that can be used to
+convert between String (as XML) and ROME RSS model objects.
+
+* marshal = from ROME `SyndFeed` to XML `String`
+* unmarshal = from XML `String` to ROME `SyndFeed`
+
+A route using the RSS dataformat will look like this:
+`from("rss:file:src/test/data/rss20.xml?splitEntries=false&consumer.delay=1000").marshal().rss().to("mock:marshal");`
+
+The purpose of this feature is to make it possible to use Camel's built-in expressions for manipulating RSS messages. As shown below, an
+XPath expression can be used to filter the RSS message. In the following example, on ly entries with Camel in the title will get through the filter.
+
+  `from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100").marshal().rss().filter().xpath("//item/title[contains(.,'Camel')]").to("mock:result");`
+
+
+TIP: *Query parameters*
+If the URL for the RSS feed uses query parameters, this component will
+resolve them. For example if the feed uses `alt=rss`, then the following example will be resolved: 
+`from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&consumer.delay=1000").to("bean:rss");`
+
+== Filtering entries
+
+You can filter out entries using XPath, as shown in the
+data format section above. You can also exploit Camel's
+Bean Integration to implement your own
+conditions. For instance, a filter equivalent to the XPath example above
+would be:
+
+`from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100").
+filter().method("myFilterBean", "titleContainsCamel").to("mock:result");`
+
+The custom bean for this would be:
+[source,java]
+----
+public static class FilterBean {
+       public boolean titleContainsCamel(@Body SyndFeed feed) {
+           SyndEntry firstEntry = (SyndEntry) feed.getEntries().get(0);
+return firstEntry.getTitle().contains("Camel");
+----

@@ -1,1 +1,211 @@
-../../../../../components/camel-paho/src/main/docs/paho-component.adoc
+= Paho Component
+
+*Available as of Camel version 2.16*
+
+
+Paho component provides connector for the MQTT messaging protocol using
+the https://eclipse.org/paho/[Eclipse Paho] library. Paho is one of the
+most popular MQTT libraries, so if you would like to integrate it with
+your Java project - Camel Paho connector is a way to go.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-paho</artifactId>
+    <version>x.y.z</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+Keep in mind that Paho artifacts are not hosted in the Maven Central, so
+you need to add Eclipse Paho repository to your POM xml file:
+
+[source,xml]
+----
+<repositories>
+  <repository>
+    <id>eclipse-paho</id>
+    <url>https://repo.eclipse.org/content/repositories/paho-releases</url>
+    <snapshots>
+      <enabled>false</enabled>
+    </snapshots>
+  </repository>
+</repositories>
+----
+
+
+== URI format
+
+[source]
+----
+paho:topic[?options]
+----
+
+Where *topic* is the name of the topic.
+
+
+== Options
+
+// component options: START
+The Paho component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *brokerUrl* (common) | The URL of the MQTT broker. |  | String
+| *clientId* (common) | MQTT client identifier. |  | String
+| *connectOptions* (advanced) | Client connection options |  | MqttConnectOptions
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The Paho endpoint is configured using URI syntax:
+
+----
+paho:topic
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *topic* | *Required* Name of the topic |  | String
+|===
+
+
+==== Query Parameters (15 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *autoReconnect* (common) | Client will automatically attempt to reconnect to the server if the connection is lost | true | boolean
+| *brokerUrl* (common) | The URL of the MQTT broker. | tcp://localhost:1883 | String
+| *clientId* (common) | MQTT client identifier. |  | String
+| *connectOptions* (common) | Client connection options |  | MqttConnectOptions
+| *filePersistenceDirectory* (common) | Base directory used by the file persistence provider. |  | String
+| *password* (common) | Password to be used for authentication against the MQTT broker |  | String
+| *persistence* (common) | Client persistence to be used - memory or file. | MEMORY | PahoPersistence
+| *qos* (common) | Client quality of service level (0-2). | 2 | int
+| *resolveMqttConnectOptions* (common) | Define if you don't want to resolve the MQTT Connect Options from registry | true | boolean
+| *retained* (common) | Retain option | false | boolean
+| *userName* (common) | Username to be used for authentication against the MQTT broker |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.paho.broker-url* | The URL of the MQTT broker. |  | String
+| *camel.component.paho.client-id* | MQTT client identifier. |  | String
+| *camel.component.paho.connect-options* | Client connection options. The option is a org.eclipse.paho.client.mqttv3.MqttConnectOptions type. |  | String
+| *camel.component.paho.enabled* | Enable paho component | true | Boolean
+| *camel.component.paho.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Headers
+
+The following headers are recognized by the Paho component:
+
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
+|===
+|Header |Java constant |Endpoint type |Value type |Description
+
+|CamelMqttTopic |PahoConstants.MQTT_TOPIC |Consumer |String |The name of the topic
+|CamelMqttQoS |PahoConstants.MQTT_QOS |Consumer |Integer |QualityOfService of the incoming message
+|CamelPahoOverrideTopic |PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC |Producer |String |Name of topic to override and send to instead of topic specified on endpoint
+|===
+
+
+== Default payload type
+
+By default Camel Paho component operates on the binary payloads
+extracted out of (or put into) the MQTT message:
+
+[source,java]
+----
+// Receive payload
+byte[] payload = (byte[]) consumerTemplate.receiveBody("paho:topic");
+
+// Send payload
+byte[] payload = "message".getBytes();
+producerTemplate.sendBody("paho:topic", payload);
+----
+
+But of course Camel build-in xref:manual::type-converter.adoc[type conversion
+API] can perform the automatic data type transformations for you. In the
+example below Camel automatically converts binary payload into `String`
+(and conversely):
+
+[source,java]
+----
+// Receive payload
+String payload = consumerTemplate.receiveBody("paho:topic", String.class);
+
+// Send payload
+String payload = "message";
+producerTemplate.sendBody("paho:topic", payload);
+----
+
+
+== Samples
+
+For example the following snippet reads messages from the MQTT broker
+installed on the same host as the Camel router:
+
+[source,java]
+----
+from("paho:some/queue")
+    .to("mock:test");
+----
+
+While the snippet below sends message to the MQTT broker:
+
+[source,java]
+----
+from("direct:test")
+    .to("paho:some/target/queue");
+----
+
+For example this is how to read messages from the remote MQTT broker: 
+
+[source]
+----
+from("paho:some/queue?brokerUrl=tcp://iot.eclipse.org:1883")
+    .to("mock:test");
+----
+
+And here we override the default topic and set to a dynamic topic
+
+[source,java]
+----
+from("direct:test")
+    .setHeader(PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC, simple("${header.customerId}"))
+    .to("paho:some/target/queue");
+----

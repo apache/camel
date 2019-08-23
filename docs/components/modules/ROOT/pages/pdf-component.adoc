@@ -1,1 +1,114 @@
-../../../../../components/camel-pdf/src/main/docs/pdf-component.adoc
+= PDF Component
+
+*Available as of Camel version 2.16*
+
+
+The PDF components provides the ability to create, modify or extract
+content from PDF documents. This component uses
+https://pdfbox.apache.org/[Apache PDFBox] as underlying library to work
+with PDF documents.
+
+In order to use the PDF component, Maven users will need to add the
+following dependency to their `pom.xml`:
+
+*pom.xml*
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-pdf</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+The PDF component only supports producer endpoints.
+
+[source,java]
+-----------------------
+pdf:operation[?options]
+-----------------------
+
+== Options
+
+// component options: START
+The PDF component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The PDF endpoint is configured using URI syntax:
+
+----
+pdf:operation
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *operation* | *Required* Operation type |  | PdfOperation
+|===
+
+
+==== Query Parameters (9 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *font* (producer) | Font | Helvetica | PDFont
+| *fontSize* (producer) | Font size in pixels | 14 | float
+| *marginBottom* (producer) | Margin bottom in pixels | 20 | int
+| *marginLeft* (producer) | Margin left in pixels | 20 | int
+| *marginRight* (producer) | Margin right in pixels | 40 | int
+| *marginTop* (producer) | Margin top in pixels | 20 | int
+| *pageSize* (producer) | Page size | A4 | PDRectangle
+| *textProcessingFactory* (producer) | Text processing to use. autoFormatting: Text is getting sliced by words, then max amount of words that fits in the line will be written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new line. lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol and then it will be written regardless it fits in the line or not. | lineTermination | TextProcessingFactory
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.pdf.enabled* | Enable pdf component | true | Boolean
+| *camel.component.pdf.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Headers
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`pdf-document` |*Mandatory* header for `append` operation and ignored in all other
+operations. Expected type is
+https://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/PDDocument.html[PDDocument].
+Stores PDF document which will be used for append operation.
+
+|`protection-policy` |Expected type is
+https://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encryption/ProtectionPolicy.html[ProtectionPolicy].
+If specified then PDF document will be encrypted with it.
+
+|`decryption-material` |Expected type is
+https://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial].
+*Mandatory* header if PDF document is encrypted.
+|=======================================================================

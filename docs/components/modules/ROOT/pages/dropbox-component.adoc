@@ -1,1 +1,427 @@
-../../../../../components/camel-dropbox/src/main/docs/dropbox-component.adoc
+= Dropbox Component
+
+*Available as of Camel version 2.14*
+
+
+The Dropbox component allows you to treat
+https://www.dropbox.com[Dropbox] remote folders as a producer or
+consumer of messages. Using the
+http://dropbox.github.io/dropbox-sdk-java/api-docs/v1.7.x/[Dropbox Java
+Core API] (reference version for this component is 1.7.x), this camel
+component has the following features:
+
+* As a consumer, download files and search files by queries
+* As a producer, download files, move files between remote directories,
+delete files/dir, upload files and search files by queries
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-dropbox</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+[source]
+----
+dropbox://[operation]?[options]
+----
+
+Where *operation* is the specific action (typically is a CRUD action) to
+perform on Dropbox remote folder.
+
+== Operations
+
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Operation |Description
+
+|`del` |deletes files or directories on Dropbox
+
+|`get` |download files from Dropbox
+
+|`move` |move files from folders on Dropbox
+
+|`put` |upload files on Dropbox
+
+|`search` |search files on Dropbox based on string queries
+|===
+
+*Operations* require additional options to work, some are mandatory for
+the specific operation.
+
+== Options
+
+In order to work with Dropbox API you need to obtain an *accessToken*
+and a *clientIdentifier.* +
+You can refer to the
+https://www.dropbox.com/developers/core/start/java[Dropbox
+documentation] that explains how to get them.  
+
+// component options: START
+The Dropbox component has no options.
+// component options: END
+
+// endpoint options: START
+The Dropbox endpoint is configured using URI syntax:
+
+----
+dropbox:operation
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *operation* | *Required* The specific action (typically is a CRUD action) to perform on Dropbox remote folder. |  | DropboxOperation
+|===
+
+
+==== Query Parameters (12 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessToken* (common) | *Required* The access token to make API requests for a specific Dropbox user |  | String
+| *client* (common) | To use an existing DbxClient instance as DropBox client. |  | DbxClientV2
+| *clientIdentifier* (common) | Name of the app registered to make API requests |  | String
+| *localPath* (common) | Optional folder or file to upload on Dropbox from the local filesystem. If this option has not been configured then the message body is used as the content to upload. |  | String
+| *newRemotePath* (common) | Destination file or folder |  | String
+| *query* (common) | A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If this option is not set, all files will be matched. |  | String
+| *remotePath* (common) | Original file or folder to move |  | String
+| *uploadMode* (common) | Which mode to upload. in case of add the new file will be renamed if a file with the same name already exists on dropbox. in case of force if a file with the same name already exists on dropbox, this will be overwritten. |  | DropboxUploadMode
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.dropbox.enabled* | Enable dropbox component | true | Boolean
+| *camel.component.dropbox.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Del operation
+
+Delete files on Dropbox.
+
+Works only as Camel producer.
+
+Below are listed the options for this operation:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|===
+|Property |Mandatory |Description
+
+|`remotePath` |`true` |Folder or file to delete on Dropbox
+|===
+
+=== Samples
+
+[source,java]
+----
+from("direct:start")
+  .to("dropbox://del?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1")
+  .to("mock:result");
+
+from("direct:start")
+  .to("dropbox://del?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1/file1.tar.gz")
+  .to("mock:result");
+----
+
+=== Result Message Headers
+
+The following headers are set on message result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Property |Value
+
+|`DELETED_PATH` |name of the path deleted on dropbox
+|===
+
+=== Result Message Body
+
+The following objects are set on message body result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Object type |Description
+
+|`String` |name of the path deleted on dropbox
+|===
+
+== Get (download) operation
+
+Download files from Dropbox.
+
+Works as Camel producer or Camel consumer.
+
+Below are listed the options for this operation:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|===
+|Property |Mandatory |Description
+
+|`remotePath` |`true` |Folder or file to download from Dropbox
+|===
+
+=== Samples
+
+[source,java]
+----
+from("direct:start")
+  .to("dropbox://get?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1/file1.tar.gz")
+  .to("file:///home/kermit/?fileName=file1.tar.gz");
+
+from("direct:start")
+  .to("dropbox://get?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1")
+  .to("mock:result");
+
+from("dropbox://get?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1")
+  .to("file:///home/kermit/");
+----
+
+=== Result Message Headers
+
+The following headers are set on message result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Property |Value
+
+|`DOWNLOADED_FILE` |in case of single file download, path of the remote file downloaded
+
+|`DOWNLOADED_FILES` |in case of multiple files download, path of the remote files downloaded
+|===
+
+=== Result Message Body
+
+The following objects are set on message body result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Object type |Description
+
+|`ByteArrayOutputStream` |in case of single file download, stream representing the file downloaded
+
+|`Map<String, ByteArrayOutputStream>` |in case of multiple files download, a map with as key the path of the
+remote file downloaded and as value the stream representing the file
+downloaded
+|===
+
+== Move operation
+
+Move files on Dropbox between one folder to another.
+
+Works only as Camel producer.
+
+Below are listed the options for this operation:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|===
+|Property |Mandatory |Description
+
+|`remotePath` |`true` |Original file or folder to move
+
+|`newRemotePath` |`true` |Destination file or folder
+|===
+
+=== Samples
+
+[source,java]
+----
+from("direct:start")
+  .to("dropbox://move?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1&newRemotePath=/root/folder2")
+  .to("mock:result");
+----
+
+=== Result Message Headers
+
+The following headers are set on message result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Property |Value
+
+|`MOVED_PATH` |name of the path moved on dropbox
+|===
+
+=== Result Message Body
+
+The following objects are set on message body result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Object type |Description
+
+|`String` |name of the path moved on dropbox
+|===
+
+== Put (upload) operation
+
+Upload files on Dropbox.
+
+Works as Camel producer.
+
+Below are listed the options for this operation:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|===
+|Property |Mandatory |Description
+
+|`uploadMode` |`true` |add or force this option specifies how a file should be saved on
+dropbox: in case of "add" the new file will be renamed if a file with the same
+name already exists on dropbox. In case of "force" if a file with the same name already exists on
+dropbox, this will be overwritten.
+
+|`localPath` |`false` |Folder or file to upload on Dropbox from the local filesystem.
+If this option has been configured then it takes precedence over uploading as a single
+file with content from the Camel message body (message body is converted into a byte array).
+
+|`remotePath` |`false` |Folder destination on Dropbox. If the property is not set, the component
+will upload the file on a remote path equal to the local path. With Windows or without an absolute 
+localPath you may run into an exception like the following:
+
+Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "C:/My/File" +
+OR +
+Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "MyFile" +
+	
+|===
+
+=== Samples
+
+[source,java]
+----
+from("direct:start").to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&uploadMode=add&localPath=/root/folder1")
+  .to("mock:result");
+
+from("direct:start").to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&uploadMode=add&localPath=/root/folder1&remotePath=/root/folder2")
+  .to("mock:result");
+----
+
+And to upload a single file with content from the message body
+
+[source,java]
+----
+from("direct:start")
+   .setHeader(DropboxConstants.HEADER_PUT_FILE_NAME, constant("myfile.txt"))
+   .to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&uploadMode=add&remotePath=/root/folder2")
+   .to("mock:result");
+----
+
+The name of the file can be provided in the header `DropboxConstants.HEADER_PUT_FILE_NAME`
+or `Exchange.FILE_NAME` in that order of precedence. If no header has been provided then the message id (uuid) is
+used as the file name.
+
+=== Result Message Headers
+
+The following headers are set on message result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Property |Value
+
+|`UPLOADED_FILE` |in case of single file upload, path of the remote path uploaded
+
+|`UPLOADED_FILES` |in case of multiple files upload, string with the remote paths uploaded
+|===
+
+=== Result Message Body
+
+The following objects are set on message body result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Object type |Description
+
+|`String` |in case of single file upload, result of the upload operation, OK or KO
+
+|`Map<String, DropboxResultCode>` |in case of multiple files upload, a map with as key the path of the
+remote file uploaded and as value the result of the upload operation, OK
+or KO
+|===
+
+== Search operation
+
+Search inside a remote Dropbox folder including its sub directories.
+
+Works as Camel producer and as Camel consumer.
+
+Below are listed the options for this operation:
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|===
+|Property |Mandatory |Description
+
+|`remotePath` |`true` |Folder on Dropbox where to search in.
+
+|`query` |`true` |A space-separated list of sub-strings to search for. A file matches only
+if it contains all the sub-strings. If this option is not set, all files
+will be matched. The query is required to be provided in either the endpoint configuration
+or as a header `CamelDropboxQuery` on the Camel message.
+|===
+
+=== Samples
+
+[source,java]
+----
+from("dropbox://search?accessToken=XXX&clientIdentifier=XXX&remotePath=/XXX&query=XXX")
+  .to("mock:result");
+
+from("direct:start")
+  .setHeader("CamelDropboxQuery", constant("XXX"))
+  .to("dropbox://search?accessToken=XXX&clientIdentifier=XXX&remotePath=/XXX")
+  .to("mock:result");
+----
+
+=== Result Message Headers
+
+The following headers are set on message result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Property |Value
+
+|`FOUNDED_FILES` |list of file path founded
+|===
+
+=== Result Message Body
+
+The following objects are set on message body result:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Object type |Description
+
+|`List<DbxEntry>` |list of file path founded. For more information on this object refer to
+Dropbox documentation,
+|===
+
+
+
+ 

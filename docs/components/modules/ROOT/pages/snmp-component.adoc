@@ -1,1 +1,212 @@
-../../../../../components/camel-snmp/src/main/docs/snmp-component.adoc
+= SNMP Component
+
+*Available as of Camel version 2.1*
+
+
+The SNMP component gives you the ability to poll SNMP capable devices
+or receiving traps
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-snmp</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+--------------------------------
+snmp://hostname[:port][?Options]
+--------------------------------
+
+The component supports polling OID values from an SNMP enabled device
+and receiving traps.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Snmp Producer 
+
+*Available from 2.18 release*
+
+It can also be used to request information using GET method.
+
+The response body type is org.apache.camel.component.snmp.SnmpMessage
+
+== Options
+
+
+// component options: START
+The SNMP component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The SNMP endpoint is configured using URI syntax:
+
+----
+snmp:host:port
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* | *Required* Hostname of the SNMP enabled device |  | String
+| *port* | *Required* Port number of the SNMP enabled device |  | Integer
+|===
+
+
+==== Query Parameters (35 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *delay* (consumer) | Sets update rate in seconds | 60000 | long
+| *oids* (consumer) | Defines which values you are interested in. Please have a look at the Wikipedia to get a better understanding. You may provide a single OID or a coma separated list of OIDs. Example: oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1 |  | String
+| *protocol* (consumer) | Here you can select which protocol to use. You can use either udp or tcp. | udp | String
+| *retries* (consumer) | Defines how often a retry is made before canceling the request. | 2 | int
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *snmpCommunity* (consumer) | Sets the community octet string for the snmp request. | public | String
+| *snmpContextEngineId* (consumer) | Sets the context engine ID field of the scoped PDU. |  | String
+| *snmpContextName* (consumer) | Sets the context name field of this scoped PDU. |  | String
+| *snmpVersion* (consumer) | Sets the snmp version for the request. The value 0 means SNMPv1, 1 means SNMPv2c, and the value 3 means SNMPv3 | 0 | int
+| *timeout* (consumer) | Sets the timeout value for the request in millis. | 1500 | int
+| *treeList* (consumer) | Sets the flag whether the scoped PDU will be displayed as the list if it has child elements in its tree | false | boolean
+| *type* (consumer) | Which operation to perform such as poll, trap, etc. |  | SnmpActionType
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *authenticationPassphrase* (security) | The authentication passphrase. If not null, authenticationProtocol must also be not null. RFC3414 11.2 requires passphrases to have a minimum length of 8 bytes. If the length of authenticationPassphrase is less than 8 bytes an IllegalArgumentException is thrown. |  | String
+| *authenticationProtocol* (security) | Authentication protocol to use if security level is set to enable authentication The possible values are: MD5, SHA1 |  | String
+| *privacyPassphrase* (security) | The privacy passphrase. If not null, privacyProtocol must also be not null. RFC3414 11.2 requires passphrases to have a minimum length of 8 bytes. If the length of authenticationPassphrase is less than 8 bytes an IllegalArgumentException is thrown. |  | String
+| *privacyProtocol* (security) | The privacy protocol ID to be associated with this user. If set to null, this user only supports unencrypted messages. |  | String
+| *securityLevel* (security) | Sets the security level for this target. The supplied security level must be supported by the security model dependent information associated with the security name set for this target. The value 1 means: No authentication and no encryption. Anyone can create and read messages with this security level The value 2 means: Authentication and no encryption. Only the one with the right authentication key can create messages with this security level, but anyone can read the contents of the message. The value 3 means: Authentication and encryption. Only the one with the right authentication key can create messages with this security level, and only the one with the right encryption/decryption key can read the contents of the message. | 3 | int
+| *securityName* (security) | Sets the security name to be used with this target. |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.snmp.enabled* | Enable snmp component | true | Boolean
+| *camel.component.snmp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== The result of a poll
+
+Given the situation, that I poll for the following OIDs:
+
+*OIDs*
+
+-------------------------
+1.3.6.1.2.1.1.3.0
+1.3.6.1.2.1.25.3.2.1.5.1
+1.3.6.1.2.1.25.3.5.1.1.1
+1.3.6.1.2.1.43.5.1.1.11.1
+-------------------------
+
+The result will be the following:
+
+*Result of toString conversion*
+
+[source,xml]
+-----------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<snmp>
+  <entry>
+    <oid>1.3.6.1.2.1.1.3.0</oid>
+    <value>6 days, 21:14:28.00</value>
+  </entry>
+  <entry>
+    <oid>1.3.6.1.2.1.25.3.2.1.5.1</oid>
+    <value>2</value>
+  </entry>
+  <entry>
+    <oid>1.3.6.1.2.1.25.3.5.1.1.1</oid>
+    <value>3</value>
+  </entry>
+  <entry>
+    <oid>1.3.6.1.2.1.43.5.1.1.11.1</oid>
+    <value>6</value>
+  </entry>
+  <entry>
+    <oid>1.3.6.1.2.1.1.1.0</oid>
+    <value>My Very Special Printer Of Brand Unknown</value>
+  </entry>
+</snmp>
+-----------------------------------------------------------
+
+As you maybe recognized there is one more result than
+requested....1.3.6.1.2.1.1.1.0. +
+ This one is filled in by the device automatically in this special case.
+So it may absolutely happen, that you receive more than you
+requested...be prepared.
+
+*OID starting with dot representation*
+-------------------------
+.1.3.6.1.4.1.6527.3.1.2.21.2.1.50
+-------------------------
+As you may notice, default snmpVersion is 0 which means *version1* in the endpoint if it is not set explicitly. Make sure you explicitly set snmpVersion which is not default value, of course in a case of where you are able to query SNMP tables with different versions. Other possible values are *version2c* and *version3*.
+
+== Examples
+
+Polling a remote device:
+
+---------------------------------------------------------------------
+snmp:192.168.178.23:161?protocol=udp&type=POLL&oids=1.3.6.1.2.1.1.5.0
+---------------------------------------------------------------------
+
+Setting up a trap receiver (*Note that no OID info is needed here!*):
+
+-----------------------------------------
+snmp:127.0.0.1:162?protocol=udp&type=TRAP
+-----------------------------------------
+
+You can get the community of SNMP TRAP with message
+header 'securityName', +
+ peer address of the SNMP TRAP with message header 'peerAddress'.
+
+Routing example in Java: (converts the SNMP PDU to XML String)
+
+[source,java]
+------------------------------------------------------------------------------
+from("snmp:192.168.178.23:161?protocol=udp&type=POLL&oids=1.3.6.1.2.1.1.5.0").
+convertBodyTo(String.class).
+to("activemq:snmp.states");
+------------------------------------------------------------------------------

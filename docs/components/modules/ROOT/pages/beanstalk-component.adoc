@@ -1,1 +1,243 @@
-../../../../../components/camel-beanstalk/src/main/docs/beanstalk-component.adoc
+= Beanstalk Component
+
+*Available as of Camel version 2.15*
+
+
+Camel Beanstalk project provides a Camel component for job retrieval and
+post-processing of Beanstalk jobs.
+
+You can find the detailed explanation of Beanstalk job lifecycle
+at http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
+protocol].
+
+== Dependencies
+
+Maven users need to add the following dependency to their `pom.xml`
+
+[source,xml]
+------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-beanstalk</artifactId>
+  <version>${camel-version}</version>
+</dependency>
+------------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel.
+
+== URI format
+
+[source,xml]
+------------------------------------------
+beanstalk://[host[:port]][/tube][?options]
+------------------------------------------
+
+You may omit either `port` or both `host` and `port`: for the Beanstalk
+defaults to be used (“localhost” and 11300). If you omit `tube`,
+Beanstalk component will use the tube with name “default”.
+
+When listening, you may probably want to watch for jobs from several
+tubes. Just separate them with plus sign, e.g.
+
+[source,java]
+---------------------------------------
+beanstalk://localhost:11300/tube1+tube2
+---------------------------------------
+
+Tube name will be URL decoded, so if your tube names include special
+characters like + or ?, you need to URL-encode them appropriately, or
+use the RAW syntax, see xref:manual::faq/how-do-i-configure-endpoints.adoc[more
+details here].
+
+By the way, you cannot specify several tubes when you are writing jobs
+into Beanstalk.
+
+== Beanstalk options
+
+
+
+// component options: START
+The Beanstalk component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionSettings Factory* (common) | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings) |  | ConnectionSettings Factory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The Beanstalk endpoint is configured using URI syntax:
+
+----
+beanstalk:connectionSettings
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionSettings* | Connection settings host:port/tube |  | String
+|===
+
+
+==== Query Parameters (26 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *command* (common) | put means to put the job into Beanstalk. Job body is specified in the Camel message body. Job ID will be returned in beanstalk.jobId message header. delete, release, touch or bury expect Job ID in the message header beanstalk.jobId. Result of the operation is returned in beanstalk.result message header kick expects the number of jobs to kick in the message body and returns the number of jobs actually kicked out in the message header beanstalk.result. |  | BeanstalkCommand
+| *jobDelay* (common) | Job delay in seconds. | 0 | int
+| *jobPriority* (common) | Job priority. (0 is the highest, see Beanstalk protocol) | 1000 | long
+| *jobTimeToRun* (common) | Job time to run in seconds. (when 0, the beanstalkd daemon raises it to 1 automatically, see Beanstalk protocol) | 60 | int
+| *awaitJob* (consumer) | Whether to wait for job to complete before ack the job from beanstalk | true | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *onFailure* (consumer) | Command to use when processing failed. |  | BeanstalkCommand
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *useBlockIO* (consumer) | Whether to use blockIO. | true | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.beanstalk.connection-settings-factory* | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings). The option is a org.apache.camel.component.beanstalk.ConnectionSettingsFactory type. |  | String
+| *camel.component.beanstalk.enabled* | Enable beanstalk component | true | Boolean
+| *camel.component.beanstalk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+Producer behavior is affected by the `command` parameter which tells
+what to do with the job, it can be
+
+The consumer may delete the job immediately after reserving it or wait
+until Camel routes process it. While the first scenario is more like a
+“message queue”, the second is similar to “job queue”. This behavior is
+controlled by `consumer.awaitJob` parameter, which equals `true` by
+default (following Beanstalkd nature).
+
+When synchronous, the consumer calls `delete` on successful job
+completion and calls `bury` on failure. You can choose which command to
+execute in the case of failure by
+specifying `consumer.onFailure` parameter in the URI. It can take values
+of `bury`, `delete` or `release`.
+
+There is a boolean parameter `consumer.useBlockIO` which corresponds to
+the same parameter in JavaBeanstalkClient library. By default it
+is `true`.
+
+Be careful when specifying `release`, as the failed job will immediately
+become available in the same tube and your consumer will try to acquire
+it again. You can `release` and specify _jobDelay_ though.
+
+The beanstalk consumer is a Scheduled xref:manual::polling-consumer.adoc[Polling
+Consumer] which means there is more options you can configure, such as
+how frequent the consumer should poll. For more details
+see Polling Consumer.
+
+== Consumer Headers
+
+The consumer stores a number of job headers in the Exchange message:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Property |Type |Description
+
+|_beanstalk.jobId_ |long | Job ID
+
+|_beanstalk.tube_ |string |the name of the tube that contains this job
+
+|_beanstalk.state_ |string |“ready” or “delayed” or “reserved” or “buried” (must be “reserved”)
+
+|_beanstalk.priority_ |long |the priority value set
+
+|_beanstalk.age_ |int |the time in seconds since the put command that created this job
+
+|_beanstalk.time-left_ |int |the number of seconds left until the server puts this job into the ready
+queue
+
+|_beanstalk.timeouts_ |int |the number of times this job has timed out during a reservation
+
+|_beanstalk.releases_ |int |the number of times a client has released this job from a reservation
+
+|_beanstalk.buries_ |int |the number of times this job has been buried
+
+|_beanstalk.kicks_ |int |the number of times this job has been kicked
+|=======================================================================
+
+== Examples
+
+This Camel component lets you both request the jobs for processing and
+supply them to Beanstalkd daemon. Our simple demo routes may look like
+
+[source,java]
+----------------------------------------------------------------------------------------------
+from("beanstalk:testTube").
+   log("Processing job #${property.beanstalk.jobId} with body ${in.body}").
+   process(new Processor() {
+     @Override
+     public void process(Exchange exchange) {
+       // try to make integer value out of body
+       exchange.getIn().setBody( Integer.valueOf(exchange.getIn().getBody(classOf[String])) );
+     }
+   }).
+   log("Parsed job #${property.beanstalk.jobId} to body ${in.body}");
+----------------------------------------------------------------------------------------------
+
+[source,java]
+---------------------------------------------------------------------
+from("timer:dig?period=30seconds").
+   setBody(constant(10)).log("Kick ${in.body} buried/delayed tasks").
+   to("beanstalk:testTube?command=kick");
+---------------------------------------------------------------------
+
+In the first route we are listening for new jobs in tube “testTube”.
+When they are arriving, we are trying to parse integer value from the
+message body. If done successful, we log it and this successful exchange
+completion makes Camel component to _delete_ this job from Beanstalk
+automatically. Contrary, when we cannot parse the job data, the exchange
+failed and the Camel component _buries_ it by default, so that it can be
+processed later or probably we are going to inspect failed jobs
+manually.
+
+So the second route periodically requests Beanstalk to _kick_ 10 jobs
+out of buried and/or delayed state to the normal queue.
+
+ 

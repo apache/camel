@@ -1,1 +1,169 @@
-../../../../../components/camel-docker/src/main/docs/docker-component.adoc
+= Docker Component
+
+*Available as of Camel version 2.15*
+
+
+Camel component for communicating with Docker.
+
+The Docker Camel component leverages the
+https://github.com/docker-java/docker-java[docker-java] via the
+https://docs.docker.com/reference/api/docker_remote_api[Docker Remote
+API].
+
+
+== URI format
+
+[source,java]
+------------------------------
+docker://[operation]?[options]
+------------------------------
+
+Where *operation* is the specific action to perform on Docker.
+
+== General Options
+
+// component options: START
+The Docker component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | To use the shared docker configuration |  | DockerConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The Docker endpoint is configured using URI syntax:
+
+----
+docker:operation
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *operation* | *Required* Which operation to use |  | DockerOperation
+|===
+
+
+==== Query Parameters (20 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *email* (common) | Email address associated with the user |  | String
+| *host* (common) | *Required* Docker host | localhost | String
+| *port* (common) | *Required* Docker port | 2375 | Integer
+| *requestTimeout* (common) | Request timeout for response (in seconds) |  | Integer
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *cmdExecFactory* (advanced) | The fully qualified class name of the DockerCmdExecFactory implementation to use | com.github.dockerjava.netty.NettyDockerCmdExecFactory | String
+| *followRedirectFilter* (advanced) | Whether to follow redirect filter | false | boolean
+| *loggingFilter* (advanced) | Whether to use logging filter | false | boolean
+| *maxPerRouteConnections* (advanced) | Maximum route connections | 100 | Integer
+| *maxTotalConnections* (advanced) | Maximum total connections | 100 | Integer
+| *serverAddress* (advanced) | Server address for docker registry. | https://index.docker.io/v1/ | String
+| *socket* (advanced) | Socket connection mode | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *certPath* (security) | Location containing the SSL certificate chain |  | String
+| *password* (security) | Password to authenticate with |  | String
+| *secure* (security) | Use HTTPS communication | false | boolean
+| *tlsVerify* (security) | Check TLS | false | boolean
+| *username* (security) | User name to authenticate with |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 20 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.docker.configuration.cert-path* | Location containing the SSL certificate chain |  | String
+| *camel.component.docker.configuration.cmd-exec-factory* | The fully qualified class name of the DockerCmdExecFactory implementation to use | com.github.dockerjava.netty.NettyDockerCmdExecFactory | String
+| *camel.component.docker.configuration.email* | Email address associated with the user |  | String
+| *camel.component.docker.configuration.follow-redirect-filter* | Whether to follow redirect filter | false | Boolean
+| *camel.component.docker.configuration.host* | Docker host | localhost | String
+| *camel.component.docker.configuration.logging-filter* | Whether to use logging filter | false | Boolean
+| *camel.component.docker.configuration.max-per-route-connections* | Maximum route connections | 100 | Integer
+| *camel.component.docker.configuration.max-total-connections* | Maximum total connections | 100 | Integer
+| *camel.component.docker.configuration.operation* | Which operation to use |  | DockerOperation
+| *camel.component.docker.configuration.parameters* | Additional configuration parameters as key/value pairs |  | Map
+| *camel.component.docker.configuration.password* | Password to authenticate with |  | String
+| *camel.component.docker.configuration.port* | Docker port | 2375 | Integer
+| *camel.component.docker.configuration.request-timeout* | Request timeout for response (in seconds) |  | Integer
+| *camel.component.docker.configuration.secure* | Use HTTPS communication | false | Boolean
+| *camel.component.docker.configuration.server-address* | Server address for docker registry. | https://index.docker.io/v1/ | String
+| *camel.component.docker.configuration.socket* | Socket connection mode | true | Boolean
+| *camel.component.docker.configuration.tls-verify* | Check TLS | false | Boolean
+| *camel.component.docker.configuration.username* | User name to authenticate with |  | String
+| *camel.component.docker.enabled* | Enable docker component | true | Boolean
+| *camel.component.docker.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Header Strategy
+
+All URI option can be passed as Header properties. Values found in a
+message header take precedence over URI parameters. A header property
+takes the form of a URI option prefixed with *CamelDocker* as shown
+below
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|URI Option |Header Property
+
+|containerId |CamelDockerContainerId
+|=======================================================================
+
+
+== Examples
+
+The following example consumes events from Docker:
+
+[source,java]
+----------------------------------------------------------------------
+from("docker://events?host=192.168.59.103&port=2375").to("log:event");
+----------------------------------------------------------------------
+
+The following example queries Docker for system wide information
+
+[source,java]
+-------------------------------------------------------------------
+from("docker://info?host=192.168.59.103&port=2375").to("log:info");
+-------------------------------------------------------------------
+
+
+== Dependencies
+
+To use Docker in your Camel routes you need to add a dependency on
+*camel-docker*, which implements the component.
+
+If you use Maven you can just add the following to your pom.xml,
+substituting the version number for the latest and greatest release (see
+the download page for the latest versions).
+
+[source,java]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-docker</artifactId>
+  <version>x.x.x</version>
+</dependency>
+-------------------------------------

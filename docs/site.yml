@@ -1,0 +1,12 @@
+site:
+  title: Apache Camel
+
+content:
+  sources:
+    - url: ../
+      branches: HEAD
+      start_path: docs/components
+
+ui:
+  bundle:
+    url: not-used

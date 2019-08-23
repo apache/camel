@@ -1,1 +1,143 @@
-../../../../../components/camel-jolt/src/main/docs/jolt-component.adoc
+= JOLT Component
+
+*Available as of Camel version 2.16*
+
+
+The Jolt component allows you to process a JSON messages using an
+https://github.com/bazaarvoice/jolt[JOLT] specification. This can be
+ideal when doing JSON to JSON transformation.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jolt</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+ 
+
+== URI format
+
+[source,java]
+-----------------------
+jolt:specName[?options]
+-----------------------
+
+Where *specName* is the classpath-local URI of the specification to
+invoke; or the complete URL of the remote specification
+(eg: \file://folder/myfile.vm).
+
+You can append query options to the URI in the following
+format, `?option=value&option=value&...`
+
+== Options
+
+
+
+
+// component options: START
+The JOLT component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *transform* (advanced) | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created |  | Transform
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+// endpoint options: START
+The JOLT endpoint is configured using URI syntax:
+
+----
+jolt:resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* Path to the resource. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod. |  | String
+|===
+
+
+==== Query Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *inputType* (producer) | Specifies if the input is hydrated JSON or a JSON String. | Hydrated | JoltInputOutputType
+| *outputType* (producer) | Specifies if the output should be hydrated JSON or a JSON String. | Hydrated | JoltInputOutputType
+| *transformDsl* (producer) | Specifies the Transform DSL of the endpoint resource. If none is specified Chainr will be used. | Chainr | JoltTransformType
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jolt.enabled* | Enable jolt component | true | Boolean
+| *camel.component.jolt.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.jolt.transform* | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created. The option is a com.bazaarvoice.jolt.Transform type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Samples
+
+For example you could use something like
+
+[source,java]
+--------------------------------------
+from("activemq:My.Queue").
+  to("jolt:com/acme/MyResponse.json");
+--------------------------------------
+
+And a file based resource:
+
+[source,java]
+---------------------------------------------------------------
+from("activemq:My.Queue").
+  to("jolt:file://myfolder/MyResponse.json?contentCache=true").
+  to("activemq:Another.Queue");
+---------------------------------------------------------------
+
+You can also specify what specification the component should use
+dynamically via a header, so for example:
+
+[source,java]
+---------------------------------------------------------------------
+from("direct:in").
+  setHeader("CamelJoltResourceUri").constant("path/to/my/spec.json").
+  to("jolt:dummy");
+---------------------------------------------------------------------
+
+ 

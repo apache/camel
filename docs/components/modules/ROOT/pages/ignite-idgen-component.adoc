@@ -1,1 +1,77 @@
-../../../../../components/camel-ignite/src/main/docs/ignite-idgen-component.adoc
+= Ignite ID Generator Component
+
+*Available as of Camel version 2.17*
+
+
+The Ignite ID Generator endpoint is one of camel-ignite endpoints which allows you to interact with https://apacheignite.readme.io/docs/id-generator[Ignite Atomic Sequences and ID Generators].
+
+This endpoint only supports producers.
+
+== Options
+
+// component options: START
+The Ignite ID Generator component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *ignite* (producer) | Sets the Ignite instance. |  | Ignite
+| *configurationResource* (producer) | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. |  | Object
+| *igniteConfiguration* (producer) | Allows the user to set a programmatic IgniteConfiguration. |  | IgniteConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Ignite ID Generator endpoint is configured using URI syntax:
+
+----
+ignite-idgen:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* The sequence name. |  | String
+|===
+
+
+==== Query Parameters (6 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *batchSize* (producer) | The batch size. |  | Integer
+| *initialValue* (producer) | The initial value. | 0 | Long
+| *operation* (producer) | The operation to invoke on the Ignite ID Generator. Superseded by the IgniteConstants.IGNITE_IDGEN_OPERATION header in the IN message. Possible values: ADD_AND_GET, GET, GET_AND_ADD, GET_AND_INCREMENT, INCREMENT_AND_GET. |  | IgniteIdGenOperation
+| *propagateIncomingBodyIfNo ReturnValue* (producer) | Sets whether to propagate the incoming body if the return type of the underlying Ignite operation is void. | true | boolean
+| *treatCollectionsAsCache Objects* (producer) | Sets whether to treat Collections as cache objects or as Collections of items to insert/update/compute, etc. | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.ignite-idgen.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
+| *camel.component.ignite-idgen.enabled* | Enable ignite-idgen component | true | Boolean
+| *camel.component.ignite-idgen.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
+| *camel.component.ignite-idgen.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
+| *camel.component.ignite-idgen.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END

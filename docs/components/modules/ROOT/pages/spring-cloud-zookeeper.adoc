@@ -1,1 +1,3 @@
-../../../../../components/camel-spring-cloud-zookeeper/src/main/docs/spring-cloud-zookeeper.adoc
+= Spring Cloud Zookeeper
+
+*Available as of Camel 2.22*

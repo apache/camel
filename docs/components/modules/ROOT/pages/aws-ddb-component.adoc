@@ -1,1 +1,377 @@
-../../../../../components/camel-aws/src/main/docs/aws-ddb-component.adoc
+[[aws-ddb-component]]
+= AWS DynamoDB Component
+
+*Available as of Camel version 2.10*
+
+The DynamoDB component supports storing and retrieving data from/to
+http://aws.amazon.com/dynamodb[Amazon's DynamoDB] service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon DynamoDB. More information are available at
+http://aws.amazon.com/dynamodb[Amazon DynamoDB].
+
+### URI Format
+
+[source,java]
+------------------------------
+aws-ddb://domainName[?options]
+------------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+### URI Options
+
+
+// component options: START
+The AWS DynamoDB component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS DDB default configuration |  | DdbConfiguration
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *region* (producer) | The region in which DDB client needs to work |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS DynamoDB endpoint is configured using URI syntax:
+
+----
+aws-ddb:tableName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *tableName* | *Required* The name of the table currently worked with. |  | String
+|===
+
+
+==== Query Parameters (13 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *amazonDDBClient* (producer) | To use the AmazonDynamoDB as the client |  | AmazonDynamoDB
+| *consistentRead* (producer) | Determines whether or not strong consistency should be enforced when data is read. | false | boolean
+| *keyAttributeName* (producer) | Attribute name when creating table |  | String
+| *keyAttributeType* (producer) | Attribute type when creating table |  | String
+| *operation* (producer) | What operation to perform | PutItem | DdbOperations
+| *proxyHost* (producer) | To define a proxy host when instantiating the DDB client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the DDB client |  | Integer
+| *readCapacity* (producer) | The provisioned throughput to reserve for reading resources from your table |  | Long
+| *region* (producer) | The region in which DDB client needs to work |  | String
+| *writeCapacity* (producer) | The provisioned throughput to reserved for writing resources to your table |  | Long
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessKey* (security) | Amazon AWS Access Key |  | String
+| *secretKey* (security) | Amazon AWS Secret Key |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 18 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-ddb.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ddb.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ddb.configuration.amazon-d-d-b-client* | To use the AmazonDynamoDB as the client |  | AmazonDynamoDB
+| *camel.component.aws-ddb.configuration.consistent-read* | Determines whether or not strong consistency should be enforced when data is read. | false | Boolean
+| *camel.component.aws-ddb.configuration.key-attribute-name* | Attribute name when creating table |  | String
+| *camel.component.aws-ddb.configuration.key-attribute-type* | Attribute type when creating table |  | String
+| *camel.component.aws-ddb.configuration.operation* | What operation to perform |  | DdbOperations
+| *camel.component.aws-ddb.configuration.proxy-host* | To define a proxy host when instantiating the DDB client |  | String
+| *camel.component.aws-ddb.configuration.proxy-port* | To define a proxy port when instantiating the DDB client |  | Integer
+| *camel.component.aws-ddb.configuration.read-capacity* | The provisioned throughput to reserve for reading resources from your table |  | Long
+| *camel.component.aws-ddb.configuration.region* | The region in which DDB client needs to work |  | String
+| *camel.component.aws-ddb.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-ddb.configuration.table-name* | The name of the table currently worked with. |  | String
+| *camel.component.aws-ddb.configuration.write-capacity* | The provisioned throughput to reserved for writing resources to your table |  | Long
+| *camel.component.aws-ddb.enabled* | Enable aws-ddb component | true | Boolean
+| *camel.component.aws-ddb.region* | The region in which DDB client needs to work |  | String
+| *camel.component.aws-ddb.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.aws-ddb.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+Required DDB component options
+
+You have to provide the amazonDDBClient in the
+Registry or your accessKey and secretKey to access
+the http://aws.amazon.com/dynamodb[Amazon's DynamoDB].
+
+### Usage
+
+#### Message headers evaluated by the DDB producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsDdbBatchItems` |`Map<String, KeysAndAttributes>` |A map of the table name and corresponding items to get by primary key.
+
+|`CamelAwsDdbTableName` |`String` |Table Name for this operation.
+
+|`CamelAwsDdbKey` |`Key` |The primary key that uniquely identifies each item in a table. *From Camel 2.16.0 the type of this header is Map<String,
+AttributeValue> and not Key*
+
+|`CamelAwsDdbReturnValues` |`String` |Use this parameter if you want to get the attribute name-value pairs
+before or after they are modified(NONE, ALL_OLD, UPDATED_OLD, ALL_NEW,
+UPDATED_NEW).
+
+|`CamelAwsDdbUpdateCondition` |`Map<String, ExpectedAttributeValue>` |Designates an attribute for a conditional modification.
+
+|`CamelAwsDdbAttributeNames` |`Collection<String>` |If attribute names are not specified then all attributes will be
+returned.
+
+|`CamelAwsDdbConsistentRead` |`Boolean` |If set to true, then a consistent read is issued, otherwise eventually
+consistent is used.
+
+|`CamelAwsDdbIndexName` |`String` |If set will be used as Secondary Index for Query operation.
+
+|`CamelAwsDdbItem` |`Map<String, AttributeValue>` |A map of the attributes for the item, and must include the primary key
+values that define the item.
+
+|`CamelAwsDdbExactCount` |`Boolean` |If set to true, Amazon DynamoDB returns a total number of items that
+match the query parameters, instead of a list of the matching items and
+their attributes. *From Camel 2.16.0 this header doesn't exist anymore.*
+
+|`CamelAwsDdbKeyConditions` |`Map<String, Condition>` |*From Camel 2.16.0*. This header specify the selection criteria for the
+query, and merge together the two old headers *CamelAwsDdbHashKeyValue*
+and *CamelAwsDdbScanRangeKeyCondition*
+
+|`CamelAwsDdbStartKey` |`Key` |Primary key of the item from which to continue an earlier query.
+
+|`CamelAwsDdbHashKeyValue` |`AttributeValue` |Value of the hash component of the composite primary key.
+*From Camel 2.16.0 this header doesn't exist anymore.*
+
+|`CamelAwsDdbLimit` |`Integer` |The maximum number of items to return.
+
+|`CamelAwsDdbScanRangeKeyCondition` |`Condition` |A container for the attribute values and comparison operators to use for
+the query.*From Camel 2.16.0 this header doesn't exist anymore.*
+
+|`CamelAwsDdbScanIndexForward` |`Boolean` |Specifies forward or backward traversal of the index.
+
+|`CamelAwsDdbScanFilter` |`Map<String, Condition>` |Evaluates the scan results and returns only the desired values.
+
+|`CamelAwsDdbUpdateValues` |`Map<String, AttributeValueUpdate>` |Map of attribute name to the new value and action for the update.
+|=======================================================================
+
+#### Message headers set during BatchGetItems operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsDdbBatchResponse` |`Map<String,BatchResponse>` |Table names and the respective item attributes from the tables.
+
+|`CamelAwsDdbUnprocessedKeys` |`Map<String,KeysAndAttributes>` |Contains a map of tables and their respective keys that were not
+processed with the current response.
+|=======================================================================
+
+#### Message headers set during DeleteItem operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsDdbAttributes` |`Map<String, AttributeValue>` |The list of attributes returned by the operation.
+|=======================================================================
+
+#### Message headers set during DeleteTable operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsDdbProvisionedThroughput`| | 
+
+|`ProvisionedThroughputDescription` | |The value of the ProvisionedThroughput property for this table
+
+|`CamelAwsDdbCreationDate` |`Date` |Creation DateTime of this table.
+
+|`CamelAwsDdbTableItemCount` |`Long` |Item count for this table.
+
+|`CamelAwsDdbKeySchema` |`KeySchema` |The KeySchema that identifies the primary key for this table. 
+*From Camel 2.16.0 the type of this header is List<KeySchemaElement> and not KeySchema*
+
+|`CamelAwsDdbTableName` |`String` |The table name. 
+
+|`CamelAwsDdbTableSize` |`Long` |The table size in bytes. 
+
+|`CamelAwsDdbTableStatus` |`String` |The status of the table: CREATING, UPDATING, DELETING, ACTIVE
+|=======================================================================
+
+#### Message headers set during DescribeTable operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsDdbProvisionedThroughput` |{{ProvisionedThroughputDescription}} |The value of the ProvisionedThroughput property for this table
+
+|`CamelAwsDdbCreationDate` |`Date` |Creation DateTime of this table.
+
+|`CamelAwsDdbTableItemCount` |`Long` |Item count for this table.
+
+|`CamelAwsDdbKeySchema` |{{KeySchema}} |The KeySchema that identifies the primary key for this table.
+*From Camel 2.16.0 the type of this header is List<KeySchemaElement> and
+not KeySchema*
+
+|`CamelAwsDdbTableName` |`String` |The table name.
+
+|`CamelAwsDdbTableSize` |`Long` |The table size in bytes.
+
+|`CamelAwsDdbTableStatus` |`String` |The status of the table: CREATING, UPDATING, DELETING, ACTIVE
+
+|`CamelAwsDdbReadCapacity` |`Long` |ReadCapacityUnits property of this table.
+
+|`CamelAwsDdbWriteCapacity` |`Long` |WriteCapacityUnits property of this table.
+|=======================================================================
+
+#### Message headers set during GetItem operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsDdbAttributes` |`Map<String, AttributeValue>` |The list of attributes returned by the operation.
+
+|=======================================================================
+
+#### Message headers set during PutItem operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsDdbAttributes` |`Map<String, AttributeValue>` |The list of attributes returned by the operation.
+
+|=======================================================================
+
+#### Message headers set during Query operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsDdbItems` |`List<java.util.Map<String,AttributeValue>>` |The list of attributes returned by the operation.
+
+|`CamelAwsDdbLastEvaluatedKey` |`Key` |Primary key of the item where the query operation stopped, inclusive of
+the previous result set.
+
+|`CamelAwsDdbConsumedCapacity` |`Double` |The number of Capacity Units of the provisioned throughput of the table
+consumed during the operation.
+
+|`CamelAwsDdbCount` |`Integer` |Number of items in the response.
+|=======================================================================
+
+#### Message headers set during Scan operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsDdbItems` |`List<java.util.Map<String,AttributeValue>>` |The list of attributes returned by the operation.
+
+|`CamelAwsDdbLastEvaluatedKey` |`Key` |Primary key of the item where the query operation stopped, inclusive of
+the previous result set.
+
+|`CamelAwsDdbConsumedCapacity` |`Double` |The number of Capacity Units of the provisioned throughput of the table
+consumed during the operation.
+
+|`CamelAwsDdbCount` |`Integer` |Number of items in the response.
+
+|`CamelAwsDdbScannedCount` |`Integer` |Number of items in the complete scan before any filters are applied.
+|=======================================================================
+
+#### Message headers set during UpdateItem operation
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsDdbAttributes` |`Map<String, AttributeValue>` |The list of attributes returned by the operation.
+
+|=======================================================================
+
+#### Advanced AmazonDynamoDB configuration
+
+If you need more control over the `AmazonDynamoDB` instance
+configuration you can create your own instance and refer to it from the
+URI:
+
+[source,java]
+----------------------------------------------------
+from("direct:start")
+.to("aws-ddb://domainName?amazonDDBClient=#client");
+----------------------------------------------------
+
+The `#client` refers to a `AmazonDynamoDB` in the
+Registry.
+
+For example if your Camel Application is running behind a firewall:
+
+[source,java]
+--------------------------------------------------------------------------------------
+AWSCredentials awsCredentials = new BasicAWSCredentials("myAccessKey", "mySecretKey");
+ClientConfiguration clientConfiguration = new ClientConfiguration();
+clientConfiguration.setProxyHost("http://myProxyHost");
+clientConfiguration.setProxyPort(8080);
+
+AmazonDynamoDB client = new AmazonDynamoDBClient(awsCredentials, clientConfiguration);
+
+registry.bind("client", client);
+--------------------------------------------------------------------------------------
+
+### Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.10 or higher).
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* AWS Component

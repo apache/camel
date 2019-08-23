@@ -1,1 +1,138 @@
-../../../../../components/camel-mvel/src/main/docs/mvel-language.adoc
+= MVEL Language
+
+*Available as of Camel version 2.0*
+
+
+Camel allows Mvel to be used as an Expression or
+Predicate the DSL or
+Xml Configuration.
+
+You could use Mvel to create an Predicate in a
+Message Filter or as an
+Expression for a
+Recipient List
+
+You can use Mvel dot notation to invoke operations. If you for instance
+have a body that contains a POJO that has a `getFamiliyName` method then
+you can construct the syntax as follows:
+
+[source,java]
+----------------------------------------
+"request.body.familyName"
+   // or 
+"getRequest().getBody().getFamilyName()"
+----------------------------------------
+
+== Mvel Options
+
+// language options: START
+The MVEL language supports 1 options, which are listed below.
+
+
+
+[width="100%",cols="2,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|===
+// language options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mvel.enabled* | Enable mvel component | true | Boolean
+| *camel.component.mvel.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.language.mvel.enabled* | Enable mvel language | true | Boolean
+| *camel.language.mvel.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Variables
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Variable |Type |Description
+
+|*this* |Exchange |the Exchange is the root object
+
+|exchange |Exchange |the Exchange object
+
+|exception |Throwable |the Exchange exception (if any)
+
+|exchangeId |String |the exchange id
+
+|fault |Message |the Fault message (if any)
+
+|request |Message |the exchange.in message
+
+|response |Message |the exchange.out message (if any)
+
+|properties |Map |the exchange properties
+
+|property(name) |Object |the property by the given name
+
+|property(name, type) |Type |the property by the given name as the given type
+|=======================================================================
+
+== Samples
+
+For example you could use Mvel inside a xref:manual::filter-eip.adoc[Message
+Filter] in XML
+
+[source,java]
+---------------------------------------------
+<route>
+  <from uri="seda:foo"/>
+  <filter>
+    <mvel>request.headers.foo == 'bar'</mvel>
+    <to uri="seda:bar"/>
+  </filter>
+</route>
+---------------------------------------------
+
+And the sample using Java DSL:
+
+[source,java]
+---------------------------------------------------------------------------------
+   from("seda:foo").filter().mvel("request.headers.foo == 'bar'").to("seda:bar");
+---------------------------------------------------------------------------------
+
+== Loading script from external resource
+
+*Available as of Camel 2.11*
+
+You can externalize the script and have Camel load it from a resource
+such as `"classpath:"`, `"file:"`, or `"http:"`. +
+ This is done using the following syntax: `"resource:scheme:location"`,
+eg to refer to a file on the classpath you can do:
+
+[source,java]
+-------------------------------------------------------------
+.setHeader("myHeader").mvel("resource:classpath:script.mvel")
+-------------------------------------------------------------
+
+== Dependencies
+
+To use Mvel in your camel routes you need to add the a dependency on
+*camel-mvel* which implements the Mvel language.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,java]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-mvel</artifactId>
+  <version>x.x.x</version>
+</dependency>
+-------------------------------------

@@ -1,1 +1,382 @@
-../../../../../components/camel-jclouds/src/main/docs/jclouds-component.adoc
+= JClouds Component
+
+*Available as of Camel version 2.9*
+
+
+This component allows interaction with cloud provider key-value engines
+(blobstores) and compute services. The component uses
+http://code.google.com/p/jclouds[jclouds] which is +
+ a library that provides abstractions for blobstores and compute
+services.
+
+*ComputeService* simplifies the task of managing machines in the cloud.
+For example, you can use ComputeService to start 5 machines and install
+your software on them. +
+ *BlobStore* simplifies dealing with key-value providers such as Amazon
+S3. For example, BlobStore can give you a simple Map view of a
+container.
+
+The camel jclouds component allows you to use both abstractions, as it
+specifes two types of endpoint the JcloudsBlobStoreEndpoint and the
+JcloudsComputeEndpoint. You can have both producers and consumers on a
+blobstore endpoint but you can only have producers on compute endpoints.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jclouds</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== Configuring the component
+
+The camel jclouds component will make use of multiple jclouds blobstores
+and compute services as long as they are passed to the component during
+initialization. The component accepts a list blobstores and compute
+services. Here is how it can be configured.
+
+[source,xml]
+----------------------------------------------------------------------------------------------------------------
+    <bean id="jclouds" class="org.apache.camel.component.jclouds.JcloudsComponent">
+        <property name="computeServices">
+            <list>
+                <ref bean="computeService"/>
+            </list>
+        </property>
+        <property name="blobStores">
+            <list>
+                <ref bean="blobStore"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Creating a blobstore from spring / blueprint xml -->
+    <bean id="blobStoreContextFactory" class="org.jclouds.blobstore.BlobStoreContextFactory"/>
+
+    <bean id="blobStoreContext" factory-bean="blobStoreContextFactory" factory-method="createContext">
+        <constructor-arg name="provider" value="PROVIDER_NAME"/>
+        <constructor-arg name="identity"  value="IDENTITY"/>
+        <constructor-arg name="credential" value="CREDENTIAL"/>
+    </bean>
+
+    <bean id="blobStore" factory-bean="blobStoreContext" factory-method="getBlobStore"/>
+
+    <!-- Creating a compute service from spring / blueprint xml -->
+    <bean id="computeServiceContextFactory" class="org.jclouds.compute.ComputeServiceContextFactory"/>
+
+    <bean id="computeServiceContext" factory-bean="computeServiceContextFactory" factory-method="createContext">
+        <constructor-arg name="provider" value="PROVIDER_NAME"/>
+        <constructor-arg name="identity"  value="IDENTITY"/>
+        <constructor-arg name="credential" value="CREDENTIAL"/>
+    </bean>
+
+    <bean id="computeService" factory-bean="computeServiceContext" factory-method="getComputeService"/>
+----------------------------------------------------------------------------------------------------------------
+
+As you can see the component is capable of handling multiple blobstores
+and compute services. The actual implementation that will be used by
+each endpoint is specified by passing the provider inside the URI.
+
+== Jclouds Options
+
+[source,java]
+-----------------------------------------
+jclouds:blobstore:[provider id][?options]
+jclouds:compute:[provider id][?options]
+-----------------------------------------
+
+The *provider id* is the name of the cloud provider that provides the
+target service (_e.g. aws-s3 or aws_ec2_).
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Blobstore URI Options
+
+
+
+
+// component options: START
+The JClouds component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *blobStores* (common) | To use the given BlobStore which must be configured when using blobstore. |  | List
+| *computeServices* (common) | To use the given ComputeService which must be configured when use compute. |  | List
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+// endpoint options: START
+The JClouds endpoint is configured using URI syntax:
+
+----
+jclouds:command:providerId
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *command* | *Required* What command to execute such as blobstore or compute. |  | JcloudsCommand
+| *providerId* | *Required* The name of the cloud provider that provides the target service (e.g. aws-s3 or aws_ec2). |  | String
+|===
+
+
+==== Query Parameters (15 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *blobName* (blobstore) | The name of the blob. |  | String
+| *container* (blobstore) | The name of the blob container. |  | String
+| *directory* (blobstore) | An optional directory name to use |  | String
+| *group* (compute) | The group that will be assigned to the newly created node. Values depend on the actual cloud provider. |  | String
+| *hardwareId* (compute) | The hardware that will be used for creating a node. Values depend on the actual cloud provider. |  | String
+| *imageId* (compute) | The imageId that will be used for creating a node. Values depend on the actual cloud provider. |  | String
+| *locationId* (compute) | The location that will be used for creating a node. Values depend on the actual cloud provider. |  | String
+| *nodeId* (compute) | The id of the node that will run the script or destroyed. |  | String
+| *nodeState* (compute) | To filter by node status to only select running nodes etc. |  | String
+| *operation* (compute) | Specifies the type of operation that will be performed to the blobstore. |  | String
+| *user* (compute) | The user on the target node that will run the script. |  | String
+|===
+// endpoint options: END
+
+
+
+You can have as many of these options as you like.
+
+[source,java]
+------------------------------------------------------------------------------------------
+jclouds:blobstore:aws-s3?operation=CamelJcloudsGet&container=mycontainer&blobName=someblob
+------------------------------------------------------------------------------------------
+
+For producer endpoint you can override all of the above URI options by
+passing the appropriate headers to the message.
+
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jclouds.blob-stores* | To use the given BlobStore which must be configured when using blobstore. |  | List
+| *camel.component.jclouds.compute-services* | To use the given ComputeService which must be configured when use compute. |  | List
+| *camel.component.jclouds.enabled* | Whether to enable auto configuration of the jclouds component. This is enabled by default. |  | Boolean
+| *camel.component.jclouds.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+=== Message Headers for blobstore
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`CamelJcloudsOperation` |The operation to be performed on the blob. The valid options are
+* PUT
+* GET
+
+|`CamelJcloudsContainer` |The name of the blob container.
+
+|`CamelJcloudsBlobName` |The name of the blob.
+|=======================================================================
+
+== Blobstore Usage Samples
+
+=== Example 1: Putting to the blob
+
+This example will show you how you can store any message inside a blob
+using the jclouds component.
+
+[source,java]
+------------------------------------
+from("direct:start")
+    .to("jclouds:blobstore:aws-s3" +
+        "?operation=PUT" +
+        "&container=mycontainer" +
+        "&blobName=myblob");
+------------------------------------
+
+In the above example you can override any of the URI parameters with
+headers on the message. 
+Here is how the above example would look like using xml to define our
+route.
+
+[source,xml]
+--------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:start"/>
+    <to uri="jclouds:blobstore:aws-s3?operation=PUT&container=mycontainer&blobName=myblob"/>
+</route>
+--------------------------------------------------------------------------------------------
+
+=== Example 2: Getting/Reading from a blob
+
+This example will show you how you can read the contnet of a blob using
+the jclouds component.
+
+[source,java]
+------------------------------------
+from("direct:start")
+    .to("jclouds:blobstore:aws-s3" +
+        "?operation=GET" +
+        "&container=mycontainer" +
+        "&blobName=myblob");
+------------------------------------
+
+In the above example you can override any of the URI parameters with
+headers on the message. 
+ Here is how the above example would look like using xml to define our
+route.
+
+[source,xml]
+--------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:start"/>
+    <to uri="jclouds:blobstore:aws-s3?operation=PUT&container=mycontainer&blobName=myblob"/>
+</route>
+--------------------------------------------------------------------------------------------
+
+=== Example 3: Consuming a blob
+
+This example will consume all blob that are under the specified
+container. The generated exchange will contain the payload of the blob
+as body.
+
+[source,java]
+-------------------------------------
+    from("jclouds:blobstore:aws-s3" +
+        "?container=mycontainer")
+        .to("direct:next");
+-------------------------------------
+
+You can achieve the same goal by using xml, as you can see below.
+
+[source,xml]
+----------------------------------------------------------------------------------------------
+<route>
+    <from uri="jclouds:blobstore:aws-s3?operation=GET&container=mycontainer&blobName=myblob"/>
+    <to uri="direct:next"/>
+</route>
+----------------------------------------------------------------------------------------------
+
+
+
+[source,java]
+-------------------------------------------------------------------------------------------------------------
+jclouds:compute:aws-ec2?operation=CamelJcloudsCreateNode&imageId=AMI_XXXXX&locationId=eu-west-1&group=mygroup
+-------------------------------------------------------------------------------------------------------------
+
+== Compute Usage Samples
+
+Below are some examples that demonstrate the use of jclouds compute
+producer in java dsl and spring/blueprint xml.
+
+=== Example 1: Listing the available images.
+
+[source,java]
+--------------------------------------------
+    from("jclouds:compute:aws-ec2" +
+        "&operation=CamelJCloudsListImages")
+        .to("direct:next");
+--------------------------------------------
+
+This will create a message that will contain the list of images inside
+its body. You can also do the same using xml.
+
+[source,xml]
+--------------------------------------------------------------------------
+<route>
+    <from uri="jclouds:compute:aws-ec2?operation=CamelJCloudsListImages"/>
+    <to uri="direct:next"/>
+</route>
+--------------------------------------------------------------------------
+
+=== Example 2: Create a new node.
+
+[source,java]
+---------------------------------------------
+    from("direct:start").
+    to("jclouds:compute:aws-ec2" +
+        "?operation=CamelJcloudsCreateNode" +
+        "&imageId=AMI_XXXXX" +
+        "&locationId=XXXXX" +
+        "&group=myGroup");
+---------------------------------------------
+
+This will create a new node on the cloud provider. The out message in
+this case will be a set of metadata that contains information about the
+newly created node (e.g. the ip, hostname etc). Here is the same using
+spring xml.
+
+[source,xml]
+-------------------------------------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:start"/>
+    <to uri="jclouds:compute:aws-ec2?operation=CamelJcloudsCreateNode&imageId=AMI_XXXXX&locationId=XXXXX&group=myGroup"/>
+</route>
+-------------------------------------------------------------------------------------------------------------------------
+
+=== Example 3: Run a shell script on running node.
+
+[source,java]
+--------------------------------------------
+    from("direct:start").
+    to("jclouds:compute:aws-ec2" +
+        "?operation=CamelJcloudsRunScript" +
+        "?nodeId=10" +
+        "&user=ubuntu");
+--------------------------------------------
+
+The sample above will retrieve the body of the in message, which is
+expected to contain the shell script to be executed. Once the script is
+retrieved, it will be sent to the node for execution under the specified
+user (_in order case ubuntu_). The target node is specified using its
+nodeId. The nodeId can be retrieved either upon the creation of the
+node, it will be part of the resulting metadata or by a executing a
+LIST_NODES operation.
+
+*Note* This will require that the compute service that will be passed to
+the component, to be initialized with the appropriate jclouds ssh
+capable module (_e.g. jsch or sshj_).
+
+Here is the same using spring xml.
+
+[source,xml]
+----------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:start"/>
+    <to uri="jclouds:compute:aws-ec2?operation=CamelJcloudsListNodes&?nodeId=10&user=ubuntu"/>
+</route>
+----------------------------------------------------------------------------------------------

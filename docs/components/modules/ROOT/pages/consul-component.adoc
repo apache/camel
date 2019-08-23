@@ -1,1 +1,224 @@
-../../../../../components/camel-consul/src/main/docs/consul-component.adoc
+= Consul Component
+
+*Available as of Camel version 2.18*
+
+
+The Consul**** component is a component for integrating your application with Consul.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,java]
+-------------------------------------------------
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-consul</artifactId>
+        <version>${camel-version}</version>
+    </dependency>
+-------------------------------------------------
+
+== URI format
+
+[source,java]
+---------------------------------------
+    consul://domain?[options]
+---------------------------------------
+
+You can append query options to the URI in the following format:
+
+---------------------------------------
+    ?option=value&option=value&...
+---------------------------------------
+
+== Options
+
+
+
+
+// component options: START
+The Consul component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *url* (common) | The Consul agent URL |  | String
+| *datacenter* (common) | The data center |  | String
+| *sslContextParameters* (common) | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance. |  | SSLContextParameters
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *aclToken* (common) | Sets the ACL token to be used with Consul |  | String
+| *userName* (common) | Sets the username to be used for basic authentication |  | String
+| *password* (common) | Sets the password to be used for basic authentication |  | String
+| *configuration* (advanced) | Sets the common configuration shared among endpoints |  | ConsulConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+// endpoint options: START
+The Consul endpoint is configured using URI syntax:
+
+----
+consul:apiEndpoint
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apiEndpoint* | *Required* The API endpoint |  | String
+|===
+
+
+==== Query Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 90 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.consul.acl-token* | Sets the ACL token to be used with Consul |  | String
+| *camel.component.consul.cluster.service.acl-token* |  |  | String
+| *camel.component.consul.cluster.service.attributes* | Custom service attributes. |  | Map
+| *camel.component.consul.cluster.service.block-seconds* |  |  | Integer
+| *camel.component.consul.cluster.service.connect-timeout-millis* |  |  | Long
+| *camel.component.consul.cluster.service.consistency-mode* |  |  | ConsistencyMode
+| *camel.component.consul.cluster.service.datacenter* |  |  | String
+| *camel.component.consul.cluster.service.enabled* | Sets if the consul cluster service should be enabled or not, default is false. | false | Boolean
+| *camel.component.consul.cluster.service.first-index* |  |  | BigInteger
+| *camel.component.consul.cluster.service.id* | Cluster Service ID |  | String
+| *camel.component.consul.cluster.service.near-node* |  |  | String
+| *camel.component.consul.cluster.service.node-meta* |  |  | List
+| *camel.component.consul.cluster.service.order* | Service lookup order/priority. |  | Integer
+| *camel.component.consul.cluster.service.password* |  |  | String
+| *camel.component.consul.cluster.service.ping-instance* |  |  | Boolean
+| *camel.component.consul.cluster.service.read-timeout-millis* |  |  | Long
+| *camel.component.consul.cluster.service.recursive* |  |  | Boolean
+| *camel.component.consul.cluster.service.root-path* |  |  | String
+| *camel.component.consul.cluster.service.session-lock-delay* |  |  | Integer
+| *camel.component.consul.cluster.service.session-refresh-interval* |  |  | Integer
+| *camel.component.consul.cluster.service.session-ttl* |  |  | Integer
+| *camel.component.consul.cluster.service.ssl-context-parameters* |  |  | SSLContextParameters
+| *camel.component.consul.cluster.service.tags* |  |  | Set
+| *camel.component.consul.cluster.service.url* |  |  | String
+| *camel.component.consul.cluster.service.user-name* |  |  | String
+| *camel.component.consul.cluster.service.write-timeout-millis* |  |  | Long
+| *camel.component.consul.configuration.acl-token* | Sets the ACL token to be used with Consul |  | String
+| *camel.component.consul.configuration.action* | The default action. Can be overridden by CamelConsulAction |  | String
+| *camel.component.consul.configuration.block-seconds* | The second to wait for a watch event, default 10 seconds |  | Integer
+| *camel.component.consul.configuration.connect-timeout-millis* | Connect timeout for OkHttpClient |  | Long
+| *camel.component.consul.configuration.consistency-mode* | The consistencyMode used for queries, default ConsistencyMode.DEFAULT |  | ConsistencyMode
+| *camel.component.consul.configuration.consul-client* | Reference to a `com.orbitz.consul.Consul` in the registry. |  | Consul
+| *camel.component.consul.configuration.datacenter* | The data center |  | String
+| *camel.component.consul.configuration.first-index* | The first index for watch for, default 0 |  | BigInteger
+| *camel.component.consul.configuration.key* | The default key. Can be overridden by CamelConsulKey |  | String
+| *camel.component.consul.configuration.near-node* | The near node to use for queries. |  | String
+| *camel.component.consul.configuration.node-meta* | The note meta-data to use for queries. |  | List
+| *camel.component.consul.configuration.password* | Sets the password to be used for basic authentication |  | String
+| *camel.component.consul.configuration.ping-instance* | Configure if the AgentClient should attempt a ping before returning the Consul instance |  | Boolean
+| *camel.component.consul.configuration.read-timeout-millis* | Read timeout for OkHttpClient |  | Long
+| *camel.component.consul.configuration.recursive* | Recursively watch, default false |  | Boolean
+| *camel.component.consul.configuration.ssl-context-parameters* | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance. |  | SSLContextParameters
+| *camel.component.consul.configuration.tags* | Set tags. You can separate multiple tags by comma. |  | Set
+| *camel.component.consul.configuration.url* | The Consul agent URL |  | String
+| *camel.component.consul.configuration.user-name* | Sets the username to be used for basic authentication |  | String
+| *camel.component.consul.configuration.value-as-string* | Default to transform values retrieved from Consul i.e. on KV endpoint to string. |  | Boolean
+| *camel.component.consul.configuration.write-timeout-millis* | Write timeout for OkHttpClient |  | Long
+| *camel.component.consul.datacenter* | The data center |  | String
+| *camel.component.consul.enabled* | Enable consul component | true | Boolean
+| *camel.component.consul.health.check.repository.checks* | Define the checks to include. |  | List
+| *camel.component.consul.health.check.repository.configurations* | Health check configurations. |  | Map
+| *camel.component.consul.health.check.repository.enabled* |  |  | Boolean
+| *camel.component.consul.health.check.repository.failure-threshold* |  |  | Integer
+| *camel.component.consul.health.check.repository.interval* |  |  | String
+| *camel.component.consul.password* | Sets the password to be used for basic authentication |  | String
+| *camel.component.consul.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.consul.service-registry.acl-token* |  |  | String
+| *camel.component.consul.service-registry.attributes* | Custom service attributes. |  | Map
+| *camel.component.consul.service-registry.block-seconds* |  |  | Integer
+| *camel.component.consul.service-registry.check-interval* |  |  | Integer
+| *camel.component.consul.service-registry.check-ttl* |  |  | Integer
+| *camel.component.consul.service-registry.connect-timeout-millis* |  |  | Long
+| *camel.component.consul.service-registry.consistency-mode* |  |  | ConsistencyMode
+| *camel.component.consul.service-registry.datacenter* |  |  | String
+| *camel.component.consul.service-registry.deregister-after* |  |  | Integer
+| *camel.component.consul.service-registry.deregister-services-on-stop* |  |  | Boolean
+| *camel.component.consul.service-registry.enabled* | Sets if the consul service registry should be enabled or not, default is false. | false | Boolean
+| *camel.component.consul.service-registry.first-index* |  |  | BigInteger
+| *camel.component.consul.service-registry.id* | Service Registry ID |  | String
+| *camel.component.consul.service-registry.near-node* |  |  | String
+| *camel.component.consul.service-registry.node-meta* |  |  | List
+| *camel.component.consul.service-registry.order* | Service lookup order/priority. |  | Integer
+| *camel.component.consul.service-registry.override-service-host* |  |  | Boolean
+| *camel.component.consul.service-registry.password* |  |  | String
+| *camel.component.consul.service-registry.ping-instance* |  |  | Boolean
+| *camel.component.consul.service-registry.read-timeout-millis* |  |  | Long
+| *camel.component.consul.service-registry.recursive* |  |  | Boolean
+| *camel.component.consul.service-registry.service-host* |  |  | String
+| *camel.component.consul.service-registry.ssl-context-parameters* |  |  | SSLContextParameters
+| *camel.component.consul.service-registry.tags* |  |  | Set
+| *camel.component.consul.service-registry.url* |  |  | String
+| *camel.component.consul.service-registry.user-name* |  |  | String
+| *camel.component.consul.service-registry.write-timeout-millis* |  |  | Long
+| *camel.component.consul.ssl-context-parameters* | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.consul.url* | The Consul agent URL |  | String
+| *camel.component.consul.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+| *camel.component.consul.user-name* | Sets the username to be used for basic authentication |  | String
+| *camel.component.consul.cluster.service.dc* |  |  | String
+| *camel.component.consul.configuration.dc* | The data center  @deprecated replaced by {@link #setDatacenter(String)} ()} |  | String
+| *camel.component.consul.service-registry.dc* |  |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+== Headers
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Type |Description
+|CamelConsulAction|String|The Producer action
+|CamelConsulKey|String|The Key on which the action should applied
+|CamelConsulEventId|String|The event id (consumer only)
+|CamelConsulEventName|String|The event name (consumer only)
+|CamelConsulEventLTime|Long|The event LTime
+|CamelConsulNodeFilter|String|The Node filter
+|CamelConsulTagFilter|String|The tag filter
+|CamelConsulSessionFilter|String|The session filter
+|CamelConsulVersion|int|The data version
+|CamelConsulFlags|Long|Flags associated with a value
+|CamelConsulCreateIndex|Long|The internal index value that represents when the entry was created
+|CamelConsulLockIndex|Long|The number of times this key has successfully been acquired in a lock
+|CamelConsulModifyIndex|Long|The last index that modified this key
+|CamelConsulOptions|Object|Options associated to the request
+|CamelConsulResult|boolean|true if the response has a result
+|CamelConsulSession|String|The session id
+|CamelConsulValueAsString|boolean|To transform values retrieved from Consul i.e. on KV endpoint to string.
+|=======================================================================

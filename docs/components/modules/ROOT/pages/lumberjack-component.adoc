@@ -1,1 +1,133 @@
-../../../../../components/camel-lumberjack/src/main/docs/lumberjack-component.adoc
+= Lumberjack Component
+
+*Available as of Camel version 2.18*
+
+
+The Lumberjack component retrieves logs sent over the network using the Lumberjack protocol,
+from https://www.elastic.co/fr/products/beats/filebeat[Filebeat] for instance.
+The network communication can be secured with SSL.
+
+This component only supports consumer endpoints.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-lumberjack</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+------------------------------------
+lumberjack:host
+lumberjack:host:port
+------------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+
+
+
+// component options: START
+The Lumberjack component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *sslContextParameters* (security) | Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level. |  | SSLContextParameters
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+
+// endpoint options: START
+The Lumberjack endpoint is configured using URI syntax:
+
+----
+lumberjack:host:port
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* | *Required* Network interface on which to listen for Lumberjack |  | String
+| *port* | Network port on which to listen for Lumberjack | 5044 | int
+|===
+
+
+==== Query Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sslContextParameters* (consumer) | SSL configuration |  | SSLContextParameters
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.lumberjack.enabled* | Enable lumberjack component | true | Boolean
+| *camel.component.lumberjack.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.lumberjack.ssl-context-parameters* | Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.lumberjack.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+
+== Result
+
+The result body is a `Map<String, Object>` object.
+
+== Lumberjack Usage Samples
+
+=== Example 1: Streaming the log messages
+
+[source,java]
+------------------------------------------------------------------------------------
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+       from("lumberjack:0.0.0.0").                  // Listen on all network interfaces using the default port
+           setBody(simple("${body[message]}")).     // Select only the log message
+           to("stream:out");                        // Write it into the output stream
+    }
+};
+------------------------------------------------------------------------------------

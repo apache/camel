@@ -1,1 +1,93 @@
-../../../../../components/camel-asterisk/src/main/docs/asterisk-component.adoc
+= Asterisk Component
+
+*Available as of Camel version 2.18*
+
+
+The Asterisk component allows you to work easily with an Asterisk PBX Server http://www.asterisk.org/ using https://asterisk-java.org/[asterisk-java]
+
+This component help to interface with http://www.voip-info.org/wiki-Asterisk+manager+API[Asterisk Manager Interface]
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-asterisk</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------
+asterisk:name[?options]
+-------------------------------------------------------------------------------------------------------------------------
+
+== Options
+
+// component options: START
+The Asterisk component has no options.
+// component options: END
+
+// endpoint options: START
+The Asterisk endpoint is configured using URI syntax:
+
+----
+asterisk:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Logical name |  | String
+|===
+
+
+==== Query Parameters (8 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hostname* (common) | *Required* The hostname of the asterisk server |  | String
+| *password* (common) | *Required* Login password |  | String
+| *username* (common) | *Required* Login username |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *action* (producer) | What action to perform such as getting queue status, sip peers or extension state. |  | AsteriskAction
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.asterisk.enabled* | Enable asterisk component | true | Boolean
+| *camel.component.asterisk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+== Action
+Supported actions are:
+
+* QUEUE_STATUS, Queue Status
+* SIP_PEERS, List SIP Peers
+* EXTENSION_STATE, Check Extension Status

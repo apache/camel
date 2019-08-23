@@ -1,1 +1,151 @@
-../../../../../components/camel-barcode/src/main/docs/barcode-dataformat.adoc
+= Barcode DataFormat
+
+*Available as of Camel version 2.14*
+
+
+The Barcode data format is based on the
+https://github.com/zxing/zxing[zxing library]. The goal of this
+component is to create a barcode image from a String (marshal) and a
+String from a barcode image (unmarshal). You're free to use all features
+that zxing offers.
+
+== Dependencies
+
+To use the barcode data format in your camel routes you need to add the
+a dependency on *camel-barcode* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,java]
+----------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-barcode</artifactId>
+  <version>x.x.x</version>
+</dependency>
+----------------------------------------
+
+== Barcode Options
+
+// dataformat options: START
+The Barcode dataformat supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| width |  | Integer | Width of the barcode
+| height |  | Integer | Height of the barcode
+| imageType |  | String | Image type of the barcode such as png
+| barcodeFormat |  | String | Barcode format such as QR-Code
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.barcode.barcode-format* | Barcode format such as QR-Code |  | String
+| *camel.dataformat.barcode.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.barcode.enabled* | Enable barcode dataformat | true | Boolean
+| *camel.dataformat.barcode.height* | Height of the barcode |  | Integer
+| *camel.dataformat.barcode.image-type* | Image type of the barcode such as png |  | String
+| *camel.dataformat.barcode.width* | Width of the barcode |  | Integer
+|===
+// spring-boot-auto-configure options: END
+ND
+
+== Using the Java DSL
+
+First you have to initialize the barcode data fomat class. You can use
+the default constructor, or one of parameterized (see JavaDoc). The
+default values are:
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Parameter |Default Value 
+|image type (BarcodeImageType) |PNG
+
+|width |100 px
+
+|height |100 px
+
+|encoding |UTF-8
+
+|barcode format (BarcodeFormat) |QR-Code
+|=======================================================================
+
+[source,java]
+------------------------------------------
+// QR-Code default
+DataFormat code = new BarcodeDataFormat();
+------------------------------------------
+
+If you want to use zxing hints, you can use the 'addToHintMap' method of
+your BarcodeDataFormat instance:
+
+[source,java]
+-----------------------------------------------------------
+code.addToHintMap(DecodeHintType.TRY_HARDER, Boolean.true);
+-----------------------------------------------------------
+
+For possible hints, please consult the xzing documentation.
+
+=== Marshalling
+
+[source,java]
+----------------------------
+from("direct://code")
+  .marshal(code)
+  .to("file://barcode_out");
+----------------------------
+
+You can call the route from a test class with:
+
+[source,java]
+-------------------------------------------------------------
+template.sendBody("direct://code", "This is a testmessage!");
+-------------------------------------------------------------
+
+You should find inside the 'barcode_out' folder this image:
+
+image::qr-code.png[image]
+
+=== Unmarshalling
+
+The unmarshaller is generic. For unmarshalling you can use any
+BarcodeDataFormat instance. If you've two instances, one for
+(generating) QR-Code and one for PDF417, it doesn't matter which one
+will be used.
+
+[source,java]
+--------------------------------------------------------------------
+from("file://barcode_in?noop=true")
+  .unmarshal(code) // for unmarshalling, the instance doesn't matter
+  .to("mock:out");
+--------------------------------------------------------------------
+
+If you'll paste the QR-Code image above into the 'barcode_in' folder,
+you should find '`This is a testmessage!`' inside the mock. You can find
+the barcode data format as header variable:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+
+|Name |Type |Description
+
+|BarcodeFormat |String |Value of com.google.zxing.BarcodeFormat.
+|=======================================================================
+ 
+
+ 

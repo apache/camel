@@ -1,1 +1,214 @@
-../../../../../components/camel-sjms/src/main/docs/sjms-batch-component.adoc
+= Simple JMS Batch Component
+
+*Available as of Camel version 2.16*
+
+
+SJMS Batch is a specialized component for highly performant,
+transactional batch consumption from a JMS queue. It can be thought of
+as a hybrid of a consumer-only component and an
+aggregator.
+
+A common use case in Camel is to consume messages from a queue and
+aggregate them before sending the aggregated state to another endpoint.
+In order to ensure that data is not lost if the system performing the
+processing fails, it is typically consumed within a transaction from the
+queue, and once aggregated stored in a persistent
+`AggregationRepository`, such as the one found in the
+xref:jdbc-component.adoc[JDBC Component].
+
+The behavior of the aggregator pattern involves fetching data from the
+`AggregationRepository` before an incoming message is aggregated, and
+writing back the result afterwards. By nature, the reads and writes take
+progressively longer as the number of aggregated artifacts increases. A
+rough example of this using arbitrary time units that demonstrates the
+impact of this is as follows:
+
+[cols=",,,",options="header",]
+|=======================================
+|Item |Read Time |Write Time |Total Time
+|0 |0 |1 |1
+|1 |1 |2 |4
+|2 |2 |3 |9
+|3 |3 |4 |16
+|4 |4 |5 |25
+|5 |5 |6 |36
+|6 |6 |7 |49
+|7 |7 |8 |64
+|8 |8 |9 |81
+|9 |9 |10 |100
+|=======================================
+
+In contrast, consumption performance using the SJMS Batch component is
+linear. Each message is consumed and aggregated using an
+`AggregationStrategy` before the next one is fetched. As all of the
+consumption and aggregation is performed in a single JMS transaction no
+external storage is required to persist the intermediate state - this
+avoids the read and write costs described above. In practice, this
+yields multiple orders of magnitude higher throughput.
+
+Once a completion condition is met, either by size or period since first
+message, the aggregated `Exchange` is passed into the route. During the
+processing of this `Exchange`, if an exception is thrown or the system
+shuts down, all of the original consumed messages end up back on the
+queue (or are placed on the dead-letter queue depending on the broker
+configuration).
+
+Unlike using a regular aggregator, there is no facility for an
+aggregation condition, meaning that it is not possible to batch consume
+into multiple groups of messages. All consumed messages are aggregated
+together into a single batch.
+
+Multiple JMS consumer support is available which allows you to consume
+in parallel using the one route, and at the same time use facilities
+like JMS message groups to group related messages.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-sjms</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+[source]
+----
+sjms:[queue:]destinationName[?options]
+----
+
+Where `destinationName` is a JMS queue. By default, the
+`destinationName` is interpreted as a queue name.
+
+[source]
+----
+sjms:FOO.BAR
+----
+
+You can include the optional `queue:` prefix, if you prefer:
+
+[source]
+----
+sjms:queue:FOO.BAR
+----
+
+Topic consumption is not supported, as there is no advantage to using
+batch consumption within that context. Topic messages are usually
+non-persistent, and loss is acceptable. If consumed within a transaction
+that fails, a topic message will likely not be redelivered by the
+broker. A plain xref:sjms-component.adoc[SJMS] consumer endpoint can be used in
+conjunction with a regular non-persistence backed
+aggregator in this scenario.
+
+== Component Options and Configurations
+
+
+
+
+// component options: START
+The Simple JMS Batch component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionFactory* (advanced) | A ConnectionFactory is required to enable the SjmsBatchComponent. |  | ConnectionFactory
+| *asyncStartListener* (advanced) | Whether to startup the consumer message listener asynchronously, when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level, and the consumer will not be able to receive messages; You can then restart the route to retry. | false | boolean
+| *recoveryInterval* (advanced) | Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds. The default is 5000 ms, that is, 5 seconds. | 5000 | int
+| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+
+
+
+// endpoint options: START
+The Simple JMS Batch endpoint is configured using URI syntax:
+
+----
+sjms-batch:destinationName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *destinationName* | *Required* The destination name. Only queues are supported, names may be prefixed by 'queue:'. |  | String
+|===
+
+
+==== Query Parameters (23 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *aggregationStrategy* (consumer) | *Required* The aggregation strategy to use, which merges all the batched messages into a single message |  | AggregationStrategy
+| *allowNullBody* (consumer) | Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown. | true | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *completionInterval* (consumer) | The completion interval in millis, which causes batches to be completed in a scheduled fixed rate every interval. The batch may be empty if the timeout triggered and there was no messages in the batch. Notice you cannot use both completion timeout and completion interval at the same time, only one can be configured. | 1000 | int
+| *completionPredicate* (consumer) | The completion predicate, which causes batches to be completed when the predicate evaluates as true. The predicate can also be configured using the simple language using the string syntax. You may want to set the option eagerCheckCompletion to true to let the predicate match the incoming message, as otherwise it matches the aggregated message. |  | String
+| *completionSize* (consumer) | The number of messages consumed at which the batch will be completed | 200 | int
+| *completionTimeout* (consumer) | The timeout in millis from receipt of the first first message when the batch will be completed. The batch may be empty if the timeout triggered and there was no messages in the batch. Notice you cannot use both completion timeout and completion interval at the same time, only one can be configured. | 500 | int
+| *consumerCount* (consumer) | The number of JMS sessions to consume from | 1 | int
+| *eagerCheckCompletion* (consumer) | Use eager completion checking which means that the completionPredicate will use the incoming Exchange. As opposed to without eager completion checking the completionPredicate will use the aggregated Exchange. | false | boolean
+| *includeAllJMSXProperties* (consumer) | Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply. | false | boolean
+| *mapJmsMessage* (consumer) | Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc. See section about how mapping works below for more details. | true | boolean
+| *pollDuration* (consumer) | The duration in milliseconds of each poll for messages. completionTimeOut will be used if it is shorter and a batch has started. | 1000 | int
+| *sendEmptyMessageWhenIdle* (consumer) | If using completion timeout or interval, then the batch may be empty if the timeout triggered and there was no messages in the batch. If this option is true and the batch is empty then an empty message is added to the batch so an empty message is routed. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *asyncStartListener* (advanced) | Whether to startup the consumer message listener asynchronously, when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level, and the consumer will not be able to receive messages; You can then restart the route to retry. | false | boolean
+| *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *jmsKeyFormatStrategy* (advanced) | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation. |  | JmsKeyFormatStrategy
+| *keepAliveDelay* (advanced) | The delay in millis between attempts to re-establish a valid session. If this is a positive value the SjmsBatchConsumer will attempt to create a new session if it sees an IllegalStateException during message consumption. This delay value allows you to pause between attempts to prevent spamming the logs. If this is a negative value (default is -1) then the SjmsBatchConsumer will behave as it always has before - that is it will bail out and the route will shut down if it sees an IllegalStateException. | -1 | int
+| *messageCreatedStrategy* (advanced) | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message. |  | MessageCreatedStrategy
+| *recoveryInterval* (advanced) | Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds. The default is 5000 ms, that is, 5 seconds. | 5000 | int
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *timeoutCheckerExecutor Service* (advanced) | If using the completionInterval option a background thread is created to trigger the completion interval. Set this option to provide a custom thread pool to be used rather than creating a new thread for every consumer. |  | ScheduledExecutor Service
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.sjms-batch.async-start-listener* | Whether to startup the consumer message listener asynchronously, when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level, and the consumer will not be able to receive messages; You can then restart the route to retry. | false | Boolean
+| *camel.component.sjms-batch.connection-factory* | A ConnectionFactory is required to enable the SjmsBatchComponent. The option is a javax.jms.ConnectionFactory type. |  | String
+| *camel.component.sjms-batch.enabled* | Enable sjms-batch component | true | Boolean
+| *camel.component.sjms-batch.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.sjms-batch.recovery-interval* | Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds. The default is 5000 ms, that is, 5 seconds. | 5000 | Integer
+| *camel.component.sjms-batch.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+
+The `completionSize` endpoint attribute is used in conjunction with
+`completionTimeout`, where the first condition to be met will cause the
+aggregated `Exchange` to be emitted down the route.

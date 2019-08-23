@@ -1,1 +1,151 @@
-../../../../../components/camel-spring-ldap/src/main/docs/spring-ldap-component.adoc
+= Spring LDAP Component
+
+*Available as of Camel version 2.11*
+
+
+The Spring LDAP component provides a Camel wrapper for
+http://www.springsource.org/ldap[Spring LDAP].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-ldap</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+----------------------------------------
+spring-ldap:springLdapTemplate[?options]
+----------------------------------------
+
+Where *springLdapTemplate* is the name of the
+http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap/core/LdapTemplate.html[Spring
+LDAP Template bean]. In this bean, you configure the URL and the
+credentials for your LDAP access.
+
+== Options
+
+
+// component options: START
+The Spring LDAP component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Spring LDAP endpoint is configured using URI syntax:
+
+----
+spring-ldap:templateName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *templateName* | *Required* Name of the Spring LDAP Template bean |  | String
+|===
+
+
+==== Query Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *operation* (producer) | *Required* The LDAP operation to be performed. |  | LdapOperation
+| *scope* (producer) | The scope of the search operation. | subtree | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.spring-ldap.enabled* | Enable spring-ldap component | true | Boolean
+| *camel.component.spring-ldap.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== Usage
+
+The component supports producer endpoint only. An attempt to create a
+consumer endpoint will result in an `UnsupportedOperationException`. +
+ The body of the message must be a map (an instance of `java.util.Map`).
+Unless a base DN is specified by in the configuration of your ContextSource,
+this map must contain at least an entry with the key *`dn`* (not needed for function_driven operation) that
+specifies the root node for the LDAP operation to be performed. Other
+entries of the map are operation-specific (see below).
+
+The body of the message remains unchanged for the `bind` and `unbind`
+operations. For the `search` and `function_driven` operations, the body is set to the result of
+the search, see
+http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap/core/LdapTemplate.html#search%28java.lang.String,%20java.lang.String,%20int,%20org.springframework.ldap.core.AttributesMapper%29[http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap/core/LdapTemplate.html#search%28java.lang.String,%20java.lang.String,%20int,%20org.springframework.ldap.core.AttributesMapper%29].
+
+=== Search
+
+The message body must have an entry with the key *`filter`*. The value
+must be a `String` representing a valid LDAP filter, see
+http://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol#Search_and_Compare[http://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol#Search_and_Compare].
+
+=== Bind
+
+The message body must have an entry with the key *`attributes`*. The
+value must be an instance of
+http://docs.oracle.com/javase/6/docs/api/javax/naming/directory/Attributes.html[javax.naming.directory.Attributes]
+This entry specifies the LDAP node to be created.
+
+=== Unbind
+
+No further entries necessary, the node with the specified *`dn`* is
+deleted.
+
+=== Authenticate
+
+The message body must have entries with the keys *`filter`* and  *`password`*. The
+values must be an instance of `String` representing a valid LDAP filter and a user password, respectively.
+
+=== Modify Attributes
+
+The message body must have an entry with the key *`modificationItems`*. The
+value must be an instance of any array of type 
+http://docs.oracle.com/javase/6/docs/api/javax/naming/directory/ModificationItem.html[javax.naming.directory.ModificationItem]
+
+=== Function-Driven
+
+The message body must have entries with the keys *`function`* and *`request`*. The *`function`* value must be of type `java.util.function.BiFunction<L, Q, S>`. The `L` type parameter must be of type `org.springframework.ldap.core.LdapOperations`. The *`request`* value must be the same type as the `Q` type parameter in the *`function`* and it must encapsulate the parameters expected by the LdapTemplate method being invoked within the *`function`*. The `S` type parameter represents the response type as returned by the LdapTemplate method being invoked.
+This operation allows dynamic invocation of LdapTemplate methods that are not covered by the operations mentioned above.
+
+*Key definitions*
+
+In order to avoid spelling errors, the following constants are defined
+in `org.apache.camel.springldap.SpringLdapProducer`:
+
+* public static final String DN = "dn"
+* public static final String FILTER = "filter"
+* public static final String ATTRIBUTES = "attributes"
+* public static final String PASSWORD = "password";
+* public static final String MODIFICATION_ITEMS = "modificationItems";
+* public static final String FUNCTION = "function";
+* public static final String REQUEST = "request";

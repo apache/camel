@@ -1,1 +1,134 @@
-../../../../../components/camel-hazelcast/src/main/docs/hazelcast-seda-component.adoc
+= Hazelcast SEDA Component
+
+*Available as of Camel version 2.7*
+
+
+The http://www.hazelcast.com/[Hazelcast] SEDA component is one of Camel Hazelcast Components which allows you to access Hazelcast BlockingQueue.
+SEDA component differs from the rest components provided. It implements a work-queue in order to support asynchronous SEDA architectures, similar to the core "SEDA" component.
+
+
+== Options
+
+// component options: START
+The Hazelcast SEDA component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hazelcastInstance* (advanced) | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. |  | HazelcastInstance
+| *hazelcastMode* (advanced) | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+// endpoint options: START
+The Hazelcast SEDA endpoint is configured using URI syntax:
+
+----
+hazelcast-seda:cacheName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cacheName* | *Required* The name of the cache |  | String
+|===
+
+
+==== Query Parameters (16 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *defaultOperation* (common) | To specify a default operation to use, if no operation header has been provided. |  | HazelcastOperation
+| *hazelcastInstance* (common) | The hazelcast instance reference which can be used for hazelcast endpoint. |  | HazelcastInstance
+| *hazelcastInstanceName* (common) | The hazelcast instance reference name which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. |  | String
+| *reliable* (common) | Define if the endpoint will use a reliable Topic struct or not. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *pollingTimeout* (consumer) | Define the polling timeout of the Queue consumer in Poll mode | 10000 | long
+| *poolSize* (consumer) | Define the Pool size for Queue Consumer Executor | 1 | int
+| *queueConsumerMode* (consumer) | Define the Queue Consumer mode: Listen or Poll | Listen | HazelcastQueueConsumer Mode
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *concurrentConsumers* (seda) | To use concurrent consumers polling from the SEDA queue. | 1 | int
+| *onErrorDelay* (seda) | Milliseconds before consumer continues polling after an error has occurred. | 1000 | int
+| *pollTimeout* (seda) | The timeout used when consuming from the SEDA queue. When a timeout occurs, the consumer can check whether it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown. | 1000 | int
+| *transacted* (seda) | If set to true then the consumer runs in transaction mode, where the messages in the seda queue will only be removed if the transaction commits, which happens when the processing is complete. | false | boolean
+| *transferExchange* (seda) | If set to true the whole Exchange will be transfered. If header or body contains not serializable objects, they will be skipped. | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.hazelcast-seda.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-seda.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-seda.enabled* | Enable hazelcast-seda component | true | Boolean
+| *camel.component.hazelcast-seda.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. The option is a com.hazelcast.core.HazelcastInstance type. |  | String
+| *camel.component.hazelcast-seda.hazelcast-mode* | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
+| *camel.component.hazelcast-seda.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+== SEDA producer – to(“hazelcast-seda:foo”)
+
+The SEDA producer provides no operations. You only send data to the
+specified queue.
+
+Java DSL :
+
+[source,java]
+--------------------------
+from("direct:foo")
+.to("hazelcast-seda:foo");
+--------------------------
+
+Spring DSL :
+
+[source,java]
+----------------------------------
+<route>
+   <from uri="direct:start" />
+   <to uri="hazelcast-seda:foo" />
+</route>
+----------------------------------
+
+== SEDA consumer – from(“hazelcast-seda:foo”)
+
+The SEDA consumer provides no operations. You only retrieve data from
+the specified queue.
+
+Java DSL :
+
+[source,java]
+--------------------------
+from("hazelcast-seda:foo")
+.to("mock:result");
+--------------------------
+
+Spring DSL:
+
+[source,java]
+-----------------------------------
+<route>
+  <from uri="hazelcast-seda:foo" />
+  <to uri="mock:result" />
+</route>
+-----------------------------------

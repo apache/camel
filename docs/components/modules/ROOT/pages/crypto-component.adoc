@@ -1,1 +1,280 @@
-../../../../../components/camel-crypto/src/main/docs/crypto-component.adoc
+= Crypto (JCE) Component
+
+*Available as of Camel version 2.3*
+
+
+With Camel cryptographic endpoints and Java's Cryptographic extension it
+is easy to create Digital Signatures for Exchanges.
+Camel provides a pair of flexible endpoints which get used in concert to
+create a signature for an exchange in one part of the exchange's
+workflow and then verify the signature in a later part of the workflow.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-crypto</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== Introduction
+
+Digital signatures make use of Asymmetric Cryptographic techniques to
+sign messages. From a (very) high level, the algorithms use pairs of
+complimentary keys with the special property that data encrypted with
+one key can only be decrypted with the other. One, the private key, is
+closely guarded and used to 'sign' the message while the other, public
+key, is shared around to anyone interested in verifying the signed
+messages. Messages are signed by using the private key to encrypting a
+digest of the message. This encrypted digest is transmitted along with
+the message. On the other side the verifier recalculates the message
+digest and uses the public key to decrypt the digest in the
+signature. If both digests match the verifier knows only the holder of
+the private key could have created the signature.
+
+Camel uses the Signature service from the Java Cryptographic Extension
+to do all the heavy cryptographic lifting required to create exchange
+signatures. The following are some excellent resources for explaining
+the mechanics of Cryptography, Message digests and Digital Signatures
+and how to leverage them with the JCE.
+
+* Bruce Schneier's Applied Cryptography
+* Beginning Cryptography with Java by David Hook
+* The ever insightful Wikipedia
+http://en.wikipedia.org/wiki/Digital_signature[Digital_signatures]
+
+== URI format
+
+As mentioned Camel provides a pair of crypto endpoints to create and
+verify signatures
+
+[source,java]
+----------------------------
+crypto:sign:name[?options]
+crypto:verify:name[?options]
+----------------------------
+
+* `crypto:sign` creates the signature and stores it in the Header keyed
+by the constant
+`org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE`,
+i.e. `"CamelDigitalSignature"`.
+* `crypto:verify` will read in the contents of this header and do the
+verification calculation.
+
+In order to correctly function, the sign and verify process needs a pair
+of keys to be shared, signing requiring a `PrivateKey` and verifying a
+`PublicKey` (or a `Certificate` containing one). Using the JCE it is
+very simple to generate these key pairs but it is usually most secure to
+use a KeyStore to house and share your keys. The DSL is very flexible
+about how keys are supplied and provides a number of mechanisms.
+
+Note a `crypto:sign` endpoint is typically defined in one route and the
+complimentary `crypto:verify` in another, though for simplicity in the
+examples they appear one after the other. It goes without saying that
+both signing and verifying should be configured identically.
+
+== Options
+
+// component options: START
+The Crypto (JCE) component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | To use the shared DigitalSignatureConfiguration as configuration |  | DigitalSignature Configuration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Crypto (JCE) endpoint is configured using URI syntax:
+
+----
+crypto:cryptoOperation:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cryptoOperation* | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation. |  | CryptoOperation
+| *name* | *Required* The logical name of this operation. |  | String
+|===
+
+
+==== Query Parameters (19 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *algorithm* (producer) | Sets the JCE name of the Algorithm that should be used for the signer. | SHA1WithDSA | String
+| *alias* (producer) | Sets the alias used to query the KeyStore for keys and link java.security.cert.Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS |  | String
+| *certificateName* (producer) | Sets the reference name for a PrivateKey that can be fond in the registry. |  | String
+| *keystore* (producer) | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStore
+| *keystoreName* (producer) | Sets the reference name for a Keystore that can be fond in the registry. |  | String
+| *privateKey* (producer) | Set the PrivateKey that should be used to sign the exchange |  | PrivateKey
+| *privateKeyName* (producer) | Sets the reference name for a PrivateKey that can be fond in the registry. |  | String
+| *provider* (producer) | Set the id of the security provider that provides the configured Signature algorithm. |  | String
+| *publicKeyName* (producer) | references that should be resolved when the context changes |  | String
+| *secureRandomName* (producer) | Sets the reference name for a SecureRandom that can be fond in the registry. |  | String
+| *signatureHeaderName* (producer) | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
+| *bufferSize* (advanced) | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
+| *certificate* (advanced) | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
+| *clearHeaders* (advanced) | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true, and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset. | true | boolean
+| *keyStoreParameters* (advanced) | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStoreParameters
+| *publicKey* (advanced) | Set the PublicKey that should be used to verify the signature in the exchange. |  | PublicKey
+| *secureRandom* (advanced) | Set the SecureRandom used to initialize the Signature service |  | SecureRandom
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *password* (security) | Sets the password used to access an aliased PrivateKey in the KeyStore. |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 33 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.crypto.configuration.algorithm* | Sets the JCE name of the Algorithm that should be used for the signer. | SHA1WithDSA | String
+| *camel.component.crypto.configuration.alias* | Sets the alias used to query the KeyStore for keys and link java.security.cert.Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header org.apache.camel.component.crypto.DigitalSignatureConstants #KEYSTORE_ALIAS |  | String
+| *camel.component.crypto.configuration.buffer-size* | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
+| *camel.component.crypto.configuration.certificate* | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
+| *camel.component.crypto.configuration.certificate-name* | Sets the reference name for a PrivateKey that can be fond in the registry. |  | String
+| *camel.component.crypto.configuration.clear-headers* | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true, and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset. | true | Boolean
+| *camel.component.crypto.configuration.crypto-operation* | Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation. |  | CryptoOperation
+| *camel.component.crypto.configuration.key-store-parameters* | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStoreParameters
+| *camel.component.crypto.configuration.keystore* | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias, either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStore
+| *camel.component.crypto.configuration.keystore-name* | Sets the reference name for a Keystore that can be fond in the registry. |  | String
+| *camel.component.crypto.configuration.name* | The logical name of this operation. |  | String
+| *camel.component.crypto.configuration.password* | Sets the password used to access an aliased PrivateKey in the KeyStore. |  | Character[]
+| *camel.component.crypto.configuration.private-key* | Set the PrivateKey that should be used to sign the exchange |  | PrivateKey
+| *camel.component.crypto.configuration.private-key-name* | Sets the reference name for a PrivateKey that can be fond in the registry. |  | String
+| *camel.component.crypto.configuration.provider* | Set the id of the security provider that provides the configured Signature algorithm. |  | String
+| *camel.component.crypto.configuration.public-key* | Set the PublicKey that should be used to verify the signature in the exchange. |  | PublicKey
+| *camel.component.crypto.configuration.public-key-name* | references that should be resolved when the context changes |  | String
+| *camel.component.crypto.configuration.secure-random* | Set the SecureRandom used to initialize the Signature service |  | SecureRandom
+| *camel.component.crypto.configuration.secure-random-name* | Sets the reference name for a SecureRandom that can be fond in the registry. |  | String
+| *camel.component.crypto.configuration.signature-header-name* | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
+| *camel.component.crypto.enabled* | Enable crypto component | true | Boolean
+| *camel.component.crypto.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.dataformat.crypto.algorithm* | The JCE algorithm name indicating the cryptographic algorithm that will be used. Is by default DES/CBC/PKCS5Padding. | DES/CBC/PKCS5Padding | String
+| *camel.dataformat.crypto.algorithm-parameter-ref* | A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type. |  | String
+| *camel.dataformat.crypto.buffersize* | The size of the buffer used in the signature process. |  | Integer
+| *camel.dataformat.crypto.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.crypto.crypto-provider* | The name of the JCE Security Provider that should be used. |  | String
+| *camel.dataformat.crypto.enabled* | Enable crypto dataformat | true | Boolean
+| *camel.dataformat.crypto.init-vector-ref* | Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher. |  | String
+| *camel.dataformat.crypto.inline* | Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false. | false | Boolean
+| *camel.dataformat.crypto.key-ref* | Refers to the secret key to lookup from the register to use. |  | String
+| *camel.dataformat.crypto.mac-algorithm* | The JCE algorithm name indicating the Message Authentication algorithm. | HmacSHA1 | String
+| *camel.dataformat.crypto.should-append-h-m-a-c* | Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Using
+
+=== Raw keys
+
+The most basic way to way to sign and verify an exchange is with a
+KeyPair as follows.
+
+The same can be achieved with the xref:manual::spring-xml-extensions.adoc[Spring
+XML Extensions] using references to keys
+
+=== KeyStores and Aliases.
+
+The JCE provides a very versatile keystore concept for housing pairs of
+private keys and certificates, keeping them encrypted and password
+protected. They can be retrieved by applying an alias to the retrieval
+APIs. There are a number of ways to get keys and Certificates into a
+keystore, most often this is done with the external 'keytool'
+application.
+http://www.exampledepot.com/egs/java.security.cert/CreateCert.html[This]
+is a good example of using keytool to create a KeyStore with a self
+signed Cert and Private key.
+
+The examples use a Keystore with a key and cert aliased by 'bob'. The
+password for the keystore and the key is 'letmein'
+
+The following shows how to use a Keystore via the Fluent builders, it
+also shows how to load and initialize the keystore.
+
+Again in Spring a ref is used to lookup an actual keystore instance.
+
+=== Changing JCE Provider and Algorithm
+
+Changing the Signature algorithm or the Security provider is a simple
+matter of specifying their names. You will need to also use Keys that
+are compatible with the algorithm you choose.
+
+or
+
+=== Changing the Signature Message Header
+
+It may be desirable to change the message header used to store the
+signature. A different header name can be specified in the route
+definition as follows
+
+or
+
+=== Changing the buffersize
+
+In case you need to update the size of the buffer...
+
+or
+
+=== Supplying Keys dynamically.
+
+When using a Recipient list or similar EIP the recipient of an exchange
+can vary dynamically. Using the same key across all recipients may be
+neither feasible nor desirable. It would be useful to be able to specify
+signature keys dynamically on a per-exchange basis. The exchange could
+then be dynamically enriched with the key of its target recipient prior
+to signing. To facilitate this the signature mechanisms allow for keys
+to be supplied dynamically via the message headers below
+
+* `Exchange.SIGNATURE_PRIVATE_KEY`, `"CamelSignaturePrivateKey"`
+* `Exchange.SIGNATURE_PUBLIC_KEY_OR_CERT`, `"CamelSignaturePublicKeyOrCert"`
+
+or
+
+Even better would be to dynamically supply a keystore alias. Again the
+alias can be supplied in a message header
+
+* `Exchange.KEYSTORE_ALIAS`, `"CamelSignatureKeyStoreAlias"`
+
+or
+
+The header would be set as follows
+
+[source,java]
+-------------------------------------------------------------------------------------------------
+Exchange unsigned = getMandatoryEndpoint("direct:alias-sign").createExchange();
+unsigned.getIn().setBody(payload);
+unsigned.getIn().setHeader(DigitalSignatureConstants.KEYSTORE_ALIAS, "bob");
+unsigned.getIn().setHeader(DigitalSignatureConstants.KEYSTORE_PASSWORD, "letmein".toCharArray());
+template.send("direct:alias-sign", unsigned);
+Exchange signed = getMandatoryEndpoint("direct:alias-sign").createExchange();
+signed.getIn().copyFrom(unsigned.getOut());
+signed.getIn().setHeader(KEYSTORE_ALIAS, "bob");
+template.send("direct:alias-verify", signed);
+-------------------------------------------------------------------------------------------------

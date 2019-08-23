@@ -1,1 +1,106 @@
-../../../../../components/camel-beanio/src/main/docs/beanio-dataformat.adoc
+= BeanIO DataFormat
+
+*Available as of Camel version 2.10*
+
+
+The BeanIO Data Format uses
+http://beanio.org/[BeanIO] to handle flat payloads (such as XML, CSV,
+delimited, or fixed length formats).
+
+BeanIO is configured using a
+http://beanio.org/2.0/docs/reference/index.html#TheMappingFile[mappings
+XML] file where you define the mapping from the flat format to Objects
+(POJOs). This mapping file is mandatory to use.
+
+== Options
+
+// dataformat options: START
+The BeanIO dataformat supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| mapping |  | String | The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or classpath: to denote from where to load the mapping file.
+| streamName |  | String | The name of the stream to use.
+| ignoreUnidentifiedRecords | false | Boolean | Whether to ignore unidentified records.
+| ignoreUnexpectedRecords | false | Boolean | Whether to ignore unexpected records.
+| ignoreInvalidRecords | false | Boolean | Whether to ignore invalid records.
+| encoding |  | String | The charset to use. Is by default the JVM platform default charset.
+| beanReaderErrorHandlerType |  | String | To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing. Configure the fully qualified class name of the error handler. Notice the options ignoreUnidentifiedRecords, ignoreUnexpectedRecords, and ignoreInvalidRecords may not be in use when you use a custom error handler.
+| unmarshalSingleObject | false | Boolean | This options controls whether to unmarshal as a list of objects or as a single object only. The former is the default mode, and the latter is only intended in special use-cases where beanio maps the Camel message to a single POJO bean.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.beanio.bean-reader-error-handler-type* | To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler while parsing. Configure the fully qualified class name of the error handler. Notice the options ignoreUnidentifiedRecords, ignoreUnexpectedRecords, and ignoreInvalidRecords may not be in use when you use a custom error handler. |  | String
+| *camel.dataformat.beanio.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.beanio.enabled* | Enable beanio dataformat | true | Boolean
+| *camel.dataformat.beanio.encoding* | The charset to use. Is by default the JVM platform default charset. |  | String
+| *camel.dataformat.beanio.ignore-invalid-records* | Whether to ignore invalid records. | false | Boolean
+| *camel.dataformat.beanio.ignore-unexpected-records* | Whether to ignore unexpected records. | false | Boolean
+| *camel.dataformat.beanio.ignore-unidentified-records* | Whether to ignore unidentified records. | false | Boolean
+| *camel.dataformat.beanio.mapping* | The BeanIO mapping file. Is by default loaded from the classpath. You can prefix with file:, http:, or classpath: to denote from where to load the mapping file. |  | String
+| *camel.dataformat.beanio.stream-name* | The name of the stream to use. |  | String
+| *camel.dataformat.beanio.unmarshal-single-object* | This options controls whether to unmarshal as a list of objects or as a single object only. The former is the default mode, and the latter is only intended in special use-cases where beanio maps the Camel message to a single POJO bean. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+ND
+
+== Usage
+
+An example of a
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-beanio/src/test/resources/org/apache/camel/dataformat/beanio/mappings.xml[mapping
+file is here].
+
+=== Using Java DSL
+
+To use the `BeanIODataFormat` you need to configure the data format with
+the mapping file, as well the name of the stream. +
+ In Java DSL this can be done as shown below. The streamName is
+"employeeFile".
+
+Then we have two routes. The first route is for transforming CSV data
+into a List<Employee> Java objects. Which we then
+split, so the mock endpoint +
+ receives a message for each row.
+
+The 2nd route is for the reverse operation, to transform a
+List<Employee> into a stream of CSV data.
+
+The CSV data could for example be as below:
+
+=== Using XML DSL
+
+To use the BeanIO data format in XML, you need to configure it using the
+<beanio> XML tag as shown below. The routes is similar to the example
+above.
+
+== Dependencies
+
+To use BeanIO in your Camel routes you need to add a dependency on
+*camel-beanio* which implements this data format.
+
+If you use Maven you can just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+---------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-beanio</artifactId>
+  <version>2.10.0</version>
+</dependency>
+---------------------------------------

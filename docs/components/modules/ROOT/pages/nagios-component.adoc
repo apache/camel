@@ -1,1 +1,170 @@
-../../../../../components/camel-nagios/src/main/docs/nagios-component.adoc
+= Nagios Component
+
+*Available as of Camel version 2.3*
+
+
+The xref:nagios-component.adoc[Nagios] component allows you to send passive checks
+to http://nagios.org[Nagios].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,java]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-nagios</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+[source,java]
+------------------------------
+nagios://host[:port][?Options]
+------------------------------
+
+Camel provides two abilities with the xref:nagios-component.adoc[Nagios]
+component. You can send passive check messages by sending a message to
+its endpoint. +
+ Camel also provides a EventNotifer which allows
+you to send notifications to Nagios.
+
+== Options
+
+
+
+
+
+// component options: START
+The Nagios component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | To use a shared NagiosConfiguration |  | NagiosConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+
+
+// endpoint options: START
+The Nagios endpoint is configured using URI syntax:
+
+----
+nagios:host:port
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* | *Required* This is the address of the Nagios host where checks should be send. |  | String
+| *port* | *Required* The port number of the host. |  | int
+|===
+
+
+==== Query Parameters (7 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionTimeout* (producer) | Connection timeout in millis. | 5000 | int
+| *sendSync* (producer) | Whether or not to use synchronous when sending a passive check. Setting it to false will allow Camel to continue routing the message and the passive check message will be send asynchronously. | true | boolean
+| *timeout* (producer) | Sending timeout in millis. | 5000 | int
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *encryption* (security) | To specify an encryption method. |  | Encryption
+| *encryptionMethod* (security) | *Deprecated* To specify an encryption method. |  | NagiosEncryptionMethod
+| *password* (security) | Password to be authenticated when sending checks to Nagios. |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.nagios.configuration.connection-timeout* | Connection timeout in millis. | 5000 | Integer
+| *camel.component.nagios.configuration.encryption* | To specify an encryption method. |  | Encryption
+| *camel.component.nagios.configuration.host* | This is the address of the Nagios host where checks should be send. |  | String
+| *camel.component.nagios.configuration.nagios-settings* |  |  | NagiosSettings
+| *camel.component.nagios.configuration.password* | Password to be authenticated when sending checks to Nagios. |  | String
+| *camel.component.nagios.configuration.port* | The port number of the host. |  | Integer
+| *camel.component.nagios.configuration.timeout* | Sending timeout in millis. | 5000 | Integer
+| *camel.component.nagios.enabled* | Enable nagios component | true | Boolean
+| *camel.component.nagios.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.nagios.configuration.encryption-method* | To specify an encryption method. |  | NagiosEncryptionMethod
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+== Sending message examples
+
+You can send a message to Nagios where the message payload contains the
+message. By default it will be `OK` level and use the
+CamelContext name as the service name. You can
+overrule these values using headers as shown above.
+
+For example we send the `Hello Nagios` message to Nagios as follows:
+
+[source,java]
+---------------------------------------------------------------------------------------
+    template.sendBody("direct:start", "Hello Nagios");
+
+    from("direct:start").to("nagios:127.0.0.1:5667?password=secret").to("mock:result");
+---------------------------------------------------------------------------------------
+
+To send a `CRITICAL` message you can send the headers such as:
+
+[source,java]
+-----------------------------------------------------------------------------
+        Map headers = new HashMap();
+        headers.put(NagiosConstants.LEVEL, "CRITICAL");
+        headers.put(NagiosConstants.HOST_NAME, "myHost");
+        headers.put(NagiosConstants.SERVICE_NAME, "myService");
+        template.sendBodyAndHeaders("direct:start", "Hello Nagios", headers);
+-----------------------------------------------------------------------------
+
+== Using `NagiosEventNotifer`
+
+The xref:nagios-component.adoc[Nagios] component also provides an
+EventNotifer which you can use to send events to
+Nagios. For example we can enable this from Java as follows:
+
+[source,java]
+-------------------------------------------------------------------
+        NagiosEventNotifier notifier = new NagiosEventNotifier();
+        notifier.getConfiguration().setHost("localhost");
+        notifier.getConfiguration().setPort(5667);
+        notifier.getConfiguration().setPassword("password");
+
+        CamelContext context = ... 
+        context.getManagementStrategy().addEventNotifier(notifier);
+        return context;
+-------------------------------------------------------------------
+
+In Spring XML its just a matter of defining a Spring bean with the type
+`EventNotifier` and Camel will pick it up as documented here:
+xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
+configuration of CamelContext using Spring].

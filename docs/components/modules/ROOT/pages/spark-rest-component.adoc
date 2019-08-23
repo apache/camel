@@ -1,1 +1,185 @@
-../../../../../components/camel-spark-rest/src/main/docs/spark-rest-component.adoc
+= Spark Rest Component
+
+*Available as of Camel version 2.14*
+
+
+The Spark-rest component allows to define REST endpoints using the
+http://sparkjava.com/[Spark REST Java library] using the
+Rest DSL.
+
+NOTE: Spark Java requires Java 8 runtime.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+-------------------------------------------------
+ <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spark-rest</artifactId>
+        <version>${camel-version}</version>
+    </dependency>
+-------------------------------------------------
+
+== URI format
+
+[source,text]
+----------------------------------
+spark-rest://verb:path?[options]
+----------------------------------
+
+== URI Options
+
+
+
+// component options: START
+The Spark Rest component supports 12 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *port* (consumer) | Port number. Will by default use 4567 | 4567 | int
+| *ipAddress* (consumer) | Set the IP address that Spark should listen on. If not called the default address is '0.0.0.0'. | 0.0.0.0 | String
+| *minThreads* (advanced) | Minimum number of threads in Spark thread-pool (shared globally) |  | int
+| *maxThreads* (advanced) | Maximum number of threads in Spark thread-pool (shared globally) |  | int
+| *timeOutMillis* (advanced) | Thread idle timeout in millis where threads that has been idle for a longer period will be terminated from the thread pool |  | int
+| *keystoreFile* (security) | Configures connection to be secure to use the keystore file |  | String
+| *keystorePassword* (security) | Configures connection to be secure to use the keystore password |  | String
+| *truststoreFile* (security) | Configures connection to be secure to use the truststore file |  | String
+| *truststorePassword* (security) | Configures connection to be secure to use the truststore password |  | String
+| *sparkConfiguration* (advanced) | To use the shared SparkConfiguration |  | SparkConfiguration
+| *sparkBinding* (advanced) | To use a custom SparkBinding to map to/from Camel message. |  | SparkBinding
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The Spark Rest endpoint is configured using URI syntax:
+
+----
+spark-rest:verb:path
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *verb* | *Required* get, post, put, patch, delete, head, trace, connect, or options. |  | String
+| *path* | *Required* The content path which support Spark syntax. |  | String
+|===
+
+
+==== Query Parameters (11 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accept* (consumer) | Accept type such as: 'text/xml', or 'application/json'. By default we accept all kinds of types. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *disableStreamCache* (consumer) | Determines whether or not the raw input stream from Spark HttpRequest#getContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. Mind that if you enable this option, then you cannot read the Netty stream multiple times out of the box, and you would need manually to reset the reader index on the Spark raw stream. | false | boolean
+| *mapHeaders* (consumer) | If this option is enabled, then during binding from Spark to Camel Message then the headers will be mapped as well (eg added as header to the Camel Message as well). You can turn off this option to disable this. The headers can still be accessed from the org.apache.camel.component.sparkrest.SparkMessage message with the method getRequest() that returns the Spark HTTP request instance. | true | boolean
+| *transferException* (consumer) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| *urlDecodeHeaders* (consumer) | If this option is enabled, then during binding from Spark to Camel Message then the header values will be URL decoded (eg %20 will be a space character.) | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *matchOnUriPrefix* (advanced) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
+| *sparkBinding* (advanced) | To use a custom SparkBinding to map to/from Camel message. |  | SparkBinding
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+
+== Path using Spark syntax
+
+The path option is defined using a Spark REST syntax where you define
+the REST context path using support for parameters and splat. See more
+details at the http://sparkjava.com/readme.html#title1[Spark Java Route]
+documentation.
+
+The following is a Camel route using a fixed path
+
+[source,java]
+---------------------------------------
+from("spark-rest:get:hello")
+  .transform().constant("Bye World");
+---------------------------------------
+
+And the following route uses a parameter which is mapped to a Camel
+header with the key "me".
+
+[source,java]
+--------------------------------------------
+from("spark-rest:get:hello/:me")
+  .transform().simple("Bye ${header.me}");
+--------------------------------------------
+
+== Mapping to Camel Message
+
+The Spark Request object is mapped to a Camel Message as
+a `org.apache.camel.component.sparkrest.SparkMessage` which has access
+to the raw Spark request using the getRequest method. By default the
+Spark body is mapped to Camel message body, and any HTTP headers / Spark
+parameters is mapped to Camel Message headers. There is special support
+for the Spark splat syntax, which is mapped to the Camel message header
+with key splat.
+
+For example the given route below uses Spark splat (the asterisk
+sign) in the context path which we can access as a header form the
+Simple language to construct a response message.
+
+[source,java]
+------------------------------------------------------------------------------
+from("spark-rest:get:/hello/*/to/*")
+  .transform().simple("Bye big ${header.splat[1]} from ${header.splat[0]}");
+------------------------------------------------------------------------------
+
+== Rest DSL
+
+Apache Camel provides a new Rest DSL that allow to define the REST
+services in a nice REST style. For example we can define a REST hello
+service as shown below:
+
+[source,java]
+----------------------------------------------------------------
+return new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+          rest("/hello/{me}").get()
+              .route().transform().simple("Bye ${header.me}");
+      }
+  };
+----------------------------------------------------------------
+
+[source,xml]
+--------------------------------------------------------------
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <rest uri="/hello/{me}">
+    <get>
+      <route>
+        <transform>
+          <simple>Bye ${header.me}</simple>
+        </transform>
+      </route>
+    </get>
+  </rest>
+</camelContext>
+--------------------------------------------------------------
+
+See more details at the Rest DSL.
+
+== More examples
+
+There is a *camel-example-spark-rest-tomcat* example in the Apache Camel
+distribution, that demonstrates how to use camel-spark-rest in a web
+application that can be deployed on Apache Tomcat, or similar web
+containers.

@@ -1,1 +1,427 @@
-../../../../../components/camel-rabbitmq/src/main/docs/rabbitmq-component.adoc
+= RabbitMQ Component
+
+*Available as of Camel version 2.12*
+
+
+The RabbitMQ component allows you produce and consume messages from
+http://www.rabbitmq.com/[RabbitMQ] instances. Using the RabbitMQ AMQP
+client, this component offers a pure RabbitMQ approach over the generic
+http://camel.apache.org/amqp.html[AMQP] component.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-rabbitmq</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+The old syntax is *deprecated*:
+[source,text]
+----
+rabbitmq://hostname[:port]/exchangeName?[options]
+----
+
+Instead the hostname and port is configured on the component level, or
+can be provided as uri query parameters instead.
+
+The new syntax is:
+[source,text]
+----
+rabbitmq:exchangeName?[options]
+----
+
+Where *hostname* is the hostname of the running rabbitmq instance or
+cluster. Port is optional and if not specified then defaults to the
+RabbitMQ client default (5672). The exchange name determines which
+exchange produced messages will sent to. In the case of consumers, the
+exchange name determines which exchange the queue will bind to.
+
+== Options
+
+// component options: START
+The RabbitMQ component supports 50 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *hostname* (common) | The hostname of the running RabbitMQ instance or cluster. |  | String
+| *portNumber* (common) | Port number for the host with the running rabbitmq instance or cluster. | 5672 | int
+| *username* (security) | Username in case of authenticated access | guest | String
+| *password* (security) | Password for authenticated access | guest | String
+| *vhost* (common) | The vhost for the channel | / | String
+| *addresses* (common) | If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345, server2:12345 |  | String
+| *connectionFactory* (common) | To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used |  | ConnectionFactory
+| *threadPoolSize* (consumer) | The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads. | 10 | int
+| *autoDetectConnection Factory* (advanced) | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | boolean
+| *connectionTimeout* (advanced) | Connection timeout | 60000 | int
+| *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
+| *requestedFrameMax* (advanced) | Connection requested frame max (max size of frame offered) | 0 | int
+| *requestedHeartbeat* (advanced) | Connection requested heartbeat (heart-beat in seconds offered) | 60 | int
+| *automaticRecovery Enabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
+| *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
+| *topologyRecoveryEnabled* (advanced) | Enables connection topology recovery (should topology recovery be performed) |  | Boolean
+| *prefetchEnabled* (consumer) | Enables the quality of service on the RabbitMQConsumer side. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
+| *prefetchSize* (consumer) | The maximum amount of content (measured in octets) that the server will deliver, 0 if unlimited. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time |  | int
+| *prefetchCount* (consumer) | The maximum number of messages that the server will deliver, 0 if unlimited. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time |  | int
+| *prefetchGlobal* (consumer) | If the settings should be applied to the entire channel rather than each consumer You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
+| *channelPoolMaxSize* (producer) | Get maximum number of opened channel in pool | 10 | int
+| *channelPoolMaxWait* (producer) | Set the maximum number of milliseconds to wait for a channel from the pool | 1000 | long
+| *requestTimeout* (advanced) | Set timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds) | 20000 | long
+| *requestTimeoutChecker Interval* (advanced) | Set requestTimeoutCheckerInterval for inOut exchange | 1000 | long
+| *transferException* (advanced) | When true and an inOut Exchange failed on the consumer side send the caused Exception back in the response | false | boolean
+| *publisher Acknowledgements* (producer) | When true, the message will be published with publisher acknowledgements turned on | false | boolean
+| *publisher AcknowledgementsTimeout* (producer) | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server |  | long
+| *guaranteedDeliveries* (producer) | When true, an exception will be thrown when the message cannot be delivered (basic.return) and the message is marked as mandatory. PublisherAcknowledgement will also be activated in this case. See also publisher acknowledgements - When will messages be confirmed. | false | boolean
+| *mandatory* (producer) | This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. If the header is present rabbitmq.MANDATORY it will override this option. | false | boolean
+| *immediate* (producer) | This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed. If the header is present rabbitmq.IMMEDIATE it will override this option. | false | boolean
+| *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
+| *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
+| *sslProtocol* (security) | Enables SSL on connection, accepted value are true, TLS and 'SSLv3 |  | String
+| *trustManager* (security) | Configure SSL trust manager, SSL should be enabled for this option to be effective |  | TrustManager
+| *autoAck* (consumer) | If messages should be auto acknowledged | true | boolean
+| *autoDelete* (common) | If it is true, the exchange will be deleted when it is no longer in use | true | boolean
+| *durable* (common) | If we are declaring a durable exchange (the exchange will survive a server restart) | true | boolean
+| *exclusive* (common) | Exclusive queues may only be accessed by the current connection, and are deleted when that connection closes. | false | boolean
+| *exclusiveConsumer* (consumer) | Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful when you want a long-lived shared queue to be temporarily accessible by just one consumer. | false | boolean
+| *passive* (common) | Passive queues depend on the queue already to be available at RabbitMQ. | false | boolean
+| *skipQueueDeclare* (common) | If true the producer will not declare and bind a queue. This can be used for directing messages via an existing routing key. | false | boolean
+| *skipQueueBind* (common) | If true the queue will not be bound to the exchange after declaring it | false | boolean
+| *skipExchangeDeclare* (common) | This can be used if we need to declare the queue but not the exchange | false | boolean
+| *declare* (common) | If the option is true, camel declare the exchange and queue name and bind them together. If the option is false, camel won't declare the exchange and queue name on the server. | true | boolean
+| *deadLetterExchange* (common) | The name of the dead letter exchange |  | String
+| *deadLetterQueue* (common) | The name of the dead letter queue |  | String
+| *deadLetterRoutingKey* (common) | The routing key for the dead letter exchange |  | String
+| *deadLetterExchangeType* (common) | The type of the dead letter exchange | direct | String
+| *allowNullHeaders* (producer) | Allow pass null values to header | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The RabbitMQ endpoint is configured using URI syntax:
+
+----
+rabbitmq:exchangeName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *exchangeName* | *Required* The exchange name determines which exchange produced messages will sent to. In the case of consumers, the exchange name determines which exchange the queue will bind to. |  | String
+|===
+
+
+==== Query Parameters (62 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *addresses* (common) | If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345, server2:12345 |  | Address[]
+| *autoDelete* (common) | If it is true, the exchange will be deleted when it is no longer in use | true | boolean
+| *connectionFactory* (common) | To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used |  | ConnectionFactory
+| *deadLetterExchange* (common) | The name of the dead letter exchange |  | String
+| *deadLetterExchangeType* (common) | The type of the dead letter exchange | direct | String
+| *deadLetterQueue* (common) | The name of the dead letter queue |  | String
+| *deadLetterRoutingKey* (common) | The routing key for the dead letter exchange |  | String
+| *declare* (common) | If the option is true, camel declare the exchange and queue name and bind them together. If the option is false, camel won't declare the exchange and queue name on the server. | true | boolean
+| *durable* (common) | If we are declaring a durable exchange (the exchange will survive a server restart) | true | boolean
+| *exchangeType* (common) | The exchange type such as direct or topic. | direct | String
+| *exclusive* (common) | Exclusive queues may only be accessed by the current connection, and are deleted when that connection closes. | false | boolean
+| *hostname* (common) | The hostname of the running rabbitmq instance or cluster. |  | String
+| *passive* (common) | Passive queues depend on the queue already to be available at RabbitMQ. | false | boolean
+| *portNumber* (common) | Port number for the host with the running rabbitmq instance or cluster. Default value is 5672. |  | int
+| *queue* (common) | The queue to receive messages from |  | String
+| *routingKey* (common) | The routing key to use when binding a consumer queue to the exchange. For producer routing keys, you set the header rabbitmq.ROUTING_KEY. |  | String
+| *skipExchangeDeclare* (common) | This can be used if we need to declare the queue but not the exchange | false | boolean
+| *skipQueueBind* (common) | If true the queue will not be bound to the exchange after declaring it | false | boolean
+| *skipQueueDeclare* (common) | If true the producer will not declare and bind a queue. This can be used for directing messages via an existing routing key. | false | boolean
+| *vhost* (common) | The vhost for the channel | / | String
+| *autoAck* (consumer) | If messages should be auto acknowledged | true | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *concurrentConsumers* (consumer) | Number of concurrent consumers when consuming from broker. (eg similar as to the same option for the JMS component). | 1 | int
+| *exclusiveConsumer* (consumer) | Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful when you want a long-lived shared queue to be temporarily accessible by just one consumer. | false | boolean
+| *prefetchCount* (consumer) | The maximum number of messages that the server will deliver, 0 if unlimited. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time |  | int
+| *prefetchEnabled* (consumer) | Enables the quality of service on the RabbitMQConsumer side. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
+| *prefetchGlobal* (consumer) | If the settings should be applied to the entire channel rather than each consumer You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
+| *prefetchSize* (consumer) | The maximum amount of content (measured in octets) that the server will deliver, 0 if unlimited. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time |  | int
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *threadPoolSize* (consumer) | The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads. | 10 | int
+| *allowNullHeaders* (producer) | Allow pass null values to header | false | boolean
+| *bridgeEndpoint* (producer) | If the bridgeEndpoint is true, the producer will ignore the message header of rabbitmq.EXCHANGE_NAME and rabbitmq.ROUTING_KEY | false | boolean
+| *channelPoolMaxSize* (producer) | Get maximum number of opened channel in pool | 10 | int
+| *channelPoolMaxWait* (producer) | Set the maximum number of milliseconds to wait for a channel from the pool | 1000 | long
+| *guaranteedDeliveries* (producer) | When true, an exception will be thrown when the message cannot be delivered (basic.return) and the message is marked as mandatory. PublisherAcknowledgement will also be activated in this case. See also publisher acknowledgements - When will messages be confirmed. | false | boolean
+| *immediate* (producer) | This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed. If the header is present rabbitmq.IMMEDIATE it will override this option. | false | boolean
+| *mandatory* (producer) | This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. If the header is present rabbitmq.MANDATORY it will override this option. | false | boolean
+| *publisherAcknowledgements* (producer) | When true, the message will be published with publisher acknowledgements turned on | false | boolean
+| *publisherAcknowledgements Timeout* (producer) | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server |  | long
+| *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
+| *automaticRecoveryEnabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
+| *bindingArgs* (advanced) | *Deprecated* Key/value args for configuring the queue binding parameters when declare=true |  | Map
+| *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
+| *connectionTimeout* (advanced) | Connection timeout | 60000 | int
+| *exchangeArgs* (advanced) | *Deprecated* Key/value args for configuring the exchange parameters when declare=true |  | Map
+| *exchangeArgsConfigurer* (advanced) | *Deprecated* Set the configurer for setting the exchange args in Channel.exchangeDeclare |  | ArgsConfigurer
+| *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
+| *queueArgs* (advanced) | *Deprecated* Key/value args for configuring the queue parameters when declare=true |  | Map
+| *queueArgsConfigurer* (advanced) | *Deprecated* Set the configurer for setting the queue args in Channel.queueDeclare |  | ArgsConfigurer
+| *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
+| *requestedFrameMax* (advanced) | Connection requested frame max (max size of frame offered) | 0 | int
+| *requestedHeartbeat* (advanced) | Connection requested heartbeat (heart-beat in seconds offered) | 60 | int
+| *requestTimeout* (advanced) | Set timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds) | 20000 | long
+| *requestTimeoutChecker Interval* (advanced) | Set requestTimeoutCheckerInterval for inOut exchange | 1000 | long
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *topologyRecoveryEnabled* (advanced) | Enables connection topology recovery (should topology recovery be performed) |  | Boolean
+| *transferException* (advanced) | When true and an inOut Exchange failed on the consumer side send the caused Exception back in the response | false | boolean
+| *password* (security) | Password for authenticated access | guest | String
+| *sslProtocol* (security) | Enables SSL on connection, accepted value are true, TLS and 'SSLv3 |  | String
+| *trustManager* (security) | Configure SSL trust manager, SSL should be enabled for this option to be effective |  | TrustManager
+| *username* (security) | Username in case of authenticated access | guest | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 51 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.rabbitmq.addresses* | If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345, server2:12345 |  | String
+| *camel.component.rabbitmq.allow-null-headers* | Allow pass null values to header | false | Boolean
+| *camel.component.rabbitmq.args* | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
+| *camel.component.rabbitmq.auto-ack* | If messages should be auto acknowledged | true | Boolean
+| *camel.component.rabbitmq.auto-delete* | If it is true, the exchange will be deleted when it is no longer in use | true | Boolean
+| *camel.component.rabbitmq.auto-detect-connection-factory* | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | Boolean
+| *camel.component.rabbitmq.automatic-recovery-enabled* | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
+| *camel.component.rabbitmq.channel-pool-max-size* | Get maximum number of opened channel in pool | 10 | Integer
+| *camel.component.rabbitmq.channel-pool-max-wait* | Set the maximum number of milliseconds to wait for a channel from the pool | 1000 | Long
+| *camel.component.rabbitmq.client-properties* | Connection client properties (client info used in negotiating with the server) |  | Map
+| *camel.component.rabbitmq.connection-factory* | To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used. The option is a com.rabbitmq.client.ConnectionFactory type. |  | String
+| *camel.component.rabbitmq.connection-timeout* | Connection timeout | 60000 | Integer
+| *camel.component.rabbitmq.dead-letter-exchange* | The name of the dead letter exchange |  | String
+| *camel.component.rabbitmq.dead-letter-exchange-type* | The type of the dead letter exchange | direct | String
+| *camel.component.rabbitmq.dead-letter-queue* | The name of the dead letter queue |  | String
+| *camel.component.rabbitmq.dead-letter-routing-key* | The routing key for the dead letter exchange |  | String
+| *camel.component.rabbitmq.declare* | If the option is true, camel declare the exchange and queue name and bind them together. If the option is false, camel won't declare the exchange and queue name on the server. | true | Boolean
+| *camel.component.rabbitmq.durable* | If we are declaring a durable exchange (the exchange will survive a server restart) | true | Boolean
+| *camel.component.rabbitmq.enabled* | Enable rabbitmq component | true | Boolean
+| *camel.component.rabbitmq.exclusive* | Exclusive queues may only be accessed by the current connection, and are deleted when that connection closes. | false | Boolean
+| *camel.component.rabbitmq.exclusive-consumer* | Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful when you want a long-lived shared queue to be temporarily accessible by just one consumer. | false | Boolean
+| *camel.component.rabbitmq.guaranteed-deliveries* | When true, an exception will be thrown when the message cannot be delivered (basic.return) and the message is marked as mandatory. PublisherAcknowledgement will also be activated in this case. See also publisher acknowledgements - When will messages be confirmed. | false | Boolean
+| *camel.component.rabbitmq.hostname* | The hostname of the running RabbitMQ instance or cluster. |  | String
+| *camel.component.rabbitmq.immediate* | This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed. If the header is present rabbitmq.IMMEDIATE it will override this option. | false | Boolean
+| *camel.component.rabbitmq.mandatory* | This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. If the header is present rabbitmq.MANDATORY it will override this option. | false | Boolean
+| *camel.component.rabbitmq.network-recovery-interval* | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
+| *camel.component.rabbitmq.passive* | Passive queues depend on the queue already to be available at RabbitMQ. | false | Boolean
+| *camel.component.rabbitmq.password* | Password for authenticated access | guest | String
+| *camel.component.rabbitmq.port-number* | Port number for the host with the running rabbitmq instance or cluster. | 5672 | Integer
+| *camel.component.rabbitmq.prefetch-count* | The maximum number of messages that the server will deliver, 0 if unlimited. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time |  | Integer
+| *camel.component.rabbitmq.prefetch-enabled* | Enables the quality of service on the RabbitMQConsumer side. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | Boolean
+| *camel.component.rabbitmq.prefetch-global* | If the settings should be applied to the entire channel rather than each consumer You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | Boolean
+| *camel.component.rabbitmq.prefetch-size* | The maximum amount of content (measured in octets) that the server will deliver, 0 if unlimited. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time |  | Integer
+| *camel.component.rabbitmq.publisher-acknowledgements* | When true, the message will be published with publisher acknowledgements turned on | false | Boolean
+| *camel.component.rabbitmq.publisher-acknowledgements-timeout* | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server |  | Long
+| *camel.component.rabbitmq.request-timeout* | Set timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds) | 20000 | Long
+| *camel.component.rabbitmq.request-timeout-checker-interval* | Set requestTimeoutCheckerInterval for inOut exchange | 1000 | Long
+| *camel.component.rabbitmq.requested-channel-max* | Connection requested channel max (max number of channels offered) | 2047 | Integer
+| *camel.component.rabbitmq.requested-frame-max* | Connection requested frame max (max size of frame offered) | 0 | Integer
+| *camel.component.rabbitmq.requested-heartbeat* | Connection requested heartbeat (heart-beat in seconds offered) | 60 | Integer
+| *camel.component.rabbitmq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.rabbitmq.skip-exchange-declare* | This can be used if we need to declare the queue but not the exchange | false | Boolean
+| *camel.component.rabbitmq.skip-queue-bind* | If true the queue will not be bound to the exchange after declaring it | false | Boolean
+| *camel.component.rabbitmq.skip-queue-declare* | If true the producer will not declare and bind a queue. This can be used for directing messages via an existing routing key. | false | Boolean
+| *camel.component.rabbitmq.ssl-protocol* | Enables SSL on connection, accepted value are true, TLS and 'SSLv3 |  | String
+| *camel.component.rabbitmq.thread-pool-size* | The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads. | 10 | Integer
+| *camel.component.rabbitmq.topology-recovery-enabled* | Enables connection topology recovery (should topology recovery be performed) |  | Boolean
+| *camel.component.rabbitmq.transfer-exception* | When true and an inOut Exchange failed on the consumer side send the caused Exception back in the response | false | Boolean
+| *camel.component.rabbitmq.trust-manager* | Configure SSL trust manager, SSL should be enabled for this option to be effective. The option is a javax.net.ssl.TrustManager type. |  | String
+| *camel.component.rabbitmq.username* | Username in case of authenticated access | guest | String
+| *camel.component.rabbitmq.vhost* | The vhost for the channel | / | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+See
+http://www.rabbitmq.com/releases/rabbitmq-java-client/current-javadoc/com/rabbitmq/client/ConnectionFactory.html[http://www.rabbitmq.com/releases/rabbitmq-java-client/current-javadoc/com/rabbitmq/client/ConnectionFactory.html]
+and the AMQP specification for more information on connection options.
+
+== Using connection factory
+
+To connect to RabbitMQ you can setup a `ConnectionFactory` (same as with JMS) with the login details such as:
+
+[source,xml]
+----
+<bean id="rabbitConnectionFactory" class="com.rabbitmq.client.ConnectionFactory">
+  <property name="host" value="localhost"/>
+  <property name="port" value="5672"/>
+  <property name="username" value="camel"/>
+  <property name="password" value="bugsbunny"/>
+</bean>
+
+And then refer to the connection factory in the endpoint uri as shown below:
+
+<camelContext>
+  <route>
+    <from uri="direct:rabbitMQEx2"/>
+    <to uri="rabbitmq:ex2?connectionFactory=#rabbitConnectionFactory"/>
+  </route>
+</camelContext>
+----
+
+The `ConnectionFactory` is auto-detected by default, so you can just do
+
+[source,xml]
+----
+<camelContext>
+  <route>
+    <from uri="direct:rabbitMQEx2"/>
+    <to uri="rabbitmq:ex2"/>
+  </route>
+</camelContext>
+----
+
+
+== Message Headers
+
+The following headers are set on exchanges when consuming messages.
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Property |Value
+
+|`rabbitmq.ROUTING_KEY` |The routing key that was used to receive the message, or the routing key
+that will be used when producing a message
+
+|`rabbitmq.EXCHANGE_NAME` |The exchange the message was received from
+
+|`rabbitmq.DELIVERY_TAG` |The rabbitmq delivery tag of the received message
+
+|`rabbitmq.REDELIVERY_TAG` |Whether the message is a redelivered
+
+|`rabbitmq.REQUEUE` |This is used by the consumer to control rejection of the
+message. When the consumer is complete processing the exchange, and if
+the exchange failed, then the consumer is going to reject the message
+from the RabbitMQ broker. The value of this header controls this
+behavior. If the value is false (by default) then the message is
+discarded/dead-lettered. If the value is true, then the message is
+re-queued. 
+|===
+
+The following headers are used by the producer. If these are set on the
+camel exchange then they will be set on the RabbitMQ message.
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Property |Value
+
+|`rabbitmq.ROUTING_KEY` |The routing key that will be used when sending the message
+
+|`rabbitmq.EXCHANGE_NAME` |The exchange the message was received from
+
+|`rabbitmq.EXCHANGE_OVERRIDE_NAME` |Used for force sending the message to this exchange instead of the endpoint configured name on the producer
+
+|`rabbitmq.CONTENT_TYPE` |The contentType to set on the RabbitMQ message
+
+|`rabbitmq.PRIORITY` |The priority header to set on the RabbitMQ message
+
+|`rabbitmq.CORRELATIONID` |The correlationId to set on the RabbitMQ message
+
+|`rabbitmq.MESSAGE_ID` |The message id to set on the RabbitMQ message
+
+|`rabbitmq.DELIVERY_MODE` |If the message should be persistent or not
+
+|`rabbitmq.USERID` |The userId to set on the RabbitMQ message
+
+|`rabbitmq.CLUSTERID` |The clusterId to set on the RabbitMQ message
+
+|`rabbitmq.REPLY_TO` |The replyTo to set on the RabbitMQ message
+
+|`rabbitmq.CONTENT_ENCODING` |The contentEncoding to set on the RabbitMQ message
+
+|`rabbitmq.TYPE` |The type to set on the RabbitMQ message
+
+|`rabbitmq.EXPIRATION` |The expiration to set on the RabbitMQ message
+
+|`rabbitmq.TIMESTAMP` |The timestamp to set on the RabbitMQ message
+
+|`rabbitmq.APP_ID` |The appId to set on the RabbitMQ message
+|===
+
+Headers are set by the consumer once the message is received. The
+producer will also set the headers for downstream processors once the
+exchange has taken place. Any headers set prior to production that the
+producer sets will be overriden.
+
+== Message Body
+
+The component will use the camel exchange in body as the rabbit mq
+message body. The camel exchange in object must be convertible to a byte
+array. Otherwise the producer will throw an exception of unsupported
+body type.
+
+== Samples
+
+To receive messages from a queue that is bound to an exchange A with the
+routing key B,
+
+[source,java]
+----
+from("rabbitmq:A?routingKey=B")
+----
+
+To receive messages from a queue with a single thread with auto
+acknowledge disabled.
+
+[source,java]
+----
+from("rabbitmq:A?routingKey=B&threadPoolSize=1&autoAck=false")
+----
+
+To send messages to an exchange called C
+
+[source,java]
+----
+to("rabbitmq:C")
+----
+
+Declaring a headers exchange and queue
+
+[source,java]
+----
+from("rabbitmq:ex?exchangeType=headers&queue=q&bindingArgs=#bindArgs")
+----
+
+and place corresponding `Map<String, Object>` with the id of "bindArgs" in the Registry.
+
+For example declaring a method in spring
+
+[source,java]
+----
+@Bean(name="bindArgs")
+public Map<String, Object> bindArgsBuilder() {
+    return Collections.singletonMap("foo", "bar");
+}
+----
