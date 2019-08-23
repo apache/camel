@@ -202,7 +202,7 @@
         <google-findbugs-annotations2-version>2.0.3</google-findbugs-annotations2-version>
         <google-maps-services-version>0.2.9</google-maps-services-version>
         <flatpack-version>4.0.4</flatpack-version>
-        <flink-version>1.8.1</flink-version>
+        <flink-version>1.9.0</flink-version>
         <fop-bundle-version>2.3_1</fop-bundle-version>
         <fop-version>2.3</fop-version>
         <ftpserver-version>1.1.1</ftpserver-version>
