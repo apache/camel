@@ -18,7 +18,17 @@ package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
 
+/**
+ * Property configurer for Camel {@link org.apache.camel.Endpoint}
+ * which allows fast configurations without using Java reflection.
+ */
 public interface EndpointPropertyConfigurer extends PropertyConfigurer<Object> {
 
+    /**
+     * Configures the endpoint.
+     *
+     * @param endpoint      the endpoint
+     * @param camelContext  the camel context
+     */
     void configure(Object endpoint, CamelContext camelContext);
 }
