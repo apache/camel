@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition> {
 
-    OnCompletionReifier(ProcessorDefinition<?> definition) {
+    public OnCompletionReifier(ProcessorDefinition<?> definition) {
         super((OnCompletionDefinition)definition);
     }
 

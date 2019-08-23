@@ -23,7 +23,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class OtherwiseReifier extends ProcessorReifier<OtherwiseDefinition> {
 
-    OtherwiseReifier(ProcessorDefinition<?> definition) {
+    public OtherwiseReifier(ProcessorDefinition<?> definition) {
         super(OtherwiseDefinition.class.cast(definition));
     }
 

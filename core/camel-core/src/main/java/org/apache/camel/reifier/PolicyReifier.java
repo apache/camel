@@ -27,7 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
 
-    PolicyReifier(ProcessorDefinition<?> definition) {
+    public PolicyReifier(ProcessorDefinition<?> definition) {
         super((PolicyDefinition)definition);
     }
 

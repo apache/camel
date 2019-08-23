@@ -24,7 +24,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class RandomLoadBalancerReifier extends LoadBalancerReifier<RandomLoadBalancerDefinition> {
 
-    RandomLoadBalancerReifier(LoadBalancerDefinition definition) {
+    public RandomLoadBalancerReifier(LoadBalancerDefinition definition) {
         super((RandomLoadBalancerDefinition)definition);
     }
 

@@ -26,7 +26,7 @@ import org.apache.camel.spi.Transformer;
 
 public class DataFormatTransformeReifier extends TransformerReifier<DataFormatTransformerDefinition> {
 
-    DataFormatTransformeReifier(TransformerDefinition definition) {
+    public DataFormatTransformeReifier(TransformerDefinition definition) {
         super((DataFormatTransformerDefinition)definition);
     }
 

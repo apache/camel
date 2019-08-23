@@ -38,7 +38,7 @@ import org.apache.camel.support.CamelContextHelper;
 
 public class RecipientListReifier extends ProcessorReifier<RecipientListDefinition<?>> {
 
-    RecipientListReifier(ProcessorDefinition<?> definition) {
+    public RecipientListReifier(ProcessorDefinition<?> definition) {
         super((RecipientListDefinition<?>)definition);
     }
 

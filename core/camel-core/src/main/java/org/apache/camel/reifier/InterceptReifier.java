@@ -28,7 +28,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class InterceptReifier<T extends InterceptDefinition> extends ProcessorReifier<T> {
 
-    InterceptReifier(ProcessorDefinition<?> definition) {
+    public InterceptReifier(ProcessorDefinition<?> definition) {
         super((T)definition);
     }
 

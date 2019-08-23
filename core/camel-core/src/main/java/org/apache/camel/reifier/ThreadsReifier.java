@@ -31,7 +31,7 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
 
-    ThreadsReifier(ProcessorDefinition<?> definition) {
+    public ThreadsReifier(ProcessorDefinition<?> definition) {
         super((ThreadsDefinition)definition);
     }
 

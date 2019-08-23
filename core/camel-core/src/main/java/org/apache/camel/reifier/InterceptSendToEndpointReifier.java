@@ -35,7 +35,7 @@ import org.apache.camel.util.URISupport;
 
 public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSendToEndpointDefinition> {
 
-    InterceptSendToEndpointReifier(ProcessorDefinition<?> definition) {
+    public InterceptSendToEndpointReifier(ProcessorDefinition<?> definition) {
         super((InterceptSendToEndpointDefinition)definition);
     }
 

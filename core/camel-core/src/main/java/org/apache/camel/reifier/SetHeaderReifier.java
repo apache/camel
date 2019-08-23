@@ -27,7 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class SetHeaderReifier extends ExpressionReifier<SetHeaderDefinition> {
 
-    SetHeaderReifier(ProcessorDefinition<?> definition) {
+    public SetHeaderReifier(ProcessorDefinition<?> definition) {
         super((SetHeaderDefinition)definition);
     }
 

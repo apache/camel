@@ -25,7 +25,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class ThrowExceptionReifier extends ProcessorReifier<ThrowExceptionDefinition> {
 
-    ThrowExceptionReifier(ProcessorDefinition<?> definition) {
+    public ThrowExceptionReifier(ProcessorDefinition<?> definition) {
         super((ThrowExceptionDefinition)definition);
     }
 

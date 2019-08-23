@@ -39,7 +39,7 @@ import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
-    AggregateReifier(ProcessorDefinition<?> definition) {
+    public AggregateReifier(ProcessorDefinition<?> definition) {
         super(AggregateDefinition.class.cast(definition));
     }
 

@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class CatchReifier extends ProcessorReifier<CatchDefinition> {
 
-    CatchReifier(ProcessorDefinition<?> definition) {
+    public CatchReifier(ProcessorDefinition<?> definition) {
         super(CatchDefinition.class.cast(definition));
     }
 

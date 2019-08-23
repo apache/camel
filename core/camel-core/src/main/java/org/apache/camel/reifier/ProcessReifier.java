@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ProcessReifier extends ProcessorReifier<ProcessDefinition> {
 
-    ProcessReifier(ProcessorDefinition<?> definition) {
+    public ProcessReifier(ProcessorDefinition<?> definition) {
         super((ProcessDefinition)definition);
     }
 

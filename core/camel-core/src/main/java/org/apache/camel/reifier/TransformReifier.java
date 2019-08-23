@@ -25,7 +25,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class TransformReifier extends ExpressionReifier<TransformDefinition> {
 
-    TransformReifier(ProcessorDefinition<?> definition) {
+    public TransformReifier(ProcessorDefinition<?> definition) {
         super((TransformDefinition)definition);
     }
 

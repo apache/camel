@@ -39,7 +39,7 @@ public class TransactedReifier extends ProcessorReifier<TransactedDefinition> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactedReifier.class);
 
-    TransactedReifier(ProcessorDefinition<?> definition) {
+    public TransactedReifier(ProcessorDefinition<?> definition) {
         super((TransactedDefinition)definition);
     }
 

@@ -27,7 +27,7 @@ import org.apache.camel.spi.Transformer;
 
 public class EndpointTransformeReifier extends TransformerReifier<EndpointTransformerDefinition> {
 
-    EndpointTransformeReifier(TransformerDefinition definition) {
+    public EndpointTransformeReifier(TransformerDefinition definition) {
         super((EndpointTransformerDefinition)definition);
     }
 

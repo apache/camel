@@ -23,7 +23,7 @@ import org.apache.camel.spi.Transformer;
 
 public class CustomTransformeReifier extends TransformerReifier<CustomTransformerDefinition> {
 
-    CustomTransformeReifier(TransformerDefinition definition) {
+    public CustomTransformeReifier(TransformerDefinition definition) {
         super((CustomTransformerDefinition)definition);
     }
 

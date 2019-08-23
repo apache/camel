@@ -25,7 +25,7 @@ import org.apache.camel.util.StringHelper;
 
 public class CustomLoadBalancerReifier extends LoadBalancerReifier<CustomLoadBalancerDefinition> {
 
-    CustomLoadBalancerReifier(LoadBalancerDefinition definition) {
+    public CustomLoadBalancerReifier(LoadBalancerDefinition definition) {
         super((CustomLoadBalancerDefinition)definition);
     }
 

@@ -25,7 +25,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class WhenSkipSendToEndpointReifier extends ExpressionReifier<WhenSkipSendToEndpointDefinition> {
 
-    WhenSkipSendToEndpointReifier(ProcessorDefinition<?> definition) {
+    public WhenSkipSendToEndpointReifier(ProcessorDefinition<?> definition) {
         super((WhenSkipSendToEndpointDefinition)definition);
     }
 

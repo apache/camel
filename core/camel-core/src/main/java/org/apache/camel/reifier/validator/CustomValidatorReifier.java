@@ -23,7 +23,7 @@ import org.apache.camel.spi.Validator;
 
 public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefinition> {
 
-    CustomValidatorReifier(ValidatorDefinition definition) {
+    public CustomValidatorReifier(ValidatorDefinition definition) {
         super((CustomValidatorDefinition)definition);
     }
 

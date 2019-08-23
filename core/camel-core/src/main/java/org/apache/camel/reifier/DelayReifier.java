@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class DelayReifier extends ExpressionReifier<DelayDefinition> {
 
-    DelayReifier(ProcessorDefinition<?> definition) {
+    public DelayReifier(ProcessorDefinition<?> definition) {
         super(DelayDefinition.class.cast(definition));
     }
 

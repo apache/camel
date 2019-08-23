@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
 
-    ChoiceReifier(ProcessorDefinition<?> definition) {
+    public ChoiceReifier(ProcessorDefinition<?> definition) {
         super(ChoiceDefinition.class.cast(definition));
     }
 

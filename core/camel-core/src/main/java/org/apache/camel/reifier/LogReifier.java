@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 public class LogReifier extends ProcessorReifier<LogDefinition> {
 
-    LogReifier(ProcessorDefinition<?> definition) {
+    public LogReifier(ProcessorDefinition<?> definition) {
         super((LogDefinition)definition);
     }
 
