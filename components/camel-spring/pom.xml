@@ -301,6 +301,7 @@
                         <filter implementation="org.codehaus.mojo.jaxb2.shared.filters.pattern.PatternFileFilter">
                             <patterns>
                                 <pattern>Helper.java</pattern>
+                                <pattern>Adapter.java</pattern>
                             </patterns>
                         </filter>
                     </schemaSourceExcludeFilters>
