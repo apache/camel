@@ -60,8 +60,8 @@ public class CwEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public void doStart() throws Exception {
-        super.doStart();
+    public void doInit() throws Exception {
+        super.doInit();
 
         cloudWatchClient = configuration.getAmazonCwClient() != null ? configuration.getAmazonCwClient() : createCloudWatchClient();
     }
