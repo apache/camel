@@ -1,16 +1,16 @@
-[[beanstalk-component]]
-== Beanstalk Component
+= Beanstalk Component
 
 *Available as of Camel version 2.15*
 
-camel-beanstalk project provides a Camel component for job retrieval and
+
+Camel Beanstalk project provides a Camel component for job retrieval and
 post-processing of Beanstalk jobs.
 
 You can find the detailed explanation of Beanstalk job lifecycle
-at http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
+at http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
 protocol].
 
-### Dependencies
+== Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -23,18 +23,17 @@ Maven users need to add the following dependency to their `pom.xml`
 </dependency>
 ------------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
-(2.15.0 or higher).
+where `${camel-version`} must be replaced by the actual version of Camel.
 
-### URI format
+== URI format
 
 [source,xml]
 ------------------------------------------
 beanstalk://[host[:port]][/tube][?options]
 ------------------------------------------
 
-You may omit either `port` or both `host` and `port`: for the Beanstalk
-defaults to be used (“localhost” and 11300). If you omit `tube`,
+You may omit either `port` or both `host` and `port`: for the Beanstalk
+defaults to be used (“localhost” and 11300). If you omit `tube`,
 Beanstalk component will use the tube with name “default”.
 
 When listening, you may probably want to watch for jobs from several
@@ -47,13 +46,13 @@ beanstalk://localhost:11300/tube1+tube2
 
 Tube name will be URL decoded, so if your tube names include special
 characters like + or ?, you need to URL-encode them appropriately, or
-use the RAW syntax, see link:how-do-i-configure-endpoints.html[more
+use the RAW syntax, see xref:latest@manual::faq/how-do-i-configure-endpoints.adoc[more
 details here].
 
 By the way, you cannot specify several tubes when you are writing jobs
 into Beanstalk.
 
-### Beanstalk options
+== Beanstalk options
 
 
 
@@ -145,35 +144,35 @@ The component supports 3 options, which are listed below.
 
 
 
-Producer behavior is affected by the `command` parameter which tells
+Producer behavior is affected by the `command` parameter which tells
 what to do with the job, it can be
 
 The consumer may delete the job immediately after reserving it or wait
 until Camel routes process it. While the first scenario is more like a
 “message queue”, the second is similar to “job queue”. This behavior is
-controlled by `consumer.awaitJob` parameter, which equals `true` by
+controlled by `consumer.awaitJob` parameter, which equals `true` by
 default (following Beanstalkd nature).
 
-When synchronous, the consumer calls `delete` on successful job
-completion and calls `bury` on failure. You can choose which command to
+When synchronous, the consumer calls `delete` on successful job
+completion and calls `bury` on failure. You can choose which command to
 execute in the case of failure by
-specifying `consumer.onFailure` parameter in the URI. It can take values
-of `bury`, `delete` or `release`.
+specifying `consumer.onFailure` parameter in the URI. It can take values
+of `bury`, `delete` or `release`.
 
-There is a boolean parameter `consumer.useBlockIO` which corresponds to
+There is a boolean parameter `consumer.useBlockIO` which corresponds to
 the same parameter in JavaBeanstalkClient library. By default it
-is `true`.
+is `true`.
 
-Be careful when specifying `release`, as the failed job will immediately
+Be careful when specifying `release`, as the failed job will immediately
 become available in the same tube and your consumer will try to acquire
-it again. You can `release` and specify _jobDelay_ though.
+it again. You can `release` and specify _jobDelay_ though.
 
-The beanstalk consumer is a Scheduled link:polling-consumer.html[Polling
+The beanstalk consumer is a Scheduled xref:latest@manual::polling-consumer.adoc[Polling
 Consumer] which means there is more options you can configure, such as
 how frequent the consumer should poll. For more details
-see Polling Consumer.
+see Polling Consumer.
 
-### Consumer Headers
+== Consumer Headers
 
 The consumer stores a number of job headers in the Exchange message:
 
@@ -203,7 +202,7 @@ queue
 |_beanstalk.kicks_ |int |the number of times this job has been kicked
 |=======================================================================
 
-### Examples
+== Examples
 
 This Camel component lets you both request the jobs for processing and
 supply them to Beanstalkd daemon. Our simple demo routes may look like
@@ -232,20 +231,13 @@ from("timer:dig?period=30seconds").
 In the first route we are listening for new jobs in tube “testTube”.
 When they are arriving, we are trying to parse integer value from the
 message body. If done successful, we log it and this successful exchange
-completion makes Camel component to _delete_ this job from Beanstalk
+completion makes Camel component to _delete_ this job from Beanstalk
 automatically. Contrary, when we cannot parse the job data, the exchange
-failed and the Camel component _buries_ it by default, so that it can be
+failed and the Camel component _buries_ it by default, so that it can be
 processed later or probably we are going to inspect failed jobs
 manually.
 
-So the second route periodically requests Beanstalk to _kick_ 10 jobs
+So the second route periodically requests Beanstalk to _kick_ 10 jobs
 out of buried and/or delayed state to the normal queue.
 
- 
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
+ 

@@ -1,15 +1,12 @@
-[[amqp-component]]
-== AMQP Component
+= AMQP Component
 
 *Available as of Camel version 1.2*
 
-The *amqp:* component supports the http://www.amqp.org/[AMQP 1.0
-protocol] using the JMS Client API of the http://qpid.apache.org/[Qpid]
-project. In case you want to use AMQP 0.9 (in particular RabbitMQ) you
-might also be interested in the <<rabbitmq-component,Camel RabbitMQ>>
-component. Please keep in mind that prior to the Camel 2.17.0 AMQP
-component supported AMQP 0.9 and above, however since Camel 2.17.0 it
-supports only AMQP 1.0.
+
+The AMQP component supports the
+http://www.amqp.org/[AMQP 1.0 protocol]
+using the JMS Client API of the http://qpid.apache.org/[Qpid]
+project.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -23,17 +20,17 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source,java]
 ----
 amqp:[queue:|topic:]destinationName[?options]
 ----
 
-### AMQP Options
+== AMQP Options
 
 You can specify all of the various configuration options of the
-link:../../../../camel-jms/src/main/docs/readme.html[JMS] component after the destination name.
+xref:jms-component.adoc[JMS] component after the destination name.
 
 
 
@@ -353,7 +350,7 @@ The component supports 81 options, which are listed below.
 
 
 
-### Usage
+== Usage
 
 As AMQP component is inherited from JMS component, the usage of the
 former is almost identical to the latter:
@@ -365,43 +362,26 @@ former is almost identical to the latter:
 // Consuming from AMQP queue
 from("amqp:queue:incoming").
   to(...);
- 
+ 
 // Sending message to the AMQP topic
 from(...).
   to("amqp:topic:notify");
 ----
 
-### Configuring AMQP component
-
-Starting from the Camel 2.16.1 you can also use the
-`AMQPComponent#amqp10Component(String connectionURI)` factory method to
-return the AMQP 1.0 component with the pre-configured topic prefix: 
-
-*Creating AMQP 1.0 component*
-
-[source,java]
-----
- AMQPComponent amqp = AMQPComponent.amqp10Component("amqp://guest:guest@localhost:5672");
-----
-
-Keep in mind that starting from the
-Camel 2.17 the `AMQPComponent#amqp10Component(String connectionURI)` factory
-method has been deprecated on the behalf of the
-`AMQPComponent#amqpComponent(String connectionURI)`: 
+== Configuring AMQP component
 
 *Creating AMQP 1.0 component*
 
 [source,java]
 ----
 AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672");
- 
+ 
 AMQPComponent authorizedAmqp = AMQPComponent.amqpComponent("amqp://localhost:5672", "user", "password");
 ----
 
-Starting from Camel 2.17, in order to automatically configure the AMQP
-component, you can also add an instance
-of `org.apache.camel.component.amqp.AMQPConnectionDetails` to the
-registry. For example for Spring Boot you just have to define bean:
+You can also add an instance
+of `org.apache.camel.component.amqp.AMQPConnectionDetails` to the
+registry in order to automatically configure the AMQP component. For example for Spring Boot you just have to define bean:
 
 *AMQP connection details auto-configuration*
 
@@ -411,7 +391,7 @@ registry. For example for Spring Boot you just have to define bean:
 AMQPConnectionDetails amqpConnection() {
   return new AMQPConnectionDetails("amqp://localhost:5672"); 
 }
- 
+ 
 @Bean
 AMQPConnectionDetails securedAmqpConnection() {
   return new AMQPConnectionDetails("amqp://localhost:5672", "username", "password"); 
@@ -430,9 +410,9 @@ AMQPConnectionDetails amqpConnection() {
 }
 ----
 
-You can also rely on the <<properties-component,Camel properties>> to read
+You can also rely on the Camel properties to read
 the AMQP connection details. Factory
-method `AMQPConnectionDetails.discoverAMQP()` attempts to read Camel
+method `AMQPConnectionDetails.discoverAMQP()` attempts to read Camel
 properties in a Kubernetes-like convention, just as demonstrated on the
 snippet below:
 
@@ -444,9 +424,9 @@ export AMQP_SERVICE_HOST = "mybroker.com"
 export AMQP_SERVICE_PORT = "6666"
 export AMQP_SERVICE_USERNAME = "username"
 export AMQP_SERVICE_PASSWORD = "password"
- 
+ 
 ...
- 
+ 
 @Bean
 AMQPConnectionDetails amqpConnection() {
   return AMQPConnectionDetails.discoverAMQP(); 
@@ -464,10 +444,10 @@ AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672?amqp.tra
 
 For reference take a look at the https://qpid.apache.org/releases/qpid-jms-0.29.0/docs/index.html[QPID JMS client configuration]
 
-### Using topics
+== Using topics
 
-To have using topics working with `camel-amqp` you need to configure the
-component to use `topic://` as topic prefix, as shown below:
+To have using topics working with `camel-amqp` you need to configure the
+component to use `topic://` as topic prefix, as shown below:
 
 [source,java]
 ----
@@ -481,13 +461,6 @@ component to use `topic://` as topic prefix, as shown below:
  </bean>
 ----
 
-Keep in mind that both  `AMQPComponent#amqpComponent()` methods and
+Keep in mind that both  `AMQPComponent#amqpComponent()` methods and
 `AMQPConnectionDetails` pre-configure the component with the topic
 prefix, so you don't have to configure it explicitly.
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

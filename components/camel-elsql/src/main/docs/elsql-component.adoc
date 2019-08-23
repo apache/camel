@@ -1,11 +1,11 @@
-[[elsql-component]]
-== ElSQL Component
+= ElSQL Component
 
 *Available as of Camel version 2.16*
 
-The *elsql:* component is an extension to the existing
-<<sql-component,SQL Component>> that uses
-https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
+
+The ELSQL component is an extension to the existing
+xref:sql-component.adoc[SQL Component] that uses
+https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
 handling.
@@ -34,20 +34,22 @@ sql:elSqlName:resourceUri[?options]
 ----
 
 You can append query options to the URI in the following
-format, `?option=value&option=value&...`
+format, `?option=value&option=value&...`
 
 The parameters to the SQL queries are named parameters in the elsql
-mapping files, and maps to corresponding keys from the Camel message, in
+mapping files, and maps to corresponding keys from the Camel message, in
 the given precedence:
 
-1. *Camel 2.16.1:* from message body if <<simple-language,Simple>>
+1. from message body if xref:latest@manual::simple-language.adoc[Simple]
 expression.
 
-2. from message body if its a `java.util.Map`3. from message headers
+2. from message body if its a `java.util.Map`
+
+3. from message headers
 
 If a named parameter cannot be resolved, then an exception is thrown.
 
-=== Options
+== Options
 
 // component options: START
 The ElSQL component supports 5 options, which are listed below.
@@ -161,21 +163,21 @@ The component supports 6 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Result of the query
+== Result of the query
 
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
 JdbcTemplate.queryForList() method. For `update` operations, the result
 is the number of updated rows, returned as an `Integer`.
 
-By default, the result is placed in the message body.  If the
-outputHeader parameter is set, the result is placed in the header.  This
+By default, the result is placed in the message body.  If the
+outputHeader parameter is set, the result is placed in the header.  This
 is an alternative to using a full message enrichment pattern to add
 headers, it provides a concise syntax for querying a sequence or some
-other small value into a header.  It is convenient to use outputHeader
+other small value into a header.  It is convenient to use outputHeader
 and outputType together:
 
-=== Header values
+== Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
@@ -191,7 +193,7 @@ count in the following message headers:
 `Integer` object.
 |===
 
-==== Sample
+=== Sample
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :#lic and
@@ -230,11 +232,11 @@ parameters will be taken from the body.
      .to("elsql:projects:com/foo/orders.elsql")
 ----
 
-=== Using expression parameters in producers
+== Using expression parameters in producers
 
 In from Camel 2.16.1 onwards you can use Simple expressions as well,
 which allows to use an OGNL like notation on the message body, where it
-assumes to have `getLicense` and `getMinimum` methods:
+assumes to have `getLicense` and `getMinimum` methods:
 
 [source,sql]
 ----
@@ -245,7 +247,7 @@ assumes to have `getLicense` and `getMinimum` methods:
   ORDER BY id
 ----
 
-==== Using expression parameters in consumers
+=== Using expression parameters in consumers
 
 *Available as of Camel 2.23*
 
@@ -284,4 +286,3 @@ public static class MyIdGenerator {
 Notice that there is no existing `Exchange` with message body and headers, so
 the simple expression you can use in the consumer are most useable for calling
 bean methods as in this example.
-

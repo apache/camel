@@ -1,4 +1,4 @@
-## Blueprint Testing
+= Blueprint Testing
 
 *Available as of Camel 2.10*
 
@@ -11,7 +11,7 @@ integration work. Camel supports the definition of
 Blueprint routes, but given
 that Blueprint is an OSGi specific technology, writing unit tests is
 quite difficult. This library leverages
-http://code.google.com/p/pojosr/[PojoSR] (now Felix Connect) which
+http://code.google.com/p/pojosr/[PojoSR] (now Felix Connect) which
 provides a service registry without using a fully compliant OSGi
 container. This allows defining real unit tests (as opposed to
 integration tests using
@@ -22,7 +22,8 @@ Also notice the use of *`getBlueprintDescriptor`* to specify the
 location of the OSGi Blueprint XML file. +
  If you have multiple OSGi Blueprint XML files, then you can specify
 them with a comma-separated list in the *`getBlueprintDescriptor`*
-method.
+method. Notice that only **one** `CamelContext` is supported per blueprint bundle,
+so if you have multiple XML files then only one of them should have `<camelContext>`.
 
 Here's the
 http://svn.apache.org/viewvc/camel/trunk/components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml?view=markup[Blueprint
@@ -41,14 +42,14 @@ pom:
 </dependency>
 -----------------------------------------------
 
-### Classpath scanning
+== Classpath scanning
 
 By default PojoSR test container scans the test classpath for all the
 OSGi bundles available there. All the bundles with Blueprint descriptor
 files will be automatically started by the test container. If you would
 like to prevent particular bundles from being started by the test
 container, override the `getBundleFilter` method, just as demonstrated
-in the snippet below. 
+in the snippet below. 
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -64,7 +65,7 @@ getBlueprintDescriptor method will not prevent the test container from
 loading a given descriptor. The `getBundleFilter` method is the proper
 way of filtering out bundles you don't want to start during the test.
 
-### Setting timeout when getting CamelContext
+== Setting timeout when getting CamelContext
 
 *Available as of Camel 2.13.0/2.12.1/2.11.2*
 
@@ -77,7 +78,7 @@ property.
 * Locally for each test, by overriding _getCamelContextCreationTimeout_
 method.
 
-### Adding services on startup
+== Adding services on startup
 
 *Available as of Camel 2.11.2/2.12.0*
 
@@ -113,7 +114,7 @@ services.put("myService", asService(myService, null));
 ------------------------------------------------------
 
 This allows us to use the service by calling a method on it from a Camel
-<<bean-component,Bean>> component in a route as shown:
+Bean component in a route as shown:
 
 [source,xml]
 --------------------------------
@@ -147,11 +148,11 @@ And in the route we use the FQN name:
     </route>
 ----------------------------------------------------------------
 
- 
+ 
 
-From *Camel 2.16.0*, an additional `addServicesOnStartup` method is
+From *Camel 2.16.0*, an additional `addServicesOnStartup` method is
 available to be overridden making it ideal for when needing to specify
-multiple services with the same interface. 
+multiple services with the same interface. 
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------
@@ -159,10 +160,10 @@ multiple services with the same interface. 
   protected void addServicesOnStartup(List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> services) {
       Dictionary<String, String> dict1 = new Hashtable<String, String>();
       dict1.put("osgi.jndi.service.name", "jdbc/db1");
-        
+        
       Dictionary<String, String> dict2 = new Hashtable<String, String>();
       dict2.put("osgi.jndi.service.name", "jdbc/db2");
-        
+        
       services.add(asKeyValueService(javax.sql.DataSource.class.getName(), mockService1, dict1));
       services.add(asKeyValueService(javax.sql.DataSource.class.getName(), mockService2, dict2));
     }
@@ -170,5 +171,5 @@ multiple services with the same interface. 
 
 The `asKeyValueService` builder method can be used to construct the
 necessary parameters to create the service. The method takes in the name
-of the registered service, the object, and and a `Dictionary` as
+of the registered service, the object, and and a `Dictionary` as
 arguments.

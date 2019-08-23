@@ -1,23 +1,18 @@
 [[cdi-component]]
-== Camel CDI
+= Camel CDI
 
 The Camel CDI component provides auto-configuration for Apache Camel
 using CDI as dependency injection framework based
-on _convention-over-configuration_. It auto-detects Camel routes
+on _convention-over-configuration_. It auto-detects Camel routes
 available in the application and provides beans for common Camel
-primitives like `Endpoint`, `FluentProducerTemplate`, `ProducerTemplate` or `TypeConverter`. It
+primitives like `Endpoint`, `FluentProducerTemplate`, `ProducerTemplate` or `TypeConverter`. It
 implements standard Camel bean integration
-so that Camel annotations like `@Consume`, `@Produce`
-and `@PropertyInject` can be used seamlessly in CDI beans. Besides, it
+so that Camel annotations like `@Consume`, `@Produce`
+and `@PropertyInject` can be used seamlessly in CDI beans. Besides, it
 bridges Camel events (e.g. `RouteAddedEvent`,
-`CamelContextStartedEvent`, `ExchangeCompletedEvent`, ...) as CDI events
+`CamelContextStartedEvent`, `ExchangeCompletedEvent`, ...) as CDI events
 and provides a CDI events endpoint that can be used to consume / produce
 CDI events from / to Camel routes.
-
-While the Camel CDI component is available as of **Camel 2.10**, it's
-been rewritten in *Camel 2.17* to better fit into the CDI programming
-model. Hence some of the features like the Camel events to CDI events
-bridge and the CDI events endpoint only apply starting Camel 2.17.
 
 More details on how to test Camel CDI applications are available in
 Camel CDI testing.
@@ -27,9 +22,9 @@ Camel CDI testing.
 camel-cdi is deprecated in OSGi and not supported. Use OSGi Blueprint if using Camel with OSGi.
 ====
 
-=== Auto-configured Camel context
+== Auto-configured Camel context
 
-Camel CDI automatically deploys and configures a `CamelContext` bean.
+Camel CDI automatically deploys and configures a `CamelContext` bean.
 That `CamelContext` bean is automatically instantiated, configured and
 started (resp. stopped) when the CDI container initializes (resp. shuts
 down). It can be injected in the application, e.g.:
@@ -41,15 +36,16 @@ CamelContext context;
 ----
 
 That default `CamelContext` bean is qualified with the
-built-in `@Default` qualifier, is scoped `@ApplicationScoped` and is of
+built-in `@Default` qualifier, is scoped `@ApplicationScoped` and is of
 type `DefaultCamelContext`.
 
 Note that this bean can be customized programmatically and other Camel
 context beans can be deployed in the application as well.
 
-=== Auto-detecting Camel routes
+[[CDI-Auto-detectingCamelroutes]]
+== Auto-detecting Camel routes
 
-Camel CDI automatically collects all the `RoutesBuilder` beans in the
+Camel CDI automatically collects all the `RoutesBuilder` beans in the
 application, instantiates and add them to the `CamelContext` bean
 instance when the CDI container initializes. For example, adding a Camel
 route is as simple as declaring a class, e.g.:
@@ -57,7 +53,7 @@ route is as simple as declaring a class, e.g.:
 [source,java]
 ----
 class MyRouteBean extends RouteBuilder {
- 
+
     @Override
     public void configure() {
         from("jms:invoices").to("file:/invoices");
@@ -65,12 +61,10 @@ class MyRouteBean extends RouteBuilder {
 }
 ----
 
-Note that you can declare as many `RoutesBuilder` beans as you want.
-Besides, `RouteContainer` beans are also automatically collected,
-instantiated and added to the `CamelContext` bean instance managed by
+Note that you can declare as many `RoutesBuilder` beans as you want.
+Besides, `RouteContainer` beans are also automatically collected,
+instantiated and added to the `CamelContext` bean instance managed by
 Camel CDI when the container initializes.
-
-*Available as of Camel 2.19*
 
 In some situations, it may be necessary to disable the auto-configuration of the `RouteBuilder` and `RouteContainer` beans. That can be achieved by observing for the `CdiCamelConfiguration` event, e.g.:
 
@@ -90,7 +84,7 @@ static void configuration(@Observes CdiCamelConfiguration configuration) {
 }
 ----
 
-=== Auto-configured Camel primitives
+== Auto-configured Camel primitives
 
 Camel CDI provides beans for common Camel primitives that can be
 injected in any CDI beans, e.g.:
@@ -116,26 +110,23 @@ Endpoint endpoint;
 TypeConverter converter;
 ----
 
-=== Camel context configuration
+== Camel context configuration
 
 If you just want to change the name of the default `CamelContext` bean,
-you can used the `@ContextName` qualifier provided by Camel CDI, e.g.:
+you can used the `@Named` qualifier provided by CDI, e.g.:
 
 [source,java]
 ----
-@ContextName("camel-context")
-class MyRouteBean extends RouteBuilder {
- 
-    @Override
-    public void configure() {
-        from("jms:invoices").to("file:/invoices");
-    }
+@ApplicationScoped
+@Named("myCamelName")
+class CustomCamelContext extends DefaultCamelContext {
+
 }
 ----
 
-Else, if more customization is needed, any `CamelContext` class can be
+Else, if more customization is needed, any `CamelContext` class can be
 used to declare a custom Camel context bean. Then,
-the `@PostConstruct` and `@PreDestroy` lifecycle callbacks can be done
+the `@PostConstruct` and `@PreDestroy` lifecycle callbacks can be done
 to do the customization, e.g.:
 
 [source,java]
@@ -145,7 +136,7 @@ class CustomCamelContext extends DefaultCamelContext {
 
     @PostConstruct
     void customize() {
-        // Set the Camel context name
+        // Or set the Camel context name here
         setName("custom");
         // Disable JMX
         disableJMX();
@@ -158,8 +149,8 @@ class CustomCamelContext extends DefaultCamelContext {
 }
 ----
 
-link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#producer_method[Producer]
-and link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#disposer_method[disposer]
+http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#producer_method[Producer]
+and http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#disposer_method[disposer]
 methods can also be used as well to customize the Camel context bean, e.g.:
 
 [source,java]
@@ -180,8 +171,8 @@ class CamelContextFactory {
 }
 ----
 
-Similarly, link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#producer_field[producer
-fields] can be used, e.g.:
+Similarly, http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#producer_field[producer
+fields] can be used, e.g.:
 
 [source,java]
 ----
@@ -199,7 +190,7 @@ class CustomCamelContext extends DefaultCamelContext {
 
 This pattern can be used for example to avoid having the Camel context
 routes started automatically when the container initializes by calling
-the `setAutoStartup` method, e.g.:
+the `setAutoStartup` method, e.g.:
 
 [source,java]
 ----
@@ -213,108 +204,11 @@ class ManualStartupCamelContext extends DefaultCamelContext {
 }
 ----
 
-=== Multiple Camel contexts
-
-Any number of `CamelContext` beans can actually be declared in the
-application as documented above. In that case, the CDI qualifiers
-declared on these `CamelContext` beans are used to bind the Camel routes
-and other Camel primitives to the corresponding Camel contexts. From
-example, if the following beans get declared:
-
-[source,java]
-----
-@ApplicationScoped
-@ContextName("foo")
-class FooCamelContext extends DefaultCamelContext {
-}
-
-@ApplicationScoped
-@BarContextQualifier
-class BarCamelContext extends DefaultCamelContext {
-}
- 
-@ContextName("foo")
-class RouteAddedToFooCamelContext extends RouteBuilder {
-
-    @Override
-    public void configure() {
-        // ...
-    }
-}
- 
-@BarContextQualifier
-class RouteAddedToBarCamelContext extends RouteBuilder {
-
-    @Override
-    public void configure() {
-        // ...
-    }
-}
- 
-@ContextName("baz")
-class RouteAddedToBazCamelContext extends RouteBuilder {
-
-    @Override
-    public void configure() {
-        // ...
-    }
-}
- 
-@MyOtherQualifier
-class RouteNotAddedToAnyCamelContext extends RouteBuilder {
-
-    @Override
-    public void configure() {
-        // ...
-    }
-}
-----
-
-The `RoutesBuilder` beans qualified with `@ContextName` are
-automatically added to the corresponding `CamelContext` beans by Camel
-CDI. If no such `CamelContext` bean exists, it gets automatically
-created, as for the `RouteAddedToBazCamelContext` bean. Note this only
-happens for the `@ContextName` qualifier provided by Camel CDI. Hence
-the `RouteNotAddedToAnyCamelContext` bean qualified with the
-user-defined `@MyOtherQualifier` qualifier does not get added to any
-Camel contexts. That may be useful, for example, for Camel routes that
-may be required to be added later during the application execution.
-
-NOTE: Since Camel version 2.17.0, Camel CDI is capable of managing any kind of
-`CamelContext` beans (e.g. `DefaultCamelContext`). In previous versions,
-it is only capable of managing beans of type `CdiCamelContext` so it is
-required to extend it.
-
-The CDI qualifiers declared on the `CamelContext` beans are also used to
-bind the corresponding Camel primitives, e.g.:
-
-[source,java]
-----
-@Inject
-@ContextName("foo")
-@Uri("direct:inbound")
-ProducerTemplate producerTemplate;
-
-@Inject
-@ContextName("foo")
-@Uri("direct:inbound")
-FluentProducerTemplate fluentProducerTemplate;
-
-@Inject
-@BarContextQualifier
-MockEndpoint outbound; // URI defaults to the member name, i.e. mock:outbound
-
-@Inject
-@ContextName("baz")
-@Uri("direct:inbound")
-Endpoint endpoint;
-----
-
-=== Configuration properties
+== Configuration properties
 
 To configure the sourcing of the configuration properties used by Camel
 to resolve properties placeholders, you can declare
-a `PropertiesComponent` bean qualified with `@Named("properties")`,
+a `PropertiesComponent` bean qualified with `@Named("properties")`,
 e.g.:
 
 [source,java]
@@ -333,9 +227,9 @@ PropertiesComponent propertiesComponent() {
 ----
 
 If you want to
-use link:http://deltaspike.apache.org/documentation/configuration.html[DeltaSpike
-configuration mechanism] you can declare the
-following `PropertiesComponent` bean:
+use http://deltaspike.apache.org/documentation/configuration.html[DeltaSpike
+configuration mechanism] you can declare the
+following `PropertiesComponent` bean:
 
 [source,java]
 ----
@@ -357,13 +251,13 @@ static class DeltaSpikeParser extends DefaultPropertiesParser {
 }
 ----
 
-You can see the `camel-example-cdi-properties` example for a working
+You can see the `camel-example-cdi-properties` example for a working
 example of a Camel CDI application using DeltaSpike configuration
 mechanism.
 
-=== Auto-configured type converters
+== Auto-configured type converters
 
-CDI beans annotated with the `@Converter` annotation are automatically
+CDI beans annotated with the `@Converter` annotation are automatically
 registered into the deployed Camel contexts, e.g.:
 
 [source,java]
@@ -380,19 +274,19 @@ public class MyTypeConverter {
 
 Note that CDI injection is supported within the type converters.
 
-=== Camel bean integration
+== Camel bean integration
 
-==== Camel annotations
+=== Camel annotations
 
-As part of the Camel link:http://camel.apache.org/bean-integration.html[bean
-integration], Camel comes with a set
-of link:http://camel.apache.org/bean-integration.html#BeanIntegration-Annotations[annotations] that
+As part of the Camel http://camel.apache.org/bean-integration.html[bean
+integration], Camel comes with a set
+of http://camel.apache.org/bean-integration.html#BeanIntegration-Annotations[annotations] that
 are seamlessly supported by Camel CDI. So you can use any of these
 annotations in your CDI beans, e.g.:
 
 [width="100%",cols="1,2a,2a",options="header",]
 |===
-|  |Camel annotation |CDI equivalent
+|  |Camel annotation |CDI equivalent
 |Configuration property a|
 [source,java]
 ----
@@ -417,11 +311,11 @@ See configuration properties for more details.
 |Producer template injection (default Camel context) a|
 [source,java]
 ----
-@Produce(uri = "mock:outbound")
+@Produce("mock:outbound")
 ProducerTemplate producer;
 
 // or using fluent template
-@Produce(uri = "mock:outbound")
+@Produce("mock:outbound")
 FluentProducerTemplate producer;
 ----
 
@@ -433,14 +327,14 @@ FluentProducerTemplate producer;
 ProducerTemplate producer;
 
 // or using fluent template
-@Produce(uri = "direct:outbound")
+@Produce("direct:outbound")
 FluentProducerTemplate producer;
 ----
 
 |Endpoint injection (default Camel context) a|
 [source,java]
 ----
-@EndpointInject(uri = "direct:inbound")
+@EndpointInject("direct:inbound")
 Endpoint endpoint;
 ----
 
@@ -452,19 +346,8 @@ Endpoint endpoint;
 Endpoint endpoint;
 ----
 
-|Endpoint injection (Camel context by name) a|
-[source,java]
-----
-@EndpointInject(uri = "direct:inbound",
-                context = "foo")
-Endpoint contextEndpoint;
-----
-
- a|
-[source,java]
 ----
 @Inject
-@ContextName("foo")
 @Uri("direct:inbound")
 Endpoint contextEndpoint;
 ----
@@ -501,16 +384,16 @@ MyBean bean;
 |POJO consuming a|
 [source,java]
 ----
-@Consume(uri = "seda:inbound")
+@Consume("seda:inbound")
 void consume(@Body String body) {
     //...
 }
 ----
 
- | 
+ | 
 |===
 
-==== Bean component
+=== Bean component
 
 You can refer to CDI beans, either by type or name, From the Camel DSL,
 e.g. with the Java Camel DSL:
@@ -536,11 +419,11 @@ class MyNamedBean {
 from("direct:inbound").bean("foo");
 ----
 
-==== Referring beans from Endpoint URIs
+=== Referring beans from Endpoint URIs
 
 When configuring endpoints using the URI syntax you can refer to beans
-in the Registry using the `pass:[#]` notation. If the URI
-parameter value starts with a `pass:[#]` sign then Camel CDI will lookup for a
+in the Registry using the `pass:[#]` notation. If the URI
+parameter value starts with a `pass:[#]` sign then Camel CDI will lookup for a
 bean of the given type by name, e.g.:
 
 [source,java]
@@ -549,7 +432,7 @@ from("jms:queue:{{destination}}?transacted=true&transactionManager=#jtaTransacti
 ----
 
 Having the following CDI bean qualified
-with `@Named("jtaTransactionManager")`:
+with `@Named("jtaTransactionManager")`:
 
 [source,java]
 ----
@@ -564,16 +447,14 @@ PlatformTransactionManager createTransactionManager(TransactionManager transacti
 }
 ----
 
-=== Camel events to CDI events
-
-*Available as of Camel 2.17*
+== Camel events to CDI events
 
 Camel provides a set
-of link:http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/event/package-summary.html[management
-events] that can be subscribed to for listening to Camel context,
+of http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/event/package-summary.html[management
+events] that can be subscribed to for listening to Camel context,
 service, route and exchange events. Camel CDI seamlessly translates
 these Camel events into CDI events that can be observed using
-CDI link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_methods[observer
+CDI http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_methods[observer
 methods], e.g.:
 
 [source,java]
@@ -583,7 +464,7 @@ void onContextStarting(@Observes CamelContextStartingEvent event) {
 }
 ----
 
-As of Camel 2.18, it is possible to observe events for a particular route (`RouteAddedEvent`,
+It is possible to observe events for a particular route (`RouteAddedEvent`,
 `RouteStartedEvent`, `RouteStoppedEvent` and `RouteRemovedEvent`) should it have
 an explicit defined, e.g.:
 
@@ -596,25 +477,8 @@ void onRouteStarted(@Observes @Named("foo") RouteStartedEvent event) {
 }
 ----
 
-When multiple Camel contexts exist in the CDI container, the Camel
-context bean qualifiers, like `@ContextName`, can be used to refine the
-observer method resolution to a particular Camel context as specified
-in link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_resolution[observer
-resolution], e.g.:
-
-[source,java]
-----
-void onRouteStarted(@Observes @ContextName("foo") RouteStartedEvent event) {
-    // Called after the route 'event.getRoute()' for the Camel context 'foo' has started
-}
- 
-void onContextStarted(@Observes @Manual CamelContextStartedEvent event) {
-    // Called after the Camel context qualified with '@Manual' has started
-}
-----
-
-Similarly, the `@Default` qualifier can be used to observe Camel events
-for the _default_ Camel context if multiples contexts exist, e.g.:
+Similarly, the `@Default` qualifier can be used to observe Camel events
+for the _default_ Camel context if multiples contexts exist, e.g.:
 
 [source,java]
 ----
@@ -623,7 +487,7 @@ void onExchangeCompleted(@Observes @Default ExchangeCompletedEvent event) {
 }
 ----
 
-In that example, if no qualifier is specified, the `@Any` qualifier is
+In that example, if no qualifier is specified, the `@Any` qualifier is
 implicitly assumed, so that corresponding events for all the Camel
 contexts get received.
 
@@ -631,18 +495,16 @@ Note that the support for Camel events translation into CDI events is
 only activated if observer methods listening for Camel events are
 detected in the deployment, and that per Camel context.
 
-=== CDI events endpoint
-
-*Available as of Camel 2.17*
+== CDI events endpoint
 
 The CDI event endpoint bridges
-the link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#events[CDI
-events] with the Camel routes so that CDI events can be seamlessly
+the http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#events[CDI
+events] with the Camel routes so that CDI events can be seamlessly
 observed / consumed (resp. produced / fired) from Camel consumers (resp.
 by Camel producers).
 
-The `CdiEventEndpoint<T>` bean provided by Camel CDI can be used to
-observe / consume CDI events whose _event type_ is `T`, for example:
+The `CdiEventEndpoint<T>` bean provided by Camel CDI can be used to
+observe / consume CDI events whose _event type_ is `T`, for example:
 
 [source,java]
 ----
@@ -667,8 +529,8 @@ void observeCdiEvents(@Observes String event) {
 from("direct:event").log("CDI event received: ${body}");
 ----
 
-Conversely, the `CdiEventEndpoint<T>` bean can be used to produce / fire
-CDI events whose _event type_ is `T`, for example:
+Conversely, the `CdiEventEndpoint<T>` bean can be used to produce / fire
+CDI events whose _event type_ is `T`, for example:
 
 [source,java]
 ----
@@ -705,10 +567,10 @@ from("direct:event")
     .log("CDI event sent: ${body}");
 ----
 
-The type variable `T` (resp. the qualifiers) of a
-particular `CdiEventEndpoint<T>` injection point are automatically
-translated into the parameterized _event type_ (resp. into the _event
-qualifiers_) e.g.:
+The type variable `T` (resp. the qualifiers) of a
+particular `CdiEventEndpoint<T>` injection point are automatically
+translated into the parameterized _event type_ (resp. into the _event
+qualifiers_) e.g.:
 
 [source,java]
 ----
@@ -723,37 +585,18 @@ void observeCdiEvents(@Observes @FooQualifier List<String> event) {
 }
 ----
 
-When multiple Camel contexts exist in the CDI container, the Camel
-context bean qualifiers, like `@ContextName`, can be used to qualify
-the `CdiEventEndpoint<T>` injection points, e.g.:
-
-[source,java]
-----
-@Inject
-@ContextName("foo")
-CdiEventEndpoint<List<String>> cdiEventEndpoint;
-// Only observes / consumes events having the @ContextName("foo") qualifier
-from(cdiEventEndpoint).log("Camel context (foo) > CDI event received: ${body}");
-// Produces / fires events with the @ContextName("foo") qualifier
-from("...").to(cdiEventEndpoint);
-
-void observeCdiEvents(@Observes @ContextName("foo") List<String> event) {
-    logger.info("Camel context (foo) > CDI event: {}", event);
-}
-----
-
 Note that the CDI event Camel endpoint dynamically adds
-an link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_methods[observer
-method] for each unique combination of _event type_ and _event
-qualifiers_ and solely relies on the container
-typesafe link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_resolution[observer
+an http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_methods[observer
+method] for each unique combination of _event type_ and _event
+qualifiers_ and solely relies on the container
+typesafe http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_resolution[observer
 resolution], which leads to an implementation as efficient as possible.
 
-Besides, as the impedance between the _typesafe_ nature of CDI and
-the _dynamic_ nature of
-the link:http://camel.apache.org/component.html[Camel component] model is
+Besides, as the impedance between the _typesafe_ nature of CDI and
+the _dynamic_ nature of
+the http://camel.apache.org/component.html[Camel component] model is
 quite high, it is not possible to create an instance of the CDI event
-Camel endpoint via link:http://camel.apache.org/uris.html[URIs]. Indeed, the
+Camel endpoint via http://camel.apache.org/uris.html[URIs]. Indeed, the
 URI format for the CDI event component is:
 
 [source,text]
@@ -761,10 +604,10 @@ URI format for the CDI event component is:
 cdi-event://PayloadType<T1,...,Tn>[?qualifiers=QualifierType1[,...[,QualifierTypeN]...]]
 ----
 
-With the authority `PayloadType` (resp. the `QualifierType`) being the
+With the authority `PayloadType` (resp. the `QualifierType`) being the
 URI escaped fully qualified name of the payload (resp. qualifier) raw
 type followed by the type parameters section delimited by angle brackets
-for payload parameterized type. Which leads to _unfriendly_ URIs,
+for payload parameterized type. Which leads to _unfriendly_ URIs,
 e.g.:
 
 [source,text]
@@ -777,16 +620,14 @@ endpoint instances and the observer methods as the CDI container doesn't
 have any ways of discovering the Camel context model during the
 deployment phase.
 
-=== Camel XML configuration import
-
-*Available as of Camel 2.18*
+== Camel XML configuration import
 
 While CDI favors a typesafe dependency injection mechanism, it may be
-useful to reuse existing Camel XML configuration files into a Camel CDI
-application. In other use cases, it might be handy to rely on the Camel
-XML DSL to configure its Camel context(s).
+useful to reuse existing Camel XML configuration files into a Camel CDI
+application. In other use cases, it might be handy to rely on the Camel
+XML DSL to configure its Camel context(s).
 
-You can use the `@ImportResource` annotation that's provided by Camel
+You can use the `@ImportResource` annotation that's provided by Camel
 CDI on any CDI beans and Camel CDI will automatically load the Camel XML
 configuration at the specified locations, e.g.:
 
@@ -818,13 +659,12 @@ following Camel XML configuration:
 <camelContext/>
 ----
 
-The corresponding CDI beans are automatically deployed and can be
+The corresponding CDI beans are automatically deployed and can be
 injected, e.g.:
 
 [source,java]
 ----
 @Inject
-@ContextName("foo")
 CamelContext context;
 
 @Inject
@@ -832,13 +672,8 @@ CamelContext context;
 Endpoint endpoint;
 ----
 
-Note that the `CamelContext` beans are automatically qualified with both
-the `@Named` and `@ContextName` qualifiers. If the
-imported `CamelContext` element doesn't have an `id` attribute, the
-corresponding bean is deployed with the built-in `@Default` qualifier.
-
 Conversely, CDI beans deployed in the application can be referred to
-from the Camel XML configuration, usually using the `ref` attribute,
+from the Camel XML configuration, usually using the `ref` attribute,
 e.g., given the following bean declared:
 
 [source,java]
@@ -862,9 +697,7 @@ configuration, e.g.:
 ----
 
 
-=== Transaction support
-
-*Available as of Camel 2.19*
+== Transaction support
 
 Camel CDI provides support for Camel transactional client using JTA.
 
@@ -888,7 +721,7 @@ Note that, for the time being, the transaction manager is looked up as JNDI reso
 More flexible strategies will be added in the future to support a wider range of deployment scenarios.
 ====
 
-==== Transaction policies
+=== Transaction policies
 
 Camel CDI provides implementation for the typically supported Camel `TransactedPolicy` as CDI beans. It is possible to have these policies looked up by name using the transacted EIP, e.g.:
 
@@ -938,7 +771,7 @@ The list of supported transaction policy names is:
 - `PROPAGATION_NESTED`,
 - `PROPAGATION_MANDATORY`.
 
-==== Transactional error handler
+=== Transactional error handler
 
 Camel CDI provides a transactional error handler that extends the redelivery error handler, forces a rollback whenever an exception occurs and creates a new transaction for each redelivery.
 
@@ -961,30 +794,7 @@ class MyRouteBean extends CdiRouteBuilder {
 ----
 
 
-=== Auto-configured OSGi integration
-
-*Available as of Camel 2.17*
-
-The Camel context beans are automatically adapted by Camel CDI so that
-they are registered as OSGi services and the various resolvers
-(like `ComponentResolver` and `DataFormatResolver`) integrate with the
-OSGi registry. That means that the Karaf Camel commands
-can be used to operate the Camel contexts auto-configured by Camel CDI,
-e.g.:
-
-[source,text]
-----
-karaf@root()> camel:context-list
- Context        Status              Total #       Failed #     Inflight #   Uptime
- -------        ------              -------       --------     ----------   ------
- camel-cdi      Started                   1              0              0   1 minute
-----
-
-See the `camel-example-cdi-osgi` example for a working example of the
-Camel CDI OSGi integration.
-
-
-=== Lazy Injection / Programmatic Lookup
+== Lazy Injection / Programmatic Lookup
 
 While the CDI programmatic model favors a http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#typesafe_resolution[typesafe resolution]
 mechanism that occurs at application initialization time, it is possible to perform
@@ -1024,54 +834,11 @@ MockEndpoint outbound = endpoints
     .get();
 ----
 
-Similarly, you can use the provided annotation literal for
-the `@ContextName` qualifier to lazily lookup for `CamelContext`
-beans, e.g.:
 
-[source,java]
-----
-@Any
-@Inject
-Instance<CamelContext> contexts;
+== Maven Archetype
 
-CamelContext context = contexts
-    .select(ContextName.Literal.of("foo"))
-    .get();
-----
-
-You can also refined the selection based on the Camel context type, e.g.:
-
-[source,java]
-----
-@Any
-@Inject
-Instance<CamelContext> contexts;
-
-// Refine the selection by type
-Instance<DefaultCamelContext> context = contexts.select(DefaultCamelContext.class);
-
-// Check if such a bean exists then retrieve a reference
-if (!context.isUnsatisfied())
-    context.get();
-----
-
-Or even iterate over a selection of Camel contexts, e.g.:
-
-[source,java]
-----
-@Any
-@Inject
-Instance<CamelContext> contexts;
-
-for (CamelContext context : contexts)
-    context.setUseBreadcrumb(true);
-----
-
-
-=== Maven Archetype
-
-Among the available link:camel-maven-archetypes.html[Camel Maven
-archetypes], you can use the provided `camel-archetype-cdi` to generate
+Among the available xref:latest@manual::camel-maven-archetypes.adoc[Camel Maven
+archetypes], you can use the provided `camel-archetype-cdi` to generate
 a Camel CDI Maven project, e.g.:
 
 [source,text]
@@ -1079,79 +846,4 @@ a Camel CDI Maven project, e.g.:
 mvn archetype:generate -DarchetypeGroupId=org.apache.camel.archetypes -DarchetypeArtifactId=camel-archetype-cdi
 ----
 
-=== Supported containers
 
-The Camel CDI component is compatible with any CDI 1.0, CDI 1.1 and CDI
-1.2 compliant runtime. It's been successfully tested against the
-following runtimes:
-
-[width="100%",cols="2,1m,2",options="header",]
-|============================================
-|Container |Version |Runtime
-|Weld SE |1.1.28.Final |CDI 1.0 / Java SE 7
-|OpenWebBeans |1.2.7 |CDI 1.0 / Java SE 7
-|Weld SE |2.4.2.Final |CDI 1.2 / Java SE 7
-|OpenWebBeans |1.7.2 |CDI 1.2 / Java SE 7
-|WildFly |8.2.1.Final |CDI 1.2 / Java EE 7
-|WildFly |9.0.1.Final |CDI 1.2 / Java EE 7
-|WildFly |10.1.0.Final |CDI 1.2 / Java EE 7
-|============================================
-
-
-=== Examples
-
-The following examples are available in the `examples` directory of the
-Camel project:
-
-[width="100%",cols="1m,3",options="header",]
-|===
-|Example |Description
-
-|camel-example-cdi
-|Illustrates how to work with Camel using CDI to configure components,
-endpoints and beans
-
-|camel-example-cdi-kubernetes
-|Illustrates the integration between Camel, CDI and Kubernetes
-
-|camel-example-cdi-metrics
-|Illustrates the integration between Camel, Dropwizard Metrics and CDI
-
-|camel-example-cdi-properties
-|Illustrates the integration between Camel, DeltaSpike and CDI for
-configuration properties
-
-|camel-example-cdi-osgi
-|A CDI application using the SJMS component that can be executed
-inside an OSGi container using PAX CDI
-
-|camel-example-cdi-rest-servlet
-|Illustrates the Camel REST DSL being used in a Web application that
-uses CDI as dependency injection framework
-
-|camel-example-cdi-test
-|Demonstrates the testing features that are provided as part of
-the integration between Camel and CDI
-
-|camel-example-cdi-xml
-|Illustrates the use of Camel XML configuration
-files into a Camel CDI application
-
-|camel-example-swagger-cdi
-|An example using REST DSL and Swagger Java with CDI
-
-|camel-example-widget-gadget-cdi
-|The Widget and Gadget use-case from the EIP book implemented
-in Java with CDI dependency Injection
-
-|===
-
-=== See Also
-
-* Camel CDI testing
-* http://www.cdi-spec.org[CDI specification Web site]
-* http://www.cdi-spec.org/ecosystem/[CDI ecosystem]
-* http://weld.cdi-spec.org[Weld home page]
-* http://openwebbeans.apache.org[OpenWebBeans home page]
-* https://github.com/astefanutti/further-cdi[Going further with CDI and Camel]
-(See Camel CDI section)

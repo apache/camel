@@ -4,7 +4,7 @@
 
 
 The
-LZF xref:manual::data-format.adoc[Data Format] is a message compression
+LZF xref:latest@manual::data-format.adoc[Data Format] is a message compression
 and de-compression format. It uses the
 LZF deflate algorithm. Messages marshalled using LZF compression can be
 unmarshalled using LZF decompression just prior to being consumed at the

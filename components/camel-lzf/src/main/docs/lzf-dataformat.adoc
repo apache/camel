@@ -1,18 +1,18 @@
-[[lzf-dataformat]]
-== LZF Deflate Compression DataFormat
+= LZF Deflate Compression DataFormat
 
 *Available as of Camel version 2.17*
 
+
 The
-LZF https://cwiki.apache.org/confluence/display/CAMEL/Data+Format[Data
-Format] is a message compression and de-compression format. It uses the
-LZF deflate algorithm. Messages marshalled using LZF compression can be
+LZF xref:latest@manual::data-format.adoc[Data Format] is a message compression
+and de-compression format. It uses the
+LZF deflate algorithm. Messages marshalled using LZF compression can be
 unmarshalled using LZF decompression just prior to being consumed at the
 endpoint. The compression capability is quite useful when you deal with
 large XML and Text based payloads or when you read messages previously
 comressed using LZF algotithm.
 
-### Options
+== Options
 
 // dataformat options: START
 The LZF Deflate Compression dataformat supports 2 options, which are listed below.
@@ -44,7 +44,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-### Marshal
+== Marshal
 
 In this example we marshal a regular text/XML payload to a compressed
 payload employing LZF compression format and send it an ActiveMQ queue
@@ -55,26 +55,24 @@ called MY_QUEUE.
 from("direct:start").marshal().lzf().to("activemq:queue:MY_QUEUE");
 -------------------------------------------------------------------
 
-### Unmarshal
+== Unmarshal
 
-In this example we unmarshal a LZF payload from an ActiveMQ queue called
-MY_QUEUE to its original format, and forward it for processing to
-the `UnGZippedMessageProcessor`.
+In this example we unmarshal a LZF payload from an ActiveMQ queue called
+MY_QUEUE to its original format, and forward it for processing to
+the `UnGZippedMessageProcessor`.
 
 [source,java]
 ----------------------------------------------------------------------------------------------
 from("activemq:queue:MY_QUEUE").unmarshal().lzf().process(new UnCompressedMessageProcessor());
 ----------------------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To useLZF compression in your camel routes you need to add a dependency
-on *camel-lzf* which implements this data format.
+on *camel-lzf* which implements this data format.
 
-If you use Maven you can just add the following to your `pom.xml`,
-substituting the version number for the latest & greatest release
-(see https://cwiki.apache.org/confluence/display/CAMEL/Download[the
-download page for the latest versions]).
+If you use Maven you can just add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release.
 
 [source,xml]
 ----------------------------------------------------------

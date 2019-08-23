@@ -17,6 +17,6 @@
 
 name: components
 title: Component reference
-version: latest
+version: 2.x
 nav:
 - modules/ROOT/nav.adoc

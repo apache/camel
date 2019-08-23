@@ -8,10 +8,10 @@ http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior much as the
 standard SEDA Component, but utilizes a
 https://github.com/LMAX-Exchange/disruptor[Disruptor] instead of a
 http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
-utilized by the standard xref:seda-component.adoc[SEDA]. Alternatively, a
+utilized by the standard SEDA. Alternatively, a
 
 *disruptor-vm:* endpoint is supported by this component, providing an
-alternative to the standard xref:vm-component.adoc[VM]. As with the SEDA
+alternative to the standard VM. As with the SEDA
 component, buffers of the *disruptor:* endpoints are only visible within
 a *single* CamelContext and no support is
 provided for persistence or recovery. The buffers of the
@@ -220,7 +220,7 @@ without incurring significant latency spikes.
 
 == Use of Request Reply
 
-The Disruptor component supports using xref:manual::requestReply-eip.adoc[Request
+The Disruptor component supports using xref:latest@manual::requestReply-eip.adoc[Request
 Reply], where the caller will wait for the Async route to complete. For
 instance:
 

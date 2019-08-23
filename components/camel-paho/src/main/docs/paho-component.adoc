@@ -1,7 +1,7 @@
-[[paho-component]]
-== Paho Component
+= Paho Component
 
 *Available as of Camel version 2.16*
+
 
 Paho component provides connector for the MQTT messaging protocol using
 the https://eclipse.org/paho/[Eclipse Paho] library. Paho is one of the
@@ -38,7 +38,7 @@ you need to add Eclipse Paho repository to your POM xml file:
 ----
 
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -48,7 +48,7 @@ paho:topic[?options]
 Where *topic* is the name of the topic.
 
 
-=== Options
+== Options
 
 // component options: START
 The Paho component supports 4 options, which are listed below.
@@ -129,7 +129,7 @@ The component supports 5 options, which are listed below.
 
 
 
-=== Headers
+== Headers
 
 The following headers are recognized by the Paho component:
 
@@ -138,11 +138,12 @@ The following headers are recognized by the Paho component:
 |Header |Java constant |Endpoint type |Value type |Description
 
 |CamelMqttTopic |PahoConstants.MQTT_TOPIC |Consumer |String |The name of the topic
+|CamelMqttQoS |PahoConstants.MQTT_QOS |Consumer |Integer |QualityOfService of the incoming message
 |CamelPahoOverrideTopic |PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC |Producer |String |Name of topic to override and send to instead of topic specified on endpoint
 |===
 
 
-=== Default payload type
+== Default payload type
 
 By default Camel Paho component operates on the binary payloads
 extracted out of (or put into) the MQTT message:
@@ -157,10 +158,10 @@ byte[] payload = "message".getBytes();
 producerTemplate.sendBody("paho:topic", payload);
 ----
 
-But of course Camel build-in link:type-converter.html[type conversion
+But of course Camel build-in xref:latest@manual::type-converter.adoc[type conversion
 API] can perform the automatic data type transformations for you. In the
 example below Camel automatically converts binary payload into `String`
-(and conversely):
+(and conversely):
 
 [source,java]
 ----
@@ -173,7 +174,7 @@ producerTemplate.sendBody("paho:topic", payload);
 ----
 
 
-=== Samples
+== Samples
 
 For example the following snippet reads messages from the MQTT broker
 installed on the same host as the Camel router:
@@ -192,7 +193,7 @@ from("direct:test")
     .to("paho:some/target/queue");
 ----
 
-For example this is how to read messages from the remote MQTT broker: 
+For example this is how to read messages from the remote MQTT broker: 
 
 [source]
 ----

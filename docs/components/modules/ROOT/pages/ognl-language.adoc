@@ -86,7 +86,7 @@ The component supports 2 options, which are listed below.
 
 == Samples
 
-For example you could use OGNL inside a xref:manual::filter-eip.adoc[Message
+For example you could use OGNL inside a xref:latest@manual::filter-eip.adoc[Message
 Filter] in XML
 
 [source,java]

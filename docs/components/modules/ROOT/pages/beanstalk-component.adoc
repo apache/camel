@@ -46,7 +46,7 @@ beanstalk://localhost:11300/tube1+tube2
 
 Tube name will be URL decoded, so if your tube names include special
 characters like + or ?, you need to URL-encode them appropriately, or
-use the RAW syntax, see xref:manual::faq/how-do-i-configure-endpoints.adoc[more
+use the RAW syntax, see xref:latest@manual::faq/how-do-i-configure-endpoints.adoc[more
 details here].
 
 By the way, you cannot specify several tubes when you are writing jobs
@@ -167,7 +167,7 @@ Be careful when specifying `release`, as the failed job will immediately
 become available in the same tube and your consumer will try to acquire
 it again. You can `release` and specify _jobDelay_ though.
 
-The beanstalk consumer is a Scheduled xref:manual::polling-consumer.adoc[Polling
+The beanstalk consumer is a Scheduled xref:latest@manual::polling-consumer.adoc[Polling
 Consumer] which means there is more options you can configure, such as
 how frequent the consumer should poll. For more details
 see Polling Consumer.

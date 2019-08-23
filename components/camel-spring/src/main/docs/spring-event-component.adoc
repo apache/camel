@@ -1,17 +1,17 @@
-[[spring-event-component]]
-== Spring Event Component
+= Spring Event Component
 
 *Available as of Camel version 1.4*
 
-The *spring-event:* component provides access to the Spring
+
+The Spring Event component provides access to the Spring
 `ApplicationEvent` objects. This allows you to publish
 `ApplicationEvent` objects to a Spring `ApplicationContext` or to
 consume them. You can then use
-link:enterprise-integration-patterns.html[Enterprise Integration
-Patterns] to process them such as link:message-filter.html[Message
+xref:latest@manual::enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns] to process them such as xref:latest@manual::filter-eip.adoc[Message
 Filter].
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------
@@ -21,7 +21,7 @@ spring-event://default[?options]
 Note, at the moment there are no options for this component. That can
 easily change in future releases, so please check back.
 
-### Spring Event Options
+== Spring Event Options
 
 
 
@@ -80,12 +80,3 @@ The component supports 4 options, which are listed below.
 | *camel.language.spel.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
 |===
 // spring-boot-auto-configure options: END
-
-
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

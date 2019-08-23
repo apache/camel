@@ -1,9 +1,9 @@
-[[cometd-component]]
-== CometD Component
+= CometD Component
 
 *Available as of Camel version 2.0*
 
-The *cometd:* component is a transport for working with the
+
+The Cometd component is a transport for working with the
 http://www.mortbay.org/jetty[jetty] implementation of the
 http://docs.codehaus.org/display/JETTY/Cometd+%28aka+Bayeux%29[cometd/bayeux
 protocol]. +
@@ -24,7 +24,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ----------------------------------------
@@ -34,7 +34,7 @@ cometd://host:port/channelName[?options]
 The *channelName* represents a topic that can be subscribed to by the
 Camel endpoints.
 
-### Examples
+== Examples
 
 ------------------------------------------
 cometd://localhost:8080/service/mychannel
@@ -43,7 +43,7 @@ cometds://localhost:8443/service/mychannel
 
 where `cometds:` represents an SSL configured endpoint.
 
-### Options
+== Options
 
 
 
@@ -154,7 +154,7 @@ For file (for webapp resources located in the Web Application directory
 the webapp folder -->
 cometd://localhost:8080?resourceBase=classpath:webapp
 
-### Authentication
+== Authentication
 
 *Available as of Camel 2.8*
 
@@ -162,15 +162,15 @@ You can configure custom `SecurityPolicy` and `Extension`'s to the
 `CometdComponent` which allows you to use authentication as
 http://cometd.org/documentation/howtos/authentication[documented here]
 
-### Setting up SSL for Cometd Component
+== Setting up SSL for Cometd Component
 
-#### Using the JSSE Configuration Utility
+=== Using the JSSE Configuration Utility
 
-As of Camel 2.9, the Cometd component supports SSL/TLS configuration
-through the link:camel-configuration-utilities.html[Camel JSSE
-Configuration Utility].  This utility greatly decreases the amount of
+The Cometd component supports SSL/TLS configuration
+through the xref:latest@manual::camel-configuration-utilities.adoc[Camel JSSE
+Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
-endpoint and component levels.  The following examples demonstrate how
+endpoint and component levels.  The following examples demonstrate how
 to use the utility with the Cometd component. You need to configure SSL
 on the CometdComponent.
 
@@ -218,17 +218,10 @@ Spring DSL based configuration of endpoint
           password="keystorePassword"/>
     </camel:keyManagers>
   </camel:sslContextParameters>...
- 
+ 
   <bean id="cometd" class="org.apache.camel.component.cometd.CometdComponent">
     <property name="sslContextParameters" ref="sslContextParameters"/>
   </bean>
 ...
   <to uri="cometds://127.0.0.1:443/service/test?baseResource=file:./target/test-classes/webapp&timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2"/>...
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

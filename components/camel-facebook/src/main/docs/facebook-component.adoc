@@ -1,7 +1,7 @@
-[[facebook-component]]
-== Facebook Component
+= Facebook Component
 
 *Available as of Camel version 2.14*
+
 
 The Facebook component provides access to all of the Facebook APIs
 accessible using http://facebook4j.org/en/index.html[Facebook4J]. It
@@ -33,14 +33,14 @@ for this component:
     </dependency>
 -----------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------
   facebook://[endpoint]?[options]
 ---------------------------------
 
-### FacebookComponent
+== FacebookComponent
 
 The facebook component can be configured with the Facebook account
 settings below, which are mandatory. The values can be provided to the
@@ -195,7 +195,7 @@ with the following path and query parameters:
 | *oAuthAppId* (security) | The application Id |  | String
 | *oAuthAppSecret* (security) | The application Secret |  | String
 | *oAuthAuthorizationURL* (security) | OAuth authorization URL | https://www.facebook.com/dialog/oauth | String
-| *oAuthPermissions* (security) | Default OAuth permissions. Comma separated permission names. See \https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
+| *oAuthPermissions* (security) | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
@@ -231,7 +231,7 @@ The component supports 29 options, which are listed below.
 | *camel.component.facebook.configuration.o-auth-app-id* | The application Id |  | String
 | *camel.component.facebook.configuration.o-auth-app-secret* | The application Secret |  | String
 | *camel.component.facebook.configuration.o-auth-authorization-u-r-l* | OAuth authorization URL | https://www.facebook.com/dialog/oauth | String
-| *camel.component.facebook.configuration.o-auth-permissions* | Default OAuth permissions. Comma separated permission names. See \https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
+| *camel.component.facebook.configuration.o-auth-permissions* | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
 | *camel.component.facebook.configuration.pretty-debug-enabled* | Prettify JSON debug output if set to true | false | Boolean
 | *camel.component.facebook.configuration.rest-base-u-r-l* | API base URL | https://graph.facebook.com/ | String
 | *camel.component.facebook.configuration.use-s-s-l* | Use SSL | true | Boolean
@@ -243,7 +243,7 @@ The component supports 29 options, which are listed below.
 
 
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 Producer endpoints can use endpoint names and options from the table
 below. Endpoints can also use the short name without the *get* or
@@ -264,8 +264,7 @@ value in the incoming message body.
 
 Any of the endpoint options can be provided in either the endpoint URI,
 or dynamically in a message header. The message header name must be of
-the format
-*CamelFacebook.https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=option&linkCreation=true&fromPageId=34020899[option]*.
+the format `CamelFacebook.option`.
 For example, the *userId* option value in the previous route could
 alternately be provided in the message header *CamelFacebook.userId*.
 Note that the inBody option overrides message header, e.g. the endpoint
@@ -277,11 +276,10 @@ return a boolean, return true for success and false otherwise. In case
 of Facebook API errors the endpoint will throw a RuntimeCamelException
 with a facebook4j.FacebookException cause.
 
-### Consumer Endpoints:
+== Consumer Endpoints:
 
 Any of the producer endpoints that take a
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=reading&linkCreation=true&fromPageId=34020899[reading#reading]
-parameter can be used as a consumer endpoint. The polling consumer uses
+reading parameter can be used as a consumer endpoint. The polling consumer uses
 the *since* and *until* fields to get responses within the polling
 interval. In addition to other reading fields, an initial *since* value
 can be provided in the endpoint for the first poll.
@@ -292,15 +290,12 @@ camel-facebook creates one route exchange per returned object. As an
 example, if *"facebook://home"* results in five posts, the route will be
 executed five times (once for each Post).
 
-### Reading Options
+== Reading Options
 
 The *reading* option of type *facebook4j.Reading* adds support for
 reading parameters, which allow selecting specific fields, limits the
 number of results, etc. For more information see
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=Graph+API&linkCreation=true&fromPageId=34020899[Graph
-API#reading] -
-https://developers.facebook.com/docs/reference/api/#reading[Facebook
-Developers].
+https://developers.facebook.com/docs/reference/api/#reading[Graph API documentation].
 
 It is also used by consumer endpoints to poll Facebook data to avoid
 sending duplicate messages across polls.
@@ -310,14 +305,12 @@ The reading option can be a reference or value of type
 options in either the endpoint URI or exchange header with
 *CamelFacebook.* prefix.
 
-### Message header
+== Message header
 
-Any of the
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=URI+options&linkCreation=true&fromPageId=34020899[URI
-options#urioptions] can be provided in a message header for producer
-endpoints with *CamelFacebook.* prefix.
+Any of the URI options can be provided in a message header for producer
+endpoints with `CamelFacebook.` prefix.
 
-### Message body
+== Message body
 
 All result message bodies utilize objects provided by the Facebook4J
 API. Producer endpoints can specify the option name for incoming message
@@ -327,7 +320,7 @@ For endpoints that return an array, or *facebook4j.ResponseList*, or
 *java.util.List*, a consumer endpoint will map every elements in the
 list to distinct messages.
 
-### Use cases
+== Use cases
 
 To create a post within your Facebook profile, send this producer a
 facebook4j.PostUpdate body.
@@ -338,8 +331,8 @@ facebook4j.PostUpdate body.
         .to("facebook://postFeed/inBody=postUpdate);
 ----------------------------------------------------
 
-To poll, every 5 sec (You can set the link:polling-consumer.html[polling
-consumer] options by adding a prefix of "consumer"), all statuses on
+To poll, every 5 sec (You can set the xref:latest@manual::polling-consumer.adoc[polling
+consumer] options by adding a prefix of "consumer"), all statuses on
 your home feed:
 
 [source,java]

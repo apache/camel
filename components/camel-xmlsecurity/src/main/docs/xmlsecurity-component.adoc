@@ -1,5 +1,4 @@
-[[xmlsecurity-component]]
-== XML Security Component
+= XML Security Component
 
 *Available as of Camel version 2.12*
 
@@ -8,7 +7,7 @@ signatures as described in the W3C standard
 http://www.w3.org/TR/xmldsig-core/[XML Signature Syntax and Processing]
 or as described in the successor
 http://www.w3.org/TR/xmldsig-core1/[version 1.1]. For XML Encryption
-support, please refer to the XML Security link:data-format.html[Data
+support, please refer to the XML Security xref:latest@manual::data-format.adoc[Data
 Format].
 
 You can find an introduction to XML signature
@@ -21,7 +20,7 @@ will first try to use the Apache Santuario provider; if it does not find
 the Santuario provider, it will use the JDK provider. Further, the
 implementation is DOM based.
 
-Since Camel 2.15.0 we also provide support for *XAdES-BES/EPES* for the
+We also provide support for *XAdES-BES/EPES* for the
 signer endpoint; see subsection "XAdES-BES/EPES for the Signer
 Endpoint".
 
@@ -38,7 +37,7 @@ for this component:
 </dependency>
 ----
 
-### XML Signature Wrapping Modes
+== XML Signature Wrapping Modes
 
 XML Signature differs between enveloped, enveloping, and detached XML
 signature. In the
@@ -50,8 +49,7 @@ http://www.w3.org/TR/xmldsig-core1/#def-SignatureEnveloping[enveloping]
 XML signature case, the XML Signature contains the signed content. All
 other cases are called
 http://www.w3.org/TR/xmldsig-core1/#def-SignatureDetached[detached] XML
-signatures. A certain form of detached XML signature is supported since
-**2.14.0**.
+signatures.
 
 In the *enveloped XML signature* case, the supported generated XML
 signature has the following structure (Variables are surrounded by `[]`).
@@ -108,7 +106,7 @@ signature has the structure:
 </Signature>
 ----
 
-As of 2.14.0 *detached XML signatures* with the following structure
+*Detached XML signatures* with the following structure
 are supported (see also sub-chapter XML Signatures as Siblings of Signed
 Elements):
 
@@ -119,7 +117,7 @@ Elements):
       ...
 
 </[signed element]>
-<other sibling/>* 
+<other sibling/>* 
 <!-- between the signed element and the corresponding signature element, there can be other siblings.
  Signature element is added as last sibling. -->
 <Signature Id="generated_unique_ID">
@@ -143,9 +141,9 @@ Elements):
 </Signature>)+
 ----
 
- 
+ 
 
-### URI Format
+== URI Format
 
 The camel component consists of two endpoints which have the following
 URI format:
@@ -158,17 +156,17 @@ xmlsecurity:verify:name[?options]
 
 * With the signer endpoint, you can generate a XML signature for the
 body of the in-message which can be either a XML document or a plain
-text. The enveloped, enveloping, or detached (as of 12.14)  XML
+text. The enveloped, enveloping, or detached (as of 12.14)  XML
 signature(s) will be set to the body of the out-message.
 * With the verifier endpoint, you can validate an enveloped or
-enveloping XML signature or even several detached (as of 2.14.0) XML
+enveloping XML signature or even several detached XML
 signatures contained in the body of the in-message; if the validation is
 successful, then the original content is extracted from the XML
 signature and set to the body of the out-message.
 * The `name` part in the URI can be chosen by the user to distinguish
 between different signer/verifier endpoints within the camel context.
 
-### Basic Example
+== Basic Example
 
 The following example shows the basic usage of the component.
 
@@ -209,7 +207,7 @@ https://github.com/apache/camel/blob/master/components/camel-xmlsecurity/src/mai
 which reads the public key from a keystore.
 
 In the example, the default signature algorithm
-`http://www.w3.org/2000/09/xmldsig#rsa-sha1` is used. You can set the
+`\http://www.w3.org/2000/09/xmldsig#rsa-sha1` is used. You can set the
 signature algorithm of your choice by the option `signatureAlgorithm`
 (see below). The signer endpoint creates an _enveloping_ XML signature.
 If you want to create an _enveloped_ XML signature then you must specify
@@ -219,7 +217,7 @@ the parent element of the Signature element; see option
 For creating _detached_ XML signatures, see sub-chapter "Detached XML
 Signatures as Siblings of the Signed Elements".
 
-### Component Options
+== Component Options
 
 
 
@@ -244,7 +242,7 @@ The XML Security component supports 3 options, which are listed below.
 
 
 
-### Endpoint Options
+== Endpoint Options
 
 
 // endpoint options: START
@@ -390,7 +388,7 @@ The component supports 63 options, which are listed below.
 
 
 
-#### Output Node Determination in Enveloping XML Signature Case
+=== Output Node Determination in Enveloping XML Signature Case
 
 After the validation the node is extracted from the XML signature
 document which is finally returned to the output-message body. In the
@@ -458,9 +456,7 @@ or the structure:
 </Signature>
 ----
 
-### Detached XML Signatures as Siblings of the Signed Elements
-
-**Since 2.14.0**
+== Detached XML Signatures as Siblings of the Signed Elements
 
 You can create detached signatures where the signature is a sibling of
 the signed element. The following example contains two detached
@@ -512,7 +508,7 @@ signature is for the element `A` which also contains the first signature.
 The example shows that you can sign several elements and that for each
 element a signature is created as sibling. The elements to be signed
 must have an attribute of type ID. The ID type of the attribute must be
-defined in the XML schema (see option `schemaResourceUri`). You
+defined in the XML schema (see option `schemaResourceUri`). You
 specify a list of XPATH expressions pointing to attributes of type ID
 (see option `xpathsToIdAttributes`). These attributes determine the
 elements to be signed. The elements are signed by the same key given by
@@ -534,7 +530,7 @@ from("direct:detached")
 
 [source,xml]
 ----
-   
+   
 <bean id="xpathsToIdAttributesBean" class="java.util.ArrayList">
       <constructor-arg type="java.util.Collection">
           <list>
@@ -562,9 +558,9 @@ from("direct:detached")
 ----
 
 
-### XAdES-BES/EPES for the Signer Endpoint
+== XAdES-BES/EPES for the Signer Endpoint
 
-*Available as of Camel 2.15.0* 
+*Available as of Camel 2.15.0* 
 
 http://www.etsi.org/deliver/etsi_ts/101900_101999/101903/01.04.02_60/ts_101903v010402p.pdf[XML
 Advanced Electronic Signatures (XAdES)] defines extensions to XML
@@ -577,7 +573,7 @@ signatures]. XAdES defines different sets of signature properties which
 are called signature forms. We support the signature forms *Basic
 Electronic Signature* (XAdES-BES) and *Explicit Policy Based Electronic
 Signature* (XAdES-EPES) for the Signer Endpoint. The forms
-**Electronic ****Signature with Validation Data** XAdES-T and XAdES-C
+**Electronic ****Signature with Validation Data** XAdES-T and XAdES-C
 are not supported.
 
 
@@ -607,17 +603,17 @@ zero or one occurrence):
 ----
 
 The properties of the XAdES-BES form are the same except that
-the `SignaturePolicyIdentifier` property is not part of XAdES-BES. 
+the `SignaturePolicyIdentifier` property is not part of XAdES-BES. 
 
 You can configure the XAdES-BES/EPES properties via the
-bean `org.apache.camel.component.xmlsecurity.api.XAdESSignatureProperties`
-or `org.apache.camel.component.xmlsecurity.api.DefaultXAdESSignatureProperties. XAdESSignatureProperties` does
+bean `org.apache.camel.component.xmlsecurity.api.XAdESSignatureProperties`
+or `org.apache.camel.component.xmlsecurity.api.DefaultXAdESSignatureProperties. XAdESSignatureProperties` does
 support all properties mentioned above except
-the `SigningCertificate` property. To get
-the `SigningCertificate` property, you must overwrite either the
-method `XAdESSignatureProperties.getSigningCertificate()` or `XAdESSignatureProperties.getSigningCertificateChain()`. The
-class `DefaultXAdESSignatureProperties` overwrites the
-method `getSigningCertificate()` and allows you to specify the signing
+the `SigningCertificate` property. To get
+the `SigningCertificate` property, you must overwrite either the
+method `XAdESSignatureProperties.getSigningCertificate()` or `XAdESSignatureProperties.getSigningCertificateChain()`. The
+class `DefaultXAdESSignatureProperties` overwrites the
+method `getSigningCertificate()` and allows you to specify the signing
 certificate via a keystore and alias. The following example shows all
 parameters you can specify. If you do not need certain parameters you
 can just omit them.
@@ -626,25 +622,25 @@ can just omit them.
 
 [source,java]
 ----
- Keystore keystore = ... // load a keystore
+ Keystore keystore = ... // load a keystore
 DefaultKeyAccessor accessor = new DefaultKeyAccessor();
 accessor.setKeyStore(keystore);
 accessor.setPassword("password");
 accessor.setAlias("cert_alias"); // signer key alias
- 
+ 
 DefaultXAdESSignatureProperties props = new DefaultXAdESSignatureProperties();
 props.setNamespace("http://uri.etsi.org/01903/v1.3.2#"); // sets the namespace for the XAdES elements; the namspace is related to the XAdES version, default value is "http://uri.etsi.org/01903/v1.3.2#", other possible values are "http://uri.etsi.org/01903/v1.1.1#" and "http://uri.etsi.org/01903/v1.2.2#"
 props.setPrefix("etsi"); // sets the prefix for the XAdES elements, default value is "etsi"
- 
+ 
 // signing certificate
 props.setKeystore(keystore));
 props.setAlias("cert_alias"); // specify the alias of the signing certificate in the keystore = signer key alias
 props.setDigestAlgorithmForSigningCertificate(DigestMethod.SHA256); // possible values for the algorithm are "http://www.w3.org/2000/09/xmldsig#sha1", "http://www.w3.org/2001/04/xmlenc#sha256", "http://www.w3.org/2001/04/xmldsig-more#sha384", "http://www.w3.org/2001/04/xmlenc#sha512", default value is "http://www.w3.org/2001/04/xmlenc#sha256"
 props.setSigningCertificateURIs(Collections.singletonList("http://certuri"));
- 
+ 
 // signing time
 props.setAddSigningTime(true);
- 
+ 
 // policy
 props.setSignaturePolicy(XAdESSignatureProperties.SIG_POLICY_EXPLICIT_ID);
 // also the values XAdESSignatureProperties.SIG_POLICY_NONE ("None"), and XAdESSignatureProperties.SIG_POLICY_IMPLIED ("Implied")are possible, default value is XAdESSignatureProperties.SIG_POLICY_EXPLICIT_ID ("ExplicitId")
@@ -661,20 +657,20 @@ props.setSigPolicyQualifiers(Arrays
             + "</SPUserNotice></SigPolicyQualifier>", "category B" }));
 props.setSigPolicyIdDocumentationReferences(Arrays.asList(new String[] {"http://test.com/policy.doc.ref1.txt",
     "http://test.com/policy.doc.ref2.txt" }));
- 
+ 
 // production place
 props.setSignatureProductionPlaceCity("Munich");
 props.setSignatureProductionPlaceCountryName("Germany");
 props.setSignatureProductionPlacePostalCode("80331");
 props.setSignatureProductionPlaceStateOrProvince("Bavaria");
- 
+ 
 //role
 // you can add claimed roles either by specifying text or an XML fragment with the root element "ClaimedRole"
 props.setSignerClaimedRoles(Arrays.asList(new String[] {"test",
     "<a:ClaimedRole xmlns:a=\"http://uri.etsi.org/01903/v1.3.2#\"><TestRole>TestRole</TestRole></a:ClaimedRole>" }));
 props.setSignerCertifiedRoles(Collections.singletonList(new XAdESEncapsulatedPKIData("Ahixl6upD6av8N7pEvDABhEL6hM=",
     "http://uri.etsi.org/01903/v1.2.2#DER", "IdCertifiedRole")));
- 
+ 
 // data object format
 props.setDataObjectFormatDescription("invoice");
 props.setDataObjectFormatMimeType("text/xml");
@@ -683,7 +679,7 @@ props.setDataObjectFormatIdentifierQualifier("OIDAsURN"); //allowed values are e
 props.setDataObjectFormatIdentifierDescription("identifier desc");
 props.setDataObjectFormatIdentifierDocumentationReferences(Arrays.asList(new String[] {
     "http://test.com/dataobject.format.doc.ref1.txt", "http://test.com/dataobject.format.doc.ref2.txt" }));
- 
+ 
 //commitment
 props.setCommitmentTypeId("urn:oid:1.2.840.113549.1.9.16.6.4");
 props.setCommitmentTypeIdQualifier("OIDAsURN"); //allowed values are empty string, "OIDAsURI", "OIDAsURN"; default value is empty string
@@ -693,10 +689,10 @@ props.setCommitmentTypeIdDocumentationReferences(Arrays.asList(new String[] {"ht
 // you can specify a commitment type qualifier either by simple text or an XML fragment with root element "CommitmentTypeQualifier"
 props.setCommitmentTypeQualifiers(Arrays.asList(new String[] {"commitment qualifier",
     "<c:CommitmentTypeQualifier xmlns:c=\"http://uri.etsi.org/01903/v1.3.2#\"><C>c</C></c:CommitmentTypeQualifier>" }));
- 
+ 
 beanRegistry.bind("xmlSignatureProperties",props);
 beanRegistry.bind("keyAccessorDefault",keyAccessor);
- 
+ 
 // you must reference the properties bean in the "xmlsecurity" URI
 from("direct:xades").to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefault&properties=#xmlSignatureProperties")
              .to("mock:result");
@@ -714,7 +710,7 @@ from("direct:xades").to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefaul
 ...
 <bean id="xadesProperties"
     class="org.apache.camel.component.xmlsecurity.api.XAdESSignatureProperties">
-    <!-- For more properties see the previous Java DSL example. 
+    <!-- For more properties see the previous Java DSL example. 
          If you want to have a signing certificate then use the bean class DefaultXAdESSignatureProperties (see the previous Java DSL example). -->
     <property name="signaturePolicy" value="ExplicitId" />
     <property name="sigPolicyId" value="http://www.test.com/policy.pdf" />
@@ -737,7 +733,7 @@ from("direct:xades").to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefaul
 </bean>
 ----
 
-#### Headers
+=== Headers
 
 [width="100%",cols="1m,1m,4",options="header",]
 |=======================================================================
@@ -749,35 +745,35 @@ attribute value of `QualifyingProperties` element
 'Id' attribute value of `SignedDataObjectProperties` element
 
 |CamelXmlSignatureXAdESSignedSignaturePropertiesId |String |for the
-'Id' attribute value of `SignedSignatureProperties` element
+'Id' attribute value of `SignedSignatureProperties` element
 
 |CamelXmlSignatureXAdESDataObjectFormatEncoding |String |for the value
 of the Encoding element of the `DataObjectFormat` element
 
-|CamelXmlSignatureXAdESNamespace |String | overwrites the XAdES
+|CamelXmlSignatureXAdESNamespace |String | overwrites the XAdES
 namespace parameter value
 
 |CamelXmlSignatureXAdESPrefix |String |overwrites the XAdES prefix
 parameter value
 |=======================================================================
 
-#### Limitations with regard to XAdES version 1.4.2
+=== Limitations with regard to XAdES version 1.4.2
 
 * No support for signature form XAdES-T and XAdES-C
 * Only signer part implemented. Verifier part currently not available.
-* No support for the `QualifyingPropertiesReference` element (see
+* No support for the `QualifyingPropertiesReference` element (see
 section 6.3.2 of spec).
 * No support for the `Transforms` element contained in
-the `SignaturePolicyId` element contained in
-the `SignaturePolicyIdentifier element`
+the `SignaturePolicyId` element contained in
+the `SignaturePolicyIdentifier element`
 * No support of the `CounterSignature` element -> no support for
-the `UnsignedProperties` element
+the `UnsignedProperties` element
 * At most one `DataObjectFormat` element. More than one
 `DataObjectFormat` element makes no sense because we have only one data
 object which is signed (this is the incoming message body to the XML
 signer endpoint).
 * At most one `CommitmentTypeIndication` element. More than one
-`CommitmentTypeIndication` element makes no sense  because we have only
+`CommitmentTypeIndication` element makes no sense  because we have only
 one data object which is signed (this is the incoming message body to
 the XML signer endpoint).
 * A `CommitmentTypeIndication` element contains always the
@@ -785,7 +781,3 @@ the XML signer endpoint).
 `CommitmentTypeIndication` element is not supported.
 * The `AllDataObjectsTimeStamp` element is not supported
 * The `IndividualDataObjectsTimeStamp` element is not supported
-
-### See Also
-
-* http://www.w3.org/TR/xmldsig-bestpractices/[Best Practices]

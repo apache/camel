@@ -206,7 +206,7 @@ If you need to expose an Undertow endpoint on all network interfaces, the
 `0.0.0.0` address should be used.
 
 To listen across an entire URI prefix, see
-xref:manual::faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
+xref:latest@manual::faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
 
 If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the

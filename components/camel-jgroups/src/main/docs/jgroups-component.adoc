@@ -1,7 +1,7 @@
-[[jgroups-component]]
-== JGroups Component
+= JGroups Component
 
 *Available as of Camel version 2.13*
+
 
 http://www.jgroups.org[JGroups] is a toolkit for reliable multicast
 communication. The *jgroups:* component provides exchange of messages
@@ -13,28 +13,14 @@ for this component.
 [source,xml]
 ------------------------------------------------------------
 <dependency>
-    <groupId>org.apache-extras.camel-extra</groupId>
+    <groupId>org.apache.camel</groupId>
     <artifactId>camel-jgroups</artifactId>
     <!-- use the same version as your Camel core version -->
     <version>x.y.z</version>
 </dependency>
 ------------------------------------------------------------
 
-Starting from the Camel *2.13.0*, JGroups component has been moved from
-Camel Extra under the umbrella of the Apache Camel. If you are using
-Camel *2.13.0* or higher, please use the following POM entry instead.
-
-[source,xml]
-------------------------------------------------------------
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-jgroups</artifactId>
-    <!-- use the same version as your Camel core version -->
-    <version>x.y.z</version>
-</dependency>
-------------------------------------------------------------
-
-### URI format
+== URI format
 
 [source,java]
 -----------------------------
@@ -44,7 +30,7 @@ jgroups:clusterName[?options]
 Where *clusterName* represents the name of the JGroups cluster the
 component should connect to.
 
-### Options
+== Options
 
 
 
@@ -128,28 +114,28 @@ The component supports 9 options, which are listed below.
 
 
 
-### Headers
+== Headers
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,70%",options="header",]
 |=======================================================================
-|Header |Constant |Since version |Description
+|Header |Constant |Description
 
-|`JGROUPS_ORIGINAL_MESSAGE` |`JGroupsEndpoint.HEADER_JGROUPS_ORIGINAL_MESSAGE` |*2.13.0* |The original `org.jgroups.Message` instance from which the body of the
+|`JGROUPS_ORIGINAL_MESSAGE` |`JGroupsEndpoint.HEADER_JGROUPS_ORIGINAL_MESSAGE` |The original `org.jgroups.Message` instance from which the body of the
 consumed message has been extracted.
 
-|`JGROUPS_SRC` |`JGroupsEndpoint.`HEADER_JGROUPS_SRC |*2.10.0* | *Consumer* : The `org.jgroups.Address` instance extracted by
+|`JGROUPS_SRC` |`JGroupsEndpoint.`HEADER_JGROUPS_SRC |*Consumer* : The `org.jgroups.Address` instance extracted by
 `org.jgroups.Message`.getSrc() method of the consumed message. 
 *Producer*: The custom source `org.jgroups.Address` of the message to be sent.
 
-|`JGROUPS_DEST` |`JGroupsEndpoint.`HEADER_JGROUPS_DEST |*2.10.0* |*Consumer*: The `org.jgroups.Address` instance extracted by
+|`JGROUPS_DEST` |`JGroupsEndpoint.`HEADER_JGROUPS_DEST |*Consumer*: The `org.jgroups.Address` instance extracted by
 `org.jgroups.Message`.getDest() method of the consumed message.
 *Producer*: The custom destination `org.jgroups.Address` of the message to be sent.
 
-|`JGROUPS_CHANNEL_ADDRESS` |`JGroupsEndpoint.`HEADER_JGROUPS_CHANNEL_ADDRESS |*2.13.0* |Address (`org.jgroups.Address`) of the channel associated with the
+|`JGROUPS_CHANNEL_ADDRESS` |`JGroupsEndpoint.`HEADER_JGROUPS_CHANNEL_ADDRESS |Address (`org.jgroups.Address`) of the channel associated with the
 endpoint.
 |=======================================================================
- 
-### Usage
+ 
+== Usage
 
 Using `jgroups` component on the consumer side of the route will capture
 messages received by the `JChannel` associated with the endpoint and
@@ -174,10 +160,9 @@ endpoint.
 from("direct:start").to("jgroups:clusterName");
 --------------------------------------------------
 
-### Predefined filters
+== Predefined filters
 
-Starting from version *2.13.0* of Camel, JGroups component comes with
-predefined filters factory class named `JGroupsFilters.`
+JGroups component comes with predefined filters factory class named `JGroupsFilters.`
 
 If you would like to consume only view changes notifications sent to
 coordinator of the cluster (and ignore these sent to the "slave" nodes),
@@ -197,10 +182,9 @@ from("jgroups:clusterName?enableViewMessages=true").
   to("seda:masterNodeEventsQueue");
 ----------------------------------------------------------------------------------------
 
-### Predefined expressions
+== Predefined expressions
 
-Starting from version *2.13.0* of Camel, JGroups component comes with
-predefined expressions factory class named `JGroupsExpressions.`
+JGroups component comes with predefined expressions factory class named `JGroupsExpressions.`
 
 If you would like to create delayer that would affect
 the route only if the Camel context has not been started yet, use the
@@ -209,7 +193,7 @@ method. The expression created by this factory method will return given
 delay value only if the Camel context is in the state different than
 `started`. This expression is particularly useful if you would like to
 use JGroups component for keeping singleton (master) route within the
-cluster. <<controlbus-component,Control Bus>> `start` command
+cluster. Control Bus `start` command
 won't initialize the singleton route if the Camel Context hasn't been
 yet started. So you need to delay a startup of the master route, to be
 sure that it has been initialized after the Camel Context startup.
@@ -230,14 +214,14 @@ import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinat
 from("jgroups:clusterName?enableViewMessages=true").
   filter(dropNonCoordinatorViews()).
   threads().delay(delayIfContextNotStarted(SECONDS.toMillis(5))). // run in separated and delayed thread. Delay only if the context hasn't been started already. 
-  to("controlbus:route?routeId=masterRoute&action=start&async=true");
+  to("controlbus:route?routeId=masterRoute&action=start&async=true");
 
-from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).to(masterMockUri); 
+from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).to(masterMockUri); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Examples
+== Examples
 
-#### Sending (receiving) messages to (from) the JGroups cluster
+=== Sending (receiving) messages to (from) the JGroups cluster
 
 In order to send message to the JGroups cluster use producer endpoint,
 just as demonstrated on the snippet below.
@@ -263,10 +247,10 @@ from("jgroups:myCluster").to("mock:messagesFromTheCluster");
 mockEndpoint.assertIsSatisfied();
 ------------------------------------------------------------
 
-#### Receive cluster view change notifications
+=== Receive cluster view change notifications
 
 The snippet below demonstrates how to create the consumer endpoint
-listening to the notifications regarding cluster membership changes. By
+listening to the notifications regarding cluster membership changes. By
 default only regular messages are consumed by the endpoint.
 
 [source,java]
@@ -279,12 +263,12 @@ from("jgroups:clusterName?enableViewMessages=true").to(mockEndpoint);
 mockEndpoint.assertIsSatisfied();
 ---------------------------------------------------------------------
 
-#### Keeping singleton route within the cluster
+=== Keeping singleton route within the cluster
 
 The snippet below demonstrates how to keep the singleton consumer route
 in the cluster of Camel Contexts. As soon as the master node dies, one
 of the slaves will be elected as a new master and started. In this
-particular example we want to keep singleton <<jetty-component,jetty>>
+particular example we want to keep singleton xref:jetty-component.adoc[jetty]
 instance listening for the requests on
 address` http://localhost:8080/orders`.
 
@@ -295,5 +279,5 @@ service.setId("uniqueNodeId");
 ...
 context.addService(service);
 
-from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
+from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------

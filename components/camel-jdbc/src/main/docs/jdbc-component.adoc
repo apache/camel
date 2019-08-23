@@ -1,12 +1,12 @@
-[[jdbc-component]]
-== JDBC Component
+= JDBC Component
 
 *Available as of Camel version 1.2*
 
-The *jdbc* component enables you to access databases through JDBC, where
+
+The JDBC component enables you to access databases through JDBC, where
 SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in
 the message body. This component uses the standard JDBC API, unlike the
-<<sql-component,SQL Component>> component, which uses
+xref:sql-component.adoc[SQL Component] component, which uses
 spring-jdbc.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -25,7 +25,7 @@ for this component:
 This component can only be used to define producer endpoints, which
 means that you cannot use the JDBC component in a `from()` statement.
 
-=== URI format
+== URI format
 
 [source,text]
 ----
@@ -37,7 +37,7 @@ This component only supports producer endpoints.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 // component options: START
 The JDBC component supports 2 options, which are listed below.
@@ -115,7 +115,7 @@ The component supports 3 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Result
+== Result
 
 By default the result is returned in the OUT body as an
 `ArrayList<HashMap<String, Object>>`. The `List` object contains the
@@ -126,7 +126,7 @@ the result.
 *Note:* This component fetches `ResultSetMetaData` to be able to return
 the column name as the key in the `Map`.
 
-==== Message Headers
+=== Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |===
@@ -138,24 +138,24 @@ header.
 |`CamelJdbcUpdateCount` |If the query is an `UPDATE`, query the update count is returned in this
 OUT header.
 
-|`CamelGeneratedKeysRows` |*Camel 2.10:* Rows that contains the generated kets.
+|`CamelGeneratedKeysRows` |Rows that contains the generated keys.
 
-|`CamelGeneratedKeysRowCount` |*Camel 2.10:* The number of rows in the header that contains generated
+|`CamelGeneratedKeysRowCount` |The number of rows in the header that contains generated
 keys.
 
-|`CamelJdbcColumnNames` |*Camel 2.11.1:* The column names from the ResultSet as a `java.util.Set`
+|`CamelJdbcColumnNames` |The column names from the ResultSet as a `java.util.Set`
 type.
 
-|`CamelJdbcParametes` |*Camel 2.12:* A `java.util.Map` which has the headers to be used if
+|`CamelJdbcParametes` |A `java.util.Map` which has the headers to be used if
 `useHeadersAsParameters` has been enabled.
 |===
 
-=== Generated keys
+== Generated keys
 
 *Available as of Camel 2.10*
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
-generated keys. You can instruct the <<jdbc-component,JDBC>> producer to
+generated keys. You can instruct the xref:jdbc-component.adoc[JDBC] producer to
 return the generated keys in headers. +
  To do that set the header `CamelRetrieveGeneratedKeys=true`. Then the
 generated keys will be provided as headers with the keys listed in the
@@ -167,7 +167,7 @@ test].
 
 Using generated keys does not work with together with named parameters.
 
-=== Using named parameters
+== Using named parameters
 
 *Available as of Camel 2.12*
 
@@ -175,7 +175,7 @@ In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :?lic and
 :?min. +
  Camel will then lookup these parameters from the message headers.
-Notice in the example above we set two headers with constant value +
+Notice in the example above we set two headers with constant value
  for the named parameters:
 
 [source,java]
@@ -190,7 +190,7 @@ Notice in the example above we set two headers with constant value +
 You can also store the header values in a `java.util.Map` and store the
 map on the headers with the key `CamelJdbcParameters`.
 
-=== Samples
+== Samples
 
 In the following example, we fetch the rows from the customer table.
 
@@ -222,11 +222,11 @@ from("direct:hello")
   .to("mock:result");
 ----
 
-=== Sample - Polling the database every minute
+== Sample - Polling the database every minute
 
 If we want to poll a database using the JDBC component, we need to
-combine it with a polling scheduler such as the <<timer-component,Timer>>
-or <<quartz-component,Quartz>> etc. In the following example, we retrieve
+combine it with a polling scheduler such as the Timer
+or xref:quartz-component.adoc[Quartz] etc. In the following example, we retrieve
 data from the database every 60 seconds:
 
 [source,java]
@@ -237,7 +237,7 @@ from("timer://foo?period=60000")
   .to("activemq:queue:customers");
 ----
 
-=== Sample - Move Data Between Data Sources
+== Sample - Move Data Between Data Sources
 
 A common use case is to query for data, process it and move it to
 another data source (ETL operations). In the following example, we
@@ -254,4 +254,3 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
         .setBody(simple("insert into processed_customer values('${body[ID]}','${body[NAME]}')"))
         .to("jdbc:testdb");
 ----
-

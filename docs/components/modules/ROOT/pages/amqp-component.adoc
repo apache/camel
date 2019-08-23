@@ -410,7 +410,7 @@ AMQPConnectionDetails amqpConnection() {
 }
 ----
 
-You can also rely on the xref:properties-component.adoc[Camel properties] to read
+You can also rely on the Camel properties to read
 the AMQP connection details. Factory
 method `AMQPConnectionDetails.discoverAMQP()` attempts to read Camel
 properties in a Kubernetes-like convention, just as demonstrated on the

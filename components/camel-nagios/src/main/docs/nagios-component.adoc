@@ -1,9 +1,9 @@
-[[nagios-component]]
-== Nagios Component
+= Nagios Component
 
 *Available as of Camel version 2.3*
 
-The <<nagios-component,Nagios>> component allows you to send passive checks
+
+The xref:nagios-component.adoc[Nagios] component allows you to send passive checks
 to http://nagios.org[Nagios].
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -19,20 +19,20 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------
 nagios://host[:port][?Options]
 ------------------------------
 
-Camel provides two abilities with the <<nagios-component,Nagios>>
+Camel provides two abilities with the xref:nagios-component.adoc[Nagios]
 component. You can send passive check messages by sending a message to
 its endpoint. +
  Camel also provides a EventNotifer which allows
 you to send notifications to Nagios.
 
-### Options
+== Options
 
 
 
@@ -119,7 +119,7 @@ The component supports 10 options, which are listed below.
 
 
 
-### Sending message examples
+== Sending message examples
 
 You can send a message to Nagios where the message payload contains the
 message. By default it will be `OK` level and use the
@@ -146,9 +146,9 @@ To send a `CRITICAL` message you can send the headers such as:
         template.sendBodyAndHeaders("direct:start", "Hello Nagios", headers);
 -----------------------------------------------------------------------------
 
-### Using `NagiosEventNotifer`
+== Using `NagiosEventNotifer`
 
-The <<nagios-component,Nagios>> component also provides an
+The xref:nagios-component.adoc[Nagios] component also provides an
 EventNotifer which you can use to send events to
 Nagios. For example we can enable this from Java as follows:
 
@@ -166,12 +166,5 @@ Nagios. For example we can enable this from Java as follows:
 
 In Spring XML its just a matter of defining a Spring bean with the type
 `EventNotifier` and Camel will pick it up as documented here:
-link:advanced-configuration-of-camelcontext-using-spring.html[Advanced
+xref:latest@manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring].
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

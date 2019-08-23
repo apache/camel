@@ -5,9 +5,9 @@
 
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
 Expression or Predicate to be
-used in the DSL or xref:manual::xml-configuration.adoc[Xml
+used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
 Configuration]. For example you could use XQuery to create an
-Predicate in a xref:manual::filter-eip.adoc[Message
+Predicate in a xref:latest@manual::filter-eip.adoc[Message
 Filter] or as an Expression for a
 Recipient List.
 

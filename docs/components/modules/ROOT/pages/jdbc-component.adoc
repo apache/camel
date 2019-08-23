@@ -225,7 +225,7 @@ from("direct:hello")
 == Sample - Polling the database every minute
 
 If we want to poll a database using the JDBC component, we need to
-combine it with a polling scheduler such as the xref:timer-component.adoc[Timer]
+combine it with a polling scheduler such as the Timer
 or xref:quartz-component.adoc[Quartz] etc. In the following example, we retrieve
 data from the database every 60 seconds:
 

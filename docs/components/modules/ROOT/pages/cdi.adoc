@@ -837,7 +837,7 @@ MockEndpoint outbound = endpoints
 
 == Maven Archetype
 
-Among the available xref:manual::camel-maven-archetypes.adoc[Camel Maven
+Among the available xref:latest@manual::camel-maven-archetypes.adoc[Camel Maven
 archetypes], you can use the provided `camel-archetype-cdi` to generate
 a Camel CDI Maven project, e.g.:
 

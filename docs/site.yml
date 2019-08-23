@@ -4,7 +4,10 @@ site:
 content:
   sources:
     - url: ../
-      branches: HEAD
+      branches: master
+      start_path: docs/user-manual
+    - url: ../
+      branches: master, HEAD
       start_path: docs/components
 
 ui:

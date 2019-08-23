@@ -1,21 +1,15 @@
-[[websocket-component]]
-== Jetty Websocket Component
+= Jetty Websocket Component
 
 *Available as of Camel version 2.10*
 
-The *websocket* component provides websocket
+The WebSocket component provides websocket
 endpoints for communicating with clients using
 websocket. The component uses Eclipse Jetty Server which implements the
 http://tools.ietf.org/html/rfc6455[IETF] specification (drafts and RFC
 6455). It supports the protocols ws:// and wss://. To use wss://
 protocol, the SSLContextParameters must be defined.
 
-
-*Version currently supported*
-
-Camel 2.18 uses Jetty 9
-
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------------------
@@ -25,7 +19,7 @@ websocket://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Websocket Options
+== Websocket Options
 
 
 
@@ -145,11 +139,11 @@ The component supports 15 options, which are listed below.
 
 
 
- 
+ 
 
-### Message Headers
+== Message Headers
 
-The websocket component uses 2 headers to indicate to either send
+The WebSocket component uses 2 headers to indicate to either send
 messages back to a single/current client, or to all clients.
 
 [width="100%",cols="10%,90%",options="header",]
@@ -163,7 +157,7 @@ use the `sendToAll` option on the endpoint instead of using this header.
 |`WebsocketConstants.REMOTE_ADDRESS` |Remote address of the websocket session.
 |=======================================================================
 
-### Usage
+== Usage
 
 In this example we let Camel exposes a websocket server which clients
 can communicate with. The websocket server uses the default host and
@@ -175,7 +169,7 @@ message, we need to send the transformed message to the same endpoint
 
 This example is part of an unit test, which you can find
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-websocket/src/test/java/org/apache/camel/component/websocket/WebsocketRouteExampleTest.java[here].
-As a client we use the <<ahc-component,AHC>> library which offers support
+As a client we use the xref:ahc-component.adoc[AHC] library which offers support
 for web socket as well.
 
 Here is another example where webapp resources location have been
@@ -190,15 +184,15 @@ from("activemq:topic:newsTopic")
    .to("websocket://localhost:8443/newsTopic?sendToAll=true&staticResources=classpath:webapp");
 -----------------------------------------------------------------------------------------------
 
-### Setting up SSL for WebSocket Component
+== Setting up SSL for WebSocket Component
 
-#### Using the JSSE Configuration Utility
+=== Using the JSSE Configuration Utility
 
-As of Camel 2.10, the WebSocket component supports SSL/TLS configuration
-through the link:camel-configuration-utilities.html[Camel JSSE
-Configuration Utility].  This utility greatly decreases the amount of
+The WebSocket component supports SSL/TLS configuration
+through the xref:latest@manual::camel-configuration-utilities.adoc[Camel JSSE
+Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
-endpoint and component levels.  The following examples demonstrate how
+endpoint and component levels.  The following examples demonstrate how
 to use the utility with the Cometd component.
 
 [[Websocket-Programmaticconfigurationofthecomponent]]
@@ -269,16 +263,3 @@ Java DSL based configuration of endpoint
                          .to(uri);
 ...
 ----------------------------------------------------------------------------------------------------------
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* <<ahc-component,AHC>>
-* <<jetty-component,Jetty>>
-* Twitter Websocket Example
-demonstrates how to poll a constant feed of twitter searches and publish
-results in real time using web socket to a web page.

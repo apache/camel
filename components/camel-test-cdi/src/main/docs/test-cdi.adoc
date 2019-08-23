@@ -1,5 +1,5 @@
 [[CDITesting-CDITesting]]
-== CDI Testing
+= CDI Testing
 
 http://camel.apache.org/testing.html[Testing] is a crucial part of any
 development or integration work. In case you're using the Camel CDI
@@ -17,18 +17,16 @@ Camel:
 [width="100%",cols="1,1,4",options="header",]
 |=======================================================================
 |Name |Testing Frameworks Supported |Description
-|<<CDITesting-CamelCDITest,Camel CDI Test>> a|
+|<<CDITesting-CamelCDITest>>[Camel CDI Test] a|
 * JUnit 4
 
  a|
-*Available as of Camel 2.17*
-
 The Camel CDI test module (`camel-test-cdi`) provides a JUnit runner
 that bootstraps a test environment using CDI so that you don't have to
 be familiar with any CDI testing frameworks and can concentrate on the
 testing logic of your Camel CDI applications.
 
-|<<CDITesting-Arquillian,Arquillian>> a|
+|<<CDITesting-Arquillian>>[Arquillian] a|
 * JUnit 4
 * TestNG 5
 
@@ -45,7 +43,7 @@ descriptors]. The benefit is that you have a very fine-grained control
 over the application configuration that you want to test. The downside
 is more code and more complex _classpath_ / class loading structure.
 
-|<<CDITesting-PAXExam,PAX Exam>> a|
+|<<CDITesting-PAXExam>>[PAX Exam] a|
 * JUnit 4
 * TestNG 6
 
@@ -65,8 +63,7 @@ containers].
 |=======================================================================
 
 [[CDITesting-CamelCDITest]]
-Camel CDI Test
-^^^^^^^^^^^^^^
+== Camel CDI Test
 
 With this approach, your test classes use the JUnit runner provided in
 Camel CDI test. This runner manages the lifecycle of a standalone CDI
@@ -202,8 +199,7 @@ public class CamelCdiTest {
 ----
 
 [[CDITesting-Arquillian]]
-Arquillian
-^^^^^^^^^^
+== Arquillian
 
 With this approach, you use the JUnit runner or TestNG support provided
 by Arquillian to delegate the bootstrap of the CDI container. You need
@@ -282,7 +278,7 @@ Using ShrinkWarp Descriptors, you have a complete control over the
 configuration and kind of Camel CDI applications you want to test. For
 example, to test a Camel CDI application that uses the Camel
 REST DSL configured with the
-<<servlet-component,Servlet component>>, you need to create a Web archive,
+xref:servlet-component.adoc[Servlet component], you need to create a Web archive,
 e.g.:
 
 [source,java]
@@ -368,8 +364,7 @@ for a complete working example of testing a Camel CDI application using
 the REST DSL and deployed as a WAR in Jetty.
 
 [[CDITesting-PAXExam]]
-PAX Exam
-^^^^^^^^
+== PAX Exam
 
 If you target OSGi as runtime environment for your Camel CDI
 applications, you can use PAX Exam to automate the deployment of your
@@ -427,8 +422,7 @@ complete working example of testing a Camel CDI application deployed in
 an OSGi container using PAX Exam.
 
 [[CDITesting-TestingPatterns]]
-Testing Patterns
-^^^^^^^^^^^^^^^^
+== Testing Patterns
 
 You can see the tests in the `camel-example-cdi-test` example for a
 thorough overview of the following testing patterns for Camel CDI
@@ -439,8 +433,7 @@ module, they should equally work with Arquillian and PAX Exam unless
 otherwise stated or illustrated with a specific example.
 
 [[CDITesting-Testroutes]]
-Test routes
-+++++++++++
+== Test routes
 
 You may want to add some Camel routes to your Camel CDI applications for
 testing purpose. For example to route some exchanges to a `MockEndpoint`
@@ -468,8 +461,8 @@ public class CamelCdiTest {
 }
 ----
 
-You can find more information in <<cdi.adoc#CDI-Auto-detectingCamelroutes,auto-detecting Camel
-routes>>.
+You can find more information in xref:cdi.adoc#CDI-Auto-detectingCamelroutes[auto-detecting Camel
+routes].
 
 In case you prefer declaring the `RouteBuilder` bean in a separate class,
 for example to share it more easily across multiple test classes, you can use
@@ -487,8 +480,7 @@ public class CamelCdiTest {
 ----
 
 [[CDITesting-Beanalternatives]]
-Bean alternatives
-+++++++++++++++++
+== Bean alternatives
 
 You may want to replace a bean that is used in your Camel routes by
 another bean for testing purpose, for example to mock it or change the
@@ -500,7 +492,7 @@ Imagine you have the following route in your application:
 ----
 public class Application {
 
-    @ContextName("camel-test-cdi")
+    @ApplicationScoped
     static class Hello extends RouteBuilder {
 
         @Override
@@ -601,8 +593,7 @@ public class CamelCdiTest {
 ----
 
 [[CDITesting-Camelcontextcustomization]]
-Camel context customization
-+++++++++++++++++++++++++++
+== Camel context customization
 
 You may need to customize your Camel contexts for testing purpose, for
 example disabling JMX management to avoid TCP port allocation conflict.
@@ -615,7 +606,7 @@ class, e.g.:
 public class CamelCdiTest {
 
     @Default
-    @ContextName("camel-test-cdi")
+    @Named("camel-test-cdi")
     @ApplicationScoped
     static class CustomCamelContext extends DefaultCamelContext {
 
@@ -632,14 +623,13 @@ class will be used during the test execution instead of the default
 Camel context bean provided by the Camel CDI component.
 
 [[CDITesting-RoutesadvisingwithadviceWith]]
-Routes advising with `adviceWith`
-+++++++++++++++++++++++++++++++++
+== Routes advising with `adviceWith`
 
 `AdviceWith` is used for testing Camel routes where you
 can _advice_ an existing route before its being tested. It allows to
 add http://camel.apache.org/intercept.html[Intercept] or _weave_ routes
 for testing purpose, for example using
-the <<mock-component,Mock>> component.
+the Mock component.
 
 It is recommended to only advice routes which are not started already.
 To meet that requirement, you can use the `CamelContextStartingEvent`
@@ -667,8 +657,7 @@ public class CamelCdiTest {
 ----
 
 [[CDITesting-JUnitrules]]
-JUnit rules
-+++++++++++
+== JUnit rules
 
 Camel CDI test starts the CDI container after all the JUnit class rules
 have executed.
@@ -735,14 +724,3 @@ public class CamelCdiTest {
 }
 ----
 
-[[CDITesting-SeeAlso]]
-See Also
-^^^^^^^^
-
-* CDI component
-* http://arquillian.org[Arquillian Web site]
-* http://arquillian.org/modules/descriptors-shrinkwrap/[ShrinkWrap
-Descriptors]
-* http://arquillian.org/guides/shrinkwrap_introduction/[Creating
-Deployable Archives with ShrinkWrap]
-* https://ops4j1.jira.com/wiki/display/PAXEXAM4[PAX Exam]

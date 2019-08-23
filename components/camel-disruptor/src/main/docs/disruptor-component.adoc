@@ -1,17 +1,17 @@
-[[disruptor-component]]
-== Disruptor Component
+= Disruptor Component
 
 *Available as of Camel version 2.12*
 
-The *disruptor:* component provides asynchronous
+
+The Disruptor component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior much as the
 standard SEDA Component, but utilizes a
 https://github.com/LMAX-Exchange/disruptor[Disruptor] instead of a
 http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
-utilized by the standard <<seda-component,SEDA>>. Alternatively, a
+utilized by the standard SEDA. Alternatively, a
 
 *disruptor-vm:* endpoint is supported by this component, providing an
-alternative to the standard <<vm-component,VM>>. As with the SEDA
+alternative to the standard VM. As with the SEDA
 component, buffers of the *disruptor:* endpoints are only visible within
 a *single* CamelContext and no support is
 provided for persistence or recovery. The buffers of the
@@ -62,7 +62,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------------
@@ -87,7 +87,7 @@ across contexts in case of +
   ?option=value&option=value&…
 ------------------------------
 
-### Options
+== Options
 
 All the following options are valid for both the **disruptor:** and
 **disruptor-vm:** components.
@@ -189,7 +189,7 @@ The component supports 18 options, which are listed below.
 
 
 
-### Wait strategies
+== Wait strategies
 
 The wait strategy effects the type of waiting performed by the consumer
 threads that are currently waiting for the next exchange to be
@@ -218,9 +218,9 @@ barrier after an initially spinning. |This strategy is a good compromise between
 without incurring significant latency spikes.
 |=======================================================================
 
-### Use of Request Reply
+== Use of Request Reply
 
-The Disruptor component supports using link:request-reply.html[Request
+The Disruptor component supports using xref:latest@manual::requestReply-eip.adoc[Request
 Reply], where the caller will wait for the Async route to complete. For
 instance:
 
@@ -236,7 +236,7 @@ buffer. As it is a Request Reply message, we
 wait for the response. When the consumer on the _disruptor:input_ buffer
 is complete, it copies the response to the original message response.
 
-### Concurrent consumers
+== Concurrent consumers
 
 By default, the Disruptor endpoint uses a single consumer thread, but
 you can configure it to use concurrent consumer threads. So instead of
@@ -252,7 +252,7 @@ increase/shrink dynamically at runtime depending on load, whereas the
 number of concurrent consumers is always fixed and supported by the
 Disruptor internally so performance will be higher.
 
-### Thread pools
+== Thread pools
 
 Be aware that adding a thread pool to a Disruptor endpoint by doing
 something like:
@@ -269,7 +269,7 @@ of the performance gains achieved by using the Disruptor. Instead, it is
 advices to directly configure number of threads that process messages on
 a Disruptor endpoint using the concurrentConsumers option.
 
-### Sample
+== Sample
 
 In the route below we use the Disruptor to send the request to this
 async queue to be able to send a fire-and-forget message for further
@@ -302,7 +302,7 @@ another thread for further processing. Since this is from a unit test,
 it will be sent to a mock endpoint where we can do assertions in the
 unit test.
 
-### Using multipleConsumers
+== Using multipleConsumers
 
 In this example we have defined two consumers and registered them as
 spring beans.
@@ -330,7 +330,7 @@ but notice how we can use @Consume to consume from the Disruptor.
 -------------------------------------------
 public class FooEventConsumer {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private ProducerTemplate destination;
 
     @Consume(ref = "foo")
@@ -341,7 +341,7 @@ public class FooEventConsumer {
 }
 -------------------------------------------
 
-### Extracting disruptor information
+== Extracting disruptor information
 
 If needed, information such as buffer size, etc. can be obtained without
 using JMX in this fashion:

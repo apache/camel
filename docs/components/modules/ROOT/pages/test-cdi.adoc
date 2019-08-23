@@ -629,7 +629,7 @@ Camel context bean provided by the Camel CDI component.
 can _advice_ an existing route before its being tested. It allows to
 add http://camel.apache.org/intercept.html[Intercept] or _weave_ routes
 for testing purpose, for example using
-the xref:mock-component.adoc[Mock] component.
+the Mock component.
 
 It is recommended to only advice routes which are not started already.
 To meet that requirement, you can use the `CamelContextStartingEvent`

@@ -650,7 +650,7 @@ from("file://orders").
 
 === Using Annotations
 
-Camel also has annotations so you can use xref:manual::pojo-consuming.adoc[POJO
+Camel also has annotations so you can use xref:latest@manual::pojo-consuming.adoc[POJO
 Consuming] and POJO Producing.
 
 === Spring DSL sample
@@ -679,7 +679,7 @@ the documentation.
 
 Normally, when using xref:jms-component.adoc[JMS] as the transport, it only
 transfers the body and headers as the payload. If you want to use
-xref:jms-component.adoc[JMS] with a xref:manual::dead-letter-channel.adoc[Dead Letter
+xref:jms-component.adoc[JMS] with a xref:latest@manual::dead-letter-channel.adoc[Dead Letter
 Channel], using a JMS queue as the Dead Letter Queue, then normally the
 caused Exception is not stored in the JMS message. You can, however, use
 the `transferExchange` option on the JMS dead letter queue to instruct
@@ -1386,7 +1386,7 @@ Transactions and [Request Reply] over JMS
 When using Request Reply over JMS you cannot
 use a single transaction; JMS will not send any messages until a commit
 is performed, so the server side won't receive anything at all until the
-transaction commits. Therefore to use xref:manual::requestReply-eip.adoc[Request
+transaction commits. Therefore to use xref:latest@manual::requestReply-eip.adoc[Request
 Reply] you must commit a transaction after sending the request and then
 use a separate transaction for receiving the response.
 

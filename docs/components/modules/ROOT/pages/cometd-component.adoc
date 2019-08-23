@@ -167,7 +167,7 @@ http://cometd.org/documentation/howtos/authentication[documented here]
 === Using the JSSE Configuration Utility
 
 The Cometd component supports SSL/TLS configuration
-through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
+through the xref:latest@manual::camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how

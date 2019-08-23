@@ -115,8 +115,8 @@ can invoke the "bar" method on this bean like this:
 
 === SpEL in enterprise integration patterns
 
-You can use SpEL as an expression for xref:manual::recipientList-eip.adoc[Recipient
-List] or as a predicate inside a xref:manual::filter-eip.adoc[Message
+You can use SpEL as an expression for xref:latest@manual::recipientList-eip.adoc[Recipient
+List] or as a predicate inside a xref:latest@manual::filter-eip.adoc[Message
 Filter]:
 
 [source,xml]

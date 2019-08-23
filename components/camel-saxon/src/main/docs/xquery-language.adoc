@@ -1,17 +1,17 @@
-[[xquery-language]]
-== XQuery Language
+= XQuery Language
 
 *Available as of Camel version 1.0*
 
+
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
 Expression or Predicate to be
-used in the DSL or link:xml-configuration.html[Xml
+used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
 Configuration]. For example you could use XQuery to create an
-Predicate in a link:message-filter.html[Message
+Predicate in a xref:latest@manual::filter-eip.adoc[Message
 Filter] or as an Expression for a
 Recipient List.
 
-### XQuery Language options
+== XQuery Language options
 
 // language options: START
 The XQuery language supports 3 options, which are listed below.
@@ -48,7 +48,7 @@ The component supports 8 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-### Examples
+== Examples
 
 [source,java]
 ---------------------------
@@ -68,7 +68,7 @@ from("direct:start").
   recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
 -----------------------------------------------------------------------------
 
-### Variables
+== Variables
 
 The IN message body will be set as the `contextItem`. Besides this these
 Variables is also added as parameters:
@@ -95,7 +95,7 @@ with they own key name, for instance if there is an IN header with the
 key name *foo* then its added as *foo*.
 |=======================================================================
 
-### Using XML configuration
+== Using XML configuration
 
 If you prefer to configure your routes in your Spring
 XML file then you can use XPath expressions as follows
@@ -133,7 +133,7 @@ attribute:
     <xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
 -------------------------------------------------------------------------------
 
-### Using XQuery as transformation
+== Using XQuery as transformation
 
 We can do a message translation using transform or setBody in the route,
 as shown below:
@@ -154,9 +154,9 @@ from("direct:start").
    transform().xquery("/people/person/text()", String.class);
 -------------------------------------------------------------
 
- 
+ 
 
-### Using XQuery as an endpoint
+== Using XQuery as an endpoint
 
 Sometimes an XQuery expression can be quite large; it can essentally be
 used for Templating. So you may want to use an
@@ -177,7 +177,7 @@ The following example shows how to take a message of an ActiveMQ queue
   </camelContext>
 -------------------------------------------------------------------------
 
-### Examples
+== Examples
 
 Here is a simple
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryFilterTest.java[example]
@@ -189,7 +189,7 @@ http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java
 uses XQuery with namespaces as a predicate in a
 Message Filter
 
-### Learning XQuery
+== Learning XQuery
 
 XQuery is a very powerful language for querying, searching, sorting and
 returning XML. For help learning XQuery try these tutorials
@@ -202,7 +202,7 @@ Tutorial]
 You might also find the http://www.w3.org/TR/xpath-functions/[XQuery
 function reference] useful
 
-### Loading script from external resource
+== Loading script from external resource
 
 *Available as of Camel 2.11*
 
@@ -216,7 +216,7 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").xquery("resource:classpath:myxquery.txt", String.class)
 ------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use XQuery in your camel routes you need to add the a dependency on
 *camel-saxon* which implements the XQuery language.

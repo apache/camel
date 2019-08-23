@@ -4,7 +4,7 @@
 
 http://www.jasypt.org/[Jasypt] is a simplified encryption library which
 makes encryption and decryption easy. Camel integrates with Jasypt to
-allow sensitive information in xref:properties-component.adoc[Properties] files to
+allow sensitive information in Properties files to
 be encrypted. By dropping *`camel-jasypt`* on the classpath those
 encrypted values will automatically be decrypted on-the-fly by Camel.
 This ensures that human eyes can't easily spot sensitive information
@@ -97,7 +97,7 @@ Decrypted text: tiger
 ---------------------
 
 The idea is then to use those encrypted values in your
-xref:properties-component.adoc[Properties] files. Notice how the password value is
+Properties files. Notice how the password value is
 encrypted and the value has the tokens surrounding `ENC(value here)`
 
 TIP: When running jasypt tooling, if you come across `java.lang.NoClassDefFoundError: org/jasypt/encryption/pbe/StandardPBEStringEncryptor` this means you have to include jasypt\{version\}.jar in your classpath. Example of adding jar to classpath may be copying jasypt\{version\}.jar to $JAVA_HOME\jre\lib\ext if you are going to run as `java -jar ...`. The latter may be adding jasypt\{version\}.jar to classpath using `-cp`, in that case you should provide main class to execute as eg: `java -cp jasypt-1.9.2.jar:camel-jasypt-2.18.2.jar org.apache.camel.component.jasypt.Main -c encrypt -p secret -i tiger`
@@ -154,7 +154,7 @@ The `password` option is then a matter of defining as follows:
 
 In Java DSL you need to configure Jasypt as a
 `JasyptPropertiesParser` instance and set it on the
-xref:properties-component.adoc[Properties] component as show below:
+Properties component as show below:
 
 The properties file `myproperties.properties` then contain the encrypted
 value, such as shown below. Notice how the password value is encrypted
@@ -163,7 +163,7 @@ and the value has the tokens surrounding `ENC(value here)`
 == Example with Spring XML
 
 In Spring XML you need to configure the `JasyptPropertiesParser` which
-is shown below. Then the Camel xref:properties-component.adoc[Properties]
+is shown below. Then the Camel Properties
 component is told to use `jasypt` as the properties parser, which means
 Jasypt has its chance to decrypt values looked up in
 the properties.
@@ -184,7 +184,7 @@ the properties.
 </bean>
 -----------------------------------------------------------------------------------------------------------
 
-The xref:properties-component.adoc[Properties] component can also be inlined
+The Properties component can also be inlined
 inside the `<camelContext>` tag which is shown below. Notice how we use
 the `propertiesParserRef` attribute to refer to
 Jasypt.
@@ -214,7 +214,7 @@ Jasypt.
 
 In Blueprint XML you need to configure
 the `JasyptPropertiesParser` which is shown below. Then the
-Camel xref:properties-component.adoc[Properties] component is told to
+Camel Properties component is told to
 use `jasypt` as the properties parser, which
 means Jasypt has its chance to decrypt values looked
 up in the properties.
@@ -254,7 +254,7 @@ up in the properties.
 </blueprint>
 ----------------------------------------------------------------------------------------------------------------
 
-The xref:properties-component.adoc[Properties] component can also be inlined
+The Properties component can also be inlined
 inside the `<camelContext>` tag which is shown below. Notice how we use
 the `propertiesParserRef` attribute to refer
 to Jasypt.

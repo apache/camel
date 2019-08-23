@@ -1,7 +1,7 @@
-[[crypto-component]]
-== Crypto (JCE) Component
+= Crypto (JCE) Component
 
 *Available as of Camel version 2.3*
+
 
 With Camel cryptographic endpoints and Java's Cryptographic extension it
 is easy to create Digital Signatures for Exchanges.
@@ -22,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Introduction
+== Introduction
 
 Digital signatures make use of Asymmetric Cryptographic techniques to
 sign messages. From a (very) high level, the algorithms use pairs of
@@ -48,7 +48,7 @@ and how to leverage them with the JCE.
 * The ever insightful Wikipedia
 http://en.wikipedia.org/wiki/Digital_signature[Digital_signatures]
 
-### URI format
+== URI format
 
 As mentioned Camel provides a pair of crypto endpoints to create and
 verify signatures
@@ -78,7 +78,7 @@ complimentary `crypto:verify` in another, though for simplicity in the
 examples they appear one after the other. It goes without saying that
 both signing and verifying should be configured identically.
 
-### Options
+== Options
 
 // component options: START
 The Crypto (JCE) component supports 2 options, which are listed below.
@@ -190,17 +190,17 @@ The component supports 33 options, which are listed below.
 
 
 
-### Using
+== Using
 
-#### Raw keys
+=== Raw keys
 
 The most basic way to way to sign and verify an exchange is with a
 KeyPair as follows.
 
-The same can be achieved with the link:spring-xml-extensions.html[Spring
+The same can be achieved with the xref:latest@manual::spring-xml-extensions.adoc[Spring
 XML Extensions] using references to keys
 
-#### KeyStores and Aliases.
+=== KeyStores and Aliases.
 
 The JCE provides a very versatile keystore concept for housing pairs of
 private keys and certificates, keeping them encrypted and password
@@ -220,7 +220,7 @@ also shows how to load and initialize the keystore.
 
 Again in Spring a ref is used to lookup an actual keystore instance.
 
-#### Changing JCE Provider and Algorithm
+=== Changing JCE Provider and Algorithm
 
 Changing the Signature algorithm or the Security provider is a simple
 matter of specifying their names. You will need to also use Keys that
@@ -228,7 +228,7 @@ are compatible with the algorithm you choose.
 
 or
 
-#### Changing the Signature Message Header
+=== Changing the Signature Message Header
 
 It may be desirable to change the message header used to store the
 signature. A different header name can be specified in the route
@@ -236,13 +236,13 @@ definition as follows
 
 or
 
-#### Changing the buffersize
+=== Changing the buffersize
 
 In case you need to update the size of the buffer...
 
 or
 
-#### Supplying Keys dynamically.
+=== Supplying Keys dynamically.
 
 When using a Recipient list or similar EIP the recipient of an exchange
 can vary dynamically. Using the same key across all recipients may be
@@ -278,10 +278,3 @@ signed.getIn().copyFrom(unsigned.getOut());
 signed.getIn().setHeader(KEYSTORE_ALIAS, "bob");
 template.send("direct:alias-verify", signed);
 -------------------------------------------------------------------------------------------------
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

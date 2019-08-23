@@ -1,17 +1,16 @@
-[[undertow-component]]
-== Undertow Component
+= Undertow Component
 
 *Available as of Camel version 2.16*
 
-The *undertow* component provides HTTP and WebSocket based endpoints for consuming
+The Undertow component provides HTTP and WebSocket based endpoints for consuming
 and producing HTTP/WebSocket requests.
 
 That is, the Undertow component behaves as a simple Web server.
 Undertow can also be used as a http client which mean you can also use
 it with Camel as a producer.
 
-TIP: Since Camel version 2.21, the *undertow* component also supports WebSocket
-connections and can thus serve as a drop-in replacement for Camel websocket
+Since the component also supports WebSocket
+connections, it can serve as a drop-in replacement for Camel websocket
 component or atmosphere-websocket component.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -27,7 +26,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source,text]
 ----
@@ -40,7 +39,7 @@ undertow:wss://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 // component options: START
 The Undertow component supports 5 options, which are listed below.
@@ -134,20 +133,18 @@ The component supports 10 options, which are listed below.
 
 
 
-=== Message Headers
+== Message Headers
 
-Camel uses the same message headers as the <<http-component,HTTP>>
-component.
- From Camel 2.2, it also uses
-`Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
-the chuched encoding on the camel-undertow consumer.
+Camel uses the same message headers as the xref:http-component.adoc[HTTP]
+component. It also uses `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
+the chunked encoding on the camel-undertow consumer.
 
 Camel also populates *all* request.parameter and request.headers. For
 example, given a client request with the URL,
-`http://myserver/myserver?orderid=123`, the exchange will contain a
+`\http://myserver/myserver?orderid=123`, the exchange will contain a
 header named `orderid` with the value 123.
 
-=== HTTP Producer Example
+== HTTP Producer Example
 
 The following is a basic example of how to send an HTTP request to an
 existing HTTP endpoint.
@@ -170,10 +167,10 @@ or in XML
 <route>
 ----
 
-=== HTTP Consumer Example
+== HTTP Consumer Example
 
 In this sample we define a route that exposes a HTTP service at
-`http://localhost:8080/myapp/myservice`:
+`\http://localhost:8080/myapp/myservice`:
 
 [source,xml]
 ----
@@ -183,10 +180,10 @@ In this sample we define a route that exposes a HTTP service at
 </route>
 ----
 
-=== WebSocket Example
+== WebSocket Example
 
 In this sample we define a route that exposes a WebSocket service at
-`http://localhost:8080/myapp/mysocket` and returns back a response to the same channel:
+`\http://localhost:8080/myapp/mysocket` and returns back a response to the same channel:
 
 [source,xml]
 ----
@@ -197,23 +194,20 @@ In this sample we define a route that exposes a WebSocket service at
 </route>
 ----
 
-=== Using localhost as host
+== Using localhost as host
 
 When you specify `localhost` in a URL, Camel exposes the endpoint only
 on the local TCP/IP network interface, so it cannot be accessed from
 outside the machine it operates on.
 
-If you need to expose a Jetty endpoint on a specific network interface,
+If you need to expose an Undertow endpoint on a specific network interface,
 the numerical IP address of this interface should be used as the host.
-If you need to expose a Jetty endpoint on all network interfaces, the
+If you need to expose an Undertow endpoint on all network interfaces, the
 `0.0.0.0` address should be used.
 
 To listen across an entire URI prefix, see
-link:how-do-i-let-jetty-match-wildcards.html[How do I let Jetty match
-wildcards].
+xref:latest@manual::faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
 
 If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the
-https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=46339[Servlet
-Transport].
-
+xref:servlet-component.adoc[Servlet Transport].

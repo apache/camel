@@ -193,7 +193,7 @@ method. The expression created by this factory method will return given
 delay value only if the Camel context is in the state different than
 `started`. This expression is particularly useful if you would like to
 use JGroups component for keeping singleton (master) route within the
-cluster. xref:controlbus-component.adoc[Control Bus] `start` command
+cluster. Control Bus `start` command
 won't initialize the singleton route if the Camel Context hasn't been
 yet started. So you need to delay a startup of the master route, to be
 sure that it has been initialized after the Camel Context startup.

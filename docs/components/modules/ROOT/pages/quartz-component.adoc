@@ -394,7 +394,7 @@ but it does not want to be fired now.
 
 The xref:quartz-component.adoc[Quartz] component provides a
 Polling Consumer scheduler which allows to
-use cron based scheduling for xref:manual::polling-consumer.adoc[Polling
+use cron based scheduling for xref:latest@manual::polling-consumer.adoc[Polling
 Consumer] such as the File and FTP
 consumers.
 

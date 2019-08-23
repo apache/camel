@@ -1,9 +1,9 @@
-[[mail-component]]
-== Mail Component
+= Mail Component
 
 *Available as of Camel version 1.0*
 
-The mail component provides access to Email via Spring's Mail support
+
+The Mail component provides access to Email via Spring's Mail support
 and the underlying JavaMail system.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -19,7 +19,9 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-WARNING: *Geronimo mail .jar*
+[WARNING]
+====
+*Geronimo mail .jar*
 
 We have discovered that the geronimo mail `.jar` (v1.6) has a bug when
 polling mails with attachments. It cannot correctly identify the
@@ -30,24 +32,33 @@ it, the `Content-Type` is resolved as `text/plain` and not as
 enables you to provide your own implementation and fix this bug by
 returning the correct Mime type based on the file name. So if the file
 name ends with `jpeg/jpg`, you can return `image/jpeg`.
+====
 
 You can set your custom resolver on the `MailComponent` instance or on
 the `MailEndpoint` instance.
 
 
-TIP: *POP3 or IMAP*
+[TIP]
+====
+*POP3 or IMAP*
+
 POP3 has some limitations and end users are encouraged to use IMAP if
 possible.
+====
 
-INFO: *Using mock-mail for testing*
+[NOTE]
+====
+*Using mock-mail for testing*
+
 You can use a mock framework for unit testing, which allows you to test
 without the need for a real mail server. However you should remember to
 not include the mock-mail when you go into production or other
 environments where you need to send mails to a real mail server. Just
 the presence of the mock-javamail.jar on the classpath means that it
 will kick in and avoid sending the mails.
+====
 
-### URI format
+== URI format
 
 Mail endpoints can have one of the following URI formats (for the
 protocols, SMTP, POP3, or IMAP, respectively):
@@ -74,7 +85,7 @@ You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
 
-### [[Mail-Component-Options]]
+== Component options
 
 
 // component options: START
@@ -94,7 +105,7 @@ The Mail component supports 4 options, which are listed below.
 
 
 
-### [[Mail-Endpoint-Options]]
+== Endpoint options
 
 
 // endpoint options: START
@@ -253,7 +264,7 @@ The component supports 48 options, which are listed below.
 
 
 
-#### Sample endpoints
+=== Sample endpoints
 
 Typically, you specify a URI with login credentials as follows (taking
 SMTP as an example):
@@ -278,7 +289,7 @@ For example:
 smtp://mycompany.mailserver:30?password=tiger&username=scott
 ------------------------------------------------------------
 
-### Components
+== Components
 
 - IMAP
 - IMAPs
@@ -287,7 +298,7 @@ smtp://mycompany.mailserver:30?password=tiger&username=scott
 - SMTP
 - SMTPs
 
-#### Default ports
+=== Default ports
 
 Default port numbers are supported. If the port number is omitted, Camel
 determines the port number to use based on the protocol.
@@ -303,21 +314,21 @@ determines the port number to use based on the protocol.
 |`IMAPS` |`993`
 |=======================================================================
 
-### SSL support
+== SSL support
 
 The underlying mail framework is responsible for providing SSL support.
- You may either configure SSL/TLS support by completely specifying the
+ You may either configure SSL/TLS support by completely specifying the
 necessary Java Mail API configuration options, or you may provide a
 configured SSLContextParameters through the component or endpoint
 configuration.
 
-#### Using the JSSE Configuration Utility
+=== Using the JSSE Configuration Utility
 
-As of *Camel 2.10*, the mail component supports SSL/TLS configuration
-through the link:camel-configuration-utilities.html[Camel JSSE
-Configuration Utility].  This utility greatly decreases the amount of
+The mail component supports SSL/TLS configuration
+through the xref:latest@manual::camel-configuration-utilities.adoc[Camel JSSE
+Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
-endpoint and component levels.  The following examples demonstrate how
+endpoint and component levels.  The following examples demonstrate how
 to use the utility with the mail component.
 
 [[Mail-Programmaticconfigurationoftheendpoint]]
@@ -354,7 +365,7 @@ Spring DSL based configuration of endpoint
 <to uri="smtps://smtp.google.com?username=user@gmail.com&password=password&sslContextParameters=#sslContextParameters"/>...
 ---------------------------------------------------------------------------------------------------------------------------
 
-#### Configuring JavaMail Directly
+=== Configuring JavaMail Directly
 
 Camel uses SUN JavaMail, which only trusts certificates issued by well
 known Certificate Authorities (the default JVM trust configuration). If
@@ -362,7 +373,7 @@ you issue your own certificates, you have to import the CA certificates
 into the JVM's Java trust/key store files, override the default JVM
 trust/key store files (see `SSLNOTES.txt` in JavaMail for details).
 
-### Mail Message Content
+== Mail Message Content
 
 Camel uses the message exchange's IN body as the
 http://java.sun.com/javaee/5/docs/api/javax/mail/internet/MimeMessage.html[MimeMessage]
@@ -380,12 +391,12 @@ below demonstrates this:
 The same applies for other MimeMessage headers such as recipients, so
 you can use a header property as `To`:
 
-*Since Camel 2.11* When using the MailProducer the send the mail to
+When using the MailProducer the send the mail to
 server, you should be able to get the message id of the
 http://java.sun.com/javaee/5/docs/api/javax/mail/internet/MimeMessage.html[MimeMessage]
 with the key `CamelMailMessageId` from the Camel message header.
 
-### Headers take precedence over pre-configured recipients
+== Headers take precedence over pre-configured recipients
 
 The recipients specified in the message headers always take precedence
 over recipients pre-configured in the endpoint URI. The idea is that if
@@ -411,7 +422,7 @@ pre-configured settings.
         template.sendBodyAndHeaders("smtp://admin@localhost?to=info@mycompany.com", "Hello World", headers);
 ------------------------------------------------------------------------------------------------------------
 
-### Multiple recipients for easier configuration
+== Multiple recipients for easier configuration
 
 It is possible to set multiple recipients using a comma-separated or a
 semicolon-separated list. This applies both to header settings and to
@@ -425,7 +436,7 @@ settings in an endpoint URI. For example:
 
 The preceding example uses a semicolon, `;`, as the separator character.
 
-### Setting sender name and email
+== Setting sender name and email
 
 You can specify recipients in the format, `name <email>`, to include
 both the name and the email address of the recipient.
@@ -441,7 +452,7 @@ map.put("From", "James Strachan <jstrachan@apache.org>");
 map.put("Subject", "Camel is cool");
 ---------------------------------------------------------
 
-### JavaMail API (ex SUN JavaMail)
+== JavaMail API (ex SUN JavaMail)
 
 https://java.net/projects/javamail/pages/Home[JavaMail API] is used
 under the hood for consuming and producing mails. +
@@ -457,7 +468,7 @@ IMAP API]
 https://javamail.java.net/nonav/docs/api/javax/mail/Flags.html[MAIL
 Flags]
 
-### Samples
+== Samples
 
 We start with a simple route that sends the messages received from a JMS
 queue as emails. The email account is the `admin` account on
@@ -481,23 +492,27 @@ from("imap://admin@mymailserver.com
 
 In this sample we want to send a mail to multiple recipients:
 
-### Sending mail with attachment sample
+== Sending mail with attachment sample
 
 
-WARNING: *Attachments are not support by all Camel components*
+[WARNING]
+====
+*Attachments are not support by all Camel components*
+
 The _Attachments API_ is based on the Java Activation Framework and is
 generally only used by the Mail API. Since many of the other Camel
 components do not support attachments, the attachments could potentially
 be lost as they propagate along the route. The rule of thumb, therefore,
 is to add attachments just before sending a message to the mail
 endpoint.
+====
 
 
 The mail component supports attachments. In the sample below, we send a
 mail message containing a plain text message with a logo file
 attachment.
 
-### SSL sample
+== SSL sample
 
 In this sample, we want to poll our Google mail inbox for mails. To
 download mail onto a local mail client, Google mail requires you to
@@ -526,7 +541,7 @@ progress in the logs:
 2008-05-08 06:32:12,187 INFO  newmail - Exchange[MailMessage: messageNumber=[332], from=[James Bond <007@mi5.co.uk>], to=YOUR_USERNAME@gmail.com], subject=[...
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Consuming mails with attachment sample
+== Consuming mails with attachment sample
 
 In this sample we poll a mailbox and store all attachments from the
 mails as files. First, we define a route to poll the mailbox. As this
@@ -571,7 +586,7 @@ As you can see the API to handle attachments is a bit clunky but it's
 there so you can get the `javax.activation.DataHandler` so you can
 handle the attachments using standard API.
 
-### How to split a mail message with attachments
+== How to split a mail message with attachments
 
 In this example we consume mail messages which may have a number of
 attachments. What we want to do is to use the
@@ -603,7 +618,7 @@ the Splitter as shown below
 </split>
 ---------------------------------------------------------------------------------
 
- 
+ 
 
 From Camel 2.16 onwards you can also split the attachments as byte[] to
 be stored as the message body. This is done by creating the expression
@@ -616,7 +631,7 @@ SplitAttachmentsExpression split = SplitAttachmentsExpression(true);
 
 And then use the expression with the splitter eip.
 
-### Using custom SearchTerm
+== Using custom SearchTerm
 
 *Available as of Camel 2.11*
 
@@ -703,10 +718,3 @@ builder.unseen().body(Op.not, "Spam").subject(Op.not, "Spam")
 
 SearchTerm term = builder.build();
 --------------------------------------------------------------
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

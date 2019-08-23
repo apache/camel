@@ -288,7 +288,7 @@ try (ElasticsearchScrollRequestIterator response = template.requestBody("direct:
 }
 ----
 
-xref:manual::split-eip.adoc[Split EIP] can also be used.
+xref:latest@manual::split-eip.adoc[Split EIP] can also be used.
 
 [source,java]
 ----
