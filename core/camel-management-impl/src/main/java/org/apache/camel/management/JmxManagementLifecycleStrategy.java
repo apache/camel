@@ -1023,7 +1023,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
      *
      * @see JmxManagementLifecycleStrategy#enlistPreRegisteredServices()
      */
-    public static final class PreRegisterService {
+    static final class PreRegisterService {
 
         private String name;
         private Component component;
