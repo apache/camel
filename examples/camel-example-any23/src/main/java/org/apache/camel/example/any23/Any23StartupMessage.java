@@ -22,9 +22,6 @@ import org.apache.camel.StartupListener;
 
 public class Any23StartupMessage implements StartupListener {
 
-  public Any23StartupMessage() {
-  }
-
   @Override
   public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
     ProducerTemplate template = context.createProducerTemplate();

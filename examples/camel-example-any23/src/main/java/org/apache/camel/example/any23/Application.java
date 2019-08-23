@@ -22,14 +22,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class Application {
 
   public static void main(String[] args) throws Exception {
-    System.out.println("Camel is started. Ready to run Any23 example!");
-
     CamelContext context = new DefaultCamelContext();
-    context.start();
-
     context.addRoutes(new Any23RouteBuilder());
+    context.start();
     context.addStartupListener(new Any23StartupMessage());
-
   }
 
 }

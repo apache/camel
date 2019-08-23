@@ -44,7 +44,7 @@ public class Any23RouteBuilder extends RouteBuilder {
             .process(new Processor() {
               public void process(Exchange exchange) throws Exception {
                 ValueFactory vf = SimpleValueFactory.getInstance();
-                Model model = (Model) exchange.getIn().getBody();
+                Model model = exchange.getIn().getBody(Model.class);
 
                 //Selecting the leaders of Ecuador
                 IRI propertyLeader = vf.createIRI("http://dbpedia.org/ontology/leader");
@@ -69,13 +69,12 @@ public class Any23RouteBuilder extends RouteBuilder {
 
     from("direct:extractMoreData")
             .log("Split ${body}")
-            .convertBodyTo(String.class)
             .toD("${body}")
             .unmarshal()
             //Extract RDF data of the leaders as JSONLD
             .any23(BASEURI, Any23Type.JSONLD)
             .log(" Result : ${body} ")
-            .to("mock:result");
+            .to("log:result");
   }
 
 }
