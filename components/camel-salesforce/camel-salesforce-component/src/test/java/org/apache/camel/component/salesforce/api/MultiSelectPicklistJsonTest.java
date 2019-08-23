@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.dto.generated.MSPTest;
+import org.apache.camel.component.salesforce.dto.generated.StringMSPTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -58,4 +59,28 @@ public class MultiSelectPicklistJsonTest {
         assertNull(mspTest.getMspField());
     }
 
+    @Test
+    public void testMarshalString() throws Exception {
+        final StringMSPTest mspTest = new StringMSPTest();
+        mspTest.setMspField(new String[] { "Value1", "Value2", "Value3" });
+
+        String json = objectMapper.writeValueAsString(mspTest);
+        assertEquals(TEST_JSON, json);
+
+        // test null
+        mspTest.setMspField(null);
+
+        json = objectMapper.writeValueAsString(mspTest);
+        assertEquals(TEST_NULL_JSON, json);
+    }
+
+    @Test
+    public void testUnmarshalString() throws Exception {
+        StringMSPTest mspTest = objectMapper.readValue(TEST_JSON, StringMSPTest.class);
+        assertArrayEquals(new String[] { "Value1", "Value2", "Value3" }, mspTest.getMspField());
+
+        // test null
+        mspTest = objectMapper.readValue(TEST_NULL_JSON, StringMSPTest.class);
+        assertNull(mspTest.getMspField());
+    }
 }

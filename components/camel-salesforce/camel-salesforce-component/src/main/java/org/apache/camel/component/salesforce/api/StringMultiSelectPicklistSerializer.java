@@ -31,6 +31,10 @@ public class StringMultiSelectPicklistSerializer extends StdSerializer<Object> {
 
     private static final long serialVersionUID = 1406195556960561677L;
 
+    public StringMultiSelectPicklistSerializer() {
+        super(Object.class);
+    }
+
     protected StringMultiSelectPicklistSerializer(Class<Object> t) {
         super(t);
     }
