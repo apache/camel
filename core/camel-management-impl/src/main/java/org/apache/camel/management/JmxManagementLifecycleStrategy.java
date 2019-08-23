@@ -142,6 +142,18 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         this.camelContext = camelContext;
     }
 
+    // used for handing over pre-services between a provisional lifecycycle strategy
+    // and then later the actual strategy to be used when using XML
+    List<PreRegisterService> getPreServices() {
+        return preServices;
+    }
+
+    // used for handing over pre-services between a provisional lifecycycle strategy
+    // and then later the actual strategy to be used when using XML
+    void addPreService(PreRegisterService preService) {
+        preServices.add(preService);
+    }
+
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
@@ -1011,7 +1023,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
      *
      * @see JmxManagementLifecycleStrategy#enlistPreRegisteredServices()
      */
-    private static final class PreRegisterService {
+    public static final class PreRegisterService {
 
         private String name;
         private Component component;

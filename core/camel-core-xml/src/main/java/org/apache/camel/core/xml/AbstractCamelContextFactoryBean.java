@@ -181,9 +181,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             mergedOptions.putAll(getGlobalOptions().asMap());
         }
 
-        getContext().setGlobalOptions(mergedOptions);
-
-        setupCustomServices();
+        if (!mergedOptions.isEmpty()) {
+            getContext().setGlobalOptions(mergedOptions);
+        }
 
         // set the custom registry if defined
         initCustomRegistry(getContext());
@@ -191,8 +191,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // setup property placeholder so we got it as early as possible
         initPropertyPlaceholder();
 
-        // setup JMX agent at first
+        // then setup JMX
         initJMXAgent();
+
+        // setup all misc services
+        setupCustomServices();
 
         BacklogTracer backlogTracer = getBeanForType(BacklogTracer.class);
         if (backlogTracer != null) {
