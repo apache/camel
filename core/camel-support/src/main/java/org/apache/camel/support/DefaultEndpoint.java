@@ -27,7 +27,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.ExceptionHandler;
@@ -425,7 +424,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         } else {
             PropertyConfigurer configurer = null;
             if (bean instanceof Endpoint) {
-                configurer = getComponent().getEndpointPropertyConfigurer(bean);
+                configurer = getComponent().getEndpointPropertyConfigurer();
             } else if (bean instanceof PropertyConfigurerAware) {
                 configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
             }

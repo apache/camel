@@ -17,13 +17,12 @@
 package org.apache.camel.support.component;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.EndpointPropertyConfigurer;
 
 /**
- * Base class used by the camel-apt compiler plugin when it generates source code for all
- * the endpoint configurations.
+ * Base class used by the camel-apt compiler plugin when it generates source code for fast
+ * property configurations via {@link org.apache.camel.spi.PropertyConfigurer}.
  */
-public abstract class EndpointPropertyConfigurerSupport implements EndpointPropertyConfigurer {
+public abstract class PropertyConfigurerSupport {
 
     /**
      * Converts the property to the expected type
