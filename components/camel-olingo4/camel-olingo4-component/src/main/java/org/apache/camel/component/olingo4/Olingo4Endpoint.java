@@ -166,7 +166,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
 
     @Override
     public void interceptProperties(Map<String, Object> properties) {
-        Map<String, String> endpointHttpHeaders = (Map<String, String>) properties.get(ENDPOINT_HTTP_HEADERS_PROPERTY);
+        Map<String, String> endpointHttpHeaders = (Map<String, String>)properties.get(ENDPOINT_HTTP_HEADERS_PROPERTY);
 
         // read Edm if not set yet
         properties.put(EDM_PROPERTY, apiProxy.getEdm(endpointHttpHeaders));
@@ -206,8 +206,8 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
             final String paramName = entry.getKey();
 
             /**
-             * Avoid swallowing consumer scheduler properties, which
-             * get processed in configureProperties()
+             * Avoid swallowing consumer scheduler properties, which get
+             * processed in configureProperties()
              */
             if (paramName.startsWith("consumer.")) {
                 continue;

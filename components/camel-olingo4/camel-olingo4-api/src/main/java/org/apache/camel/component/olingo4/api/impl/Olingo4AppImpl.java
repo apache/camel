@@ -111,6 +111,7 @@ import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.core.uri.parser.Parser;
 
 import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
+
 /**
  * Application API used by Olingo4 Component.
  */
@@ -269,20 +270,20 @@ public final class Olingo4AppImpl implements Olingo4App {
     }
 
     @Override
-    public <T> void create(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
+    public <T> void create(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data,
+                           final Olingo4ResponseHandler<T> responseHandler) {
         final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
         writeContent(edm, new HttpPost(createUri(resourcePath, null)), uriInfo, data, endpointHttpHeaders, responseHandler);
     }
 
     @Override
-    public <T> void update(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
+    public <T> void update(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data,
+                           final Olingo4ResponseHandler<T> responseHandler) {
         final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
-        augmentWithETag(edm, resourcePath, endpointHttpHeaders,
-                        new HttpPut(createUri(resourcePath, null)),
-                        request -> writeContent(edm, (HttpPut) request, uriInfo, data, endpointHttpHeaders, responseHandler),
-                        responseHandler);
+        augmentWithETag(edm, resourcePath, endpointHttpHeaders, new HttpPut(createUri(resourcePath, null)),
+        request -> writeContent(edm, (HttpPut)request, uriInfo, data, endpointHttpHeaders, responseHandler), responseHandler);
     }
 
     @Override
@@ -299,30 +300,25 @@ public final class Olingo4AppImpl implements Olingo4App {
             });
         };
 
-        augmentWithETag(null, resourcePath, endpointHttpHeaders,
-                        deleteRequest,
-                        deleteFunction,
-                        responseHandler);
+        augmentWithETag(null, resourcePath, endpointHttpHeaders, deleteRequest, deleteFunction, responseHandler);
     }
 
     @Override
-    public <T> void patch(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
+    public <T> void patch(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data,
+                          final Olingo4ResponseHandler<T> responseHandler) {
         final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
-        augmentWithETag(edm, resourcePath, endpointHttpHeaders,
-                        new HttpPatch(createUri(resourcePath, null)),
-                        request -> writeContent(edm, (HttpPatch) request, uriInfo, data, endpointHttpHeaders, responseHandler),
-                        responseHandler);
+        augmentWithETag(edm, resourcePath, endpointHttpHeaders, new HttpPatch(createUri(resourcePath, null)),
+        request -> writeContent(edm, (HttpPatch)request, uriInfo, data, endpointHttpHeaders, responseHandler), responseHandler);
     }
 
     @Override
-    public <T> void merge(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
+    public <T> void merge(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data,
+                          final Olingo4ResponseHandler<T> responseHandler) {
         final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
-        augmentWithETag(edm, resourcePath, endpointHttpHeaders,
-                        new HttpMerge(createUri(resourcePath, null)),
-                        request -> writeContent(edm, (HttpMerge) request, uriInfo, data, endpointHttpHeaders, responseHandler),
-                        responseHandler);
+        augmentWithETag(edm, resourcePath, endpointHttpHeaders, new HttpMerge(createUri(resourcePath, null)),
+        request -> writeContent(edm, (HttpMerge)request, uriInfo, data, endpointHttpHeaders, responseHandler), responseHandler);
     }
 
     @Override
@@ -333,7 +329,8 @@ public final class Olingo4AppImpl implements Olingo4App {
     }
 
     @Override
-    public <T> void action(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data, final Olingo4ResponseHandler<T> responseHandler) {
+    public <T> void action(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final Object data,
+                           final Olingo4ResponseHandler<T> responseHandler) {
         final UriInfo uriInfo = parseUri(edm, resourcePath, null, serviceUri);
 
         writeContent(edm, new HttpPost(createUri(resourcePath, null)), uriInfo, data, endpointHttpHeaders, responseHandler);
@@ -367,28 +364,31 @@ public final class Olingo4AppImpl implements Olingo4App {
     }
 
     /**
-     * On occasion, some resources are protected with Optimistic Concurrency via the use of eTags.
-     * This will first conduct a read on the given entity resource, find its eTag then perform the given
-     * delegate request function, augmenting the request with the eTag, if appropriate.
-     *
-     * Since read operations may be asynchronous, it is necessary to chain together the methods via
-     * the use of a {@link Consumer} function. Only when the response from the read returns will
-     * this delegate function be executed.
+     * On occasion, some resources are protected with Optimistic Concurrency via
+     * the use of eTags. This will first conduct a read on the given entity
+     * resource, find its eTag then perform the given delegate request function,
+     * augmenting the request with the eTag, if appropriate. Since read
+     * operations may be asynchronous, it is necessary to chain together the
+     * methods via the use of a {@link Consumer} function. Only when the
+     * response from the read returns will this delegate function be executed.
      *
      * @param edm the Edm object to be interrogated
      * @param resourcePath the resource path of the entity to be operated on
-     * @param endpointHttpHeaders the headers provided from the endpoint which may be required for the read operation
-     * @param httpRequest the request to be updated, if appropriate, with the eTag and provided to the delegate request function
-     * @param delegateRequestFn the function to be invoked in response to the read operation
-     * @param delegateResponseHandler the response handler to respond if any errors occur during the read operation
+     * @param endpointHttpHeaders the headers provided from the endpoint which
+     *            may be required for the read operation
+     * @param httpRequest the request to be updated, if appropriate, with the
+     *            eTag and provided to the delegate request function
+     * @param delegateRequestFn the function to be invoked in response to the
+     *            read operation
+     * @param delegateResponseHandler the response handler to respond if any
+     *            errors occur during the read operation
      */
-    private <T> void augmentWithETag(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders,
-                                     final HttpRequestBase httpRequest,
-                                     final Consumer<HttpRequestBase> delegateRequestFn,
-                                     final Olingo4ResponseHandler<T> delegateResponseHandler) {
+    private <T> void augmentWithETag(final Edm edm, final String resourcePath, final Map<String, String> endpointHttpHeaders, final HttpRequestBase httpRequest,
+                                     final Consumer<HttpRequestBase> delegateRequestFn, final Olingo4ResponseHandler<T> delegateResponseHandler) {
 
         if (edm == null) {
-            // Can be the case if calling a delete then need to do a metadata call first
+            // Can be the case if calling a delete then need to do a metadata
+            // call first
             final Olingo4ResponseHandler<Edm> edmResponseHandler = new Olingo4ResponseHandler<Edm>() {
                 @Override
                 public void onResponse(Edm response, Map<String, String> responseHeaders) {
@@ -411,14 +411,16 @@ public final class Olingo4AppImpl implements Olingo4App {
 
             //
             // Reads the metadata to establish an Edm object
-            // then the response handler invokes this method again with the new edm object
+            // then the response handler invokes this method again with the new
+            // edm object
             //
             read(null, Constants.METADATA, null, null, edmResponseHandler);
 
         } else {
 
             //
-            // The handler that responds to the read operation and supplies an ETag if necessary
+            // The handler that responds to the read operation and supplies an
+            // ETag if necessary
             // and invokes the delegate request function
             //
             Olingo4ResponseHandler<T> eTagReadHandler = new Olingo4ResponseHandler<T>() {
@@ -426,13 +428,12 @@ public final class Olingo4AppImpl implements Olingo4App {
                 @Override
                 public void onResponse(T response, Map<String, String> responseHeaders) {
                     if (response instanceof ClientEntity) {
-                        ClientEntity e = (ClientEntity) response;
-                        Optional
-                           .ofNullable(e.getETag())
-                           .ifPresent(v -> httpRequest.addHeader("If-Match", v));
+                        ClientEntity e = (ClientEntity)response;
+                        Optional.ofNullable(e.getETag()).ifPresent(v -> httpRequest.addHeader("If-Match", v));
                     }
 
-                    // Invoke the delegate request function providing the modified request
+                    // Invoke the delegate request function providing the
+                    // modified request
                     delegateRequestFn.accept(httpRequest);
                 }
 
@@ -593,8 +594,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                             switch (lastResourceKind) {
                             case action:
                             case entitySet:
-                                ClientEntity entity = odataReader.readEntity(result.getEntity().getContent(),
-                                                                             ContentType.parse(result.getEntity().getContentType().getValue()));
+                                ClientEntity entity = odataReader.readEntity(result.getEntity().getContent(), ContentType.parse(result.getEntity().getContentType().getValue()));
                                 responseHandler.onResponse((T)entity, headersToMap(result.getAllHeaders()));
                                 break;
                             default:
@@ -641,7 +641,7 @@ public final class Olingo4AppImpl implements Olingo4App {
         } else if (uriInfo.getKind() == UriInfoKind.batch) {
             final String boundary = BOUNDARY_PREFIX + UUID.randomUUID();
             final String contentHeader = BATCH_CONTENT_TYPE + BOUNDARY_PARAMETER + boundary;
-            final List<Olingo4BatchRequest> batchParts = (List<Olingo4BatchRequest>) content;
+            final List<Olingo4BatchRequest> batchParts = (List<Olingo4BatchRequest>)content;
 
             final InputStream requestStream = serializeBatchRequest(edm, batchParts, BOUNDARY_DOUBLE_DASH + boundary);
             httpEntity = writeContent(requestStream);
@@ -657,10 +657,10 @@ public final class Olingo4AppImpl implements Olingo4App {
         AbstractHttpEntity httpEntity;
 
         if (content instanceof ClientEntity) {
-            final InputStream requestStream = odataWriter.writeEntity((ClientEntity) content, getResourceContentType(uriInfo));
+            final InputStream requestStream = odataWriter.writeEntity((ClientEntity)content, getResourceContentType(uriInfo));
             httpEntity = writeContent(requestStream);
         } else if (content instanceof String) {
-            httpEntity = new StringEntity((String) content, org.apache.http.entity.ContentType.APPLICATION_JSON);
+            httpEntity = new StringEntity((String)content, org.apache.http.entity.ContentType.APPLICATION_JSON);
         } else {
             throw new ODataException("Unsupported content type: " + content);
         }
@@ -672,7 +672,7 @@ public final class Olingo4AppImpl implements Olingo4App {
 
     private AbstractHttpEntity writeContent(InputStream inputStream) throws ODataException {
         AbstractHttpEntity httpEntity;
-        
+
         try {
             httpEntity = new ByteArrayEntity(IOUtils.toByteArray(inputStream));
         } catch (IOException e) {
@@ -706,8 +706,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     final ContentType acceptType = getResourceContentType(uriInfo);
                     final String acceptCharset = acceptType.getParameter(ContentType.PARAMETER_CHARSET);
-                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT,
-                            contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
+                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT, contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
                     if (null != acceptCharset) {
                         writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT_CHARSET, acceptCharset.toLowerCase());
                     }
@@ -732,8 +731,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                     writeHttpHeader(batchRequestHeaderOutputStream, HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
                     final ContentType acceptType = getResourceContentType(uriInfo);
                     final String acceptCharset = acceptType.getParameter(ContentType.PARAMETER_CHARSET);
-                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT,
-                            contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
+                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT, contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
                     if (null != acceptCharset) {
                         writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT_CHARSET, acceptCharset.toLowerCase());
                     }
@@ -944,7 +942,7 @@ public final class Olingo4AppImpl implements Olingo4App {
         }
         return result;
     }
-    
+
     private static Map<String, String> headersToMap(final Header[] headers) {
         final Map<String, String> responseHeaders = new HashMap<>();
         for (Header header : headers) {
@@ -957,8 +955,7 @@ public final class Olingo4AppImpl implements Olingo4App {
         // add accept header when its not a form or multipart
         if (!ContentType.APPLICATION_FORM_URLENCODED.equals(contentType) && !contentType.toContentTypeString().startsWith(MULTIPART_MIME_TYPE)) {
             // otherwise accept what is being sent
-            httpUriRequest.addHeader(HttpHeaders.ACCEPT,
-                    contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
+            httpUriRequest.addHeader(HttpHeaders.ACCEPT, contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
             final String acceptCharset = contentType.getParameter(ContentType.PARAMETER_CHARSET);
             if (null != acceptCharset) {
                 httpUriRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, acceptCharset.toLowerCase());
@@ -976,7 +973,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                 httpUriRequest.setHeader(entry.getKey(), entry.getValue());
             }
         }
-        
+
         // set user specified endpoint headers
         if (ObjectHelper.isNotEmpty(endpointHttpHeaders)) {
             for (Map.Entry<String, String> entry : endpointHttpHeaders.entrySet()) {

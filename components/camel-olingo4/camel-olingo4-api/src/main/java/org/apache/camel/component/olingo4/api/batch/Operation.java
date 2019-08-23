@@ -17,15 +17,12 @@
 package org.apache.camel.component.olingo4.api.batch;
 
 /**
-* OData operation used by {@link org.apache.camel.component.olingo4.api.batch.Olingo4BatchChangeRequest}.
-*/
+ * OData operation used by
+ * {@link org.apache.camel.component.olingo4.api.batch.Olingo4BatchChangeRequest}.
+ */
 public enum Operation {
 
-    CREATE("POST"),
-    UPDATE("PUT"),
-    PATCH("PATCH"),
-    MERGE("MERGE"),
-    DELETE("DELETE");
+    CREATE("POST"), UPDATE("PUT"), PATCH("PATCH"), MERGE("MERGE"), DELETE("DELETE");
 
     private final String httpMethod;
 

@@ -55,9 +55,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + PEOPLE + "?"
-                        + "$filter=LastName eq 'Whyte'&$expand=Trips")
-                    .to("mock:consumer-query");
+                from("olingo4://read/" + PEOPLE + "?" + "$filter=LastName eq 'Whyte'&$expand=Trips").to("mock:consumer-query");
             };
         };
         addRouteAndStartContext(builder);
@@ -72,7 +70,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
                 // First polled messages contained all the entities
                 //
                 assertTrue(body instanceof ClientEntity);
-                ClientEntity e = (ClientEntity) body;
+                ClientEntity e = (ClientEntity)body;
                 ClientProperty nameProp = e.getProperty("UserName");
                 assertNotNull(nameProp);
                 assertEquals("russellwhyte", nameProp.getValue().toString());
@@ -81,16 +79,14 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
     }
 
     /**
-     * Read entity set of the People object
-     * and filter already seen items on subsequent exchanges
-     * Use a delay since the mock endpoint does not always get
-     * the correct number of exchanges before being satisfied.
-     *
-     * Note:
-     * - consumer.splitResults is set to false since this ensures the first returned message
-     *   contains all the results. This is preferred for the purposes of this test. The default
-     *   will mean the first n messages contain the results (where n is the result total) then
-     *   subsequent messages will be empty
+     * Read entity set of the People object and filter already seen items on
+     * subsequent exchanges Use a delay since the mock endpoint does not always
+     * get the correct number of exchanges before being satisfied. Note: -
+     * consumer.splitResults is set to false since this ensures the first
+     * returned message contains all the results. This is preferred for the
+     * purposes of this test. The default will mean the first n messages contain
+     * the results (where n is the result total) then subsequent messages will
+     * be empty
      */
     @Test
     public void testConsumerReadFilterAlreadySeen() throws Exception {
@@ -117,7 +113,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
                 // First polled messages contained all the entities
                 //
                 assertTrue(body instanceof ClientEntitySet);
-                ClientEntitySet set = (ClientEntitySet) body;
+                ClientEntitySet set = (ClientEntitySet)body;
                 assertEquals(expectedEntities, set.getEntities().size());
             } else {
                 //
@@ -130,16 +126,13 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
     }
 
     /**
-     * Read entity set of the People object
-     * and filter already seen items on subsequent exchanges
-     * Use a delay since the mock endpoint does not always get
-     * the correct number of exchanges before being satisfied.
-     *
-     * Note:
-     * - consumer.splitResults is set to false since this ensures the first returned message
-     *   contains all the results.
-     * - consumer.sendEmptyMessageWhenIdle is set to false so only 1 message should
-     *   even be returned.
+     * Read entity set of the People object and filter already seen items on
+     * subsequent exchanges Use a delay since the mock endpoint does not always
+     * get the correct number of exchanges before being satisfied. Note: -
+     * consumer.splitResults is set to false since this ensures the first
+     * returned message contains all the results. -
+     * consumer.sendEmptyMessageWhenIdle is set to false so only 1 message
+     * should even be returned.
      */
     @Test
     public void testConsumerReadFilterAlreadySeenNoEmptyMsgs() throws Exception {
@@ -175,14 +168,12 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         // Only polled message contains all the entities
         //
         assertTrue(body instanceof ClientEntitySet);
-        ClientEntitySet set = (ClientEntitySet) body;
+        ClientEntitySet set = (ClientEntitySet)body;
         assertEquals(expectedEntities, set.getEntities().size());
     }
 
     /**
-     * WithPredicate in address
-     * FilterAlreadySeen: true
-     * SplitResults: true
+     * WithPredicate in address FilterAlreadySeen: true SplitResults: true
      * consumer.sendEmptyMessageWhenIdle: true
      *
      * @throws Exception
@@ -195,11 +186,8 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + AIRPORTS + "('KSFO')"
-                        + "?filterAlreadySeen=true&"
-                        + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&"
-                        + "consumer.splitResult=true")
-                    .to("mock:consumer-splitresult-kp-airport");
+                from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&"
+                     + "consumer.splitResult=true").to("mock:consumer-splitresult-kp-airport");
             };
         };
         addRouteAndStartContext(builder);
@@ -214,7 +202,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
                 // First polled messages contained all the entities
                 //
                 assertTrue(body instanceof ClientEntity);
-                ClientEntity ksfoEntity = (ClientEntity) body;
+                ClientEntity ksfoEntity = (ClientEntity)body;
                 ClientProperty nameProp = ksfoEntity.getProperty("Name");
                 assertNotNull(nameProp);
                 assertEquals("San Francisco International Airport", nameProp.getValue().toString());
@@ -229,9 +217,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
     }
 
     /**
-     * WithPredicate in address
-     * FilterAlreadySeen: true
-     * SplitResults: true
+     * WithPredicate in address FilterAlreadySeen: true SplitResults: true
      * consumer.sendEmptyMessageWhenIdle: false
      *
      * @throws Exception
@@ -250,11 +236,8 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + AIRPORTS + "('KSFO')"
-                        + "?filterAlreadySeen=true&"
-                        + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&"
-                        + "consumer.splitResult=true")
-                    .to("mock:consumer-splitresult-kp-airport");
+                from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&"
+                     + "consumer.splitResult=true").to("mock:consumer-splitresult-kp-airport");
             };
         };
         addRouteAndStartContext(builder);
@@ -273,15 +256,15 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         // Only polled message contains the entity
         //
         assertTrue(body instanceof ClientEntity);
-        ClientEntity ksfoEntity = (ClientEntity) body;
+        ClientEntity ksfoEntity = (ClientEntity)body;
         ClientProperty nameProp = ksfoEntity.getProperty("Name");
         assertNotNull(nameProp);
         assertEquals("San Francisco International Airport", nameProp.getValue().toString());
     }
 
     /**
-     * Read entity set of the People object and split the results
-     * into individual messages
+     * Read entity set of the People object and split the results into
+     * individual messages
      */
     @Test
     public void testConsumerReadSplitResults() throws Exception {
@@ -291,8 +274,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + PEOPLE + "?consumer.splitResult=true")
-                    .to("mock:consumer-splitresult");
+                from("olingo4://read/" + PEOPLE + "?consumer.splitResult=true").to("mock:consumer-splitresult");
             };
         };
         addRouteAndStartContext(builder);
@@ -309,7 +291,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
             ClientProperty nameProperty = entity.getProperty("UserName");
             assertNotNull(nameProperty);
 
-            switch(i) {
+            switch (i) {
             case 0:
                 assertEquals("russellwhyte", nameProperty.getValue().toString());
                 break;
@@ -325,8 +307,8 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
     }
 
     /**
-     * Read value of the People object and split the results
-     * into individual messages
+     * Read value of the People object and split the results into individual
+     * messages
      */
     @Test
     public void testConsumerReadClientValuesSplitResults() throws Exception {
@@ -335,8 +317,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + TEST_PEOPLE + "/FavoriteFeature?consumer.splitResult=true")
-                    .to("mock:consumer-splitresult-value");
+                from("olingo4://read/" + TEST_PEOPLE + "/FavoriteFeature?consumer.splitResult=true").to("mock:consumer-splitresult-value");
             };
         };
         addRouteAndStartContext(builder);
@@ -347,13 +328,13 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         //
         Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
         assertIsInstanceOf(ClientPrimitiveValue.class, body);
-        ClientPrimitiveValue value = (ClientPrimitiveValue) body;
+        ClientPrimitiveValue value = (ClientPrimitiveValue)body;
         assertEquals("Feature1", value.toString());
     }
 
     /**
-     * Read value of the People object's AddressInfo collection value
-     * & split the results into individual messages for each address
+     * Read value of the People object's AddressInfo collection value & split
+     * the results into individual messages for each address
      */
     @Test
     public void testConsumerReadClientCollectionValuesSplitResults() throws Exception {
@@ -362,8 +343,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?consumer.splitResult=true")
-                    .to("mock:consumer-splitresult-collection-value");
+                from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?consumer.splitResult=true").to("mock:consumer-splitresult-collection-value");
             };
         };
         addRouteAndStartContext(builder);
@@ -374,13 +354,13 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         //
         Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
         assertIsInstanceOf(ClientComplexValue.class, body);
-        ClientComplexValue value = (ClientComplexValue) body;
+        ClientComplexValue value = (ClientComplexValue)body;
         assertEquals("Boise", value.get("City").getComplexValue().get("Name").getValue().toString());
     }
 
     /**
-     * Read value of the People object's AddressInfo collection value
-     * & split the results into individual messages for each address
+     * Read value of the People object's AddressInfo collection value & split
+     * the results into individual messages for each address
      */
     @Test
     public void testConsumerReadClientCollectionValuesNoSplitResults() throws Exception {
@@ -389,8 +369,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?consumer.splitResult=false")
-                    .to("mock:consumer-nosplitresult-colleciton-value");
+                from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?consumer.splitResult=false").to("mock:consumer-nosplitresult-colleciton-value");
             };
         };
         addRouteAndStartContext(builder);
@@ -401,12 +380,12 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         //
         Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
         assertIsInstanceOf(ClientCollectionValue.class, body);
-        ClientCollectionValue<?> value = (ClientCollectionValue<?>) body;
+        ClientCollectionValue<?> value = (ClientCollectionValue<?>)body;
         assertEquals(1, value.size());
         Iterator<?> propIter = value.iterator();
         Object propValueObj = propIter.next();
         assertIsInstanceOf(ClientComplexValue.class, propValueObj);
-        ClientComplexValue propValue = (ClientComplexValue) propValueObj;
+        ClientComplexValue propValue = (ClientComplexValue)propValueObj;
         assertEquals("Boise", propValue.get("City").getComplexValue().get("Name").getValue().toString());
     }
 }

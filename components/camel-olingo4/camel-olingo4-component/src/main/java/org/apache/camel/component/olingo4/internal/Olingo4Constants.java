@@ -26,6 +26,6 @@ public interface Olingo4Constants {
 
     // thread profile name for this component
     String THREAD_PROFILE_NAME = "CamelOlingo4";
-    
+
     String RESPONSE_HTTP_HEADERS = "responseHttpHeaders";
 }

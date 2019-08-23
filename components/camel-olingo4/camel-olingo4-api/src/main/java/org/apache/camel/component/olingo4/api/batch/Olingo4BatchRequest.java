@@ -31,7 +31,7 @@ public abstract class Olingo4BatchRequest {
     public String getResourceUri() {
         return resourceUri;
     }
-    
+
     public String getResourcePath() {
         return resourcePath;
     }
