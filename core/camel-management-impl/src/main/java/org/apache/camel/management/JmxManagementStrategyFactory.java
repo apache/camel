@@ -16,9 +16,12 @@
  */
 package org.apache.camel.management;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Service;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
@@ -49,6 +52,26 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
         camelContext.setManagementStrategy(strategy);
         // must add management lifecycle strategy as first choice
         if (!camelContext.getLifecycleStrategies().isEmpty()) {
+
+            // a bit of ugly code to handover pre registered services that has been add to an eager/provisional JmxManagementLifecycleStrategy
+            // which is now re-placed with a new JmxManagementLifecycleStrategy that is based on the end user configured settings
+            // and therefore will be in use
+            List<JmxManagementLifecycleStrategy.PreRegisterService> preServices = null;
+            JmxManagementLifecycleStrategy jmx = camelContext.getLifecycleStrategies().stream()
+                    .filter(s -> s instanceof JmxManagementLifecycleStrategy)
+                    .map(JmxManagementLifecycleStrategy.class::cast)
+                    .findFirst().orElse(null);
+            if (jmx != null) {
+                preServices = jmx.getPreServices();
+            }
+
+            if (preServices != null &&  !preServices.isEmpty() && lifecycle instanceof JmxManagementLifecycleStrategy) {
+                JmxManagementLifecycleStrategy existing = (JmxManagementLifecycleStrategy) lifecycle;
+                for (JmxManagementLifecycleStrategy.PreRegisterService pre : preServices) {
+                    existing.addPreService(pre);
+                }
+            }
+
             // camel-spring/camel-blueprint may re-initialize JMX during startup, so remove any previous
             camelContext.getLifecycleStrategies().removeIf(s -> s instanceof JmxManagementLifecycleStrategy);
         }
