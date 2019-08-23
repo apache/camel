@@ -105,12 +105,12 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private Integer sendTimeout = 30000;
     @UriParam(label = "consumer,websocket", defaultValue = "false")
     private boolean fireWebSocketChannelEvents;
-    @UriParam(label = "consumer,advanced", javaType = "java.lang.String",
+    @UriParam(label = "consumer,advanced",
         description = "Specifies a comma-delimited set of Undertow HttpHandler instances to lookup in your Registry."
         + " These handlers are added to the Undertow handler chain (for example, to add security)."
         + " Important: You can not use different handlers with different Undertow endpoints using the same port number."
         + " The handlers is associated to the port number. If you need different handlers, then use different port numbers.")
-    private List<CamelUndertowHttpHandler> handlers;
+    private String handlers;
 
     public UndertowEndpoint(String uri, UndertowComponent component) {
         super(uri, component);
@@ -503,8 +503,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     public void setAccessLogReceiver(AccessLogReceiver accessLogReceiver) {
         this.accessLogReceiver = accessLogReceiver;
     }
-    
-    public List<CamelUndertowHttpHandler> getHandlers() {
+
+    public String getHandlers() {
         return handlers;
     }
 
@@ -514,9 +514,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
      * Important: You can not use different handlers with different Undertow endpoints using the same port number.
      * The handlers is associated to the port number. If you need different handlers, then use different port numbers.
      */
-    public void setHandlers(List<CamelUndertowHttpHandler> handlers) {
+    public void setHandlers(String handlers) {
         this.handlers = handlers;
     }
-
 
 }
