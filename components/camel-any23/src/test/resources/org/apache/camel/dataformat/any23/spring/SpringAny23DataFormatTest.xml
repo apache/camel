@@ -30,7 +30,7 @@
     <dataFormats>
       <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" > 
         <configuration>
-          <option name="any23.extraction.metadata.nesting" value="off" />
+          <property key="any23.extraction.metadata.nesting" value="off" />
         </configuration>
         <extractors>html-head-title</extractors>
       </any23>

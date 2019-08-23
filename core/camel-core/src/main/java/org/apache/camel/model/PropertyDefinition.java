@@ -38,6 +38,11 @@ public class PropertyDefinition {
     public PropertyDefinition() {
     }
 
+    public PropertyDefinition(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
     /**
      * Property key
      */
