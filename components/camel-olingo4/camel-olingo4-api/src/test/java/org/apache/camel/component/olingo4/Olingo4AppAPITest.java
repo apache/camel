@@ -94,8 +94,20 @@ public class Olingo4AppAPITest {
     private static final String PEOPLE = "People";
     private static final String TEST_PEOPLE = "People('russellwhyte')";
     private static final String TEST_AIRLINE = "Airlines('FM')";
-    private static final String TEST_AIRLINE_TO_UPDATE = "Airlines('AA')"; // Careful using this as it get updated!
-    private static final String TEST_AIRLINE_TO_DELETE = "Airlines('MU')"; // Careful using this as it gets deleted!
+    private static final String TEST_AIRLINE_TO_UPDATE = "Airlines('AA')"; // Careful
+                                                                           // using
+                                                                           // this
+                                                                           // as
+                                                                           // it
+                                                                           // get
+                                                                           // updated!
+    private static final String TEST_AIRLINE_TO_DELETE = "Airlines('MU')"; // Careful
+                                                                           // using
+                                                                           // this
+                                                                           // as
+                                                                           // it
+                                                                           // gets
+                                                                           // deleted!
     private static final String TRIPS = "Trips";
     private static final String TEST_CREATE_RESOURCE_CONTENT_ID = "1";
     private static final String TEST_UPDATE_RESOURCE_CONTENT_ID = "2";
@@ -304,12 +316,11 @@ public class Olingo4AppAPITest {
     }
 
     /**
-     * The Airline resource is implemented with Optimistic Concurrency.
-     * This requires an eTag to be first fetched via a read before performing
-     * patch, update, delete or merge operations.
-     *
-     * The test should complete successfully and not throw an error of the form
-     * 'The request need to have If-Match or If-None-Match header'
+     * The Airline resource is implemented with Optimistic Concurrency. This
+     * requires an eTag to be first fetched via a read before performing patch,
+     * update, delete or merge operations. The test should complete successfully
+     * and not throw an error of the form 'The request need to have If-Match or
+     * If-None-Match header'
      *
      * @throws Exception
      */
@@ -346,12 +357,11 @@ public class Olingo4AppAPITest {
     }
 
     /**
-     * The Airline resource is implemented with Optimistic Concurrency.
-     * This requires an eTag to be first fetched via a read before performing
-     * patch, update, delete or merge operations.
-     *
-     * The test should complete successfully and not throw an error of the form
-     * 'The request need to have If-Match or If-None-Match header'
+     * The Airline resource is implemented with Optimistic Concurrency. This
+     * requires an eTag to be first fetched via a read before performing patch,
+     * update, delete or merge operations. The test should complete successfully
+     * and not throw an error of the form 'The request need to have If-Match or
+     * If-None-Match header'
      *
      * @throws Exception
      */
@@ -370,8 +380,7 @@ public class Olingo4AppAPITest {
         TestOlingo4ResponseHandler<HttpStatusCode> statusHandler = new TestOlingo4ResponseHandler<>();
         ClientEntity clientEntity = objFactory.newEntity(null);
         String newAirlineName = "The Patched American Airlines";
-        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("Name",
-                                                                         objFactory.newPrimitiveValueBuilder().buildString(newAirlineName)));
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("Name", objFactory.newPrimitiveValueBuilder().buildString(newAirlineName)));
 
         //
         // Call patch
@@ -392,12 +401,11 @@ public class Olingo4AppAPITest {
     }
 
     /**
-     * The Airline resource is implemented with Optimistic Concurrency.
-     * This requires an eTag to be first fetched via a read before performing
-     * patch, update, delete or merge operations.
-     *
-     * The test should complete successfully and not throw an error of the form
-     * 'The request need to have If-Match or If-None-Match header'
+     * The Airline resource is implemented with Optimistic Concurrency. This
+     * requires an eTag to be first fetched via a read before performing patch,
+     * update, delete or merge operations. The test should complete successfully
+     * and not throw an error of the form 'The request need to have If-Match or
+     * If-None-Match header'
      *
      * @throws Exception
      */
@@ -416,8 +424,7 @@ public class Olingo4AppAPITest {
         TestOlingo4ResponseHandler<HttpStatusCode> statusHandler = new TestOlingo4ResponseHandler<>();
         ClientEntity clientEntity = objFactory.newEntity(null);
         String newAirlineName = "The Updated American Airlines";
-        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("Name",
-                                                                         objFactory.newPrimitiveValueBuilder().buildString(newAirlineName)));
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("Name", objFactory.newPrimitiveValueBuilder().buildString(newAirlineName)));
 
         //
         // Call update
@@ -571,8 +578,8 @@ public class Olingo4AppAPITest {
         assertEquals(HttpStatusCode.NO_CONTENT, statusCode);
     }
 
-
-    // Unfortunately there is no action that returns a client entity. So we fake one
+    // Unfortunately there is no action that returns a client entity. So we fake
+    // one
     @Test
     public void testBoundActionRequestWithClientEntityResponse() throws Exception {
         final ODataClient odataClient = ODataClientFactory.getClient();
@@ -584,10 +591,8 @@ public class Olingo4AppAPITest {
             public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
                 if (response.getStatusLine().getStatusCode() == HttpStatusCode.NO_CONTENT.getStatusCode()) {
                     try {
-                        response.setEntity(
-                                new InputStreamEntity(
-                                        odataWriter.writeEntity(createEntity(), ContentType.JSON),
-                                        org.apache.http.entity.ContentType.parse(ContentType.JSON.toContentTypeString())));
+                        response.setEntity(new InputStreamEntity(odataWriter.writeEntity(createEntity(), ContentType.JSON),
+                                                                 org.apache.http.entity.ContentType.parse(ContentType.JSON.toContentTypeString())));
                         response.setStatusCode(HttpStatusCode.OK.getStatusCode());
                     } catch (ODataSerializerException e) {
                         throw new IOException(e);

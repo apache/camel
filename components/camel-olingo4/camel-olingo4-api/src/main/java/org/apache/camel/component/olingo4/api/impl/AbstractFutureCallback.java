@@ -35,14 +35,14 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
 
 /**
-* Helper implementation of {@link org.apache.http.concurrent.FutureCallback}
+ * Helper implementation of {@link org.apache.http.concurrent.FutureCallback}
  * for {@link org.apache.camel.component.olingo4.api.impl.Olingo4AppImpl}
-*/
+ */
 public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpResponse> {
 
     public static final Pattern ODATA_MIME_TYPE_PATTERN = Pattern.compile("application/((atom)|(json)|(xml)).*");
     public static final int NETWORK_CONNECT_TIMEOUT_ERROR = 599;
-    
+
     private final Olingo4ResponseHandler<T> responseHandler;
 
     AbstractFutureCallback(Olingo4ResponseHandler<T> responseHandler) {
@@ -56,11 +56,11 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpRe
             if (response.getEntity() != null) {
                 try {
                     final ContentType responseContentType = getContentTypeHeader(response);
-                              
+
                     if (responseContentType != null && ODATA_MIME_TYPE_PATTERN.matcher(responseContentType.toContentTypeString()).matches()) {
                         final ODataReader reader = ODataClientFactory.getClient().getReader();
                         final ODataError error = reader.readError(response.getEntity().getContent(), responseContentType);
-                        
+
                         throw new ODataClientErrorException(statusLine, error);
                     }
                 } catch (IOException e) {
@@ -86,7 +86,7 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpRe
         } finally {
             if (result instanceof Closeable) {
                 try {
-                    ((Closeable) result).close();
+                    ((Closeable)result).close();
                 } catch (final IOException ignore) {
                 }
             }

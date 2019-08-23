@@ -109,7 +109,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         Iterator<?> propIter = collectionProperty.iterator();
         Object propValueObj = propIter.next();
         assertIsInstanceOf(ClientComplexValue.class, propValueObj);
-        ClientComplexValue propValue = (ClientComplexValue) propValueObj;
+        ClientComplexValue propValue = (ClientComplexValue)propValueObj;
         assertEquals("Boise", propValue.get("City").getComplexValue().get("Name").getValue().toString());
 
         final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct:readentitybyid", null, headers);
@@ -392,7 +392,6 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
             }
         }
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
