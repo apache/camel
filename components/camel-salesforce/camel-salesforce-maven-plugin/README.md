@@ -19,6 +19,7 @@ The plugin configuration has the following properties.
 * excludePattern - Java RegEx for SObject types to exclude
 * packageName - Java package name for generated DTOs, defaults to org.apache.camel.salesforce.dto.
 * customTypes - override default types in generated DTOs
+* useStringsForPicklists - Use strings instead of enumerations for picklists. Default is false.
 
 Additonal properties to provide proxy information, if behind a firewall.
 
