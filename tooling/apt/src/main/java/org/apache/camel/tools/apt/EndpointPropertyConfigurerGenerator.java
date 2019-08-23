@@ -69,7 +69,7 @@ public final class EndpointPropertyConfigurerGenerator {
     }
 
     public static void generatePropertyConfigurer(ProcessingEnvironment processingEnv, TypeElement parent,
-                                                  String pn, String cn, String fqn, String en, String fqen,
+                                                  String pn, String cn, String fqn, String en,
                                                   Set<EndpointOption> options) {
 
         Writer w = null;
@@ -88,7 +88,6 @@ public final class EndpointPropertyConfigurerGenerator {
             w.write("import java.util.function.Supplier;\n");
             w.write("\n");
             w.write("import org.apache.camel.CamelContext;\n");
-            w.write("import " + fqen + ";\n");
             w.write("import org.apache.camel.support.component.EndpointPropertyConfigurerSupport;\n");
             w.write("\n");
             w.write("/**\n");

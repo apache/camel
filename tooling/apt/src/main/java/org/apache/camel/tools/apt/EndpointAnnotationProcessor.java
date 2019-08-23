@@ -194,7 +194,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
             // only generate this once for the first scheme
             if (schemes == null || schemes[0].equals(scheme)) {
-                EndpointPropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, pn, cn, fqn, en, fqen, endpointOptions);
+                EndpointPropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, pn, cn, fqn, en, endpointOptions);
                 EndpointPropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqn);
             }
         }
