@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class WeightedLoadBalancerReifier extends LoadBalancerReifier<WeightedLoadBalancerDefinition> {
 
-    WeightedLoadBalancerReifier(LoadBalancerDefinition definition) {
+    public WeightedLoadBalancerReifier(LoadBalancerDefinition definition) {
         super((WeightedLoadBalancerDefinition)definition);
     }
 

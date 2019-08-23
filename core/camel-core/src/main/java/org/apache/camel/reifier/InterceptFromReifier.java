@@ -26,7 +26,7 @@ import org.apache.camel.support.ExpressionAdapter;
 
 public class InterceptFromReifier extends InterceptReifier<InterceptFromDefinition> {
 
-    InterceptFromReifier(ProcessorDefinition<?> definition) {
+    public InterceptFromReifier(ProcessorDefinition<?> definition) {
         super((InterceptFromDefinition)definition);
     }
 

@@ -34,7 +34,7 @@ import org.apache.camel.util.URISupport;
 
 public class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T> {
 
-    ToDynamicReifier(ProcessorDefinition<?> definition) {
+    public ToDynamicReifier(ProcessorDefinition<?> definition) {
         super((T)definition);
     }
 

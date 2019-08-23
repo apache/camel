@@ -28,7 +28,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
 
-    PollEnrichReifier(ProcessorDefinition<?> definition) {
+    public PollEnrichReifier(ProcessorDefinition<?> definition) {
         super((PollEnrichDefinition)definition);
     }
 

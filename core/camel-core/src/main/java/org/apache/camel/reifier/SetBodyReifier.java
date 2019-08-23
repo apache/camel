@@ -25,7 +25,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class SetBodyReifier extends ExpressionReifier<SetBodyDefinition> {
 
-    SetBodyReifier(ProcessorDefinition<?> definition) {
+    public SetBodyReifier(ProcessorDefinition<?> definition) {
         super((SetBodyDefinition)definition);
     }
 

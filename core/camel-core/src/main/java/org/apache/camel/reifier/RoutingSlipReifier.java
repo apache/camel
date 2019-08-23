@@ -30,7 +30,7 @@ import static org.apache.camel.model.RoutingSlipDefinition.DEFAULT_DELIMITER;
 
 public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<?>> {
 
-    RoutingSlipReifier(ProcessorDefinition<?> definition) {
+    public RoutingSlipReifier(ProcessorDefinition<?> definition) {
         super((RoutingSlipDefinition)definition);
     }
 

@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
 
-    ResequenceReifier(ProcessorDefinition<?> definition) {
+    public ResequenceReifier(ProcessorDefinition<?> definition) {
         super((ResequenceDefinition)definition);
     }
 

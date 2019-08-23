@@ -34,7 +34,7 @@ import org.apache.camel.support.CamelContextHelper;
 
 public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
 
-    WireTapReifier(ProcessorDefinition<?> definition) {
+    public WireTapReifier(ProcessorDefinition<?> definition) {
         super(definition);
     }
 

@@ -26,7 +26,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class LoopReifier extends ExpressionReifier<LoopDefinition> {
 
-    LoopReifier(ProcessorDefinition<?> definition) {
+    public LoopReifier(ProcessorDefinition<?> definition) {
         super((LoopDefinition)definition);
     }
 

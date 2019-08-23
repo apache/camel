@@ -39,7 +39,7 @@ import org.apache.camel.support.CamelContextHelper;
 
 public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
-    SagaReifier(ProcessorDefinition<?> definition) {
+    public SagaReifier(ProcessorDefinition<?> definition) {
         super((SagaDefinition)definition);
     }
 

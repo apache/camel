@@ -23,7 +23,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class PipelineReifier extends ProcessorReifier<PipelineDefinition> {
 
-    PipelineReifier(ProcessorDefinition<?> definition) {
+    public PipelineReifier(ProcessorDefinition<?> definition) {
         super(PipelineDefinition.class.cast(definition));
     }
 

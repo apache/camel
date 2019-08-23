@@ -23,7 +23,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
 
-    ServiceCallReifier(ProcessorDefinition<?> definition) {
+    public ServiceCallReifier(ProcessorDefinition<?> definition) {
         super(ServiceCallDefinition.class.cast(definition));
     }
 

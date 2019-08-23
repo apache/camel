@@ -35,7 +35,7 @@ import org.apache.camel.support.CamelContextHelper;
 
 public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
 
-    MulticastReifier(ProcessorDefinition<?> definition) {
+    public MulticastReifier(ProcessorDefinition<?> definition) {
         super((MulticastDefinition)definition);
     }
 

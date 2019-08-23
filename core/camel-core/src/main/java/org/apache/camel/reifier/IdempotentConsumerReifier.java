@@ -27,7 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsumerDefinition> {
 
-    IdempotentConsumerReifier(ProcessorDefinition<?> definition) {
+    public IdempotentConsumerReifier(ProcessorDefinition<?> definition) {
         super(IdempotentConsumerDefinition.class.cast(definition));
     }
 

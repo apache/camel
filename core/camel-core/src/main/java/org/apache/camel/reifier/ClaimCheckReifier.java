@@ -30,7 +30,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
 
-    ClaimCheckReifier(ProcessorDefinition<?> definition) {
+    public ClaimCheckReifier(ProcessorDefinition<?> definition) {
         super(ClaimCheckDefinition.class.cast(definition));
     }
 

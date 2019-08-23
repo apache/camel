@@ -50,7 +50,7 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> {
 
     protected final T definition;
 
-    LoadBalancerReifier(T definition) {
+    public LoadBalancerReifier(T definition) {
         this.definition = definition;
     }
 

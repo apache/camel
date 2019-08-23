@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
 
-    OnExceptionReifier(ProcessorDefinition<?> definition) {
+    public OnExceptionReifier(ProcessorDefinition<?> definition) {
         super((OnExceptionDefinition)definition);
     }
 

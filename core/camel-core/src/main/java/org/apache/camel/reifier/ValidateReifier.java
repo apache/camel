@@ -24,7 +24,7 @@ import org.apache.camel.support.processor.validation.PredicateValidatingProcesso
 
 public class ValidateReifier extends ExpressionReifier<ValidateDefinition> {
 
-    ValidateReifier(ProcessorDefinition<?> definition) {
+    public ValidateReifier(ProcessorDefinition<?> definition) {
         super((ValidateDefinition)definition);
     }
 

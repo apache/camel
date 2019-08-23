@@ -27,7 +27,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> {
 
-    LoadBalanceReifier(ProcessorDefinition<?> definition) {
+    public LoadBalanceReifier(ProcessorDefinition<?> definition) {
         super((LoadBalanceDefinition)definition);
     }
 

@@ -33,7 +33,7 @@ import org.apache.camel.support.CamelContextHelper;
 
 public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
-    SplitReifier(ProcessorDefinition<?> definition) {
+    public SplitReifier(ProcessorDefinition<?> definition) {
         super((SplitDefinition)definition);
     }
 

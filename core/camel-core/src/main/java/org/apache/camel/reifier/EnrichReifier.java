@@ -28,7 +28,7 @@ import org.apache.camel.spi.RouteContext;
 
 public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
 
-    EnrichReifier(ProcessorDefinition<?> definition) {
+    public EnrichReifier(ProcessorDefinition<?> definition) {
         super(EnrichDefinition.class.cast(definition));
     }
 
