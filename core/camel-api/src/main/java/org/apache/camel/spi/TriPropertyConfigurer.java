@@ -16,20 +16,25 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.function.TriConsumer;
 
 /**
- * Property configurer for Camel {@link org.apache.camel.Endpoint}
+ * Property configurer for Camel {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}
  * which allows fast configurations without using Java reflection.
  */
-@Deprecated
-public interface EndpointPropertyConfigurer extends PropertyConfigurer {
+public interface TriPropertyConfigurer extends PropertyConfigurer {
 
     /**
-     * Configures the endpoint.
-     *
-     * @param endpoint      the endpoint
-     * @param camelContext  the camel context
+     * To update properties using the tri-function.
+     * 
+     * The key in the map is the property name.
+     * The 1st parameter in the tri-function is {@link CamelContext}
+     * The 2nd parameter in the tri-function is the target object
+     * The 3rd parameter in the tri-function is the value
      */
-    void configure(Object endpoint, CamelContext camelContext);
+    Map<String, TriConsumer<CamelContext, Object, Object>> getWriteOptions(CamelContext camelContext);
+
 }

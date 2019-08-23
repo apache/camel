@@ -31,7 +31,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.TriPropertyConfigurer;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.function.TriConsumer;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
@@ -455,14 +457,16 @@ public final class PropertyBindingSupport {
         boolean rc = false;
 
         // if there is a property configurer then use it to set the properties
-        if (configurer != null) {
-            Map<String, Consumer<Object>> writeProperties = configurer.getWritePropertyPlaceholderOptions(camelContext);
+        if (configurer instanceof TriPropertyConfigurer) {
+            TriPropertyConfigurer tri = (TriPropertyConfigurer) configurer;
+
+            Map<String, TriConsumer<CamelContext, Object, Object>> writeProperties = tri.getWriteOptions(camelContext);
             for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry<String, Object> entry = iter.next();
                 String key = entry.getKey();
                 Object value = entry.getValue();
                 if (writeProperties.containsKey(key)) {
-                    writeProperties.get(key).accept(value);
+                    writeProperties.get(key).accept(camelContext, target, value);
                     if (removeParameter) {
                         iter.remove();
                         rc = true;

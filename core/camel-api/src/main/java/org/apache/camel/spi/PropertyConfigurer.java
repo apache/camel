@@ -16,32 +16,12 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import org.apache.camel.CamelContext;
-
 /**
- * A configurer for properties on a given object.
+ * A marker interface to identify the object as being configurable via a configurer class.
  * <p/>
  * This is used in Camel to have fast property configuration of Camel components & endpoints,
  * and for EIP patterns as well.
  */
-public interface PropertyConfigurer<T> {
-
-    /**
-     * Gets the options which supports property placeholders and can be resolved.
-     * This will be all the string based options.
-     *
-     * @return key/values of options
-     */
-    Map<String, Supplier<T>> getReadPropertyPlaceholderOptions(CamelContext camelContext);
-
-    /**
-     * To update an existing property using the function with the key/value and returning the changed value
-     * This will be all the string based options.
-     */
-    Map<String, Consumer<T>> getWritePropertyPlaceholderOptions(CamelContext camelContext);
+public interface PropertyConfigurer {
 
 }

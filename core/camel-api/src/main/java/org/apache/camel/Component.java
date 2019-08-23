@@ -75,10 +75,9 @@ public interface Component extends CamelContextAware, Service {
     /**
      * Gets the endpoint {@link PropertyConfigurer}.
      *
-     * @param  endpoint  the endpoint
      * @return the configurer, or <tt>null</tt> if the endpoint does not support using property configurer.
      */
-    default PropertyConfigurer getEndpointPropertyConfigurer(Object endpoint) {
+    default PropertyConfigurer getEndpointPropertyConfigurer() {
         return null;
     }
 
