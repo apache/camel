@@ -19,8 +19,20 @@ package org.apache.camel.support.component;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.EndpointPropertyConfigurer;
 
+/**
+ * Base class used by the camel-apt compiler plugin when it generates source code for all
+ * the endpoint configurations.
+ */
 public abstract class EndpointPropertyConfigurerSupport implements EndpointPropertyConfigurer {
 
+    /**
+     * Converts the property to the expected type
+     *
+     * @param camelContext   the camel context
+     * @param type           the expected type
+     * @param value          the value
+     * @return  the value converted to the expected type
+     */
     public static <T> T property(CamelContext camelContext, Class<T> type, Object value) {
         // if the type is not string based and the value is a bean reference, then we need to lookup
         // the bean from the registry
