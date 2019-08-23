@@ -1,11 +1,12 @@
 /*
- * Copyright (C) 2016 Red Hat, Inc.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,12 +16,15 @@
  */
 package org.apache.camel.component.olingo2;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import java.io.InputStream;
 import java.util.Map;
 import javax.ws.rs.HttpMethod;
+import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+import okio.Buffer;
 import org.apache.camel.component.olingo2.api.Olingo2App;
 import org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
@@ -38,26 +42,19 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
-import okio.Buffer;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
- * Tests support for concurrency properties which generate and require
- * reading eTags before patch, update and delete operations.
- *
- * Since the embedded olingo2 odata service does not contain any
- * concurrency properties, it is necessary to mock up a new server.
- *
- * Uses a cutdown version of the reference odata service and adds in
- * extra concurrency properties.
- *
- * Service's dispatcher only tests the correct calls are made and whether
- * the eTags are correctly added as headers to the requisite requests.
- *
+ * Tests support for concurrency properties which generate and require reading
+ * eTags before patch, update and delete operations. Since the embedded olingo2
+ * odata service does not contain any concurrency properties, it is necessary to
+ * mock up a new server. Uses a cutdown version of the reference odata service
+ * and adds in extra concurrency properties. Service's dispatcher only tests the
+ * correct calls are made and whether the eTags are correctly added as headers
+ * to the requisite requests.
  */
 public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSupport {
 
@@ -98,7 +95,7 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
         //
         // Check we have enabled eTag properties
         //
-        EdmProperty property = (EdmProperty) entityType.getProperty("Id");
+        EdmProperty property = (EdmProperty)entityType.getProperty("Id");
         assertNotNull(property.getFacets());
     }
 
@@ -109,57 +106,55 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
         //
         server.setDispatcher(new Dispatcher() {
 
-            @SuppressWarnings( "resource" )
+            @SuppressWarnings("resource")
             @Override
             public MockResponse dispatch(RecordedRequest recordedRequest) throws InterruptedException {
                 MockResponse mockResponse = new MockResponse();
 
-                switch(recordedRequest.getMethod()) {
-                    case HttpMethod.GET:
-                        try {
-                            if (recordedRequest.getPath().endsWith("/" + TEST_CREATE_MANUFACTURER)) {
+                switch (recordedRequest.getMethod()) {
+                case HttpMethod.GET:
+                    try {
+                        if (recordedRequest.getPath().endsWith("/" + TEST_CREATE_MANUFACTURER)) {
 
-                                ODataResponse odataResponse = EntityProvider.writeEntry(TEST_FORMAT.getMimeType(),
-                                                                                        manufacturersSet, getEntityData(),
-                                                                                        EntityProviderWriteProperties
-                                                                                            .serviceRoot(getServiceUrl().uri())
-                                                                                            .build());
-                                InputStream entityStream = odataResponse.getEntityAsStream();
-                                mockResponse.setResponseCode(HttpStatusCodes.OK.getStatusCode());
-                                mockResponse.setBody(new Buffer().readFrom(entityStream));
-                                return mockResponse;
+                            ODataResponse odataResponse = EntityProvider.writeEntry(TEST_FORMAT.getMimeType(), manufacturersSet, getEntityData(),
+                                                                                    EntityProviderWriteProperties.serviceRoot(getServiceUrl().uri()).build());
+                            InputStream entityStream = odataResponse.getEntityAsStream();
+                            mockResponse.setResponseCode(HttpStatusCodes.OK.getStatusCode());
+                            mockResponse.setBody(new Buffer().readFrom(entityStream));
+                            return mockResponse;
 
                         } else if (recordedRequest.getPath().endsWith("/" + Olingo2AppImpl.METADATA)) {
 
                             EdmServiceMetadata serviceMetadata = edm.getServiceMetadata();
-                            return mockResponse
-                                .setResponseCode(HttpStatusCodes.OK.getStatusCode())
+                            return mockResponse.setResponseCode(HttpStatusCodes.OK.getStatusCode())
                                 .addHeader(ODataHttpHeaders.DATASERVICEVERSION, serviceMetadata.getDataServiceVersion())
                                 .setBody(new Buffer().readFrom(serviceMetadata.getMetadata()));
                         }
 
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                        break;
-                    case HttpMethod.PATCH:
-                    case HttpMethod.PUT:
-                    case HttpMethod.POST:
-                    case HttpMethod.DELETE:
-                        //
-                        // Objective of the test:
-                        //   The Read has to have been called by Olingo2AppImpl.argumentWithETag
-                        //    which should then populate the IF-MATCH header with the eTag value.
-                        //    Verify the eTag value is present.
-                        //
-                        assertNotNull(recordedRequest.getHeader(HttpHeader.IF_MATCH.asString()));
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    break;
+                case HttpMethod.PATCH:
+                case HttpMethod.PUT:
+                case HttpMethod.POST:
+                case HttpMethod.DELETE:
+                    //
+                    // Objective of the test:
+                    // The Read has to have been called by
+                    // Olingo2AppImpl.argumentWithETag
+                    // which should then populate the IF-MATCH header with the
+                    // eTag value.
+                    // Verify the eTag value is present.
+                    //
+                    assertNotNull(recordedRequest.getHeader(HttpHeader.IF_MATCH.asString()));
 
-                        return mockResponse.setResponseCode(HttpStatusCodes.NO_CONTENT.getStatusCode());
+                    return mockResponse.setResponseCode(HttpStatusCodes.NO_CONTENT.getStatusCode());
+                default:
+                    break;
                 }
 
-                mockResponse
-                    .setResponseCode(HttpStatusCodes.NOT_FOUND.getStatusCode())
-                    .setBody("{ status: \"Not Found\"}");
+                mockResponse.setResponseCode(HttpStatusCodes.NOT_FOUND.getStatusCode()).setBody("{ status: \"Not Found\"}");
                 return mockResponse;
             }
         });
@@ -187,7 +182,7 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
 
         Map<String, Object> data = getEntityData();
         @SuppressWarnings("unchecked")
-        Map<String, Object> address = (Map<String, Object>) data.get(ADDRESS);
+        Map<String, Object> address = (Map<String, Object>)data.get(ADDRESS);
 
         data.put("Name", "MyCarManufacturer Renamed");
         address.put("Street", "Main Street");
@@ -207,7 +202,7 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
 
         Map<String, Object> data = getEntityData();
         @SuppressWarnings("unchecked")
-        Map<String, Object> address = (Map<String, Object>) data.get(ADDRESS);
+        Map<String, Object> address = (Map<String, Object>)data.get(ADDRESS);
 
         data.put("Name", "MyCarManufacturer Renamed");
         address.put("Street", "Main Street");
@@ -227,7 +222,7 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
 
         Map<String, Object> data = getEntityData();
         @SuppressWarnings("unchecked")
-        Map<String, Object> address = (Map<String, Object>) data.get(ADDRESS);
+        Map<String, Object> address = (Map<String, Object>)data.get(ADDRESS);
 
         data.put("Name", "MyCarManufacturer Renamed");
         address.put("Street", "Main Street");

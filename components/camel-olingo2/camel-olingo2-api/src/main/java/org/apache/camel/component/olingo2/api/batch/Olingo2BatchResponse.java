@@ -33,9 +33,7 @@ public class Olingo2BatchResponse {
     private final Map<String, String> headers;
     private final Object body;
 
-
-    public Olingo2BatchResponse(int statusCode, String statusInfo,
-                               String contentId, Map<String, String> headers, Object body) {
+    public Olingo2BatchResponse(int statusCode, String statusInfo, String contentId, Map<String, String> headers, Object body) {
         this.statusCode = statusCode;
         this.statusInfo = statusInfo;
         this.contentId = contentId;

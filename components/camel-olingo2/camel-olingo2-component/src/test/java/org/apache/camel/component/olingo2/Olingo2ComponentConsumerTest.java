@@ -27,10 +27,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App} APIs.
+ * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App}
+ * APIs.
  * <p>
- * The integration test runs against Apache Olingo 2.0 sample server
- * which is dynamically installed and started during the test.
+ * The integration test runs against Apache Olingo 2.0 sample server which is
+ * dynamically installed and started during the test.
  * </p>
  */
 public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
@@ -69,16 +70,14 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
     }
 
     /**
-     * Read entity set of the People object
-     * and filter already seen items on subsequent exchanges
-     * Use a delay since the mock endpoint does not always get
-     * the correct number of exchanges before being satisfied.
-     *
-     * Note:
-     * - consumer.splitResults is set to false since this ensures the first returned message
-     *   contains all the results. This is preferred for the purposes of this test. The default
-     *   will mean the first n messages contain the results (where n is the result total) then
-     *   subsequent messages will be empty
+     * Read entity set of the People object and filter already seen items on
+     * subsequent exchanges Use a delay since the mock endpoint does not always
+     * get the correct number of exchanges before being satisfied. Note: -
+     * consumer.splitResults is set to false since this ensures the first
+     * returned message contains all the results. This is preferred for the
+     * purposes of this test. The default will mean the first n messages contain
+     * the results (where n is the result total) then subsequent messages will
+     * be empty
      */
     @Test
     public void testConsumerReadFilterAlreadySeen() throws Exception {
@@ -89,9 +88,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers?filterAlreadySeen=true&"
-                        + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&"
-                        + "consumer.splitResult=false")
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&" + "consumer.splitResult=false")
                     .to("mock:consumer-alreadyseen");
             };
         };
@@ -107,7 +104,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
                 // First polled messages contained all the manufacturers
                 //
                 assertTrue(body instanceof ODataFeed);
-                ODataFeed set = (ODataFeed) body;
+                ODataFeed set = (ODataFeed)body;
                 assertTrue(set.getEntries().size() > 0);
             } else {
                 //
@@ -120,16 +117,13 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
     }
 
     /**
-     * Read entity set of the People object
-     * and filter already seen items on subsequent exchanges
-     * Use a delay since the mock endpoint does not always get
-     * the correct number of exchanges before being satisfied.
-     *
-     * Note:
-     * - consumer.splitResults is set to false since this ensures the first returned message
-     *   contains all the results.
-     * - consumer.sendEmptyMessageWhenIdle is set to false so only 1 message should
-     *   even be returned.
+     * Read entity set of the People object and filter already seen items on
+     * subsequent exchanges Use a delay since the mock endpoint does not always
+     * get the correct number of exchanges before being satisfied. Note: -
+     * consumer.splitResults is set to false since this ensures the first
+     * returned message contains all the results. -
+     * consumer.sendEmptyMessageWhenIdle is set to false so only 1 message
+     * should even be returned.
      */
     @Test
     public void testConsumerReadFilterAlreadySeenNoEmptyMsgs() throws Exception {
@@ -144,9 +138,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers?filterAlreadySeen=true&"
-                + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&"
-                + "consumer.splitResult=false")
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&" + "consumer.splitResult=false")
                     .to("mock:consumer-alreadyseen");
             };
         };
@@ -166,14 +158,12 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
         // Only polled message contains all the entities
         //
         assertTrue(body instanceof ODataFeed);
-        ODataFeed set = (ODataFeed) body;
+        ODataFeed set = (ODataFeed)body;
         assertTrue(set.getEntries().size() > 0);
     }
 
     /**
-     * WithPredicate in address
-     * FilterAlreadySeen: true
-     * SplitResults: true
+     * WithPredicate in address FilterAlreadySeen: true SplitResults: true
      * consumer.sendEmptyMessageWhenIdle: true
      *
      * @throws Exception
@@ -186,9 +176,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&"
-                        + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&"
-                        + "consumer.splitResult=true")
+                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&" + "consumer.splitResult=true")
                     .to("mock:consumer-splitresult-kp-manufacturer");
             };
         };
@@ -204,7 +192,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
                 // First polled messages contained all the entities
                 //
                 assertTrue(body instanceof ODataEntry);
-                ODataEntry entry = (ODataEntry) body;
+                ODataEntry entry = (ODataEntry)body;
                 Object nameValue = entry.getProperties().get("Name");
                 assertNotNull(nameValue);
                 assertEquals("Star Powered Racing", nameValue.toString());
@@ -219,9 +207,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
     }
 
     /**
-     * WithPredicate in address
-     * FilterAlreadySeen: true
-     * SplitResults: true
+     * WithPredicate in address FilterAlreadySeen: true SplitResults: true
      * consumer.sendEmptyMessageWhenIdle: false
      *
      * @throws Exception
@@ -240,9 +226,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&"
-                    + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&"
-                    + "consumer.splitResult=true")
+                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&" + "consumer.splitResult=true")
                     .to("mock:consumer-splitresult-kp-manufacturer");
             };
         };
@@ -262,15 +246,15 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
         // Only polled message contains the entity
         //
         assertTrue(body instanceof ODataEntry);
-        ODataEntry entry = (ODataEntry) body;
+        ODataEntry entry = (ODataEntry)body;
         Object nameValue = entry.getProperties().get("Name");
         assertNotNull(nameValue);
         assertEquals("Star Powered Racing", nameValue.toString());
     }
 
     /**
-     * Read value of the People object and split the results
-     * into individual messages
+     * Read value of the People object and split the results into individual
+     * messages
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -281,8 +265,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers('1')/Address?consumer.splitResult=true")
-                    .to("mock:consumer-value");
+                from("olingo2://read/Manufacturers('1')/Address?consumer.splitResult=true").to("mock:consumer-value");
             };
         };
         addRouteAndStartContext(builder);
@@ -293,10 +276,10 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
         //
         Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
         assertIsInstanceOf(Map.class, body);
-        Map<String, Object> value = (Map<String, Object>) body;
+        Map<String, Object> value = (Map<String, Object>)body;
         Object addrObj = value.get("Address");
         assertIsInstanceOf(Map.class, addrObj);
-        Map<String, Object> addrMap = (Map<String, Object>) addrObj;
+        Map<String, Object> addrMap = (Map<String, Object>)addrObj;
         assertEquals("70173", addrMap.get("ZipCode"));
         assertEquals("Star Street 137", addrMap.get("Street"));
         assertEquals("Germany", addrMap.get("Country"));
@@ -304,8 +287,8 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
     }
 
     /**
-     * Read entity set of the Manufacturers object and split the results
-     * into individual messages
+     * Read entity set of the Manufacturers object and split the results into
+     * individual messages
      */
     @Test
     public void testConsumerReadSplitResults() throws Exception {
@@ -315,8 +298,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers?consumer.splitResult=true")
-                    .to("mock:consumer-splitresult");
+                from("olingo2://read/Manufacturers?consumer.splitResult=true").to("mock:consumer-splitresult");
             };
         };
 

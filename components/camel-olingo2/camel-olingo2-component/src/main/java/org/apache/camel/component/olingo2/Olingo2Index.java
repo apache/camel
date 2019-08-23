@@ -212,7 +212,7 @@ public class Olingo2Index {
             }
             response = filter(result);
         } else if (response instanceof ODataEntry) {
-            response = filter((ODataEntry) response);
+            response = filter((ODataEntry)response);
         } else {
             response = filter(response);
         }

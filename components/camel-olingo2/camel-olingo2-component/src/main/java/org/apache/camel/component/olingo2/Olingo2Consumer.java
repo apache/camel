@@ -84,7 +84,8 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
 
             doInvokeMethod(args);
 
-            // guaranteed to return, since an exception on timeout is expected!!!
+            // guaranteed to return, since an exception on timeout is
+            // expected!!!
             latch.await();
 
             if (error[0] != null) {
@@ -92,10 +93,10 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
             }
 
             //
-            // Allow consumer idle properties to properly handle an empty polling response
+            // Allow consumer idle properties to properly handle an empty
+            // polling response
             //
-            if ((result[0] == null)
-                || (result[0] instanceof ODataFeed && (((ODataFeed) result[0]).getEntries().isEmpty()))) {
+            if ((result[0] == null) || (result[0] instanceof ODataFeed && (((ODataFeed)result[0]).getEntries().isEmpty()))) {
                 return 0;
             } else {
                 int processed = ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
@@ -110,7 +111,8 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
     @Override
     public void interceptProperties(Map<String, Object> properties) {
         //
-        // If we have a filterAlreadySeen property then initialise the filter index
+        // If we have a filterAlreadySeen property then initialise the filter
+        // index
         //
         Object value = properties.get(Olingo2Endpoint.FILTER_ALREADY_SEEN);
         if (value == null) {
@@ -118,7 +120,8 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
         }
 
         //
-        // Initialise the index if not already and if filterAlreadySeen has been set
+        // Initialise the index if not already and if filterAlreadySeen has been
+        // set
         //
         if (Boolean.parseBoolean(value.toString()) && resultIndex == null) {
             resultIndex = new Olingo2Index();
@@ -139,7 +142,7 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
         List<Object> splitResult = new ArrayList<>();
 
         if (result instanceof ODataFeed) {
-            ODataFeed odataFeed = (ODataFeed) result;
+            ODataFeed odataFeed = (ODataFeed)result;
             for (ODataEntry entry : odataFeed.getEntries()) {
                 splitResult.add(entry);
             }

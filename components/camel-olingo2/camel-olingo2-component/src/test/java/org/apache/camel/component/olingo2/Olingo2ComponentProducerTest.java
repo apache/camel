@@ -44,7 +44,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App} APIs.
+ * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App}
+ * APIs.
  * <p>
  * The integration test runs against Apache Olingo 2.0 sample server which is
  * dynamically installed and started during the test.
@@ -248,7 +249,7 @@ public class Olingo2ComponentProducerTest extends AbstractOlingo2TestSupport {
     /**
      * Read entity set of the People object and with no filter already seen, all
      * items should be present in each message
-    *
+     *
      * @throws Exception
      */
     @Test

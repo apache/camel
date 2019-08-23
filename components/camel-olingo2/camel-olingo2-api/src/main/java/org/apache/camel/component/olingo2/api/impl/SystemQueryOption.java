@@ -20,5 +20,5 @@ package org.apache.camel.component.olingo2.api.impl;
  * Copied from Olingo2 core package.
  */
 public enum SystemQueryOption {
-  $format, $filter, $inlinecount, $orderby, $skiptoken, $skip, $top, $expand, $select;
+    $format, $filter, $inlinecount, $orderby, $skiptoken, $skip, $top, $expand, $select;
 }

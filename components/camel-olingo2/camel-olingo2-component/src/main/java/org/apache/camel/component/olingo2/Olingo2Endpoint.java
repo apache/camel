@@ -65,8 +65,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     private Olingo2AppWrapper apiProxy;
 
-    public Olingo2Endpoint(String uri, Olingo2Component component,
-                           Olingo2ApiName apiName, String methodName, Olingo2Configuration endpointConfiguration) {
+    public Olingo2Endpoint(String uri, Olingo2Component component, Olingo2ApiName apiName, String methodName, Olingo2Configuration endpointConfiguration) {
         super(uri, component, apiName, methodName, Olingo2ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
 
         this.configuration = endpointConfiguration;
@@ -122,8 +121,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
     @Override
     protected void afterConfigureProperties() {
         // set default inBody
-        if (!(READ_METHOD.equals(methodName) || DELETE_METHOD.equals(methodName) || UREAD_METHOD.equals(methodName))
-            && inBody == null) {
+        if (!(READ_METHOD.equals(methodName) || DELETE_METHOD.equals(methodName) || UREAD_METHOD.equals(methodName)) && inBody == null) {
             inBody = DATA_PROPERTY;
         }
         createProxy();
@@ -136,7 +134,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     @Override
     public Olingo2Component getComponent() {
-        return (Olingo2Component) super.getComponent();
+        return (Olingo2Component)super.getComponent();
     }
 
     @Override
@@ -158,7 +156,8 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
     @Override
     public void interceptPropertyNames(Set<String> propertyNames) {
         // add edm, and responseHandler property names
-        // edm is computed on first call to getApiProxy(), and responseHandler is provided by consumer and producer
+        // edm is computed on first call to getApiProxy(), and responseHandler
+        // is provided by consumer and producer
         if (!DELETE_METHOD.equals(methodName)) {
             propertyNames.add(EDM_PROPERTY);
         }
@@ -175,15 +174,14 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         properties.put(FILTER_ALREADY_SEEN, configuration.getFilterAlreadySeen());
 
         // handle keyPredicate
-        final String keyPredicate = (String) properties.get(KEY_PREDICATE_PROPERTY);
+        final String keyPredicate = (String)properties.get(KEY_PREDICATE_PROPERTY);
         if (keyPredicate != null) {
 
             // make sure a resource path is provided
-            final String resourcePath = (String) properties.get(RESOURCE_PATH_PROPERTY);
+            final String resourcePath = (String)properties.get(RESOURCE_PATH_PROPERTY);
             if (resourcePath == null) {
-                throw new IllegalArgumentException("Resource path must be provided in endpoint URI, or URI parameter '"
-                    + RESOURCE_PATH_PROPERTY + "', or exchange header '"
-                    + Olingo2Constants.PROPERTY_PREFIX + RESOURCE_PATH_PROPERTY + "'");
+                throw new IllegalArgumentException("Resource path must be provided in endpoint URI, or URI parameter '" + RESOURCE_PATH_PROPERTY + "', or exchange header '"
+                                                   + Olingo2Constants.PROPERTY_PREFIX + RESOURCE_PATH_PROPERTY + "'");
             }
 
             // append keyPredicate to dynamically create resource path
@@ -205,10 +203,10 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
             final Map.Entry<String, Object> entry = it.next();
             final String paramName = entry.getKey();
-            
+
             /**
-             * Avoid swallowing consumer scheduler properties, which
-             * get processed in configureProperties()
+             * Avoid swallowing consumer scheduler properties, which get
+             * processed in configureProperties()
              */
             if (paramName.startsWith("consumer.")) {
                 continue;
@@ -230,7 +228,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         if (!queryParams.isEmpty()) {
 
             @SuppressWarnings("unchecked")
-            final Map<String, String> oldParams = (Map<String, String>) options.get(QUERY_PARAMS_PROPERTY);
+            final Map<String, String> oldParams = (Map<String, String>)options.get(QUERY_PARAMS_PROPERTY);
             if (oldParams == null) {
                 // set queryParams property
                 options.put(QUERY_PARAMS_PROPERTY, queryParams);

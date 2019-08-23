@@ -24,7 +24,8 @@ import java.util.Map;
 import org.apache.olingo.odata2.api.uri.PathSegment;
 
 /**
- * Copied from Olingo2 library, since URI parsing wasn't made a part of it's public API.
+ * Copied from Olingo2 library, since URI parsing wasn't made a part of it's
+ * public API.
  */
 public class ODataPathSegmentImpl implements PathSegment {
 
