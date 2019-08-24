@@ -42,10 +42,7 @@ public class MicroProfileMetricsComponent extends DefaultComponent {
         String metricsName = MicroProfileMetricsHelper.getMetricsName(remaining);
         MetricType metricsType = MicroProfileMetricsHelper.getMetricsType(remaining);
 
-        String rawTags = getAndRemoveParameter(parameters, "tags", String.class, "");
-        List<Tag> tags = MicroProfileMetricsHelper.getMetricsTag(rawTags);
-
-        return new MicroProfileMetricsEndpoint(uri, this, metricRegistry, metricsType, metricsName, tags);
+        return new MicroProfileMetricsEndpoint(uri, this, metricRegistry, metricsType, metricsName);
     }
 
     public MetricRegistry getMetricRegistry() {

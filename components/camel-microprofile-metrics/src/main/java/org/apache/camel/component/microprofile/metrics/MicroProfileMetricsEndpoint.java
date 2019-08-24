@@ -31,7 +31,7 @@ import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.Tag;
 
-@UriEndpoint(firstVersion = "3.0.0", scheme = "microprofile-metrics", title = "MicroProfile Metrics", syntax = "microprofile-metrics:metricsType:metricsName", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "microprofile-metrics", title = "MicroProfile Metrics", syntax = "microprofile-metrics:metricType:metricsName", producerOnly = true, label = "monitoring")
 public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry metricRegistry;
@@ -42,8 +42,8 @@ public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
     @UriPath(description = "Metric name")
     @Metadata(required = true)
     private final String metricName;
-    @UriPath(description = "Comma delimited list of tags associated with the metric in the format tagName=tagValue")
-    private final List<Tag> tags;
+    @UriParam(description = "Comma delimited list of tags associated with the metric in the format tagName=tagValue")
+    private String tags;
     @UriParam(description = "Action to use when using the timer type")
     private String action;
     @UriParam(description = "Mark value to set when using the meter type")
@@ -63,12 +63,11 @@ public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
     @UriParam(description = "Metric unit. See org.eclipse.microprofile.metrics.MetricUnits")
     private String metricUnit;
 
-    public MicroProfileMetricsEndpoint(String uri, Component component, MetricRegistry metricRegistry, MetricType metricType, String metricsName, List<Tag> tags) {
+    public MicroProfileMetricsEndpoint(String uri, Component component, MetricRegistry metricRegistry, MetricType metricType, String metricsName) {
         super(uri, component);
         this.metricRegistry = metricRegistry;
         this.metricType = metricType;
         this.metricName = metricsName;
-        this.tags = tags;
     }
 
     @Override
@@ -105,8 +104,12 @@ public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
         return metricName;
     }
 
-    public List<Tag> getTags() {
+    public String getTags() {
         return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public String getAction() {

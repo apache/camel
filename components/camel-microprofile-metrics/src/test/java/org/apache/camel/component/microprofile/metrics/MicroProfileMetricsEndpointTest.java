@@ -74,6 +74,6 @@ public class MicroProfileMetricsEndpointTest {
     }
 
     private MicroProfileMetricsEndpoint createEndpoint(MetricType metricType) {
-        return new MicroProfileMetricsEndpoint("microprofile-metrics:foo:bar", null, null, metricType, null, Collections.emptyList());
+        return new MicroProfileMetricsEndpoint("microprofile-metrics:foo:bar", null, null, metricType, null);
     }
 }

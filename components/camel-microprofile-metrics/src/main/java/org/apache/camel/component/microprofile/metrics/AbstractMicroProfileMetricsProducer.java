@@ -65,11 +65,9 @@ public abstract class AbstractMicroProfileMetricsProducer<T extends Metric> exte
         String metricUnit = getStringHeader(in, HEADER_METRIC_UNIT, endpoint.getMetricUnit());
         MetricType metricType = exchange.getIn().getHeader(HEADER_METRIC_TYPE,  endpoint.getMetricType(), MetricType.class);
 
-        List<Tag> defaultTags = endpoint.getTags();
-        String headerTags = getStringHeader(in, HEADER_METRIC_TAGS, "");
-
         List<Tag> allTags = new ArrayList<>();
-        allTags.addAll(defaultTags);
+        allTags.addAll(MicroProfileMetricsHelper.getMetricsTag(endpoint.getTags()));
+        String headerTags = getStringHeader(in, HEADER_METRIC_TAGS, "");
         allTags.addAll(MicroProfileMetricsHelper.getMetricsTag(headerTags));
 
         List<Tag> finalTags = allTags.stream()

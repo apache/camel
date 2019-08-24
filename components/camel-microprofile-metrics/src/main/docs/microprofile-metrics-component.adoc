@@ -45,12 +45,12 @@ The MicroProfile Metrics component supports 2 options, which are listed below.
 The MicroProfile Metrics endpoint is configured using URI syntax:
 
 ----
-microprofile-metrics:metricsType:metricsName
+microprofile-metrics:metricType:metricsName
 ----
 
 with the following path and query parameters:
 
-=== Path Parameters (3 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -58,11 +58,10 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *metricType* | *Required* Metric type |  | MetricType
 | *metricName* | *Required* Metric name |  | String
-| *tags* | Comma delimited list of tags associated with the metric in the format tagName=tagValue |  | List
 |===
 
 
-=== Query Parameters (12 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,6 +76,7 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *mark* (producer) | The mark value to set when using the Meter metric type |  | Long
 | *metricUnit* (producer) | Sets a metric unit within the metric metadata |  | String
+| *tags* (producer) | Comma delimited list of tags associated with the metric in the format tagName=tagValue |  | String
 | *value* (producer) | The value to set when using the Histogram metric type |  | Long
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

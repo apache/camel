@@ -182,6 +182,18 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma delimited list of tags associated with the metric in the format
+         * tagName=tagValue.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default MicroProfileMetricsEndpointBuilder tags(String tags) {
+            setProperty("tags", tags);
+            return this;
+        }
+        /**
          * The value to set when using the Histogram metric type.
          * 
          * The option is a: <code>java.lang.Long</code> type.
@@ -275,7 +287,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
      * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-microprofile-metrics
      * 
-     * Syntax: <code>microprofile-metrics:metricsType:metricsName</code>
+     * Syntax: <code>microprofile-metrics:metricType:metricsName</code>
      * 
      * Path parameter: metricType (required)
      * Metric type
@@ -284,10 +296,6 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
      * 
      * Path parameter: metricName (required)
      * Metric name
-     * 
-     * Path parameter: tags
-     * Comma delimited list of tags associated with the metric in the format
-     * tagName=tagValue
      */
     default MicroProfileMetricsEndpointBuilder microProfileMetrics(String path) {
         class MicroProfileMetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MicroProfileMetricsEndpointBuilder, AdvancedMicroProfileMetricsEndpointBuilder {
