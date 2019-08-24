@@ -423,7 +423,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                     .bind(camelContext, bean, parameters);
         } else {
             PropertyConfigurer configurer = null;
-            if (bean instanceof Endpoint) {
+            if (bean instanceof Component) {
+                configurer = getComponent().getComponentPropertyConfigurer();
+            } else if (bean instanceof Endpoint) {
                 configurer = getComponent().getEndpointPropertyConfigurer();
             } else if (bean instanceof PropertyConfigurerAware) {
                 configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);

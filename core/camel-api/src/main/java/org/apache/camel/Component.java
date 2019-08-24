@@ -73,6 +73,15 @@ public interface Component extends CamelContextAware, Service {
     boolean useRawUri();
 
     /**
+     * Gets the component {@link PropertyConfigurer}.
+     *
+     * @return the configurer, or <tt>null</tt> if the component does not support using property configurer.
+     */
+    default PropertyConfigurer getComponentPropertyConfigurer() {
+        return null;
+    }
+
+    /**
      * Gets the endpoint {@link PropertyConfigurer}.
      *
      * @return the configurer, or <tt>null</tt> if the endpoint does not support using property configurer.

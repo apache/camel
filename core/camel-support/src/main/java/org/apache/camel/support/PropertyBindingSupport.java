@@ -465,7 +465,12 @@ public final class PropertyBindingSupport {
                 Map.Entry<String, Object> entry = iter.next();
                 String key = entry.getKey();
                 Object value = entry.getValue();
-                if (writeProperties.containsKey(key)) {
+                boolean valid = true;
+                if (nesting) {
+                    // property configurer does not support nested names so skip if the name has a dot
+                    valid = key.indexOf('.') == -1;
+                }
+                if (valid && writeProperties.containsKey(key)) {
                     writeProperties.get(key).accept(camelContext, target, value);
                     if (removeParameter) {
                         iter.remove();
@@ -640,6 +645,8 @@ public final class PropertyBindingSupport {
                 value = null;
             }
         }
+
+        // TODO: Move configurer here so the value can have done all its magic
 
         boolean hit = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, context.getTypeConverter(), target, name, value, refName, fluentBuilder, allowPrivateSetter, ignoreCase);
         if (!hit && mandatory) {

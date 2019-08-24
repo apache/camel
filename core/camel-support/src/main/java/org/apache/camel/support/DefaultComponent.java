@@ -59,6 +59,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/configurer/";
 
+    private volatile TriPropertyConfigurer componentPropertyConfigurer;
     private volatile TriPropertyConfigurer endpointPropertyConfigurer;
     private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
     private CamelContext camelContext;
@@ -339,8 +340,15 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                 name = StringHelper.before(name, ",");
             }
             try {
-                log.trace("Discovering optional endpoint property configurer class for component: {}", name);
+                log.trace("Discovering optional component property configurer class for component: {}", name);
                 Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
+                        .findOptionalClass(name + "-component", null);
+                clazz.ifPresent(c -> componentPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, TriPropertyConfigurer.class));
+                if (log.isDebugEnabled() && componentPropertyConfigurer != null) {
+                    log.debug("Discovered component property configurer: {} -> {}", name, componentPropertyConfigurer);
+                }
+                log.trace("Discovering optional endpoint property configurer class for component: {}", name);
+                clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
                         .findOptionalClass(name + "-endpoint", null);
                 clazz.ifPresent(c -> endpointPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, TriPropertyConfigurer.class));
                 if (log.isDebugEnabled() && endpointPropertyConfigurer != null) {
@@ -407,7 +415,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                     .bind(camelContext, bean, parameters);
         } else {
             PropertyConfigurer configurer = null;
-            if (bean instanceof Endpoint) {
+            if (bean instanceof Component) {
+                configurer = getComponentPropertyConfigurer();
+            } else if (bean instanceof Endpoint) {
                 configurer = getEndpointPropertyConfigurer();
             } else if (bean instanceof PropertyConfigurerAware) {
                 configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
@@ -415,6 +425,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             // use advanced binding
             PropertyBindingSupport.build().withConfigurer(configurer).bind(camelContext, bean, parameters);
         }
+    }
+
+    @Override
+    public PropertyConfigurer getComponentPropertyConfigurer() {
+        return componentPropertyConfigurer;
     }
 
     @Override
