@@ -184,7 +184,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             // special for activemq and amqp scheme which should reuse jms
             parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.component.jms.JmsComponentConfigurer");
         } else {
-            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.TriPropertyConfigurer");
+            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.GeneratedPropertyConfigurer");
         }
         String fqComponentClassName = componentModel.getJavaType();
         String componentClassName = fqComponentClassName.substring(fqComponentClassName.lastIndexOf('.') + 1);
@@ -211,7 +211,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             // special for activemq and amqp scheme which should reuse jms
             parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.component.jms.JmsEndpointConfigurer");
         } else {
-            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.TriPropertyConfigurer");
+            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.GeneratedPropertyConfigurer");
         }
         String fqEndpointClassName = classElement.getQualifiedName().toString();
         String packageName = fqEndpointClassName.substring(0, fqEndpointClassName.lastIndexOf('.'));

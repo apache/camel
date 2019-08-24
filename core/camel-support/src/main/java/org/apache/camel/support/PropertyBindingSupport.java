@@ -25,15 +25,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurer;
-import org.apache.camel.spi.TriPropertyConfigurer;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.function.TriConsumer;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
@@ -461,11 +459,9 @@ public final class PropertyBindingSupport {
         org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
 
-        // if there is a property configurer then use it to set the properties
-        if (configurer instanceof TriPropertyConfigurer) {
-            TriPropertyConfigurer tri = (TriPropertyConfigurer) configurer;
+        if (configurer instanceof GeneratedPropertyConfigurer) {
+            GeneratedPropertyConfigurer gen = (GeneratedPropertyConfigurer) configurer;
 
-            Map<String, TriConsumer<CamelContext, Object, Object>> writeProperties = tri.getWriteOptions(camelContext);
             for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry<String, Object> entry = iter.next();
                 String key = entry.getKey();
@@ -475,12 +471,9 @@ public final class PropertyBindingSupport {
                     // property configurer does not support nested names so skip if the name has a dot
                     valid = key.indexOf('.') == -1;
                 }
-                if (valid && writeProperties.containsKey(key)) {
-                    writeProperties.get(key).accept(camelContext, target, value);
-                    if (removeParameter) {
-                        iter.remove();
-                        rc = true;
-                    }
+                if (valid && removeParameter && gen.configure(camelContext, target, key, value)) {
+                    iter.remove();
+                    rc = true;
                 }
             };
         }
