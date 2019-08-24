@@ -163,39 +163,70 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             }
         }
 
+        // component options
         TypeElement componentClassElement = findTypeElement(processingEnv, roundEnv, componentModel.getJavaType());
         if (componentClassElement != null) {
             findComponentClassProperties(writer, roundEnv, componentModel, componentOptions, componentClassElement, "", parentData, null, null);
         }
+        generateComponentConfigurer(roundEnv, uriEndpoint, scheme, schemes, componentModel, componentOptions);
 
+        // endpoint options
         findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, "", uriEndpoint.excludeProperties(), parentData, null, null);
-
         String json = createParameterJsonSchema(componentModel, componentOptions, endpointPaths, endpointOptions, schemes, parentData);
         writer.println(json);
+        generateEndpointConfigurer(roundEnv, classElement, uriEndpoint, scheme, schemes, componentModel, endpointOptions);
+    }
 
-        // special for activemq and amqp scheme which should reuse jms
+    private void generateComponentConfigurer(RoundEnvironment roundEnv, UriEndpoint uriEndpoint, String scheme, String[] schemes,
+                                             ComponentModel componentModel, Set<ComponentOption> componentOptions) {
+        TypeElement parent;
         if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
-            TypeElement parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.component.jms.JmsEndpointConfigurer");
-            String fqen = classElement.getQualifiedName().toString();
-            String pn = fqen.substring(0, fqen.lastIndexOf('.'));
-            String en = classElement.getSimpleName().toString();
-            String cn = en + "Configurer";
-            String fqn = pn + "." + cn;
+            // special for activemq and amqp scheme which should reuse jms
+            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.component.jms.JmsComponentConfigurer");
+        } else {
+            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.TriPropertyConfigurer");
+        }
+        String fqComponentClassName = componentModel.getJavaType();
+        String componentClassName = fqComponentClassName.substring(fqComponentClassName.lastIndexOf('.') + 1);
+        String className = componentClassName + "Configurer";
+        String packageName = fqComponentClassName.substring(0, fqComponentClassName.lastIndexOf('.'));
+        String fqClassName = packageName + "." + className;
 
-            EndpointPropertyConfigurerGenerator.generateExtendConfigurer(processingEnv, parent, pn, cn, fqn);
-            EndpointPropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqn);
-        } else if (uriEndpoint.generateConfigurer() && !endpointOptions.isEmpty()) {
-            TypeElement parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.TriPropertyConfigurer");
-            String fqen = classElement.getQualifiedName().toString();
-            String pn = fqen.substring(0, fqen.lastIndexOf('.'));
-            String en = classElement.getSimpleName().toString();
-            String cn = en + "Configurer";
-            String fqn = pn + "." + cn;
-
+        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
+            ComponentPropertyConfigurerGenerator.generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName);
+            ComponentPropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-component", fqClassName);
+        } else if (uriEndpoint.generateConfigurer() && !componentOptions.isEmpty()) {
             // only generate this once for the first scheme
             if (schemes == null || schemes[0].equals(scheme)) {
-                EndpointPropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, pn, cn, fqn, en, endpointOptions);
-                EndpointPropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqn);
+                ComponentPropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, componentClassName, componentOptions);
+                ComponentPropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-component", fqClassName);
+            }
+        }
+    }
+
+    private void generateEndpointConfigurer(RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme, String[] schemes,
+                                            ComponentModel componentModel, Set<EndpointOption> endpointOptions) {
+        TypeElement parent;
+        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
+            // special for activemq and amqp scheme which should reuse jms
+            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.component.jms.JmsEndpointConfigurer");
+        } else {
+            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.TriPropertyConfigurer");
+        }
+        String fqEndpointClassName = classElement.getQualifiedName().toString();
+        String packageName = fqEndpointClassName.substring(0, fqEndpointClassName.lastIndexOf('.'));
+        String endpointClassName = classElement.getSimpleName().toString();
+        String className = endpointClassName + "Configurer";
+        String fqClassName = packageName + "." + className;
+
+        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
+            EndpointPropertyConfigurerGenerator.generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName);
+            EndpointPropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqClassName);
+        } else if (uriEndpoint.generateConfigurer() && !endpointOptions.isEmpty()) {
+            // only generate this once for the first scheme
+            if (schemes == null || schemes[0].equals(scheme)) {
+                EndpointPropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, endpointClassName, endpointOptions);
+                EndpointPropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqClassName);
             }
         }
     }
@@ -542,11 +573,9 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     continue;
                 }
 
-                // must be a getter/setter pair
+                // we usually favor putting the @Metadata annotation on the field instead of the setter, so try to use it if its there
                 String fieldName = methodName.substring(3);
                 fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
-
-                // we usually favor putting the @Metadata annotation on the field instead of the setter, so try to use it if its there
                 VariableElement field = findFieldElement(classElement, fieldName);
                 if (field != null && metadata == null) {
                     metadata = field.getAnnotation(Metadata.class);

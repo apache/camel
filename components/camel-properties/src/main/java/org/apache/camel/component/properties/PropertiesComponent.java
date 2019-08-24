@@ -106,9 +106,10 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
     private final List<PropertiesSource> sources = new ArrayList<>();
-
     private List<PropertiesLocation> locations = Collections.emptyList();
 
+    @Metadata
+    private String location;
     @Metadata
     private boolean ignoreMissingLocation;
     @Metadata
@@ -282,7 +283,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      * A list of locations to load properties.
      * This option will override any default locations and only use the locations from this option.
      */
-    public void setLocations(List<PropertiesLocation> locations) {
+    private void setLocations(List<PropertiesLocation> locations) {
         // reset locations
         locations = parseLocations(locations);
         this.locations = Collections.unmodifiableList(locations);
@@ -324,6 +325,10 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         setLocations(locations);
     }
 
+    public void addLocation(PropertiesLocation location) {
+        this.locations.add(location);
+    }
+
     @Override
     public void addLocation(String location) {
         if (location != null) {
@@ -345,9 +350,14 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      */
     @Override
     public void setLocation(String location) {
+        this.location = location;
         if (location != null) {
             setLocations(location.split(","));
         }
+    }
+
+    public String getLocation() {
+        return location;
     }
 
     @ManagedAttribute(description = "Encoding to use when loading properties file from the file system or classpath")
