@@ -1,0 +1,523 @@
+[[xj-component]]
+= XJ Component
+
+*Available as of Camel version 3.0*
+
+The XJ component allows you to convert XML and JSON documents directly forth and back without the need of
+intermediate java objects. You can even specify an XSLT stylesheet to convert directly to the target
+JSON / XML (domain) model.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-xj</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI format
+
+----
+xj:[templateName]?transformDirection=XML2JSON|JSON2XML[&options]
+----
+
+[TIP]
+====
+*More documentation*
+
+The XJ component extends the XSLT component and therefore it supports all options provided by the XSLT
+component as well. At least look at the XSLT component documentation how to configure the xsl template.
+====
+
+The *transformDirection* option is mandatory and must be either XML2JSON or JSON2XML.
+
+In contrary to the xslt component, the *templateName* parameter is optional. If not specified a so called
+"identity transform" will be performed. 
+
+== Component options
+
+// component options: START
+The XJ component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uriResolverFactory* (advanced) | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. |  | XsltUriResolverFactory
+| *uriResolver* (advanced) | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. |  | URIResolver
+| *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
+| *saxon* (producer) | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath. | false | boolean
+| *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
+| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Object
+| *saxonConfiguration Properties* (advanced) | To set custom Saxon configuration properties |  | Map
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The XJ endpoint is configured using URI syntax:
+
+----
+xj:resourceUri
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resourceUri* | *Required* Path to the template. The following is supported by the default URIResolver. You can prefix with: classpath, file, http, ref, or bean. classpath, file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot, eg bean:myBean.myMethod |  | String
+|===
+
+
+=== Query Parameters (19 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *transformDirection* (producer) | *Required* Sets the transform direction. |  | TransformDirection
+| *allowStAX* (producer) | Whether to allow using StAX as the javax.xml.transform.Source. | true | boolean
+| *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
+| *deleteOutputFile* (producer) | If you have output=file then this option dictates whether or not the output file should be deleted when the Exchange is done processing. For example suppose the output file is a temporary file, then it can be a good idea to delete it after use. | false | boolean
+| *failOnNullBody* (producer) | Whether or not to throw an exception if the input body is null. | true | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *output* (producer) | Option to specify which output type to use. Possible values are: string, bytes, DOM, file. The first three options are all in memory based, where as file is streamed directly to a java.io.File. For file you must specify the filename in the IN header with the key Exchange.XSLT_FILE_NAME which is also CamelXsltFileName. Also any paths leading to the filename must be created beforehand, otherwise an exception is thrown at runtime. | string | XsltOutput
+| *saxon* (producer) | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath. | false | boolean
+| *transformerCacheSize* (producer) | The number of javax.xml.transform.Transformer object that are cached for reuse to avoid calls to Template.newTransformer(). | 0 | int
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *entityResolver* (advanced) | To use a custom org.xml.sax.EntityResolver with javax.xml.transform.sax.SAXSource. |  | EntityResolver
+| *errorListener* (advanced) | Allows to configure to use a custom javax.xml.transform.ErrorListener. Beware when doing this then the default error listener which captures any errors or fatal errors and store information on the Exchange as properties is not in use. So only use this option for special use-cases. |  | ErrorListener
+| *resultHandlerFactory* (advanced) | Allows you to use a custom org.apache.camel.builder.xml.ResultHandlerFactory which is capable of using custom org.apache.camel.builder.xml.ResultHandler types. |  | ResultHandlerFactory
+| *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Object
+| *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *transformerFactory* (advanced) | To use a custom XSLT transformer factory |  | TransformerFactory
+| *transformerFactoryClass* (advanced) | To use a custom XSLT transformer factory, specified as a FQN class name |  | String
+| *uriResolver* (advanced) | To use a custom javax.xml.transform.URIResolver |  | URIResolver
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-xj-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.xj.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.xj.content-cache* | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | Boolean
+| *camel.component.xj.enabled* | Whether to enable auto configuration of the xj component. This is enabled by default. |  | Boolean
+| *camel.component.xj.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.xj.saxon* | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath. | false | Boolean
+| *camel.component.xj.saxon-configuration* | To use a custom Saxon configuration. The option is a java.lang.Object type. |  | String
+| *camel.component.xj.saxon-configuration-properties* | To set custom Saxon configuration properties |  | Map
+| *camel.component.xj.saxon-extension-functions* | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
+| *camel.component.xj.uri-resolver* | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. The option is a javax.xml.transform.URIResolver type. |  | String
+| *camel.component.xj.uri-resolver-factory* | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. The option is a org.apache.camel.component.xslt.XsltUriResolverFactory type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+== Using XJ endpoints
+
+=== Converting JSON to XML
+
+The following route does an "identity" transform of the message because no xslt stylesheet is given. In the context of
+xml to xml transformations, "Identity" transform means that the output document is just a copy of the input document.
+In case of XJ it means it transforms the json document to an equivalent xml representation.
+
+[source,java]
+----
+from("direct:start").
+  to("xj:?transformDirection=JSON2XML");
+----
+
+Sample:
+
+The input:
+
+[source,json]
+----
+{
+  "firstname": "camel",
+  "lastname": "apache",
+  "personalnumber": 42,
+  "active": true,
+  "ranking": 3.1415926,
+  "roles": [
+    "a",
+    {
+      "x": null
+    }
+  ],
+  "state": {
+    "needsWater": true
+  }
+}
+----
+
+will output
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<object xmlns:xj="http://camel.apache.org/component/xj" xj:type="object">
+    <object xj:name="firstname" xj:type="string">camel</object>
+    <object xj:name="lastname" xj:type="string">apache</object>
+    <object xj:name="personalnumber" xj:type="int">42</object>
+    <object xj:name="active" xj:type="boolean">true</object>
+    <object xj:name="ranking" xj:type="float">3.1415926</object>
+    <object xj:name="roles" xj:type="array">
+        <object xj:type="string">a</object>
+        <object xj:type="object">
+            <object xj:name="x" xj:type="null">null</object>
+        </object>
+    </object>
+    <object xj:name="state" xj:type="object">
+        <object xj:name="needsWater" xj:type="boolean">true</object>
+    </object>
+</object>
+----
+
+As can be seen in the output above, XJ writes some metadata in the resulting xml that can be used in further processing:
+
+* XJ metadata nodes are always in the "http://camel.apache.org/component/xj" namespace.
+* JSON key names are placed in the xj:name attribute.
+* The parsed JSON type can be found in the xj:type attribute. The above example already contains all possible types.
+* Generated XML elements are always named "object".
+
+Now we can apply a stylesheet, e.g.:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:xj="http://camel.apache.org/component/xj"
+                exclude-result-prefixes="xj">
+
+    <xsl:output omit-xml-declaration="no" encoding="UTF-8" method="xml" indent="yes"/>
+
+    <xsl:template match="/">
+        <person>
+            <xsl:apply-templates select="//object"/>
+        </person>
+    </xsl:template>
+
+    <xsl:template match="object[@xj:type != 'object' and @xj:type != 'array' and string-length(@xj:name) > 0]">
+        <xsl:variable name="name" select="@xj:name"/>
+        <xsl:element name="{$name}">
+            <xsl:value-of select="text()"/>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="@*|node()"/>
+</xsl:stylesheet>
+----
+
+to the above sample by specifying the template on the endpoint:
+
+[source,java]
+----
+from("direct:start").
+  to("xj:com/example/json2xml.xsl?transformDirection=JSON2XML");
+----
+
+and get the following output:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<person>
+    <firstname>camel</firstname>
+    <lastname>apache</lastname>
+    <personalnumber>42</personalnumber>
+    <active>true</active>
+    <ranking>3.1415926</ranking>
+    <x>null</x>
+    <needsWater>true</needsWater>
+</person>
+----
+
+
+=== Converting XML to JSON
+
+Based on the explanations above an "identity" transform will be performed when no stylesheet is given:
+
+[source,java]
+----
+from("direct:start").
+  to("xj:?transformDirection=XML2JSON");
+----
+
+Given the sample input
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<person>
+    <firstname>camel</firstname>
+    <lastname>apache</lastname>
+    <personalnumber>42</personalnumber>
+    <active>true</active>
+    <ranking>3.1415926</ranking>
+    <roles>
+        <entry>a</entry>
+        <entry>
+            <x>null</x>
+        </entry>
+    </roles>
+    <state>
+        <needsWater>true</needsWater>
+    </state>
+</person>
+----
+
+will result in
+
+[source,json]
+----
+{
+  "firstname": "camel",
+  "lastname": "apache",
+  "personalnumber": "42",
+  "active": "true",
+  "ranking": "3.1415926",
+  "roles": [
+    "a",
+    {
+      "x": "null"
+    }
+  ],
+  "state": {
+    "needsWater": "true"
+  }
+}
+----
+
+You may have noted that the input xml and output json is very similar to the examples above when converting from json to xml
+altough nothing special is done here. We only transformed an arbitrary XML document to json.
+XJ uses the following rules by default:
+
+* The XML root element can be named somehow, it will always end in a json root object declaration '{}'
+* The json key name is the name of the xml element
+* If there is an name clash as in "<roles>" above where two "<entry>" elements exists a json array will be generated.
+* XML elements with text-only-child-nodes will result in the usual key/string-value pair. Mixed content elements
+results in key/child-object pair as seen in "<state>" above.
+
+Now we can apply again a stylesheet, e.g.:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:xj="http://camel.apache.org/component/xj"
+                exclude-result-prefixes="xj">
+
+    <xsl:output omit-xml-declaration="no" encoding="UTF-8" method="xml" indent="yes"/>
+
+    <xsl:template match="/">
+        <xsl:apply-templates/>
+    </xsl:template>
+
+    <xsl:template match="personalnumber">
+        <xsl:element name="{local-name()}">
+            <xsl:attribute name="xj:type">
+                <xsl:value-of select="'int'"/>
+            </xsl:attribute>
+            <xsl:apply-templates/>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="active|needsWater">
+        <xsl:element name="{local-name()}">
+            <xsl:attribute name="xj:type">
+                <xsl:value-of select="'boolean'"/>
+            </xsl:attribute>
+            <xsl:apply-templates/>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="ranking">
+        <xsl:element name="{local-name()}">
+            <xsl:attribute name="xj:type">
+                <xsl:value-of select="'float'"/>
+            </xsl:attribute>
+            <xsl:apply-templates/>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="roles">
+        <xsl:element name="{local-name()}">
+            <xsl:attribute name="xj:type">
+                <xsl:value-of select="'array'"/>
+            </xsl:attribute>
+            <xsl:apply-templates/>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="*[normalize-space(text()) = 'null']">
+        <xsl:element name="{local-name()}">
+            <xsl:attribute name="xj:type">
+                <xsl:value-of select="'null'"/>
+            </xsl:attribute>
+            <xsl:apply-templates/>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+</xsl:stylesheet>
+----
+
+to the sample above by specifying the template on the endpoint:
+
+[source,java]
+----
+from("direct:start").
+  to("xj:com/example/xml2json.xsl?transformDirection=XML2JSON");
+----
+
+and get the following output:
+
+[source,json]
+----
+{
+  "firstname": "camel",
+  "lastname": "apache",
+  "personalnumber": 42,
+  "active": true,
+  "ranking": 3.1415926,
+  "roles": [
+    "a",
+    {
+      "x": null
+    }
+  ],
+  "state": {
+    "needsWater": true
+  }
+}
+----
+
+Note, this transformation resulted in exactly the same json document as we used as input to the json2xml convertion.
+What did the stylesheet do? We just gave some hints to XJ on how to write the json document. The following XML
+document is that what is passed to XJ after xsl transformation:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<person>
+    <firstname>camel</firstname>
+    <lastname>apache</lastname>
+    <personalnumber xmlns:xj="http://camel.apache.org/component/xj" xj:type="int">42</personalnumber>
+    <active xmlns:xj="http://camel.apache.org/component/xj" xj:type="boolean">true</active>
+    <ranking xmlns:xj="http://camel.apache.org/component/xj" xj:type="float">3.1415926</ranking>
+    <roles xmlns:xj="http://camel.apache.org/component/xj" xj:type="array">
+        <entry>a</entry>
+        <entry>
+            <x xj:type="null">null</x>
+        </entry>
+    </roles>
+    <state>
+        <needsWater xmlns:xj="http://camel.apache.org/component/xj" xj:type="boolean">true</needsWater>
+    </state>
+</person>
+----
+
+In the stylesheet we just provided the minimal required type hints to get the same result.
+The supported type hints are exactly the same as XJ writes to a XML document when converting from json to xml.
+
+In the end that means that we can feed back in the result document from the json to xml transformation sample above:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<object xmlns:xj="http://camel.apache.org/component/xj" xj:type="object">
+    <object xj:name="firstname" xj:type="string">camel</object>
+    <object xj:name="lastname" xj:type="string">apache</object>
+    <object xj:name="personalnumber" xj:type="int">42</object>
+    <object xj:name="active" xj:type="boolean">true</object>
+    <object xj:name="ranking" xj:type="float">3.1415926</object>
+    <object xj:name="roles" xj:type="array">
+        <object xj:type="string">a</object>
+        <object xj:type="object">
+            <object xj:name="x" xj:type="null">null</object>
+        </object>
+    </object>
+    <object xj:name="state" xj:type="object">
+        <object xj:name="needsWater" xj:type="boolean">true</object>
+    </object>
+</object>
+----
+
+and get the same output again:
+
+[source,json]
+----
+{
+  "firstname": "camel",
+  "lastname": "apache",
+  "personalnumber": 42,
+  "active": true,
+  "ranking": 3.1415926,
+  "roles": [
+    "a",
+    {
+      "x": null
+    }
+  ],
+  "state": {
+    "needsWater": true
+  }
+}
+----
+
+As seen in the example above:
+* xj:type lets you specify exactly the desired output type
+* xj:name lets you overrule the json key name. This is required when you want to generate key names which contains chars
+that aren't allowed in XML element names.
+
+=== Available type hints
+
+[width="100%",cols="2,4",options="header"]
+|===
+| @xj:type= | Description
+| object | Generate a json object
+| array | Generate a json array
+| string | Generate a json string
+| int | Generate a json number without fractional part
+| float | Generate a json number with fractional part
+| boolean | Generate a json boolean
+| null | Generate an empty value, using the word null
+|===

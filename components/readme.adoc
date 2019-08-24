@@ -875,7 +875,7 @@ Number of Components: 297 in 235 JAR artifacts (0 deprecated)
 `xchange:name` | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
 
 | link:camel-xj/src/main/docs/xj-component.adoc[XJ] (camel-xj) +
-`xj:resourceUri` | 2.25 | Transforms json/xml message back and forth using a XSLT.
+`xj:resourceUri` | 3.0 | Transforms json/xml message back and forth using a XSLT.
 
 | link:camel-xmlsecurity/src/main/docs/xmlsecurity-component.adoc[XML Security] (camel-xmlsecurity) +
 `xmlsecurity:command:name` | 2.12 | Used to sign and verify exchanges using the XML signature specification.
