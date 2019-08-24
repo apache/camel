@@ -57,7 +57,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     protected final LongAdder misses = new LongAdder();
     protected final LongAdder evicted = new LongAdder();
 
-    private int maxCacheSize = 10000;
+    private int maxCacheSize;
     private final Cache<K, V> cache;
     private final Map<K, V> map;
     private final Consumer<V> evict;
