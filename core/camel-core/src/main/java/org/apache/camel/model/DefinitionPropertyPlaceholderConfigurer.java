@@ -46,8 +46,8 @@ public interface DefinitionPropertyPlaceholderConfigurer extends PropertyPlaceho
      * returning the changed value This will be all the string based options.
      */
     default Map<String, Consumer<String>> getWritePropertyPlaceholderOptions(CamelContext camelContext) {
-        PropertyPlaceholderConfigurer aware = DefinitionPropertiesPlaceholderProviderHelper.provider(this).orElse(null);
-        return aware != null ? aware.getWritePropertyPlaceholderOptions(camelContext) : null;
+        PropertyPlaceholderConfigurer configurer = DefinitionPropertiesPlaceholderProviderHelper.provider(this).orElse(null);
+        return configurer != null ? configurer.getWritePropertyPlaceholderOptions(camelContext) : null;
     }
 
 }
