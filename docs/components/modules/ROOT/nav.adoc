@@ -375,6 +375,7 @@
 * xref:websocket-component.adoc[Jetty Websocket Component]
 * xref:wordpress-component.adoc[Wordpress Component]
 * xref:xchange-component.adoc[XChange Component]
+* xref:xj-component.adoc[XJ Component]
 * xref:secureXML-dataformat.adoc[XML Security DataFormat]
 * xref:xmlsecurity-component.adoc[XML Security Component]
 * xref:xmpp-component.adoc[XMPP Component]
