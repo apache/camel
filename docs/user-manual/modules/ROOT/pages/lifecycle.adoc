@@ -105,4 +105,4 @@ stop the route instead.
 [[Lifecycle-RelatedInfo]]
 == Related Info
 
-link:https://camel.apache.org/components/latest/controlbus-component.html[Take a look at the Control Bus Component]
+xref:controlbus-component.adoc[Take a look at the Control Bus Component]
