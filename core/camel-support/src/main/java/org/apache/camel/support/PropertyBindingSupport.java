@@ -471,7 +471,7 @@ public final class PropertyBindingSupport {
                     // property configurer does not support nested names so skip if the name has a dot
                     valid = key.indexOf('.') == -1;
                 }
-                if (valid && removeParameter && gen.configure(camelContext, target, key, value)) {
+                if (valid && removeParameter && gen.configure(camelContext, target, key, value, ignoreCase)) {
                     iter.remove();
                     rc = true;
                 }

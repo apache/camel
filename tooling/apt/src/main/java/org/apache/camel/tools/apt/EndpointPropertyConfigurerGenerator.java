@@ -94,13 +94,33 @@ public final class EndpointPropertyConfigurerGenerator {
             w.write("public class " + cn + " extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {\n");
             w.write("\n");
             w.write("    @Override\n");
-            w.write("    public boolean configure(CamelContext camelContext, Object endpoint, String name, Object value) {\n");
+            w.write("    public boolean configure(CamelContext camelContext, Object endpoint, String name, Object value, boolean ignoreCase) {\n");
+            w.write("        if (ignoreCase) {\n");
+            w.write("            return doConfigureIgnoreCase(camelContext, endpoint, name, value);\n");
+            w.write("        } else {\n");
+            w.write("            return doConfigure(camelContext, endpoint, name, value);\n");
+            w.write("        }\n");
+            w.write("    }\n");
+            w.write("\n");
+            w.write("    private static boolean doConfigure(CamelContext camelContext, Object endpoint, String name, Object value) {\n");
             w.write("        switch (name) {\n");
             for (EndpointOption option : options) {
                 String getOrSet = option.getName();
                 getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
                 String setterLambda = setterLambda(en, getOrSet, option.getType(), option.getConfigurationField());
                 w.write(String.format("        case \"%s\": %s; return true;\n", option.getName(), setterLambda));
+            }
+            w.write("            default: return false;\n");
+            w.write("        }\n");
+            w.write("    }\n");
+            w.write("\n");
+            w.write("    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object endpoint, String name, Object value) {\n");
+            w.write("        switch (name.toLowerCase()) {\n");
+            for (EndpointOption option : options) {
+                String getOrSet = option.getName();
+                getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
+                String setterLambda = setterLambda(en, getOrSet, option.getType(), option.getConfigurationField());
+                w.write(String.format("        case \"%s\": %s; return true;\n", option.getName().toLowerCase(), setterLambda));
             }
             w.write("            default: return false;\n");
             w.write("        }\n");
