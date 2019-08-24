@@ -347,7 +347,11 @@ public final class PropertyBindingSupport {
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-            Class<?> type = getGetterType(camelContext, target, key, false);
+
+            // skip based on some known names
+            if ("basicPropertyBinding".equals(key)) {
+                continue;
+            }
 
             boolean skip = parents.contains(value) || value instanceof CamelContext;
             if (skip) {
@@ -356,6 +360,7 @@ public final class PropertyBindingSupport {
                 continue;
             }
 
+            Class<?> type = getGetterType(camelContext, target, key, false);
             if (isComplexUserType(type)) {
                 // if the property has not been set and its a complex type (not simple or string etc)
                 if (!bindNullOnly || value == null) {
