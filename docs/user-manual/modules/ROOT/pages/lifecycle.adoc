@@ -105,4 +105,4 @@ stop the route instead.
 [[Lifecycle-RelatedInfo]]
 == Related Info
 
-xref:controlbus-component.adoc[Take a look at the Control Bus Component]
+xref:components::controlbus-component.adoc[Take a look at the Control Bus Component]
