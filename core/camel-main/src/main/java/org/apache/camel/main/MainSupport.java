@@ -51,6 +51,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -1246,6 +1247,13 @@ public abstract class MainSupport extends ServiceSupport {
         boolean rc = false;
         Iterator it = properties.entrySet().iterator();
 
+        PropertyConfigurer configurer = null;
+        if (target instanceof Component) {
+            // the component needs to be initialized to have the configurer ready
+            ServiceHelper.initService(target);
+            configurer = ((Component) target).getComponentPropertyConfigurer();
+        }
+
         while (it.hasNext()) {
             Map.Entry<String, Object> entry = (Map.Entry) it.next();
             String name = entry.getKey();
@@ -1262,10 +1270,10 @@ public abstract class MainSupport extends ServiceSupport {
             try {
                 boolean hit;
                 if (failIfNotSet) {
-                    PropertyBindingSupport.build().withMandatory(true).withIgnoreCase(ignoreCase).bind(context, target, name, stringValue);
+                    PropertyBindingSupport.build().withMandatory(true).withConfigurer(configurer).withIgnoreCase(ignoreCase).bind(context, target, name, stringValue);
                     hit = true;
                 } else {
-                    hit = PropertyBindingSupport.build().withIgnoreCase(true).bind(context, target, name, stringValue);
+                    hit = PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true).bind(context, target, name, stringValue);
                 }
                 if (hit) {
                     it.remove();
