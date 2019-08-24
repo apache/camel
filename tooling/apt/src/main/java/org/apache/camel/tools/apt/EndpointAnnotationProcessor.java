@@ -552,6 +552,10 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                 String methodName = method.getSimpleName().toString();
                 boolean deprecated = method.getAnnotation(Deprecated.class) != null;
                 Metadata metadata = method.getAnnotation(Metadata.class);
+                if (metadata != null && metadata.skip()) {
+                    continue;
+                }
+
                 String deprecationNote = null;
                 if (metadata != null) {
                     deprecationNote = metadata.deprecationNote();
@@ -579,6 +583,9 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                 VariableElement field = findFieldElement(classElement, fieldName);
                 if (field != null && metadata == null) {
                     metadata = field.getAnnotation(Metadata.class);
+                }
+                if (metadata != null && metadata.skip()) {
+                    continue;
                 }
 
                 boolean required = metadata != null && metadata.required();
@@ -676,6 +683,9 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             for (VariableElement fieldElement : fieldElements) {
 
                 Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+                if (metadata != null && metadata.skip()) {
+                    continue;
+                }
                 boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
                 String deprecationNote = null;
                 if (metadata != null) {

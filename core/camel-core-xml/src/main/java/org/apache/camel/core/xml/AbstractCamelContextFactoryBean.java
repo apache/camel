@@ -627,7 +627,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
 
             PropertiesComponent pc = new PropertiesComponent();
-            locations.forEach(pc::addLocation);
+            pc.setLocations(locations);
             pc.setEncoding(def.getEncoding());
 
             if (def.isIgnoreMissingLocation() != null) {

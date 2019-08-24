@@ -100,4 +100,9 @@ public @interface Metadata {
      */
     String deprecationNote() default "";
 
+    /**
+     * Whether to skip this option
+     */
+    boolean skip() default false;
+
 }
