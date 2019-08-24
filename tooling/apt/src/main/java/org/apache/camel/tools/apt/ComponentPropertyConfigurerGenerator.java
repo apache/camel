@@ -33,6 +33,7 @@ import org.apache.camel.tools.apt.model.EndpointOption;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
 
 // TODO: ComponentPropertyConfigurerGenerator and EndpointPropertyConfigurerGenerator can be merged to one
+// TODO: Add support for ignore case
 
 public final class ComponentPropertyConfigurerGenerator {
 
@@ -95,13 +96,33 @@ public final class ComponentPropertyConfigurerGenerator {
             w.write("public class " + cn + " extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {\n");
             w.write("\n");
             w.write("    @Override\n");
-            w.write("    public boolean configure(CamelContext camelContext, Object component, String name, Object value) {\n");
+            w.write("    public boolean configure(CamelContext camelContext, Object component, String name, Object value, boolean ignoreCase) {\n");
+            w.write("        if (ignoreCase) {\n");
+            w.write("            return doConfigureIgnoreCase(camelContext, component, name, value);\n");
+            w.write("        } else {\n");
+            w.write("            return doConfigure(camelContext, component, name, value);\n");
+            w.write("        }\n");
+            w.write("    }\n");
+            w.write("\n");
+            w.write("    private static boolean doConfigure(CamelContext camelContext, Object component, String name, Object value) {\n");
             w.write("        switch (name) {\n");
             for (ComponentOption option : options) {
                 String getOrSet = option.getName();
                 getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
                 String setterLambda = setterLambda(en, getOrSet, option.getType(), option.getConfigurationField());
                 w.write(String.format("        case \"%s\": %s; return true;\n", option.getName(), setterLambda));
+            }
+            w.write("            default: return false;\n");
+            w.write("        }\n");
+            w.write("    }\n");
+            w.write("\n");
+            w.write("    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object component, String name, Object value) {\n");
+            w.write("        switch (name.toLowerCase()) {\n");
+            for (ComponentOption option : options) {
+                String getOrSet = option.getName();
+                getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
+                String setterLambda = setterLambda(en, getOrSet, option.getType(), option.getConfigurationField());
+                w.write(String.format("        case \"%s\": %s; return true;\n", option.getName().toLowerCase(), setterLambda));
             }
             w.write("            default: return false;\n");
             w.write("        }\n");
