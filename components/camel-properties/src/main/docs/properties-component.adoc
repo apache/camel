@@ -15,14 +15,13 @@ Where *key* is the key for the property to lookup
 == Options
 
 // component options: START
-The Properties component supports 12 options, which are listed below.
+The Properties component supports 11 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *locations* (common) | A list of locations to load properties. This option will override any default locations and only use the locations from this option. |  | List
 | *location* (common) | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
 | *encoding* (common) | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by java.util.Properties#load(java.io.InputStream) |  | String
 | *propertiesParser* (common) | To use a custom PropertiesParser |  | PropertiesParser

@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.properties.springboot;
 
-import java.util.List;
 import javax.annotation.Generated;
-import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -39,11 +37,6 @@ public class PropertiesComponentConfiguration
      * enabled by default.
      */
     private Boolean enabled;
-    /**
-     * A list of locations to load properties. This option will override any
-     * default locations and only use the locations from this option.
-     */
-    private List<PropertiesLocation> locations;
     /**
      * A list of locations to load properties. You can use comma to separate
      * multiple locations. This option will override any default locations and
@@ -107,14 +100,6 @@ public class PropertiesComponentConfiguration
      * the newer property binding with additional capabilities
      */
     private Boolean basicPropertyBinding = false;
-
-    public List<PropertiesLocation> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(List<PropertiesLocation> locations) {
-        this.locations = locations;
-    }
 
     public String getLocation() {
         return location;
