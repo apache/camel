@@ -1,13 +1,13 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,25 +16,22 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.function.TriConsumer;
 
 /**
- * Property configurer for Camel {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}
- * which allows fast configurations without using Java reflection.
+ * A auto generated {@link PropertyConfigurer} for fast configuration of Camel components & endpoints.
  */
-public interface TriPropertyConfigurer extends PropertyConfigurer {
+public interface GeneratedPropertyConfigurer extends PropertyConfigurer {
 
     /**
-     * To update properties using the tri-function.
-     * 
-     * The key in the map is the property name.
-     * The 1st parameter in the tri-function is {@link CamelContext}
-     * The 2nd parameter in the tri-function is the target object
-     * The 3rd parameter in the tri-function is the value
+     * Configures the property
+     *
+     * @param camelContext  the Camel context
+     * @param target        the target instance such as {@link org.apache.camel.Endpoint} or {@link org.apache.camel.Component}.
+     * @param name          the property name
+     * @param value         the property value
+     * @return <tt>true</tt> if the configurer configured the property, <tt>false</tt> if the property does not exists
      */
-    Map<String, TriConsumer<CamelContext, Object, Object>> getWriteOptions(CamelContext camelContext);
+    boolean configure(CamelContext camelContext, Object target, String name, Object value);
 
 }

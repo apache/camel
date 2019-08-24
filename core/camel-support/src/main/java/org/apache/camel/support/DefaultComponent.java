@@ -35,10 +35,10 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.extension.ComponentExtension;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
-import org.apache.camel.spi.TriPropertyConfigurer;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
@@ -59,8 +59,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/configurer/";
 
-    private volatile TriPropertyConfigurer componentPropertyConfigurer;
-    private volatile TriPropertyConfigurer endpointPropertyConfigurer;
+    private volatile GeneratedPropertyConfigurer componentPropertyConfigurer;
+    private volatile GeneratedPropertyConfigurer endpointPropertyConfigurer;
     private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
     private CamelContext camelContext;
 
@@ -343,14 +343,14 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                 log.trace("Discovering optional component property configurer class for component: {}", name);
                 Optional<Class<?>> clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
                         .findOptionalClass(name + "-component", null);
-                clazz.ifPresent(c -> componentPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, TriPropertyConfigurer.class));
+                clazz.ifPresent(c -> componentPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
                 if (log.isDebugEnabled() && componentPropertyConfigurer != null) {
                     log.debug("Discovered component property configurer: {} -> {}", name, componentPropertyConfigurer);
                 }
                 log.trace("Discovering optional endpoint property configurer class for component: {}", name);
                 clazz = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH)
                         .findOptionalClass(name + "-endpoint", null);
-                clazz.ifPresent(c -> endpointPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, TriPropertyConfigurer.class));
+                clazz.ifPresent(c -> endpointPropertyConfigurer = org.apache.camel.support.ObjectHelper.newInstance(c, GeneratedPropertyConfigurer.class));
                 if (log.isDebugEnabled() && endpointPropertyConfigurer != null) {
                     log.debug("Discovered endpoint property configurer: {} -> {}", name, endpointPropertyConfigurer);
                 }
