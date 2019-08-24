@@ -21,7 +21,7 @@ Number of Examples: 114 (0 deprecated)
 
 | link:camel-example-bigxml-split/README.md[Bigxml Split] (camel-example-bigxml-split) |  | How to deal with big XML files in Camel
 
-| link:camel-example-jira/README.adoc[Jira] (camel-example-jira) |  | An example that uses Jira Camel API
+| link:camel-example-jira/README.adoc[Jira] (camel-example-jira) | Beginner | An example that uses Jira Camel API
 
 | link:camel-example-telegram/README.adoc[Telegram] (camel-example-telegram) |  | An example that uses Telegram API
 
