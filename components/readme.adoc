@@ -566,7 +566,7 @@ Number of Components: 297 in 235 JAR artifacts (0 deprecated)
 `micrometer:metricsType:metricsName` | 2.22 | To collect various metrics directly from Camel routes using the Micrometer library.
 
 | link:camel-microprofile-metrics/src/main/docs/microprofile-metrics-component.adoc[MicroProfile Metrics] (camel-microprofile-metrics) +
-`microprofile-metrics:metricsType:metricsName` | 3.0 | Camel metrics exposed with Eclipse MicroProfile Metrics
+`microprofile-metrics:metricType:metricsName` | 3.0 | Camel metrics exposed with Eclipse MicroProfile Metrics
 
 | link:camel-mina/src/main/docs/mina-component.adoc[Mina] (camel-mina) +
 `mina:protocol:host:port` | 2.10 | Socket level networking using TCP or UDP with the Apache Mina 2.x library.
