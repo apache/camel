@@ -91,22 +91,21 @@ public final class EndpointPropertyConfigurerGenerator {
             w.write(" */\n");
             w.write("public class " + cn + " extends PropertyConfigurerSupport implements TriPropertyConfigurer {\n");
             w.write("\n");
-            w.write("    private final Map<String, TriConsumer<CamelContext, Object, Object>> writes = new HashMap<>(" + size + ");\n");
-            w.write("\n");
-
-            w.write("    public " + cn + "() {\n");
+            w.write("    private static final Map<String, TriConsumer<CamelContext, Object, Object>> WRITES;\n");
+            w.write("    static {\n");
+            w.write("        Map<String, TriConsumer<CamelContext, Object, Object>> map = new HashMap<>(" + size + ");\n");
             for (EndpointOption option : options) {
                 String getOrSet = option.getName();
                 getOrSet = Character.toUpperCase(getOrSet.charAt(0)) + getOrSet.substring(1);
                 String setterLambda = setterLambda(en, getOrSet, option.getType(), option.getConfigurationField());
-                w.write("        writes.put(\"" + option.getName() + "\", (camelContext, endpoint, value) -> " + setterLambda + ");\n");
+                w.write("        map.put(\"" + option.getName() + "\", (camelContext, endpoint, value) -> " + setterLambda + ");\n");
             }
-
+            w.write("        WRITES = map;\n");
             w.write("    }\n");
             w.write("\n");
             w.write("    @Override\n");
             w.write("    public Map<String, TriConsumer<CamelContext, Object, Object>> getWriteOptions(CamelContext camelContext) {\n");
-            w.write("        return writes;\n");
+            w.write("        return WRITES;\n");
             w.write("    }\n");
             w.write("\n");
             w.write("}\n");
