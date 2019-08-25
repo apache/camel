@@ -184,19 +184,6 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     }
 
     @Override
-    public boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
-        invoked.incrementAndGet();
-        if (logger.shouldLog()) {
-            Object text = value;
-            if (SECRETS.matcher(name).find()) {
-                text = "xxxxxx";
-            }
-            log("setProperty", target, name, text);
-        }
-        return IntrospectionSupport.setProperty(typeConverter, target, name, value);
-    }
-
-    @Override
     public Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
         invoked.incrementAndGet();
         if (logger.shouldLog()) {

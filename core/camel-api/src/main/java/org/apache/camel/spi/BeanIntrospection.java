@@ -193,8 +193,6 @@ public interface BeanIntrospection extends StaticService {
 
     boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception;
 
-    boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception;
-
     Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase);
 
 }
