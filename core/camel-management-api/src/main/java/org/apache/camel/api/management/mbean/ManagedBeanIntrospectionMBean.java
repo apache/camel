@@ -33,4 +33,10 @@ public interface ManagedBeanIntrospectionMBean extends ManagedServiceMBean {
     @ManagedOperation(description = "Rests the statistic counters")
     void resetCounters();
 
+    @ManagedAttribute(description = "Number of cached introspected bean classes")
+    Long getCachedClasses();
+
+    @ManagedOperation(description = "Clears the cache for introspected bean classes")
+    void clearCache();
+
 }

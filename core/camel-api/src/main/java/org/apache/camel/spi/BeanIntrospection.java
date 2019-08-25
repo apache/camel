@@ -135,6 +135,11 @@ public interface BeanIntrospection extends StaticService {
     void clearCache();
 
     /**
+     * Number of classes in the introspection cache.
+     */
+    long getCachedClassesCounter();
+
+    /**
      * Gets the property or else returning the default value.
      *
      * @param target         the target bean

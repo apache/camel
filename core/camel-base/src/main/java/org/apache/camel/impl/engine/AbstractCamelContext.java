@@ -2639,9 +2639,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             log.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
         }
 
-        // invoke this logic to warmup the routes and if possible also start the
-        // routes
+        // invoke this logic to warmup the routes and if possible also start the routes
         doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
+
+        long cacheCounter = getBeanIntrospection().getCachedClassesCounter();
+        if (cacheCounter > 0) {
+            log.debug("Clearing BeanIntrospection cache with {} objects using during starting Camel", cacheCounter);
+            getBeanIntrospection().clearCache();
+        }
 
         // starting will continue in the start method
     }
