@@ -65,7 +65,7 @@ public class ManagedBeanIntrospectionTest extends ManagementTestSupport {
         Long counter = (Long) mbeanServer.getAttribute(on, "InvokedCounter");
         assertEquals("Should not have been invoked", 0, counter.intValue());
 
-        Object dummy = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(this, "dummy", null);
+        Object dummy = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(this, "dummy", null, false);
         assertEquals("MyDummy", dummy);
 
         counter = (Long) mbeanServer.getAttribute(on, "InvokedCounter");

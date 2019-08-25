@@ -713,7 +713,7 @@ public final class PropertyBindingSupport {
                     return getter.getReturnType();
                 }
             } else {
-                Method getter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getPropertyGetter(target.getClass(), name);
+                Method getter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getPropertyGetter(target.getClass(), name, false);
                 if (getter != null) {
                     return getter.getReturnType();
                 }
