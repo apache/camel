@@ -102,3 +102,7 @@ stop/start.
 If a route consumer does not support suspension, it will fallback and
 stop the route instead.
 
+[[Lifecycle-RelatedInfo]]
+== Related Info
+
+xref:components::controlbus-component.adoc[Take a look at the Control Bus Component]
