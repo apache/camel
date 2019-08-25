@@ -57,4 +57,14 @@ public class ManagedBeanIntrospection extends ManagedService implements ManagedB
     public void resetCounters() {
         beanIntrospection.resetCounters();
     }
+
+    @Override
+    public Long getCachedClasses() {
+        return beanIntrospection.getCachedClassesCounter();
+    }
+
+    @Override
+    public void clearCache() {
+        beanIntrospection.clearCache();
+    }
 }

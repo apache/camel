@@ -100,6 +100,12 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
         if (logger.shouldLog()) {
             log("clearCache", null);
         }
+        IntrospectionSupport.clearCache();
+    }
+
+    @Override
+    public long getCachedClassesCounter() {
+        return IntrospectionSupport.getCacheCounter();
     }
 
     @Override

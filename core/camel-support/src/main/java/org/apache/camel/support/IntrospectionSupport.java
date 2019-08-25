@@ -114,11 +114,22 @@ public final class IntrospectionSupport {
      * This implementation will clear its introspection cache.
      */
     public static void stop() {
+        clearCache();
+    }
+
+    /**
+     * Clears the introspection cache.
+     */
+    public static void clearCache() {
         if (LOG.isDebugEnabled() && CACHE instanceof LRUCache) {
             LRUCache localCache = (LRUCache) IntrospectionSupport.CACHE;
             LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", localCache.size(), localCache.getHits(), localCache.getMisses(), localCache.getEvicted());
         }
         CACHE.clear();
+    }
+
+    public static long getCacheCounter() {
+        return CACHE.size();
     }
 
     public static boolean isGetter(Method method) {
