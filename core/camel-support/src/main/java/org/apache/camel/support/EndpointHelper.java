@@ -182,7 +182,7 @@ public final class EndpointHelper {
             Object v = entry.getValue();
             String value = v != null ? v.toString() : null;
             if (isReferenceParameter(value)) {
-                boolean hit = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, context.getTypeConverter(), bean, name, null, value, true);
+                boolean hit = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, context.getTypeConverter(), bean, name, null, value, true, false, false);
                 if (hit) {
                     // must remove as its a valid option and we could configure it
                     it.remove();

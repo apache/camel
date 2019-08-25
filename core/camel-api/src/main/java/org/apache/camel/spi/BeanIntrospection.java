@@ -26,16 +26,11 @@ import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.meta.Experimental;
 
-// TODO: Add javadoc for methods
-// TODO: Consolidate some of the methods
-
 /**
  * Used for introspecting beans properties via Java reflection; such as extracting current property values,
  * or updating one or more properties etc.
  *
  * End users should favour using org.apache.camel.support.PropertyBindingSupport instead.
- * <p/>
- * Notice this API is not final yet
  */
 @Experimental
 public interface BeanIntrospection extends StaticService {
@@ -173,8 +168,7 @@ public interface BeanIntrospection extends StaticService {
      * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
      * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
      */
-    boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
-                                      boolean allowBuilderPattern) throws Exception;
+    boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception;
 
     /**
      * This method supports three modes to set a property:
@@ -191,8 +185,9 @@ public interface BeanIntrospection extends StaticService {
     boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
                                       boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) throws Exception;
 
-    boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception;
-
+    /**
+     * Find all the setter methods on the class
+     */
     Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase);
 
 }
