@@ -77,14 +77,29 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
         if (args != null && args.length > 0) {
             obj = Arrays.asList(args);
         }
-        logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + ", Arguments: " + obj + " ]");
+        if (target == null) {
+            logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + " ]");
+        } else if (args == null) {
+            logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + "]");
+        } else {
+            logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + ", Arguments: " + obj + " ]");
+        }
     }
 
     @Override
     public ClassInfo cacheClass(Class<?> clazz) {
-        log("cacheClass", clazz);
+        if (logger.shouldLog()) {
+            log("cacheClass", clazz);
+        }
         invoked.incrementAndGet();
         return IntrospectionSupport.cacheClass(clazz);
+    }
+
+    @Override
+    public void clearCache() {
+        if (logger.shouldLog()) {
+            log("clearCache", null);
+        }
     }
 
     @Override
@@ -106,30 +121,12 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     }
 
     @Override
-    public Object getOrElseProperty(Object target, String propertyName, Object defaultValue) {
-        invoked.incrementAndGet();
-        if (logger.shouldLog()) {
-            log("getOrElseProperty", target, propertyName);
-        }
-        return IntrospectionSupport.getOrElseProperty(target, propertyName, defaultValue);
-    }
-
-    @Override
     public Object getOrElseProperty(Object target, String propertyName, Object defaultValue, boolean ignoreCase) {
         invoked.incrementAndGet();
         if (logger.shouldLog()) {
             log("getOrElseProperty", target, propertyName);
         }
         return IntrospectionSupport.getOrElseProperty(target, propertyName, defaultValue, ignoreCase);
-    }
-
-    @Override
-    public Method getPropertyGetter(Class<?> type, String propertyName) throws NoSuchMethodException {
-        invoked.incrementAndGet();
-        if (logger.shouldLog()) {
-            log("getPropertyGetter", type, propertyName);
-        }
-        return IntrospectionSupport.getPropertyGetter(type, propertyName);
     }
 
     @Override

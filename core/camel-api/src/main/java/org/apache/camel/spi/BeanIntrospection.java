@@ -129,12 +129,31 @@ public interface BeanIntrospection extends StaticService {
      */
     ClassInfo cacheClass(Class<?> clazz);
 
-    Object getOrElseProperty(Object target, String propertyName, Object defaultValue);
+    /**
+     * Clears the introspection cache.
+     */
+    void clearCache();
 
+    /**
+     * Gets the property or else returning the default value.
+     *
+     * @param target         the target bean
+     * @param propertyName   the property name
+     * @param defaultValue   the default value
+     * @param ignoreCase     whether to ignore case for matching the property name
+     * @return the property value, or the default value if the target does not have a property with the given name
+     */
     Object getOrElseProperty(Object target, String propertyName, Object defaultValue, boolean ignoreCase);
 
-    Method getPropertyGetter(Class<?> type, String propertyName) throws NoSuchMethodException;
-
+    /**
+     * Gets the getter method for the property.
+     *
+     * @param type            the target class
+     * @param propertyName    the property name
+     * @param ignoreCase      whether to ignore case for matching the property name
+     * @return                the getter method
+     * @throws NoSuchMethodException  is thrown if there are no getter method for the property
+     */
     Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase) throws NoSuchMethodException;
 
     /**
