@@ -168,7 +168,10 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         if (componentClassElement != null) {
             findComponentClassProperties(writer, roundEnv, componentModel, componentOptions, componentClassElement, "", parentData, null, null);
         }
-        generateComponentConfigurer(roundEnv, uriEndpoint, scheme, schemes, componentModel, componentOptions);
+        // if the component has known class name
+        if (!"@@@JAVATYPE@@@".equals(componentModel.getJavaType())) {
+            generateComponentConfigurer(roundEnv, uriEndpoint, scheme, schemes, componentModel, componentOptions);
+        }
 
         // endpoint options
         findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, "", uriEndpoint.excludeProperties(), parentData, null, null);

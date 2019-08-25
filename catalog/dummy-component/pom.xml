@@ -54,17 +54,25 @@
 
     <build>
         <plugins>
-            <!-- use Camel plugins to generate component details -->
+            <!-- generate components meta-data and validate component includes documentation etc -->
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
                     <execution>
+                        <id>prepare</id>
                         <goals>
-                            <goal>generate-components-list</goal>
+                            <goal>prepare-components</goal>
                         </goals>
                         <phase>generate-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>validate</id>
+                        <goals>
+                            <goal>validate-components</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
                     </execution>
                 </executions>
             </plugin>
