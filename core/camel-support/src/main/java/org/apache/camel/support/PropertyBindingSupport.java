@@ -475,7 +475,7 @@ public final class PropertyBindingSupport {
                     iter.remove();
                     rc = true;
                 }
-            };
+            }
         }
 
         // must set reference parameters first before the other bindings
