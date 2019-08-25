@@ -78,11 +78,11 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
             obj = Arrays.asList(args);
         }
         if (target == null) {
-            logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + " ]");
+            logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + "]");
         } else if (args == null) {
             logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + "]");
         } else {
-            logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + ", Arguments: " + obj + " ]");
+            logger.log("Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + ", Arguments: " + obj + "]");
         }
     }
 
