@@ -145,19 +145,6 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     }
 
     @Override
-    public boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName, boolean allowBuilderPattern) throws Exception {
-        invoked.incrementAndGet();
-        if (logger.shouldLog()) {
-            Object text = value;
-            if (SECRETS.matcher(name).find()) {
-                text = "xxxxxx";
-            }
-            log("setProperty", target, name, text);
-        }
-        return IntrospectionSupport.setProperty(context, typeConverter, target, name, value, refName, allowBuilderPattern);
-    }
-
-    @Override
     public boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) throws Exception {
         invoked.incrementAndGet();
         if (logger.shouldLog()) {

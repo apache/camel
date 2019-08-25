@@ -238,7 +238,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
         try {
             String ref = value instanceof String ? value.toString() : null;
             if (isReferenceParameter(ref) && camelContext != null) {
-                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, camelContext.getTypeConverter(), bean, name, null, ref, true);
+                camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, camelContext.getTypeConverter(), bean, name, null, ref, true, false, false);
             } else {
                 camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, bean, name, value);
             }
