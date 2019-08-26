@@ -287,7 +287,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
      * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-microprofile-metrics
      * 
-     * Syntax: <code>microprofile-metrics:metricType:metricsName</code>
+     * Syntax: <code>microprofile-metrics:metricType:metricName</code>
      * 
      * Path parameter: metricType (required)
      * Metric type
