@@ -201,6 +201,7 @@
                     <configuration>
                         <excludeSubProjects>false</excludeSubProjects>
                         <excludes>
+                            <exclude>**/generated.txt</exclude>
                             <exclude>**/*.json</exclude>
                             <exclude>**/README</exclude>
                             <exclude>**/README.txt</exclude>
