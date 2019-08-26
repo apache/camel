@@ -1,5 +1,6 @@
 [[to-eip]]
 = To EIP
+:page-source: core/camel-core/src/main/docs/eips/to-eip.adoc
 
 See message related documentation
 

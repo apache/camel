@@ -1,5 +1,6 @@
 [[ignite-compute-component]]
 = Ignite Compute Component
+:page-source: components/camel-ignite/src/main/docs/ignite-compute-component.adoc
 
 *Available as of Camel version 2.17*
 

@@ -1,5 +1,6 @@
 [[ignite-set-component]]
 = Ignite Sets Component
+:page-source: components/camel-ignite/src/main/docs/ignite-set-component.adoc
 
 *Available as of Camel version 2.17*
 

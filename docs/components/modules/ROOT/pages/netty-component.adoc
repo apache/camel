@@ -1,5 +1,6 @@
 [[netty-component]]
 = Netty Component
+:page-source: components/camel-netty/src/main/docs/netty-component.adoc
 
 *Available as of Camel version 2.14*
 

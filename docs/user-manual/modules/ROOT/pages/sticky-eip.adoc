@@ -1,5 +1,6 @@
 [[sticky-eip]]
 = Sticky EIP
+:page-source: core/camel-core/src/main/docs/eips/sticky-eip.adoc
 
 Sticky Load Balancer. Sticky load balancing uses an Expression to calculate a correlation key to perform the sticky load balancing.
 

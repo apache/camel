@@ -1,5 +1,6 @@
 [[choice-eip]]
 = Choice EIP
+:page-source: core/camel-core/src/main/docs/eips/choice-eip.adoc
 
 The
 http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content

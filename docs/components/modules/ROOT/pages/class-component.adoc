@@ -1,5 +1,6 @@
 [[class-component]]
 = Class Component
+:page-source: components/camel-bean/src/main/docs/class-component.adoc
 
 *Available as of Camel version 2.4*
 

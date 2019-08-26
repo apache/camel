@@ -1,5 +1,6 @@
 [[google-sheets-component]]
 = Google Sheets Component
+:page-source: components/camel-google-sheets/src/main/docs/google-sheets-component.adoc
 
 *Available as of Camel version 2.23*
 

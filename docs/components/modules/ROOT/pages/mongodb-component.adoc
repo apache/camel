@@ -1,5 +1,6 @@
 [[mongodb-component]]
 = MongoDB Component
+:page-source: components/camel-mongodb/src/main/docs/mongodb-component.adoc
 
 *Available as of Camel version 2.19*
 

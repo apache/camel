@@ -1,5 +1,6 @@
 [[activemq-component]]
 = ActiveMQ Component
+:page-source: components/camel-activemq/src/main/docs/activemq-component.adoc
 
 *Available as of Camel version 1.0*
 

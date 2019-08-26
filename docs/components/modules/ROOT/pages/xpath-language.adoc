@@ -1,5 +1,6 @@
 [[xpath-language]]
 = XPath Language
+:page-source: components/camel-xpath/src/main/docs/xpath-language.adoc
 
 *Available as of Camel version 1.1*
 

@@ -1,5 +1,6 @@
 [[service-component]]
 = Service Component
+:page-source: components/camel-service/src/main/docs/service-component.adoc
 
 *Available as of Camel version 2.22*
 

@@ -1,5 +1,6 @@
 [[bean-component]]
 = Bean Component
+:page-source: components/camel-bean/src/main/docs/bean-component.adoc
 
 *Available as of Camel version 1.0*
 

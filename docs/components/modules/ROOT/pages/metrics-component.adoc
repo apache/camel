@@ -1,5 +1,6 @@
 [[metrics-component]]
 = Metrics Component
+:page-source: components/camel-metrics/src/main/docs/metrics-component.adoc
 ifdef::env-github[]
 *Available as of Camel version 2.14.0*
 

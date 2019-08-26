@@ -1,5 +1,6 @@
 [[transform-eip]]
 = Transform EIP
+:page-source: core/camel-core/src/main/docs/eips/transform-eip.adoc
 
 See below for details
 

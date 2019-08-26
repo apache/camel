@@ -1,5 +1,6 @@
 [[soapjaxb-dataformat]]
 = SOAP DataFormat
+:page-source: components/camel-soap/src/main/docs/soapjaxb-dataformat.adoc
 
 *Available as of Camel version 2.3*
 

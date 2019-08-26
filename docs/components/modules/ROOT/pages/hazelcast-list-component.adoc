@@ -1,5 +1,6 @@
 [[hazelcast-list-component]]
 = Hazelcast List Component
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-list-component.adoc
 
 *Available as of Camel version 2.7*
 

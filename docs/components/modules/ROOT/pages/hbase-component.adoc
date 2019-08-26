@@ -1,5 +1,6 @@
 [[hbase-component]]
 = HBase Component
+:page-source: components/camel-hbase/src/main/docs/hbase-component.adoc
 
 *Available as of Camel version 2.10*
 

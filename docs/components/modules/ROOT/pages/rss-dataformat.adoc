@@ -1,5 +1,6 @@
 [[rss-dataformat]]
 = RSS DataFormat
+:page-source: components/camel-rss/src/main/docs/rss-dataformat.adoc
 
 *Available as of Camel version 2.1*
 

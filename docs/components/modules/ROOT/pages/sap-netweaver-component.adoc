@@ -1,5 +1,6 @@
 [[sap-netweaver-component]]
 = SAP NetWeaver Component
+:page-source: components/camel-sap-netweaver/src/main/docs/sap-netweaver-component.adoc
 
 *Available as of Camel version 2.12*
 

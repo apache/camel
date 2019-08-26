@@ -1,5 +1,6 @@
 [[milo-server-component]]
 = OPC UA Server Component
+:page-source: components/camel-milo/src/main/docs/milo-server-component.adoc
 
 *Available as of Camel version 2.19*
 

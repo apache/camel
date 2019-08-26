@@ -1,5 +1,6 @@
 [[aws-ses-component]]
 = AWS Simple Email Service Component
+:page-source: components/camel-aws-ses/src/main/docs/aws-ses-component.adoc
 
 *Available as of Camel version 2.9*
 

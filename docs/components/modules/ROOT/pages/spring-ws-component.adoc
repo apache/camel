@@ -1,5 +1,6 @@
 [[spring-ws-component]]
 = Spring WebService Component
+:page-source: components/camel-spring-ws/src/main/docs/spring-ws-component.adoc
 
 *Available as of Camel version 2.6*
 

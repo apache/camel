@@ -1,4 +1,5 @@
 = LRA Component
+:page-source: components/camel-lra/src/main/docs/lra.adoc
 
 *Available as of Camel version 2.21.0*
 

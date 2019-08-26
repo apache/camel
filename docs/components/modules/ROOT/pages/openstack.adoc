@@ -1,5 +1,6 @@
 [[Openstack-OpenstackComponent]]
 = Openstack Component
+:page-source: components/camel-openstack/src/main/docs/openstack.adoc
 
 *Available as of Camel 2.19*
 

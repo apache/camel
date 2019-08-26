@@ -1,5 +1,6 @@
 [[jdbc-component]]
 = JDBC Component
+:page-source: components/camel-jdbc/src/main/docs/jdbc-component.adoc
 
 *Available as of Camel version 1.2*
 

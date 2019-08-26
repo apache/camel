@@ -1,5 +1,6 @@
 [[file-component]]
 = File Component
+:page-source: components/camel-file/src/main/docs/file-component.adoc
 
 *Available as of Camel version 1.0*
 

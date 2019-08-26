@@ -1,5 +1,6 @@
 [[sort-eip]]
 = Sort EIP
+:page-source: core/camel-core/src/main/docs/eips/sort-eip.adoc
 
 Sort can be used to sort a message. Imagine you consume text files and before processing each file you want to be sure the content is sorted.
 

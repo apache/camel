@@ -1,4 +1,5 @@
 = Testcontainers Spring
+:page-source: components/camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc
 
 *Available since 2.22.0*
 

@@ -1,5 +1,6 @@
 [[language-component]]
 = Language Component
+:page-source: components/camel-language/src/main/docs/language-component.adoc
 
 *Available as of Camel version 2.5*
 

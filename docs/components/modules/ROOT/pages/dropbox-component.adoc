@@ -1,5 +1,6 @@
 [[dropbox-component]]
 = Dropbox Component
+:page-source: components/camel-dropbox/src/main/docs/dropbox-component.adoc
 
 *Available as of Camel version 2.14*
 

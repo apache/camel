@@ -1,5 +1,6 @@
 [[wireTap-eip]]
 = Wire Tap EIP
+:page-source: core/camel-core/src/main/docs/eips/wireTap-eip.adoc
 
 http://www.enterpriseintegrationpatterns.com/WireTap.html[Wire Tap]
 (from the xref:enterprise-integration-patterns.adoc[EIP patterns])

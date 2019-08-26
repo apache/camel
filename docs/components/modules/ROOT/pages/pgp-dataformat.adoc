@@ -1,5 +1,6 @@
 [[pgp-dataformat]]
 = PGP DataFormat
+:page-source: components/camel-crypto/src/main/docs/pgp-dataformat.adoc
 
 *Available as of Camel version 2.9*
 

@@ -1,5 +1,6 @@
 [[aws-sdb-component]]
 = AWS SimpleDB Component
+:page-source: components/camel-aws-sdb/src/main/docs/aws-sdb-component.adoc
 
 *Available as of Camel version 2.9*
 

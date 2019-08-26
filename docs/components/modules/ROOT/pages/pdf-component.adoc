@@ -1,5 +1,6 @@
 [[pdf-component]]
 = PDF Component
+:page-source: components/camel-pdf/src/main/docs/pdf-component.adoc
 
 *Available as of Camel version 2.16*
 

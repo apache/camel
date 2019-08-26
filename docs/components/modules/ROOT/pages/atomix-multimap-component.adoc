@@ -1,5 +1,6 @@
 [[atomix-multimap-component]]
 = Atomix MultiMap Component
+:page-source: components/camel-atomix/src/main/docs/atomix-multimap-component.adoc
 
 *Available as of Camel version 2.20*
 

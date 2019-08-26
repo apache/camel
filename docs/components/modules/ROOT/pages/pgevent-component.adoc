@@ -1,5 +1,6 @@
 [[pgevent-component]]
 = PostgresSQL Event Component
+:page-source: components/camel-pgevent/src/main/docs/pgevent-component.adoc
 
 *Available as of Camel version 2.15*
 

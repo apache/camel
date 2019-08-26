@@ -1,5 +1,6 @@
 [[file-language]]
 = File Language
+:page-source: core/camel-base/src/main/docs/file-language.adoc
 
 *Available as of Camel version 1.1*
 

@@ -1,5 +1,6 @@
 [[coap-component]]
 = CoAP Component
+:page-source: components/camel-coap/src/main/docs/coap-component.adoc
 
 *Available as of Camel version 2.16*
 

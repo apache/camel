@@ -1,5 +1,6 @@
 [[rollback-eip]]
 = Rollback EIP
+:page-source: core/camel-core/src/main/docs/eips/rollback-eip.adoc
 Rollback might be needed if there is a transaction or transactional pieces in your design.
 
 Camel recommends supporting the
