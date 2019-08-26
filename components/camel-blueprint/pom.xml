@@ -17,14 +17,13 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-RC1</version>
     </parent>
 
     <artifactId>camel-blueprint</artifactId>
@@ -168,7 +167,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -360,35 +359,33 @@
                                 <phase>process-classes</phase>
                                 <configuration>
                                     <target>
-                                        <taskdef resource="net/sf/antcontrib/antcontrib.properties"
-                                                 classpathref="maven.plugin.classpath"/>
+                                        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
 
                                         <echo>Copying to code together for the XSD generation</echo>
-                                        <mkdir dir="${project.build.directory}/schema-src"/>
-                                        <mkdir dir="${project.build.directory}/schema"/>
-                                        <mkdir dir="${project.build.directory}/schema/META-INF/JAXB"/>
+                                        <mkdir dir="${project.build.directory}/schema-src" />
+                                        <mkdir dir="${project.build.directory}/schema" />
+                                        <mkdir dir="${project.build.directory}/schema/META-INF/JAXB" />
                                         <copy todir="${project.build.directory}/schema-src">
                                             <fileset dir="${basedir}/src/main/java">
-                                                <include name="org/apache/camel/blueprint/Camel*.java"/>
-                                                <include name="org/apache/camel/blueprint/ErrorHandler*.java"/>
-                                                <include name="org/apache/camel/blueprint/package-info.java"/>
-                                                <include name="org/apache/camel/util/blueprint/**/*.java"/>
+                                                <include name="org/apache/camel/blueprint/Camel*.java" />
+                                                <include name="org/apache/camel/blueprint/ErrorHandler*.java" />
+                                                <include name="org/apache/camel/blueprint/package-info.java" />
+                                                <include name="org/apache/camel/util/blueprint/**/*.java" />
                                             </fileset>
                                             <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java">
-                                                <include name="org/apache/camel/core/xml/*.java"/>
-                                                <include name="org/apache/camel/core/xml/util/**/*.java"/>
+                                                <include name="org/apache/camel/core/xml/*.java" />
+                                                <include name="org/apache/camel/core/xml/util/**/*.java" />
                                             </fileset>
                                             <fileset dir="${basedir}/../../core/camel-core/src/main/java">
-                                                <include name="org/apache/camel/model/**/*.java"/>
-                                                <include name="org/apache/camel/ExchangePattern.java"/>
-                                                <include name="org/apache/camel/LoggingLevel.java"/>
-                                                <include name="org/apache/camel/ManagementStatisticsLevel.java"/>
-                                                <include name="**/package-info.java"/>
-                                                <exclude name="org/apache/camel/model/endpoint/*.java"/>
+                                                <include name="org/apache/camel/model/**/*.java" />
+                                                <include name="org/apache/camel/ExchangePattern.java" />
+                                                <include name="org/apache/camel/LoggingLevel.java" />
+                                                <include name="org/apache/camel/ManagementStatisticsLevel.java" />
+                                                <include name="**/package-info.java" />
+                                                <exclude name="org/apache/camel/model/endpoint/*.java" />
                                             </fileset>
                                             <fileset dir="${basedir}/../../core/camel-util/src/main/java">
-                                                <include
-                                                        name="org/apache/camel/util/concurrent/ThreadPoolRejectedPolicy.java"/>
+                                                <include name="org/apache/camel/util/concurrent/ThreadPoolRejectedPolicy.java" />
                                             </fileset>
                                         </copy>
                                     </target>
@@ -406,13 +403,10 @@
                                         <echo>Including source code from camel-core-xml in the
                                             camel-blueprint-sources.jar
                                         </echo>
-                                        <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar"
-                                             update="true">
-                                            <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java"
-                                                     includes="**/*"/>
-                                            <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java"
-                                                     includes="**/*"/>
-                                            <fileset dir="${basedir}/src/main/java" includes="**/*"/>
+                                        <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
+                                            <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java" includes="**/*" />
+                                            <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java" includes="**/*" />
+                                            <fileset dir="${basedir}/src/main/java" includes="**/*" />
                                         </jar>
                                     </target>
                                 </configuration>
@@ -427,20 +421,16 @@
                                 <configuration>
                                     <target>
                                         <echo>Copying XSD schema to be included in JAR</echo>
-                                        <replace file="${project.build.directory}/schema/camel-blueprint.xsd"
-                                                 token="xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;"
-                                                 value="xs:schema xmlns=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;"/>
-                                        <replace file="${project.build.directory}/schema/camel-blueprint.xsd"
-                                                 token="http://camel.apache.org/schema/spring"
-                                                 value="http://camel.apache.org/schema/blueprint"/>
+                                        <replace file="${project.build.directory}/schema/camel-blueprint.xsd" token="xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;" value="xs:schema xmlns=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;" />
+                                        <replace file="${project.build.directory}/schema/camel-blueprint.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/blueprint" />
                                         <copy todir="${project.build.directory}/classes">
                                             <fileset dir="${project.build.directory}/schema">
-                                                <exclude name="**/*.class"/>
+                                                <exclude name="**/*.class" />
                                             </fileset>
                                         </copy>
                                         <!-- copy modified schemas back again in classes so they are included in the JAR -->
                                         <fileset dir="${project.build.directory}/schema">
-                                            <exclude name="**/*.class"/>
+                                            <exclude name="**/*.class" />
                                         </fileset>
                                     </target>
                                 </configuration>

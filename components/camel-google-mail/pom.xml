@@ -17,15 +17,14 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-RC1</version>
     </parent>
 
     <artifactId>camel-google-mail</artifactId>
@@ -157,33 +156,33 @@
                                 <api>
                                     <apiName>threads</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$Threads</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>messages</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$Messages</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>attachments</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$Messages$Attachments
                                     </proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>labels</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$Labels</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>history</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$History</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drafts</apiName>
                                     <proxyClass>com.google.api.services.gmail.Gmail$Users$Drafts</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>users</apiName>

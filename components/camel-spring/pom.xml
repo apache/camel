@@ -17,14 +17,13 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-RC1</version>
     </parent>
 
     <artifactId>camel-spring</artifactId>
@@ -256,7 +255,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -269,7 +268,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -372,24 +371,16 @@
                         <phase>initialize</phase>
                         <configuration>
                             <target>
-                                <taskdef resource="net/sf/antcontrib/antcontrib.properties"
-                                         classpathref="maven.plugin.classpath"/>
-                                <property name="ant.regexp.regexpimpl"
-                                          value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp"/>
-                                <property name="mv" value="${project.version}"/>
-                                <propertyregex property="ov.p1" input="${mv}"
-                                               regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1"
-                                               defaultValue="0"/>
-                                <propertyregex property="ov.p2" input="${mv}"
-                                               regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2"
-                                               defaultValue=".0"/>
-                                <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1"
-                                               defaultValue="0"/>
-                                <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1"
-                                               defaultValue=".0"/>
-                                <property name="camel.schema.version" value="${ov.p1a}${ov.p2a}"/>
-                                <mkdir dir="target"/>
-                                <mkdir dir="${project.build.directory}/schema/META-INF/JAXB"/>
+                                <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
+                                <property name="ant.regexp.regexpimpl" value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp" />
+                                <property name="mv" value="${project.version}" />
+                                <propertyregex property="ov.p1" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1" defaultValue="0" />
+                                <propertyregex property="ov.p2" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2" defaultValue=".0" />
+                                <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1" defaultValue="0" />
+                                <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0" />
+                                <property name="camel.schema.version" value="${ov.p1a}${ov.p2a}" />
+                                <mkdir dir="target" />
+                                <mkdir dir="${project.build.directory}/schema/META-INF/JAXB" />
                                 <echo file="target/camel.osgi.version.txt">
                                     camel.schema.version = ${camel.schema.version}
                                 </echo>
@@ -405,31 +396,31 @@
                         <configuration>
                             <target>
                                 <echo>Copying code together for the XSD generation</echo>
-                                <mkdir dir="${project.build.directory}/schema-src"/>
+                                <mkdir dir="${project.build.directory}/schema-src" />
                                 <copy todir="${project.build.directory}/schema-src">
                                     <fileset dir="${basedir}/src/main/java">
-                                        <include name="org/apache/camel/spring/Camel*.java"/>
-                                        <include name="org/apache/camel/spring/ErrorHandler*.java"/>
-                                        <include name="org/apache/camel/spring/package-info.java"/>
-                                        <include name="org/apache/camel/util/spring/**/*.java"/>
+                                        <include name="org/apache/camel/spring/Camel*.java" />
+                                        <include name="org/apache/camel/spring/ErrorHandler*.java" />
+                                        <include name="org/apache/camel/spring/package-info.java" />
+                                        <include name="org/apache/camel/util/spring/**/*.java" />
                                     </fileset>
                                     <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java">
-                                        <include name="org/apache/camel/core/xml/*.java"/>
-                                        <include name="org/apache/camel/core/xml/util/**/*.java"/>
+                                        <include name="org/apache/camel/core/xml/*.java" />
+                                        <include name="org/apache/camel/core/xml/util/**/*.java" />
                                     </fileset>
                                     <fileset dir="${basedir}/../../core/camel-core/src/main/java">
-                                        <include name="org/apache/camel/model/**/*.java"/>
-                                        <include name="org/apache/camel/ExchangePattern.java"/>
-                                        <include name="org/apache/camel/LoggingLevel.java"/>
-                                        <include name="org/apache/camel/ManagementStatisticsLevel.java"/>
-                                        <include name="org/apache/camel/ShutdownRoute.java"/>
-                                        <include name="org/apache/camel/ShutdownRunningTask.java"/>
-                                        <include name="org/apache/camel/WaitForTaskToComplete.java"/>
-                                        <include name="org/apache/camel/package-info.java"/>
-                                        <exclude name="org/apache/camel/model/endpoint/*.java"/>
+                                        <include name="org/apache/camel/model/**/*.java" />
+                                        <include name="org/apache/camel/ExchangePattern.java" />
+                                        <include name="org/apache/camel/LoggingLevel.java" />
+                                        <include name="org/apache/camel/ManagementStatisticsLevel.java" />
+                                        <include name="org/apache/camel/ShutdownRoute.java" />
+                                        <include name="org/apache/camel/ShutdownRunningTask.java" />
+                                        <include name="org/apache/camel/WaitForTaskToComplete.java" />
+                                        <include name="org/apache/camel/package-info.java" />
+                                        <exclude name="org/apache/camel/model/endpoint/*.java" />
                                     </fileset>
                                     <fileset dir="${basedir}/../../core/camel-util/src/main/java">
-                                        <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java"/>
+                                        <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java" />
                                     </fileset>
                                 </copy>
                             </target>
@@ -444,11 +435,10 @@
                         <configuration>
                             <target>
                                 <echo>Including source code from camel-core-xml in the camel-spring-sources.jar</echo>
-                                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar"
-                                     update="true">
-                                    <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java" includes="**/*"/>
-                                    <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java" includes="**/*"/>
-                                    <fileset dir="${basedir}/src/main/java" includes="**/*"/>
+                                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
+                                    <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java" includes="**/*" />
+                                    <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java" includes="**/*" />
+                                    <fileset dir="${basedir}/src/main/java" includes="**/*" />
                                 </jar>
                             </target>
                         </configuration>
@@ -463,21 +453,13 @@
                         <configuration>
                             <target>
                                 <echo>Copying XSD schema to be included in JAR</echo>
-                                <copy file="${project.build.directory}/classes/camel-spring.xsd"
-                                      tofile="${project.build.directory}/schema/camel-spring.xsd"
-                                      preservelastmodified="true"/>
-                                <copy file="${project.build.directory}/classes/camel-spring.xsd"
-                                      tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"
-                                      preservelastmodified="true"/>
-                                <replace
-                                        file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"
-                                        token="&quot;http://camel.apache.org/schema/spring&quot;"
-                                        value="&quot;http://camel.apache.org/schema/spring/v${camel.schema.version}&quot;"
-                                        preservelastmodified="true"/>
+                                <copy file="${project.build.directory}/classes/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" preservelastmodified="true" />
+                                <copy file="${project.build.directory}/classes/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" preservelastmodified="true" />
+                                <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" token="&quot;http://camel.apache.org/schema/spring&quot;" value="&quot;http://camel.apache.org/schema/spring/v${camel.schema.version}&quot;" preservelastmodified="true" />
                                 <!-- copy modified schemas back again in classes so they are included in the JAR -->
                                 <copy todir="${project.build.directory}/classes" preservelastmodified="true">
                                     <fileset dir="${project.build.directory}/schema">
-                                        <exclude name="**/*.class"/>
+                                        <exclude name="**/*.class" />
                                     </fileset>
                                 </copy>
                             </target>
@@ -493,16 +475,12 @@
                             <target>
                                 <echo>Copying spring meta files</echo>
                                 <copy todir="${project.build.directory}/spring-meta" preservelastmodified="true">
-                                    <fileset dir="${project.basedir}/src/main/resources"/>
+                                    <fileset dir="${project.basedir}/src/main/resources" />
                                 </copy>
-                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers"
-                                         token="\\${camel.schema.version}" value="${camel.schema.version}"
-                                         preservelastmodified="true"/>
-                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas"
-                                         token="\\${camel.schema.version}" value="${camel.schema.version}"
-                                         preservelastmodified="true"/>
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers" token="\\${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas" token="\\${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
                                 <copy todir="${project.build.directory}/classes" preservelastmodified="true">
-                                    <fileset dir="${project.build.directory}/spring-meta"/>
+                                    <fileset dir="${project.build.directory}/spring-meta" />
                                 </copy>
                             </target>
                         </configuration>
@@ -516,12 +494,10 @@
                         <configuration>
                             <target>
                                 <echo>Create some jars for testing</echo>
-                                <jar destfile="${project.build.directory}/test-classes/package+scan+test.jar"
-                                     update="true">
-                                    <fileset dir="${project.build.directory}/test-classes/" includes="**/Test.class"/>
+                                <jar destfile="${project.build.directory}/test-classes/package+scan+test.jar" update="true">
+                                    <fileset dir="${project.build.directory}/test-classes/" includes="**/Test.class" />
                                 </jar>
-                                <copy file="${project.build.directory}/test-classes/package+scan+test.jar"
-                                      tofile="${project.build.directory}/test-classes/package_scan_test.jar"/>
+                                <copy file="${project.build.directory}/test-classes/package+scan+test.jar" tofile="${project.build.directory}/test-classes/package_scan_test.jar" />
                             </target>
                         </configuration>
                         <goals>
