@@ -10,7 +10,7 @@ The main functionality of this DataFormat focuses on its Unmarshal method which 
 Any23 is a Data Format that is intended to convert HTML from a site (or file) into rdf.
 
 
-### Any23 Options
+== Any23 Options
 
 // dataformat options: START
 The Any23 dataformat supports 4 options, which are listed below.
@@ -59,7 +59,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Java DSL Example
+== Java DSL Example
 
 An example where the consumer provides some HTML
 
@@ -68,7 +68,7 @@ An example where the consumer provides some HTML
 from("direct:start").unmarshal().any23("http://mock.foo/bar").to("mock:result");
 ---------------------------------------------------------------------------
 
-### Spring XML Example
+== Spring XML Example
 
 The following example shows how to use TidyMarkup
 to unmarshal using Spring
@@ -98,7 +98,7 @@ to unmarshal using Spring
   </camelContext>
 -----------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use Any23 in your camel routes you need to add the a dependency
 on *camel-any23* which implements this data format.
