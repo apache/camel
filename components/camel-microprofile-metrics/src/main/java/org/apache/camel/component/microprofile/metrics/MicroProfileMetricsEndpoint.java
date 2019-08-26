@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.microprofile.metrics;
 
-import java.util.List;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -29,9 +27,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
-import org.eclipse.microprofile.metrics.Tag;
 
-@UriEndpoint(firstVersion = "3.0.0", scheme = "microprofile-metrics", title = "MicroProfile Metrics", syntax = "microprofile-metrics:metricType:metricsName", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "microprofile-metrics", title = "MicroProfile Metrics", syntax = "microprofile-metrics:metricType:metricName", producerOnly = true, label = "monitoring")
 public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry metricRegistry;
