@@ -1,5 +1,6 @@
 [[mustache-component]]
 = Mustache Component
+:page-source: components/camel-mustache/src/main/docs/mustache-component.adoc
 
 *Available as of Camel version 2.12*
 

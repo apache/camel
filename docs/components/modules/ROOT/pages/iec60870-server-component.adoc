@@ -1,5 +1,6 @@
 [[iec60870-server-component]]
 = IEC 60870 Server Component
+:page-source: components/camel-iec60870/src/main/docs/iec60870-server-component.adoc
 
 *Available as of Camel version 2.20*
 

@@ -1,5 +1,6 @@
 [[controlbus-component]]
 = Control Bus Component
+:page-source: components/camel-controlbus/src/main/docs/controlbus-component.adoc
 
 *Available as of Camel version 2.11*
 

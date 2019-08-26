@@ -1,4 +1,5 @@
 = CXF Transport Component
+:page-source: components/camel-cxf-transport/src/main/docs/cxf-transport.adoc
 
 [[CamelTransportforCXF-WhatstheCamelTransportforCXF]]
 == What's the Camel Transport for CXF

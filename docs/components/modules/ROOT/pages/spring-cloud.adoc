@@ -1,5 +1,6 @@
 [[SpringCloud-SpringCloud]]
 = Spring Cloud
+:page-source: components/camel-spring-cloud/src/main/docs/spring-cloud.adoc
 
 *Available as of Camel 2.19*
 

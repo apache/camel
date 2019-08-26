@@ -1,5 +1,6 @@
 [[ShiroSecurity-ShiroSecurityComponent]]
 = Shiro Security Component
+:page-source: components/camel-shiro/src/main/docs/shiro.adoc
 
 *Available as of Camel 2.5*
 

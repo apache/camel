@@ -1,5 +1,6 @@
 [[azure-blob-component]]
 = Azure Storage Blob Service Component
+:page-source: components/camel-azure/src/main/docs/azure-blob-component.adoc
 
 *Available as of Camel version 2.19*
 

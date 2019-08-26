@@ -1,5 +1,6 @@
 [[ironmq-component]]
 = IronMQ Component
+:page-source: components/camel-ironmq/src/main/docs/ironmq-component.adoc
 
 *Available as of Camel version 2.17*
 

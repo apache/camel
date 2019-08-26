@@ -1,5 +1,6 @@
 [[undertow-component]]
 = Undertow Component
+:page-source: components/camel-undertow/src/main/docs/undertow-component.adoc
 
 *Available as of Camel version 2.16*
 

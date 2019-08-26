@@ -1,5 +1,6 @@
 [[atmosphere-websocket-component]]
 = Atmosphere Websocket Component
+:page-source: components/camel-atmosphere-websocket/src/main/docs/atmosphere-websocket-component.adoc
 
 *Available as of Camel version 2.14*
 

@@ -1,5 +1,6 @@
 [[removeHeader-eip]]
 = Remove Header EIP
+:page-source: core/camel-core/src/main/docs/eips/removeHeader-eip.adoc
 The Remove Header EIP allows you to remove an header from your exchange.
 
 == Options

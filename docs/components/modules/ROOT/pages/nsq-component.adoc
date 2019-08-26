@@ -1,5 +1,6 @@
 [[nsq-component]]
 = NSQ Component
+:page-source: components/camel-nsq/src/main/docs/nsq-component.adoc
 
 *Available as of Camel version 2.23*
 

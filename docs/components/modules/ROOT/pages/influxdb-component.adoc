@@ -1,5 +1,6 @@
 [[influxdb-component]]
 = InfluxDB Component
+:page-source: components/camel-influxdb/src/main/docs/influxdb-component.adoc
 
 *Available as of Camel version 2.18*
 

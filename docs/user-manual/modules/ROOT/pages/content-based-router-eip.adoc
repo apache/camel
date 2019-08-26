@@ -1,5 +1,6 @@
 [[contentBasedRouter-eip]]
 = Content Based Router
+:page-source: core/camel-core/src/main/docs/eips/content-based-router-eip.adoc
 
 The
 http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content

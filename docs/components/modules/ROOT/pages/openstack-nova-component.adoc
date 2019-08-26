@@ -1,5 +1,6 @@
 [[openstack-nova-component]]
 = OpenStack Nova Component
+:page-source: components/camel-openstack/src/main/docs/openstack-nova-component.adoc
 
 *Available as of Camel version 2.19*
 

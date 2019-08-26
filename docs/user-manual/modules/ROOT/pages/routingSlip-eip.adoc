@@ -1,5 +1,6 @@
 [[routingSlip-eip]]
 = Routing Slip EIP
+:page-source: core/camel-core/src/main/docs/eips/routingSlip-eip.adoc
 The Routing Slip from the https://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] allows you to route a message consecutively through a series of processing steps where the sequence of steps is not known at design time and can vary for each message.
 
 image::eip/RoutingTableSimple.gif[image]

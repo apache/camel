@@ -1,5 +1,6 @@
 [[bean-language]]
 = Bean method Language
+:page-source: components/camel-bean/src/main/docs/bean-language.adoc
 == Bean Language
 *Available as of Camel version 1.3*
 

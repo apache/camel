@@ -1,5 +1,6 @@
 [[cm-sms-component]]
 = CM SMS Gateway Component
+:page-source: components/camel-cm-sms/src/main/docs/cm-sms-component.adoc
 
 *Available as of Camel version 2.18*
 

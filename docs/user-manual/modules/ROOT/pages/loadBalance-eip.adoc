@@ -1,5 +1,6 @@
 [[loadBalance-eip]]
 = Load Balance EIP
+:page-source: core/camel-core/src/main/docs/eips/loadBalance-eip.adoc
 
 The Load Balancer Pattern allows you to delegate to one of a number of endpoints using a variety of different load balancing policies.
 

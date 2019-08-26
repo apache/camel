@@ -1,5 +1,6 @@
 [[ical-dataformat]]
 = iCal DataFormat
+:page-source: components/camel-ical/src/main/docs/ical-dataformat.adoc
 
 *Available as of Camel version 2.12*
 

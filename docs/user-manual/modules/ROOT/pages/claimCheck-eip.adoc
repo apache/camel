@@ -1,5 +1,6 @@
 [[claimCheck-eip]]
 = Claim Check EIP
+:page-source: core/camel-core/src/main/docs/eips/claimCheck-eip.adoc
 
 *Available as of Camel 2.21*
 

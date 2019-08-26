@@ -1,5 +1,6 @@
 [[cometd-component]]
 = CometD Component
+:page-source: components/camel-cometd/src/main/docs/cometd-component.adoc
 
 *Available as of Camel version 2.0*
 

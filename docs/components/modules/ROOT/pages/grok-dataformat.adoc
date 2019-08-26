@@ -1,5 +1,6 @@
 [[grok-dataformat]]
 = Grok DataFormat
+:page-source: components/camel-grok/src/main/docs/grok-dataformat.adoc
 
 *Available as of Camel version 3.0*
 

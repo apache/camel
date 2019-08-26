@@ -1,5 +1,6 @@
 [[ehcache-component]]
 = Ehcache Component
+:page-source: components/camel-ehcache/src/main/docs/ehcache-component.adoc
 
 *Available as of Camel version 2.18*
 

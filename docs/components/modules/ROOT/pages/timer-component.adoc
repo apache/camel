@@ -1,5 +1,6 @@
 [[timer-component]]
 = Timer Component
+:page-source: components/camel-timer/src/main/docs/timer-component.adoc
 
 *Available as of Camel version 1.0*
 

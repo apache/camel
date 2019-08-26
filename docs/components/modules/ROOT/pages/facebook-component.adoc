@@ -1,5 +1,6 @@
 [[facebook-component]]
 = Facebook Component
+:page-source: components/camel-facebook/src/main/docs/facebook-component.adoc
 
 *Available as of Camel version 2.14*
 

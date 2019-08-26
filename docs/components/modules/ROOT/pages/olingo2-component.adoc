@@ -1,5 +1,6 @@
 [[olingo2-component]]
 = Olingo2 Component
+:page-source: components/camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc
 
 *Available as of Camel version 2.14*
 

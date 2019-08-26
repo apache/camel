@@ -1,5 +1,6 @@
 [[stomp-component]]
 = Stomp Component
+:page-source: components/camel-stomp/src/main/docs/stomp-component.adoc
 
 *Available as of Camel version 2.12*
 

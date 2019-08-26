@@ -1,5 +1,6 @@
 [[jmx-component]]
 = JMX Component
+:page-source: components/camel-jmx/src/main/docs/jmx-component.adoc
 ifdef::env-github[]
 *Available as of Camel version 2.6.0*
 

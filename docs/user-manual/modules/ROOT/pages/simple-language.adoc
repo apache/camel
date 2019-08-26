@@ -1,5 +1,6 @@
 [[simple-language]]
 = Simple Language
+:page-source: core/camel-base/src/main/docs/simple-language.adoc
 
 *Available as of Camel version 1.1*
 

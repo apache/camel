@@ -1,5 +1,6 @@
 [[mock-component]]
 = Mock Component
+:page-source: components/camel-mock/src/main/docs/mock-component.adoc
 
 *Available as of Camel version 1.0*
 

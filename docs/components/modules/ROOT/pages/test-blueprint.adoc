@@ -1,4 +1,5 @@
 = Blueprint Testing
+:page-source: components/camel-test-blueprint/src/main/docs/test-blueprint.adoc
 
 *Available as of Camel 2.10*
 

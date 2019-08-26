@@ -1,5 +1,6 @@
 [[twilio-component]]
 = Twilio Component
+:page-source: components/camel-twilio/src/main/docs/twilio-component.adoc
 
 *Available as of Camel version 2.20*
 

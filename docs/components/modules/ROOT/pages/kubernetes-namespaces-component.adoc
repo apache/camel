@@ -1,5 +1,6 @@
 [[kubernetes-namespaces-component]]
 = Kubernetes Namespaces Component
+:page-source: components/camel-kubernetes/src/main/docs/kubernetes-namespaces-component.adoc
 
 *Available as of Camel version 2.17*
 

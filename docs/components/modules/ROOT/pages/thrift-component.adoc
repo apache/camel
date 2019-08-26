@@ -1,5 +1,6 @@
 [[thrift-component]]
 = Thrift Component
+:page-source: components/camel-thrift/src/main/docs/thrift-component.adoc
 
 *Available as of Camel version 2.20*
 

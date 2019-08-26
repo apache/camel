@@ -1,5 +1,6 @@
 [[univocity-tsv-dataformat]]
 = uniVocity TSV DataFormat
+:page-source: components/camel-univocity-parsers/src/main/docs/univocity-tsv-dataformat.adoc
 
 *Available as of Camel version 2.15*
 

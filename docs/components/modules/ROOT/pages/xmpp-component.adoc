@@ -1,5 +1,6 @@
 [[xmpp-component]]
 = XMPP Component
+:page-source: components/camel-xmpp/src/main/docs/xmpp-component.adoc
 
 *Available as of Camel version 1.0*
 

@@ -1,5 +1,6 @@
 [[SpringSecurity-SpringSecurity]]
 = Spring Security
+:page-source: components/camel-spring-security/src/main/docs/spring-security.adoc
 
 *Available as of Camel 2.3*
 

@@ -1,5 +1,6 @@
 [[etcd-component]]
 = etcd Component
+:page-source: components/camel-etcd/src/main/docs/etcd-component.adoc
 
 *Available as of Camel version 2.18*
 

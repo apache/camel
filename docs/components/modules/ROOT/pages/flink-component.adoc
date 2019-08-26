@@ -1,5 +1,6 @@
 [[flink-component]]
 = Apache Flink Component
+:page-source: components/camel-flink/src/main/docs/flink-component.adoc
 
 *Available as of Camel version 2.18*
 

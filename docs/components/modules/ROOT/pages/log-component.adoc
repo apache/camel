@@ -1,5 +1,6 @@
 [[log-component]]
 = Log Component
+:page-source: components/camel-log/src/main/docs/log-component.adoc
 
 *Available as of Camel version 1.1*
 

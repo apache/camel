@@ -1,5 +1,6 @@
 [[Test]]
 = Test Module
+:page-source: components/camel-test/src/main/docs/test.adoc
 
 The `camel-test` module is used for unit testing Camel.
 

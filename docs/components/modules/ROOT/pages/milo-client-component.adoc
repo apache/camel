@@ -1,5 +1,6 @@
 [[milo-client-component]]
 = OPC UA Client Component
+:page-source: components/camel-milo/src/main/docs/milo-client-component.adoc
 
 *Available as of Camel version 2.19*
 
