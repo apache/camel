@@ -201,6 +201,7 @@
                     <configuration>
                         <excludeSubProjects>false</excludeSubProjects>
                         <excludes>
+                            <exclude>**/*.json</exclude>
                             <exclude>**/README</exclude>
                             <exclude>**/README.txt</exclude>
                             <exclude>**/README.md</exclude>
@@ -254,14 +255,10 @@
                             <!-- camel website and user-manual -->
                             <exclude>**/node/**</exclude>
                             <exclude>**/node_modules/**</exclude>
-                            <exclude>**/npm-shrinkwrap.json</exclude>
-                            <exclude>**/package.json</exclude>
                             <exclude>**/user-manual/**</exclude>
                             <exclude>**/yarn.lock</exclude>
                             <!-- examples -->
                             <exclude>**/fabric8/*.yaml</exclude>
-                            <exclude>**/src/main/resources/consul/services.json</exclude>
-                            <exclude>**/src/main/resources/data/*.json</exclude>
                             <exclude>**/src/main/data/*.patient</exclude>
                             <exclude>**/src/main/data/*.csv</exclude>
                             <!-- generated files -->
@@ -278,14 +275,11 @@
                             <exlucde>**/*.log</exlucde>
                             <exclude>**/id_file</exclude>
                             <exclude>**/dependency-reduced-pom.xml</exclude>
-                            <exclude>**/grape.json</exclude>
                             <exclude>**/Dropbox_API_Terms_and_Conditions.txt</exclude>
                             <exclude>**/MerchandiseRestResource.apxc</exclude>
                             <exclude>**/file-sig-api.txt</exclude>
                             <exclude>**/Tasks__c.java</exclude>
-                            <exclude>**/additional-spring-configuration-metadata.json</exclude>
                             <exclude>**/*.proto</exclude>
-                            <exclude>**/src/revapi/ignore.json</exclude>
                             <exclude>
                                 **/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension
                             </exclude>
