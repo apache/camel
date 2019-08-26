@@ -45,7 +45,7 @@ The MicroProfile Metrics component supports 2 options, which are listed below.
 The MicroProfile Metrics endpoint is configured using URI syntax:
 
 ----
-microprofile-metrics:metricType:metricsName
+microprofile-metrics:metricType:metricName
 ----
 
 with the following path and query parameters:

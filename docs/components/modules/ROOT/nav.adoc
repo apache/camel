@@ -19,6 +19,7 @@
 * xref:atomix-queue-component.adoc[Atomix Queue Component]
 * xref:atomix-set-component.adoc[Atomix Set Component]
 * xref:atomix-value-component.adoc[Atomix Value Component]
+* xref:attachments.adoc[Attachments Component]
 * xref:avro-component.adoc[Avro Component]
 * xref:avro-dataformat.adoc[Avro DataFormat]
 * xref:aws-cw-component.adoc[AWS CloudWatch Component]
