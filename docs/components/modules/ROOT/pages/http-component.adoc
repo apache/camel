@@ -450,7 +450,7 @@ only from the CamelContext or URI. +
 [source,java]
 ---------------------------------------------------------------
  context.getProperties().put("http.proxyHost", "172.168.18.9");
- context.getProperties().put("http.proxyPort" "8080");
+ context.getProperties().put("http.proxyPort", "8080");
 ---------------------------------------------------------------
 
 Spring XML
