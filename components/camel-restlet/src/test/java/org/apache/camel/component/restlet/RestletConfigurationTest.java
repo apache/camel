@@ -34,7 +34,7 @@ public class RestletConfigurationTest extends RestletTestSupport {
 
     @Test
     public void testConfiguration() throws Exception {
-        assertNotPresent(GsonConverter.class);
+        assertPresent(GsonConverter.class);
         assertPresent(JacksonConverter.class);
     }
 
