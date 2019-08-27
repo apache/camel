@@ -73,19 +73,59 @@ public class SObjectTreeTest extends CompositeTestBase {
         tree.addNode(account2);
 
         final String json = writer.writeValueAsString(tree);
-
-        assertEquals("Should serialize to JSON as in Salesforce example",
-                     "{" + "\"records\":[" + "{" + "\"Industry\":\"Banking\"," + "\"Name\":\"SampleAccount\"," + "\"NumberOfEmployees\":100," + "\"Phone\":\"1234567890\","
-                                                                          + "\"Website\":\"www.salesforce.com\"," + "\"attributes\":{" + "\"referenceId\":\"ref1\","
-                                                                          + "\"type\":\"Account\"" + "}," + "\"Contacts\":{" + "\"records\":[" + "{"
-                                                                          + "\"Email\":\"sample@salesforce.com\"," + "\"LastName\":\"Smith\"," + "\"Title\":\"President\","
-                                                                          + "\"attributes\":{" + "\"referenceId\":\"ref2\"," + "\"type\":\"Contact\"" + "}" + "}," + "{"
-                                                                          + "\"Email\":\"sample@salesforce.com\"," + "\"LastName\":\"Evans\"," + "\"Title\":\"Vice President\","
-                                                                          + "\"attributes\":{" + "\"referenceId\":\"ref3\"," + "\"type\":\"Contact\"" + "}" + "}" + "]" + "}" + "},"
-                                                                          + "{" + "\"Industry\":\"Banking\"," + "\"Name\":\"SampleAccount2\"," + "\"NumberOfEmployees\":100,"
-                                                                          + "\"Phone\":\"1234567890\"," + "\"Website\":\"www.salesforce2.com\"," + "\"attributes\":{"
-                                                                          + "\"referenceId\":\"ref4\"," + "\"type\":\"Account\"" + "}" + "}" + "]" + "}",
-                     json);
+        final String expected = "{" +
+                "\"records\":[" +
+                "{" +
+                "\"Industry\":\"Banking\"," +
+                "\"Name\":\"SampleAccount\"," +
+                "\"NumberOfEmployees\":100," +
+                "\"Phone\":\"1234567890\"," +
+                "\"Website\":\"www.salesforce.com\"," +
+                "\"attributes\":{" +
+                "\"referenceId\":\"ref1\"," +
+                "\"type\":\"Account\"," +
+                "\"url\":null" +
+                "}," +
+                "\"Contacts\":{" +
+                "\"records\":[" +
+                "{" +
+                "\"Email\":\"sample@salesforce.com\"," +
+                "\"LastName\":\"Smith\"," +
+                "\"Title\":\"President\"," +
+                "\"attributes\":{" +
+                "\"referenceId\":\"ref2\"," +
+                "\"type\":\"Contact\"," +
+                "\"url\":null" +
+                "}" +
+                "}," +
+                "{" +
+                "\"Email\":\"sample@salesforce.com\"," +
+                "\"LastName\":\"Evans\"," +
+                "\"Title\":\"Vice President\"," +
+                "\"attributes\":{" +
+                "\"referenceId\":\"ref3\"," +
+                "\"type\":\"Contact\"," +
+                "\"url\":null" +
+                "}" +
+                "}" +
+                "]" +
+                "}" +
+                "}," +
+                "{" +
+                "\"Industry\":\"Banking\"," +
+                "\"Name\":\"SampleAccount2\"," +
+                "\"NumberOfEmployees\":100," +
+                "\"Phone\":\"1234567890\"," +
+                "\"Website\":\"www.salesforce2.com\"," +
+                "\"attributes\":{" +
+                "\"referenceId\":\"ref4\"," +
+                "\"type\":\"Account\"," +
+                "\"url\":null" +
+                "}" +
+                "}" +
+                "]" +
+                "}";
+        assertEquals("Should serialize to JSON as in Salesforce example", expected, json);
     }
 
     @Test

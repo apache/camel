@@ -25,7 +25,6 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
-import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
@@ -38,7 +37,6 @@ import org.apache.camel.component.salesforce.api.dto.SObjectField;
 public class Account extends AbstractDescribedSObjectBase {
 
     public Account() {
-        super();
         getAttributes().setType("Account");
     }
 
