@@ -654,32 +654,6 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointConsumerBuilder serializeNulls(
-                boolean serializeNulls) {
-            doSetProperty("serializeNulls", serializeNulls);
-            return this;
-        }
-        /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointConsumerBuilder serializeNulls(
-                String serializeNulls) {
-            doSetProperty("serializeNulls", serializeNulls);
-            return this;
-        }
-        /**
          * SObject blob field name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1611,32 +1585,6 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointProducerBuilder serializeNulls(
-                boolean serializeNulls) {
-            doSetProperty("serializeNulls", serializeNulls);
-            return this;
-        }
-        /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointProducerBuilder serializeNulls(
-                String serializeNulls) {
-            doSetProperty("serializeNulls", serializeNulls);
-            return this;
-        }
-        /**
          * SObject blob field name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2478,30 +2426,6 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder resultId(String resultId) {
             doSetProperty("resultId", resultId);
-            return this;
-        }
-        /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointBuilder serializeNulls(boolean serializeNulls) {
-            doSetProperty("serializeNulls", serializeNulls);
-            return this;
-        }
-        /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointBuilder serializeNulls(String serializeNulls) {
-            doSetProperty("serializeNulls", serializeNulls);
             return this;
         }
         /**

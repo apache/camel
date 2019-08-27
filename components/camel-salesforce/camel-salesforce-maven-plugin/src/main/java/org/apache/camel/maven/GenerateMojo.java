@@ -529,7 +529,6 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         for (final Field field : AbstractSObjectBase.class.getDeclaredFields()) {
             baseFields.add(field.getName());
         }
-
         return baseFields;
     }
 

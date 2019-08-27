@@ -11,7 +11,9 @@
       "BillingState" : "California",
       "Industry" : "Technology",
       "attributes" : {
-        "type" : "Account"
+        "referenceId" : null,
+        "type" : "Account",
+        "url" : null
       }
     }
   }, {
@@ -22,7 +24,9 @@
       "LastName" : "John Doe",
       "Phone" : "1234567890",
       "attributes" : {
-        "type" : "Contact"
+        "referenceId" : null,
+        "type" : "Contact",
+        "url" : null
       }
     }
   }, {
@@ -33,7 +37,9 @@
       "account__c" : "001xx000003DIpcAAG",
       "contactId__c" : "@{NewContact.id}",
       "attributes" : {
-        "type" : "AccountContactJunction__c"
+        "referenceId" : null,
+        "type" : "AccountContactJunction__c",
+        "url" : null
       }
     }
   } ]
