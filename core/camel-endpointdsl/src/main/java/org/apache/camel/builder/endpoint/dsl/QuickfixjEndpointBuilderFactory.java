@@ -56,7 +56,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default QuickfixjEndpointConsumerBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
-            setProperty("lazyCreateEngine", lazyCreateEngine);
+            doSetProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default QuickfixjEndpointConsumerBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
-            setProperty("lazyCreateEngine", lazyCreateEngine);
+            doSetProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * Group: common
          */
         default QuickfixjEndpointConsumerBuilder sessionID(Object sessionID) {
-            setProperty("sessionID", sessionID);
+            doSetProperty("sessionID", sessionID);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * Group: common
          */
         default QuickfixjEndpointConsumerBuilder sessionID(String sessionID) {
-            setProperty("sessionID", sessionID);
+            doSetProperty("sessionID", sessionID);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -163,7 +163,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -204,7 +204,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -284,7 +284,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default QuickfixjEndpointProducerBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
-            setProperty("lazyCreateEngine", lazyCreateEngine);
+            doSetProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default QuickfixjEndpointProducerBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
-            setProperty("lazyCreateEngine", lazyCreateEngine);
+            doSetProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
         }
         /**
@@ -314,7 +314,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * Group: common
          */
         default QuickfixjEndpointProducerBuilder sessionID(Object sessionID) {
-            setProperty("sessionID", sessionID);
+            doSetProperty("sessionID", sessionID);
             return this;
         }
         /**
@@ -328,7 +328,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * Group: common
          */
         default QuickfixjEndpointProducerBuilder sessionID(String sessionID) {
-            setProperty("sessionID", sessionID);
+            doSetProperty("sessionID", sessionID);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default QuickfixjEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -368,7 +368,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default QuickfixjEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -392,7 +392,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -405,7 +405,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -459,7 +459,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default QuickfixjEndpointBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
-            setProperty("lazyCreateEngine", lazyCreateEngine);
+            doSetProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
         }
         /**
@@ -476,7 +476,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default QuickfixjEndpointBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
-            setProperty("lazyCreateEngine", lazyCreateEngine);
+            doSetProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
         }
         /**
@@ -489,7 +489,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * Group: common
          */
         default QuickfixjEndpointBuilder sessionID(Object sessionID) {
-            setProperty("sessionID", sessionID);
+            doSetProperty("sessionID", sessionID);
             return this;
         }
         /**
@@ -503,7 +503,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * Group: common
          */
         default QuickfixjEndpointBuilder sessionID(String sessionID) {
-            setProperty("sessionID", sessionID);
+            doSetProperty("sessionID", sessionID);
             return this;
         }
     }
@@ -527,7 +527,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -540,7 +540,7 @@ public interface QuickfixjEndpointBuilderFactory {
          */
         default AdvancedQuickfixjEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -552,7 +552,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedQuickfixjEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedQuickfixjEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -56,7 +56,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default MiloServerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default MiloServerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -101,7 +101,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -117,7 +117,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -225,7 +225,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default MiloServerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default MiloServerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -269,7 +269,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -282,7 +282,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -295,7 +295,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -308,7 +308,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -343,7 +343,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -356,7 +356,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface MiloServerEndpointBuilderFactory {
          */
         default AdvancedMiloServerEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -381,7 +381,7 @@ public interface MiloServerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMiloServerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

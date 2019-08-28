@@ -61,7 +61,7 @@ public interface DataFormatEndpointBuilderFactory {
          */
         default AdvancedDataFormatEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface DataFormatEndpointBuilderFactory {
          */
         default AdvancedDataFormatEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface DataFormatEndpointBuilderFactory {
          */
         default AdvancedDataFormatEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface DataFormatEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDataFormatEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

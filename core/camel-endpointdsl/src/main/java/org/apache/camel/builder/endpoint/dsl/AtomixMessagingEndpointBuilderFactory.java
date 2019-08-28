@@ -52,7 +52,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointConsumerBuilder atomix(Object atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointConsumerBuilder atomix(String atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointConsumerBuilder broadcastType(
                 BroadcastType broadcastType) {
-            setProperty("broadcastType", broadcastType);
+            doSetProperty("broadcastType", broadcastType);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointConsumerBuilder broadcastType(
                 String broadcastType) {
-            setProperty("broadcastType", broadcastType);
+            doSetProperty("broadcastType", broadcastType);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointConsumerBuilder channelName(
                 String channelName) {
-            setProperty("channelName", channelName);
+            doSetProperty("channelName", channelName);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointConsumerBuilder defaultAction(
                 Action defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointConsumerBuilder defaultAction(
                 String defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointConsumerBuilder memberName(
                 String memberName) {
-            setProperty("memberName", memberName);
+            doSetProperty("memberName", memberName);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointConsumerBuilder nodes(List<Object> nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointConsumerBuilder nodes(String nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointConsumerBuilder resultHeader(
                 String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointConsumerBuilder transportClassName(
                 String transportClassName) {
-            setProperty("transportClassName", transportClassName);
+            doSetProperty("transportClassName", transportClassName);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -236,7 +236,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -264,7 +264,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -292,7 +292,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -305,7 +305,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -318,7 +318,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -331,7 +331,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -343,7 +343,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -356,7 +356,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -368,7 +368,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -381,7 +381,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder ephemeral(
                 boolean ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -409,7 +409,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder ephemeral(
                 String ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -422,7 +422,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder readConsistency(
                 ReadConsistency readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -435,7 +435,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder readConsistency(
                 String readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -448,7 +448,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -462,7 +462,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder resourceConfigs(
                 String resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -475,7 +475,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -489,7 +489,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder resourceOptions(
                 String resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -502,7 +502,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -515,7 +515,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -537,7 +537,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointProducerBuilder atomix(Object atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -549,7 +549,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointProducerBuilder atomix(String atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -562,7 +562,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointProducerBuilder broadcastType(
                 BroadcastType broadcastType) {
-            setProperty("broadcastType", broadcastType);
+            doSetProperty("broadcastType", broadcastType);
             return this;
         }
         /**
@@ -575,7 +575,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointProducerBuilder broadcastType(
                 String broadcastType) {
-            setProperty("broadcastType", broadcastType);
+            doSetProperty("broadcastType", broadcastType);
             return this;
         }
         /**
@@ -587,7 +587,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointProducerBuilder channelName(
                 String channelName) {
-            setProperty("channelName", channelName);
+            doSetProperty("channelName", channelName);
             return this;
         }
         /**
@@ -599,7 +599,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointProducerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -612,7 +612,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointProducerBuilder defaultAction(
                 Action defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -625,7 +625,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointProducerBuilder defaultAction(
                 String defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -637,7 +637,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointProducerBuilder memberName(
                 String memberName) {
-            setProperty("memberName", memberName);
+            doSetProperty("memberName", memberName);
             return this;
         }
         /**
@@ -649,7 +649,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointProducerBuilder nodes(List<Object> nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -661,7 +661,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointProducerBuilder nodes(String nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -673,7 +673,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointProducerBuilder resultHeader(
                 String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -685,7 +685,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointProducerBuilder transportClassName(
                 String transportClassName) {
-            setProperty("transportClassName", transportClassName);
+            doSetProperty("transportClassName", transportClassName);
             return this;
         }
         /**
@@ -705,7 +705,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -725,7 +725,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -750,7 +750,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -763,7 +763,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -775,7 +775,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -788,7 +788,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -800,7 +800,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -813,7 +813,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -827,7 +827,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder ephemeral(
                 boolean ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -841,7 +841,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder ephemeral(
                 String ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -854,7 +854,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder readConsistency(
                 ReadConsistency readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -867,7 +867,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder readConsistency(
                 String readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -880,7 +880,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -894,7 +894,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder resourceConfigs(
                 String resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -907,7 +907,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -921,7 +921,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder resourceOptions(
                 String resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -934,7 +934,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -947,7 +947,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -969,7 +969,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointBuilder atomix(Object atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -981,7 +981,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointBuilder atomix(String atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -994,7 +994,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointBuilder broadcastType(
                 BroadcastType broadcastType) {
-            setProperty("broadcastType", broadcastType);
+            doSetProperty("broadcastType", broadcastType);
             return this;
         }
         /**
@@ -1007,7 +1007,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointBuilder broadcastType(
                 String broadcastType) {
-            setProperty("broadcastType", broadcastType);
+            doSetProperty("broadcastType", broadcastType);
             return this;
         }
         /**
@@ -1018,7 +1018,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointBuilder channelName(String channelName) {
-            setProperty("channelName", channelName);
+            doSetProperty("channelName", channelName);
             return this;
         }
         /**
@@ -1030,7 +1030,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -1043,7 +1043,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointBuilder defaultAction(
                 Action defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -1056,7 +1056,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointBuilder defaultAction(
                 String defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -1067,7 +1067,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointBuilder memberName(String memberName) {
-            setProperty("memberName", memberName);
+            doSetProperty("memberName", memberName);
             return this;
         }
         /**
@@ -1079,7 +1079,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointBuilder nodes(List<Object> nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -1091,7 +1091,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointBuilder nodes(String nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -1102,7 +1102,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * Group: common
          */
         default AtomixMessagingEndpointBuilder resultHeader(String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -1114,7 +1114,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AtomixMessagingEndpointBuilder transportClassName(
                 String transportClassName) {
-            setProperty("transportClassName", transportClassName);
+            doSetProperty("transportClassName", transportClassName);
             return this;
         }
     }
@@ -1138,7 +1138,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1151,7 +1151,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1163,7 +1163,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -1176,7 +1176,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -1188,7 +1188,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -1201,7 +1201,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -1215,7 +1215,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder ephemeral(
                 boolean ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -1229,7 +1229,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder ephemeral(
                 String ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -1242,7 +1242,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder readConsistency(
                 ReadConsistency readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -1255,7 +1255,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder readConsistency(
                 String readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -1268,7 +1268,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -1282,7 +1282,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder resourceConfigs(
                 String resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -1295,7 +1295,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -1309,7 +1309,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder resourceOptions(
                 String resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -1322,7 +1322,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1335,7 +1335,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          */
         default AdvancedAtomixMessagingEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

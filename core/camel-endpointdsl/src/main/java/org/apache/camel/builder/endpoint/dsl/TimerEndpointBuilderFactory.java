@@ -52,7 +52,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder fixedRate(boolean fixedRate) {
-            setProperty("fixedRate", fixedRate);
+            doSetProperty("fixedRate", fixedRate);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder fixedRate(String fixedRate) {
-            setProperty("fixedRate", fixedRate);
+            doSetProperty("fixedRate", fixedRate);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder period(long period) {
-            setProperty("period", period);
+            doSetProperty("period", period);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder period(String period) {
-            setProperty("period", period);
+            doSetProperty("period", period);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder repeatCount(long repeatCount) {
-            setProperty("repeatCount", repeatCount);
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder repeatCount(String repeatCount) {
-            setProperty("repeatCount", repeatCount);
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
     }
@@ -169,7 +169,7 @@ public interface TimerEndpointBuilderFactory {
          */
         default AdvancedTimerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface TimerEndpointBuilderFactory {
          */
         default AdvancedTimerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder daemon(boolean daemon) {
-            setProperty("daemon", daemon);
+            doSetProperty("daemon", daemon);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder daemon(String daemon) {
-            setProperty("daemon", daemon);
+            doSetProperty("daemon", daemon);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder pattern(String pattern) {
-            setProperty("pattern", pattern);
+            doSetProperty("pattern", pattern);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -242,7 +242,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder time(Date time) {
-            setProperty("time", time);
+            doSetProperty("time", time);
             return this;
         }
         /**
@@ -268,7 +268,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder time(String time) {
-            setProperty("time", time);
+            doSetProperty("time", time);
             return this;
         }
         /**
@@ -279,7 +279,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder timer(Timer timer) {
-            setProperty("timer", timer);
+            doSetProperty("timer", timer);
             return this;
         }
         /**
@@ -290,7 +290,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder timer(String timer) {
-            setProperty("timer", timer);
+            doSetProperty("timer", timer);
             return this;
         }
     }

@@ -49,7 +49,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: common
          */
         default ScpEndpointBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: common
          */
         default ScpEndpointBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: producer
          */
         default ScpEndpointBuilder chmod(String chmod) {
-            setProperty("chmod", chmod);
+            doSetProperty("chmod", chmod);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: producer
          */
         default ScpEndpointBuilder fileName(Expression fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: producer
          */
         default ScpEndpointBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
-            setProperty("strictHostKeyChecking", strictHostKeyChecking);
+            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: security
          */
         default ScpEndpointBuilder knownHostsFile(String knownHostsFile) {
-            setProperty("knownHostsFile", knownHostsFile);
+            doSetProperty("knownHostsFile", knownHostsFile);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: security
          */
         default ScpEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -180,7 +180,7 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder preferredAuthentications(
                 String preferredAuthentications) {
-            setProperty("preferredAuthentications", preferredAuthentications);
+            doSetProperty("preferredAuthentications", preferredAuthentications);
             return this;
         }
         /**
@@ -193,7 +193,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: security
          */
         default ScpEndpointBuilder privateKeyBytes(Byte[] privateKeyBytes) {
-            setProperty("privateKeyBytes", privateKeyBytes);
+            doSetProperty("privateKeyBytes", privateKeyBytes);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: security
          */
         default ScpEndpointBuilder privateKeyBytes(String privateKeyBytes) {
-            setProperty("privateKeyBytes", privateKeyBytes);
+            doSetProperty("privateKeyBytes", privateKeyBytes);
             return this;
         }
         /**
@@ -219,7 +219,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: security
          */
         default ScpEndpointBuilder privateKeyFile(String privateKeyFile) {
-            setProperty("privateKeyFile", privateKeyFile);
+            doSetProperty("privateKeyFile", privateKeyFile);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder privateKeyFilePassphrase(
                 String privateKeyFilePassphrase) {
-            setProperty("privateKeyFilePassphrase", privateKeyFilePassphrase);
+            doSetProperty("privateKeyFilePassphrase", privateKeyFilePassphrase);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: security
          */
         default ScpEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
-            setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
         }
         /**
@@ -269,7 +269,7 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
-            setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
         }
     }
@@ -293,7 +293,7 @@ public interface ScpEndpointBuilderFactory {
          */
         default AdvancedScpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -306,7 +306,7 @@ public interface ScpEndpointBuilderFactory {
          */
         default AdvancedScpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -318,7 +318,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder connectTimeout(String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -345,7 +345,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder soTimeout(int soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -360,7 +360,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder soTimeout(String soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -372,7 +372,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -384,7 +384,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -406,7 +406,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -420,7 +420,7 @@ public interface ScpEndpointBuilderFactory {
          * Group: security (advanced)
          */
         default AdvancedScpEndpointBuilder ciphers(String ciphers) {
-            setProperty("ciphers", ciphers);
+            doSetProperty("ciphers", ciphers);
             return this;
         }
     }

@@ -55,7 +55,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointConsumerBuilder cluster(Object cluster) {
-            setProperty("cluster", cluster);
+            doSetProperty("cluster", cluster);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointConsumerBuilder cluster(String cluster) {
-            setProperty("cluster", cluster);
+            doSetProperty("cluster", cluster);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointConsumerBuilder clusterName(String clusterName) {
-            setProperty("clusterName", clusterName);
+            doSetProperty("clusterName", clusterName);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder consistencyLevel(
                 ConsistencyLevel consistencyLevel) {
-            setProperty("consistencyLevel", consistencyLevel);
+            doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder consistencyLevel(
                 String consistencyLevel) {
-            setProperty("consistencyLevel", consistencyLevel);
+            doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointConsumerBuilder cql(String cql) {
-            setProperty("cql", cql);
+            doSetProperty("cql", cql);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder loadBalancingPolicy(
                 String loadBalancingPolicy) {
-            setProperty("loadBalancingPolicy", loadBalancingPolicy);
+            doSetProperty("loadBalancingPolicy", loadBalancingPolicy);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder prepareStatements(
                 boolean prepareStatements) {
-            setProperty("prepareStatements", prepareStatements);
+            doSetProperty("prepareStatements", prepareStatements);
             return this;
         }
         /**
@@ -163,7 +163,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder prepareStatements(
                 String prepareStatements) {
-            setProperty("prepareStatements", prepareStatements);
+            doSetProperty("prepareStatements", prepareStatements);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder resultSetConversionStrategy(
                 Object resultSetConversionStrategy) {
-            setProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder resultSetConversionStrategy(
                 String resultSetConversionStrategy) {
-            setProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointConsumerBuilder session(Object session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
@@ -214,7 +214,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointConsumerBuilder session(String session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -261,7 +261,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -274,7 +274,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -326,7 +326,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -339,7 +339,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -356,7 +356,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -373,7 +373,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -386,7 +386,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -399,7 +399,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -411,7 +411,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -423,7 +423,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -436,7 +436,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -450,7 +450,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -463,7 +463,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -477,7 +477,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -492,7 +492,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -507,7 +507,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -519,7 +519,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -533,7 +533,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -548,7 +548,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -560,7 +560,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -572,7 +572,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -583,7 +583,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -595,7 +595,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -608,7 +608,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -621,7 +621,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -648,7 +648,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -664,7 +664,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -676,7 +676,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -689,7 +689,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -705,7 +705,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -721,7 +721,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -734,7 +734,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -747,7 +747,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -760,7 +760,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -773,7 +773,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -795,7 +795,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointProducerBuilder cluster(Object cluster) {
-            setProperty("cluster", cluster);
+            doSetProperty("cluster", cluster);
             return this;
         }
         /**
@@ -807,7 +807,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointProducerBuilder cluster(String cluster) {
-            setProperty("cluster", cluster);
+            doSetProperty("cluster", cluster);
             return this;
         }
         /**
@@ -818,7 +818,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointProducerBuilder clusterName(String clusterName) {
-            setProperty("clusterName", clusterName);
+            doSetProperty("clusterName", clusterName);
             return this;
         }
         /**
@@ -831,7 +831,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointProducerBuilder consistencyLevel(
                 ConsistencyLevel consistencyLevel) {
-            setProperty("consistencyLevel", consistencyLevel);
+            doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
         /**
@@ -844,7 +844,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointProducerBuilder consistencyLevel(
                 String consistencyLevel) {
-            setProperty("consistencyLevel", consistencyLevel);
+            doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
         /**
@@ -856,7 +856,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointProducerBuilder cql(String cql) {
-            setProperty("cql", cql);
+            doSetProperty("cql", cql);
             return this;
         }
         /**
@@ -868,7 +868,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointProducerBuilder loadBalancingPolicy(
                 String loadBalancingPolicy) {
-            setProperty("loadBalancingPolicy", loadBalancingPolicy);
+            doSetProperty("loadBalancingPolicy", loadBalancingPolicy);
             return this;
         }
         /**
@@ -879,7 +879,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -891,7 +891,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointProducerBuilder prepareStatements(
                 boolean prepareStatements) {
-            setProperty("prepareStatements", prepareStatements);
+            doSetProperty("prepareStatements", prepareStatements);
             return this;
         }
         /**
@@ -903,7 +903,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointProducerBuilder prepareStatements(
                 String prepareStatements) {
-            setProperty("prepareStatements", prepareStatements);
+            doSetProperty("prepareStatements", prepareStatements);
             return this;
         }
         /**
@@ -917,7 +917,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointProducerBuilder resultSetConversionStrategy(
                 Object resultSetConversionStrategy) {
-            setProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
             return this;
         }
         /**
@@ -931,7 +931,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointProducerBuilder resultSetConversionStrategy(
                 String resultSetConversionStrategy) {
-            setProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
             return this;
         }
         /**
@@ -942,7 +942,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointProducerBuilder session(Object session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
@@ -954,7 +954,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointProducerBuilder session(String session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
@@ -965,7 +965,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -985,7 +985,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1005,7 +1005,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -1029,7 +1029,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1042,7 +1042,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1055,7 +1055,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1068,7 +1068,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1090,7 +1090,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointBuilder cluster(Object cluster) {
-            setProperty("cluster", cluster);
+            doSetProperty("cluster", cluster);
             return this;
         }
         /**
@@ -1102,7 +1102,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointBuilder cluster(String cluster) {
-            setProperty("cluster", cluster);
+            doSetProperty("cluster", cluster);
             return this;
         }
         /**
@@ -1113,7 +1113,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointBuilder clusterName(String clusterName) {
-            setProperty("clusterName", clusterName);
+            doSetProperty("clusterName", clusterName);
             return this;
         }
         /**
@@ -1126,7 +1126,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointBuilder consistencyLevel(
                 ConsistencyLevel consistencyLevel) {
-            setProperty("consistencyLevel", consistencyLevel);
+            doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
         /**
@@ -1139,7 +1139,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointBuilder consistencyLevel(
                 String consistencyLevel) {
-            setProperty("consistencyLevel", consistencyLevel);
+            doSetProperty("consistencyLevel", consistencyLevel);
             return this;
         }
         /**
@@ -1151,7 +1151,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointBuilder cql(String cql) {
-            setProperty("cql", cql);
+            doSetProperty("cql", cql);
             return this;
         }
         /**
@@ -1163,7 +1163,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointBuilder loadBalancingPolicy(
                 String loadBalancingPolicy) {
-            setProperty("loadBalancingPolicy", loadBalancingPolicy);
+            doSetProperty("loadBalancingPolicy", loadBalancingPolicy);
             return this;
         }
         /**
@@ -1174,7 +1174,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1186,7 +1186,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointBuilder prepareStatements(
                 boolean prepareStatements) {
-            setProperty("prepareStatements", prepareStatements);
+            doSetProperty("prepareStatements", prepareStatements);
             return this;
         }
         /**
@@ -1198,7 +1198,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointBuilder prepareStatements(
                 String prepareStatements) {
-            setProperty("prepareStatements", prepareStatements);
+            doSetProperty("prepareStatements", prepareStatements);
             return this;
         }
         /**
@@ -1212,7 +1212,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointBuilder resultSetConversionStrategy(
                 Object resultSetConversionStrategy) {
-            setProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
             return this;
         }
         /**
@@ -1226,7 +1226,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointBuilder resultSetConversionStrategy(
                 String resultSetConversionStrategy) {
-            setProperty("resultSetConversionStrategy", resultSetConversionStrategy);
+            doSetProperty("resultSetConversionStrategy", resultSetConversionStrategy);
             return this;
         }
         /**
@@ -1237,7 +1237,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointBuilder session(Object session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
@@ -1249,7 +1249,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointBuilder session(String session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
@@ -1260,7 +1260,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: common
          */
         default CassandraEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1284,7 +1284,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1297,7 +1297,7 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1309,7 +1309,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCassandraEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1321,7 +1321,7 @@ public interface CassandraEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCassandraEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

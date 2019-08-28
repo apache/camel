@@ -45,7 +45,7 @@ public interface MustacheEndpointBuilderFactory {
          * Group: producer
          */
         default MustacheEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface MustacheEndpointBuilderFactory {
          * Group: producer
          */
         default MustacheEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface MustacheEndpointBuilderFactory {
          * Group: producer
          */
         default MustacheEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface MustacheEndpointBuilderFactory {
          * Group: producer
          */
         default MustacheEndpointBuilder endDelimiter(String endDelimiter) {
-            setProperty("endDelimiter", endDelimiter);
+            doSetProperty("endDelimiter", endDelimiter);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface MustacheEndpointBuilderFactory {
          * Group: producer
          */
         default MustacheEndpointBuilder startDelimiter(String startDelimiter) {
-            setProperty("startDelimiter", startDelimiter);
+            doSetProperty("startDelimiter", startDelimiter);
             return this;
         }
     }
@@ -113,7 +113,7 @@ public interface MustacheEndpointBuilderFactory {
          */
         default AdvancedMustacheEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface MustacheEndpointBuilderFactory {
          */
         default AdvancedMustacheEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface MustacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMustacheEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -150,7 +150,7 @@ public interface MustacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMustacheEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

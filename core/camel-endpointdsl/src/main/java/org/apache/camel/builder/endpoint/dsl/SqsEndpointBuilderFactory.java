@@ -57,7 +57,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: common
          */
         default SqsEndpointConsumerBuilder amazonAWSHost(String amazonAWSHost) {
-            setProperty("amazonAWSHost", amazonAWSHost);
+            doSetProperty("amazonAWSHost", amazonAWSHost);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder amazonSQSClient(
                 Object amazonSQSClient) {
-            setProperty("amazonSQSClient", amazonSQSClient);
+            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder amazonSQSClient(
                 String amazonSQSClient) {
-            setProperty("amazonSQSClient", amazonSQSClient);
+            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder autoCreateQueue(
                 boolean autoCreateQueue) {
-            setProperty("autoCreateQueue", autoCreateQueue);
+            doSetProperty("autoCreateQueue", autoCreateQueue);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder autoCreateQueue(
                 String autoCreateQueue) {
-            setProperty("autoCreateQueue", autoCreateQueue);
+            doSetProperty("autoCreateQueue", autoCreateQueue);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -133,7 +133,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -146,7 +146,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder queueOwnerAWSAccountId(
                 String queueOwnerAWSAccountId) {
-            setProperty("queueOwnerAWSAccountId", queueOwnerAWSAccountId);
+            doSetProperty("queueOwnerAWSAccountId", queueOwnerAWSAccountId);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: common
          */
         default SqsEndpointConsumerBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -173,7 +173,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder attributeNames(String attributeNames) {
-            setProperty("attributeNames", attributeNames);
+            doSetProperty("attributeNames", attributeNames);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -209,7 +209,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -222,7 +222,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -235,7 +235,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -247,7 +247,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder defaultVisibilityTimeout(
                 Integer defaultVisibilityTimeout) {
-            setProperty("defaultVisibilityTimeout", defaultVisibilityTimeout);
+            doSetProperty("defaultVisibilityTimeout", defaultVisibilityTimeout);
             return this;
         }
         /**
@@ -260,7 +260,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder defaultVisibilityTimeout(
                 String defaultVisibilityTimeout) {
-            setProperty("defaultVisibilityTimeout", defaultVisibilityTimeout);
+            doSetProperty("defaultVisibilityTimeout", defaultVisibilityTimeout);
             return this;
         }
         /**
@@ -272,7 +272,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder deleteAfterRead(
                 boolean deleteAfterRead) {
-            setProperty("deleteAfterRead", deleteAfterRead);
+            doSetProperty("deleteAfterRead", deleteAfterRead);
             return this;
         }
         /**
@@ -284,7 +284,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder deleteAfterRead(
                 String deleteAfterRead) {
-            setProperty("deleteAfterRead", deleteAfterRead);
+            doSetProperty("deleteAfterRead", deleteAfterRead);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder deleteIfFiltered(
                 boolean deleteIfFiltered) {
-            setProperty("deleteIfFiltered", deleteIfFiltered);
+            doSetProperty("deleteIfFiltered", deleteIfFiltered);
             return this;
         }
         /**
@@ -314,7 +314,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder deleteIfFiltered(
                 String deleteIfFiltered) {
-            setProperty("deleteIfFiltered", deleteIfFiltered);
+            doSetProperty("deleteIfFiltered", deleteIfFiltered);
             return this;
         }
         /**
@@ -329,7 +329,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder extendMessageVisibility(
                 boolean extendMessageVisibility) {
-            setProperty("extendMessageVisibility", extendMessageVisibility);
+            doSetProperty("extendMessageVisibility", extendMessageVisibility);
             return this;
         }
         /**
@@ -344,7 +344,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder extendMessageVisibility(
                 String extendMessageVisibility) {
-            setProperty("extendMessageVisibility", extendMessageVisibility);
+            doSetProperty("extendMessageVisibility", extendMessageVisibility);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder kmsDataKeyReusePeriodSeconds(
                 Integer kmsDataKeyReusePeriodSeconds) {
-            setProperty("kmsDataKeyReusePeriodSeconds", kmsDataKeyReusePeriodSeconds);
+            doSetProperty("kmsDataKeyReusePeriodSeconds", kmsDataKeyReusePeriodSeconds);
             return this;
         }
         /**
@@ -375,7 +375,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder kmsDataKeyReusePeriodSeconds(
                 String kmsDataKeyReusePeriodSeconds) {
-            setProperty("kmsDataKeyReusePeriodSeconds", kmsDataKeyReusePeriodSeconds);
+            doSetProperty("kmsDataKeyReusePeriodSeconds", kmsDataKeyReusePeriodSeconds);
             return this;
         }
         /**
@@ -387,7 +387,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder kmsMasterKeyId(String kmsMasterKeyId) {
-            setProperty("kmsMasterKeyId", kmsMasterKeyId);
+            doSetProperty("kmsMasterKeyId", kmsMasterKeyId);
             return this;
         }
         /**
@@ -401,7 +401,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -415,7 +415,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -428,7 +428,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder messageAttributeNames(
                 String messageAttributeNames) {
-            setProperty("messageAttributeNames", messageAttributeNames);
+            doSetProperty("messageAttributeNames", messageAttributeNames);
             return this;
         }
         /**
@@ -441,7 +441,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -454,7 +454,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -466,7 +466,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder serverSideEncryptionEnabled(
                 boolean serverSideEncryptionEnabled) {
-            setProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
+            doSetProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
             return this;
         }
         /**
@@ -478,7 +478,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder serverSideEncryptionEnabled(
                 String serverSideEncryptionEnabled) {
-            setProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
+            doSetProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder visibilityTimeout(
                 Integer visibilityTimeout) {
-            setProperty("visibilityTimeout", visibilityTimeout);
+            doSetProperty("visibilityTimeout", visibilityTimeout);
             return this;
         }
         /**
@@ -513,7 +513,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder visibilityTimeout(
                 String visibilityTimeout) {
-            setProperty("visibilityTimeout", visibilityTimeout);
+            doSetProperty("visibilityTimeout", visibilityTimeout);
             return this;
         }
         /**
@@ -526,7 +526,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder waitTimeSeconds(
                 Integer waitTimeSeconds) {
-            setProperty("waitTimeSeconds", waitTimeSeconds);
+            doSetProperty("waitTimeSeconds", waitTimeSeconds);
             return this;
         }
         /**
@@ -540,7 +540,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder waitTimeSeconds(
                 String waitTimeSeconds) {
-            setProperty("waitTimeSeconds", waitTimeSeconds);
+            doSetProperty("waitTimeSeconds", waitTimeSeconds);
             return this;
         }
         /**
@@ -553,7 +553,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -566,7 +566,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -579,7 +579,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -592,7 +592,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -609,7 +609,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -626,7 +626,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -639,7 +639,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -652,7 +652,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -664,7 +664,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -676,7 +676,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -689,7 +689,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -702,7 +702,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -715,7 +715,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -729,7 +729,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -744,7 +744,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -759,7 +759,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -771,7 +771,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -785,7 +785,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -800,7 +800,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -811,7 +811,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder startScheduler(boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -822,7 +822,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder startScheduler(String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -833,7 +833,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -845,7 +845,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -857,7 +857,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -869,7 +869,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -880,7 +880,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: proxy
          */
         default SqsEndpointConsumerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -891,7 +891,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: proxy
          */
         default SqsEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -903,7 +903,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: proxy
          */
         default SqsEndpointConsumerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -916,7 +916,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder maximumMessageSize(
                 Integer maximumMessageSize) {
-            setProperty("maximumMessageSize", maximumMessageSize);
+            doSetProperty("maximumMessageSize", maximumMessageSize);
             return this;
         }
         /**
@@ -930,7 +930,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder maximumMessageSize(
                 String maximumMessageSize) {
-            setProperty("maximumMessageSize", maximumMessageSize);
+            doSetProperty("maximumMessageSize", maximumMessageSize);
             return this;
         }
         /**
@@ -943,7 +943,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder messageRetentionPeriod(
                 Integer messageRetentionPeriod) {
-            setProperty("messageRetentionPeriod", messageRetentionPeriod);
+            doSetProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
         }
         /**
@@ -957,7 +957,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder messageRetentionPeriod(
                 String messageRetentionPeriod) {
-            setProperty("messageRetentionPeriod", messageRetentionPeriod);
+            doSetProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
         }
         /**
@@ -968,7 +968,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: queue
          */
         default SqsEndpointConsumerBuilder policy(String policy) {
-            setProperty("policy", policy);
+            doSetProperty("policy", policy);
             return this;
         }
         /**
@@ -982,7 +982,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
                 Integer receiveMessageWaitTimeSeconds) {
-            setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
+            doSetProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
         }
         /**
@@ -997,7 +997,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
                 String receiveMessageWaitTimeSeconds) {
-            setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
+            doSetProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
         }
         /**
@@ -1009,7 +1009,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: queue
          */
         default SqsEndpointConsumerBuilder redrivePolicy(String redrivePolicy) {
-            setProperty("redrivePolicy", redrivePolicy);
+            doSetProperty("redrivePolicy", redrivePolicy);
             return this;
         }
         /**
@@ -1020,7 +1020,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: security
          */
         default SqsEndpointConsumerBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -1031,7 +1031,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: security
          */
         default SqsEndpointConsumerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -1059,7 +1059,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -1075,7 +1075,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -1087,7 +1087,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -1100,7 +1100,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -1116,7 +1116,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -1132,7 +1132,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -1145,7 +1145,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1158,7 +1158,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1170,7 +1170,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqsEndpointConsumerBuilder delayQueue(boolean delayQueue) {
-            setProperty("delayQueue", delayQueue);
+            doSetProperty("delayQueue", delayQueue);
             return this;
         }
         /**
@@ -1182,7 +1182,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqsEndpointConsumerBuilder delayQueue(String delayQueue) {
-            setProperty("delayQueue", delayQueue);
+            doSetProperty("delayQueue", delayQueue);
             return this;
         }
         /**
@@ -1196,7 +1196,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqsEndpointConsumerBuilder queueUrl(String queueUrl) {
-            setProperty("queueUrl", queueUrl);
+            doSetProperty("queueUrl", queueUrl);
             return this;
         }
         /**
@@ -1209,7 +1209,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1222,7 +1222,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1245,7 +1245,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: common
          */
         default SqsEndpointProducerBuilder amazonAWSHost(String amazonAWSHost) {
-            setProperty("amazonAWSHost", amazonAWSHost);
+            doSetProperty("amazonAWSHost", amazonAWSHost);
             return this;
         }
         /**
@@ -1258,7 +1258,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder amazonSQSClient(
                 Object amazonSQSClient) {
-            setProperty("amazonSQSClient", amazonSQSClient);
+            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -1271,7 +1271,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder amazonSQSClient(
                 String amazonSQSClient) {
-            setProperty("amazonSQSClient", amazonSQSClient);
+            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -1283,7 +1283,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder autoCreateQueue(
                 boolean autoCreateQueue) {
-            setProperty("autoCreateQueue", autoCreateQueue);
+            doSetProperty("autoCreateQueue", autoCreateQueue);
             return this;
         }
         /**
@@ -1295,7 +1295,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder autoCreateQueue(
                 String autoCreateQueue) {
-            setProperty("autoCreateQueue", autoCreateQueue);
+            doSetProperty("autoCreateQueue", autoCreateQueue);
             return this;
         }
         /**
@@ -1308,7 +1308,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1321,7 +1321,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1334,7 +1334,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder queueOwnerAWSAccountId(
                 String queueOwnerAWSAccountId) {
-            setProperty("queueOwnerAWSAccountId", queueOwnerAWSAccountId);
+            doSetProperty("queueOwnerAWSAccountId", queueOwnerAWSAccountId);
             return this;
         }
         /**
@@ -1349,7 +1349,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: common
          */
         default SqsEndpointProducerBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -1360,7 +1360,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: producer
          */
         default SqsEndpointProducerBuilder delaySeconds(Integer delaySeconds) {
-            setProperty("delaySeconds", delaySeconds);
+            doSetProperty("delaySeconds", delaySeconds);
             return this;
         }
         /**
@@ -1372,7 +1372,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: producer
          */
         default SqsEndpointProducerBuilder delaySeconds(String delaySeconds) {
-            setProperty("delaySeconds", delaySeconds);
+            doSetProperty("delaySeconds", delaySeconds);
             return this;
         }
         /**
@@ -1392,7 +1392,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1412,7 +1412,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1428,7 +1428,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder messageDeduplicationIdStrategy(
                 Object messageDeduplicationIdStrategy) {
-            setProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
+            doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
             return this;
         }
         /**
@@ -1444,7 +1444,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder messageDeduplicationIdStrategy(
                 String messageDeduplicationIdStrategy) {
-            setProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
+            doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
             return this;
         }
         /**
@@ -1460,7 +1460,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder messageGroupIdStrategy(
                 Object messageGroupIdStrategy) {
-            setProperty("messageGroupIdStrategy", messageGroupIdStrategy);
+            doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
             return this;
         }
         /**
@@ -1476,7 +1476,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder messageGroupIdStrategy(
                 String messageGroupIdStrategy) {
-            setProperty("messageGroupIdStrategy", messageGroupIdStrategy);
+            doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
             return this;
         }
         /**
@@ -1489,7 +1489,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: producer
          */
         default SqsEndpointProducerBuilder operation(SqsOperations operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -1502,7 +1502,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: producer
          */
         default SqsEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -1513,7 +1513,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: proxy
          */
         default SqsEndpointProducerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -1524,7 +1524,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: proxy
          */
         default SqsEndpointProducerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1536,7 +1536,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: proxy
          */
         default SqsEndpointProducerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1549,7 +1549,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder maximumMessageSize(
                 Integer maximumMessageSize) {
-            setProperty("maximumMessageSize", maximumMessageSize);
+            doSetProperty("maximumMessageSize", maximumMessageSize);
             return this;
         }
         /**
@@ -1563,7 +1563,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder maximumMessageSize(
                 String maximumMessageSize) {
-            setProperty("maximumMessageSize", maximumMessageSize);
+            doSetProperty("maximumMessageSize", maximumMessageSize);
             return this;
         }
         /**
@@ -1576,7 +1576,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder messageRetentionPeriod(
                 Integer messageRetentionPeriod) {
-            setProperty("messageRetentionPeriod", messageRetentionPeriod);
+            doSetProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
         }
         /**
@@ -1590,7 +1590,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder messageRetentionPeriod(
                 String messageRetentionPeriod) {
-            setProperty("messageRetentionPeriod", messageRetentionPeriod);
+            doSetProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
         }
         /**
@@ -1601,7 +1601,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: queue
          */
         default SqsEndpointProducerBuilder policy(String policy) {
-            setProperty("policy", policy);
+            doSetProperty("policy", policy);
             return this;
         }
         /**
@@ -1615,7 +1615,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder receiveMessageWaitTimeSeconds(
                 Integer receiveMessageWaitTimeSeconds) {
-            setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
+            doSetProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
         }
         /**
@@ -1630,7 +1630,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointProducerBuilder receiveMessageWaitTimeSeconds(
                 String receiveMessageWaitTimeSeconds) {
-            setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
+            doSetProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
         }
         /**
@@ -1642,7 +1642,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: queue
          */
         default SqsEndpointProducerBuilder redrivePolicy(String redrivePolicy) {
-            setProperty("redrivePolicy", redrivePolicy);
+            doSetProperty("redrivePolicy", redrivePolicy);
             return this;
         }
         /**
@@ -1653,7 +1653,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: security
          */
         default SqsEndpointProducerBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -1664,7 +1664,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: security
          */
         default SqsEndpointProducerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -1689,7 +1689,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1702,7 +1702,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1714,7 +1714,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqsEndpointProducerBuilder delayQueue(boolean delayQueue) {
-            setProperty("delayQueue", delayQueue);
+            doSetProperty("delayQueue", delayQueue);
             return this;
         }
         /**
@@ -1726,7 +1726,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqsEndpointProducerBuilder delayQueue(String delayQueue) {
-            setProperty("delayQueue", delayQueue);
+            doSetProperty("delayQueue", delayQueue);
             return this;
         }
         /**
@@ -1740,7 +1740,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqsEndpointProducerBuilder queueUrl(String queueUrl) {
-            setProperty("queueUrl", queueUrl);
+            doSetProperty("queueUrl", queueUrl);
             return this;
         }
         /**
@@ -1753,7 +1753,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1766,7 +1766,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1788,7 +1788,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: common
          */
         default SqsEndpointBuilder amazonAWSHost(String amazonAWSHost) {
-            setProperty("amazonAWSHost", amazonAWSHost);
+            doSetProperty("amazonAWSHost", amazonAWSHost);
             return this;
         }
         /**
@@ -1800,7 +1800,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: common
          */
         default SqsEndpointBuilder amazonSQSClient(Object amazonSQSClient) {
-            setProperty("amazonSQSClient", amazonSQSClient);
+            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -1812,7 +1812,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: common
          */
         default SqsEndpointBuilder amazonSQSClient(String amazonSQSClient) {
-            setProperty("amazonSQSClient", amazonSQSClient);
+            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -1823,7 +1823,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: common
          */
         default SqsEndpointBuilder autoCreateQueue(boolean autoCreateQueue) {
-            setProperty("autoCreateQueue", autoCreateQueue);
+            doSetProperty("autoCreateQueue", autoCreateQueue);
             return this;
         }
         /**
@@ -1834,7 +1834,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: common
          */
         default SqsEndpointBuilder autoCreateQueue(String autoCreateQueue) {
-            setProperty("autoCreateQueue", autoCreateQueue);
+            doSetProperty("autoCreateQueue", autoCreateQueue);
             return this;
         }
         /**
@@ -1847,7 +1847,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1860,7 +1860,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1873,7 +1873,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointBuilder queueOwnerAWSAccountId(
                 String queueOwnerAWSAccountId) {
-            setProperty("queueOwnerAWSAccountId", queueOwnerAWSAccountId);
+            doSetProperty("queueOwnerAWSAccountId", queueOwnerAWSAccountId);
             return this;
         }
         /**
@@ -1888,7 +1888,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: common
          */
         default SqsEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -1899,7 +1899,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: proxy
          */
         default SqsEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -1910,7 +1910,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: proxy
          */
         default SqsEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1922,7 +1922,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: proxy
          */
         default SqsEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1934,7 +1934,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: queue
          */
         default SqsEndpointBuilder maximumMessageSize(Integer maximumMessageSize) {
-            setProperty("maximumMessageSize", maximumMessageSize);
+            doSetProperty("maximumMessageSize", maximumMessageSize);
             return this;
         }
         /**
@@ -1947,7 +1947,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: queue
          */
         default SqsEndpointBuilder maximumMessageSize(String maximumMessageSize) {
-            setProperty("maximumMessageSize", maximumMessageSize);
+            doSetProperty("maximumMessageSize", maximumMessageSize);
             return this;
         }
         /**
@@ -1960,7 +1960,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointBuilder messageRetentionPeriod(
                 Integer messageRetentionPeriod) {
-            setProperty("messageRetentionPeriod", messageRetentionPeriod);
+            doSetProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
         }
         /**
@@ -1974,7 +1974,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointBuilder messageRetentionPeriod(
                 String messageRetentionPeriod) {
-            setProperty("messageRetentionPeriod", messageRetentionPeriod);
+            doSetProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
         }
         /**
@@ -1985,7 +1985,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: queue
          */
         default SqsEndpointBuilder policy(String policy) {
-            setProperty("policy", policy);
+            doSetProperty("policy", policy);
             return this;
         }
         /**
@@ -1999,7 +1999,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointBuilder receiveMessageWaitTimeSeconds(
                 Integer receiveMessageWaitTimeSeconds) {
-            setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
+            doSetProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
         }
         /**
@@ -2014,7 +2014,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default SqsEndpointBuilder receiveMessageWaitTimeSeconds(
                 String receiveMessageWaitTimeSeconds) {
-            setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
+            doSetProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
         }
         /**
@@ -2026,7 +2026,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: queue
          */
         default SqsEndpointBuilder redrivePolicy(String redrivePolicy) {
-            setProperty("redrivePolicy", redrivePolicy);
+            doSetProperty("redrivePolicy", redrivePolicy);
             return this;
         }
         /**
@@ -2037,7 +2037,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: security
          */
         default SqsEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -2048,7 +2048,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: security
          */
         default SqsEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -2072,7 +2072,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2085,7 +2085,7 @@ public interface SqsEndpointBuilderFactory {
          */
         default AdvancedSqsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2097,7 +2097,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder delayQueue(boolean delayQueue) {
-            setProperty("delayQueue", delayQueue);
+            doSetProperty("delayQueue", delayQueue);
             return this;
         }
         /**
@@ -2109,7 +2109,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder delayQueue(String delayQueue) {
-            setProperty("delayQueue", delayQueue);
+            doSetProperty("delayQueue", delayQueue);
             return this;
         }
         /**
@@ -2123,7 +2123,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder queueUrl(String queueUrl) {
-            setProperty("queueUrl", queueUrl);
+            doSetProperty("queueUrl", queueUrl);
             return this;
         }
         /**
@@ -2135,7 +2135,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2147,7 +2147,7 @@ public interface SqsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

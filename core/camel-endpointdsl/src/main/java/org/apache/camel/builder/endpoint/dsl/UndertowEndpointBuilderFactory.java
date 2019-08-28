@@ -60,7 +60,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder useStreaming(
                 boolean useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: common
          */
         default UndertowEndpointConsumerBuilder useStreaming(String useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: consumer
          */
         default UndertowEndpointConsumerBuilder accessLog(Boolean accessLog) {
-            setProperty("accessLog", accessLog);
+            doSetProperty("accessLog", accessLog);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: consumer
          */
         default UndertowEndpointConsumerBuilder accessLog(String accessLog) {
-            setProperty("accessLog", accessLog);
+            doSetProperty("accessLog", accessLog);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -150,7 +150,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
-            setProperty("httpMethodRestrict", httpMethodRestrict);
+            doSetProperty("httpMethodRestrict", httpMethodRestrict);
             return this;
         }
         /**
@@ -163,7 +163,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder matchOnUriPrefix(
                 Boolean matchOnUriPrefix) {
-            setProperty("matchOnUriPrefix", matchOnUriPrefix);
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
-            setProperty("matchOnUriPrefix", matchOnUriPrefix);
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder optionsEnabled(
                 boolean optionsEnabled) {
-            setProperty("optionsEnabled", optionsEnabled);
+            doSetProperty("optionsEnabled", optionsEnabled);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder optionsEnabled(
                 String optionsEnabled) {
-            setProperty("optionsEnabled", optionsEnabled);
+            doSetProperty("optionsEnabled", optionsEnabled);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder fireWebSocketChannelEvents(
                 boolean fireWebSocketChannelEvents) {
-            setProperty("fireWebSocketChannelEvents", fireWebSocketChannelEvents);
+            doSetProperty("fireWebSocketChannelEvents", fireWebSocketChannelEvents);
             return this;
         }
         /**
@@ -231,7 +231,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder fireWebSocketChannelEvents(
                 String fireWebSocketChannelEvents) {
-            setProperty("fireWebSocketChannelEvents", fireWebSocketChannelEvents);
+            doSetProperty("fireWebSocketChannelEvents", fireWebSocketChannelEvents);
             return this;
         }
         /**
@@ -244,7 +244,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -257,7 +257,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -284,7 +284,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -312,7 +312,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -325,7 +325,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -344,7 +344,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder handlers(
                 Set<Object> handlers) {
-            setProperty("handlers", handlers);
+            doSetProperty("handlers", handlers);
             return this;
         }
         /**
@@ -362,7 +362,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedUndertowEndpointConsumerBuilder handlers(String handlers) {
-            setProperty("handlers", handlers);
+            doSetProperty("handlers", handlers);
             return this;
         }
         /**
@@ -377,7 +377,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder accessLogReceiver(
                 Object accessLogReceiver) {
-            setProperty("accessLogReceiver", accessLogReceiver);
+            doSetProperty("accessLogReceiver", accessLogReceiver);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder accessLogReceiver(
                 String accessLogReceiver) {
-            setProperty("accessLogReceiver", accessLogReceiver);
+            doSetProperty("accessLogReceiver", accessLogReceiver);
             return this;
         }
         /**
@@ -405,7 +405,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -432,7 +432,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -446,7 +446,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -459,7 +459,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -472,7 +472,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -487,7 +487,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder undertowHttpBinding(
                 Object undertowHttpBinding) {
-            setProperty("undertowHttpBinding", undertowHttpBinding);
+            doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
         }
         /**
@@ -502,7 +502,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointConsumerBuilder undertowHttpBinding(
                 String undertowHttpBinding) {
-            setProperty("undertowHttpBinding", undertowHttpBinding);
+            doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
         }
     }
@@ -531,7 +531,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder useStreaming(
                 boolean useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -548,7 +548,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: common
          */
         default UndertowEndpointProducerBuilder useStreaming(String useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -561,7 +561,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder cookieHandler(
                 Object cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -574,7 +574,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder cookieHandler(
                 String cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -585,7 +585,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: producer
          */
         default UndertowEndpointProducerBuilder keepAlive(Boolean keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -597,7 +597,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: producer
          */
         default UndertowEndpointProducerBuilder keepAlive(String keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -617,7 +617,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -637,7 +637,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -653,7 +653,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder options(
                 Map<String, Object> options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -669,7 +669,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: producer
          */
         default UndertowEndpointProducerBuilder options(String options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -681,7 +681,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder reuseAddresses(
                 Boolean reuseAddresses) {
-            setProperty("reuseAddresses", reuseAddresses);
+            doSetProperty("reuseAddresses", reuseAddresses);
             return this;
         }
         /**
@@ -694,7 +694,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder reuseAddresses(
                 String reuseAddresses) {
-            setProperty("reuseAddresses", reuseAddresses);
+            doSetProperty("reuseAddresses", reuseAddresses);
             return this;
         }
         /**
@@ -705,7 +705,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: producer
          */
         default UndertowEndpointProducerBuilder tcpNoDelay(Boolean tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -717,7 +717,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: producer
          */
         default UndertowEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -731,7 +731,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder throwExceptionOnFailure(
                 Boolean throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -746,7 +746,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -765,7 +765,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder transferException(
                 Boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -785,7 +785,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -797,7 +797,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: websocket
          */
         default UndertowEndpointProducerBuilder sendTimeout(Integer sendTimeout) {
-            setProperty("sendTimeout", sendTimeout);
+            doSetProperty("sendTimeout", sendTimeout);
             return this;
         }
         /**
@@ -810,7 +810,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: websocket
          */
         default UndertowEndpointProducerBuilder sendTimeout(String sendTimeout) {
-            setProperty("sendTimeout", sendTimeout);
+            doSetProperty("sendTimeout", sendTimeout);
             return this;
         }
         /**
@@ -823,7 +823,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: websocket
          */
         default UndertowEndpointProducerBuilder sendToAll(Boolean sendToAll) {
-            setProperty("sendToAll", sendToAll);
+            doSetProperty("sendToAll", sendToAll);
             return this;
         }
         /**
@@ -837,7 +837,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: websocket
          */
         default UndertowEndpointProducerBuilder sendToAll(String sendToAll) {
-            setProperty("sendToAll", sendToAll);
+            doSetProperty("sendToAll", sendToAll);
             return this;
         }
         /**
@@ -850,7 +850,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -863,7 +863,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -889,7 +889,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointProducerBuilder accessLogReceiver(
                 Object accessLogReceiver) {
-            setProperty("accessLogReceiver", accessLogReceiver);
+            doSetProperty("accessLogReceiver", accessLogReceiver);
             return this;
         }
         /**
@@ -904,7 +904,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointProducerBuilder accessLogReceiver(
                 String accessLogReceiver) {
-            setProperty("accessLogReceiver", accessLogReceiver);
+            doSetProperty("accessLogReceiver", accessLogReceiver);
             return this;
         }
         /**
@@ -917,7 +917,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -930,7 +930,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -944,7 +944,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -958,7 +958,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -971,7 +971,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -984,7 +984,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -999,7 +999,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointProducerBuilder undertowHttpBinding(
                 Object undertowHttpBinding) {
-            setProperty("undertowHttpBinding", undertowHttpBinding);
+            doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
         }
         /**
@@ -1014,7 +1014,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointProducerBuilder undertowHttpBinding(
                 String undertowHttpBinding) {
-            setProperty("undertowHttpBinding", undertowHttpBinding);
+            doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
         }
     }
@@ -1042,7 +1042,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: common
          */
         default UndertowEndpointBuilder useStreaming(boolean useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -1059,7 +1059,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: common
          */
         default UndertowEndpointBuilder useStreaming(String useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -1072,7 +1072,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1085,7 +1085,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default UndertowEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -1111,7 +1111,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointBuilder accessLogReceiver(
                 Object accessLogReceiver) {
-            setProperty("accessLogReceiver", accessLogReceiver);
+            doSetProperty("accessLogReceiver", accessLogReceiver);
             return this;
         }
         /**
@@ -1126,7 +1126,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointBuilder accessLogReceiver(
                 String accessLogReceiver) {
-            setProperty("accessLogReceiver", accessLogReceiver);
+            doSetProperty("accessLogReceiver", accessLogReceiver);
             return this;
         }
         /**
@@ -1139,7 +1139,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1152,7 +1152,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1166,7 +1166,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1180,7 +1180,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1192,7 +1192,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1204,7 +1204,7 @@ public interface UndertowEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1219,7 +1219,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointBuilder undertowHttpBinding(
                 Object undertowHttpBinding) {
-            setProperty("undertowHttpBinding", undertowHttpBinding);
+            doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
         }
         /**
@@ -1234,7 +1234,7 @@ public interface UndertowEndpointBuilderFactory {
          */
         default AdvancedUndertowEndpointBuilder undertowHttpBinding(
                 String undertowHttpBinding) {
-            setProperty("undertowHttpBinding", undertowHttpBinding);
+            doSetProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
         }
     }

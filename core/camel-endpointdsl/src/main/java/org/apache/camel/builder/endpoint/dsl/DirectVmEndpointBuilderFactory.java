@@ -58,7 +58,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default DirectVmEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default DirectVmEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -103,7 +103,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -157,7 +157,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -183,7 +183,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointConsumerBuilder propagateProperties(
                 boolean propagateProperties) {
-            setProperty("propagateProperties", propagateProperties);
+            doSetProperty("propagateProperties", propagateProperties);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointConsumerBuilder propagateProperties(
                 String propagateProperties) {
-            setProperty("propagateProperties", propagateProperties);
+            doSetProperty("propagateProperties", propagateProperties);
             return this;
         }
         /**
@@ -209,7 +209,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -222,7 +222,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -246,7 +246,7 @@ public interface DirectVmEndpointBuilderFactory {
          * Group: producer
          */
         default DirectVmEndpointProducerBuilder block(boolean block) {
-            setProperty("block", block);
+            doSetProperty("block", block);
             return this;
         }
         /**
@@ -259,7 +259,7 @@ public interface DirectVmEndpointBuilderFactory {
          * Group: producer
          */
         default DirectVmEndpointProducerBuilder block(String block) {
-            setProperty("block", block);
+            doSetProperty("block", block);
             return this;
         }
         /**
@@ -272,7 +272,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default DirectVmEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
-            setProperty("failIfNoConsumers", failIfNoConsumers);
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
         }
         /**
@@ -285,7 +285,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default DirectVmEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
-            setProperty("failIfNoConsumers", failIfNoConsumers);
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
         }
         /**
@@ -305,7 +305,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default DirectVmEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -325,7 +325,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default DirectVmEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -336,7 +336,7 @@ public interface DirectVmEndpointBuilderFactory {
          * Group: producer
          */
         default DirectVmEndpointProducerBuilder timeout(long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -347,7 +347,7 @@ public interface DirectVmEndpointBuilderFactory {
          * Group: producer
          */
         default DirectVmEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -373,7 +373,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -388,7 +388,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -401,7 +401,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -414,7 +414,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -427,7 +427,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointProducerBuilder propagateProperties(
                 boolean propagateProperties) {
-            setProperty("propagateProperties", propagateProperties);
+            doSetProperty("propagateProperties", propagateProperties);
             return this;
         }
         /**
@@ -440,7 +440,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointProducerBuilder propagateProperties(
                 String propagateProperties) {
-            setProperty("propagateProperties", propagateProperties);
+            doSetProperty("propagateProperties", propagateProperties);
             return this;
         }
         /**
@@ -453,7 +453,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -466,7 +466,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -501,7 +501,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -514,7 +514,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -527,7 +527,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointBuilder propagateProperties(
                 boolean propagateProperties) {
-            setProperty("propagateProperties", propagateProperties);
+            doSetProperty("propagateProperties", propagateProperties);
             return this;
         }
         /**
@@ -540,7 +540,7 @@ public interface DirectVmEndpointBuilderFactory {
          */
         default AdvancedDirectVmEndpointBuilder propagateProperties(
                 String propagateProperties) {
-            setProperty("propagateProperties", propagateProperties);
+            doSetProperty("propagateProperties", propagateProperties);
             return this;
         }
         /**
@@ -552,7 +552,7 @@ public interface DirectVmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDirectVmEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface DirectVmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDirectVmEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

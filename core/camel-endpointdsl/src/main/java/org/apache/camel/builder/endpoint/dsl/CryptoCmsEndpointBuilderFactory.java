@@ -52,7 +52,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: common
          */
         default CryptoCmsEndpointBuilder keyStore(KeyStore keyStore) {
-            setProperty("keyStore", keyStore);
+            doSetProperty("keyStore", keyStore);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: common
          */
         default CryptoCmsEndpointBuilder keyStore(String keyStore) {
-            setProperty("keyStore", keyStore);
+            doSetProperty("keyStore", keyStore);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder keyStoreParameters(
                 Object keyStoreParameters) {
-            setProperty("keyStoreParameters", keyStoreParameters);
+            doSetProperty("keyStoreParameters", keyStoreParameters);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder keyStoreParameters(
                 String keyStoreParameters) {
-            setProperty("keyStoreParameters", keyStoreParameters);
+            doSetProperty("keyStoreParameters", keyStoreParameters);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: decrypt
          */
         default CryptoCmsEndpointBuilder password(Character[] password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -125,7 +125,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: decrypt
          */
         default CryptoCmsEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -137,7 +137,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: decrypt_verify
          */
         default CryptoCmsEndpointBuilder fromBase64(boolean fromBase64) {
-            setProperty("fromBase64", fromBase64);
+            doSetProperty("fromBase64", fromBase64);
             return this;
         }
         /**
@@ -149,7 +149,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: decrypt_verify
          */
         default CryptoCmsEndpointBuilder fromBase64(String fromBase64) {
-            setProperty("fromBase64", fromBase64);
+            doSetProperty("fromBase64", fromBase64);
             return this;
         }
         /**
@@ -163,7 +163,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder contentEncryptionAlgorithm(
                 String contentEncryptionAlgorithm) {
-            setProperty("contentEncryptionAlgorithm", contentEncryptionAlgorithm);
+            doSetProperty("contentEncryptionAlgorithm", contentEncryptionAlgorithm);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder originatorInformationProvider(
                 Object originatorInformationProvider) {
-            setProperty("originatorInformationProvider", originatorInformationProvider);
+            doSetProperty("originatorInformationProvider", originatorInformationProvider);
             return this;
         }
         /**
@@ -193,7 +193,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder originatorInformationProvider(
                 String originatorInformationProvider) {
-            setProperty("originatorInformationProvider", originatorInformationProvider);
+            doSetProperty("originatorInformationProvider", originatorInformationProvider);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder recipient(List<Object> recipient) {
-            setProperty("recipient", recipient);
+            doSetProperty("recipient", recipient);
             return this;
         }
         /**
@@ -219,7 +219,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder recipient(String recipient) {
-            setProperty("recipient", recipient);
+            doSetProperty("recipient", recipient);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder secretKeyLength(int secretKeyLength) {
-            setProperty("secretKeyLength", secretKeyLength);
+            doSetProperty("secretKeyLength", secretKeyLength);
             return this;
         }
         /**
@@ -257,7 +257,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder secretKeyLength(String secretKeyLength) {
-            setProperty("secretKeyLength", secretKeyLength);
+            doSetProperty("secretKeyLength", secretKeyLength);
             return this;
         }
         /**
@@ -273,7 +273,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
                 Object unprotectedAttributesGeneratorProvider) {
-            setProperty("unprotectedAttributesGeneratorProvider", unprotectedAttributesGeneratorProvider);
+            doSetProperty("unprotectedAttributesGeneratorProvider", unprotectedAttributesGeneratorProvider);
             return this;
         }
         /**
@@ -289,7 +289,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
                 String unprotectedAttributesGeneratorProvider) {
-            setProperty("unprotectedAttributesGeneratorProvider", unprotectedAttributesGeneratorProvider);
+            doSetProperty("unprotectedAttributesGeneratorProvider", unprotectedAttributesGeneratorProvider);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt_sign
          */
         default CryptoCmsEndpointBuilder toBase64(Boolean toBase64) {
-            setProperty("toBase64", toBase64);
+            doSetProperty("toBase64", toBase64);
             return this;
         }
         /**
@@ -314,7 +314,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt_sign
          */
         default CryptoCmsEndpointBuilder toBase64(String toBase64) {
-            setProperty("toBase64", toBase64);
+            doSetProperty("toBase64", toBase64);
             return this;
         }
         /**
@@ -327,7 +327,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: sign
          */
         default CryptoCmsEndpointBuilder includeContent(Boolean includeContent) {
-            setProperty("includeContent", includeContent);
+            doSetProperty("includeContent", includeContent);
             return this;
         }
         /**
@@ -341,7 +341,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: sign
          */
         default CryptoCmsEndpointBuilder includeContent(String includeContent) {
-            setProperty("includeContent", includeContent);
+            doSetProperty("includeContent", includeContent);
             return this;
         }
         /**
@@ -355,7 +355,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: sign
          */
         default CryptoCmsEndpointBuilder signer(List<Object> signer) {
-            setProperty("signer", signer);
+            doSetProperty("signer", signer);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: sign
          */
         default CryptoCmsEndpointBuilder signer(String signer) {
-            setProperty("signer", signer);
+            doSetProperty("signer", signer);
             return this;
         }
         /**
@@ -384,7 +384,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder signedDataHeaderBase64(
                 boolean signedDataHeaderBase64) {
-            setProperty("signedDataHeaderBase64", signedDataHeaderBase64);
+            doSetProperty("signedDataHeaderBase64", signedDataHeaderBase64);
             return this;
         }
         /**
@@ -399,7 +399,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder signedDataHeaderBase64(
                 String signedDataHeaderBase64) {
-            setProperty("signedDataHeaderBase64", signedDataHeaderBase64);
+            doSetProperty("signedDataHeaderBase64", signedDataHeaderBase64);
             return this;
         }
         /**
@@ -414,7 +414,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
                 boolean verifySignaturesOfAllSigners) {
-            setProperty("verifySignaturesOfAllSigners", verifySignaturesOfAllSigners);
+            doSetProperty("verifySignaturesOfAllSigners", verifySignaturesOfAllSigners);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
                 String verifySignaturesOfAllSigners) {
-            setProperty("verifySignaturesOfAllSigners", verifySignaturesOfAllSigners);
+            doSetProperty("verifySignaturesOfAllSigners", verifySignaturesOfAllSigners);
             return this;
         }
     }
@@ -453,7 +453,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default AdvancedCryptoCmsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -466,7 +466,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default AdvancedCryptoCmsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -478,7 +478,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCryptoCmsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -490,7 +490,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCryptoCmsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

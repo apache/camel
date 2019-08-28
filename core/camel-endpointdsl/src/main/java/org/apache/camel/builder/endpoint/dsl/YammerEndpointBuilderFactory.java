@@ -56,7 +56,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: common
          */
         default YammerEndpointConsumerBuilder useJson(boolean useJson) {
-            setProperty("useJson", useJson);
+            doSetProperty("useJson", useJson);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: common
          */
         default YammerEndpointConsumerBuilder useJson(String useJson) {
-            setProperty("useJson", useJson);
+            doSetProperty("useJson", useJson);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder limit(int limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -150,7 +150,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder limit(String limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder newerThan(long newerThan) {
-            setProperty("newerThan", newerThan);
+            doSetProperty("newerThan", newerThan);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder newerThan(String newerThan) {
-            setProperty("newerThan", newerThan);
+            doSetProperty("newerThan", newerThan);
             return this;
         }
         /**
@@ -197,7 +197,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder olderThan(long olderThan) {
-            setProperty("olderThan", olderThan);
+            doSetProperty("olderThan", olderThan);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder olderThan(String olderThan) {
-            setProperty("olderThan", olderThan);
+            doSetProperty("olderThan", olderThan);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder threaded(String threaded) {
-            setProperty("threaded", threaded);
+            doSetProperty("threaded", threaded);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -278,7 +278,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -291,7 +291,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -304,7 +304,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -317,7 +317,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -334,7 +334,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -351,7 +351,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -363,7 +363,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -375,7 +375,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -388,7 +388,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -401,7 +401,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -414,7 +414,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -428,7 +428,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -443,7 +443,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -458,7 +458,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -470,7 +470,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -484,7 +484,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -499,7 +499,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -511,7 +511,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -523,7 +523,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -534,7 +534,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -546,7 +546,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -559,7 +559,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -583,7 +583,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: security
          */
         default YammerEndpointConsumerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -595,7 +595,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: security
          */
         default YammerEndpointConsumerBuilder consumerKey(String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -608,7 +608,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointConsumerBuilder consumerSecret(
                 String consumerSecret) {
-            setProperty("consumerSecret", consumerSecret);
+            doSetProperty("consumerSecret", consumerSecret);
             return this;
         }
     }
@@ -635,7 +635,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -651,7 +651,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -663,7 +663,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -676,7 +676,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -692,7 +692,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -708,7 +708,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -721,7 +721,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -734,7 +734,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -747,7 +747,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -760,7 +760,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -783,7 +783,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: common
          */
         default YammerEndpointProducerBuilder useJson(boolean useJson) {
-            setProperty("useJson", useJson);
+            doSetProperty("useJson", useJson);
             return this;
         }
         /**
@@ -795,7 +795,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: common
          */
         default YammerEndpointProducerBuilder useJson(String useJson) {
-            setProperty("useJson", useJson);
+            doSetProperty("useJson", useJson);
             return this;
         }
         /**
@@ -815,7 +815,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -835,7 +835,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -847,7 +847,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: security
          */
         default YammerEndpointProducerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -859,7 +859,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: security
          */
         default YammerEndpointProducerBuilder consumerKey(String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -872,7 +872,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default YammerEndpointProducerBuilder consumerSecret(
                 String consumerSecret) {
-            setProperty("consumerSecret", consumerSecret);
+            doSetProperty("consumerSecret", consumerSecret);
             return this;
         }
     }
@@ -896,7 +896,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -909,7 +909,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -922,7 +922,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -935,7 +935,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -958,7 +958,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: common
          */
         default YammerEndpointBuilder useJson(boolean useJson) {
-            setProperty("useJson", useJson);
+            doSetProperty("useJson", useJson);
             return this;
         }
         /**
@@ -970,7 +970,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: common
          */
         default YammerEndpointBuilder useJson(String useJson) {
-            setProperty("useJson", useJson);
+            doSetProperty("useJson", useJson);
             return this;
         }
         /**
@@ -982,7 +982,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: security
          */
         default YammerEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -994,7 +994,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: security
          */
         default YammerEndpointBuilder consumerKey(String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -1006,7 +1006,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: security
          */
         default YammerEndpointBuilder consumerSecret(String consumerSecret) {
-            setProperty("consumerSecret", consumerSecret);
+            doSetProperty("consumerSecret", consumerSecret);
             return this;
         }
     }
@@ -1030,7 +1030,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1043,7 +1043,7 @@ public interface YammerEndpointBuilderFactory {
          */
         default AdvancedYammerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1055,7 +1055,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedYammerEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1067,7 +1067,7 @@ public interface YammerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedYammerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

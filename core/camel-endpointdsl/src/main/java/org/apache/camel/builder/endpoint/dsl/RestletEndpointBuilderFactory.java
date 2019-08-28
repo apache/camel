@@ -54,7 +54,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointConsumerBuilder restletMethod(
                 Object restletMethod) {
-            setProperty("restletMethod", restletMethod);
+            doSetProperty("restletMethod", restletMethod);
             return this;
         }
         /**
@@ -69,7 +69,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointConsumerBuilder restletMethod(
                 String restletMethod) {
-            setProperty("restletMethod", restletMethod);
+            doSetProperty("restletMethod", restletMethod);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -122,7 +122,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointConsumerBuilder restletMethods(
                 String restletMethods) {
-            setProperty("restletMethods", restletMethods);
+            doSetProperty("restletMethods", restletMethods);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointConsumerBuilder restletRealm(
                 Map<String, String> restletRealm) {
-            setProperty("restletRealm", restletRealm);
+            doSetProperty("restletRealm", restletRealm);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface RestletEndpointBuilderFactory {
          * Group: security
          */
         default RestletEndpointConsumerBuilder restletRealm(String restletRealm) {
-            setProperty("restletRealm", restletRealm);
+            doSetProperty("restletRealm", restletRealm);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -174,7 +174,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -206,7 +206,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder disableStreamCache(
                 String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -259,7 +259,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -271,7 +271,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -284,7 +284,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -297,7 +297,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -310,7 +310,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -324,7 +324,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -338,7 +338,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -352,7 +352,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder restletBinding(
                 Object restletBinding) {
-            setProperty("restletBinding", restletBinding);
+            doSetProperty("restletBinding", restletBinding);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder restletBinding(
                 String restletBinding) {
-            setProperty("restletBinding", restletBinding);
+            doSetProperty("restletBinding", restletBinding);
             return this;
         }
         /**
@@ -379,7 +379,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder synchronous(
                 Boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -418,7 +418,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder restletMethod(
                 Object restletMethod) {
-            setProperty("restletMethod", restletMethod);
+            doSetProperty("restletMethod", restletMethod);
             return this;
         }
         /**
@@ -433,7 +433,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder restletMethod(
                 String restletMethod) {
-            setProperty("restletMethod", restletMethod);
+            doSetProperty("restletMethod", restletMethod);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface RestletEndpointBuilderFactory {
          * Group: producer
          */
         default RestletEndpointProducerBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -458,7 +458,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -471,7 +471,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder cookieHandler(
                 Object cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -484,7 +484,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder cookieHandler(
                 String cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -504,7 +504,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -524,7 +524,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -535,7 +535,7 @@ public interface RestletEndpointBuilderFactory {
          * Group: producer
          */
         default RestletEndpointProducerBuilder socketTimeout(int socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -547,7 +547,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder socketTimeout(
                 String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -561,7 +561,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -575,7 +575,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -588,7 +588,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder restletRealm(
                 Map<String, String> restletRealm) {
-            setProperty("restletRealm", restletRealm);
+            doSetProperty("restletRealm", restletRealm);
             return this;
         }
         /**
@@ -601,7 +601,7 @@ public interface RestletEndpointBuilderFactory {
          * Group: security
          */
         default RestletEndpointProducerBuilder restletRealm(String restletRealm) {
-            setProperty("restletRealm", restletRealm);
+            doSetProperty("restletRealm", restletRealm);
             return this;
         }
         /**
@@ -614,7 +614,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -627,7 +627,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -656,7 +656,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder autoCloseStream(
                 boolean autoCloseStream) {
-            setProperty("autoCloseStream", autoCloseStream);
+            doSetProperty("autoCloseStream", autoCloseStream);
             return this;
         }
         /**
@@ -674,7 +674,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder autoCloseStream(
                 String autoCloseStream) {
-            setProperty("autoCloseStream", autoCloseStream);
+            doSetProperty("autoCloseStream", autoCloseStream);
             return this;
         }
         /**
@@ -693,7 +693,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder streamRepresentation(
                 boolean streamRepresentation) {
-            setProperty("streamRepresentation", streamRepresentation);
+            doSetProperty("streamRepresentation", streamRepresentation);
             return this;
         }
         /**
@@ -712,7 +712,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder streamRepresentation(
                 String streamRepresentation) {
-            setProperty("streamRepresentation", streamRepresentation);
+            doSetProperty("streamRepresentation", streamRepresentation);
             return this;
         }
         /**
@@ -725,7 +725,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -738,7 +738,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -752,7 +752,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -766,7 +766,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -780,7 +780,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder restletBinding(
                 Object restletBinding) {
-            setProperty("restletBinding", restletBinding);
+            doSetProperty("restletBinding", restletBinding);
             return this;
         }
         /**
@@ -794,7 +794,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder restletBinding(
                 String restletBinding) {
-            setProperty("restletBinding", restletBinding);
+            doSetProperty("restletBinding", restletBinding);
             return this;
         }
         /**
@@ -807,7 +807,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder synchronous(
                 Boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -821,7 +821,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -845,7 +845,7 @@ public interface RestletEndpointBuilderFactory {
          * Group: common
          */
         default RestletEndpointBuilder restletMethod(Object restletMethod) {
-            setProperty("restletMethod", restletMethod);
+            doSetProperty("restletMethod", restletMethod);
             return this;
         }
         /**
@@ -859,7 +859,7 @@ public interface RestletEndpointBuilderFactory {
          * Group: common
          */
         default RestletEndpointBuilder restletMethod(String restletMethod) {
-            setProperty("restletMethod", restletMethod);
+            doSetProperty("restletMethod", restletMethod);
             return this;
         }
         /**
@@ -872,7 +872,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointBuilder restletRealm(
                 Map<String, String> restletRealm) {
-            setProperty("restletRealm", restletRealm);
+            doSetProperty("restletRealm", restletRealm);
             return this;
         }
         /**
@@ -885,7 +885,7 @@ public interface RestletEndpointBuilderFactory {
          * Group: security
          */
         default RestletEndpointBuilder restletRealm(String restletRealm) {
-            setProperty("restletRealm", restletRealm);
+            doSetProperty("restletRealm", restletRealm);
             return this;
         }
         /**
@@ -898,7 +898,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -911,7 +911,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default RestletEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -935,7 +935,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -948,7 +948,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -962,7 +962,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -976,7 +976,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -990,7 +990,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointBuilder restletBinding(
                 Object restletBinding) {
-            setProperty("restletBinding", restletBinding);
+            doSetProperty("restletBinding", restletBinding);
             return this;
         }
         /**
@@ -1004,7 +1004,7 @@ public interface RestletEndpointBuilderFactory {
          */
         default AdvancedRestletEndpointBuilder restletBinding(
                 String restletBinding) {
-            setProperty("restletBinding", restletBinding);
+            doSetProperty("restletBinding", restletBinding);
             return this;
         }
         /**
@@ -1016,7 +1016,7 @@ public interface RestletEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRestletEndpointBuilder synchronous(Boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1029,7 +1029,7 @@ public interface RestletEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRestletEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

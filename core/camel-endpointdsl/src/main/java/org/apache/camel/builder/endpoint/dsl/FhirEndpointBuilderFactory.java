@@ -49,7 +49,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointConsumerBuilder encoding(EncodingEnum encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointConsumerBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default FhirEndpointConsumerBuilder fhirVersion(
                 FhirVersionEnum fhirVersion) {
-            setProperty("fhirVersion", fhirVersion);
+            doSetProperty("fhirVersion", fhirVersion);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointConsumerBuilder fhirVersion(String fhirVersion) {
-            setProperty("fhirVersion", fhirVersion);
+            doSetProperty("fhirVersion", fhirVersion);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -108,7 +108,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointConsumerBuilder log(boolean log) {
-            setProperty("log", log);
+            doSetProperty("log", log);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointConsumerBuilder log(String log) {
-            setProperty("log", log);
+            doSetProperty("log", log);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointConsumerBuilder prettyPrint(boolean prettyPrint) {
-            setProperty("prettyPrint", prettyPrint);
+            doSetProperty("prettyPrint", prettyPrint);
             return this;
         }
         /**
@@ -141,7 +141,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointConsumerBuilder prettyPrint(String prettyPrint) {
-            setProperty("prettyPrint", prettyPrint);
+            doSetProperty("prettyPrint", prettyPrint);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointConsumerBuilder serverUrl(String serverUrl) {
-            setProperty("serverUrl", serverUrl);
+            doSetProperty("serverUrl", serverUrl);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default FhirEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default FhirEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -199,7 +199,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -210,7 +210,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyPassword(String proxyPassword) {
-            setProperty("proxyPassword", proxyPassword);
+            doSetProperty("proxyPassword", proxyPassword);
             return this;
         }
         /**
@@ -221,7 +221,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -233,7 +233,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -244,7 +244,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyUser(String proxyUser) {
-            setProperty("proxyUser", proxyUser);
+            doSetProperty("proxyUser", proxyUser);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: security
          */
         default FhirEndpointConsumerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -266,7 +266,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: security
          */
         default FhirEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -277,7 +277,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: security
          */
         default FhirEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -304,7 +304,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -320,7 +320,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -332,7 +332,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -345,7 +345,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -358,7 +358,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -371,7 +371,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -383,7 +383,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder client(Object client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder client(String client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -408,7 +408,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder clientFactory(
                 Object clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -421,7 +421,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder clientFactory(
                 String clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -432,7 +432,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder compress(boolean compress) {
-            setProperty("compress", compress);
+            doSetProperty("compress", compress);
             return this;
         }
         /**
@@ -443,7 +443,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder compress(String compress) {
-            setProperty("compress", compress);
+            doSetProperty("compress", compress);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -468,7 +468,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -482,7 +482,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder deferModelScanning(
                 boolean deferModelScanning) {
-            setProperty("deferModelScanning", deferModelScanning);
+            doSetProperty("deferModelScanning", deferModelScanning);
             return this;
         }
         /**
@@ -496,7 +496,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder deferModelScanning(
                 String deferModelScanning) {
-            setProperty("deferModelScanning", deferModelScanning);
+            doSetProperty("deferModelScanning", deferModelScanning);
             return this;
         }
         /**
@@ -509,7 +509,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder fhirContext(
                 Object fhirContext) {
-            setProperty("fhirContext", fhirContext);
+            doSetProperty("fhirContext", fhirContext);
             return this;
         }
         /**
@@ -523,7 +523,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder fhirContext(
                 String fhirContext) {
-            setProperty("fhirContext", fhirContext);
+            doSetProperty("fhirContext", fhirContext);
             return this;
         }
         /**
@@ -535,7 +535,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder forceConformanceCheck(
                 boolean forceConformanceCheck) {
-            setProperty("forceConformanceCheck", forceConformanceCheck);
+            doSetProperty("forceConformanceCheck", forceConformanceCheck);
             return this;
         }
         /**
@@ -547,7 +547,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder forceConformanceCheck(
                 String forceConformanceCheck) {
-            setProperty("forceConformanceCheck", forceConformanceCheck);
+            doSetProperty("forceConformanceCheck", forceConformanceCheck);
             return this;
         }
         /**
@@ -559,7 +559,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder sessionCookie(
                 String sessionCookie) {
-            setProperty("sessionCookie", sessionCookie);
+            doSetProperty("sessionCookie", sessionCookie);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder socketTimeout(
                 Integer socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -584,7 +584,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder socketTimeout(
                 String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -595,7 +595,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder summary(SummaryEnum summary) {
-            setProperty("summary", summary);
+            doSetProperty("summary", summary);
             return this;
         }
         /**
@@ -607,7 +607,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder summary(String summary) {
-            setProperty("summary", summary);
+            doSetProperty("summary", summary);
             return this;
         }
         /**
@@ -620,7 +620,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -633,7 +633,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -647,7 +647,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder validationMode(
                 ServerValidationModeEnum validationMode) {
-            setProperty("validationMode", validationMode);
+            doSetProperty("validationMode", validationMode);
             return this;
         }
         /**
@@ -661,7 +661,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointConsumerBuilder validationMode(
                 String validationMode) {
-            setProperty("validationMode", validationMode);
+            doSetProperty("validationMode", validationMode);
             return this;
         }
     }
@@ -683,7 +683,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointProducerBuilder encoding(EncodingEnum encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -695,7 +695,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointProducerBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -708,7 +708,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default FhirEndpointProducerBuilder fhirVersion(
                 FhirVersionEnum fhirVersion) {
-            setProperty("fhirVersion", fhirVersion);
+            doSetProperty("fhirVersion", fhirVersion);
             return this;
         }
         /**
@@ -720,7 +720,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointProducerBuilder fhirVersion(String fhirVersion) {
-            setProperty("fhirVersion", fhirVersion);
+            doSetProperty("fhirVersion", fhirVersion);
             return this;
         }
         /**
@@ -731,7 +731,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -742,7 +742,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointProducerBuilder log(boolean log) {
-            setProperty("log", log);
+            doSetProperty("log", log);
             return this;
         }
         /**
@@ -753,7 +753,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointProducerBuilder log(String log) {
-            setProperty("log", log);
+            doSetProperty("log", log);
             return this;
         }
         /**
@@ -764,7 +764,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointProducerBuilder prettyPrint(boolean prettyPrint) {
-            setProperty("prettyPrint", prettyPrint);
+            doSetProperty("prettyPrint", prettyPrint);
             return this;
         }
         /**
@@ -775,7 +775,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointProducerBuilder prettyPrint(String prettyPrint) {
-            setProperty("prettyPrint", prettyPrint);
+            doSetProperty("prettyPrint", prettyPrint);
             return this;
         }
         /**
@@ -786,7 +786,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointProducerBuilder serverUrl(String serverUrl) {
-            setProperty("serverUrl", serverUrl);
+            doSetProperty("serverUrl", serverUrl);
             return this;
         }
         /**
@@ -806,7 +806,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default FhirEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -826,7 +826,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default FhirEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -837,7 +837,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -848,7 +848,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyPassword(String proxyPassword) {
-            setProperty("proxyPassword", proxyPassword);
+            doSetProperty("proxyPassword", proxyPassword);
             return this;
         }
         /**
@@ -859,7 +859,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -871,7 +871,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -882,7 +882,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyUser(String proxyUser) {
-            setProperty("proxyUser", proxyUser);
+            doSetProperty("proxyUser", proxyUser);
             return this;
         }
         /**
@@ -893,7 +893,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: security
          */
         default FhirEndpointProducerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -904,7 +904,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: security
          */
         default FhirEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -915,7 +915,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: security
          */
         default FhirEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -939,7 +939,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -952,7 +952,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -964,7 +964,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder client(Object client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -976,7 +976,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder client(String client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -989,7 +989,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder clientFactory(
                 Object clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -1002,7 +1002,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder clientFactory(
                 String clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -1013,7 +1013,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder compress(boolean compress) {
-            setProperty("compress", compress);
+            doSetProperty("compress", compress);
             return this;
         }
         /**
@@ -1024,7 +1024,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder compress(String compress) {
-            setProperty("compress", compress);
+            doSetProperty("compress", compress);
             return this;
         }
         /**
@@ -1036,7 +1036,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1049,7 +1049,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1063,7 +1063,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder deferModelScanning(
                 boolean deferModelScanning) {
-            setProperty("deferModelScanning", deferModelScanning);
+            doSetProperty("deferModelScanning", deferModelScanning);
             return this;
         }
         /**
@@ -1077,7 +1077,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder deferModelScanning(
                 String deferModelScanning) {
-            setProperty("deferModelScanning", deferModelScanning);
+            doSetProperty("deferModelScanning", deferModelScanning);
             return this;
         }
         /**
@@ -1090,7 +1090,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder fhirContext(
                 Object fhirContext) {
-            setProperty("fhirContext", fhirContext);
+            doSetProperty("fhirContext", fhirContext);
             return this;
         }
         /**
@@ -1104,7 +1104,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder fhirContext(
                 String fhirContext) {
-            setProperty("fhirContext", fhirContext);
+            doSetProperty("fhirContext", fhirContext);
             return this;
         }
         /**
@@ -1116,7 +1116,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder forceConformanceCheck(
                 boolean forceConformanceCheck) {
-            setProperty("forceConformanceCheck", forceConformanceCheck);
+            doSetProperty("forceConformanceCheck", forceConformanceCheck);
             return this;
         }
         /**
@@ -1128,7 +1128,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder forceConformanceCheck(
                 String forceConformanceCheck) {
-            setProperty("forceConformanceCheck", forceConformanceCheck);
+            doSetProperty("forceConformanceCheck", forceConformanceCheck);
             return this;
         }
         /**
@@ -1140,7 +1140,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder sessionCookie(
                 String sessionCookie) {
-            setProperty("sessionCookie", sessionCookie);
+            doSetProperty("sessionCookie", sessionCookie);
             return this;
         }
         /**
@@ -1152,7 +1152,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder socketTimeout(
                 Integer socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -1165,7 +1165,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder socketTimeout(
                 String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -1176,7 +1176,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder summary(SummaryEnum summary) {
-            setProperty("summary", summary);
+            doSetProperty("summary", summary);
             return this;
         }
         /**
@@ -1188,7 +1188,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder summary(String summary) {
-            setProperty("summary", summary);
+            doSetProperty("summary", summary);
             return this;
         }
         /**
@@ -1201,7 +1201,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1214,7 +1214,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1228,7 +1228,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder validationMode(
                 ServerValidationModeEnum validationMode) {
-            setProperty("validationMode", validationMode);
+            doSetProperty("validationMode", validationMode);
             return this;
         }
         /**
@@ -1242,7 +1242,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointProducerBuilder validationMode(
                 String validationMode) {
-            setProperty("validationMode", validationMode);
+            doSetProperty("validationMode", validationMode);
             return this;
         }
     }
@@ -1264,7 +1264,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointBuilder encoding(EncodingEnum encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -1276,7 +1276,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -1288,7 +1288,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointBuilder fhirVersion(FhirVersionEnum fhirVersion) {
-            setProperty("fhirVersion", fhirVersion);
+            doSetProperty("fhirVersion", fhirVersion);
             return this;
         }
         /**
@@ -1300,7 +1300,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointBuilder fhirVersion(String fhirVersion) {
-            setProperty("fhirVersion", fhirVersion);
+            doSetProperty("fhirVersion", fhirVersion);
             return this;
         }
         /**
@@ -1311,7 +1311,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -1322,7 +1322,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointBuilder log(boolean log) {
-            setProperty("log", log);
+            doSetProperty("log", log);
             return this;
         }
         /**
@@ -1333,7 +1333,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointBuilder log(String log) {
-            setProperty("log", log);
+            doSetProperty("log", log);
             return this;
         }
         /**
@@ -1344,7 +1344,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointBuilder prettyPrint(boolean prettyPrint) {
-            setProperty("prettyPrint", prettyPrint);
+            doSetProperty("prettyPrint", prettyPrint);
             return this;
         }
         /**
@@ -1355,7 +1355,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointBuilder prettyPrint(String prettyPrint) {
-            setProperty("prettyPrint", prettyPrint);
+            doSetProperty("prettyPrint", prettyPrint);
             return this;
         }
         /**
@@ -1366,7 +1366,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: common
          */
         default FhirEndpointBuilder serverUrl(String serverUrl) {
-            setProperty("serverUrl", serverUrl);
+            doSetProperty("serverUrl", serverUrl);
             return this;
         }
         /**
@@ -1377,7 +1377,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -1388,7 +1388,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointBuilder proxyPassword(String proxyPassword) {
-            setProperty("proxyPassword", proxyPassword);
+            doSetProperty("proxyPassword", proxyPassword);
             return this;
         }
         /**
@@ -1399,7 +1399,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1411,7 +1411,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1422,7 +1422,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: proxy
          */
         default FhirEndpointBuilder proxyUser(String proxyUser) {
-            setProperty("proxyUser", proxyUser);
+            doSetProperty("proxyUser", proxyUser);
             return this;
         }
         /**
@@ -1433,7 +1433,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: security
          */
         default FhirEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -1444,7 +1444,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: security
          */
         default FhirEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1455,7 +1455,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: security
          */
         default FhirEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1479,7 +1479,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1492,7 +1492,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1504,7 +1504,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder client(Object client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -1516,7 +1516,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder client(String client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -1528,7 +1528,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder clientFactory(Object clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -1540,7 +1540,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder clientFactory(String clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -1551,7 +1551,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder compress(boolean compress) {
-            setProperty("compress", compress);
+            doSetProperty("compress", compress);
             return this;
         }
         /**
@@ -1562,7 +1562,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder compress(String compress) {
-            setProperty("compress", compress);
+            doSetProperty("compress", compress);
             return this;
         }
         /**
@@ -1574,7 +1574,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1587,7 +1587,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1601,7 +1601,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointBuilder deferModelScanning(
                 boolean deferModelScanning) {
-            setProperty("deferModelScanning", deferModelScanning);
+            doSetProperty("deferModelScanning", deferModelScanning);
             return this;
         }
         /**
@@ -1615,7 +1615,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointBuilder deferModelScanning(
                 String deferModelScanning) {
-            setProperty("deferModelScanning", deferModelScanning);
+            doSetProperty("deferModelScanning", deferModelScanning);
             return this;
         }
         /**
@@ -1627,7 +1627,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder fhirContext(Object fhirContext) {
-            setProperty("fhirContext", fhirContext);
+            doSetProperty("fhirContext", fhirContext);
             return this;
         }
         /**
@@ -1640,7 +1640,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder fhirContext(String fhirContext) {
-            setProperty("fhirContext", fhirContext);
+            doSetProperty("fhirContext", fhirContext);
             return this;
         }
         /**
@@ -1652,7 +1652,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointBuilder forceConformanceCheck(
                 boolean forceConformanceCheck) {
-            setProperty("forceConformanceCheck", forceConformanceCheck);
+            doSetProperty("forceConformanceCheck", forceConformanceCheck);
             return this;
         }
         /**
@@ -1664,7 +1664,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointBuilder forceConformanceCheck(
                 String forceConformanceCheck) {
-            setProperty("forceConformanceCheck", forceConformanceCheck);
+            doSetProperty("forceConformanceCheck", forceConformanceCheck);
             return this;
         }
         /**
@@ -1675,7 +1675,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder sessionCookie(String sessionCookie) {
-            setProperty("sessionCookie", sessionCookie);
+            doSetProperty("sessionCookie", sessionCookie);
             return this;
         }
         /**
@@ -1686,7 +1686,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder socketTimeout(Integer socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -1698,7 +1698,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder socketTimeout(String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -1709,7 +1709,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder summary(SummaryEnum summary) {
-            setProperty("summary", summary);
+            doSetProperty("summary", summary);
             return this;
         }
         /**
@@ -1721,7 +1721,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder summary(String summary) {
-            setProperty("summary", summary);
+            doSetProperty("summary", summary);
             return this;
         }
         /**
@@ -1733,7 +1733,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1745,7 +1745,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1759,7 +1759,7 @@ public interface FhirEndpointBuilderFactory {
          */
         default AdvancedFhirEndpointBuilder validationMode(
                 ServerValidationModeEnum validationMode) {
-            setProperty("validationMode", validationMode);
+            doSetProperty("validationMode", validationMode);
             return this;
         }
         /**
@@ -1772,7 +1772,7 @@ public interface FhirEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder validationMode(String validationMode) {
-            setProperty("validationMode", validationMode);
+            doSetProperty("validationMode", validationMode);
             return this;
         }
     }

@@ -46,7 +46,7 @@ public interface TikaEndpointBuilderFactory {
          * Group: producer
          */
         default TikaEndpointBuilder tikaConfig(Object tikaConfig) {
-            setProperty("tikaConfig", tikaConfig);
+            doSetProperty("tikaConfig", tikaConfig);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface TikaEndpointBuilderFactory {
          * Group: producer
          */
         default TikaEndpointBuilder tikaConfig(String tikaConfig) {
-            setProperty("tikaConfig", tikaConfig);
+            doSetProperty("tikaConfig", tikaConfig);
             return this;
         }
         /**
@@ -69,7 +69,7 @@ public interface TikaEndpointBuilderFactory {
          * Group: producer
          */
         default TikaEndpointBuilder tikaConfigUri(String tikaConfigUri) {
-            setProperty("tikaConfigUri", tikaConfigUri);
+            doSetProperty("tikaConfigUri", tikaConfigUri);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface TikaEndpointBuilderFactory {
          */
         default TikaEndpointBuilder tikaParseOutputEncoding(
                 String tikaParseOutputEncoding) {
-            setProperty("tikaParseOutputEncoding", tikaParseOutputEncoding);
+            doSetProperty("tikaParseOutputEncoding", tikaParseOutputEncoding);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface TikaEndpointBuilderFactory {
          */
         default TikaEndpointBuilder tikaParseOutputFormat(
                 TikaParseOutputFormat tikaParseOutputFormat) {
-            setProperty("tikaParseOutputFormat", tikaParseOutputFormat);
+            doSetProperty("tikaParseOutputFormat", tikaParseOutputFormat);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface TikaEndpointBuilderFactory {
          */
         default TikaEndpointBuilder tikaParseOutputFormat(
                 String tikaParseOutputFormat) {
-            setProperty("tikaParseOutputFormat", tikaParseOutputFormat);
+            doSetProperty("tikaParseOutputFormat", tikaParseOutputFormat);
             return this;
         }
     }
@@ -140,7 +140,7 @@ public interface TikaEndpointBuilderFactory {
          */
         default AdvancedTikaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface TikaEndpointBuilderFactory {
          */
         default AdvancedTikaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface TikaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTikaEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface TikaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTikaEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

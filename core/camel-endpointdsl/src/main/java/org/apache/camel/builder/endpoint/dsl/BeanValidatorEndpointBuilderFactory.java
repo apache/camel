@@ -50,7 +50,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default BeanValidatorEndpointBuilder constraintValidatorFactory(
                 Object constraintValidatorFactory) {
-            setProperty("constraintValidatorFactory", constraintValidatorFactory);
+            doSetProperty("constraintValidatorFactory", constraintValidatorFactory);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default BeanValidatorEndpointBuilder constraintValidatorFactory(
                 String constraintValidatorFactory) {
-            setProperty("constraintValidatorFactory", constraintValidatorFactory);
+            doSetProperty("constraintValidatorFactory", constraintValidatorFactory);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * Group: producer
          */
         default BeanValidatorEndpointBuilder group(String group) {
-            setProperty("group", group);
+            doSetProperty("group", group);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default BeanValidatorEndpointBuilder messageInterpolator(
                 Object messageInterpolator) {
-            setProperty("messageInterpolator", messageInterpolator);
+            doSetProperty("messageInterpolator", messageInterpolator);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default BeanValidatorEndpointBuilder messageInterpolator(
                 String messageInterpolator) {
-            setProperty("messageInterpolator", messageInterpolator);
+            doSetProperty("messageInterpolator", messageInterpolator);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default BeanValidatorEndpointBuilder traversableResolver(
                 Object traversableResolver) {
-            setProperty("traversableResolver", traversableResolver);
+            doSetProperty("traversableResolver", traversableResolver);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default BeanValidatorEndpointBuilder traversableResolver(
                 String traversableResolver) {
-            setProperty("traversableResolver", traversableResolver);
+            doSetProperty("traversableResolver", traversableResolver);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default BeanValidatorEndpointBuilder validationProviderResolver(
                 Object validationProviderResolver) {
-            setProperty("validationProviderResolver", validationProviderResolver);
+            doSetProperty("validationProviderResolver", validationProviderResolver);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default BeanValidatorEndpointBuilder validationProviderResolver(
                 String validationProviderResolver) {
-            setProperty("validationProviderResolver", validationProviderResolver);
+            doSetProperty("validationProviderResolver", validationProviderResolver);
             return this;
         }
     }
@@ -176,7 +176,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default AdvancedBeanValidatorEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default AdvancedBeanValidatorEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default AdvancedBeanValidatorEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -215,7 +215,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          */
         default AdvancedBeanValidatorEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

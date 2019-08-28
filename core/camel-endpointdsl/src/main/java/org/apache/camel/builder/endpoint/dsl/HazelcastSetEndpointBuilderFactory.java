@@ -53,7 +53,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -146,7 +146,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -173,7 +173,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -214,7 +214,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -240,7 +240,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -253,7 +253,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -266,7 +266,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -292,7 +292,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -307,7 +307,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -321,7 +321,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -335,7 +335,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -349,7 +349,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -389,7 +389,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -413,7 +413,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -426,7 +426,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -439,7 +439,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -452,7 +452,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -478,7 +478,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -493,7 +493,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -507,7 +507,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -521,7 +521,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -535,7 +535,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default HazelcastSetEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
     }
@@ -559,7 +559,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -572,7 +572,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -585,7 +585,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -598,7 +598,7 @@ public interface HazelcastSetEndpointBuilderFactory {
          */
         default AdvancedHazelcastSetEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

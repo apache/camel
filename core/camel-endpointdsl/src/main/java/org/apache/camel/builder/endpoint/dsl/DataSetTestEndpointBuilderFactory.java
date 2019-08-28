@@ -49,7 +49,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetTestEndpointBuilder anyOrder(boolean anyOrder) {
-            setProperty("anyOrder", anyOrder);
+            doSetProperty("anyOrder", anyOrder);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetTestEndpointBuilder anyOrder(String anyOrder) {
-            setProperty("anyOrder", anyOrder);
+            doSetProperty("anyOrder", anyOrder);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetTestEndpointBuilder delimiter(String delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetTestEndpointBuilder split(boolean split) {
-            setProperty("split", split);
+            doSetProperty("split", split);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetTestEndpointBuilder split(String split) {
-            setProperty("split", split);
+            doSetProperty("split", split);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetTestEndpointBuilder timeout(long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -124,7 +124,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetTestEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -148,7 +148,7 @@ public interface DataSetTestEndpointBuilderFactory {
          */
         default AdvancedDataSetTestEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface DataSetTestEndpointBuilderFactory {
          */
         default AdvancedDataSetTestEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -174,7 +174,7 @@ public interface DataSetTestEndpointBuilderFactory {
          */
         default AdvancedDataSetTestEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -187,7 +187,7 @@ public interface DataSetTestEndpointBuilderFactory {
          */
         default AdvancedDataSetTestEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -51,7 +51,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder ackGroupTimeMillis(
                 long ackGroupTimeMillis) {
-            setProperty("ackGroupTimeMillis", ackGroupTimeMillis);
+            doSetProperty("ackGroupTimeMillis", ackGroupTimeMillis);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder ackGroupTimeMillis(
                 String ackGroupTimeMillis) {
-            setProperty("ackGroupTimeMillis", ackGroupTimeMillis);
+            doSetProperty("ackGroupTimeMillis", ackGroupTimeMillis);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder ackTimeoutMillis(
                 long ackTimeoutMillis) {
-            setProperty("ackTimeoutMillis", ackTimeoutMillis);
+            doSetProperty("ackTimeoutMillis", ackTimeoutMillis);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder ackTimeoutMillis(
                 String ackTimeoutMillis) {
-            setProperty("ackTimeoutMillis", ackTimeoutMillis);
+            doSetProperty("ackTimeoutMillis", ackTimeoutMillis);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder allowManualAcknowledgement(
                 boolean allowManualAcknowledgement) {
-            setProperty("allowManualAcknowledgement", allowManualAcknowledgement);
+            doSetProperty("allowManualAcknowledgement", allowManualAcknowledgement);
             return this;
         }
         /**
@@ -124,7 +124,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder allowManualAcknowledgement(
                 String allowManualAcknowledgement) {
-            setProperty("allowManualAcknowledgement", allowManualAcknowledgement);
+            doSetProperty("allowManualAcknowledgement", allowManualAcknowledgement);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -171,7 +171,7 @@ public interface PulsarEndpointBuilderFactory {
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder consumerName(String consumerName) {
-            setProperty("consumerName", consumerName);
+            doSetProperty("consumerName", consumerName);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder consumerNamePrefix(
                 String consumerNamePrefix) {
-            setProperty("consumerNamePrefix", consumerNamePrefix);
+            doSetProperty("consumerNamePrefix", consumerNamePrefix);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder consumerQueueSize(
                 int consumerQueueSize) {
-            setProperty("consumerQueueSize", consumerQueueSize);
+            doSetProperty("consumerQueueSize", consumerQueueSize);
             return this;
         }
         /**
@@ -208,7 +208,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder consumerQueueSize(
                 String consumerQueueSize) {
-            setProperty("consumerQueueSize", consumerQueueSize);
+            doSetProperty("consumerQueueSize", consumerQueueSize);
             return this;
         }
         /**
@@ -220,7 +220,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder numberOfConsumers(
                 int numberOfConsumers) {
-            setProperty("numberOfConsumers", numberOfConsumers);
+            doSetProperty("numberOfConsumers", numberOfConsumers);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder numberOfConsumers(
                 String numberOfConsumers) {
-            setProperty("numberOfConsumers", numberOfConsumers);
+            doSetProperty("numberOfConsumers", numberOfConsumers);
             return this;
         }
         /**
@@ -244,7 +244,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder subscriptionName(
                 String subscriptionName) {
-            setProperty("subscriptionName", subscriptionName);
+            doSetProperty("subscriptionName", subscriptionName);
             return this;
         }
         /**
@@ -258,7 +258,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
                 SubscriptionType subscriptionType) {
-            setProperty("subscriptionType", subscriptionType);
+            doSetProperty("subscriptionType", subscriptionType);
             return this;
         }
         /**
@@ -272,7 +272,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
                 String subscriptionType) {
-            setProperty("subscriptionType", subscriptionType);
+            doSetProperty("subscriptionType", subscriptionType);
             return this;
         }
     }
@@ -299,7 +299,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -315,7 +315,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -327,7 +327,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -340,7 +340,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -379,7 +379,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -416,7 +416,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder batchingEnabled(
                 boolean batchingEnabled) {
-            setProperty("batchingEnabled", batchingEnabled);
+            doSetProperty("batchingEnabled", batchingEnabled);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder batchingEnabled(
                 String batchingEnabled) {
-            setProperty("batchingEnabled", batchingEnabled);
+            doSetProperty("batchingEnabled", batchingEnabled);
             return this;
         }
         /**
@@ -442,7 +442,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder batchingMaxMessages(
                 int batchingMaxMessages) {
-            setProperty("batchingMaxMessages", batchingMaxMessages);
+            doSetProperty("batchingMaxMessages", batchingMaxMessages);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder batchingMaxMessages(
                 String batchingMaxMessages) {
-            setProperty("batchingMaxMessages", batchingMaxMessages);
+            doSetProperty("batchingMaxMessages", batchingMaxMessages);
             return this;
         }
         /**
@@ -470,7 +470,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder batchingMaxPublishDelayMicros(
                 long batchingMaxPublishDelayMicros) {
-            setProperty("batchingMaxPublishDelayMicros", batchingMaxPublishDelayMicros);
+            doSetProperty("batchingMaxPublishDelayMicros", batchingMaxPublishDelayMicros);
             return this;
         }
         /**
@@ -485,7 +485,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder batchingMaxPublishDelayMicros(
                 String batchingMaxPublishDelayMicros) {
-            setProperty("batchingMaxPublishDelayMicros", batchingMaxPublishDelayMicros);
+            doSetProperty("batchingMaxPublishDelayMicros", batchingMaxPublishDelayMicros);
             return this;
         }
         /**
@@ -500,7 +500,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder blockIfQueueFull(
                 boolean blockIfQueueFull) {
-            setProperty("blockIfQueueFull", blockIfQueueFull);
+            doSetProperty("blockIfQueueFull", blockIfQueueFull);
             return this;
         }
         /**
@@ -515,7 +515,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder blockIfQueueFull(
                 String blockIfQueueFull) {
-            setProperty("blockIfQueueFull", blockIfQueueFull);
+            doSetProperty("blockIfQueueFull", blockIfQueueFull);
             return this;
         }
         /**
@@ -528,7 +528,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder compressionType(
                 CompressionType compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -541,7 +541,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder compressionType(
                 String compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -556,7 +556,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder initialSequenceId(
                 long initialSequenceId) {
-            setProperty("initialSequenceId", initialSequenceId);
+            doSetProperty("initialSequenceId", initialSequenceId);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder initialSequenceId(
                 String initialSequenceId) {
-            setProperty("initialSequenceId", initialSequenceId);
+            doSetProperty("initialSequenceId", initialSequenceId);
             return this;
         }
         /**
@@ -591,7 +591,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -611,7 +611,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -624,7 +624,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder maxPendingMessages(
                 int maxPendingMessages) {
-            setProperty("maxPendingMessages", maxPendingMessages);
+            doSetProperty("maxPendingMessages", maxPendingMessages);
             return this;
         }
         /**
@@ -637,7 +637,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder maxPendingMessages(
                 String maxPendingMessages) {
-            setProperty("maxPendingMessages", maxPendingMessages);
+            doSetProperty("maxPendingMessages", maxPendingMessages);
             return this;
         }
         /**
@@ -650,7 +650,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder maxPendingMessagesAcrossPartitions(
                 int maxPendingMessagesAcrossPartitions) {
-            setProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
+            doSetProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
             return this;
         }
         /**
@@ -663,7 +663,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder maxPendingMessagesAcrossPartitions(
                 String maxPendingMessagesAcrossPartitions) {
-            setProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
+            doSetProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
             return this;
         }
         /**
@@ -674,7 +674,7 @@ public interface PulsarEndpointBuilderFactory {
          * Group: producer
          */
         default PulsarEndpointProducerBuilder producerName(String producerName) {
-            setProperty("producerName", producerName);
+            doSetProperty("producerName", producerName);
             return this;
         }
         /**
@@ -685,7 +685,7 @@ public interface PulsarEndpointBuilderFactory {
          * Group: producer
          */
         default PulsarEndpointProducerBuilder sendTimeoutMs(int sendTimeoutMs) {
-            setProperty("sendTimeoutMs", sendTimeoutMs);
+            doSetProperty("sendTimeoutMs", sendTimeoutMs);
             return this;
         }
         /**
@@ -696,7 +696,7 @@ public interface PulsarEndpointBuilderFactory {
          * Group: producer
          */
         default PulsarEndpointProducerBuilder sendTimeoutMs(String sendTimeoutMs) {
-            setProperty("sendTimeoutMs", sendTimeoutMs);
+            doSetProperty("sendTimeoutMs", sendTimeoutMs);
             return this;
         }
     }
@@ -720,7 +720,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -733,7 +733,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -746,7 +746,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -759,7 +759,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -794,7 +794,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -807,7 +807,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -819,7 +819,7 @@ public interface PulsarEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -831,7 +831,7 @@ public interface PulsarEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -56,7 +56,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Group: common
          */
         default DisruptorEndpointConsumerBuilder size(int size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Group: common
          */
         default DisruptorEndpointConsumerBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -108,7 +108,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
-            setProperty("multipleConsumers", multipleConsumers);
+            doSetProperty("multipleConsumers", multipleConsumers);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
-            setProperty("multipleConsumers", multipleConsumers);
+            doSetProperty("multipleConsumers", multipleConsumers);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointConsumerBuilder waitStrategy(
                 DisruptorWaitStrategy waitStrategy) {
-            setProperty("waitStrategy", waitStrategy);
+            doSetProperty("waitStrategy", waitStrategy);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointConsumerBuilder waitStrategy(
                 String waitStrategy) {
-            setProperty("waitStrategy", waitStrategy);
+            doSetProperty("waitStrategy", waitStrategy);
             return this;
         }
     }
@@ -221,7 +221,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -237,7 +237,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -262,7 +262,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -275,7 +275,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -314,7 +314,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -341,7 +341,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Group: common
          */
         default DisruptorEndpointProducerBuilder size(int size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Group: common
          */
         default DisruptorEndpointProducerBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -373,7 +373,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointProducerBuilder blockWhenFull(
                 boolean blockWhenFull) {
-            setProperty("blockWhenFull", blockWhenFull);
+            doSetProperty("blockWhenFull", blockWhenFull);
             return this;
         }
         /**
@@ -389,7 +389,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointProducerBuilder blockWhenFull(
                 String blockWhenFull) {
-            setProperty("blockWhenFull", blockWhenFull);
+            doSetProperty("blockWhenFull", blockWhenFull);
             return this;
         }
         /**
@@ -409,7 +409,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointProducerBuilder producerType(
                 DisruptorProducerType producerType) {
-            setProperty("producerType", producerType);
+            doSetProperty("producerType", producerType);
             return this;
         }
         /**
@@ -461,7 +461,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointProducerBuilder producerType(
                 String producerType) {
-            setProperty("producerType", producerType);
+            doSetProperty("producerType", producerType);
             return this;
         }
         /**
@@ -474,7 +474,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Group: producer
          */
         default DisruptorEndpointProducerBuilder timeout(long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -487,7 +487,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Group: producer
          */
         default DisruptorEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -504,7 +504,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
-            setProperty("waitForTaskToComplete", waitForTaskToComplete);
+            doSetProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
         }
         /**
@@ -521,7 +521,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default DisruptorEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
-            setProperty("waitForTaskToComplete", waitForTaskToComplete);
+            doSetProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
         }
     }
@@ -545,7 +545,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -558,7 +558,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -584,7 +584,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -611,7 +611,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Group: common
          */
         default DisruptorEndpointBuilder size(int size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -627,7 +627,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Group: common
          */
         default DisruptorEndpointBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
     }
@@ -651,7 +651,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -664,7 +664,7 @@ public interface DisruptorEndpointBuilderFactory {
          */
         default AdvancedDisruptorEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -676,7 +676,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDisruptorEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -688,7 +688,7 @@ public interface DisruptorEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDisruptorEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

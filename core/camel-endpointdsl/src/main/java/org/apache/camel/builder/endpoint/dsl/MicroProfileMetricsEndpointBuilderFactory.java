@@ -47,7 +47,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default MicroProfileMetricsEndpointBuilder counterIncrement(
                 Long counterIncrement) {
-            setProperty("counterIncrement", counterIncrement);
+            doSetProperty("counterIncrement", counterIncrement);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default MicroProfileMetricsEndpointBuilder counterIncrement(
                 String counterIncrement) {
-            setProperty("counterIncrement", counterIncrement);
+            doSetProperty("counterIncrement", counterIncrement);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default MicroProfileMetricsEndpointBuilder description(
                 String description) {
-            setProperty("description", description);
+            doSetProperty("description", description);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default MicroProfileMetricsEndpointBuilder displayName(
                 String displayName) {
-            setProperty("displayName", displayName);
+            doSetProperty("displayName", displayName);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default MicroProfileMetricsEndpointBuilder gaugeDecrement(
                 Boolean gaugeDecrement) {
-            setProperty("gaugeDecrement", gaugeDecrement);
+            doSetProperty("gaugeDecrement", gaugeDecrement);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default MicroProfileMetricsEndpointBuilder gaugeDecrement(
                 String gaugeDecrement) {
-            setProperty("gaugeDecrement", gaugeDecrement);
+            doSetProperty("gaugeDecrement", gaugeDecrement);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default MicroProfileMetricsEndpointBuilder gaugeIncrement(
                 Boolean gaugeIncrement) {
-            setProperty("gaugeIncrement", gaugeIncrement);
+            doSetProperty("gaugeIncrement", gaugeIncrement);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default MicroProfileMetricsEndpointBuilder gaugeIncrement(
                 String gaugeIncrement) {
-            setProperty("gaugeIncrement", gaugeIncrement);
+            doSetProperty("gaugeIncrement", gaugeIncrement);
             return this;
         }
         /**
@@ -156,7 +156,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder mark(Long mark) {
-            setProperty("mark", mark);
+            doSetProperty("mark", mark);
             return this;
         }
         /**
@@ -167,7 +167,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder mark(String mark) {
-            setProperty("mark", mark);
+            doSetProperty("mark", mark);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder metricUnit(String metricUnit) {
-            setProperty("metricUnit", metricUnit);
+            doSetProperty("metricUnit", metricUnit);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder tags(String tags) {
-            setProperty("tags", tags);
+            doSetProperty("tags", tags);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder value(Long value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder value(String value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
     }
@@ -236,7 +236,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default AdvancedMicroProfileMetricsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default AdvancedMicroProfileMetricsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -262,7 +262,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default AdvancedMicroProfileMetricsEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -275,7 +275,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          */
         default AdvancedMicroProfileMetricsEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

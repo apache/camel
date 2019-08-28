@@ -50,7 +50,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: common
          */
         default NsqEndpointConsumerBuilder topic(String topic) {
-            setProperty("topic", topic);
+            doSetProperty("topic", topic);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: common
          */
         default NsqEndpointConsumerBuilder userAgent(String userAgent) {
-            setProperty("userAgent", userAgent);
+            doSetProperty("userAgent", userAgent);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder autoFinish(Boolean autoFinish) {
-            setProperty("autoFinish", autoFinish);
+            doSetProperty("autoFinish", autoFinish);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder autoFinish(String autoFinish) {
-            setProperty("autoFinish", autoFinish);
+            doSetProperty("autoFinish", autoFinish);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -122,7 +122,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -133,7 +133,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder channel(String channel) {
-            setProperty("channel", channel);
+            doSetProperty("channel", channel);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder lookupInterval(long lookupInterval) {
-            setProperty("lookupInterval", lookupInterval);
+            doSetProperty("lookupInterval", lookupInterval);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder lookupInterval(String lookupInterval) {
-            setProperty("lookupInterval", lookupInterval);
+            doSetProperty("lookupInterval", lookupInterval);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder lookupServerPort(int lookupServerPort) {
-            setProperty("lookupServerPort", lookupServerPort);
+            doSetProperty("lookupServerPort", lookupServerPort);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointConsumerBuilder lookupServerPort(
                 String lookupServerPort) {
-            setProperty("lookupServerPort", lookupServerPort);
+            doSetProperty("lookupServerPort", lookupServerPort);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder messageTimeout(long messageTimeout) {
-            setProperty("messageTimeout", messageTimeout);
+            doSetProperty("messageTimeout", messageTimeout);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder messageTimeout(String messageTimeout) {
-            setProperty("messageTimeout", messageTimeout);
+            doSetProperty("messageTimeout", messageTimeout);
             return this;
         }
         /**
@@ -211,7 +211,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder poolSize(int poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
@@ -222,7 +222,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder poolSize(String poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
@@ -233,7 +233,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder requeueInterval(long requeueInterval) {
-            setProperty("requeueInterval", requeueInterval);
+            doSetProperty("requeueInterval", requeueInterval);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointConsumerBuilder requeueInterval(
                 String requeueInterval) {
-            setProperty("requeueInterval", requeueInterval);
+            doSetProperty("requeueInterval", requeueInterval);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: security
          */
         default NsqEndpointConsumerBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: security
          */
         default NsqEndpointConsumerBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -293,7 +293,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -320,7 +320,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -336,7 +336,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -361,7 +361,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -374,7 +374,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -387,7 +387,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -400,7 +400,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -413,7 +413,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -436,7 +436,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: common
          */
         default NsqEndpointProducerBuilder topic(String topic) {
-            setProperty("topic", topic);
+            doSetProperty("topic", topic);
             return this;
         }
         /**
@@ -447,7 +447,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: common
          */
         default NsqEndpointProducerBuilder userAgent(String userAgent) {
-            setProperty("userAgent", userAgent);
+            doSetProperty("userAgent", userAgent);
             return this;
         }
         /**
@@ -467,7 +467,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -487,7 +487,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -498,7 +498,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: producer
          */
         default NsqEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -509,7 +509,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: producer
          */
         default NsqEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -520,7 +520,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: security
          */
         default NsqEndpointProducerBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -531,7 +531,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: security
          */
         default NsqEndpointProducerBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -544,7 +544,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -557,7 +557,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -581,7 +581,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -594,7 +594,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -607,7 +607,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -620,7 +620,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -643,7 +643,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: common
          */
         default NsqEndpointBuilder topic(String topic) {
-            setProperty("topic", topic);
+            doSetProperty("topic", topic);
             return this;
         }
         /**
@@ -654,7 +654,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: common
          */
         default NsqEndpointBuilder userAgent(String userAgent) {
-            setProperty("userAgent", userAgent);
+            doSetProperty("userAgent", userAgent);
             return this;
         }
         /**
@@ -665,7 +665,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: security
          */
         default NsqEndpointBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -676,7 +676,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: security
          */
         default NsqEndpointBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -689,7 +689,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -702,7 +702,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default NsqEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -726,7 +726,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -739,7 +739,7 @@ public interface NsqEndpointBuilderFactory {
          */
         default AdvancedNsqEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -751,7 +751,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNsqEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -763,7 +763,7 @@ public interface NsqEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNsqEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

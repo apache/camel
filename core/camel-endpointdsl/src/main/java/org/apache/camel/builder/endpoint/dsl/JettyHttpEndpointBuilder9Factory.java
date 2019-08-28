@@ -65,7 +65,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default JettyHttpEndpointBuilder9 disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default JettyHttpEndpointBuilder9 disableStreamCache(
                 String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -106,7 +106,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default JettyHttpEndpointBuilder9 headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default JettyHttpEndpointBuilder9 headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 chunked(boolean chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 chunked(String chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default JettyHttpEndpointBuilder9 enableMultipartFilter(
                 boolean enableMultipartFilter) {
-            setProperty("enableMultipartFilter", enableMultipartFilter);
+            doSetProperty("enableMultipartFilter", enableMultipartFilter);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default JettyHttpEndpointBuilder9 enableMultipartFilter(
                 String enableMultipartFilter) {
-            setProperty("enableMultipartFilter", enableMultipartFilter);
+            doSetProperty("enableMultipartFilter", enableMultipartFilter);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default JettyHttpEndpointBuilder9 transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default JettyHttpEndpointBuilder9 transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default JettyHttpEndpointBuilder9 sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default JettyHttpEndpointBuilder9 sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -262,7 +262,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * Group: common (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder9 httpBinding(Object httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -275,7 +275,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * Group: common (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder9 httpBinding(String httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default AdvancedJettyHttpEndpointBuilder9 basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default AdvancedJettyHttpEndpointBuilder9 basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -315,7 +315,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -329,7 +329,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageBody(
                 String mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -343,7 +343,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -371,7 +371,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -385,7 +385,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -398,7 +398,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          */
         default AdvancedJettyHttpEndpointBuilder9 synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -410,7 +410,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

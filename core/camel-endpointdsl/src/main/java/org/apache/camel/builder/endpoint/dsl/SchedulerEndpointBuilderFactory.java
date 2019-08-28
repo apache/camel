@@ -47,7 +47,7 @@ public interface SchedulerEndpointBuilderFactory {
          * Group: scheduler
          */
         default SchedulerEndpointBuilder concurrentTasks(int concurrentTasks) {
-            setProperty("concurrentTasks", concurrentTasks);
+            doSetProperty("concurrentTasks", concurrentTasks);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface SchedulerEndpointBuilderFactory {
          * Group: scheduler
          */
         default SchedulerEndpointBuilder concurrentTasks(String concurrentTasks) {
-            setProperty("concurrentTasks", concurrentTasks);
+            doSetProperty("concurrentTasks", concurrentTasks);
             return this;
         }
     }
@@ -83,7 +83,7 @@ public interface SchedulerEndpointBuilderFactory {
          */
         default AdvancedSchedulerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface SchedulerEndpointBuilderFactory {
          */
         default AdvancedSchedulerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -108,7 +108,7 @@ public interface SchedulerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSchedulerEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface SchedulerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSchedulerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

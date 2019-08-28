@@ -50,7 +50,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointConsumerBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointConsumerBuilder criteria(
                 Map<String, Object> criteria) {
-            setProperty("criteria", criteria);
+            doSetProperty("criteria", criteria);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointConsumerBuilder criteria(String criteria) {
-            setProperty("criteria", criteria);
+            doSetProperty("criteria", criteria);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointConsumerBuilder force(boolean force) {
-            setProperty("force", force);
+            doSetProperty("force", force);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointConsumerBuilder force(String force) {
-            setProperty("force", force);
+            doSetProperty("force", force);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointConsumerBuilder id(Integer id) {
-            setProperty("id", id);
+            doSetProperty("id", id);
             return this;
         }
         /**
@@ -123,7 +123,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointConsumerBuilder id(String id) {
-            setProperty("id", id);
+            doSetProperty("id", id);
             return this;
         }
         /**
@@ -134,7 +134,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointConsumerBuilder searchCriteria(
                 Object searchCriteria) {
-            setProperty("searchCriteria", searchCriteria);
+            doSetProperty("searchCriteria", searchCriteria);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointConsumerBuilder searchCriteria(
                 String searchCriteria) {
-            setProperty("searchCriteria", searchCriteria);
+            doSetProperty("searchCriteria", searchCriteria);
             return this;
         }
         /**
@@ -173,7 +173,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointConsumerBuilder url(String url) {
-            setProperty("url", url);
+            doSetProperty("url", url);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointConsumerBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -220,7 +220,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -247,7 +247,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -275,7 +275,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -314,7 +314,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -327,7 +327,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -340,7 +340,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -362,7 +362,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointProducerBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -375,7 +375,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointProducerBuilder criteria(
                 Map<String, Object> criteria) {
-            setProperty("criteria", criteria);
+            doSetProperty("criteria", criteria);
             return this;
         }
         /**
@@ -388,7 +388,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointProducerBuilder criteria(String criteria) {
-            setProperty("criteria", criteria);
+            doSetProperty("criteria", criteria);
             return this;
         }
         /**
@@ -399,7 +399,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointProducerBuilder force(boolean force) {
-            setProperty("force", force);
+            doSetProperty("force", force);
             return this;
         }
         /**
@@ -410,7 +410,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointProducerBuilder force(String force) {
-            setProperty("force", force);
+            doSetProperty("force", force);
             return this;
         }
         /**
@@ -422,7 +422,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointProducerBuilder id(Integer id) {
-            setProperty("id", id);
+            doSetProperty("id", id);
             return this;
         }
         /**
@@ -435,7 +435,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointProducerBuilder id(String id) {
-            setProperty("id", id);
+            doSetProperty("id", id);
             return this;
         }
         /**
@@ -446,7 +446,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -459,7 +459,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointProducerBuilder searchCriteria(
                 Object searchCriteria) {
-            setProperty("searchCriteria", searchCriteria);
+            doSetProperty("searchCriteria", searchCriteria);
             return this;
         }
         /**
@@ -472,7 +472,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointProducerBuilder searchCriteria(
                 String searchCriteria) {
-            setProperty("searchCriteria", searchCriteria);
+            doSetProperty("searchCriteria", searchCriteria);
             return this;
         }
         /**
@@ -485,7 +485,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointProducerBuilder url(String url) {
-            setProperty("url", url);
+            doSetProperty("url", url);
             return this;
         }
         /**
@@ -496,7 +496,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointProducerBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
         /**
@@ -516,7 +516,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -536,7 +536,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default WordpressEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -560,7 +560,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -573,7 +573,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -586,7 +586,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -599,7 +599,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -621,7 +621,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -633,7 +633,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder criteria(Map<String, Object> criteria) {
-            setProperty("criteria", criteria);
+            doSetProperty("criteria", criteria);
             return this;
         }
         /**
@@ -646,7 +646,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder criteria(String criteria) {
-            setProperty("criteria", criteria);
+            doSetProperty("criteria", criteria);
             return this;
         }
         /**
@@ -657,7 +657,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder force(boolean force) {
-            setProperty("force", force);
+            doSetProperty("force", force);
             return this;
         }
         /**
@@ -668,7 +668,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder force(String force) {
-            setProperty("force", force);
+            doSetProperty("force", force);
             return this;
         }
         /**
@@ -680,7 +680,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder id(Integer id) {
-            setProperty("id", id);
+            doSetProperty("id", id);
             return this;
         }
         /**
@@ -693,7 +693,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder id(String id) {
-            setProperty("id", id);
+            doSetProperty("id", id);
             return this;
         }
         /**
@@ -704,7 +704,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -716,7 +716,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder searchCriteria(Object searchCriteria) {
-            setProperty("searchCriteria", searchCriteria);
+            doSetProperty("searchCriteria", searchCriteria);
             return this;
         }
         /**
@@ -728,7 +728,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder searchCriteria(String searchCriteria) {
-            setProperty("searchCriteria", searchCriteria);
+            doSetProperty("searchCriteria", searchCriteria);
             return this;
         }
         /**
@@ -741,7 +741,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder url(String url) {
-            setProperty("url", url);
+            doSetProperty("url", url);
             return this;
         }
         /**
@@ -752,7 +752,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: common
          */
         default WordpressEndpointBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -776,7 +776,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -789,7 +789,7 @@ public interface WordpressEndpointBuilderFactory {
          */
         default AdvancedWordpressEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -801,7 +801,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWordpressEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -813,7 +813,7 @@ public interface WordpressEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWordpressEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

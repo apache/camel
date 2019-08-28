@@ -49,7 +49,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: common
          */
         default JiraEndpointConsumerBuilder delay(Integer delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: common
          */
         default JiraEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: common
          */
         default JiraEndpointConsumerBuilder jiraUrl(String jiraUrl) {
-            setProperty("jiraUrl", jiraUrl);
+            doSetProperty("jiraUrl", jiraUrl);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default JiraEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default JiraEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -124,7 +124,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: consumer
          */
         default JiraEndpointConsumerBuilder jql(String jql) {
-            setProperty("jql", jql);
+            doSetProperty("jql", jql);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: consumer
          */
         default JiraEndpointConsumerBuilder maxResults(Integer maxResults) {
-            setProperty("maxResults", maxResults);
+            doSetProperty("maxResults", maxResults);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: consumer
          */
         default JiraEndpointConsumerBuilder maxResults(String maxResults) {
-            setProperty("maxResults", maxResults);
+            doSetProperty("maxResults", maxResults);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointConsumerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointConsumerBuilder consumerKey(String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -193,7 +193,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointConsumerBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -220,7 +220,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default JiraEndpointConsumerBuilder verificationCode(
                 String verificationCode) {
-            setProperty("verificationCode", verificationCode);
+            doSetProperty("verificationCode", verificationCode);
             return this;
         }
     }
@@ -247,7 +247,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -275,7 +275,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -314,7 +314,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -327,7 +327,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -340,7 +340,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -362,7 +362,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: common
          */
         default JiraEndpointProducerBuilder delay(Integer delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -374,7 +374,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: common
          */
         default JiraEndpointProducerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -386,7 +386,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: common
          */
         default JiraEndpointProducerBuilder jiraUrl(String jiraUrl) {
-            setProperty("jiraUrl", jiraUrl);
+            doSetProperty("jiraUrl", jiraUrl);
             return this;
         }
         /**
@@ -406,7 +406,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default JiraEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -426,7 +426,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default JiraEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -437,7 +437,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointProducerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -448,7 +448,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointProducerBuilder consumerKey(String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -460,7 +460,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -472,7 +472,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointProducerBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -486,7 +486,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -499,7 +499,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default JiraEndpointProducerBuilder verificationCode(
                 String verificationCode) {
-            setProperty("verificationCode", verificationCode);
+            doSetProperty("verificationCode", verificationCode);
             return this;
         }
     }
@@ -523,7 +523,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -536,7 +536,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -549,7 +549,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -562,7 +562,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -584,7 +584,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: common
          */
         default JiraEndpointBuilder delay(Integer delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -596,7 +596,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: common
          */
         default JiraEndpointBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -608,7 +608,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: common
          */
         default JiraEndpointBuilder jiraUrl(String jiraUrl) {
-            setProperty("jiraUrl", jiraUrl);
+            doSetProperty("jiraUrl", jiraUrl);
             return this;
         }
         /**
@@ -619,7 +619,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -630,7 +630,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointBuilder consumerKey(String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -642,7 +642,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -654,7 +654,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -668,7 +668,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -680,7 +680,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: security
          */
         default JiraEndpointBuilder verificationCode(String verificationCode) {
-            setProperty("verificationCode", verificationCode);
+            doSetProperty("verificationCode", verificationCode);
             return this;
         }
     }
@@ -704,7 +704,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -717,7 +717,7 @@ public interface JiraEndpointBuilderFactory {
          */
         default AdvancedJiraEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -729,7 +729,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJiraEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -741,7 +741,7 @@ public interface JiraEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJiraEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

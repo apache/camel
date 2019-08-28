@@ -52,7 +52,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder as2From(String as2From) {
-            setProperty("as2From", as2From);
+            doSetProperty("as2From", as2From);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder as2MessageStructure(
                 AS2MessageStructure as2MessageStructure) {
-            setProperty("as2MessageStructure", as2MessageStructure);
+            doSetProperty("as2MessageStructure", as2MessageStructure);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder as2MessageStructure(
                 String as2MessageStructure) {
-            setProperty("as2MessageStructure", as2MessageStructure);
+            doSetProperty("as2MessageStructure", as2MessageStructure);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder as2To(String as2To) {
-            setProperty("as2To", as2To);
+            doSetProperty("as2To", as2To);
             return this;
         }
         /**
@@ -106,7 +106,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder as2Version(String as2Version) {
-            setProperty("as2Version", as2Version);
+            doSetProperty("as2Version", as2Version);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder clientFqdn(String clientFqdn) {
-            setProperty("clientFqdn", clientFqdn);
+            doSetProperty("clientFqdn", clientFqdn);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder compressionAlgorithm(
                 AS2CompressionAlgorithm compressionAlgorithm) {
-            setProperty("compressionAlgorithm", compressionAlgorithm);
+            doSetProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder compressionAlgorithm(
                 String compressionAlgorithm) {
-            setProperty("compressionAlgorithm", compressionAlgorithm);
+            doSetProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
         }
         /**
@@ -156,7 +156,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder decryptingPrivateKey(
                 PrivateKey decryptingPrivateKey) {
-            setProperty("decryptingPrivateKey", decryptingPrivateKey);
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder decryptingPrivateKey(
                 String decryptingPrivateKey) {
-            setProperty("decryptingPrivateKey", decryptingPrivateKey);
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
         }
         /**
@@ -183,7 +183,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder dispositionNotificationTo(
                 String dispositionNotificationTo) {
-            setProperty("dispositionNotificationTo", dispositionNotificationTo);
+            doSetProperty("dispositionNotificationTo", dispositionNotificationTo);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder ediMessageTransferEncoding(
                 String ediMessageTransferEncoding) {
-            setProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
+            doSetProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
             return this;
         }
         /**
@@ -208,7 +208,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder ediMessageType(Object ediMessageType) {
-            setProperty("ediMessageType", ediMessageType);
+            doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
         /**
@@ -221,7 +221,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder ediMessageType(String ediMessageType) {
-            setProperty("ediMessageType", ediMessageType);
+            doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
         /**
@@ -234,7 +234,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder encryptingAlgorithm(
                 AS2EncryptionAlgorithm encryptingAlgorithm) {
-            setProperty("encryptingAlgorithm", encryptingAlgorithm);
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
         }
         /**
@@ -247,7 +247,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder encryptingAlgorithm(
                 String encryptingAlgorithm) {
-            setProperty("encryptingAlgorithm", encryptingAlgorithm);
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
         }
         /**
@@ -259,7 +259,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder encryptingCertificateChain(
                 Certificate[] encryptingCertificateChain) {
-            setProperty("encryptingCertificateChain", encryptingCertificateChain);
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
         /**
@@ -272,7 +272,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder encryptingCertificateChain(
                 String encryptingCertificateChain) {
-            setProperty("encryptingCertificateChain", encryptingCertificateChain);
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
         /**
@@ -283,7 +283,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder from(String from) {
-            setProperty("from", from);
+            doSetProperty("from", from);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -306,7 +306,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder mdnMessageTemplate(
                 String mdnMessageTemplate) {
-            setProperty("mdnMessageTemplate", mdnMessageTemplate);
+            doSetProperty("mdnMessageTemplate", mdnMessageTemplate);
             return this;
         }
         /**
@@ -317,7 +317,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder requestUri(String requestUri) {
-            setProperty("requestUri", requestUri);
+            doSetProperty("requestUri", requestUri);
             return this;
         }
         /**
@@ -329,7 +329,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder server(String server) {
-            setProperty("server", server);
+            doSetProperty("server", server);
             return this;
         }
         /**
@@ -341,7 +341,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder serverFqdn(String serverFqdn) {
-            setProperty("serverFqdn", serverFqdn);
+            doSetProperty("serverFqdn", serverFqdn);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder serverPortNumber(
                 Integer serverPortNumber) {
-            setProperty("serverPortNumber", serverPortNumber);
+            doSetProperty("serverPortNumber", serverPortNumber);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder serverPortNumber(
                 String serverPortNumber) {
-            setProperty("serverPortNumber", serverPortNumber);
+            doSetProperty("serverPortNumber", serverPortNumber);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
                 String[] signedReceiptMicAlgorithms) {
-            setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
                 String signedReceiptMicAlgorithms) {
-            setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
         }
         /**
@@ -409,7 +409,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder signingAlgorithm(
                 AS2SignatureAlgorithm signingAlgorithm) {
-            setProperty("signingAlgorithm", signingAlgorithm);
+            doSetProperty("signingAlgorithm", signingAlgorithm);
             return this;
         }
         /**
@@ -423,7 +423,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder signingAlgorithm(
                 String signingAlgorithm) {
-            setProperty("signingAlgorithm", signingAlgorithm);
+            doSetProperty("signingAlgorithm", signingAlgorithm);
             return this;
         }
         /**
@@ -435,7 +435,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder signingCertificateChain(
                 Certificate[] signingCertificateChain) {
-            setProperty("signingCertificateChain", signingCertificateChain);
+            doSetProperty("signingCertificateChain", signingCertificateChain);
             return this;
         }
         /**
@@ -448,7 +448,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder signingCertificateChain(
                 String signingCertificateChain) {
-            setProperty("signingCertificateChain", signingCertificateChain);
+            doSetProperty("signingCertificateChain", signingCertificateChain);
             return this;
         }
         /**
@@ -460,7 +460,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder signingPrivateKey(
                 PrivateKey signingPrivateKey) {
-            setProperty("signingPrivateKey", signingPrivateKey);
+            doSetProperty("signingPrivateKey", signingPrivateKey);
             return this;
         }
         /**
@@ -473,7 +473,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder signingPrivateKey(
                 String signingPrivateKey) {
-            setProperty("signingPrivateKey", signingPrivateKey);
+            doSetProperty("signingPrivateKey", signingPrivateKey);
             return this;
         }
         /**
@@ -484,7 +484,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder targetHostname(String targetHostname) {
-            setProperty("targetHostname", targetHostname);
+            doSetProperty("targetHostname", targetHostname);
             return this;
         }
         /**
@@ -507,7 +507,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder targetPortNumber(
                 Integer targetPortNumber) {
-            setProperty("targetPortNumber", targetPortNumber);
+            doSetProperty("targetPortNumber", targetPortNumber);
             return this;
         }
         /**
@@ -520,7 +520,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder targetPortNumber(
                 String targetPortNumber) {
-            setProperty("targetPortNumber", targetPortNumber);
+            doSetProperty("targetPortNumber", targetPortNumber);
             return this;
         }
         /**
@@ -532,7 +532,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointConsumerBuilder userAgent(String userAgent) {
-            setProperty("userAgent", userAgent);
+            doSetProperty("userAgent", userAgent);
             return this;
         }
         /**
@@ -550,7 +550,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -568,7 +568,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -595,7 +595,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -611,7 +611,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -623,7 +623,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -636,7 +636,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -649,7 +649,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -662,7 +662,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -675,7 +675,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -688,7 +688,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -710,7 +710,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder as2From(String as2From) {
-            setProperty("as2From", as2From);
+            doSetProperty("as2From", as2From);
             return this;
         }
         /**
@@ -726,7 +726,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder as2MessageStructure(
                 AS2MessageStructure as2MessageStructure) {
-            setProperty("as2MessageStructure", as2MessageStructure);
+            doSetProperty("as2MessageStructure", as2MessageStructure);
             return this;
         }
         /**
@@ -742,7 +742,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder as2MessageStructure(
                 String as2MessageStructure) {
-            setProperty("as2MessageStructure", as2MessageStructure);
+            doSetProperty("as2MessageStructure", as2MessageStructure);
             return this;
         }
         /**
@@ -753,7 +753,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder as2To(String as2To) {
-            setProperty("as2To", as2To);
+            doSetProperty("as2To", as2To);
             return this;
         }
         /**
@@ -764,7 +764,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder as2Version(String as2Version) {
-            setProperty("as2Version", as2Version);
+            doSetProperty("as2Version", as2Version);
             return this;
         }
         /**
@@ -776,7 +776,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder clientFqdn(String clientFqdn) {
-            setProperty("clientFqdn", clientFqdn);
+            doSetProperty("clientFqdn", clientFqdn);
             return this;
         }
         /**
@@ -789,7 +789,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder compressionAlgorithm(
                 AS2CompressionAlgorithm compressionAlgorithm) {
-            setProperty("compressionAlgorithm", compressionAlgorithm);
+            doSetProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
         }
         /**
@@ -802,7 +802,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder compressionAlgorithm(
                 String compressionAlgorithm) {
-            setProperty("compressionAlgorithm", compressionAlgorithm);
+            doSetProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
         }
         /**
@@ -814,7 +814,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder decryptingPrivateKey(
                 PrivateKey decryptingPrivateKey) {
-            setProperty("decryptingPrivateKey", decryptingPrivateKey);
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
         }
         /**
@@ -827,7 +827,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder decryptingPrivateKey(
                 String decryptingPrivateKey) {
-            setProperty("decryptingPrivateKey", decryptingPrivateKey);
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
         }
         /**
@@ -841,7 +841,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder dispositionNotificationTo(
                 String dispositionNotificationTo) {
-            setProperty("dispositionNotificationTo", dispositionNotificationTo);
+            doSetProperty("dispositionNotificationTo", dispositionNotificationTo);
             return this;
         }
         /**
@@ -853,7 +853,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder ediMessageTransferEncoding(
                 String ediMessageTransferEncoding) {
-            setProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
+            doSetProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
             return this;
         }
         /**
@@ -866,7 +866,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder ediMessageType(Object ediMessageType) {
-            setProperty("ediMessageType", ediMessageType);
+            doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
         /**
@@ -879,7 +879,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder ediMessageType(String ediMessageType) {
-            setProperty("ediMessageType", ediMessageType);
+            doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
         /**
@@ -892,7 +892,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder encryptingAlgorithm(
                 AS2EncryptionAlgorithm encryptingAlgorithm) {
-            setProperty("encryptingAlgorithm", encryptingAlgorithm);
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
         }
         /**
@@ -905,7 +905,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder encryptingAlgorithm(
                 String encryptingAlgorithm) {
-            setProperty("encryptingAlgorithm", encryptingAlgorithm);
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
         }
         /**
@@ -917,7 +917,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder encryptingCertificateChain(
                 Certificate[] encryptingCertificateChain) {
-            setProperty("encryptingCertificateChain", encryptingCertificateChain);
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
         /**
@@ -930,7 +930,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder encryptingCertificateChain(
                 String encryptingCertificateChain) {
-            setProperty("encryptingCertificateChain", encryptingCertificateChain);
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
         /**
@@ -941,7 +941,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder from(String from) {
-            setProperty("from", from);
+            doSetProperty("from", from);
             return this;
         }
         /**
@@ -952,7 +952,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -964,7 +964,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder mdnMessageTemplate(
                 String mdnMessageTemplate) {
-            setProperty("mdnMessageTemplate", mdnMessageTemplate);
+            doSetProperty("mdnMessageTemplate", mdnMessageTemplate);
             return this;
         }
         /**
@@ -975,7 +975,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder requestUri(String requestUri) {
-            setProperty("requestUri", requestUri);
+            doSetProperty("requestUri", requestUri);
             return this;
         }
         /**
@@ -987,7 +987,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder server(String server) {
-            setProperty("server", server);
+            doSetProperty("server", server);
             return this;
         }
         /**
@@ -999,7 +999,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder serverFqdn(String serverFqdn) {
-            setProperty("serverFqdn", serverFqdn);
+            doSetProperty("serverFqdn", serverFqdn);
             return this;
         }
         /**
@@ -1011,7 +1011,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder serverPortNumber(
                 Integer serverPortNumber) {
-            setProperty("serverPortNumber", serverPortNumber);
+            doSetProperty("serverPortNumber", serverPortNumber);
             return this;
         }
         /**
@@ -1024,7 +1024,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder serverPortNumber(
                 String serverPortNumber) {
-            setProperty("serverPortNumber", serverPortNumber);
+            doSetProperty("serverPortNumber", serverPortNumber);
             return this;
         }
         /**
@@ -1038,7 +1038,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
                 String[] signedReceiptMicAlgorithms) {
-            setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
         }
         /**
@@ -1053,7 +1053,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
                 String signedReceiptMicAlgorithms) {
-            setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
         }
         /**
@@ -1067,7 +1067,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder signingAlgorithm(
                 AS2SignatureAlgorithm signingAlgorithm) {
-            setProperty("signingAlgorithm", signingAlgorithm);
+            doSetProperty("signingAlgorithm", signingAlgorithm);
             return this;
         }
         /**
@@ -1081,7 +1081,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder signingAlgorithm(
                 String signingAlgorithm) {
-            setProperty("signingAlgorithm", signingAlgorithm);
+            doSetProperty("signingAlgorithm", signingAlgorithm);
             return this;
         }
         /**
@@ -1093,7 +1093,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder signingCertificateChain(
                 Certificate[] signingCertificateChain) {
-            setProperty("signingCertificateChain", signingCertificateChain);
+            doSetProperty("signingCertificateChain", signingCertificateChain);
             return this;
         }
         /**
@@ -1106,7 +1106,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder signingCertificateChain(
                 String signingCertificateChain) {
-            setProperty("signingCertificateChain", signingCertificateChain);
+            doSetProperty("signingCertificateChain", signingCertificateChain);
             return this;
         }
         /**
@@ -1118,7 +1118,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder signingPrivateKey(
                 PrivateKey signingPrivateKey) {
-            setProperty("signingPrivateKey", signingPrivateKey);
+            doSetProperty("signingPrivateKey", signingPrivateKey);
             return this;
         }
         /**
@@ -1131,7 +1131,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder signingPrivateKey(
                 String signingPrivateKey) {
-            setProperty("signingPrivateKey", signingPrivateKey);
+            doSetProperty("signingPrivateKey", signingPrivateKey);
             return this;
         }
         /**
@@ -1142,7 +1142,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -1153,7 +1153,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder targetHostname(String targetHostname) {
-            setProperty("targetHostname", targetHostname);
+            doSetProperty("targetHostname", targetHostname);
             return this;
         }
         /**
@@ -1165,7 +1165,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder targetPortNumber(
                 Integer targetPortNumber) {
-            setProperty("targetPortNumber", targetPortNumber);
+            doSetProperty("targetPortNumber", targetPortNumber);
             return this;
         }
         /**
@@ -1178,7 +1178,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder targetPortNumber(
                 String targetPortNumber) {
-            setProperty("targetPortNumber", targetPortNumber);
+            doSetProperty("targetPortNumber", targetPortNumber);
             return this;
         }
         /**
@@ -1190,7 +1190,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointProducerBuilder userAgent(String userAgent) {
-            setProperty("userAgent", userAgent);
+            doSetProperty("userAgent", userAgent);
             return this;
         }
         /**
@@ -1210,7 +1210,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1230,7 +1230,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -1254,7 +1254,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1267,7 +1267,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1280,7 +1280,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1293,7 +1293,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1315,7 +1315,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder as2From(String as2From) {
-            setProperty("as2From", as2From);
+            doSetProperty("as2From", as2From);
             return this;
         }
         /**
@@ -1331,7 +1331,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder as2MessageStructure(
                 AS2MessageStructure as2MessageStructure) {
-            setProperty("as2MessageStructure", as2MessageStructure);
+            doSetProperty("as2MessageStructure", as2MessageStructure);
             return this;
         }
         /**
@@ -1347,7 +1347,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder as2MessageStructure(
                 String as2MessageStructure) {
-            setProperty("as2MessageStructure", as2MessageStructure);
+            doSetProperty("as2MessageStructure", as2MessageStructure);
             return this;
         }
         /**
@@ -1358,7 +1358,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder as2To(String as2To) {
-            setProperty("as2To", as2To);
+            doSetProperty("as2To", as2To);
             return this;
         }
         /**
@@ -1369,7 +1369,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder as2Version(String as2Version) {
-            setProperty("as2Version", as2Version);
+            doSetProperty("as2Version", as2Version);
             return this;
         }
         /**
@@ -1381,7 +1381,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder clientFqdn(String clientFqdn) {
-            setProperty("clientFqdn", clientFqdn);
+            doSetProperty("clientFqdn", clientFqdn);
             return this;
         }
         /**
@@ -1394,7 +1394,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder compressionAlgorithm(
                 AS2CompressionAlgorithm compressionAlgorithm) {
-            setProperty("compressionAlgorithm", compressionAlgorithm);
+            doSetProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
         }
         /**
@@ -1407,7 +1407,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder compressionAlgorithm(
                 String compressionAlgorithm) {
-            setProperty("compressionAlgorithm", compressionAlgorithm);
+            doSetProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
         }
         /**
@@ -1419,7 +1419,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder decryptingPrivateKey(
                 PrivateKey decryptingPrivateKey) {
-            setProperty("decryptingPrivateKey", decryptingPrivateKey);
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
         }
         /**
@@ -1432,7 +1432,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder decryptingPrivateKey(
                 String decryptingPrivateKey) {
-            setProperty("decryptingPrivateKey", decryptingPrivateKey);
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
         }
         /**
@@ -1446,7 +1446,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder dispositionNotificationTo(
                 String dispositionNotificationTo) {
-            setProperty("dispositionNotificationTo", dispositionNotificationTo);
+            doSetProperty("dispositionNotificationTo", dispositionNotificationTo);
             return this;
         }
         /**
@@ -1458,7 +1458,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder ediMessageTransferEncoding(
                 String ediMessageTransferEncoding) {
-            setProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
+            doSetProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
             return this;
         }
         /**
@@ -1471,7 +1471,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder ediMessageType(Object ediMessageType) {
-            setProperty("ediMessageType", ediMessageType);
+            doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
         /**
@@ -1484,7 +1484,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder ediMessageType(String ediMessageType) {
-            setProperty("ediMessageType", ediMessageType);
+            doSetProperty("ediMessageType", ediMessageType);
             return this;
         }
         /**
@@ -1497,7 +1497,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder encryptingAlgorithm(
                 AS2EncryptionAlgorithm encryptingAlgorithm) {
-            setProperty("encryptingAlgorithm", encryptingAlgorithm);
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
         }
         /**
@@ -1510,7 +1510,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder encryptingAlgorithm(
                 String encryptingAlgorithm) {
-            setProperty("encryptingAlgorithm", encryptingAlgorithm);
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
         }
         /**
@@ -1522,7 +1522,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder encryptingCertificateChain(
                 Certificate[] encryptingCertificateChain) {
-            setProperty("encryptingCertificateChain", encryptingCertificateChain);
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
         /**
@@ -1535,7 +1535,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder encryptingCertificateChain(
                 String encryptingCertificateChain) {
-            setProperty("encryptingCertificateChain", encryptingCertificateChain);
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
         /**
@@ -1546,7 +1546,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder from(String from) {
-            setProperty("from", from);
+            doSetProperty("from", from);
             return this;
         }
         /**
@@ -1557,7 +1557,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -1568,7 +1568,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder mdnMessageTemplate(String mdnMessageTemplate) {
-            setProperty("mdnMessageTemplate", mdnMessageTemplate);
+            doSetProperty("mdnMessageTemplate", mdnMessageTemplate);
             return this;
         }
         /**
@@ -1579,7 +1579,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder requestUri(String requestUri) {
-            setProperty("requestUri", requestUri);
+            doSetProperty("requestUri", requestUri);
             return this;
         }
         /**
@@ -1591,7 +1591,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder server(String server) {
-            setProperty("server", server);
+            doSetProperty("server", server);
             return this;
         }
         /**
@@ -1603,7 +1603,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder serverFqdn(String serverFqdn) {
-            setProperty("serverFqdn", serverFqdn);
+            doSetProperty("serverFqdn", serverFqdn);
             return this;
         }
         /**
@@ -1614,7 +1614,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder serverPortNumber(Integer serverPortNumber) {
-            setProperty("serverPortNumber", serverPortNumber);
+            doSetProperty("serverPortNumber", serverPortNumber);
             return this;
         }
         /**
@@ -1626,7 +1626,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder serverPortNumber(String serverPortNumber) {
-            setProperty("serverPortNumber", serverPortNumber);
+            doSetProperty("serverPortNumber", serverPortNumber);
             return this;
         }
         /**
@@ -1640,7 +1640,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder signedReceiptMicAlgorithms(
                 String[] signedReceiptMicAlgorithms) {
-            setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
         }
         /**
@@ -1655,7 +1655,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder signedReceiptMicAlgorithms(
                 String signedReceiptMicAlgorithms) {
-            setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
         }
         /**
@@ -1669,7 +1669,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder signingAlgorithm(
                 AS2SignatureAlgorithm signingAlgorithm) {
-            setProperty("signingAlgorithm", signingAlgorithm);
+            doSetProperty("signingAlgorithm", signingAlgorithm);
             return this;
         }
         /**
@@ -1682,7 +1682,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder signingAlgorithm(String signingAlgorithm) {
-            setProperty("signingAlgorithm", signingAlgorithm);
+            doSetProperty("signingAlgorithm", signingAlgorithm);
             return this;
         }
         /**
@@ -1694,7 +1694,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder signingCertificateChain(
                 Certificate[] signingCertificateChain) {
-            setProperty("signingCertificateChain", signingCertificateChain);
+            doSetProperty("signingCertificateChain", signingCertificateChain);
             return this;
         }
         /**
@@ -1707,7 +1707,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder signingCertificateChain(
                 String signingCertificateChain) {
-            setProperty("signingCertificateChain", signingCertificateChain);
+            doSetProperty("signingCertificateChain", signingCertificateChain);
             return this;
         }
         /**
@@ -1719,7 +1719,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder signingPrivateKey(
                 PrivateKey signingPrivateKey) {
-            setProperty("signingPrivateKey", signingPrivateKey);
+            doSetProperty("signingPrivateKey", signingPrivateKey);
             return this;
         }
         /**
@@ -1731,7 +1731,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder signingPrivateKey(String signingPrivateKey) {
-            setProperty("signingPrivateKey", signingPrivateKey);
+            doSetProperty("signingPrivateKey", signingPrivateKey);
             return this;
         }
         /**
@@ -1742,7 +1742,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -1753,7 +1753,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder targetHostname(String targetHostname) {
-            setProperty("targetHostname", targetHostname);
+            doSetProperty("targetHostname", targetHostname);
             return this;
         }
         /**
@@ -1764,7 +1764,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder targetPortNumber(Integer targetPortNumber) {
-            setProperty("targetPortNumber", targetPortNumber);
+            doSetProperty("targetPortNumber", targetPortNumber);
             return this;
         }
         /**
@@ -1776,7 +1776,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder targetPortNumber(String targetPortNumber) {
-            setProperty("targetPortNumber", targetPortNumber);
+            doSetProperty("targetPortNumber", targetPortNumber);
             return this;
         }
         /**
@@ -1788,7 +1788,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: common
          */
         default AS2EndpointBuilder userAgent(String userAgent) {
-            setProperty("userAgent", userAgent);
+            doSetProperty("userAgent", userAgent);
             return this;
         }
     }
@@ -1812,7 +1812,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1825,7 +1825,7 @@ public interface AS2EndpointBuilderFactory {
          */
         default AdvancedAS2EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1837,7 +1837,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAS2EndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1849,7 +1849,7 @@ public interface AS2EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAS2EndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

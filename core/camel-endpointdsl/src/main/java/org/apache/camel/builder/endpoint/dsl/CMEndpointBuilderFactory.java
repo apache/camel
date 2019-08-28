@@ -46,7 +46,7 @@ public interface CMEndpointBuilderFactory {
          * Group: producer
          */
         default CMEndpointBuilder defaultFrom(String defaultFrom) {
-            setProperty("defaultFrom", defaultFrom);
+            doSetProperty("defaultFrom", defaultFrom);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface CMEndpointBuilderFactory {
          */
         default CMEndpointBuilder defaultMaxNumberOfParts(
                 int defaultMaxNumberOfParts) {
-            setProperty("defaultMaxNumberOfParts", defaultMaxNumberOfParts);
+            doSetProperty("defaultMaxNumberOfParts", defaultMaxNumberOfParts);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface CMEndpointBuilderFactory {
          */
         default CMEndpointBuilder defaultMaxNumberOfParts(
                 String defaultMaxNumberOfParts) {
-            setProperty("defaultMaxNumberOfParts", defaultMaxNumberOfParts);
+            doSetProperty("defaultMaxNumberOfParts", defaultMaxNumberOfParts);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface CMEndpointBuilderFactory {
          * Group: producer
          */
         default CMEndpointBuilder productToken(String productToken) {
-            setProperty("productToken", productToken);
+            doSetProperty("productToken", productToken);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface CMEndpointBuilderFactory {
          */
         default CMEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -112,7 +112,7 @@ public interface CMEndpointBuilderFactory {
          */
         default CMEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
     }
@@ -136,7 +136,7 @@ public interface CMEndpointBuilderFactory {
          */
         default AdvancedCMEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -149,7 +149,7 @@ public interface CMEndpointBuilderFactory {
          */
         default AdvancedCMEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface CMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCMEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -173,7 +173,7 @@ public interface CMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCMEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

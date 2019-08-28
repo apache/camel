@@ -51,7 +51,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointConsumerBuilder autoAck(boolean autoAck) {
-            setProperty("autoAck", autoAck);
+            doSetProperty("autoAck", autoAck);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointConsumerBuilder autoAck(String autoAck) {
-            setProperty("autoAck", autoAck);
+            doSetProperty("autoAck", autoAck);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface MllpEndpointBuilderFactory {
          */
         @Deprecated
         default MllpEndpointConsumerBuilder bufferWrites(boolean bufferWrites) {
-            setProperty("bufferWrites", bufferWrites);
+            doSetProperty("bufferWrites", bufferWrites);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface MllpEndpointBuilderFactory {
          */
         @Deprecated
         default MllpEndpointConsumerBuilder bufferWrites(String bufferWrites) {
-            setProperty("bufferWrites", bufferWrites);
+            doSetProperty("bufferWrites", bufferWrites);
             return this;
         }
         /**
@@ -101,7 +101,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointConsumerBuilder hl7Headers(boolean hl7Headers) {
-            setProperty("hl7Headers", hl7Headers);
+            doSetProperty("hl7Headers", hl7Headers);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointConsumerBuilder hl7Headers(String hl7Headers) {
-            setProperty("hl7Headers", hl7Headers);
+            doSetProperty("hl7Headers", hl7Headers);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointConsumerBuilder requireEndOfData(
                 boolean requireEndOfData) {
-            setProperty("requireEndOfData", requireEndOfData);
+            doSetProperty("requireEndOfData", requireEndOfData);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointConsumerBuilder requireEndOfData(
                 String requireEndOfData) {
-            setProperty("requireEndOfData", requireEndOfData);
+            doSetProperty("requireEndOfData", requireEndOfData);
             return this;
         }
         /**
@@ -162,7 +162,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointConsumerBuilder stringPayload(boolean stringPayload) {
-            setProperty("stringPayload", stringPayload);
+            doSetProperty("stringPayload", stringPayload);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointConsumerBuilder stringPayload(String stringPayload) {
-            setProperty("stringPayload", stringPayload);
+            doSetProperty("stringPayload", stringPayload);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointConsumerBuilder validatePayload(
                 boolean validatePayload) {
-            setProperty("validatePayload", validatePayload);
+            doSetProperty("validatePayload", validatePayload);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointConsumerBuilder validatePayload(
                 String validatePayload) {
-            setProperty("validatePayload", validatePayload);
+            doSetProperty("validatePayload", validatePayload);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -247,7 +247,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -258,7 +258,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: codec
          */
         default MllpEndpointConsumerBuilder charsetName(String charsetName) {
-            setProperty("charsetName", charsetName);
+            doSetProperty("charsetName", charsetName);
             return this;
         }
     }
@@ -285,7 +285,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -326,7 +326,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -339,7 +339,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -352,7 +352,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -365,7 +365,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -378,7 +378,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -391,7 +391,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: tcp
          */
         default AdvancedMllpEndpointConsumerBuilder backlog(Integer backlog) {
-            setProperty("backlog", backlog);
+            doSetProperty("backlog", backlog);
             return this;
         }
         /**
@@ -405,7 +405,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: tcp
          */
         default AdvancedMllpEndpointConsumerBuilder backlog(String backlog) {
-            setProperty("backlog", backlog);
+            doSetProperty("backlog", backlog);
             return this;
         }
         /**
@@ -419,7 +419,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder lenientBind(
                 boolean lenientBind) {
-            setProperty("lenientBind", lenientBind);
+            doSetProperty("lenientBind", lenientBind);
             return this;
         }
         /**
@@ -433,7 +433,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder lenientBind(
                 String lenientBind) {
-            setProperty("lenientBind", lenientBind);
+            doSetProperty("lenientBind", lenientBind);
             return this;
         }
         /**
@@ -448,7 +448,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
-            setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
         }
         /**
@@ -463,7 +463,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder maxConcurrentConsumers(
                 String maxConcurrentConsumers) {
-            setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
         }
         /**
@@ -475,7 +475,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder reuseAddress(
                 Boolean reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -488,7 +488,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder reuseAddress(
                 String reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -501,7 +501,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder acceptTimeout(
                 int acceptTimeout) {
-            setProperty("acceptTimeout", acceptTimeout);
+            doSetProperty("acceptTimeout", acceptTimeout);
             return this;
         }
         /**
@@ -514,7 +514,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder acceptTimeout(
                 String acceptTimeout) {
-            setProperty("acceptTimeout", acceptTimeout);
+            doSetProperty("acceptTimeout", acceptTimeout);
             return this;
         }
         /**
@@ -527,7 +527,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder bindRetryInterval(
                 int bindRetryInterval) {
-            setProperty("bindRetryInterval", bindRetryInterval);
+            doSetProperty("bindRetryInterval", bindRetryInterval);
             return this;
         }
         /**
@@ -540,7 +540,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder bindRetryInterval(
                 String bindRetryInterval) {
-            setProperty("bindRetryInterval", bindRetryInterval);
+            doSetProperty("bindRetryInterval", bindRetryInterval);
             return this;
         }
         /**
@@ -552,7 +552,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: timeout
          */
         default AdvancedMllpEndpointConsumerBuilder bindTimeout(int bindTimeout) {
-            setProperty("bindTimeout", bindTimeout);
+            doSetProperty("bindTimeout", bindTimeout);
             return this;
         }
         /**
@@ -565,7 +565,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder bindTimeout(
                 String bindTimeout) {
-            setProperty("bindTimeout", bindTimeout);
+            doSetProperty("bindTimeout", bindTimeout);
             return this;
         }
         /**
@@ -579,7 +579,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder idleTimeout(
                 Integer idleTimeout) {
-            setProperty("idleTimeout", idleTimeout);
+            doSetProperty("idleTimeout", idleTimeout);
             return this;
         }
         /**
@@ -594,7 +594,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder idleTimeout(
                 String idleTimeout) {
-            setProperty("idleTimeout", idleTimeout);
+            doSetProperty("idleTimeout", idleTimeout);
             return this;
         }
         /**
@@ -608,7 +608,7 @@ public interface MllpEndpointBuilderFactory {
         @Deprecated
         default AdvancedMllpEndpointConsumerBuilder maxReceiveTimeouts(
                 Integer maxReceiveTimeouts) {
-            setProperty("maxReceiveTimeouts", maxReceiveTimeouts);
+            doSetProperty("maxReceiveTimeouts", maxReceiveTimeouts);
             return this;
         }
         /**
@@ -623,7 +623,7 @@ public interface MllpEndpointBuilderFactory {
         @Deprecated
         default AdvancedMllpEndpointConsumerBuilder maxReceiveTimeouts(
                 String maxReceiveTimeouts) {
-            setProperty("maxReceiveTimeouts", maxReceiveTimeouts);
+            doSetProperty("maxReceiveTimeouts", maxReceiveTimeouts);
             return this;
         }
         /**
@@ -635,7 +635,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
                 Integer receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -648,7 +648,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
                 String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -660,7 +660,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
                 Integer sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -673,7 +673,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
                 String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -685,7 +685,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: timeout
          */
         default AdvancedMllpEndpointConsumerBuilder readTimeout(int readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -698,7 +698,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder readTimeout(
                 String readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -711,7 +711,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder receiveTimeout(
                 int receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -724,7 +724,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointConsumerBuilder receiveTimeout(
                 String receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
     }
@@ -747,7 +747,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointProducerBuilder autoAck(boolean autoAck) {
-            setProperty("autoAck", autoAck);
+            doSetProperty("autoAck", autoAck);
             return this;
         }
         /**
@@ -759,7 +759,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointProducerBuilder autoAck(String autoAck) {
-            setProperty("autoAck", autoAck);
+            doSetProperty("autoAck", autoAck);
             return this;
         }
         /**
@@ -772,7 +772,7 @@ public interface MllpEndpointBuilderFactory {
          */
         @Deprecated
         default MllpEndpointProducerBuilder bufferWrites(boolean bufferWrites) {
-            setProperty("bufferWrites", bufferWrites);
+            doSetProperty("bufferWrites", bufferWrites);
             return this;
         }
         /**
@@ -785,7 +785,7 @@ public interface MllpEndpointBuilderFactory {
          */
         @Deprecated
         default MllpEndpointProducerBuilder bufferWrites(String bufferWrites) {
-            setProperty("bufferWrites", bufferWrites);
+            doSetProperty("bufferWrites", bufferWrites);
             return this;
         }
         /**
@@ -797,7 +797,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointProducerBuilder hl7Headers(boolean hl7Headers) {
-            setProperty("hl7Headers", hl7Headers);
+            doSetProperty("hl7Headers", hl7Headers);
             return this;
         }
         /**
@@ -809,7 +809,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointProducerBuilder hl7Headers(String hl7Headers) {
-            setProperty("hl7Headers", hl7Headers);
+            doSetProperty("hl7Headers", hl7Headers);
             return this;
         }
         /**
@@ -825,7 +825,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointProducerBuilder requireEndOfData(
                 boolean requireEndOfData) {
-            setProperty("requireEndOfData", requireEndOfData);
+            doSetProperty("requireEndOfData", requireEndOfData);
             return this;
         }
         /**
@@ -841,7 +841,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointProducerBuilder requireEndOfData(
                 String requireEndOfData) {
-            setProperty("requireEndOfData", requireEndOfData);
+            doSetProperty("requireEndOfData", requireEndOfData);
             return this;
         }
         /**
@@ -858,7 +858,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointProducerBuilder stringPayload(boolean stringPayload) {
-            setProperty("stringPayload", stringPayload);
+            doSetProperty("stringPayload", stringPayload);
             return this;
         }
         /**
@@ -875,7 +875,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointProducerBuilder stringPayload(String stringPayload) {
-            setProperty("stringPayload", stringPayload);
+            doSetProperty("stringPayload", stringPayload);
             return this;
         }
         /**
@@ -892,7 +892,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointProducerBuilder validatePayload(
                 boolean validatePayload) {
-            setProperty("validatePayload", validatePayload);
+            doSetProperty("validatePayload", validatePayload);
             return this;
         }
         /**
@@ -909,7 +909,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointProducerBuilder validatePayload(
                 String validatePayload) {
-            setProperty("validatePayload", validatePayload);
+            doSetProperty("validatePayload", validatePayload);
             return this;
         }
         /**
@@ -929,7 +929,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -949,7 +949,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default MllpEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -960,7 +960,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: codec
          */
         default MllpEndpointProducerBuilder charsetName(String charsetName) {
-            setProperty("charsetName", charsetName);
+            doSetProperty("charsetName", charsetName);
             return this;
         }
     }
@@ -984,7 +984,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -997,7 +997,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1010,7 +1010,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1023,7 +1023,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1036,7 +1036,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -1049,7 +1049,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -1063,7 +1063,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder idleTimeout(
                 Integer idleTimeout) {
-            setProperty("idleTimeout", idleTimeout);
+            doSetProperty("idleTimeout", idleTimeout);
             return this;
         }
         /**
@@ -1078,7 +1078,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder idleTimeout(
                 String idleTimeout) {
-            setProperty("idleTimeout", idleTimeout);
+            doSetProperty("idleTimeout", idleTimeout);
             return this;
         }
         /**
@@ -1089,7 +1089,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: tcp
          */
         default AdvancedMllpEndpointProducerBuilder keepAlive(Boolean keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -1101,7 +1101,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: tcp
          */
         default AdvancedMllpEndpointProducerBuilder keepAlive(String keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -1113,7 +1113,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
                 Integer receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1126,7 +1126,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
                 String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1138,7 +1138,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder sendBufferSize(
                 Integer sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1151,7 +1151,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder sendBufferSize(
                 String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1163,7 +1163,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder tcpNoDelay(
                 Boolean tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -1175,7 +1175,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: tcp
          */
         default AdvancedMllpEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -1187,7 +1187,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: timeout
          */
         default AdvancedMllpEndpointProducerBuilder readTimeout(int readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -1200,7 +1200,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder readTimeout(
                 String readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -1213,7 +1213,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder receiveTimeout(
                 int receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -1226,7 +1226,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointProducerBuilder receiveTimeout(
                 String receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
     }
@@ -1249,7 +1249,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointBuilder autoAck(boolean autoAck) {
-            setProperty("autoAck", autoAck);
+            doSetProperty("autoAck", autoAck);
             return this;
         }
         /**
@@ -1261,7 +1261,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointBuilder autoAck(String autoAck) {
-            setProperty("autoAck", autoAck);
+            doSetProperty("autoAck", autoAck);
             return this;
         }
         /**
@@ -1274,7 +1274,7 @@ public interface MllpEndpointBuilderFactory {
          */
         @Deprecated
         default MllpEndpointBuilder bufferWrites(boolean bufferWrites) {
-            setProperty("bufferWrites", bufferWrites);
+            doSetProperty("bufferWrites", bufferWrites);
             return this;
         }
         /**
@@ -1287,7 +1287,7 @@ public interface MllpEndpointBuilderFactory {
          */
         @Deprecated
         default MllpEndpointBuilder bufferWrites(String bufferWrites) {
-            setProperty("bufferWrites", bufferWrites);
+            doSetProperty("bufferWrites", bufferWrites);
             return this;
         }
         /**
@@ -1299,7 +1299,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointBuilder hl7Headers(boolean hl7Headers) {
-            setProperty("hl7Headers", hl7Headers);
+            doSetProperty("hl7Headers", hl7Headers);
             return this;
         }
         /**
@@ -1311,7 +1311,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointBuilder hl7Headers(String hl7Headers) {
-            setProperty("hl7Headers", hl7Headers);
+            doSetProperty("hl7Headers", hl7Headers);
             return this;
         }
         /**
@@ -1326,7 +1326,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointBuilder requireEndOfData(boolean requireEndOfData) {
-            setProperty("requireEndOfData", requireEndOfData);
+            doSetProperty("requireEndOfData", requireEndOfData);
             return this;
         }
         /**
@@ -1341,7 +1341,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointBuilder requireEndOfData(String requireEndOfData) {
-            setProperty("requireEndOfData", requireEndOfData);
+            doSetProperty("requireEndOfData", requireEndOfData);
             return this;
         }
         /**
@@ -1358,7 +1358,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointBuilder stringPayload(boolean stringPayload) {
-            setProperty("stringPayload", stringPayload);
+            doSetProperty("stringPayload", stringPayload);
             return this;
         }
         /**
@@ -1375,7 +1375,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointBuilder stringPayload(String stringPayload) {
-            setProperty("stringPayload", stringPayload);
+            doSetProperty("stringPayload", stringPayload);
             return this;
         }
         /**
@@ -1391,7 +1391,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointBuilder validatePayload(boolean validatePayload) {
-            setProperty("validatePayload", validatePayload);
+            doSetProperty("validatePayload", validatePayload);
             return this;
         }
         /**
@@ -1407,7 +1407,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: common
          */
         default MllpEndpointBuilder validatePayload(String validatePayload) {
-            setProperty("validatePayload", validatePayload);
+            doSetProperty("validatePayload", validatePayload);
             return this;
         }
         /**
@@ -1418,7 +1418,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: codec
          */
         default MllpEndpointBuilder charsetName(String charsetName) {
-            setProperty("charsetName", charsetName);
+            doSetProperty("charsetName", charsetName);
             return this;
         }
     }
@@ -1442,7 +1442,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1455,7 +1455,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1467,7 +1467,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMllpEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1479,7 +1479,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMllpEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1492,7 +1492,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder idleTimeout(Integer idleTimeout) {
-            setProperty("idleTimeout", idleTimeout);
+            doSetProperty("idleTimeout", idleTimeout);
             return this;
         }
         /**
@@ -1506,7 +1506,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder idleTimeout(String idleTimeout) {
-            setProperty("idleTimeout", idleTimeout);
+            doSetProperty("idleTimeout", idleTimeout);
             return this;
         }
         /**
@@ -1518,7 +1518,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointBuilder receiveBufferSize(
                 Integer receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1531,7 +1531,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointBuilder receiveBufferSize(
                 String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1543,7 +1543,7 @@ public interface MllpEndpointBuilderFactory {
          */
         default AdvancedMllpEndpointBuilder sendBufferSize(
                 Integer sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1555,7 +1555,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: tcp
          */
         default AdvancedMllpEndpointBuilder sendBufferSize(String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1567,7 +1567,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder readTimeout(int readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -1579,7 +1579,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder readTimeout(String readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -1591,7 +1591,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder receiveTimeout(int receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -1603,7 +1603,7 @@ public interface MllpEndpointBuilderFactory {
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder receiveTimeout(String receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
     }

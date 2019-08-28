@@ -51,7 +51,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointConsumerBuilder deep(boolean deep) {
-            setProperty("deep", deep);
+            doSetProperty("deep", deep);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointConsumerBuilder deep(String deep) {
-            setProperty("deep", deep);
+            doSetProperty("deep", deep);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointConsumerBuilder eventTypes(int eventTypes) {
-            setProperty("eventTypes", eventTypes);
+            doSetProperty("eventTypes", eventTypes);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointConsumerBuilder eventTypes(String eventTypes) {
-            setProperty("eventTypes", eventTypes);
+            doSetProperty("eventTypes", eventTypes);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointConsumerBuilder nodeTypeNames(String nodeTypeNames) {
-            setProperty("nodeTypeNames", nodeTypeNames);
+            doSetProperty("nodeTypeNames", nodeTypeNames);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointConsumerBuilder noLocal(boolean noLocal) {
-            setProperty("noLocal", noLocal);
+            doSetProperty("noLocal", noLocal);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointConsumerBuilder noLocal(String noLocal) {
-            setProperty("noLocal", noLocal);
+            doSetProperty("noLocal", noLocal);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointConsumerBuilder sessionLiveCheckInterval(
                 long sessionLiveCheckInterval) {
-            setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
+            doSetProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointConsumerBuilder sessionLiveCheckInterval(
                 String sessionLiveCheckInterval) {
-            setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
+            doSetProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointConsumerBuilder sessionLiveCheckIntervalOnStart(
                 long sessionLiveCheckIntervalOnStart) {
-            setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
+            doSetProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointConsumerBuilder sessionLiveCheckIntervalOnStart(
                 String sessionLiveCheckIntervalOnStart) {
-            setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
+            doSetProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -215,7 +215,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointConsumerBuilder uuids(String uuids) {
-            setProperty("uuids", uuids);
+            doSetProperty("uuids", uuids);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointConsumerBuilder workspaceName(String workspaceName) {
-            setProperty("workspaceName", workspaceName);
+            doSetProperty("workspaceName", workspaceName);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -290,7 +290,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -306,7 +306,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -318,7 +318,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -331,7 +331,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -344,7 +344,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -370,7 +370,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -383,7 +383,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -406,7 +406,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointProducerBuilder deep(boolean deep) {
-            setProperty("deep", deep);
+            doSetProperty("deep", deep);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointProducerBuilder deep(String deep) {
-            setProperty("deep", deep);
+            doSetProperty("deep", deep);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointProducerBuilder eventTypes(int eventTypes) {
-            setProperty("eventTypes", eventTypes);
+            doSetProperty("eventTypes", eventTypes);
             return this;
         }
         /**
@@ -444,7 +444,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointProducerBuilder eventTypes(String eventTypes) {
-            setProperty("eventTypes", eventTypes);
+            doSetProperty("eventTypes", eventTypes);
             return this;
         }
         /**
@@ -457,7 +457,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointProducerBuilder nodeTypeNames(String nodeTypeNames) {
-            setProperty("nodeTypeNames", nodeTypeNames);
+            doSetProperty("nodeTypeNames", nodeTypeNames);
             return this;
         }
         /**
@@ -470,7 +470,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointProducerBuilder noLocal(boolean noLocal) {
-            setProperty("noLocal", noLocal);
+            doSetProperty("noLocal", noLocal);
             return this;
         }
         /**
@@ -483,7 +483,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointProducerBuilder noLocal(String noLocal) {
-            setProperty("noLocal", noLocal);
+            doSetProperty("noLocal", noLocal);
             return this;
         }
         /**
@@ -494,7 +494,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -507,7 +507,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointProducerBuilder sessionLiveCheckInterval(
                 long sessionLiveCheckInterval) {
-            setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
+            doSetProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
         }
         /**
@@ -520,7 +520,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointProducerBuilder sessionLiveCheckInterval(
                 String sessionLiveCheckInterval) {
-            setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
+            doSetProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
         }
         /**
@@ -533,7 +533,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointProducerBuilder sessionLiveCheckIntervalOnStart(
                 long sessionLiveCheckIntervalOnStart) {
-            setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
+            doSetProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
         }
         /**
@@ -546,7 +546,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointProducerBuilder sessionLiveCheckIntervalOnStart(
                 String sessionLiveCheckIntervalOnStart) {
-            setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
+            doSetProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
         }
         /**
@@ -557,7 +557,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -570,7 +570,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointProducerBuilder uuids(String uuids) {
-            setProperty("uuids", uuids);
+            doSetProperty("uuids", uuids);
             return this;
         }
         /**
@@ -582,7 +582,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointProducerBuilder workspaceName(String workspaceName) {
-            setProperty("workspaceName", workspaceName);
+            doSetProperty("workspaceName", workspaceName);
             return this;
         }
         /**
@@ -602,7 +602,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -622,7 +622,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -646,7 +646,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -659,7 +659,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -672,7 +672,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -685,7 +685,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -708,7 +708,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointBuilder deep(boolean deep) {
-            setProperty("deep", deep);
+            doSetProperty("deep", deep);
             return this;
         }
         /**
@@ -720,7 +720,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointBuilder deep(String deep) {
-            setProperty("deep", deep);
+            doSetProperty("deep", deep);
             return this;
         }
         /**
@@ -733,7 +733,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointBuilder eventTypes(int eventTypes) {
-            setProperty("eventTypes", eventTypes);
+            doSetProperty("eventTypes", eventTypes);
             return this;
         }
         /**
@@ -746,7 +746,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointBuilder eventTypes(String eventTypes) {
-            setProperty("eventTypes", eventTypes);
+            doSetProperty("eventTypes", eventTypes);
             return this;
         }
         /**
@@ -759,7 +759,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointBuilder nodeTypeNames(String nodeTypeNames) {
-            setProperty("nodeTypeNames", nodeTypeNames);
+            doSetProperty("nodeTypeNames", nodeTypeNames);
             return this;
         }
         /**
@@ -772,7 +772,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointBuilder noLocal(boolean noLocal) {
-            setProperty("noLocal", noLocal);
+            doSetProperty("noLocal", noLocal);
             return this;
         }
         /**
@@ -785,7 +785,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointBuilder noLocal(String noLocal) {
-            setProperty("noLocal", noLocal);
+            doSetProperty("noLocal", noLocal);
             return this;
         }
         /**
@@ -796,7 +796,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -809,7 +809,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointBuilder sessionLiveCheckInterval(
                 long sessionLiveCheckInterval) {
-            setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
+            doSetProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
         }
         /**
@@ -822,7 +822,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointBuilder sessionLiveCheckInterval(
                 String sessionLiveCheckInterval) {
-            setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
+            doSetProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
         }
         /**
@@ -835,7 +835,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointBuilder sessionLiveCheckIntervalOnStart(
                 long sessionLiveCheckIntervalOnStart) {
-            setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
+            doSetProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
         }
         /**
@@ -848,7 +848,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointBuilder sessionLiveCheckIntervalOnStart(
                 String sessionLiveCheckIntervalOnStart) {
-            setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
+            doSetProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
         }
         /**
@@ -859,7 +859,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -872,7 +872,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointBuilder uuids(String uuids) {
-            setProperty("uuids", uuids);
+            doSetProperty("uuids", uuids);
             return this;
         }
         /**
@@ -884,7 +884,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: common
          */
         default JcrEndpointBuilder workspaceName(String workspaceName) {
-            setProperty("workspaceName", workspaceName);
+            doSetProperty("workspaceName", workspaceName);
             return this;
         }
     }
@@ -908,7 +908,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -921,7 +921,7 @@ public interface JcrEndpointBuilderFactory {
          */
         default AdvancedJcrEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -933,7 +933,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJcrEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -945,7 +945,7 @@ public interface JcrEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJcrEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

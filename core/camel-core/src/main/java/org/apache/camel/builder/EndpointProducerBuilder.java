@@ -47,7 +47,7 @@ public interface EndpointProducerBuilder {
      * Adds an option to this endpoint. This API is only intended for Camel
      * internally.
      */
-    void setProperty(String name, Object value);
+    void doSetProperty(String name, Object value);
 
     /**
      * Builds an expression of this endpoint url. This API is only intended for

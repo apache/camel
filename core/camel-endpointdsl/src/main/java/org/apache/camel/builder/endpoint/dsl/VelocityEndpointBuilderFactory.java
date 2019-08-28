@@ -45,7 +45,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder loaderCache(boolean loaderCache) {
-            setProperty("loaderCache", loaderCache);
+            doSetProperty("loaderCache", loaderCache);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder loaderCache(String loaderCache) {
-            setProperty("loaderCache", loaderCache);
+            doSetProperty("loaderCache", loaderCache);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder propertiesFile(String propertiesFile) {
-            setProperty("propertiesFile", propertiesFile);
+            doSetProperty("propertiesFile", propertiesFile);
             return this;
         }
     }
@@ -127,7 +127,7 @@ public interface VelocityEndpointBuilderFactory {
          */
         default AdvancedVelocityEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface VelocityEndpointBuilderFactory {
          */
         default AdvancedVelocityEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVelocityEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVelocityEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

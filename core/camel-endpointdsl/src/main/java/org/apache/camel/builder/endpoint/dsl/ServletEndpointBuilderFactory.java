@@ -63,7 +63,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default ServletEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default ServletEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default ServletEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default ServletEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface ServletEndpointBuilderFactory {
          * Group: consumer
          */
         default ServletEndpointBuilder chunked(boolean chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface ServletEndpointBuilderFactory {
          * Group: consumer
          */
         default ServletEndpointBuilder chunked(String chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -162,7 +162,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default ServletEndpointBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default ServletEndpointBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
     }
@@ -206,7 +206,7 @@ public interface ServletEndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedServletEndpointBuilder httpBinding(Object httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -219,7 +219,7 @@ public interface ServletEndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedServletEndpointBuilder httpBinding(String httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default AdvancedServletEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default AdvancedServletEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -259,7 +259,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default AdvancedServletEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -273,7 +273,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default AdvancedServletEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -315,7 +315,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -329,7 +329,7 @@ public interface ServletEndpointBuilderFactory {
          */
         default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -341,7 +341,7 @@ public interface ServletEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedServletEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface ServletEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedServletEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

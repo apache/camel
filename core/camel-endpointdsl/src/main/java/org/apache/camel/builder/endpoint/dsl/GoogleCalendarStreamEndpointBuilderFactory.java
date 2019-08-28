@@ -51,7 +51,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default GoogleCalendarStreamEndpointBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default GoogleCalendarStreamEndpointBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder calendarId(String calendarId) {
-            setProperty("calendarId", calendarId);
+            doSetProperty("calendarId", calendarId);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default GoogleCalendarStreamEndpointBuilder clientSecret(
                 String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default GoogleCalendarStreamEndpointBuilder considerLastUpdate(
                 boolean considerLastUpdate) {
-            setProperty("considerLastUpdate", considerLastUpdate);
+            doSetProperty("considerLastUpdate", considerLastUpdate);
             return this;
         }
         /**
@@ -124,7 +124,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default GoogleCalendarStreamEndpointBuilder considerLastUpdate(
                 String considerLastUpdate) {
-            setProperty("considerLastUpdate", considerLastUpdate);
+            doSetProperty("considerLastUpdate", considerLastUpdate);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default GoogleCalendarStreamEndpointBuilder consumeFromNow(
                 boolean consumeFromNow) {
-            setProperty("consumeFromNow", consumeFromNow);
+            doSetProperty("consumeFromNow", consumeFromNow);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default GoogleCalendarStreamEndpointBuilder consumeFromNow(
                 String consumeFromNow) {
-            setProperty("consumeFromNow", consumeFromNow);
+            doSetProperty("consumeFromNow", consumeFromNow);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder maxResults(int maxResults) {
-            setProperty("maxResults", maxResults);
+            doSetProperty("maxResults", maxResults);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder maxResults(String maxResults) {
-            setProperty("maxResults", maxResults);
+            doSetProperty("maxResults", maxResults);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default GoogleCalendarStreamEndpointBuilder refreshToken(
                 String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -209,7 +209,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder scopes(List<String> scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -223,7 +223,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
     }
@@ -247,7 +247,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -260,7 +260,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -273,7 +273,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -286,7 +286,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

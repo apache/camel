@@ -48,7 +48,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder dmax(int dmax) {
-            setProperty("dmax", dmax);
+            doSetProperty("dmax", dmax);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder dmax(String dmax) {
-            setProperty("dmax", dmax);
+            doSetProperty("dmax", dmax);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder groupName(String groupName) {
-            setProperty("groupName", groupName);
+            doSetProperty("groupName", groupName);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder metricName(String metricName) {
-            setProperty("metricName", metricName);
+            doSetProperty("metricName", metricName);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder mode(UDPAddressingMode mode) {
-            setProperty("mode", mode);
+            doSetProperty("mode", mode);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder mode(String mode) {
-            setProperty("mode", mode);
+            doSetProperty("mode", mode);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder prefix(String prefix) {
-            setProperty("prefix", prefix);
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder slope(GMetricSlope slope) {
-            setProperty("slope", slope);
+            doSetProperty("slope", slope);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder slope(String slope) {
-            setProperty("slope", slope);
+            doSetProperty("slope", slope);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder spoofHostname(String spoofHostname) {
-            setProperty("spoofHostname", spoofHostname);
+            doSetProperty("spoofHostname", spoofHostname);
             return this;
         }
         /**
@@ -167,7 +167,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder tmax(int tmax) {
-            setProperty("tmax", tmax);
+            doSetProperty("tmax", tmax);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder tmax(String tmax) {
-            setProperty("tmax", tmax);
+            doSetProperty("tmax", tmax);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder ttl(int ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder ttl(String ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder type(GMetricType type) {
-            setProperty("type", type);
+            doSetProperty("type", type);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder type(String type) {
-            setProperty("type", type);
+            doSetProperty("type", type);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder units(String units) {
-            setProperty("units", units);
+            doSetProperty("units", units);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder wireFormat31x(boolean wireFormat31x) {
-            setProperty("wireFormat31x", wireFormat31x);
+            doSetProperty("wireFormat31x", wireFormat31x);
             return this;
         }
         /**
@@ -262,7 +262,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: producer
          */
         default GangliaEndpointBuilder wireFormat31x(String wireFormat31x) {
-            setProperty("wireFormat31x", wireFormat31x);
+            doSetProperty("wireFormat31x", wireFormat31x);
             return this;
         }
     }
@@ -286,7 +286,7 @@ public interface GangliaEndpointBuilderFactory {
          */
         default AdvancedGangliaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface GangliaEndpointBuilderFactory {
          */
         default AdvancedGangliaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGangliaEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -323,7 +323,7 @@ public interface GangliaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGangliaEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

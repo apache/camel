@@ -56,7 +56,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointConsumerBuilder amazonS3Client(Object amazonS3Client) {
-            setProperty("amazonS3Client", amazonS3Client);
+            doSetProperty("amazonS3Client", amazonS3Client);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointConsumerBuilder amazonS3Client(String amazonS3Client) {
-            setProperty("amazonS3Client", amazonS3Client);
+            doSetProperty("amazonS3Client", amazonS3Client);
             return this;
         }
         /**
@@ -80,7 +80,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder autoCreateBucket(
                 boolean autoCreateBucket) {
-            setProperty("autoCreateBucket", autoCreateBucket);
+            doSetProperty("autoCreateBucket", autoCreateBucket);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder autoCreateBucket(
                 String autoCreateBucket) {
-            setProperty("autoCreateBucket", autoCreateBucket);
+            doSetProperty("autoCreateBucket", autoCreateBucket);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder pathStyleAccess(
                 boolean pathStyleAccess) {
-            setProperty("pathStyleAccess", pathStyleAccess);
+            doSetProperty("pathStyleAccess", pathStyleAccess);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointConsumerBuilder pathStyleAccess(String pathStyleAccess) {
-            setProperty("pathStyleAccess", pathStyleAccess);
+            doSetProperty("pathStyleAccess", pathStyleAccess);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointConsumerBuilder policy(String policy) {
-            setProperty("policy", policy);
+            doSetProperty("policy", policy);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointConsumerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -149,7 +149,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointConsumerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -175,7 +175,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointConsumerBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder useIAMCredentials(
                 boolean useIAMCredentials) {
-            setProperty("useIAMCredentials", useIAMCredentials);
+            doSetProperty("useIAMCredentials", useIAMCredentials);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder useIAMCredentials(
                 String useIAMCredentials) {
-            setProperty("useIAMCredentials", useIAMCredentials);
+            doSetProperty("useIAMCredentials", useIAMCredentials);
             return this;
         }
         /**
@@ -219,7 +219,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -237,7 +237,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder deleteAfterRead(
                 boolean deleteAfterRead) {
-            setProperty("deleteAfterRead", deleteAfterRead);
+            doSetProperty("deleteAfterRead", deleteAfterRead);
             return this;
         }
         /**
@@ -272,7 +272,7 @@ public interface S3EndpointBuilderFactory {
          * Group: consumer
          */
         default S3EndpointConsumerBuilder deleteAfterRead(String deleteAfterRead) {
-            setProperty("deleteAfterRead", deleteAfterRead);
+            doSetProperty("deleteAfterRead", deleteAfterRead);
             return this;
         }
         /**
@@ -285,7 +285,7 @@ public interface S3EndpointBuilderFactory {
          * Group: consumer
          */
         default S3EndpointConsumerBuilder delimiter(String delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface S3EndpointBuilderFactory {
          * Group: consumer
          */
         default S3EndpointConsumerBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface S3EndpointBuilderFactory {
          * Group: consumer
          */
         default S3EndpointConsumerBuilder includeBody(boolean includeBody) {
-            setProperty("includeBody", includeBody);
+            doSetProperty("includeBody", includeBody);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface S3EndpointBuilderFactory {
          * Group: consumer
          */
         default S3EndpointConsumerBuilder includeBody(String includeBody) {
-            setProperty("includeBody", includeBody);
+            doSetProperty("includeBody", includeBody);
             return this;
         }
         /**
@@ -341,7 +341,7 @@ public interface S3EndpointBuilderFactory {
          * Group: consumer
          */
         default S3EndpointConsumerBuilder maxConnections(int maxConnections) {
-            setProperty("maxConnections", maxConnections);
+            doSetProperty("maxConnections", maxConnections);
             return this;
         }
         /**
@@ -352,7 +352,7 @@ public interface S3EndpointBuilderFactory {
          * Group: consumer
          */
         default S3EndpointConsumerBuilder maxConnections(String maxConnections) {
-            setProperty("maxConnections", maxConnections);
+            doSetProperty("maxConnections", maxConnections);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface S3EndpointBuilderFactory {
          * Group: consumer
          */
         default S3EndpointConsumerBuilder prefix(String prefix) {
-            setProperty("prefix", prefix);
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -406,7 +406,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -419,7 +419,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -432,7 +432,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -458,7 +458,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -471,7 +471,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -488,7 +488,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -505,7 +505,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -518,7 +518,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -531,7 +531,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -543,7 +543,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -555,7 +555,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -568,7 +568,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -581,7 +581,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -594,7 +594,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -607,7 +607,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder runLoggingLevel(String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -622,7 +622,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -637,7 +637,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -649,7 +649,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -663,7 +663,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -678,7 +678,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -689,7 +689,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder startScheduler(boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -700,7 +700,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder startScheduler(String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -711,7 +711,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -723,7 +723,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -735,7 +735,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -747,7 +747,7 @@ public interface S3EndpointBuilderFactory {
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -758,7 +758,7 @@ public interface S3EndpointBuilderFactory {
          * Group: security
          */
         default S3EndpointConsumerBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -769,7 +769,7 @@ public interface S3EndpointBuilderFactory {
          * Group: security
          */
         default S3EndpointConsumerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -796,7 +796,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder encryptionMaterials(
                 Object encryptionMaterials) {
-            setProperty("encryptionMaterials", encryptionMaterials);
+            doSetProperty("encryptionMaterials", encryptionMaterials);
             return this;
         }
         /**
@@ -811,7 +811,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder encryptionMaterials(
                 String encryptionMaterials) {
-            setProperty("encryptionMaterials", encryptionMaterials);
+            doSetProperty("encryptionMaterials", encryptionMaterials);
             return this;
         }
         /**
@@ -823,7 +823,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder useEncryption(
                 boolean useEncryption) {
-            setProperty("useEncryption", useEncryption);
+            doSetProperty("useEncryption", useEncryption);
             return this;
         }
         /**
@@ -835,7 +835,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder useEncryption(
                 String useEncryption) {
-            setProperty("useEncryption", useEncryption);
+            doSetProperty("useEncryption", useEncryption);
             return this;
         }
         /**
@@ -852,7 +852,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder autocloseBody(
                 boolean autocloseBody) {
-            setProperty("autocloseBody", autocloseBody);
+            doSetProperty("autocloseBody", autocloseBody);
             return this;
         }
         /**
@@ -869,7 +869,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder autocloseBody(
                 String autocloseBody) {
-            setProperty("autocloseBody", autocloseBody);
+            doSetProperty("autocloseBody", autocloseBody);
             return this;
         }
         /**
@@ -885,7 +885,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -901,7 +901,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -913,7 +913,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -926,7 +926,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -942,7 +942,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -958,7 +958,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -971,7 +971,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -984,7 +984,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -997,7 +997,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1009,7 +1009,7 @@ public interface S3EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedS3EndpointConsumerBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1021,7 +1021,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder accelerateModeEnabled(
                 boolean accelerateModeEnabled) {
-            setProperty("accelerateModeEnabled", accelerateModeEnabled);
+            doSetProperty("accelerateModeEnabled", accelerateModeEnabled);
             return this;
         }
         /**
@@ -1033,7 +1033,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder accelerateModeEnabled(
                 String accelerateModeEnabled) {
-            setProperty("accelerateModeEnabled", accelerateModeEnabled);
+            doSetProperty("accelerateModeEnabled", accelerateModeEnabled);
             return this;
         }
         /**
@@ -1045,7 +1045,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder chunkedEncodingDisabled(
                 boolean chunkedEncodingDisabled) {
-            setProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
+            doSetProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
             return this;
         }
         /**
@@ -1057,7 +1057,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder chunkedEncodingDisabled(
                 String chunkedEncodingDisabled) {
-            setProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
+            doSetProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
             return this;
         }
         /**
@@ -1069,7 +1069,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder dualstackEnabled(
                 boolean dualstackEnabled) {
-            setProperty("dualstackEnabled", dualstackEnabled);
+            doSetProperty("dualstackEnabled", dualstackEnabled);
             return this;
         }
         /**
@@ -1081,7 +1081,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder dualstackEnabled(
                 String dualstackEnabled) {
-            setProperty("dualstackEnabled", dualstackEnabled);
+            doSetProperty("dualstackEnabled", dualstackEnabled);
             return this;
         }
         /**
@@ -1093,7 +1093,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder forceGlobalBucketAccessEnabled(
                 boolean forceGlobalBucketAccessEnabled) {
-            setProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
+            doSetProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
             return this;
         }
         /**
@@ -1105,7 +1105,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder forceGlobalBucketAccessEnabled(
                 String forceGlobalBucketAccessEnabled) {
-            setProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
+            doSetProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
             return this;
         }
         /**
@@ -1117,7 +1117,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder payloadSigningEnabled(
                 boolean payloadSigningEnabled) {
-            setProperty("payloadSigningEnabled", payloadSigningEnabled);
+            doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
             return this;
         }
         /**
@@ -1129,7 +1129,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointConsumerBuilder payloadSigningEnabled(
                 String payloadSigningEnabled) {
-            setProperty("payloadSigningEnabled", payloadSigningEnabled);
+            doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
             return this;
         }
     }
@@ -1152,7 +1152,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointProducerBuilder amazonS3Client(Object amazonS3Client) {
-            setProperty("amazonS3Client", amazonS3Client);
+            doSetProperty("amazonS3Client", amazonS3Client);
             return this;
         }
         /**
@@ -1164,7 +1164,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointProducerBuilder amazonS3Client(String amazonS3Client) {
-            setProperty("amazonS3Client", amazonS3Client);
+            doSetProperty("amazonS3Client", amazonS3Client);
             return this;
         }
         /**
@@ -1176,7 +1176,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointProducerBuilder autoCreateBucket(
                 boolean autoCreateBucket) {
-            setProperty("autoCreateBucket", autoCreateBucket);
+            doSetProperty("autoCreateBucket", autoCreateBucket);
             return this;
         }
         /**
@@ -1188,7 +1188,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointProducerBuilder autoCreateBucket(
                 String autoCreateBucket) {
-            setProperty("autoCreateBucket", autoCreateBucket);
+            doSetProperty("autoCreateBucket", autoCreateBucket);
             return this;
         }
         /**
@@ -1200,7 +1200,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointProducerBuilder pathStyleAccess(
                 boolean pathStyleAccess) {
-            setProperty("pathStyleAccess", pathStyleAccess);
+            doSetProperty("pathStyleAccess", pathStyleAccess);
             return this;
         }
         /**
@@ -1211,7 +1211,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointProducerBuilder pathStyleAccess(String pathStyleAccess) {
-            setProperty("pathStyleAccess", pathStyleAccess);
+            doSetProperty("pathStyleAccess", pathStyleAccess);
             return this;
         }
         /**
@@ -1223,7 +1223,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointProducerBuilder policy(String policy) {
-            setProperty("policy", policy);
+            doSetProperty("policy", policy);
             return this;
         }
         /**
@@ -1234,7 +1234,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointProducerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -1245,7 +1245,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointProducerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1257,7 +1257,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointProducerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1271,7 +1271,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointProducerBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -1284,7 +1284,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointProducerBuilder useIAMCredentials(
                 boolean useIAMCredentials) {
-            setProperty("useIAMCredentials", useIAMCredentials);
+            doSetProperty("useIAMCredentials", useIAMCredentials);
             return this;
         }
         /**
@@ -1297,7 +1297,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointProducerBuilder useIAMCredentials(
                 String useIAMCredentials) {
-            setProperty("useIAMCredentials", useIAMCredentials);
+            doSetProperty("useIAMCredentials", useIAMCredentials);
             return this;
         }
         /**
@@ -1309,7 +1309,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointProducerBuilder deleteAfterWrite(
                 boolean deleteAfterWrite) {
-            setProperty("deleteAfterWrite", deleteAfterWrite);
+            doSetProperty("deleteAfterWrite", deleteAfterWrite);
             return this;
         }
         /**
@@ -1321,7 +1321,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointProducerBuilder deleteAfterWrite(
                 String deleteAfterWrite) {
-            setProperty("deleteAfterWrite", deleteAfterWrite);
+            doSetProperty("deleteAfterWrite", deleteAfterWrite);
             return this;
         }
         /**
@@ -1333,7 +1333,7 @@ public interface S3EndpointBuilderFactory {
          * Group: producer
          */
         default S3EndpointProducerBuilder keyName(String keyName) {
-            setProperty("keyName", keyName);
+            doSetProperty("keyName", keyName);
             return this;
         }
         /**
@@ -1353,7 +1353,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1373,7 +1373,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1386,7 +1386,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointProducerBuilder multiPartUpload(
                 boolean multiPartUpload) {
-            setProperty("multiPartUpload", multiPartUpload);
+            doSetProperty("multiPartUpload", multiPartUpload);
             return this;
         }
         /**
@@ -1398,7 +1398,7 @@ public interface S3EndpointBuilderFactory {
          * Group: producer
          */
         default S3EndpointProducerBuilder multiPartUpload(String multiPartUpload) {
-            setProperty("multiPartUpload", multiPartUpload);
+            doSetProperty("multiPartUpload", multiPartUpload);
             return this;
         }
         /**
@@ -1410,7 +1410,7 @@ public interface S3EndpointBuilderFactory {
          * Group: producer
          */
         default S3EndpointProducerBuilder operation(S3Operations operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -1422,7 +1422,7 @@ public interface S3EndpointBuilderFactory {
          * Group: producer
          */
         default S3EndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -1434,7 +1434,7 @@ public interface S3EndpointBuilderFactory {
          * Group: producer
          */
         default S3EndpointProducerBuilder partSize(long partSize) {
-            setProperty("partSize", partSize);
+            doSetProperty("partSize", partSize);
             return this;
         }
         /**
@@ -1446,7 +1446,7 @@ public interface S3EndpointBuilderFactory {
          * Group: producer
          */
         default S3EndpointProducerBuilder partSize(String partSize) {
-            setProperty("partSize", partSize);
+            doSetProperty("partSize", partSize);
             return this;
         }
         /**
@@ -1459,7 +1459,7 @@ public interface S3EndpointBuilderFactory {
          */
         default S3EndpointProducerBuilder serverSideEncryption(
                 String serverSideEncryption) {
-            setProperty("serverSideEncryption", serverSideEncryption);
+            doSetProperty("serverSideEncryption", serverSideEncryption);
             return this;
         }
         /**
@@ -1471,7 +1471,7 @@ public interface S3EndpointBuilderFactory {
          * Group: producer
          */
         default S3EndpointProducerBuilder storageClass(String storageClass) {
-            setProperty("storageClass", storageClass);
+            doSetProperty("storageClass", storageClass);
             return this;
         }
         /**
@@ -1482,7 +1482,7 @@ public interface S3EndpointBuilderFactory {
          * Group: security
          */
         default S3EndpointProducerBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -1493,7 +1493,7 @@ public interface S3EndpointBuilderFactory {
          * Group: security
          */
         default S3EndpointProducerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -1520,7 +1520,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder encryptionMaterials(
                 Object encryptionMaterials) {
-            setProperty("encryptionMaterials", encryptionMaterials);
+            doSetProperty("encryptionMaterials", encryptionMaterials);
             return this;
         }
         /**
@@ -1535,7 +1535,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder encryptionMaterials(
                 String encryptionMaterials) {
-            setProperty("encryptionMaterials", encryptionMaterials);
+            doSetProperty("encryptionMaterials", encryptionMaterials);
             return this;
         }
         /**
@@ -1547,7 +1547,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder useEncryption(
                 boolean useEncryption) {
-            setProperty("useEncryption", useEncryption);
+            doSetProperty("useEncryption", useEncryption);
             return this;
         }
         /**
@@ -1559,7 +1559,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder useEncryption(
                 String useEncryption) {
-            setProperty("useEncryption", useEncryption);
+            doSetProperty("useEncryption", useEncryption);
             return this;
         }
         /**
@@ -1570,7 +1570,7 @@ public interface S3EndpointBuilderFactory {
          * Group: producer (advanced)
          */
         default AdvancedS3EndpointProducerBuilder awsKMSKeyId(String awsKMSKeyId) {
-            setProperty("awsKMSKeyId", awsKMSKeyId);
+            doSetProperty("awsKMSKeyId", awsKMSKeyId);
             return this;
         }
         /**
@@ -1581,7 +1581,7 @@ public interface S3EndpointBuilderFactory {
          * Group: producer (advanced)
          */
         default AdvancedS3EndpointProducerBuilder useAwsKMS(boolean useAwsKMS) {
-            setProperty("useAwsKMS", useAwsKMS);
+            doSetProperty("useAwsKMS", useAwsKMS);
             return this;
         }
         /**
@@ -1592,7 +1592,7 @@ public interface S3EndpointBuilderFactory {
          * Group: producer (advanced)
          */
         default AdvancedS3EndpointProducerBuilder useAwsKMS(String useAwsKMS) {
-            setProperty("useAwsKMS", useAwsKMS);
+            doSetProperty("useAwsKMS", useAwsKMS);
             return this;
         }
         /**
@@ -1605,7 +1605,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1618,7 +1618,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1631,7 +1631,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1643,7 +1643,7 @@ public interface S3EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedS3EndpointProducerBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1655,7 +1655,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder accelerateModeEnabled(
                 boolean accelerateModeEnabled) {
-            setProperty("accelerateModeEnabled", accelerateModeEnabled);
+            doSetProperty("accelerateModeEnabled", accelerateModeEnabled);
             return this;
         }
         /**
@@ -1667,7 +1667,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder accelerateModeEnabled(
                 String accelerateModeEnabled) {
-            setProperty("accelerateModeEnabled", accelerateModeEnabled);
+            doSetProperty("accelerateModeEnabled", accelerateModeEnabled);
             return this;
         }
         /**
@@ -1679,7 +1679,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder chunkedEncodingDisabled(
                 boolean chunkedEncodingDisabled) {
-            setProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
+            doSetProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
             return this;
         }
         /**
@@ -1691,7 +1691,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder chunkedEncodingDisabled(
                 String chunkedEncodingDisabled) {
-            setProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
+            doSetProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
             return this;
         }
         /**
@@ -1703,7 +1703,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder dualstackEnabled(
                 boolean dualstackEnabled) {
-            setProperty("dualstackEnabled", dualstackEnabled);
+            doSetProperty("dualstackEnabled", dualstackEnabled);
             return this;
         }
         /**
@@ -1715,7 +1715,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder dualstackEnabled(
                 String dualstackEnabled) {
-            setProperty("dualstackEnabled", dualstackEnabled);
+            doSetProperty("dualstackEnabled", dualstackEnabled);
             return this;
         }
         /**
@@ -1727,7 +1727,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder forceGlobalBucketAccessEnabled(
                 boolean forceGlobalBucketAccessEnabled) {
-            setProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
+            doSetProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
             return this;
         }
         /**
@@ -1739,7 +1739,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder forceGlobalBucketAccessEnabled(
                 String forceGlobalBucketAccessEnabled) {
-            setProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
+            doSetProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
             return this;
         }
         /**
@@ -1751,7 +1751,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder payloadSigningEnabled(
                 boolean payloadSigningEnabled) {
-            setProperty("payloadSigningEnabled", payloadSigningEnabled);
+            doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
             return this;
         }
         /**
@@ -1763,7 +1763,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointProducerBuilder payloadSigningEnabled(
                 String payloadSigningEnabled) {
-            setProperty("payloadSigningEnabled", payloadSigningEnabled);
+            doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
             return this;
         }
     }
@@ -1786,7 +1786,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder amazonS3Client(Object amazonS3Client) {
-            setProperty("amazonS3Client", amazonS3Client);
+            doSetProperty("amazonS3Client", amazonS3Client);
             return this;
         }
         /**
@@ -1798,7 +1798,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder amazonS3Client(String amazonS3Client) {
-            setProperty("amazonS3Client", amazonS3Client);
+            doSetProperty("amazonS3Client", amazonS3Client);
             return this;
         }
         /**
@@ -1809,7 +1809,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder autoCreateBucket(boolean autoCreateBucket) {
-            setProperty("autoCreateBucket", autoCreateBucket);
+            doSetProperty("autoCreateBucket", autoCreateBucket);
             return this;
         }
         /**
@@ -1820,7 +1820,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder autoCreateBucket(String autoCreateBucket) {
-            setProperty("autoCreateBucket", autoCreateBucket);
+            doSetProperty("autoCreateBucket", autoCreateBucket);
             return this;
         }
         /**
@@ -1831,7 +1831,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder pathStyleAccess(boolean pathStyleAccess) {
-            setProperty("pathStyleAccess", pathStyleAccess);
+            doSetProperty("pathStyleAccess", pathStyleAccess);
             return this;
         }
         /**
@@ -1842,7 +1842,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder pathStyleAccess(String pathStyleAccess) {
-            setProperty("pathStyleAccess", pathStyleAccess);
+            doSetProperty("pathStyleAccess", pathStyleAccess);
             return this;
         }
         /**
@@ -1854,7 +1854,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder policy(String policy) {
-            setProperty("policy", policy);
+            doSetProperty("policy", policy);
             return this;
         }
         /**
@@ -1865,7 +1865,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -1876,7 +1876,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1888,7 +1888,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1902,7 +1902,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -1914,7 +1914,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder useIAMCredentials(boolean useIAMCredentials) {
-            setProperty("useIAMCredentials", useIAMCredentials);
+            doSetProperty("useIAMCredentials", useIAMCredentials);
             return this;
         }
         /**
@@ -1926,7 +1926,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common
          */
         default S3EndpointBuilder useIAMCredentials(String useIAMCredentials) {
-            setProperty("useIAMCredentials", useIAMCredentials);
+            doSetProperty("useIAMCredentials", useIAMCredentials);
             return this;
         }
         /**
@@ -1937,7 +1937,7 @@ public interface S3EndpointBuilderFactory {
          * Group: security
          */
         default S3EndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -1948,7 +1948,7 @@ public interface S3EndpointBuilderFactory {
          * Group: security
          */
         default S3EndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -1974,7 +1974,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder encryptionMaterials(
                 Object encryptionMaterials) {
-            setProperty("encryptionMaterials", encryptionMaterials);
+            doSetProperty("encryptionMaterials", encryptionMaterials);
             return this;
         }
         /**
@@ -1989,7 +1989,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder encryptionMaterials(
                 String encryptionMaterials) {
-            setProperty("encryptionMaterials", encryptionMaterials);
+            doSetProperty("encryptionMaterials", encryptionMaterials);
             return this;
         }
         /**
@@ -2000,7 +2000,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedS3EndpointBuilder useEncryption(boolean useEncryption) {
-            setProperty("useEncryption", useEncryption);
+            doSetProperty("useEncryption", useEncryption);
             return this;
         }
         /**
@@ -2011,7 +2011,7 @@ public interface S3EndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedS3EndpointBuilder useEncryption(String useEncryption) {
-            setProperty("useEncryption", useEncryption);
+            doSetProperty("useEncryption", useEncryption);
             return this;
         }
         /**
@@ -2024,7 +2024,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2037,7 +2037,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2049,7 +2049,7 @@ public interface S3EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedS3EndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2061,7 +2061,7 @@ public interface S3EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedS3EndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2073,7 +2073,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder accelerateModeEnabled(
                 boolean accelerateModeEnabled) {
-            setProperty("accelerateModeEnabled", accelerateModeEnabled);
+            doSetProperty("accelerateModeEnabled", accelerateModeEnabled);
             return this;
         }
         /**
@@ -2085,7 +2085,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder accelerateModeEnabled(
                 String accelerateModeEnabled) {
-            setProperty("accelerateModeEnabled", accelerateModeEnabled);
+            doSetProperty("accelerateModeEnabled", accelerateModeEnabled);
             return this;
         }
         /**
@@ -2097,7 +2097,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder chunkedEncodingDisabled(
                 boolean chunkedEncodingDisabled) {
-            setProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
+            doSetProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
             return this;
         }
         /**
@@ -2109,7 +2109,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder chunkedEncodingDisabled(
                 String chunkedEncodingDisabled) {
-            setProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
+            doSetProperty("chunkedEncodingDisabled", chunkedEncodingDisabled);
             return this;
         }
         /**
@@ -2121,7 +2121,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder dualstackEnabled(
                 boolean dualstackEnabled) {
-            setProperty("dualstackEnabled", dualstackEnabled);
+            doSetProperty("dualstackEnabled", dualstackEnabled);
             return this;
         }
         /**
@@ -2133,7 +2133,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder dualstackEnabled(
                 String dualstackEnabled) {
-            setProperty("dualstackEnabled", dualstackEnabled);
+            doSetProperty("dualstackEnabled", dualstackEnabled);
             return this;
         }
         /**
@@ -2145,7 +2145,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder forceGlobalBucketAccessEnabled(
                 boolean forceGlobalBucketAccessEnabled) {
-            setProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
+            doSetProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
             return this;
         }
         /**
@@ -2157,7 +2157,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder forceGlobalBucketAccessEnabled(
                 String forceGlobalBucketAccessEnabled) {
-            setProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
+            doSetProperty("forceGlobalBucketAccessEnabled", forceGlobalBucketAccessEnabled);
             return this;
         }
         /**
@@ -2169,7 +2169,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder payloadSigningEnabled(
                 boolean payloadSigningEnabled) {
-            setProperty("payloadSigningEnabled", payloadSigningEnabled);
+            doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
             return this;
         }
         /**
@@ -2181,7 +2181,7 @@ public interface S3EndpointBuilderFactory {
          */
         default AdvancedS3EndpointBuilder payloadSigningEnabled(
                 String payloadSigningEnabled) {
-            setProperty("payloadSigningEnabled", payloadSigningEnabled);
+            doSetProperty("payloadSigningEnabled", payloadSigningEnabled);
             return this;
         }
     }

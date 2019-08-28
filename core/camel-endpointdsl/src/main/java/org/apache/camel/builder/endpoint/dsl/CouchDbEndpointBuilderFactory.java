@@ -50,7 +50,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default CouchDbEndpointConsumerBuilder createDatabase(
                 boolean createDatabase) {
-            setProperty("createDatabase", createDatabase);
+            doSetProperty("createDatabase", createDatabase);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default CouchDbEndpointConsumerBuilder createDatabase(
                 String createDatabase) {
-            setProperty("createDatabase", createDatabase);
+            doSetProperty("createDatabase", createDatabase);
             return this;
         }
         /**
@@ -80,7 +80,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default CouchDbEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default CouchDbEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder deletes(boolean deletes) {
-            setProperty("deletes", deletes);
+            doSetProperty("deletes", deletes);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder deletes(String deletes) {
-            setProperty("deletes", deletes);
+            doSetProperty("deletes", deletes);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder heartbeat(long heartbeat) {
-            setProperty("heartbeat", heartbeat);
+            doSetProperty("heartbeat", heartbeat);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder heartbeat(String heartbeat) {
-            setProperty("heartbeat", heartbeat);
+            doSetProperty("heartbeat", heartbeat);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder since(String since) {
-            setProperty("since", since);
+            doSetProperty("since", since);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder style(String style) {
-            setProperty("style", style);
+            doSetProperty("style", style);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder updates(boolean updates) {
-            setProperty("updates", updates);
+            doSetProperty("updates", updates);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder updates(String updates) {
-            setProperty("updates", updates);
+            doSetProperty("updates", updates);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: security
          */
         default CouchDbEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: security
          */
         default CouchDbEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -239,7 +239,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -293,7 +293,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -306,7 +306,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -332,7 +332,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -355,7 +355,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default CouchDbEndpointProducerBuilder createDatabase(
                 boolean createDatabase) {
-            setProperty("createDatabase", createDatabase);
+            doSetProperty("createDatabase", createDatabase);
             return this;
         }
         /**
@@ -367,7 +367,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default CouchDbEndpointProducerBuilder createDatabase(
                 String createDatabase) {
-            setProperty("createDatabase", createDatabase);
+            doSetProperty("createDatabase", createDatabase);
             return this;
         }
         /**
@@ -387,7 +387,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default CouchDbEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -407,7 +407,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default CouchDbEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: security
          */
         default CouchDbEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: security
          */
         default CouchDbEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -453,7 +453,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -466,7 +466,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -479,7 +479,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -492,7 +492,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -514,7 +514,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: common
          */
         default CouchDbEndpointBuilder createDatabase(boolean createDatabase) {
-            setProperty("createDatabase", createDatabase);
+            doSetProperty("createDatabase", createDatabase);
             return this;
         }
         /**
@@ -525,7 +525,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: common
          */
         default CouchDbEndpointBuilder createDatabase(String createDatabase) {
-            setProperty("createDatabase", createDatabase);
+            doSetProperty("createDatabase", createDatabase);
             return this;
         }
         /**
@@ -536,7 +536,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: security
          */
         default CouchDbEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -547,7 +547,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: security
          */
         default CouchDbEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -571,7 +571,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -584,7 +584,7 @@ public interface CouchDbEndpointBuilderFactory {
          */
         default AdvancedCouchDbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -596,7 +596,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCouchDbEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -608,7 +608,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCouchDbEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

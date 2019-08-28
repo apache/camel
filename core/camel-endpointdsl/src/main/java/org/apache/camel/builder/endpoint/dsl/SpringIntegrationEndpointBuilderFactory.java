@@ -51,7 +51,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Group: common
          */
         default SpringIntegrationEndpointConsumerBuilder inOut(boolean inOut) {
-            setProperty("inOut", inOut);
+            doSetProperty("inOut", inOut);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Group: common
          */
         default SpringIntegrationEndpointConsumerBuilder inOut(String inOut) {
-            setProperty("inOut", inOut);
+            doSetProperty("inOut", inOut);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default SpringIntegrationEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default SpringIntegrationEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default SpringIntegrationEndpointConsumerBuilder inputChannel(
                 String inputChannel) {
-            setProperty("inputChannel", inputChannel);
+            doSetProperty("inputChannel", inputChannel);
             return this;
         }
     }
@@ -141,7 +141,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -157,7 +157,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -208,7 +208,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -221,7 +221,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -234,7 +234,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -258,7 +258,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Group: common
          */
         default SpringIntegrationEndpointProducerBuilder inOut(boolean inOut) {
-            setProperty("inOut", inOut);
+            doSetProperty("inOut", inOut);
             return this;
         }
         /**
@@ -271,7 +271,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Group: common
          */
         default SpringIntegrationEndpointProducerBuilder inOut(String inOut) {
-            setProperty("inOut", inOut);
+            doSetProperty("inOut", inOut);
             return this;
         }
         /**
@@ -291,7 +291,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default SpringIntegrationEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default SpringIntegrationEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -324,7 +324,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default SpringIntegrationEndpointProducerBuilder outputChannel(
                 String outputChannel) {
-            setProperty("outputChannel", outputChannel);
+            doSetProperty("outputChannel", outputChannel);
             return this;
         }
     }
@@ -349,7 +349,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -362,7 +362,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -375,7 +375,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -388,7 +388,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -412,7 +412,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Group: common
          */
         default SpringIntegrationEndpointBuilder inOut(boolean inOut) {
-            setProperty("inOut", inOut);
+            doSetProperty("inOut", inOut);
             return this;
         }
         /**
@@ -425,7 +425,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Group: common
          */
         default SpringIntegrationEndpointBuilder inOut(String inOut) {
-            setProperty("inOut", inOut);
+            doSetProperty("inOut", inOut);
             return this;
         }
     }
@@ -449,7 +449,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -462,7 +462,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -475,7 +475,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -488,7 +488,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          */
         default AdvancedSpringIntegrationEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

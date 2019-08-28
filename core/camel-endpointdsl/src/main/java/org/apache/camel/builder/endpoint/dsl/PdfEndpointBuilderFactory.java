@@ -47,7 +47,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder font(Object font) {
-            setProperty("font", font);
+            doSetProperty("font", font);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder font(String font) {
-            setProperty("font", font);
+            doSetProperty("font", font);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder fontSize(float fontSize) {
-            setProperty("fontSize", fontSize);
+            doSetProperty("fontSize", fontSize);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder fontSize(String fontSize) {
-            setProperty("fontSize", fontSize);
+            doSetProperty("fontSize", fontSize);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginBottom(int marginBottom) {
-            setProperty("marginBottom", marginBottom);
+            doSetProperty("marginBottom", marginBottom);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginBottom(String marginBottom) {
-            setProperty("marginBottom", marginBottom);
+            doSetProperty("marginBottom", marginBottom);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginLeft(int marginLeft) {
-            setProperty("marginLeft", marginLeft);
+            doSetProperty("marginLeft", marginLeft);
             return this;
         }
         /**
@@ -125,7 +125,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginLeft(String marginLeft) {
-            setProperty("marginLeft", marginLeft);
+            doSetProperty("marginLeft", marginLeft);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginRight(int marginRight) {
-            setProperty("marginRight", marginRight);
+            doSetProperty("marginRight", marginRight);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginRight(String marginRight) {
-            setProperty("marginRight", marginRight);
+            doSetProperty("marginRight", marginRight);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginTop(int marginTop) {
-            setProperty("marginTop", marginTop);
+            doSetProperty("marginTop", marginTop);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginTop(String marginTop) {
-            setProperty("marginTop", marginTop);
+            doSetProperty("marginTop", marginTop);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder pageSize(Object pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -193,7 +193,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder pageSize(String pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface PdfEndpointBuilderFactory {
          */
         default PdfEndpointBuilder textProcessingFactory(
                 TextProcessingFactory textProcessingFactory) {
-            setProperty("textProcessingFactory", textProcessingFactory);
+            doSetProperty("textProcessingFactory", textProcessingFactory);
             return this;
         }
         /**
@@ -233,7 +233,7 @@ public interface PdfEndpointBuilderFactory {
          */
         default PdfEndpointBuilder textProcessingFactory(
                 String textProcessingFactory) {
-            setProperty("textProcessingFactory", textProcessingFactory);
+            doSetProperty("textProcessingFactory", textProcessingFactory);
             return this;
         }
     }
@@ -257,7 +257,7 @@ public interface PdfEndpointBuilderFactory {
          */
         default AdvancedPdfEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -270,7 +270,7 @@ public interface PdfEndpointBuilderFactory {
          */
         default AdvancedPdfEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -282,7 +282,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPdfEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPdfEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

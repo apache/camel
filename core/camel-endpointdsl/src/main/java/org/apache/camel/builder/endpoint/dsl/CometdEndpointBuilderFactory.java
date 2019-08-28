@@ -52,7 +52,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointConsumerBuilder allowedOrigins(
                 String allowedOrigins) {
-            setProperty("allowedOrigins", allowedOrigins);
+            doSetProperty("allowedOrigins", allowedOrigins);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointConsumerBuilder baseResource(String baseResource) {
-            setProperty("baseResource", baseResource);
+            doSetProperty("baseResource", baseResource);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointConsumerBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointConsumerBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointConsumerBuilder filterPath(String filterPath) {
-            setProperty("filterPath", filterPath);
+            doSetProperty("filterPath", filterPath);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointConsumerBuilder interval(int interval) {
-            setProperty("interval", interval);
+            doSetProperty("interval", interval);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointConsumerBuilder interval(String interval) {
-            setProperty("interval", interval);
+            doSetProperty("interval", interval);
             return this;
         }
         /**
@@ -141,7 +141,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointConsumerBuilder jsonCommented(
                 boolean jsonCommented) {
-            setProperty("jsonCommented", jsonCommented);
+            doSetProperty("jsonCommented", jsonCommented);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointConsumerBuilder jsonCommented(String jsonCommented) {
-            setProperty("jsonCommented", jsonCommented);
+            doSetProperty("jsonCommented", jsonCommented);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointConsumerBuilder logLevel(int logLevel) {
-            setProperty("logLevel", logLevel);
+            doSetProperty("logLevel", logLevel);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointConsumerBuilder logLevel(String logLevel) {
-            setProperty("logLevel", logLevel);
+            doSetProperty("logLevel", logLevel);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointConsumerBuilder maxInterval(int maxInterval) {
-            setProperty("maxInterval", maxInterval);
+            doSetProperty("maxInterval", maxInterval);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointConsumerBuilder maxInterval(String maxInterval) {
-            setProperty("maxInterval", maxInterval);
+            doSetProperty("maxInterval", maxInterval);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointConsumerBuilder multiFrameInterval(
                 int multiFrameInterval) {
-            setProperty("multiFrameInterval", multiFrameInterval);
+            doSetProperty("multiFrameInterval", multiFrameInterval);
             return this;
         }
         /**
@@ -226,7 +226,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointConsumerBuilder multiFrameInterval(
                 String multiFrameInterval) {
-            setProperty("multiFrameInterval", multiFrameInterval);
+            doSetProperty("multiFrameInterval", multiFrameInterval);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointConsumerBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointConsumerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -268,7 +268,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -286,7 +286,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointConsumerBuilder sessionHeadersEnabled(
                 boolean sessionHeadersEnabled) {
-            setProperty("sessionHeadersEnabled", sessionHeadersEnabled);
+            doSetProperty("sessionHeadersEnabled", sessionHeadersEnabled);
             return this;
         }
         /**
@@ -312,7 +312,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointConsumerBuilder sessionHeadersEnabled(
                 String sessionHeadersEnabled) {
-            setProperty("sessionHeadersEnabled", sessionHeadersEnabled);
+            doSetProperty("sessionHeadersEnabled", sessionHeadersEnabled);
             return this;
         }
     }
@@ -339,7 +339,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -355,7 +355,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -367,7 +367,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -406,7 +406,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -419,7 +419,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -432,7 +432,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -456,7 +456,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointProducerBuilder allowedOrigins(
                 String allowedOrigins) {
-            setProperty("allowedOrigins", allowedOrigins);
+            doSetProperty("allowedOrigins", allowedOrigins);
             return this;
         }
         /**
@@ -471,7 +471,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointProducerBuilder baseResource(String baseResource) {
-            setProperty("baseResource", baseResource);
+            doSetProperty("baseResource", baseResource);
             return this;
         }
         /**
@@ -483,7 +483,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointProducerBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointProducerBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -507,7 +507,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointProducerBuilder filterPath(String filterPath) {
-            setProperty("filterPath", filterPath);
+            doSetProperty("filterPath", filterPath);
             return this;
         }
         /**
@@ -519,7 +519,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointProducerBuilder interval(int interval) {
-            setProperty("interval", interval);
+            doSetProperty("interval", interval);
             return this;
         }
         /**
@@ -531,7 +531,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointProducerBuilder interval(String interval) {
-            setProperty("interval", interval);
+            doSetProperty("interval", interval);
             return this;
         }
         /**
@@ -545,7 +545,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointProducerBuilder jsonCommented(
                 boolean jsonCommented) {
-            setProperty("jsonCommented", jsonCommented);
+            doSetProperty("jsonCommented", jsonCommented);
             return this;
         }
         /**
@@ -558,7 +558,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointProducerBuilder jsonCommented(String jsonCommented) {
-            setProperty("jsonCommented", jsonCommented);
+            doSetProperty("jsonCommented", jsonCommented);
             return this;
         }
         /**
@@ -569,7 +569,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointProducerBuilder logLevel(int logLevel) {
-            setProperty("logLevel", logLevel);
+            doSetProperty("logLevel", logLevel);
             return this;
         }
         /**
@@ -580,7 +580,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointProducerBuilder logLevel(String logLevel) {
-            setProperty("logLevel", logLevel);
+            doSetProperty("logLevel", logLevel);
             return this;
         }
         /**
@@ -592,7 +592,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointProducerBuilder maxInterval(int maxInterval) {
-            setProperty("maxInterval", maxInterval);
+            doSetProperty("maxInterval", maxInterval);
             return this;
         }
         /**
@@ -604,7 +604,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointProducerBuilder maxInterval(String maxInterval) {
-            setProperty("maxInterval", maxInterval);
+            doSetProperty("maxInterval", maxInterval);
             return this;
         }
         /**
@@ -617,7 +617,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointProducerBuilder multiFrameInterval(
                 int multiFrameInterval) {
-            setProperty("multiFrameInterval", multiFrameInterval);
+            doSetProperty("multiFrameInterval", multiFrameInterval);
             return this;
         }
         /**
@@ -630,7 +630,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointProducerBuilder multiFrameInterval(
                 String multiFrameInterval) {
-            setProperty("multiFrameInterval", multiFrameInterval);
+            doSetProperty("multiFrameInterval", multiFrameInterval);
             return this;
         }
         /**
@@ -642,7 +642,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointProducerBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -654,7 +654,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -668,7 +668,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointProducerBuilder disconnectLocalSession(
                 boolean disconnectLocalSession) {
-            setProperty("disconnectLocalSession", disconnectLocalSession);
+            doSetProperty("disconnectLocalSession", disconnectLocalSession);
             return this;
         }
         /**
@@ -682,7 +682,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointProducerBuilder disconnectLocalSession(
                 String disconnectLocalSession) {
-            setProperty("disconnectLocalSession", disconnectLocalSession);
+            doSetProperty("disconnectLocalSession", disconnectLocalSession);
             return this;
         }
         /**
@@ -702,7 +702,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -722,7 +722,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -746,7 +746,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -759,7 +759,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -772,7 +772,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -785,7 +785,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -808,7 +808,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder allowedOrigins(String allowedOrigins) {
-            setProperty("allowedOrigins", allowedOrigins);
+            doSetProperty("allowedOrigins", allowedOrigins);
             return this;
         }
         /**
@@ -823,7 +823,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder baseResource(String baseResource) {
-            setProperty("baseResource", baseResource);
+            doSetProperty("baseResource", baseResource);
             return this;
         }
         /**
@@ -835,7 +835,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -847,7 +847,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -859,7 +859,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder filterPath(String filterPath) {
-            setProperty("filterPath", filterPath);
+            doSetProperty("filterPath", filterPath);
             return this;
         }
         /**
@@ -871,7 +871,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder interval(int interval) {
-            setProperty("interval", interval);
+            doSetProperty("interval", interval);
             return this;
         }
         /**
@@ -883,7 +883,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder interval(String interval) {
-            setProperty("interval", interval);
+            doSetProperty("interval", interval);
             return this;
         }
         /**
@@ -896,7 +896,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder jsonCommented(boolean jsonCommented) {
-            setProperty("jsonCommented", jsonCommented);
+            doSetProperty("jsonCommented", jsonCommented);
             return this;
         }
         /**
@@ -909,7 +909,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder jsonCommented(String jsonCommented) {
-            setProperty("jsonCommented", jsonCommented);
+            doSetProperty("jsonCommented", jsonCommented);
             return this;
         }
         /**
@@ -920,7 +920,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder logLevel(int logLevel) {
-            setProperty("logLevel", logLevel);
+            doSetProperty("logLevel", logLevel);
             return this;
         }
         /**
@@ -931,7 +931,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder logLevel(String logLevel) {
-            setProperty("logLevel", logLevel);
+            doSetProperty("logLevel", logLevel);
             return this;
         }
         /**
@@ -943,7 +943,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder maxInterval(int maxInterval) {
-            setProperty("maxInterval", maxInterval);
+            doSetProperty("maxInterval", maxInterval);
             return this;
         }
         /**
@@ -955,7 +955,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder maxInterval(String maxInterval) {
-            setProperty("maxInterval", maxInterval);
+            doSetProperty("maxInterval", maxInterval);
             return this;
         }
         /**
@@ -967,7 +967,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder multiFrameInterval(int multiFrameInterval) {
-            setProperty("multiFrameInterval", multiFrameInterval);
+            doSetProperty("multiFrameInterval", multiFrameInterval);
             return this;
         }
         /**
@@ -980,7 +980,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default CometdEndpointBuilder multiFrameInterval(
                 String multiFrameInterval) {
-            setProperty("multiFrameInterval", multiFrameInterval);
+            doSetProperty("multiFrameInterval", multiFrameInterval);
             return this;
         }
         /**
@@ -992,7 +992,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -1004,7 +1004,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: common
          */
         default CometdEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -1028,7 +1028,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1041,7 +1041,7 @@ public interface CometdEndpointBuilderFactory {
          */
         default AdvancedCometdEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1053,7 +1053,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCometdEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1065,7 +1065,7 @@ public interface CometdEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCometdEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

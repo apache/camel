@@ -49,7 +49,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder enableSSL(boolean enableSSL) {
-            setProperty("enableSSL", enableSSL);
+            doSetProperty("enableSSL", enableSSL);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder enableSSL(String enableSSL) {
-            setProperty("enableSSL", enableSSL);
+            doSetProperty("enableSSL", enableSSL);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder hostAddresses(String hostAddresses) {
-            setProperty("hostAddresses", hostAddresses);
+            doSetProperty("hostAddresses", hostAddresses);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder indexName(String indexName) {
-            setProperty("indexName", indexName);
+            doSetProperty("indexName", indexName);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder maxRetryTimeout(int maxRetryTimeout) {
-            setProperty("maxRetryTimeout", maxRetryTimeout);
+            doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder maxRetryTimeout(
                 String maxRetryTimeout) {
-            setProperty("maxRetryTimeout", maxRetryTimeout);
+            doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder operation(
                 ElasticsearchOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 int scrollKeepAliveMs) {
-            setProperty("scrollKeepAliveMs", scrollKeepAliveMs);
+            doSetProperty("scrollKeepAliveMs", scrollKeepAliveMs);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 String scrollKeepAliveMs) {
-            setProperty("scrollKeepAliveMs", scrollKeepAliveMs);
+            doSetProperty("scrollKeepAliveMs", scrollKeepAliveMs);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder socketTimeout(int socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -223,7 +223,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder socketTimeout(String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -234,7 +234,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder useScroll(boolean useScroll) {
-            setProperty("useScroll", useScroll);
+            doSetProperty("useScroll", useScroll);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder useScroll(String useScroll) {
-            setProperty("useScroll", useScroll);
+            doSetProperty("useScroll", useScroll);
             return this;
         }
         /**
@@ -258,7 +258,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder waitForActiveShards(
                 int waitForActiveShards) {
-            setProperty("waitForActiveShards", waitForActiveShards);
+            doSetProperty("waitForActiveShards", waitForActiveShards);
             return this;
         }
         /**
@@ -271,7 +271,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder waitForActiveShards(
                 String waitForActiveShards) {
-            setProperty("waitForActiveShards", waitForActiveShards);
+            doSetProperty("waitForActiveShards", waitForActiveShards);
             return this;
         }
     }
@@ -295,7 +295,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -308,7 +308,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -321,7 +321,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default AdvancedElasticsearchEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -334,7 +334,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default AdvancedElasticsearchEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

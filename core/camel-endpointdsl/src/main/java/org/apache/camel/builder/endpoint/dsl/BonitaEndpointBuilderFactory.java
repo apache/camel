@@ -45,7 +45,7 @@ public interface BonitaEndpointBuilderFactory {
          * Group: consumer
          */
         default BonitaEndpointBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
+            doSetProperty("hostname", hostname);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface BonitaEndpointBuilderFactory {
          * Group: consumer
          */
         default BonitaEndpointBuilder port(String port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface BonitaEndpointBuilderFactory {
          * Group: consumer
          */
         default BonitaEndpointBuilder processName(String processName) {
-            setProperty("processName", processName);
+            doSetProperty("processName", processName);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface BonitaEndpointBuilderFactory {
          * Group: security
          */
         default BonitaEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface BonitaEndpointBuilderFactory {
          * Group: security
          */
         default BonitaEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -113,7 +113,7 @@ public interface BonitaEndpointBuilderFactory {
          */
         default AdvancedBonitaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface BonitaEndpointBuilderFactory {
          */
         default AdvancedBonitaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface BonitaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBonitaEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -150,7 +150,7 @@ public interface BonitaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBonitaEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

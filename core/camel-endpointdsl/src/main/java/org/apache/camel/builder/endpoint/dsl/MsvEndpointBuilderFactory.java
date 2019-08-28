@@ -45,7 +45,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: producer
          */
         default MsvEndpointBuilder failOnNullBody(boolean failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: producer
          */
         default MsvEndpointBuilder failOnNullBody(String failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: producer
          */
         default MsvEndpointBuilder failOnNullHeader(boolean failOnNullHeader) {
-            setProperty("failOnNullHeader", failOnNullHeader);
+            doSetProperty("failOnNullHeader", failOnNullHeader);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: producer
          */
         default MsvEndpointBuilder failOnNullHeader(String failOnNullHeader) {
-            setProperty("failOnNullHeader", failOnNullHeader);
+            doSetProperty("failOnNullHeader", failOnNullHeader);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: producer
          */
         default MsvEndpointBuilder headerName(String headerName) {
-            setProperty("headerName", headerName);
+            doSetProperty("headerName", headerName);
             return this;
         }
     }
@@ -113,7 +113,7 @@ public interface MsvEndpointBuilderFactory {
          */
         default AdvancedMsvEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface MsvEndpointBuilderFactory {
          */
         default AdvancedMsvEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder errorHandler(Object errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder errorHandler(String errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -167,7 +167,7 @@ public interface MsvEndpointBuilderFactory {
          */
         default AdvancedMsvEndpointBuilder resourceResolver(
                 Object resourceResolver) {
-            setProperty("resourceResolver", resourceResolver);
+            doSetProperty("resourceResolver", resourceResolver);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface MsvEndpointBuilderFactory {
          */
         default AdvancedMsvEndpointBuilder resourceResolver(
                 String resourceResolver) {
-            setProperty("resourceResolver", resourceResolver);
+            doSetProperty("resourceResolver", resourceResolver);
             return this;
         }
         /**
@@ -197,7 +197,7 @@ public interface MsvEndpointBuilderFactory {
          */
         default AdvancedMsvEndpointBuilder resourceResolverFactory(
                 Object resourceResolverFactory) {
-            setProperty("resourceResolverFactory", resourceResolverFactory);
+            doSetProperty("resourceResolverFactory", resourceResolverFactory);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface MsvEndpointBuilderFactory {
          */
         default AdvancedMsvEndpointBuilder resourceResolverFactory(
                 String resourceResolverFactory) {
-            setProperty("resourceResolverFactory", resourceResolverFactory);
+            doSetProperty("resourceResolverFactory", resourceResolverFactory);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder schemaFactory(Object schemaFactory) {
-            setProperty("schemaFactory", schemaFactory);
+            doSetProperty("schemaFactory", schemaFactory);
             return this;
         }
         /**
@@ -237,7 +237,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder schemaFactory(String schemaFactory) {
-            setProperty("schemaFactory", schemaFactory);
+            doSetProperty("schemaFactory", schemaFactory);
             return this;
         }
         /**
@@ -248,7 +248,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder schemaLanguage(String schemaLanguage) {
-            setProperty("schemaLanguage", schemaLanguage);
+            doSetProperty("schemaLanguage", schemaLanguage);
             return this;
         }
         /**
@@ -260,7 +260,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -272,7 +272,7 @@ public interface MsvEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -286,7 +286,7 @@ public interface MsvEndpointBuilderFactory {
          */
         default AdvancedMsvEndpointBuilder useSharedSchema(
                 boolean useSharedSchema) {
-            setProperty("useSharedSchema", useSharedSchema);
+            doSetProperty("useSharedSchema", useSharedSchema);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface MsvEndpointBuilderFactory {
          */
         default AdvancedMsvEndpointBuilder useSharedSchema(
                 String useSharedSchema) {
-            setProperty("useSharedSchema", useSharedSchema);
+            doSetProperty("useSharedSchema", useSharedSchema);
             return this;
         }
     }

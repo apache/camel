@@ -49,7 +49,7 @@ public interface WebhookEndpointBuilderFactory {
          */
         default WebhookEndpointBuilder webhookAutoRegister(
                 boolean webhookAutoRegister) {
-            setProperty("webhookAutoRegister", webhookAutoRegister);
+            doSetProperty("webhookAutoRegister", webhookAutoRegister);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface WebhookEndpointBuilderFactory {
          */
         default WebhookEndpointBuilder webhookAutoRegister(
                 String webhookAutoRegister) {
-            setProperty("webhookAutoRegister", webhookAutoRegister);
+            doSetProperty("webhookAutoRegister", webhookAutoRegister);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface WebhookEndpointBuilderFactory {
          * Group: common
          */
         default WebhookEndpointBuilder webhookBasePath(String webhookBasePath) {
-            setProperty("webhookBasePath", webhookBasePath);
+            doSetProperty("webhookBasePath", webhookBasePath);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface WebhookEndpointBuilderFactory {
          */
         default WebhookEndpointBuilder webhookComponentName(
                 String webhookComponentName) {
-            setProperty("webhookComponentName", webhookComponentName);
+            doSetProperty("webhookComponentName", webhookComponentName);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface WebhookEndpointBuilderFactory {
          */
         default WebhookEndpointBuilder webhookExternalUrl(
                 String webhookExternalUrl) {
-            setProperty("webhookExternalUrl", webhookExternalUrl);
+            doSetProperty("webhookExternalUrl", webhookExternalUrl);
             return this;
         }
         /**
@@ -112,7 +112,7 @@ public interface WebhookEndpointBuilderFactory {
          * Group: common
          */
         default WebhookEndpointBuilder webhookPath(String webhookPath) {
-            setProperty("webhookPath", webhookPath);
+            doSetProperty("webhookPath", webhookPath);
             return this;
         }
     }
@@ -136,7 +136,7 @@ public interface WebhookEndpointBuilderFactory {
          */
         default AdvancedWebhookEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -149,7 +149,7 @@ public interface WebhookEndpointBuilderFactory {
          */
         default AdvancedWebhookEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface WebhookEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWebhookEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -173,7 +173,7 @@ public interface WebhookEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWebhookEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -47,7 +47,7 @@ public interface IPFSEndpointBuilderFactory {
          * Group: producer
          */
         default IPFSEndpointBuilder outdir(Path outdir) {
-            setProperty("outdir", outdir);
+            doSetProperty("outdir", outdir);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface IPFSEndpointBuilderFactory {
          * Group: producer
          */
         default IPFSEndpointBuilder outdir(String outdir) {
-            setProperty("outdir", outdir);
+            doSetProperty("outdir", outdir);
             return this;
         }
     }
@@ -83,7 +83,7 @@ public interface IPFSEndpointBuilderFactory {
          */
         default AdvancedIPFSEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface IPFSEndpointBuilderFactory {
          */
         default AdvancedIPFSEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -108,7 +108,7 @@ public interface IPFSEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface IPFSEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -57,7 +57,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointConsumerBuilder eventClass(
                 Class<Object> eventClass) {
-            setProperty("eventClass", eventClass);
+            doSetProperty("eventClass", eventClass);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointConsumerBuilder eventClass(
                 String eventClass) {
-            setProperty("eventClass", eventClass);
+            doSetProperty("eventClass", eventClass);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointConsumerBuilder listenerInterface(
                 Class<Object> listenerInterface) {
-            setProperty("listenerInterface", listenerInterface);
+            doSetProperty("listenerInterface", listenerInterface);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointConsumerBuilder listenerInterface(
                 String listenerInterface) {
-            setProperty("listenerInterface", listenerInterface);
+            doSetProperty("listenerInterface", listenerInterface);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -172,7 +172,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -226,7 +226,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -239,7 +239,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -252,7 +252,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -294,7 +294,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointProducerBuilder eventClass(
                 Class<Object> eventClass) {
-            setProperty("eventClass", eventClass);
+            doSetProperty("eventClass", eventClass);
             return this;
         }
         /**
@@ -312,7 +312,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointProducerBuilder eventClass(
                 String eventClass) {
-            setProperty("eventClass", eventClass);
+            doSetProperty("eventClass", eventClass);
             return this;
         }
         /**
@@ -329,7 +329,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointProducerBuilder listenerInterface(
                 Class<Object> listenerInterface) {
-            setProperty("listenerInterface", listenerInterface);
+            doSetProperty("listenerInterface", listenerInterface);
             return this;
         }
         /**
@@ -346,7 +346,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointProducerBuilder listenerInterface(
                 String listenerInterface) {
-            setProperty("listenerInterface", listenerInterface);
+            doSetProperty("listenerInterface", listenerInterface);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -386,7 +386,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -410,7 +410,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -423,7 +423,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -436,7 +436,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -449,7 +449,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -477,7 +477,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * Group: common
          */
         default GuavaEventBusEndpointBuilder eventClass(Class<Object> eventClass) {
-            setProperty("eventClass", eventClass);
+            doSetProperty("eventClass", eventClass);
             return this;
         }
         /**
@@ -494,7 +494,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * Group: common
          */
         default GuavaEventBusEndpointBuilder eventClass(String eventClass) {
-            setProperty("eventClass", eventClass);
+            doSetProperty("eventClass", eventClass);
             return this;
         }
         /**
@@ -511,7 +511,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointBuilder listenerInterface(
                 Class<Object> listenerInterface) {
-            setProperty("listenerInterface", listenerInterface);
+            doSetProperty("listenerInterface", listenerInterface);
             return this;
         }
         /**
@@ -528,7 +528,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default GuavaEventBusEndpointBuilder listenerInterface(
                 String listenerInterface) {
-            setProperty("listenerInterface", listenerInterface);
+            doSetProperty("listenerInterface", listenerInterface);
             return this;
         }
     }
@@ -552,7 +552,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -565,7 +565,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -578,7 +578,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -591,7 +591,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          */
         default AdvancedGuavaEventBusEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

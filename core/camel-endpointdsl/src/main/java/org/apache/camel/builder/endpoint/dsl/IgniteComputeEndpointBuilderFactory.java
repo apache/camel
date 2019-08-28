@@ -52,7 +52,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          */
         default IgniteComputeEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          */
         default IgniteComputeEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          */
         default IgniteComputeEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          */
         default IgniteComputeEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
     }
@@ -115,7 +115,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          */
         default AdvancedIgniteComputeEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          */
         default AdvancedIgniteComputeEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -141,7 +141,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          */
         default AdvancedIgniteComputeEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          */
         default AdvancedIgniteComputeEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

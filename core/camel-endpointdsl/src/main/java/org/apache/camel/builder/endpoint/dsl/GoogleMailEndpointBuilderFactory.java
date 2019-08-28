@@ -50,7 +50,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointConsumerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointConsumerBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -146,7 +146,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -173,7 +173,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -214,7 +214,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -240,7 +240,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -253,7 +253,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -266,7 +266,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -289,7 +289,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointProducerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointProducerBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -312,7 +312,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -324,7 +324,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointProducerBuilder clientSecret(
                 String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -335,7 +335,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -349,7 +349,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointProducerBuilder refreshToken(
                 String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -389,7 +389,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default GoogleMailEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -413,7 +413,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -426,7 +426,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -439,7 +439,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -452,7 +452,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -475,7 +475,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -486,7 +486,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointBuilder applicationName(String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -497,7 +497,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -508,7 +508,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -519,7 +519,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -532,7 +532,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: common
          */
         default GoogleMailEndpointBuilder refreshToken(String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
     }
@@ -556,7 +556,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -569,7 +569,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -582,7 +582,7 @@ public interface GoogleMailEndpointBuilderFactory {
          */
         default AdvancedGoogleMailEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -594,7 +594,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGoogleMailEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

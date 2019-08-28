@@ -51,7 +51,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder flowControlWindow(
                 int flowControlWindow) {
-            setProperty("flowControlWindow", flowControlWindow);
+            doSetProperty("flowControlWindow", flowControlWindow);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder flowControlWindow(
                 String flowControlWindow) {
-            setProperty("flowControlWindow", flowControlWindow);
+            doSetProperty("flowControlWindow", flowControlWindow);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: common
          */
         default GrpcEndpointConsumerBuilder maxMessageSize(int maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: common
          */
         default GrpcEndpointConsumerBuilder maxMessageSize(String maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -141,7 +141,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder consumerStrategy(
                 GrpcConsumerStrategy consumerStrategy) {
-            setProperty("consumerStrategy", consumerStrategy);
+            doSetProperty("consumerStrategy", consumerStrategy);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder consumerStrategy(
                 String consumerStrategy) {
-            setProperty("consumerStrategy", consumerStrategy);
+            doSetProperty("consumerStrategy", consumerStrategy);
             return this;
         }
         /**
@@ -173,7 +173,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder forwardOnCompleted(
                 boolean forwardOnCompleted) {
-            setProperty("forwardOnCompleted", forwardOnCompleted);
+            doSetProperty("forwardOnCompleted", forwardOnCompleted);
             return this;
         }
         /**
@@ -185,7 +185,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder forwardOnCompleted(
                 String forwardOnCompleted) {
-            setProperty("forwardOnCompleted", forwardOnCompleted);
+            doSetProperty("forwardOnCompleted", forwardOnCompleted);
             return this;
         }
         /**
@@ -198,7 +198,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder forwardOnError(
                 boolean forwardOnError) {
-            setProperty("forwardOnError", forwardOnError);
+            doSetProperty("forwardOnError", forwardOnError);
             return this;
         }
         /**
@@ -210,7 +210,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: consumer
          */
         default GrpcEndpointConsumerBuilder forwardOnError(String forwardOnError) {
-            setProperty("forwardOnError", forwardOnError);
+            doSetProperty("forwardOnError", forwardOnError);
             return this;
         }
         /**
@@ -223,7 +223,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
                 int maxConcurrentCallsPerConnection) {
-            setProperty("maxConcurrentCallsPerConnection", maxConcurrentCallsPerConnection);
+            doSetProperty("maxConcurrentCallsPerConnection", maxConcurrentCallsPerConnection);
             return this;
         }
         /**
@@ -236,7 +236,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
                 String maxConcurrentCallsPerConnection) {
-            setProperty("maxConcurrentCallsPerConnection", maxConcurrentCallsPerConnection);
+            doSetProperty("maxConcurrentCallsPerConnection", maxConcurrentCallsPerConnection);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder authenticationType(
                 GrpcAuthType authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -262,7 +262,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder authenticationType(
                 String authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -276,7 +276,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder jwtAlgorithm(
                 JwtAlgorithm jwtAlgorithm) {
-            setProperty("jwtAlgorithm", jwtAlgorithm);
+            doSetProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
         /**
@@ -289,7 +289,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtAlgorithm(String jwtAlgorithm) {
-            setProperty("jwtAlgorithm", jwtAlgorithm);
+            doSetProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtIssuer(String jwtIssuer) {
-            setProperty("jwtIssuer", jwtIssuer);
+            doSetProperty("jwtIssuer", jwtIssuer);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtSecret(String jwtSecret) {
-            setProperty("jwtSecret", jwtSecret);
+            doSetProperty("jwtSecret", jwtSecret);
             return this;
         }
         /**
@@ -322,7 +322,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtSubject(String jwtSubject) {
-            setProperty("jwtSubject", jwtSubject);
+            doSetProperty("jwtSubject", jwtSubject);
             return this;
         }
         /**
@@ -334,7 +334,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder keyCertChainResource(
                 String keyCertChainResource) {
-            setProperty("keyCertChainResource", keyCertChainResource);
+            doSetProperty("keyCertChainResource", keyCertChainResource);
             return this;
         }
         /**
@@ -345,7 +345,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointConsumerBuilder keyPassword(String keyPassword) {
-            setProperty("keyPassword", keyPassword);
+            doSetProperty("keyPassword", keyPassword);
             return this;
         }
         /**
@@ -356,7 +356,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointConsumerBuilder keyResource(String keyResource) {
-            setProperty("keyResource", keyResource);
+            doSetProperty("keyResource", keyResource);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder negotiationType(
                 NegotiationType negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -383,7 +383,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder negotiationType(
                 String negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -396,7 +396,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder serviceAccountResource(
                 String serviceAccountResource) {
-            setProperty("serviceAccountResource", serviceAccountResource);
+            doSetProperty("serviceAccountResource", serviceAccountResource);
             return this;
         }
         /**
@@ -409,7 +409,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
-            setProperty("trustCertCollectionResource", trustCertCollectionResource);
+            doSetProperty("trustCertCollectionResource", trustCertCollectionResource);
             return this;
         }
     }
@@ -436,7 +436,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -452,7 +452,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -464,7 +464,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -477,7 +477,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -490,7 +490,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -503,7 +503,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -516,7 +516,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -529,7 +529,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -552,7 +552,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder flowControlWindow(
                 int flowControlWindow) {
-            setProperty("flowControlWindow", flowControlWindow);
+            doSetProperty("flowControlWindow", flowControlWindow);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder flowControlWindow(
                 String flowControlWindow) {
-            setProperty("flowControlWindow", flowControlWindow);
+            doSetProperty("flowControlWindow", flowControlWindow);
             return this;
         }
         /**
@@ -575,7 +575,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: common
          */
         default GrpcEndpointProducerBuilder maxMessageSize(int maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -586,7 +586,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: common
          */
         default GrpcEndpointProducerBuilder maxMessageSize(String maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -606,7 +606,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -626,7 +626,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -637,7 +637,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: producer
          */
         default GrpcEndpointProducerBuilder method(String method) {
-            setProperty("method", method);
+            doSetProperty("method", method);
             return this;
         }
         /**
@@ -655,7 +655,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder producerStrategy(
                 GrpcProducerStrategy producerStrategy) {
-            setProperty("producerStrategy", producerStrategy);
+            doSetProperty("producerStrategy", producerStrategy);
             return this;
         }
         /**
@@ -673,7 +673,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder producerStrategy(
                 String producerStrategy) {
-            setProperty("producerStrategy", producerStrategy);
+            doSetProperty("producerStrategy", producerStrategy);
             return this;
         }
         /**
@@ -686,7 +686,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder streamRepliesTo(
                 String streamRepliesTo) {
-            setProperty("streamRepliesTo", streamRepliesTo);
+            doSetProperty("streamRepliesTo", streamRepliesTo);
             return this;
         }
         /**
@@ -697,7 +697,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: producer
          */
         default GrpcEndpointProducerBuilder userAgent(String userAgent) {
-            setProperty("userAgent", userAgent);
+            doSetProperty("userAgent", userAgent);
             return this;
         }
         /**
@@ -710,7 +710,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder authenticationType(
                 GrpcAuthType authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -723,7 +723,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder authenticationType(
                 String authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -737,7 +737,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder jwtAlgorithm(
                 JwtAlgorithm jwtAlgorithm) {
-            setProperty("jwtAlgorithm", jwtAlgorithm);
+            doSetProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
         /**
@@ -750,7 +750,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointProducerBuilder jwtAlgorithm(String jwtAlgorithm) {
-            setProperty("jwtAlgorithm", jwtAlgorithm);
+            doSetProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
         /**
@@ -761,7 +761,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointProducerBuilder jwtIssuer(String jwtIssuer) {
-            setProperty("jwtIssuer", jwtIssuer);
+            doSetProperty("jwtIssuer", jwtIssuer);
             return this;
         }
         /**
@@ -772,7 +772,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointProducerBuilder jwtSecret(String jwtSecret) {
-            setProperty("jwtSecret", jwtSecret);
+            doSetProperty("jwtSecret", jwtSecret);
             return this;
         }
         /**
@@ -783,7 +783,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointProducerBuilder jwtSubject(String jwtSubject) {
-            setProperty("jwtSubject", jwtSubject);
+            doSetProperty("jwtSubject", jwtSubject);
             return this;
         }
         /**
@@ -795,7 +795,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder keyCertChainResource(
                 String keyCertChainResource) {
-            setProperty("keyCertChainResource", keyCertChainResource);
+            doSetProperty("keyCertChainResource", keyCertChainResource);
             return this;
         }
         /**
@@ -806,7 +806,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointProducerBuilder keyPassword(String keyPassword) {
-            setProperty("keyPassword", keyPassword);
+            doSetProperty("keyPassword", keyPassword);
             return this;
         }
         /**
@@ -817,7 +817,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointProducerBuilder keyResource(String keyResource) {
-            setProperty("keyResource", keyResource);
+            doSetProperty("keyResource", keyResource);
             return this;
         }
         /**
@@ -830,7 +830,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder negotiationType(
                 NegotiationType negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -844,7 +844,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder negotiationType(
                 String negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -857,7 +857,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder serviceAccountResource(
                 String serviceAccountResource) {
-            setProperty("serviceAccountResource", serviceAccountResource);
+            doSetProperty("serviceAccountResource", serviceAccountResource);
             return this;
         }
         /**
@@ -870,7 +870,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
-            setProperty("trustCertCollectionResource", trustCertCollectionResource);
+            doSetProperty("trustCertCollectionResource", trustCertCollectionResource);
             return this;
         }
     }
@@ -894,7 +894,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -907,7 +907,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -920,7 +920,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -933,7 +933,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -955,7 +955,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: common
          */
         default GrpcEndpointBuilder flowControlWindow(int flowControlWindow) {
-            setProperty("flowControlWindow", flowControlWindow);
+            doSetProperty("flowControlWindow", flowControlWindow);
             return this;
         }
         /**
@@ -966,7 +966,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: common
          */
         default GrpcEndpointBuilder flowControlWindow(String flowControlWindow) {
-            setProperty("flowControlWindow", flowControlWindow);
+            doSetProperty("flowControlWindow", flowControlWindow);
             return this;
         }
         /**
@@ -977,7 +977,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: common
          */
         default GrpcEndpointBuilder maxMessageSize(int maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -988,7 +988,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: common
          */
         default GrpcEndpointBuilder maxMessageSize(String maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -1001,7 +1001,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointBuilder authenticationType(
                 GrpcAuthType authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -1013,7 +1013,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointBuilder authenticationType(String authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -1026,7 +1026,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointBuilder jwtAlgorithm(JwtAlgorithm jwtAlgorithm) {
-            setProperty("jwtAlgorithm", jwtAlgorithm);
+            doSetProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
         /**
@@ -1039,7 +1039,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointBuilder jwtAlgorithm(String jwtAlgorithm) {
-            setProperty("jwtAlgorithm", jwtAlgorithm);
+            doSetProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
         /**
@@ -1050,7 +1050,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointBuilder jwtIssuer(String jwtIssuer) {
-            setProperty("jwtIssuer", jwtIssuer);
+            doSetProperty("jwtIssuer", jwtIssuer);
             return this;
         }
         /**
@@ -1061,7 +1061,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointBuilder jwtSecret(String jwtSecret) {
-            setProperty("jwtSecret", jwtSecret);
+            doSetProperty("jwtSecret", jwtSecret);
             return this;
         }
         /**
@@ -1072,7 +1072,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointBuilder jwtSubject(String jwtSubject) {
-            setProperty("jwtSubject", jwtSubject);
+            doSetProperty("jwtSubject", jwtSubject);
             return this;
         }
         /**
@@ -1084,7 +1084,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointBuilder keyCertChainResource(
                 String keyCertChainResource) {
-            setProperty("keyCertChainResource", keyCertChainResource);
+            doSetProperty("keyCertChainResource", keyCertChainResource);
             return this;
         }
         /**
@@ -1095,7 +1095,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointBuilder keyPassword(String keyPassword) {
-            setProperty("keyPassword", keyPassword);
+            doSetProperty("keyPassword", keyPassword);
             return this;
         }
         /**
@@ -1106,7 +1106,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointBuilder keyResource(String keyResource) {
-            setProperty("keyResource", keyResource);
+            doSetProperty("keyResource", keyResource);
             return this;
         }
         /**
@@ -1119,7 +1119,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointBuilder negotiationType(
                 NegotiationType negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -1132,7 +1132,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: security
          */
         default GrpcEndpointBuilder negotiationType(String negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -1145,7 +1145,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointBuilder serviceAccountResource(
                 String serviceAccountResource) {
-            setProperty("serviceAccountResource", serviceAccountResource);
+            doSetProperty("serviceAccountResource", serviceAccountResource);
             return this;
         }
         /**
@@ -1158,7 +1158,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
-            setProperty("trustCertCollectionResource", trustCertCollectionResource);
+            doSetProperty("trustCertCollectionResource", trustCertCollectionResource);
             return this;
         }
     }
@@ -1182,7 +1182,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1195,7 +1195,7 @@ public interface GrpcEndpointBuilderFactory {
          */
         default AdvancedGrpcEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1207,7 +1207,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGrpcEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1219,7 +1219,7 @@ public interface GrpcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGrpcEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

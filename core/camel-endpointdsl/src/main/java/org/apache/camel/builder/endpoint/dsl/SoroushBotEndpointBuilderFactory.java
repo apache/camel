@@ -50,7 +50,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
                 int maxConnectionRetry) {
-            setProperty("maxConnectionRetry", maxConnectionRetry);
+            doSetProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
                 String maxConnectionRetry) {
-            setProperty("maxConnectionRetry", maxConnectionRetry);
+            doSetProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
         }
         /**
@@ -108,7 +108,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder queueCapacityPerThread(
                 int queueCapacityPerThread) {
-            setProperty("queueCapacityPerThread", queueCapacityPerThread);
+            doSetProperty("queueCapacityPerThread", queueCapacityPerThread);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder queueCapacityPerThread(
                 String queueCapacityPerThread) {
-            setProperty("queueCapacityPerThread", queueCapacityPerThread);
+            doSetProperty("queueCapacityPerThread", queueCapacityPerThread);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder authorizationToken(
                 String authorizationToken) {
-            setProperty("authorizationToken", authorizationToken);
+            doSetProperty("authorizationToken", authorizationToken);
             return this;
         }
         /**
@@ -224,7 +224,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder backOffStrategy(
                 String backOffStrategy) {
-            setProperty("backOffStrategy", backOffStrategy);
+            doSetProperty("backOffStrategy", backOffStrategy);
             return this;
         }
         /**
@@ -237,7 +237,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
                 long maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
+            doSetProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
                 String maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
+            doSetProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
@@ -264,7 +264,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
                 long reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            doSetProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
         }
         /**
@@ -278,7 +278,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
                 String reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            doSetProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
         }
         /**
@@ -291,7 +291,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
                 long retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            doSetProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
         }
         /**
@@ -304,7 +304,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
                 String retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            doSetProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
         }
         /**
@@ -317,7 +317,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
                 long retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
+            doSetProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
                 String retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
+            doSetProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
         }
         /**
@@ -345,7 +345,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder retryWaitingTime(
                 long retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
+            doSetProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
         /**
@@ -360,7 +360,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointConsumerBuilder retryWaitingTime(
                 String retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
+            doSetProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
     }
@@ -387,7 +387,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -403,7 +403,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -415,7 +415,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -428,7 +428,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -441,7 +441,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -454,7 +454,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -467,7 +467,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -480,7 +480,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -503,7 +503,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -515,7 +515,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -529,7 +529,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder maxConnectionRetry(
                 int maxConnectionRetry) {
-            setProperty("maxConnectionRetry", maxConnectionRetry);
+            doSetProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
         }
         /**
@@ -543,7 +543,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder maxConnectionRetry(
                 String maxConnectionRetry) {
-            setProperty("maxConnectionRetry", maxConnectionRetry);
+            doSetProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
         }
         /**
@@ -557,7 +557,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder autoDownload(
                 boolean autoDownload) {
-            setProperty("autoDownload", autoDownload);
+            doSetProperty("autoDownload", autoDownload);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder autoDownload(
                 String autoDownload) {
-            setProperty("autoDownload", autoDownload);
+            doSetProperty("autoDownload", autoDownload);
             return this;
         }
         /**
@@ -586,7 +586,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder autoUploadFile(
                 boolean autoUploadFile) {
-            setProperty("autoUploadFile", autoUploadFile);
+            doSetProperty("autoUploadFile", autoUploadFile);
             return this;
         }
         /**
@@ -601,7 +601,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder autoUploadFile(
                 String autoUploadFile) {
-            setProperty("autoUploadFile", autoUploadFile);
+            doSetProperty("autoUploadFile", autoUploadFile);
             return this;
         }
         /**
@@ -615,7 +615,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder downloadThumbnail(
                 boolean downloadThumbnail) {
-            setProperty("downloadThumbnail", downloadThumbnail);
+            doSetProperty("downloadThumbnail", downloadThumbnail);
             return this;
         }
         /**
@@ -629,7 +629,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder downloadThumbnail(
                 String downloadThumbnail) {
-            setProperty("downloadThumbnail", downloadThumbnail);
+            doSetProperty("downloadThumbnail", downloadThumbnail);
             return this;
         }
         /**
@@ -643,7 +643,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder forceDownload(
                 boolean forceDownload) {
-            setProperty("forceDownload", forceDownload);
+            doSetProperty("forceDownload", forceDownload);
             return this;
         }
         /**
@@ -657,7 +657,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder forceDownload(
                 String forceDownload) {
-            setProperty("forceDownload", forceDownload);
+            doSetProperty("forceDownload", forceDownload);
             return this;
         }
         /**
@@ -672,7 +672,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder forceUpload(
                 boolean forceUpload) {
-            setProperty("forceUpload", forceUpload);
+            doSetProperty("forceUpload", forceUpload);
             return this;
         }
         /**
@@ -686,7 +686,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * Group: producer
          */
         default SoroushBotEndpointProducerBuilder forceUpload(String forceUpload) {
-            setProperty("forceUpload", forceUpload);
+            doSetProperty("forceUpload", forceUpload);
             return this;
         }
         /**
@@ -706,7 +706,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -726,7 +726,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -739,7 +739,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder authorizationToken(
                 String authorizationToken) {
-            setProperty("authorizationToken", authorizationToken);
+            doSetProperty("authorizationToken", authorizationToken);
             return this;
         }
         /**
@@ -756,7 +756,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder backOffStrategy(
                 String backOffStrategy) {
-            setProperty("backOffStrategy", backOffStrategy);
+            doSetProperty("backOffStrategy", backOffStrategy);
             return this;
         }
         /**
@@ -769,7 +769,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
                 long maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
+            doSetProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
@@ -782,7 +782,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
                 String maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
+            doSetProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
@@ -796,7 +796,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
                 long reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            doSetProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
         }
         /**
@@ -810,7 +810,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
                 String reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            doSetProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
         }
         /**
@@ -823,7 +823,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
                 long retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            doSetProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
         }
         /**
@@ -836,7 +836,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
                 String retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            doSetProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
         }
         /**
@@ -849,7 +849,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder retryLinearIncrement(
                 long retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
+            doSetProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
         }
         /**
@@ -862,7 +862,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder retryLinearIncrement(
                 String retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
+            doSetProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
         }
         /**
@@ -877,7 +877,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder retryWaitingTime(
                 long retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
+            doSetProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
         /**
@@ -892,7 +892,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointProducerBuilder retryWaitingTime(
                 String retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
+            doSetProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
     }
@@ -916,7 +916,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -929,7 +929,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -942,7 +942,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -955,7 +955,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -978,7 +978,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -990,7 +990,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1004,7 +1004,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder maxConnectionRetry(
                 int maxConnectionRetry) {
-            setProperty("maxConnectionRetry", maxConnectionRetry);
+            doSetProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
         }
         /**
@@ -1018,7 +1018,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder maxConnectionRetry(
                 String maxConnectionRetry) {
-            setProperty("maxConnectionRetry", maxConnectionRetry);
+            doSetProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
         }
         /**
@@ -1031,7 +1031,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder authorizationToken(
                 String authorizationToken) {
-            setProperty("authorizationToken", authorizationToken);
+            doSetProperty("authorizationToken", authorizationToken);
             return this;
         }
         /**
@@ -1047,7 +1047,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * Group: scheduling
          */
         default SoroushBotEndpointBuilder backOffStrategy(String backOffStrategy) {
-            setProperty("backOffStrategy", backOffStrategy);
+            doSetProperty("backOffStrategy", backOffStrategy);
             return this;
         }
         /**
@@ -1060,7 +1060,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder maxRetryWaitingTime(
                 long maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
+            doSetProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
@@ -1073,7 +1073,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder maxRetryWaitingTime(
                 String maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
+            doSetProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
@@ -1087,7 +1087,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
                 long reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            doSetProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
         }
         /**
@@ -1101,7 +1101,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
                 String reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            doSetProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
         }
         /**
@@ -1114,7 +1114,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder retryExponentialCoefficient(
                 long retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            doSetProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
         }
         /**
@@ -1127,7 +1127,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder retryExponentialCoefficient(
                 String retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            doSetProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
         }
         /**
@@ -1140,7 +1140,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder retryLinearIncrement(
                 long retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
+            doSetProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
         }
         /**
@@ -1153,7 +1153,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder retryLinearIncrement(
                 String retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
+            doSetProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
         }
         /**
@@ -1167,7 +1167,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * Group: scheduling
          */
         default SoroushBotEndpointBuilder retryWaitingTime(long retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
+            doSetProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
         /**
@@ -1182,7 +1182,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default SoroushBotEndpointBuilder retryWaitingTime(
                 String retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
+            doSetProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
     }
@@ -1206,7 +1206,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1219,7 +1219,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1232,7 +1232,7 @@ public interface SoroushBotEndpointBuilderFactory {
          */
         default AdvancedSoroushBotEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1244,7 +1244,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSoroushBotEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

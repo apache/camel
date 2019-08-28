@@ -50,7 +50,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointConsumerBuilder depth(Integer depth) {
-            setProperty("depth", depth);
+            doSetProperty("depth", depth);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointConsumerBuilder depth(String depth) {
-            setProperty("depth", depth);
+            doSetProperty("depth", depth);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default IOTAEndpointConsumerBuilder minWeightMagnitude(
                 Integer minWeightMagnitude) {
-            setProperty("minWeightMagnitude", minWeightMagnitude);
+            doSetProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default IOTAEndpointConsumerBuilder minWeightMagnitude(
                 String minWeightMagnitude) {
-            setProperty("minWeightMagnitude", minWeightMagnitude);
+            doSetProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointConsumerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointConsumerBuilder securityLevel(Integer securityLevel) {
-            setProperty("securityLevel", securityLevel);
+            doSetProperty("securityLevel", securityLevel);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointConsumerBuilder securityLevel(String securityLevel) {
-            setProperty("securityLevel", securityLevel);
+            doSetProperty("securityLevel", securityLevel);
             return this;
         }
         /**
@@ -137,7 +137,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointConsumerBuilder tag(String tag) {
-            setProperty("tag", tag);
+            doSetProperty("tag", tag);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointConsumerBuilder url(String url) {
-            setProperty("url", url);
+            doSetProperty("url", url);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default IOTAEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default IOTAEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -211,7 +211,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -239,7 +239,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -252,7 +252,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -278,7 +278,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -291,7 +291,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -304,7 +304,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -327,7 +327,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointProducerBuilder depth(Integer depth) {
-            setProperty("depth", depth);
+            doSetProperty("depth", depth);
             return this;
         }
         /**
@@ -340,7 +340,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointProducerBuilder depth(String depth) {
-            setProperty("depth", depth);
+            doSetProperty("depth", depth);
             return this;
         }
         /**
@@ -354,7 +354,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default IOTAEndpointProducerBuilder minWeightMagnitude(
                 Integer minWeightMagnitude) {
-            setProperty("minWeightMagnitude", minWeightMagnitude);
+            doSetProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default IOTAEndpointProducerBuilder minWeightMagnitude(
                 String minWeightMagnitude) {
-            setProperty("minWeightMagnitude", minWeightMagnitude);
+            doSetProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -391,7 +391,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointProducerBuilder securityLevel(Integer securityLevel) {
-            setProperty("securityLevel", securityLevel);
+            doSetProperty("securityLevel", securityLevel);
             return this;
         }
         /**
@@ -403,7 +403,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointProducerBuilder securityLevel(String securityLevel) {
-            setProperty("securityLevel", securityLevel);
+            doSetProperty("securityLevel", securityLevel);
             return this;
         }
         /**
@@ -414,7 +414,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointProducerBuilder tag(String tag) {
-            setProperty("tag", tag);
+            doSetProperty("tag", tag);
             return this;
         }
         /**
@@ -425,7 +425,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointProducerBuilder url(String url) {
-            setProperty("url", url);
+            doSetProperty("url", url);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default IOTAEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -465,7 +465,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default IOTAEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -489,7 +489,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -502,7 +502,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -515,7 +515,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -528,7 +528,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -551,7 +551,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointBuilder depth(Integer depth) {
-            setProperty("depth", depth);
+            doSetProperty("depth", depth);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointBuilder depth(String depth) {
-            setProperty("depth", depth);
+            doSetProperty("depth", depth);
             return this;
         }
         /**
@@ -578,7 +578,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default IOTAEndpointBuilder minWeightMagnitude(
                 Integer minWeightMagnitude) {
-            setProperty("minWeightMagnitude", minWeightMagnitude);
+            doSetProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
         }
         /**
@@ -592,7 +592,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointBuilder minWeightMagnitude(String minWeightMagnitude) {
-            setProperty("minWeightMagnitude", minWeightMagnitude);
+            doSetProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
         }
         /**
@@ -603,7 +603,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -614,7 +614,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointBuilder securityLevel(Integer securityLevel) {
-            setProperty("securityLevel", securityLevel);
+            doSetProperty("securityLevel", securityLevel);
             return this;
         }
         /**
@@ -626,7 +626,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointBuilder securityLevel(String securityLevel) {
-            setProperty("securityLevel", securityLevel);
+            doSetProperty("securityLevel", securityLevel);
             return this;
         }
         /**
@@ -637,7 +637,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointBuilder tag(String tag) {
-            setProperty("tag", tag);
+            doSetProperty("tag", tag);
             return this;
         }
         /**
@@ -648,7 +648,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: common
          */
         default IOTAEndpointBuilder url(String url) {
-            setProperty("url", url);
+            doSetProperty("url", url);
             return this;
         }
     }
@@ -672,7 +672,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -685,7 +685,7 @@ public interface IOTAEndpointBuilderFactory {
          */
         default AdvancedIOTAEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -697,7 +697,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIOTAEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -709,7 +709,7 @@ public interface IOTAEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIOTAEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -61,7 +61,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: consumer
          */
         default TwitterSearchEndpointConsumerBuilder type(EndpointType type) {
-            setProperty("type", type);
+            doSetProperty("type", type);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: consumer
          */
         default TwitterSearchEndpointConsumerBuilder type(String type) {
-            setProperty("type", type);
+            doSetProperty("type", type);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder count(Integer count) {
-            setProperty("count", count);
+            doSetProperty("count", count);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder count(String count) {
-            setProperty("count", count);
+            doSetProperty("count", count);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder filterOld(boolean filterOld) {
-            setProperty("filterOld", filterOld);
+            doSetProperty("filterOld", filterOld);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder filterOld(String filterOld) {
-            setProperty("filterOld", filterOld);
+            doSetProperty("filterOld", filterOld);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder lang(String lang) {
-            setProperty("lang", lang);
+            doSetProperty("lang", lang);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder numberOfPages(
                 Integer numberOfPages) {
-            setProperty("numberOfPages", numberOfPages);
+            doSetProperty("numberOfPages", numberOfPages);
             return this;
         }
         /**
@@ -214,7 +214,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder numberOfPages(
                 String numberOfPages) {
-            setProperty("numberOfPages", numberOfPages);
+            doSetProperty("numberOfPages", numberOfPages);
             return this;
         }
         /**
@@ -226,7 +226,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder sinceId(long sinceId) {
-            setProperty("sinceId", sinceId);
+            doSetProperty("sinceId", sinceId);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder sinceId(String sinceId) {
-            setProperty("sinceId", sinceId);
+            doSetProperty("sinceId", sinceId);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder userIds(String userIds) {
-            setProperty("userIds", userIds);
+            doSetProperty("userIds", userIds);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -276,7 +276,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -289,7 +289,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -302,7 +302,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -336,7 +336,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -347,7 +347,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -358,7 +358,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -370,7 +370,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -382,7 +382,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -396,7 +396,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder initialDelay(
                 long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -410,7 +410,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -423,7 +423,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -437,7 +437,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -452,7 +452,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -467,7 +467,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -479,7 +479,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -493,7 +493,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -508,7 +508,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -520,7 +520,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -532,7 +532,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -543,7 +543,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -555,7 +555,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -568,7 +568,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -581,7 +581,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -592,7 +592,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: sort
          */
         default TwitterSearchEndpointConsumerBuilder sortById(boolean sortById) {
-            setProperty("sortById", sortById);
+            doSetProperty("sortById", sortById);
             return this;
         }
         /**
@@ -603,7 +603,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: sort
          */
         default TwitterSearchEndpointConsumerBuilder sortById(String sortById) {
-            setProperty("sortById", sortById);
+            doSetProperty("sortById", sortById);
             return this;
         }
         /**
@@ -616,7 +616,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyHost(
                 String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -629,7 +629,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -642,7 +642,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyPort(
                 Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -656,7 +656,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyPort(
                 String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -669,7 +669,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyUser(
                 String httpProxyUser) {
-            setProperty("httpProxyUser", httpProxyUser);
+            doSetProperty("httpProxyUser", httpProxyUser);
             return this;
         }
         /**
@@ -682,7 +682,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -695,7 +695,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder accessTokenSecret(
                 String accessTokenSecret) {
-            setProperty("accessTokenSecret", accessTokenSecret);
+            doSetProperty("accessTokenSecret", accessTokenSecret);
             return this;
         }
         /**
@@ -708,7 +708,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder consumerKey(
                 String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -721,7 +721,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointConsumerBuilder consumerSecret(
                 String consumerSecret) {
-            setProperty("consumerSecret", consumerSecret);
+            doSetProperty("consumerSecret", consumerSecret);
             return this;
         }
     }
@@ -747,7 +747,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder distanceMetric(
                 String distanceMetric) {
-            setProperty("distanceMetric", distanceMetric);
+            doSetProperty("distanceMetric", distanceMetric);
             return this;
         }
         /**
@@ -763,7 +763,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -779,7 +779,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -791,7 +791,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -804,7 +804,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -817,7 +817,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder extendedMode(
                 boolean extendedMode) {
-            setProperty("extendedMode", extendedMode);
+            doSetProperty("extendedMode", extendedMode);
             return this;
         }
         /**
@@ -830,7 +830,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder extendedMode(
                 String extendedMode) {
-            setProperty("extendedMode", extendedMode);
+            doSetProperty("extendedMode", extendedMode);
             return this;
         }
         /**
@@ -844,7 +844,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder latitude(
                 Double latitude) {
-            setProperty("latitude", latitude);
+            doSetProperty("latitude", latitude);
             return this;
         }
         /**
@@ -858,7 +858,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder latitude(
                 String latitude) {
-            setProperty("latitude", latitude);
+            doSetProperty("latitude", latitude);
             return this;
         }
         /**
@@ -872,7 +872,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder locations(
                 String locations) {
-            setProperty("locations", locations);
+            doSetProperty("locations", locations);
             return this;
         }
         /**
@@ -886,7 +886,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder longitude(
                 Double longitude) {
-            setProperty("longitude", longitude);
+            doSetProperty("longitude", longitude);
             return this;
         }
         /**
@@ -900,7 +900,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder longitude(
                 String longitude) {
-            setProperty("longitude", longitude);
+            doSetProperty("longitude", longitude);
             return this;
         }
         /**
@@ -916,7 +916,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -932,7 +932,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -946,7 +946,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder radius(
                 Double radius) {
-            setProperty("radius", radius);
+            doSetProperty("radius", radius);
             return this;
         }
         /**
@@ -960,7 +960,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder radius(
                 String radius) {
-            setProperty("radius", radius);
+            doSetProperty("radius", radius);
             return this;
         }
         /**
@@ -973,7 +973,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -986,7 +986,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -999,7 +999,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1012,7 +1012,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1043,7 +1043,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1063,7 +1063,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1076,7 +1076,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointProducerBuilder httpProxyHost(
                 String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -1089,7 +1089,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -1102,7 +1102,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointProducerBuilder httpProxyPort(
                 Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1116,7 +1116,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointProducerBuilder httpProxyPort(
                 String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1129,7 +1129,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointProducerBuilder httpProxyUser(
                 String httpProxyUser) {
-            setProperty("httpProxyUser", httpProxyUser);
+            doSetProperty("httpProxyUser", httpProxyUser);
             return this;
         }
         /**
@@ -1142,7 +1142,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointProducerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -1155,7 +1155,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointProducerBuilder accessTokenSecret(
                 String accessTokenSecret) {
-            setProperty("accessTokenSecret", accessTokenSecret);
+            doSetProperty("accessTokenSecret", accessTokenSecret);
             return this;
         }
         /**
@@ -1168,7 +1168,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointProducerBuilder consumerKey(
                 String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -1181,7 +1181,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointProducerBuilder consumerSecret(
                 String consumerSecret) {
-            setProperty("consumerSecret", consumerSecret);
+            doSetProperty("consumerSecret", consumerSecret);
             return this;
         }
     }
@@ -1205,7 +1205,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1218,7 +1218,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1231,7 +1231,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1244,7 +1244,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1267,7 +1267,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: proxy
          */
         default TwitterSearchEndpointBuilder httpProxyHost(String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -1280,7 +1280,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -1292,7 +1292,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: proxy
          */
         default TwitterSearchEndpointBuilder httpProxyPort(Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1305,7 +1305,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: proxy
          */
         default TwitterSearchEndpointBuilder httpProxyPort(String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1317,7 +1317,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: proxy
          */
         default TwitterSearchEndpointBuilder httpProxyUser(String httpProxyUser) {
-            setProperty("httpProxyUser", httpProxyUser);
+            doSetProperty("httpProxyUser", httpProxyUser);
             return this;
         }
         /**
@@ -1329,7 +1329,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: security
          */
         default TwitterSearchEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -1342,7 +1342,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointBuilder accessTokenSecret(
                 String accessTokenSecret) {
-            setProperty("accessTokenSecret", accessTokenSecret);
+            doSetProperty("accessTokenSecret", accessTokenSecret);
             return this;
         }
         /**
@@ -1354,7 +1354,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Group: security
          */
         default TwitterSearchEndpointBuilder consumerKey(String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -1367,7 +1367,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default TwitterSearchEndpointBuilder consumerSecret(
                 String consumerSecret) {
-            setProperty("consumerSecret", consumerSecret);
+            doSetProperty("consumerSecret", consumerSecret);
             return this;
         }
     }
@@ -1391,7 +1391,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1404,7 +1404,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1417,7 +1417,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1430,7 +1430,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          */
         default AdvancedTwitterSearchEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

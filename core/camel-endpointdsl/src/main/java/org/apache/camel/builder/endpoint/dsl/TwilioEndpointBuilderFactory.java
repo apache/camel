@@ -50,7 +50,7 @@ public interface TwilioEndpointBuilderFactory {
          * Group: common
          */
         default TwilioEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default TwilioEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default TwilioEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -113,7 +113,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -141,7 +141,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -167,7 +167,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -180,7 +180,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -193,7 +193,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -228,7 +228,7 @@ public interface TwilioEndpointBuilderFactory {
          * Group: common
          */
         default TwilioEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -248,7 +248,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default TwilioEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -268,7 +268,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default TwilioEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -292,7 +292,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -305,7 +305,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -318,7 +318,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -331,7 +331,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -353,7 +353,7 @@ public interface TwilioEndpointBuilderFactory {
          * Group: common
          */
         default TwilioEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
     }
@@ -377,7 +377,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -390,7 +390,7 @@ public interface TwilioEndpointBuilderFactory {
          */
         default AdvancedTwilioEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -402,7 +402,7 @@ public interface TwilioEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTwilioEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -414,7 +414,7 @@ public interface TwilioEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTwilioEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

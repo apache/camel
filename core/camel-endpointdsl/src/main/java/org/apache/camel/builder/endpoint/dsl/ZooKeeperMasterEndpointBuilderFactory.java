@@ -61,7 +61,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          */
         default AdvancedZooKeeperMasterEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          */
         default AdvancedZooKeeperMasterEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          */
         default AdvancedZooKeeperMasterEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          */
         default AdvancedZooKeeperMasterEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

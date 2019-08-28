@@ -47,7 +47,7 @@ public interface DrillEndpointBuilderFactory {
          * Group: producer
          */
         default DrillEndpointBuilder clusterId(String clusterId) {
-            setProperty("clusterId", clusterId);
+            doSetProperty("clusterId", clusterId);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface DrillEndpointBuilderFactory {
          * Group: producer
          */
         default DrillEndpointBuilder directory(String directory) {
-            setProperty("directory", directory);
+            doSetProperty("directory", directory);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface DrillEndpointBuilderFactory {
          * Group: producer
          */
         default DrillEndpointBuilder mode(DrillConnectionMode mode) {
-            setProperty("mode", mode);
+            doSetProperty("mode", mode);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface DrillEndpointBuilderFactory {
          * Group: producer
          */
         default DrillEndpointBuilder mode(String mode) {
-            setProperty("mode", mode);
+            doSetProperty("mode", mode);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface DrillEndpointBuilderFactory {
          * Group: producer
          */
         default DrillEndpointBuilder port(Integer port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface DrillEndpointBuilderFactory {
          * Group: producer
          */
         default DrillEndpointBuilder port(String port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
     }
@@ -133,7 +133,7 @@ public interface DrillEndpointBuilderFactory {
          */
         default AdvancedDrillEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -146,7 +146,7 @@ public interface DrillEndpointBuilderFactory {
          */
         default AdvancedDrillEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface DrillEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDrillEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface DrillEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDrillEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

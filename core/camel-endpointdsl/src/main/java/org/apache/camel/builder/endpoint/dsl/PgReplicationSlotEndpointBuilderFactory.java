@@ -48,7 +48,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Group: common
          */
         default PgReplicationSlotEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Group: common
          */
         default PgReplicationSlotEndpointBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -83,7 +83,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          */
         default AdvancedPgReplicationSlotEndpointBuilder autoCreateSlot(
                 Boolean autoCreateSlot) {
-            setProperty("autoCreateSlot", autoCreateSlot);
+            doSetProperty("autoCreateSlot", autoCreateSlot);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          */
         default AdvancedPgReplicationSlotEndpointBuilder autoCreateSlot(
                 String autoCreateSlot) {
-            setProperty("autoCreateSlot", autoCreateSlot);
+            doSetProperty("autoCreateSlot", autoCreateSlot);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          */
         default AdvancedPgReplicationSlotEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -122,7 +122,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          */
         default AdvancedPgReplicationSlotEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          */
         default AdvancedPgReplicationSlotEndpointBuilder slotOptions(
                 Map<String, Object> slotOptions) {
-            setProperty("slotOptions", slotOptions);
+            doSetProperty("slotOptions", slotOptions);
             return this;
         }
         /**
@@ -149,7 +149,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          */
         default AdvancedPgReplicationSlotEndpointBuilder slotOptions(
                 String slotOptions) {
-            setProperty("slotOptions", slotOptions);
+            doSetProperty("slotOptions", slotOptions);
             return this;
         }
         /**
@@ -162,7 +162,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          */
         default AdvancedPgReplicationSlotEndpointBuilder statusInterval(
                 Integer statusInterval) {
-            setProperty("statusInterval", statusInterval);
+            doSetProperty("statusInterval", statusInterval);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          */
         default AdvancedPgReplicationSlotEndpointBuilder statusInterval(
                 String statusInterval) {
-            setProperty("statusInterval", statusInterval);
+            doSetProperty("statusInterval", statusInterval);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          */
         default AdvancedPgReplicationSlotEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          */
         default AdvancedPgReplicationSlotEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

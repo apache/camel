@@ -57,7 +57,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder async(boolean async) {
-            setProperty("async", async);
+            doSetProperty("async", async);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder async(String async) {
-            setProperty("async", async);
+            doSetProperty("async", async);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder loggingLevel(LoggingLevel loggingLevel) {
-            setProperty("loggingLevel", loggingLevel);
+            doSetProperty("loggingLevel", loggingLevel);
             return this;
         }
         /**
@@ -108,7 +108,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder loggingLevel(String loggingLevel) {
-            setProperty("loggingLevel", loggingLevel);
+            doSetProperty("loggingLevel", loggingLevel);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder restartDelay(int restartDelay) {
-            setProperty("restartDelay", restartDelay);
+            doSetProperty("restartDelay", restartDelay);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder restartDelay(String restartDelay) {
-            setProperty("restartDelay", restartDelay);
+            doSetProperty("restartDelay", restartDelay);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder routeId(String routeId) {
-            setProperty("routeId", routeId);
+            doSetProperty("routeId", routeId);
             return this;
         }
     }
@@ -166,7 +166,7 @@ public interface ControlBusEndpointBuilderFactory {
          */
         default AdvancedControlBusEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface ControlBusEndpointBuilderFactory {
          */
         default AdvancedControlBusEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface ControlBusEndpointBuilderFactory {
          */
         default AdvancedControlBusEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -204,7 +204,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedControlBusEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

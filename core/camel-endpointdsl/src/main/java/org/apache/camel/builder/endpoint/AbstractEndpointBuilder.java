@@ -88,7 +88,7 @@ public class AbstractEndpointBuilder {
         return getUri();
     }
 
-    public void setProperty(String key, Object value) {
+    public void doSetProperty(String key, Object value) {
         this.properties.put(key, value);
     }
 

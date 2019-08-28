@@ -47,7 +47,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Group: producer
          */
         default KeystoneEndpointBuilder config(Object config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Group: producer
          */
         default KeystoneEndpointBuilder config(String config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Group: producer
          */
         default KeystoneEndpointBuilder domain(String domain) {
-            setProperty("domain", domain);
+            doSetProperty("domain", domain);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Group: producer
          */
         default KeystoneEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -93,7 +93,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Group: producer
          */
         default KeystoneEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Group: producer
          */
         default KeystoneEndpointBuilder project(String project) {
-            setProperty("project", project);
+            doSetProperty("project", project);
             return this;
         }
         /**
@@ -117,7 +117,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Group: producer
          */
         default KeystoneEndpointBuilder subsystem(String subsystem) {
-            setProperty("subsystem", subsystem);
+            doSetProperty("subsystem", subsystem);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Group: producer
          */
         default KeystoneEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -153,7 +153,7 @@ public interface KeystoneEndpointBuilderFactory {
          */
         default AdvancedKeystoneEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface KeystoneEndpointBuilderFactory {
          */
         default AdvancedKeystoneEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedKeystoneEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface KeystoneEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedKeystoneEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

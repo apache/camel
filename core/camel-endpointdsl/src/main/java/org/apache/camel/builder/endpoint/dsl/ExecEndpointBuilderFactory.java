@@ -45,7 +45,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder args(String args) {
-            setProperty("args", args);
+            doSetProperty("args", args);
             return this;
         }
         /**
@@ -57,7 +57,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -69,7 +69,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder commandExecutor(Object commandExecutor) {
-            setProperty("commandExecutor", commandExecutor);
+            doSetProperty("commandExecutor", commandExecutor);
             return this;
         }
         /**
@@ -101,7 +101,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder commandExecutor(String commandExecutor) {
-            setProperty("commandExecutor", commandExecutor);
+            doSetProperty("commandExecutor", commandExecutor);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder outFile(String outFile) {
-            setProperty("outFile", outFile);
+            doSetProperty("outFile", outFile);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder timeout(long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface ExecEndpointBuilderFactory {
          */
         default ExecEndpointBuilder useStderrOnEmptyStdout(
                 boolean useStderrOnEmptyStdout) {
-            setProperty("useStderrOnEmptyStdout", useStderrOnEmptyStdout);
+            doSetProperty("useStderrOnEmptyStdout", useStderrOnEmptyStdout);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface ExecEndpointBuilderFactory {
          */
         default ExecEndpointBuilder useStderrOnEmptyStdout(
                 String useStderrOnEmptyStdout) {
-            setProperty("useStderrOnEmptyStdout", useStderrOnEmptyStdout);
+            doSetProperty("useStderrOnEmptyStdout", useStderrOnEmptyStdout);
             return this;
         }
         /**
@@ -180,7 +180,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder workingDir(String workingDir) {
-            setProperty("workingDir", workingDir);
+            doSetProperty("workingDir", workingDir);
             return this;
         }
     }
@@ -204,7 +204,7 @@ public interface ExecEndpointBuilderFactory {
          */
         default AdvancedExecEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface ExecEndpointBuilderFactory {
          */
         default AdvancedExecEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -229,7 +229,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedExecEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedExecEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

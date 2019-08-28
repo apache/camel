@@ -47,7 +47,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder amazonSESClient(Object amazonSESClient) {
-            setProperty("amazonSESClient", amazonSESClient);
+            doSetProperty("amazonSESClient", amazonSESClient);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder amazonSESClient(String amazonSESClient) {
-            setProperty("amazonSESClient", amazonSESClient);
+            doSetProperty("amazonSESClient", amazonSESClient);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -93,7 +93,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface SesEndpointBuilderFactory {
          */
         default SesEndpointBuilder replyToAddresses(
                 List<String> replyToAddresses) {
-            setProperty("replyToAddresses", replyToAddresses);
+            doSetProperty("replyToAddresses", replyToAddresses);
             return this;
         }
         /**
@@ -134,7 +134,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder replyToAddresses(String replyToAddresses) {
-            setProperty("replyToAddresses", replyToAddresses);
+            doSetProperty("replyToAddresses", replyToAddresses);
             return this;
         }
         /**
@@ -146,7 +146,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder returnPath(String returnPath) {
-            setProperty("returnPath", returnPath);
+            doSetProperty("returnPath", returnPath);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -171,7 +171,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder to(List<String> to) {
-            setProperty("to", to);
+            doSetProperty("to", to);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder to(String to) {
-            setProperty("to", to);
+            doSetProperty("to", to);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface SesEndpointBuilderFactory {
          * Group: security
          */
         default SesEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface SesEndpointBuilderFactory {
          * Group: security
          */
         default SesEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -230,7 +230,7 @@ public interface SesEndpointBuilderFactory {
          */
         default AdvancedSesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface SesEndpointBuilderFactory {
          */
         default AdvancedSesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface SesEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSesEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface SesEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSesEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -55,7 +55,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -112,7 +112,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -176,7 +176,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -204,7 +204,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -269,7 +269,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -296,7 +296,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -325,7 +325,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -339,7 +339,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
@@ -373,7 +373,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -418,7 +418,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -444,7 +444,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -457,7 +457,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -483,7 +483,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -498,7 +498,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -512,7 +512,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -526,7 +526,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -540,7 +540,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
     }
@@ -564,7 +564,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -577,7 +577,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -590,7 +590,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -603,7 +603,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          */
         default AdvancedHazelcastReplicatedmapEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -55,7 +55,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder achievementURL(
                 URL achievementURL) {
-            setProperty("achievementURL", achievementURL);
+            doSetProperty("achievementURL", achievementURL);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder achievementURL(
                 String achievementURL) {
-            setProperty("achievementURL", achievementURL);
+            doSetProperty("achievementURL", achievementURL);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder albumId(String albumId) {
-            setProperty("albumId", albumId);
+            doSetProperty("albumId", albumId);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder albumUpdate(Object albumUpdate) {
-            setProperty("albumUpdate", albumUpdate);
+            doSetProperty("albumUpdate", albumUpdate);
             return this;
         }
         /**
@@ -101,7 +101,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder albumUpdate(String albumUpdate) {
-            setProperty("albumUpdate", albumUpdate);
+            doSetProperty("albumUpdate", albumUpdate);
             return this;
         }
         /**
@@ -112,7 +112,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder appId(String appId) {
-            setProperty("appId", appId);
+            doSetProperty("appId", appId);
             return this;
         }
         /**
@@ -123,7 +123,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder center(Object center) {
-            setProperty("center", center);
+            doSetProperty("center", center);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder center(String center) {
-            setProperty("center", center);
+            doSetProperty("center", center);
             return this;
         }
         /**
@@ -146,7 +146,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder checkinId(String checkinId) {
-            setProperty("checkinId", checkinId);
+            doSetProperty("checkinId", checkinId);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface FacebookEndpointBuilderFactory {
         @Deprecated
         default FacebookEndpointConsumerBuilder checkinUpdate(
                 Object checkinUpdate) {
-            setProperty("checkinUpdate", checkinUpdate);
+            doSetProperty("checkinUpdate", checkinUpdate);
             return this;
         }
         /**
@@ -175,7 +175,7 @@ public interface FacebookEndpointBuilderFactory {
         @Deprecated
         default FacebookEndpointConsumerBuilder checkinUpdate(
                 String checkinUpdate) {
-            setProperty("checkinUpdate", checkinUpdate);
+            doSetProperty("checkinUpdate", checkinUpdate);
             return this;
         }
         /**
@@ -186,7 +186,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder clientURL(String clientURL) {
-            setProperty("clientURL", clientURL);
+            doSetProperty("clientURL", clientURL);
             return this;
         }
         /**
@@ -198,7 +198,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder clientVersion(
                 String clientVersion) {
-            setProperty("clientVersion", clientVersion);
+            doSetProperty("clientVersion", clientVersion);
             return this;
         }
         /**
@@ -209,7 +209,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder commentId(String commentId) {
-            setProperty("commentId", commentId);
+            doSetProperty("commentId", commentId);
             return this;
         }
         /**
@@ -221,7 +221,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder commentUpdate(
                 Object commentUpdate) {
-            setProperty("commentUpdate", commentUpdate);
+            doSetProperty("commentUpdate", commentUpdate);
             return this;
         }
         /**
@@ -234,7 +234,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder commentUpdate(
                 String commentUpdate) {
-            setProperty("commentUpdate", commentUpdate);
+            doSetProperty("commentUpdate", commentUpdate);
             return this;
         }
         /**
@@ -246,7 +246,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder debugEnabled(
                 Boolean debugEnabled) {
-            setProperty("debugEnabled", debugEnabled);
+            doSetProperty("debugEnabled", debugEnabled);
             return this;
         }
         /**
@@ -258,7 +258,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder debugEnabled(String debugEnabled) {
-            setProperty("debugEnabled", debugEnabled);
+            doSetProperty("debugEnabled", debugEnabled);
             return this;
         }
         /**
@@ -269,7 +269,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder description(String description) {
-            setProperty("description", description);
+            doSetProperty("description", description);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder distance(Integer distance) {
-            setProperty("distance", distance);
+            doSetProperty("distance", distance);
             return this;
         }
         /**
@@ -292,7 +292,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder distance(String distance) {
-            setProperty("distance", distance);
+            doSetProperty("distance", distance);
             return this;
         }
         /**
@@ -303,7 +303,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder domainId(String domainId) {
-            setProperty("domainId", domainId);
+            doSetProperty("domainId", domainId);
             return this;
         }
         /**
@@ -314,7 +314,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder domainName(String domainName) {
-            setProperty("domainName", domainName);
+            doSetProperty("domainName", domainName);
             return this;
         }
         /**
@@ -327,7 +327,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder domainNames(
                 List<String> domainNames) {
-            setProperty("domainNames", domainNames);
+            doSetProperty("domainNames", domainNames);
             return this;
         }
         /**
@@ -339,7 +339,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder domainNames(String domainNames) {
-            setProperty("domainNames", domainNames);
+            doSetProperty("domainNames", domainNames);
             return this;
         }
         /**
@@ -350,7 +350,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder eventId(String eventId) {
-            setProperty("eventId", eventId);
+            doSetProperty("eventId", eventId);
             return this;
         }
         /**
@@ -361,7 +361,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder eventUpdate(Object eventUpdate) {
-            setProperty("eventUpdate", eventUpdate);
+            doSetProperty("eventUpdate", eventUpdate);
             return this;
         }
         /**
@@ -373,7 +373,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder eventUpdate(String eventUpdate) {
-            setProperty("eventUpdate", eventUpdate);
+            doSetProperty("eventUpdate", eventUpdate);
             return this;
         }
         /**
@@ -384,7 +384,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder friendId(String friendId) {
-            setProperty("friendId", friendId);
+            doSetProperty("friendId", friendId);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder friendlistId(String friendlistId) {
-            setProperty("friendlistId", friendlistId);
+            doSetProperty("friendlistId", friendlistId);
             return this;
         }
         /**
@@ -407,7 +407,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder friendlistName(
                 String friendlistName) {
-            setProperty("friendlistName", friendlistName);
+            doSetProperty("friendlistName", friendlistName);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder friendUserId(String friendUserId) {
-            setProperty("friendUserId", friendUserId);
+            doSetProperty("friendUserId", friendUserId);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder groupId(String groupId) {
-            setProperty("groupId", groupId);
+            doSetProperty("groupId", groupId);
             return this;
         }
         /**
@@ -440,7 +440,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder gzipEnabled(Boolean gzipEnabled) {
-            setProperty("gzipEnabled", gzipEnabled);
+            doSetProperty("gzipEnabled", gzipEnabled);
             return this;
         }
         /**
@@ -452,7 +452,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder gzipEnabled(String gzipEnabled) {
-            setProperty("gzipEnabled", gzipEnabled);
+            doSetProperty("gzipEnabled", gzipEnabled);
             return this;
         }
         /**
@@ -464,7 +464,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpConnectionTimeout(
                 Integer httpConnectionTimeout) {
-            setProperty("httpConnectionTimeout", httpConnectionTimeout);
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
         }
         /**
@@ -477,7 +477,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpConnectionTimeout(
                 String httpConnectionTimeout) {
-            setProperty("httpConnectionTimeout", httpConnectionTimeout);
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
         }
         /**
@@ -489,7 +489,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpDefaultMaxPerRoute(
                 Integer httpDefaultMaxPerRoute) {
-            setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
+            doSetProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
         }
         /**
@@ -502,7 +502,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpDefaultMaxPerRoute(
                 String httpDefaultMaxPerRoute) {
-            setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
+            doSetProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
         }
         /**
@@ -514,7 +514,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpMaxTotalConnections(
                 Integer httpMaxTotalConnections) {
-            setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
+            doSetProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
         }
         /**
@@ -527,7 +527,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpMaxTotalConnections(
                 String httpMaxTotalConnections) {
-            setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
+            doSetProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
         }
         /**
@@ -539,7 +539,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -552,7 +552,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpReadTimeout(
                 String httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpRetryCount(
                 Integer httpRetryCount) {
-            setProperty("httpRetryCount", httpRetryCount);
+            doSetProperty("httpRetryCount", httpRetryCount);
             return this;
         }
         /**
@@ -577,7 +577,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpRetryCount(
                 String httpRetryCount) {
-            setProperty("httpRetryCount", httpRetryCount);
+            doSetProperty("httpRetryCount", httpRetryCount);
             return this;
         }
         /**
@@ -589,7 +589,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpRetryIntervalSeconds(
                 Integer httpRetryIntervalSeconds) {
-            setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
+            doSetProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
         }
         /**
@@ -602,7 +602,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpRetryIntervalSeconds(
                 String httpRetryIntervalSeconds) {
-            setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
+            doSetProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
         }
         /**
@@ -614,7 +614,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpStreamingReadTimeout(
                 Integer httpStreamingReadTimeout) {
-            setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
+            doSetProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
         }
         /**
@@ -627,7 +627,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpStreamingReadTimeout(
                 String httpStreamingReadTimeout) {
-            setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
+            doSetProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
         }
         /**
@@ -639,7 +639,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder ids(List<String> ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -651,7 +651,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder ids(String ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -662,7 +662,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -674,7 +674,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder includeRead(Boolean includeRead) {
-            setProperty("includeRead", includeRead);
+            doSetProperty("includeRead", includeRead);
             return this;
         }
         /**
@@ -687,7 +687,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder includeRead(String includeRead) {
-            setProperty("includeRead", includeRead);
+            doSetProperty("includeRead", includeRead);
             return this;
         }
         /**
@@ -698,7 +698,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder isHidden(Boolean isHidden) {
-            setProperty("isHidden", isHidden);
+            doSetProperty("isHidden", isHidden);
             return this;
         }
         /**
@@ -710,7 +710,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder isHidden(String isHidden) {
-            setProperty("isHidden", isHidden);
+            doSetProperty("isHidden", isHidden);
             return this;
         }
         /**
@@ -722,7 +722,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder jsonStoreEnabled(
                 Boolean jsonStoreEnabled) {
-            setProperty("jsonStoreEnabled", jsonStoreEnabled);
+            doSetProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
         }
         /**
@@ -735,7 +735,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder jsonStoreEnabled(
                 String jsonStoreEnabled) {
-            setProperty("jsonStoreEnabled", jsonStoreEnabled);
+            doSetProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
         }
         /**
@@ -746,7 +746,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder link(URL link) {
-            setProperty("link", link);
+            doSetProperty("link", link);
             return this;
         }
         /**
@@ -757,7 +757,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder link(String link) {
-            setProperty("link", link);
+            doSetProperty("link", link);
             return this;
         }
         /**
@@ -768,7 +768,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder linkId(String linkId) {
-            setProperty("linkId", linkId);
+            doSetProperty("linkId", linkId);
             return this;
         }
         /**
@@ -779,7 +779,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder locale(Locale locale) {
-            setProperty("locale", locale);
+            doSetProperty("locale", locale);
             return this;
         }
         /**
@@ -790,7 +790,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder locale(String locale) {
-            setProperty("locale", locale);
+            doSetProperty("locale", locale);
             return this;
         }
         /**
@@ -802,7 +802,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder mbeanEnabled(
                 Boolean mbeanEnabled) {
-            setProperty("mbeanEnabled", mbeanEnabled);
+            doSetProperty("mbeanEnabled", mbeanEnabled);
             return this;
         }
         /**
@@ -814,7 +814,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder mbeanEnabled(String mbeanEnabled) {
-            setProperty("mbeanEnabled", mbeanEnabled);
+            doSetProperty("mbeanEnabled", mbeanEnabled);
             return this;
         }
         /**
@@ -825,7 +825,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder message(String message) {
-            setProperty("message", message);
+            doSetProperty("message", message);
             return this;
         }
         /**
@@ -836,7 +836,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder messageId(String messageId) {
-            setProperty("messageId", messageId);
+            doSetProperty("messageId", messageId);
             return this;
         }
         /**
@@ -847,7 +847,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder metric(String metric) {
-            setProperty("metric", metric);
+            doSetProperty("metric", metric);
             return this;
         }
         /**
@@ -858,7 +858,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder milestoneId(String milestoneId) {
-            setProperty("milestoneId", milestoneId);
+            doSetProperty("milestoneId", milestoneId);
             return this;
         }
         /**
@@ -869,7 +869,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
+            doSetProperty("name", name);
             return this;
         }
         /**
@@ -880,7 +880,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder noteId(String noteId) {
-            setProperty("noteId", noteId);
+            doSetProperty("noteId", noteId);
             return this;
         }
         /**
@@ -892,7 +892,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder notificationId(
                 String notificationId) {
-            setProperty("notificationId", notificationId);
+            doSetProperty("notificationId", notificationId);
             return this;
         }
         /**
@@ -903,7 +903,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder objectId(String objectId) {
-            setProperty("objectId", objectId);
+            doSetProperty("objectId", objectId);
             return this;
         }
         /**
@@ -914,7 +914,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder offerId(String offerId) {
-            setProperty("offerId", offerId);
+            doSetProperty("offerId", offerId);
             return this;
         }
         /**
@@ -926,7 +926,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder optionDescription(
                 String optionDescription) {
-            setProperty("optionDescription", optionDescription);
+            doSetProperty("optionDescription", optionDescription);
             return this;
         }
         /**
@@ -937,7 +937,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder pageId(String pageId) {
-            setProperty("pageId", pageId);
+            doSetProperty("pageId", pageId);
             return this;
         }
         /**
@@ -949,7 +949,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder permissionName(
                 String permissionName) {
-            setProperty("permissionName", permissionName);
+            doSetProperty("permissionName", permissionName);
             return this;
         }
         /**
@@ -960,7 +960,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder permissions(String permissions) {
-            setProperty("permissions", permissions);
+            doSetProperty("permissions", permissions);
             return this;
         }
         /**
@@ -971,7 +971,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder photoId(String photoId) {
-            setProperty("photoId", photoId);
+            doSetProperty("photoId", photoId);
             return this;
         }
         /**
@@ -982,7 +982,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder pictureId(Integer pictureId) {
-            setProperty("pictureId", pictureId);
+            doSetProperty("pictureId", pictureId);
             return this;
         }
         /**
@@ -994,7 +994,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder pictureId(String pictureId) {
-            setProperty("pictureId", pictureId);
+            doSetProperty("pictureId", pictureId);
             return this;
         }
         /**
@@ -1005,7 +1005,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder pictureId2(Integer pictureId2) {
-            setProperty("pictureId2", pictureId2);
+            doSetProperty("pictureId2", pictureId2);
             return this;
         }
         /**
@@ -1017,7 +1017,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder pictureId2(String pictureId2) {
-            setProperty("pictureId2", pictureId2);
+            doSetProperty("pictureId2", pictureId2);
             return this;
         }
         /**
@@ -1029,7 +1029,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder pictureSize(
                 PictureSize pictureSize) {
-            setProperty("pictureSize", pictureSize);
+            doSetProperty("pictureSize", pictureSize);
             return this;
         }
         /**
@@ -1041,7 +1041,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder pictureSize(String pictureSize) {
-            setProperty("pictureSize", pictureSize);
+            doSetProperty("pictureSize", pictureSize);
             return this;
         }
         /**
@@ -1052,7 +1052,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder placeId(String placeId) {
-            setProperty("placeId", placeId);
+            doSetProperty("placeId", placeId);
             return this;
         }
         /**
@@ -1063,7 +1063,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder postId(String postId) {
-            setProperty("postId", postId);
+            doSetProperty("postId", postId);
             return this;
         }
         /**
@@ -1074,7 +1074,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder postUpdate(Object postUpdate) {
-            setProperty("postUpdate", postUpdate);
+            doSetProperty("postUpdate", postUpdate);
             return this;
         }
         /**
@@ -1086,7 +1086,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder postUpdate(String postUpdate) {
-            setProperty("postUpdate", postUpdate);
+            doSetProperty("postUpdate", postUpdate);
             return this;
         }
         /**
@@ -1098,7 +1098,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder prettyDebugEnabled(
                 Boolean prettyDebugEnabled) {
-            setProperty("prettyDebugEnabled", prettyDebugEnabled);
+            doSetProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
         }
         /**
@@ -1111,7 +1111,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder prettyDebugEnabled(
                 String prettyDebugEnabled) {
-            setProperty("prettyDebugEnabled", prettyDebugEnabled);
+            doSetProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
         }
         /**
@@ -1124,7 +1124,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder queries(
                 Map<String, String> queries) {
-            setProperty("queries", queries);
+            doSetProperty("queries", queries);
             return this;
         }
         /**
@@ -1137,7 +1137,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder queries(String queries) {
-            setProperty("queries", queries);
+            doSetProperty("queries", queries);
             return this;
         }
         /**
@@ -1148,7 +1148,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -1159,7 +1159,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder questionId(String questionId) {
-            setProperty("questionId", questionId);
+            doSetProperty("questionId", questionId);
             return this;
         }
         /**
@@ -1170,7 +1170,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder reading(Object reading) {
-            setProperty("reading", reading);
+            doSetProperty("reading", reading);
             return this;
         }
         /**
@@ -1182,7 +1182,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder reading(String reading) {
-            setProperty("reading", reading);
+            doSetProperty("reading", reading);
             return this;
         }
         /**
@@ -1195,7 +1195,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder readingOptions(
                 Map<String, Object> readingOptions) {
-            setProperty("readingOptions", readingOptions);
+            doSetProperty("readingOptions", readingOptions);
             return this;
         }
         /**
@@ -1209,7 +1209,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder readingOptions(
                 String readingOptions) {
-            setProperty("readingOptions", readingOptions);
+            doSetProperty("readingOptions", readingOptions);
             return this;
         }
         /**
@@ -1220,7 +1220,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder restBaseURL(String restBaseURL) {
-            setProperty("restBaseURL", restBaseURL);
+            doSetProperty("restBaseURL", restBaseURL);
             return this;
         }
         /**
@@ -1231,7 +1231,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder scoreValue(Integer scoreValue) {
-            setProperty("scoreValue", scoreValue);
+            doSetProperty("scoreValue", scoreValue);
             return this;
         }
         /**
@@ -1243,7 +1243,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder scoreValue(String scoreValue) {
-            setProperty("scoreValue", scoreValue);
+            doSetProperty("scoreValue", scoreValue);
             return this;
         }
         /**
@@ -1254,7 +1254,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder size(PictureSize size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -1266,7 +1266,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -1277,7 +1277,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder source(Object source) {
-            setProperty("source", source);
+            doSetProperty("source", source);
             return this;
         }
         /**
@@ -1288,7 +1288,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder source(String source) {
-            setProperty("source", source);
+            doSetProperty("source", source);
             return this;
         }
         /**
@@ -1299,7 +1299,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -1310,7 +1310,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder tabId(String tabId) {
-            setProperty("tabId", tabId);
+            doSetProperty("tabId", tabId);
             return this;
         }
         /**
@@ -1321,7 +1321,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder tagUpdate(Object tagUpdate) {
-            setProperty("tagUpdate", tagUpdate);
+            doSetProperty("tagUpdate", tagUpdate);
             return this;
         }
         /**
@@ -1333,7 +1333,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder tagUpdate(String tagUpdate) {
-            setProperty("tagUpdate", tagUpdate);
+            doSetProperty("tagUpdate", tagUpdate);
             return this;
         }
         /**
@@ -1344,7 +1344,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder testUser1(Object testUser1) {
-            setProperty("testUser1", testUser1);
+            doSetProperty("testUser1", testUser1);
             return this;
         }
         /**
@@ -1356,7 +1356,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder testUser1(String testUser1) {
-            setProperty("testUser1", testUser1);
+            doSetProperty("testUser1", testUser1);
             return this;
         }
         /**
@@ -1367,7 +1367,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder testUser2(Object testUser2) {
-            setProperty("testUser2", testUser2);
+            doSetProperty("testUser2", testUser2);
             return this;
         }
         /**
@@ -1379,7 +1379,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder testUser2(String testUser2) {
-            setProperty("testUser2", testUser2);
+            doSetProperty("testUser2", testUser2);
             return this;
         }
         /**
@@ -1390,7 +1390,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder testUserId(String testUserId) {
-            setProperty("testUserId", testUserId);
+            doSetProperty("testUserId", testUserId);
             return this;
         }
         /**
@@ -1401,7 +1401,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder title(String title) {
-            setProperty("title", title);
+            doSetProperty("title", title);
             return this;
         }
         /**
@@ -1412,7 +1412,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder toUserId(String toUserId) {
-            setProperty("toUserId", toUserId);
+            doSetProperty("toUserId", toUserId);
             return this;
         }
         /**
@@ -1424,7 +1424,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder toUserIds(List<String> toUserIds) {
-            setProperty("toUserIds", toUserIds);
+            doSetProperty("toUserIds", toUserIds);
             return this;
         }
         /**
@@ -1436,7 +1436,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder toUserIds(String toUserIds) {
-            setProperty("toUserIds", toUserIds);
+            doSetProperty("toUserIds", toUserIds);
             return this;
         }
         /**
@@ -1447,7 +1447,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -1458,7 +1458,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder userId1(String userId1) {
-            setProperty("userId1", userId1);
+            doSetProperty("userId1", userId1);
             return this;
         }
         /**
@@ -1469,7 +1469,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder userId2(String userId2) {
-            setProperty("userId2", userId2);
+            doSetProperty("userId2", userId2);
             return this;
         }
         /**
@@ -1481,7 +1481,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder userIds(List<String> userIds) {
-            setProperty("userIds", userIds);
+            doSetProperty("userIds", userIds);
             return this;
         }
         /**
@@ -1493,7 +1493,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder userIds(String userIds) {
-            setProperty("userIds", userIds);
+            doSetProperty("userIds", userIds);
             return this;
         }
         /**
@@ -1504,7 +1504,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder userLocale(String userLocale) {
-            setProperty("userLocale", userLocale);
+            doSetProperty("userLocale", userLocale);
             return this;
         }
         /**
@@ -1515,7 +1515,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder useSSL(Boolean useSSL) {
-            setProperty("useSSL", useSSL);
+            doSetProperty("useSSL", useSSL);
             return this;
         }
         /**
@@ -1527,7 +1527,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder useSSL(String useSSL) {
-            setProperty("useSSL", useSSL);
+            doSetProperty("useSSL", useSSL);
             return this;
         }
         /**
@@ -1538,7 +1538,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder videoBaseURL(String videoBaseURL) {
-            setProperty("videoBaseURL", videoBaseURL);
+            doSetProperty("videoBaseURL", videoBaseURL);
             return this;
         }
         /**
@@ -1549,7 +1549,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointConsumerBuilder videoId(String videoId) {
-            setProperty("videoId", videoId);
+            doSetProperty("videoId", videoId);
             return this;
         }
         /**
@@ -1567,7 +1567,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -1585,7 +1585,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -1597,7 +1597,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpProxyHost(
                 String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -1609,7 +1609,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -1621,7 +1621,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpProxyPort(
                 Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1634,7 +1634,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpProxyPort(
                 String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1646,7 +1646,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder httpProxyUser(
                 String httpProxyUser) {
-            setProperty("httpProxyUser", httpProxyUser);
+            doSetProperty("httpProxyUser", httpProxyUser);
             return this;
         }
         /**
@@ -1658,7 +1658,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder oAuthAccessToken(
                 String oAuthAccessToken) {
-            setProperty("oAuthAccessToken", oAuthAccessToken);
+            doSetProperty("oAuthAccessToken", oAuthAccessToken);
             return this;
         }
         /**
@@ -1670,7 +1670,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder oAuthAccessTokenURL(
                 String oAuthAccessTokenURL) {
-            setProperty("oAuthAccessTokenURL", oAuthAccessTokenURL);
+            doSetProperty("oAuthAccessTokenURL", oAuthAccessTokenURL);
             return this;
         }
         /**
@@ -1681,7 +1681,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: security
          */
         default FacebookEndpointConsumerBuilder oAuthAppId(String oAuthAppId) {
-            setProperty("oAuthAppId", oAuthAppId);
+            doSetProperty("oAuthAppId", oAuthAppId);
             return this;
         }
         /**
@@ -1693,7 +1693,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder oAuthAppSecret(
                 String oAuthAppSecret) {
-            setProperty("oAuthAppSecret", oAuthAppSecret);
+            doSetProperty("oAuthAppSecret", oAuthAppSecret);
             return this;
         }
         /**
@@ -1705,7 +1705,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder oAuthAuthorizationURL(
                 String oAuthAuthorizationURL) {
-            setProperty("oAuthAuthorizationURL", oAuthAuthorizationURL);
+            doSetProperty("oAuthAuthorizationURL", oAuthAuthorizationURL);
             return this;
         }
         /**
@@ -1719,7 +1719,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointConsumerBuilder oAuthPermissions(
                 String oAuthPermissions) {
-            setProperty("oAuthPermissions", oAuthPermissions);
+            doSetProperty("oAuthPermissions", oAuthPermissions);
             return this;
         }
     }
@@ -1746,7 +1746,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -1762,7 +1762,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -1774,7 +1774,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -1787,7 +1787,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -1800,7 +1800,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1813,7 +1813,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1826,7 +1826,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1839,7 +1839,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1862,7 +1862,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder achievementURL(
                 URL achievementURL) {
-            setProperty("achievementURL", achievementURL);
+            doSetProperty("achievementURL", achievementURL);
             return this;
         }
         /**
@@ -1874,7 +1874,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder achievementURL(
                 String achievementURL) {
-            setProperty("achievementURL", achievementURL);
+            doSetProperty("achievementURL", achievementURL);
             return this;
         }
         /**
@@ -1885,7 +1885,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder albumId(String albumId) {
-            setProperty("albumId", albumId);
+            doSetProperty("albumId", albumId);
             return this;
         }
         /**
@@ -1896,7 +1896,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder albumUpdate(Object albumUpdate) {
-            setProperty("albumUpdate", albumUpdate);
+            doSetProperty("albumUpdate", albumUpdate);
             return this;
         }
         /**
@@ -1908,7 +1908,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder albumUpdate(String albumUpdate) {
-            setProperty("albumUpdate", albumUpdate);
+            doSetProperty("albumUpdate", albumUpdate);
             return this;
         }
         /**
@@ -1919,7 +1919,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder appId(String appId) {
-            setProperty("appId", appId);
+            doSetProperty("appId", appId);
             return this;
         }
         /**
@@ -1930,7 +1930,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder center(Object center) {
-            setProperty("center", center);
+            doSetProperty("center", center);
             return this;
         }
         /**
@@ -1942,7 +1942,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder center(String center) {
-            setProperty("center", center);
+            doSetProperty("center", center);
             return this;
         }
         /**
@@ -1953,7 +1953,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder checkinId(String checkinId) {
-            setProperty("checkinId", checkinId);
+            doSetProperty("checkinId", checkinId);
             return this;
         }
         /**
@@ -1967,7 +1967,7 @@ public interface FacebookEndpointBuilderFactory {
         @Deprecated
         default FacebookEndpointProducerBuilder checkinUpdate(
                 Object checkinUpdate) {
-            setProperty("checkinUpdate", checkinUpdate);
+            doSetProperty("checkinUpdate", checkinUpdate);
             return this;
         }
         /**
@@ -1982,7 +1982,7 @@ public interface FacebookEndpointBuilderFactory {
         @Deprecated
         default FacebookEndpointProducerBuilder checkinUpdate(
                 String checkinUpdate) {
-            setProperty("checkinUpdate", checkinUpdate);
+            doSetProperty("checkinUpdate", checkinUpdate);
             return this;
         }
         /**
@@ -1993,7 +1993,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder clientURL(String clientURL) {
-            setProperty("clientURL", clientURL);
+            doSetProperty("clientURL", clientURL);
             return this;
         }
         /**
@@ -2005,7 +2005,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder clientVersion(
                 String clientVersion) {
-            setProperty("clientVersion", clientVersion);
+            doSetProperty("clientVersion", clientVersion);
             return this;
         }
         /**
@@ -2016,7 +2016,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder commentId(String commentId) {
-            setProperty("commentId", commentId);
+            doSetProperty("commentId", commentId);
             return this;
         }
         /**
@@ -2028,7 +2028,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder commentUpdate(
                 Object commentUpdate) {
-            setProperty("commentUpdate", commentUpdate);
+            doSetProperty("commentUpdate", commentUpdate);
             return this;
         }
         /**
@@ -2041,7 +2041,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder commentUpdate(
                 String commentUpdate) {
-            setProperty("commentUpdate", commentUpdate);
+            doSetProperty("commentUpdate", commentUpdate);
             return this;
         }
         /**
@@ -2053,7 +2053,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder debugEnabled(
                 Boolean debugEnabled) {
-            setProperty("debugEnabled", debugEnabled);
+            doSetProperty("debugEnabled", debugEnabled);
             return this;
         }
         /**
@@ -2065,7 +2065,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder debugEnabled(String debugEnabled) {
-            setProperty("debugEnabled", debugEnabled);
+            doSetProperty("debugEnabled", debugEnabled);
             return this;
         }
         /**
@@ -2076,7 +2076,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder description(String description) {
-            setProperty("description", description);
+            doSetProperty("description", description);
             return this;
         }
         /**
@@ -2087,7 +2087,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder distance(Integer distance) {
-            setProperty("distance", distance);
+            doSetProperty("distance", distance);
             return this;
         }
         /**
@@ -2099,7 +2099,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder distance(String distance) {
-            setProperty("distance", distance);
+            doSetProperty("distance", distance);
             return this;
         }
         /**
@@ -2110,7 +2110,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder domainId(String domainId) {
-            setProperty("domainId", domainId);
+            doSetProperty("domainId", domainId);
             return this;
         }
         /**
@@ -2121,7 +2121,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder domainName(String domainName) {
-            setProperty("domainName", domainName);
+            doSetProperty("domainName", domainName);
             return this;
         }
         /**
@@ -2134,7 +2134,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder domainNames(
                 List<String> domainNames) {
-            setProperty("domainNames", domainNames);
+            doSetProperty("domainNames", domainNames);
             return this;
         }
         /**
@@ -2146,7 +2146,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder domainNames(String domainNames) {
-            setProperty("domainNames", domainNames);
+            doSetProperty("domainNames", domainNames);
             return this;
         }
         /**
@@ -2157,7 +2157,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder eventId(String eventId) {
-            setProperty("eventId", eventId);
+            doSetProperty("eventId", eventId);
             return this;
         }
         /**
@@ -2168,7 +2168,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder eventUpdate(Object eventUpdate) {
-            setProperty("eventUpdate", eventUpdate);
+            doSetProperty("eventUpdate", eventUpdate);
             return this;
         }
         /**
@@ -2180,7 +2180,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder eventUpdate(String eventUpdate) {
-            setProperty("eventUpdate", eventUpdate);
+            doSetProperty("eventUpdate", eventUpdate);
             return this;
         }
         /**
@@ -2191,7 +2191,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder friendId(String friendId) {
-            setProperty("friendId", friendId);
+            doSetProperty("friendId", friendId);
             return this;
         }
         /**
@@ -2202,7 +2202,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder friendlistId(String friendlistId) {
-            setProperty("friendlistId", friendlistId);
+            doSetProperty("friendlistId", friendlistId);
             return this;
         }
         /**
@@ -2214,7 +2214,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder friendlistName(
                 String friendlistName) {
-            setProperty("friendlistName", friendlistName);
+            doSetProperty("friendlistName", friendlistName);
             return this;
         }
         /**
@@ -2225,7 +2225,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder friendUserId(String friendUserId) {
-            setProperty("friendUserId", friendUserId);
+            doSetProperty("friendUserId", friendUserId);
             return this;
         }
         /**
@@ -2236,7 +2236,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder groupId(String groupId) {
-            setProperty("groupId", groupId);
+            doSetProperty("groupId", groupId);
             return this;
         }
         /**
@@ -2247,7 +2247,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder gzipEnabled(Boolean gzipEnabled) {
-            setProperty("gzipEnabled", gzipEnabled);
+            doSetProperty("gzipEnabled", gzipEnabled);
             return this;
         }
         /**
@@ -2259,7 +2259,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder gzipEnabled(String gzipEnabled) {
-            setProperty("gzipEnabled", gzipEnabled);
+            doSetProperty("gzipEnabled", gzipEnabled);
             return this;
         }
         /**
@@ -2271,7 +2271,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpConnectionTimeout(
                 Integer httpConnectionTimeout) {
-            setProperty("httpConnectionTimeout", httpConnectionTimeout);
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
         }
         /**
@@ -2284,7 +2284,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpConnectionTimeout(
                 String httpConnectionTimeout) {
-            setProperty("httpConnectionTimeout", httpConnectionTimeout);
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
         }
         /**
@@ -2296,7 +2296,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpDefaultMaxPerRoute(
                 Integer httpDefaultMaxPerRoute) {
-            setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
+            doSetProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
         }
         /**
@@ -2309,7 +2309,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpDefaultMaxPerRoute(
                 String httpDefaultMaxPerRoute) {
-            setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
+            doSetProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
         }
         /**
@@ -2321,7 +2321,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpMaxTotalConnections(
                 Integer httpMaxTotalConnections) {
-            setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
+            doSetProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
         }
         /**
@@ -2334,7 +2334,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpMaxTotalConnections(
                 String httpMaxTotalConnections) {
-            setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
+            doSetProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
         }
         /**
@@ -2346,7 +2346,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -2359,7 +2359,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpReadTimeout(
                 String httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -2371,7 +2371,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpRetryCount(
                 Integer httpRetryCount) {
-            setProperty("httpRetryCount", httpRetryCount);
+            doSetProperty("httpRetryCount", httpRetryCount);
             return this;
         }
         /**
@@ -2384,7 +2384,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpRetryCount(
                 String httpRetryCount) {
-            setProperty("httpRetryCount", httpRetryCount);
+            doSetProperty("httpRetryCount", httpRetryCount);
             return this;
         }
         /**
@@ -2396,7 +2396,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpRetryIntervalSeconds(
                 Integer httpRetryIntervalSeconds) {
-            setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
+            doSetProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
         }
         /**
@@ -2409,7 +2409,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpRetryIntervalSeconds(
                 String httpRetryIntervalSeconds) {
-            setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
+            doSetProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
         }
         /**
@@ -2421,7 +2421,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpStreamingReadTimeout(
                 Integer httpStreamingReadTimeout) {
-            setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
+            doSetProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
         }
         /**
@@ -2434,7 +2434,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpStreamingReadTimeout(
                 String httpStreamingReadTimeout) {
-            setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
+            doSetProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
         }
         /**
@@ -2446,7 +2446,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder ids(List<String> ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -2458,7 +2458,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder ids(String ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -2469,7 +2469,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -2481,7 +2481,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder includeRead(Boolean includeRead) {
-            setProperty("includeRead", includeRead);
+            doSetProperty("includeRead", includeRead);
             return this;
         }
         /**
@@ -2494,7 +2494,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder includeRead(String includeRead) {
-            setProperty("includeRead", includeRead);
+            doSetProperty("includeRead", includeRead);
             return this;
         }
         /**
@@ -2505,7 +2505,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder isHidden(Boolean isHidden) {
-            setProperty("isHidden", isHidden);
+            doSetProperty("isHidden", isHidden);
             return this;
         }
         /**
@@ -2517,7 +2517,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder isHidden(String isHidden) {
-            setProperty("isHidden", isHidden);
+            doSetProperty("isHidden", isHidden);
             return this;
         }
         /**
@@ -2529,7 +2529,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder jsonStoreEnabled(
                 Boolean jsonStoreEnabled) {
-            setProperty("jsonStoreEnabled", jsonStoreEnabled);
+            doSetProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
         }
         /**
@@ -2542,7 +2542,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder jsonStoreEnabled(
                 String jsonStoreEnabled) {
-            setProperty("jsonStoreEnabled", jsonStoreEnabled);
+            doSetProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
         }
         /**
@@ -2553,7 +2553,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder link(URL link) {
-            setProperty("link", link);
+            doSetProperty("link", link);
             return this;
         }
         /**
@@ -2564,7 +2564,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder link(String link) {
-            setProperty("link", link);
+            doSetProperty("link", link);
             return this;
         }
         /**
@@ -2575,7 +2575,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder linkId(String linkId) {
-            setProperty("linkId", linkId);
+            doSetProperty("linkId", linkId);
             return this;
         }
         /**
@@ -2586,7 +2586,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder locale(Locale locale) {
-            setProperty("locale", locale);
+            doSetProperty("locale", locale);
             return this;
         }
         /**
@@ -2597,7 +2597,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder locale(String locale) {
-            setProperty("locale", locale);
+            doSetProperty("locale", locale);
             return this;
         }
         /**
@@ -2609,7 +2609,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder mbeanEnabled(
                 Boolean mbeanEnabled) {
-            setProperty("mbeanEnabled", mbeanEnabled);
+            doSetProperty("mbeanEnabled", mbeanEnabled);
             return this;
         }
         /**
@@ -2621,7 +2621,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder mbeanEnabled(String mbeanEnabled) {
-            setProperty("mbeanEnabled", mbeanEnabled);
+            doSetProperty("mbeanEnabled", mbeanEnabled);
             return this;
         }
         /**
@@ -2632,7 +2632,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder message(String message) {
-            setProperty("message", message);
+            doSetProperty("message", message);
             return this;
         }
         /**
@@ -2643,7 +2643,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder messageId(String messageId) {
-            setProperty("messageId", messageId);
+            doSetProperty("messageId", messageId);
             return this;
         }
         /**
@@ -2654,7 +2654,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder metric(String metric) {
-            setProperty("metric", metric);
+            doSetProperty("metric", metric);
             return this;
         }
         /**
@@ -2665,7 +2665,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder milestoneId(String milestoneId) {
-            setProperty("milestoneId", milestoneId);
+            doSetProperty("milestoneId", milestoneId);
             return this;
         }
         /**
@@ -2676,7 +2676,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
+            doSetProperty("name", name);
             return this;
         }
         /**
@@ -2687,7 +2687,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder noteId(String noteId) {
-            setProperty("noteId", noteId);
+            doSetProperty("noteId", noteId);
             return this;
         }
         /**
@@ -2699,7 +2699,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder notificationId(
                 String notificationId) {
-            setProperty("notificationId", notificationId);
+            doSetProperty("notificationId", notificationId);
             return this;
         }
         /**
@@ -2710,7 +2710,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder objectId(String objectId) {
-            setProperty("objectId", objectId);
+            doSetProperty("objectId", objectId);
             return this;
         }
         /**
@@ -2721,7 +2721,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder offerId(String offerId) {
-            setProperty("offerId", offerId);
+            doSetProperty("offerId", offerId);
             return this;
         }
         /**
@@ -2733,7 +2733,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder optionDescription(
                 String optionDescription) {
-            setProperty("optionDescription", optionDescription);
+            doSetProperty("optionDescription", optionDescription);
             return this;
         }
         /**
@@ -2744,7 +2744,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder pageId(String pageId) {
-            setProperty("pageId", pageId);
+            doSetProperty("pageId", pageId);
             return this;
         }
         /**
@@ -2756,7 +2756,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder permissionName(
                 String permissionName) {
-            setProperty("permissionName", permissionName);
+            doSetProperty("permissionName", permissionName);
             return this;
         }
         /**
@@ -2767,7 +2767,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder permissions(String permissions) {
-            setProperty("permissions", permissions);
+            doSetProperty("permissions", permissions);
             return this;
         }
         /**
@@ -2778,7 +2778,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder photoId(String photoId) {
-            setProperty("photoId", photoId);
+            doSetProperty("photoId", photoId);
             return this;
         }
         /**
@@ -2789,7 +2789,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder pictureId(Integer pictureId) {
-            setProperty("pictureId", pictureId);
+            doSetProperty("pictureId", pictureId);
             return this;
         }
         /**
@@ -2801,7 +2801,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder pictureId(String pictureId) {
-            setProperty("pictureId", pictureId);
+            doSetProperty("pictureId", pictureId);
             return this;
         }
         /**
@@ -2812,7 +2812,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder pictureId2(Integer pictureId2) {
-            setProperty("pictureId2", pictureId2);
+            doSetProperty("pictureId2", pictureId2);
             return this;
         }
         /**
@@ -2824,7 +2824,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder pictureId2(String pictureId2) {
-            setProperty("pictureId2", pictureId2);
+            doSetProperty("pictureId2", pictureId2);
             return this;
         }
         /**
@@ -2836,7 +2836,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder pictureSize(
                 PictureSize pictureSize) {
-            setProperty("pictureSize", pictureSize);
+            doSetProperty("pictureSize", pictureSize);
             return this;
         }
         /**
@@ -2848,7 +2848,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder pictureSize(String pictureSize) {
-            setProperty("pictureSize", pictureSize);
+            doSetProperty("pictureSize", pictureSize);
             return this;
         }
         /**
@@ -2859,7 +2859,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder placeId(String placeId) {
-            setProperty("placeId", placeId);
+            doSetProperty("placeId", placeId);
             return this;
         }
         /**
@@ -2870,7 +2870,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder postId(String postId) {
-            setProperty("postId", postId);
+            doSetProperty("postId", postId);
             return this;
         }
         /**
@@ -2881,7 +2881,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder postUpdate(Object postUpdate) {
-            setProperty("postUpdate", postUpdate);
+            doSetProperty("postUpdate", postUpdate);
             return this;
         }
         /**
@@ -2893,7 +2893,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder postUpdate(String postUpdate) {
-            setProperty("postUpdate", postUpdate);
+            doSetProperty("postUpdate", postUpdate);
             return this;
         }
         /**
@@ -2905,7 +2905,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder prettyDebugEnabled(
                 Boolean prettyDebugEnabled) {
-            setProperty("prettyDebugEnabled", prettyDebugEnabled);
+            doSetProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
         }
         /**
@@ -2918,7 +2918,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder prettyDebugEnabled(
                 String prettyDebugEnabled) {
-            setProperty("prettyDebugEnabled", prettyDebugEnabled);
+            doSetProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
         }
         /**
@@ -2931,7 +2931,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder queries(
                 Map<String, String> queries) {
-            setProperty("queries", queries);
+            doSetProperty("queries", queries);
             return this;
         }
         /**
@@ -2944,7 +2944,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder queries(String queries) {
-            setProperty("queries", queries);
+            doSetProperty("queries", queries);
             return this;
         }
         /**
@@ -2955,7 +2955,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -2966,7 +2966,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder questionId(String questionId) {
-            setProperty("questionId", questionId);
+            doSetProperty("questionId", questionId);
             return this;
         }
         /**
@@ -2977,7 +2977,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder reading(Object reading) {
-            setProperty("reading", reading);
+            doSetProperty("reading", reading);
             return this;
         }
         /**
@@ -2989,7 +2989,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder reading(String reading) {
-            setProperty("reading", reading);
+            doSetProperty("reading", reading);
             return this;
         }
         /**
@@ -3002,7 +3002,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder readingOptions(
                 Map<String, Object> readingOptions) {
-            setProperty("readingOptions", readingOptions);
+            doSetProperty("readingOptions", readingOptions);
             return this;
         }
         /**
@@ -3016,7 +3016,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder readingOptions(
                 String readingOptions) {
-            setProperty("readingOptions", readingOptions);
+            doSetProperty("readingOptions", readingOptions);
             return this;
         }
         /**
@@ -3027,7 +3027,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder restBaseURL(String restBaseURL) {
-            setProperty("restBaseURL", restBaseURL);
+            doSetProperty("restBaseURL", restBaseURL);
             return this;
         }
         /**
@@ -3038,7 +3038,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder scoreValue(Integer scoreValue) {
-            setProperty("scoreValue", scoreValue);
+            doSetProperty("scoreValue", scoreValue);
             return this;
         }
         /**
@@ -3050,7 +3050,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder scoreValue(String scoreValue) {
-            setProperty("scoreValue", scoreValue);
+            doSetProperty("scoreValue", scoreValue);
             return this;
         }
         /**
@@ -3061,7 +3061,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder size(PictureSize size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -3073,7 +3073,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -3084,7 +3084,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder source(Object source) {
-            setProperty("source", source);
+            doSetProperty("source", source);
             return this;
         }
         /**
@@ -3095,7 +3095,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder source(String source) {
-            setProperty("source", source);
+            doSetProperty("source", source);
             return this;
         }
         /**
@@ -3106,7 +3106,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -3117,7 +3117,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder tabId(String tabId) {
-            setProperty("tabId", tabId);
+            doSetProperty("tabId", tabId);
             return this;
         }
         /**
@@ -3128,7 +3128,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder tagUpdate(Object tagUpdate) {
-            setProperty("tagUpdate", tagUpdate);
+            doSetProperty("tagUpdate", tagUpdate);
             return this;
         }
         /**
@@ -3140,7 +3140,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder tagUpdate(String tagUpdate) {
-            setProperty("tagUpdate", tagUpdate);
+            doSetProperty("tagUpdate", tagUpdate);
             return this;
         }
         /**
@@ -3151,7 +3151,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder testUser1(Object testUser1) {
-            setProperty("testUser1", testUser1);
+            doSetProperty("testUser1", testUser1);
             return this;
         }
         /**
@@ -3163,7 +3163,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder testUser1(String testUser1) {
-            setProperty("testUser1", testUser1);
+            doSetProperty("testUser1", testUser1);
             return this;
         }
         /**
@@ -3174,7 +3174,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder testUser2(Object testUser2) {
-            setProperty("testUser2", testUser2);
+            doSetProperty("testUser2", testUser2);
             return this;
         }
         /**
@@ -3186,7 +3186,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder testUser2(String testUser2) {
-            setProperty("testUser2", testUser2);
+            doSetProperty("testUser2", testUser2);
             return this;
         }
         /**
@@ -3197,7 +3197,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder testUserId(String testUserId) {
-            setProperty("testUserId", testUserId);
+            doSetProperty("testUserId", testUserId);
             return this;
         }
         /**
@@ -3208,7 +3208,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder title(String title) {
-            setProperty("title", title);
+            doSetProperty("title", title);
             return this;
         }
         /**
@@ -3219,7 +3219,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder toUserId(String toUserId) {
-            setProperty("toUserId", toUserId);
+            doSetProperty("toUserId", toUserId);
             return this;
         }
         /**
@@ -3231,7 +3231,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder toUserIds(List<String> toUserIds) {
-            setProperty("toUserIds", toUserIds);
+            doSetProperty("toUserIds", toUserIds);
             return this;
         }
         /**
@@ -3243,7 +3243,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder toUserIds(String toUserIds) {
-            setProperty("toUserIds", toUserIds);
+            doSetProperty("toUserIds", toUserIds);
             return this;
         }
         /**
@@ -3254,7 +3254,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -3265,7 +3265,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder userId1(String userId1) {
-            setProperty("userId1", userId1);
+            doSetProperty("userId1", userId1);
             return this;
         }
         /**
@@ -3276,7 +3276,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder userId2(String userId2) {
-            setProperty("userId2", userId2);
+            doSetProperty("userId2", userId2);
             return this;
         }
         /**
@@ -3288,7 +3288,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder userIds(List<String> userIds) {
-            setProperty("userIds", userIds);
+            doSetProperty("userIds", userIds);
             return this;
         }
         /**
@@ -3300,7 +3300,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder userIds(String userIds) {
-            setProperty("userIds", userIds);
+            doSetProperty("userIds", userIds);
             return this;
         }
         /**
@@ -3311,7 +3311,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder userLocale(String userLocale) {
-            setProperty("userLocale", userLocale);
+            doSetProperty("userLocale", userLocale);
             return this;
         }
         /**
@@ -3322,7 +3322,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder useSSL(Boolean useSSL) {
-            setProperty("useSSL", useSSL);
+            doSetProperty("useSSL", useSSL);
             return this;
         }
         /**
@@ -3334,7 +3334,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder useSSL(String useSSL) {
-            setProperty("useSSL", useSSL);
+            doSetProperty("useSSL", useSSL);
             return this;
         }
         /**
@@ -3345,7 +3345,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder videoBaseURL(String videoBaseURL) {
-            setProperty("videoBaseURL", videoBaseURL);
+            doSetProperty("videoBaseURL", videoBaseURL);
             return this;
         }
         /**
@@ -3356,7 +3356,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointProducerBuilder videoId(String videoId) {
-            setProperty("videoId", videoId);
+            doSetProperty("videoId", videoId);
             return this;
         }
         /**
@@ -3376,7 +3376,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -3396,7 +3396,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -3408,7 +3408,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpProxyHost(
                 String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -3420,7 +3420,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -3432,7 +3432,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpProxyPort(
                 Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -3445,7 +3445,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpProxyPort(
                 String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -3457,7 +3457,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder httpProxyUser(
                 String httpProxyUser) {
-            setProperty("httpProxyUser", httpProxyUser);
+            doSetProperty("httpProxyUser", httpProxyUser);
             return this;
         }
         /**
@@ -3469,7 +3469,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder oAuthAccessToken(
                 String oAuthAccessToken) {
-            setProperty("oAuthAccessToken", oAuthAccessToken);
+            doSetProperty("oAuthAccessToken", oAuthAccessToken);
             return this;
         }
         /**
@@ -3481,7 +3481,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder oAuthAccessTokenURL(
                 String oAuthAccessTokenURL) {
-            setProperty("oAuthAccessTokenURL", oAuthAccessTokenURL);
+            doSetProperty("oAuthAccessTokenURL", oAuthAccessTokenURL);
             return this;
         }
         /**
@@ -3492,7 +3492,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: security
          */
         default FacebookEndpointProducerBuilder oAuthAppId(String oAuthAppId) {
-            setProperty("oAuthAppId", oAuthAppId);
+            doSetProperty("oAuthAppId", oAuthAppId);
             return this;
         }
         /**
@@ -3504,7 +3504,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder oAuthAppSecret(
                 String oAuthAppSecret) {
-            setProperty("oAuthAppSecret", oAuthAppSecret);
+            doSetProperty("oAuthAppSecret", oAuthAppSecret);
             return this;
         }
         /**
@@ -3516,7 +3516,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder oAuthAuthorizationURL(
                 String oAuthAuthorizationURL) {
-            setProperty("oAuthAuthorizationURL", oAuthAuthorizationURL);
+            doSetProperty("oAuthAuthorizationURL", oAuthAuthorizationURL);
             return this;
         }
         /**
@@ -3530,7 +3530,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointProducerBuilder oAuthPermissions(
                 String oAuthPermissions) {
-            setProperty("oAuthPermissions", oAuthPermissions);
+            doSetProperty("oAuthPermissions", oAuthPermissions);
             return this;
         }
     }
@@ -3554,7 +3554,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3567,7 +3567,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3580,7 +3580,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3593,7 +3593,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -3615,7 +3615,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder achievementURL(URL achievementURL) {
-            setProperty("achievementURL", achievementURL);
+            doSetProperty("achievementURL", achievementURL);
             return this;
         }
         /**
@@ -3626,7 +3626,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder achievementURL(String achievementURL) {
-            setProperty("achievementURL", achievementURL);
+            doSetProperty("achievementURL", achievementURL);
             return this;
         }
         /**
@@ -3637,7 +3637,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder albumId(String albumId) {
-            setProperty("albumId", albumId);
+            doSetProperty("albumId", albumId);
             return this;
         }
         /**
@@ -3648,7 +3648,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder albumUpdate(Object albumUpdate) {
-            setProperty("albumUpdate", albumUpdate);
+            doSetProperty("albumUpdate", albumUpdate);
             return this;
         }
         /**
@@ -3660,7 +3660,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder albumUpdate(String albumUpdate) {
-            setProperty("albumUpdate", albumUpdate);
+            doSetProperty("albumUpdate", albumUpdate);
             return this;
         }
         /**
@@ -3671,7 +3671,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder appId(String appId) {
-            setProperty("appId", appId);
+            doSetProperty("appId", appId);
             return this;
         }
         /**
@@ -3682,7 +3682,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder center(Object center) {
-            setProperty("center", center);
+            doSetProperty("center", center);
             return this;
         }
         /**
@@ -3694,7 +3694,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder center(String center) {
-            setProperty("center", center);
+            doSetProperty("center", center);
             return this;
         }
         /**
@@ -3705,7 +3705,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder checkinId(String checkinId) {
-            setProperty("checkinId", checkinId);
+            doSetProperty("checkinId", checkinId);
             return this;
         }
         /**
@@ -3718,7 +3718,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         @Deprecated
         default FacebookEndpointBuilder checkinUpdate(Object checkinUpdate) {
-            setProperty("checkinUpdate", checkinUpdate);
+            doSetProperty("checkinUpdate", checkinUpdate);
             return this;
         }
         /**
@@ -3732,7 +3732,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         @Deprecated
         default FacebookEndpointBuilder checkinUpdate(String checkinUpdate) {
-            setProperty("checkinUpdate", checkinUpdate);
+            doSetProperty("checkinUpdate", checkinUpdate);
             return this;
         }
         /**
@@ -3743,7 +3743,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder clientURL(String clientURL) {
-            setProperty("clientURL", clientURL);
+            doSetProperty("clientURL", clientURL);
             return this;
         }
         /**
@@ -3754,7 +3754,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder clientVersion(String clientVersion) {
-            setProperty("clientVersion", clientVersion);
+            doSetProperty("clientVersion", clientVersion);
             return this;
         }
         /**
@@ -3765,7 +3765,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder commentId(String commentId) {
-            setProperty("commentId", commentId);
+            doSetProperty("commentId", commentId);
             return this;
         }
         /**
@@ -3776,7 +3776,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder commentUpdate(Object commentUpdate) {
-            setProperty("commentUpdate", commentUpdate);
+            doSetProperty("commentUpdate", commentUpdate);
             return this;
         }
         /**
@@ -3788,7 +3788,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder commentUpdate(String commentUpdate) {
-            setProperty("commentUpdate", commentUpdate);
+            doSetProperty("commentUpdate", commentUpdate);
             return this;
         }
         /**
@@ -3799,7 +3799,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder debugEnabled(Boolean debugEnabled) {
-            setProperty("debugEnabled", debugEnabled);
+            doSetProperty("debugEnabled", debugEnabled);
             return this;
         }
         /**
@@ -3811,7 +3811,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder debugEnabled(String debugEnabled) {
-            setProperty("debugEnabled", debugEnabled);
+            doSetProperty("debugEnabled", debugEnabled);
             return this;
         }
         /**
@@ -3822,7 +3822,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder description(String description) {
-            setProperty("description", description);
+            doSetProperty("description", description);
             return this;
         }
         /**
@@ -3833,7 +3833,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder distance(Integer distance) {
-            setProperty("distance", distance);
+            doSetProperty("distance", distance);
             return this;
         }
         /**
@@ -3845,7 +3845,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder distance(String distance) {
-            setProperty("distance", distance);
+            doSetProperty("distance", distance);
             return this;
         }
         /**
@@ -3856,7 +3856,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder domainId(String domainId) {
-            setProperty("domainId", domainId);
+            doSetProperty("domainId", domainId);
             return this;
         }
         /**
@@ -3867,7 +3867,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder domainName(String domainName) {
-            setProperty("domainName", domainName);
+            doSetProperty("domainName", domainName);
             return this;
         }
         /**
@@ -3879,7 +3879,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder domainNames(List<String> domainNames) {
-            setProperty("domainNames", domainNames);
+            doSetProperty("domainNames", domainNames);
             return this;
         }
         /**
@@ -3891,7 +3891,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder domainNames(String domainNames) {
-            setProperty("domainNames", domainNames);
+            doSetProperty("domainNames", domainNames);
             return this;
         }
         /**
@@ -3902,7 +3902,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder eventId(String eventId) {
-            setProperty("eventId", eventId);
+            doSetProperty("eventId", eventId);
             return this;
         }
         /**
@@ -3913,7 +3913,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder eventUpdate(Object eventUpdate) {
-            setProperty("eventUpdate", eventUpdate);
+            doSetProperty("eventUpdate", eventUpdate);
             return this;
         }
         /**
@@ -3925,7 +3925,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder eventUpdate(String eventUpdate) {
-            setProperty("eventUpdate", eventUpdate);
+            doSetProperty("eventUpdate", eventUpdate);
             return this;
         }
         /**
@@ -3936,7 +3936,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder friendId(String friendId) {
-            setProperty("friendId", friendId);
+            doSetProperty("friendId", friendId);
             return this;
         }
         /**
@@ -3947,7 +3947,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder friendlistId(String friendlistId) {
-            setProperty("friendlistId", friendlistId);
+            doSetProperty("friendlistId", friendlistId);
             return this;
         }
         /**
@@ -3958,7 +3958,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder friendlistName(String friendlistName) {
-            setProperty("friendlistName", friendlistName);
+            doSetProperty("friendlistName", friendlistName);
             return this;
         }
         /**
@@ -3969,7 +3969,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder friendUserId(String friendUserId) {
-            setProperty("friendUserId", friendUserId);
+            doSetProperty("friendUserId", friendUserId);
             return this;
         }
         /**
@@ -3980,7 +3980,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder groupId(String groupId) {
-            setProperty("groupId", groupId);
+            doSetProperty("groupId", groupId);
             return this;
         }
         /**
@@ -3991,7 +3991,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder gzipEnabled(Boolean gzipEnabled) {
-            setProperty("gzipEnabled", gzipEnabled);
+            doSetProperty("gzipEnabled", gzipEnabled);
             return this;
         }
         /**
@@ -4003,7 +4003,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder gzipEnabled(String gzipEnabled) {
-            setProperty("gzipEnabled", gzipEnabled);
+            doSetProperty("gzipEnabled", gzipEnabled);
             return this;
         }
         /**
@@ -4015,7 +4015,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder httpConnectionTimeout(
                 Integer httpConnectionTimeout) {
-            setProperty("httpConnectionTimeout", httpConnectionTimeout);
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
         }
         /**
@@ -4028,7 +4028,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder httpConnectionTimeout(
                 String httpConnectionTimeout) {
-            setProperty("httpConnectionTimeout", httpConnectionTimeout);
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
         }
         /**
@@ -4040,7 +4040,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder httpDefaultMaxPerRoute(
                 Integer httpDefaultMaxPerRoute) {
-            setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
+            doSetProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
         }
         /**
@@ -4053,7 +4053,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder httpDefaultMaxPerRoute(
                 String httpDefaultMaxPerRoute) {
-            setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
+            doSetProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
         }
         /**
@@ -4065,7 +4065,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder httpMaxTotalConnections(
                 Integer httpMaxTotalConnections) {
-            setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
+            doSetProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
         }
         /**
@@ -4078,7 +4078,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder httpMaxTotalConnections(
                 String httpMaxTotalConnections) {
-            setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
+            doSetProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
         }
         /**
@@ -4089,7 +4089,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder httpReadTimeout(Integer httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -4101,7 +4101,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder httpReadTimeout(String httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -4112,7 +4112,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder httpRetryCount(Integer httpRetryCount) {
-            setProperty("httpRetryCount", httpRetryCount);
+            doSetProperty("httpRetryCount", httpRetryCount);
             return this;
         }
         /**
@@ -4124,7 +4124,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder httpRetryCount(String httpRetryCount) {
-            setProperty("httpRetryCount", httpRetryCount);
+            doSetProperty("httpRetryCount", httpRetryCount);
             return this;
         }
         /**
@@ -4136,7 +4136,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder httpRetryIntervalSeconds(
                 Integer httpRetryIntervalSeconds) {
-            setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
+            doSetProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
         }
         /**
@@ -4149,7 +4149,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder httpRetryIntervalSeconds(
                 String httpRetryIntervalSeconds) {
-            setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
+            doSetProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
         }
         /**
@@ -4161,7 +4161,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder httpStreamingReadTimeout(
                 Integer httpStreamingReadTimeout) {
-            setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
+            doSetProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
         }
         /**
@@ -4174,7 +4174,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder httpStreamingReadTimeout(
                 String httpStreamingReadTimeout) {
-            setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
+            doSetProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
         }
         /**
@@ -4186,7 +4186,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder ids(List<String> ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -4198,7 +4198,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder ids(String ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -4209,7 +4209,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -4221,7 +4221,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder includeRead(Boolean includeRead) {
-            setProperty("includeRead", includeRead);
+            doSetProperty("includeRead", includeRead);
             return this;
         }
         /**
@@ -4234,7 +4234,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder includeRead(String includeRead) {
-            setProperty("includeRead", includeRead);
+            doSetProperty("includeRead", includeRead);
             return this;
         }
         /**
@@ -4245,7 +4245,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder isHidden(Boolean isHidden) {
-            setProperty("isHidden", isHidden);
+            doSetProperty("isHidden", isHidden);
             return this;
         }
         /**
@@ -4257,7 +4257,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder isHidden(String isHidden) {
-            setProperty("isHidden", isHidden);
+            doSetProperty("isHidden", isHidden);
             return this;
         }
         /**
@@ -4269,7 +4269,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder jsonStoreEnabled(
                 Boolean jsonStoreEnabled) {
-            setProperty("jsonStoreEnabled", jsonStoreEnabled);
+            doSetProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
         }
         /**
@@ -4281,7 +4281,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder jsonStoreEnabled(String jsonStoreEnabled) {
-            setProperty("jsonStoreEnabled", jsonStoreEnabled);
+            doSetProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
         }
         /**
@@ -4292,7 +4292,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder link(URL link) {
-            setProperty("link", link);
+            doSetProperty("link", link);
             return this;
         }
         /**
@@ -4303,7 +4303,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder link(String link) {
-            setProperty("link", link);
+            doSetProperty("link", link);
             return this;
         }
         /**
@@ -4314,7 +4314,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder linkId(String linkId) {
-            setProperty("linkId", linkId);
+            doSetProperty("linkId", linkId);
             return this;
         }
         /**
@@ -4325,7 +4325,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder locale(Locale locale) {
-            setProperty("locale", locale);
+            doSetProperty("locale", locale);
             return this;
         }
         /**
@@ -4336,7 +4336,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder locale(String locale) {
-            setProperty("locale", locale);
+            doSetProperty("locale", locale);
             return this;
         }
         /**
@@ -4347,7 +4347,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder mbeanEnabled(Boolean mbeanEnabled) {
-            setProperty("mbeanEnabled", mbeanEnabled);
+            doSetProperty("mbeanEnabled", mbeanEnabled);
             return this;
         }
         /**
@@ -4359,7 +4359,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder mbeanEnabled(String mbeanEnabled) {
-            setProperty("mbeanEnabled", mbeanEnabled);
+            doSetProperty("mbeanEnabled", mbeanEnabled);
             return this;
         }
         /**
@@ -4370,7 +4370,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder message(String message) {
-            setProperty("message", message);
+            doSetProperty("message", message);
             return this;
         }
         /**
@@ -4381,7 +4381,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder messageId(String messageId) {
-            setProperty("messageId", messageId);
+            doSetProperty("messageId", messageId);
             return this;
         }
         /**
@@ -4392,7 +4392,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder metric(String metric) {
-            setProperty("metric", metric);
+            doSetProperty("metric", metric);
             return this;
         }
         /**
@@ -4403,7 +4403,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder milestoneId(String milestoneId) {
-            setProperty("milestoneId", milestoneId);
+            doSetProperty("milestoneId", milestoneId);
             return this;
         }
         /**
@@ -4414,7 +4414,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder name(String name) {
-            setProperty("name", name);
+            doSetProperty("name", name);
             return this;
         }
         /**
@@ -4425,7 +4425,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder noteId(String noteId) {
-            setProperty("noteId", noteId);
+            doSetProperty("noteId", noteId);
             return this;
         }
         /**
@@ -4436,7 +4436,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder notificationId(String notificationId) {
-            setProperty("notificationId", notificationId);
+            doSetProperty("notificationId", notificationId);
             return this;
         }
         /**
@@ -4447,7 +4447,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder objectId(String objectId) {
-            setProperty("objectId", objectId);
+            doSetProperty("objectId", objectId);
             return this;
         }
         /**
@@ -4458,7 +4458,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder offerId(String offerId) {
-            setProperty("offerId", offerId);
+            doSetProperty("offerId", offerId);
             return this;
         }
         /**
@@ -4470,7 +4470,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder optionDescription(
                 String optionDescription) {
-            setProperty("optionDescription", optionDescription);
+            doSetProperty("optionDescription", optionDescription);
             return this;
         }
         /**
@@ -4481,7 +4481,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder pageId(String pageId) {
-            setProperty("pageId", pageId);
+            doSetProperty("pageId", pageId);
             return this;
         }
         /**
@@ -4492,7 +4492,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder permissionName(String permissionName) {
-            setProperty("permissionName", permissionName);
+            doSetProperty("permissionName", permissionName);
             return this;
         }
         /**
@@ -4503,7 +4503,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder permissions(String permissions) {
-            setProperty("permissions", permissions);
+            doSetProperty("permissions", permissions);
             return this;
         }
         /**
@@ -4514,7 +4514,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder photoId(String photoId) {
-            setProperty("photoId", photoId);
+            doSetProperty("photoId", photoId);
             return this;
         }
         /**
@@ -4525,7 +4525,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder pictureId(Integer pictureId) {
-            setProperty("pictureId", pictureId);
+            doSetProperty("pictureId", pictureId);
             return this;
         }
         /**
@@ -4537,7 +4537,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder pictureId(String pictureId) {
-            setProperty("pictureId", pictureId);
+            doSetProperty("pictureId", pictureId);
             return this;
         }
         /**
@@ -4548,7 +4548,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder pictureId2(Integer pictureId2) {
-            setProperty("pictureId2", pictureId2);
+            doSetProperty("pictureId2", pictureId2);
             return this;
         }
         /**
@@ -4560,7 +4560,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder pictureId2(String pictureId2) {
-            setProperty("pictureId2", pictureId2);
+            doSetProperty("pictureId2", pictureId2);
             return this;
         }
         /**
@@ -4571,7 +4571,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder pictureSize(PictureSize pictureSize) {
-            setProperty("pictureSize", pictureSize);
+            doSetProperty("pictureSize", pictureSize);
             return this;
         }
         /**
@@ -4583,7 +4583,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder pictureSize(String pictureSize) {
-            setProperty("pictureSize", pictureSize);
+            doSetProperty("pictureSize", pictureSize);
             return this;
         }
         /**
@@ -4594,7 +4594,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder placeId(String placeId) {
-            setProperty("placeId", placeId);
+            doSetProperty("placeId", placeId);
             return this;
         }
         /**
@@ -4605,7 +4605,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder postId(String postId) {
-            setProperty("postId", postId);
+            doSetProperty("postId", postId);
             return this;
         }
         /**
@@ -4616,7 +4616,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder postUpdate(Object postUpdate) {
-            setProperty("postUpdate", postUpdate);
+            doSetProperty("postUpdate", postUpdate);
             return this;
         }
         /**
@@ -4628,7 +4628,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder postUpdate(String postUpdate) {
-            setProperty("postUpdate", postUpdate);
+            doSetProperty("postUpdate", postUpdate);
             return this;
         }
         /**
@@ -4640,7 +4640,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder prettyDebugEnabled(
                 Boolean prettyDebugEnabled) {
-            setProperty("prettyDebugEnabled", prettyDebugEnabled);
+            doSetProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
         }
         /**
@@ -4653,7 +4653,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder prettyDebugEnabled(
                 String prettyDebugEnabled) {
-            setProperty("prettyDebugEnabled", prettyDebugEnabled);
+            doSetProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
         }
         /**
@@ -4665,7 +4665,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder queries(Map<String, String> queries) {
-            setProperty("queries", queries);
+            doSetProperty("queries", queries);
             return this;
         }
         /**
@@ -4678,7 +4678,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder queries(String queries) {
-            setProperty("queries", queries);
+            doSetProperty("queries", queries);
             return this;
         }
         /**
@@ -4689,7 +4689,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -4700,7 +4700,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder questionId(String questionId) {
-            setProperty("questionId", questionId);
+            doSetProperty("questionId", questionId);
             return this;
         }
         /**
@@ -4711,7 +4711,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder reading(Object reading) {
-            setProperty("reading", reading);
+            doSetProperty("reading", reading);
             return this;
         }
         /**
@@ -4723,7 +4723,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder reading(String reading) {
-            setProperty("reading", reading);
+            doSetProperty("reading", reading);
             return this;
         }
         /**
@@ -4736,7 +4736,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder readingOptions(
                 Map<String, Object> readingOptions) {
-            setProperty("readingOptions", readingOptions);
+            doSetProperty("readingOptions", readingOptions);
             return this;
         }
         /**
@@ -4749,7 +4749,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder readingOptions(String readingOptions) {
-            setProperty("readingOptions", readingOptions);
+            doSetProperty("readingOptions", readingOptions);
             return this;
         }
         /**
@@ -4760,7 +4760,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder restBaseURL(String restBaseURL) {
-            setProperty("restBaseURL", restBaseURL);
+            doSetProperty("restBaseURL", restBaseURL);
             return this;
         }
         /**
@@ -4771,7 +4771,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder scoreValue(Integer scoreValue) {
-            setProperty("scoreValue", scoreValue);
+            doSetProperty("scoreValue", scoreValue);
             return this;
         }
         /**
@@ -4783,7 +4783,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder scoreValue(String scoreValue) {
-            setProperty("scoreValue", scoreValue);
+            doSetProperty("scoreValue", scoreValue);
             return this;
         }
         /**
@@ -4794,7 +4794,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder size(PictureSize size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -4806,7 +4806,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -4817,7 +4817,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder source(Object source) {
-            setProperty("source", source);
+            doSetProperty("source", source);
             return this;
         }
         /**
@@ -4828,7 +4828,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder source(String source) {
-            setProperty("source", source);
+            doSetProperty("source", source);
             return this;
         }
         /**
@@ -4839,7 +4839,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -4850,7 +4850,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder tabId(String tabId) {
-            setProperty("tabId", tabId);
+            doSetProperty("tabId", tabId);
             return this;
         }
         /**
@@ -4861,7 +4861,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder tagUpdate(Object tagUpdate) {
-            setProperty("tagUpdate", tagUpdate);
+            doSetProperty("tagUpdate", tagUpdate);
             return this;
         }
         /**
@@ -4873,7 +4873,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder tagUpdate(String tagUpdate) {
-            setProperty("tagUpdate", tagUpdate);
+            doSetProperty("tagUpdate", tagUpdate);
             return this;
         }
         /**
@@ -4884,7 +4884,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder testUser1(Object testUser1) {
-            setProperty("testUser1", testUser1);
+            doSetProperty("testUser1", testUser1);
             return this;
         }
         /**
@@ -4896,7 +4896,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder testUser1(String testUser1) {
-            setProperty("testUser1", testUser1);
+            doSetProperty("testUser1", testUser1);
             return this;
         }
         /**
@@ -4907,7 +4907,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder testUser2(Object testUser2) {
-            setProperty("testUser2", testUser2);
+            doSetProperty("testUser2", testUser2);
             return this;
         }
         /**
@@ -4919,7 +4919,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder testUser2(String testUser2) {
-            setProperty("testUser2", testUser2);
+            doSetProperty("testUser2", testUser2);
             return this;
         }
         /**
@@ -4930,7 +4930,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder testUserId(String testUserId) {
-            setProperty("testUserId", testUserId);
+            doSetProperty("testUserId", testUserId);
             return this;
         }
         /**
@@ -4941,7 +4941,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder title(String title) {
-            setProperty("title", title);
+            doSetProperty("title", title);
             return this;
         }
         /**
@@ -4952,7 +4952,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder toUserId(String toUserId) {
-            setProperty("toUserId", toUserId);
+            doSetProperty("toUserId", toUserId);
             return this;
         }
         /**
@@ -4964,7 +4964,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder toUserIds(List<String> toUserIds) {
-            setProperty("toUserIds", toUserIds);
+            doSetProperty("toUserIds", toUserIds);
             return this;
         }
         /**
@@ -4976,7 +4976,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder toUserIds(String toUserIds) {
-            setProperty("toUserIds", toUserIds);
+            doSetProperty("toUserIds", toUserIds);
             return this;
         }
         /**
@@ -4987,7 +4987,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -4998,7 +4998,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder userId1(String userId1) {
-            setProperty("userId1", userId1);
+            doSetProperty("userId1", userId1);
             return this;
         }
         /**
@@ -5009,7 +5009,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder userId2(String userId2) {
-            setProperty("userId2", userId2);
+            doSetProperty("userId2", userId2);
             return this;
         }
         /**
@@ -5021,7 +5021,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder userIds(List<String> userIds) {
-            setProperty("userIds", userIds);
+            doSetProperty("userIds", userIds);
             return this;
         }
         /**
@@ -5033,7 +5033,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder userIds(String userIds) {
-            setProperty("userIds", userIds);
+            doSetProperty("userIds", userIds);
             return this;
         }
         /**
@@ -5044,7 +5044,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder userLocale(String userLocale) {
-            setProperty("userLocale", userLocale);
+            doSetProperty("userLocale", userLocale);
             return this;
         }
         /**
@@ -5055,7 +5055,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder useSSL(Boolean useSSL) {
-            setProperty("useSSL", useSSL);
+            doSetProperty("useSSL", useSSL);
             return this;
         }
         /**
@@ -5067,7 +5067,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder useSSL(String useSSL) {
-            setProperty("useSSL", useSSL);
+            doSetProperty("useSSL", useSSL);
             return this;
         }
         /**
@@ -5078,7 +5078,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder videoBaseURL(String videoBaseURL) {
-            setProperty("videoBaseURL", videoBaseURL);
+            doSetProperty("videoBaseURL", videoBaseURL);
             return this;
         }
         /**
@@ -5089,7 +5089,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: common
          */
         default FacebookEndpointBuilder videoId(String videoId) {
-            setProperty("videoId", videoId);
+            doSetProperty("videoId", videoId);
             return this;
         }
         /**
@@ -5100,7 +5100,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: proxy
          */
         default FacebookEndpointBuilder httpProxyHost(String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -5112,7 +5112,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -5123,7 +5123,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: proxy
          */
         default FacebookEndpointBuilder httpProxyPort(Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -5135,7 +5135,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: proxy
          */
         default FacebookEndpointBuilder httpProxyPort(String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -5146,7 +5146,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: proxy
          */
         default FacebookEndpointBuilder httpProxyUser(String httpProxyUser) {
-            setProperty("httpProxyUser", httpProxyUser);
+            doSetProperty("httpProxyUser", httpProxyUser);
             return this;
         }
         /**
@@ -5157,7 +5157,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: security
          */
         default FacebookEndpointBuilder oAuthAccessToken(String oAuthAccessToken) {
-            setProperty("oAuthAccessToken", oAuthAccessToken);
+            doSetProperty("oAuthAccessToken", oAuthAccessToken);
             return this;
         }
         /**
@@ -5169,7 +5169,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder oAuthAccessTokenURL(
                 String oAuthAccessTokenURL) {
-            setProperty("oAuthAccessTokenURL", oAuthAccessTokenURL);
+            doSetProperty("oAuthAccessTokenURL", oAuthAccessTokenURL);
             return this;
         }
         /**
@@ -5180,7 +5180,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: security
          */
         default FacebookEndpointBuilder oAuthAppId(String oAuthAppId) {
-            setProperty("oAuthAppId", oAuthAppId);
+            doSetProperty("oAuthAppId", oAuthAppId);
             return this;
         }
         /**
@@ -5191,7 +5191,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: security
          */
         default FacebookEndpointBuilder oAuthAppSecret(String oAuthAppSecret) {
-            setProperty("oAuthAppSecret", oAuthAppSecret);
+            doSetProperty("oAuthAppSecret", oAuthAppSecret);
             return this;
         }
         /**
@@ -5203,7 +5203,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default FacebookEndpointBuilder oAuthAuthorizationURL(
                 String oAuthAuthorizationURL) {
-            setProperty("oAuthAuthorizationURL", oAuthAuthorizationURL);
+            doSetProperty("oAuthAuthorizationURL", oAuthAuthorizationURL);
             return this;
         }
         /**
@@ -5216,7 +5216,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: security
          */
         default FacebookEndpointBuilder oAuthPermissions(String oAuthPermissions) {
-            setProperty("oAuthPermissions", oAuthPermissions);
+            doSetProperty("oAuthPermissions", oAuthPermissions);
             return this;
         }
     }
@@ -5240,7 +5240,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -5253,7 +5253,7 @@ public interface FacebookEndpointBuilderFactory {
          */
         default AdvancedFacebookEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -5265,7 +5265,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFacebookEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -5277,7 +5277,7 @@ public interface FacebookEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFacebookEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

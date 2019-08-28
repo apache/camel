@@ -49,7 +49,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointConsumerBuilder protocol(Object protocol) {
-            setProperty("protocol", protocol);
+            doSetProperty("protocol", protocol);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointConsumerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
+            doSetProperty("protocol", protocol);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointConsumerBuilder protocolClassName(
                 String protocolClassName) {
-            setProperty("protocolClassName", protocolClassName);
+            doSetProperty("protocolClassName", protocolClassName);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointConsumerBuilder protocolLocation(
                 String protocolLocation) {
-            setProperty("protocolLocation", protocolLocation);
+            doSetProperty("protocolLocation", protocolLocation);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointConsumerBuilder reflectionProtocol(
                 boolean reflectionProtocol) {
-            setProperty("reflectionProtocol", reflectionProtocol);
+            doSetProperty("reflectionProtocol", reflectionProtocol);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointConsumerBuilder reflectionProtocol(
                 String reflectionProtocol) {
-            setProperty("reflectionProtocol", reflectionProtocol);
+            doSetProperty("reflectionProtocol", reflectionProtocol);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointConsumerBuilder singleParameter(
                 boolean singleParameter) {
-            setProperty("singleParameter", singleParameter);
+            doSetProperty("singleParameter", singleParameter);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointConsumerBuilder singleParameter(
                 String singleParameter) {
-            setProperty("singleParameter", singleParameter);
+            doSetProperty("singleParameter", singleParameter);
             return this;
         }
         /**
@@ -150,7 +150,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointConsumerBuilder uriAuthority(String uriAuthority) {
-            setProperty("uriAuthority", uriAuthority);
+            doSetProperty("uriAuthority", uriAuthority);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -186,7 +186,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -213,7 +213,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -229,7 +229,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -293,7 +293,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -306,7 +306,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -328,7 +328,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointProducerBuilder protocol(Object protocol) {
-            setProperty("protocol", protocol);
+            doSetProperty("protocol", protocol);
             return this;
         }
         /**
@@ -340,7 +340,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointProducerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
+            doSetProperty("protocol", protocol);
             return this;
         }
         /**
@@ -352,7 +352,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointProducerBuilder protocolClassName(
                 String protocolClassName) {
-            setProperty("protocolClassName", protocolClassName);
+            doSetProperty("protocolClassName", protocolClassName);
             return this;
         }
         /**
@@ -364,7 +364,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointProducerBuilder protocolLocation(
                 String protocolLocation) {
-            setProperty("protocolLocation", protocolLocation);
+            doSetProperty("protocolLocation", protocolLocation);
             return this;
         }
         /**
@@ -378,7 +378,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointProducerBuilder reflectionProtocol(
                 boolean reflectionProtocol) {
-            setProperty("reflectionProtocol", reflectionProtocol);
+            doSetProperty("reflectionProtocol", reflectionProtocol);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointProducerBuilder reflectionProtocol(
                 String reflectionProtocol) {
-            setProperty("reflectionProtocol", reflectionProtocol);
+            doSetProperty("reflectionProtocol", reflectionProtocol);
             return this;
         }
         /**
@@ -405,7 +405,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointProducerBuilder singleParameter(
                 boolean singleParameter) {
-            setProperty("singleParameter", singleParameter);
+            doSetProperty("singleParameter", singleParameter);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointProducerBuilder singleParameter(
                 String singleParameter) {
-            setProperty("singleParameter", singleParameter);
+            doSetProperty("singleParameter", singleParameter);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointProducerBuilder uriAuthority(String uriAuthority) {
-            setProperty("uriAuthority", uriAuthority);
+            doSetProperty("uriAuthority", uriAuthority);
             return this;
         }
         /**
@@ -449,7 +449,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -469,7 +469,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -493,7 +493,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -506,7 +506,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -519,7 +519,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -532,7 +532,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -554,7 +554,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointBuilder protocol(Object protocol) {
-            setProperty("protocol", protocol);
+            doSetProperty("protocol", protocol);
             return this;
         }
         /**
@@ -566,7 +566,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
+            doSetProperty("protocol", protocol);
             return this;
         }
         /**
@@ -577,7 +577,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointBuilder protocolClassName(String protocolClassName) {
-            setProperty("protocolClassName", protocolClassName);
+            doSetProperty("protocolClassName", protocolClassName);
             return this;
         }
         /**
@@ -588,7 +588,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointBuilder protocolLocation(String protocolLocation) {
-            setProperty("protocolLocation", protocolLocation);
+            doSetProperty("protocolLocation", protocolLocation);
             return this;
         }
         /**
@@ -602,7 +602,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointBuilder reflectionProtocol(
                 boolean reflectionProtocol) {
-            setProperty("reflectionProtocol", reflectionProtocol);
+            doSetProperty("reflectionProtocol", reflectionProtocol);
             return this;
         }
         /**
@@ -615,7 +615,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointBuilder reflectionProtocol(String reflectionProtocol) {
-            setProperty("reflectionProtocol", reflectionProtocol);
+            doSetProperty("reflectionProtocol", reflectionProtocol);
             return this;
         }
         /**
@@ -627,7 +627,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointBuilder singleParameter(boolean singleParameter) {
-            setProperty("singleParameter", singleParameter);
+            doSetProperty("singleParameter", singleParameter);
             return this;
         }
         /**
@@ -639,7 +639,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointBuilder singleParameter(String singleParameter) {
-            setProperty("singleParameter", singleParameter);
+            doSetProperty("singleParameter", singleParameter);
             return this;
         }
         /**
@@ -650,7 +650,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: common
          */
         default AvroEndpointBuilder uriAuthority(String uriAuthority) {
-            setProperty("uriAuthority", uriAuthority);
+            doSetProperty("uriAuthority", uriAuthority);
             return this;
         }
     }
@@ -674,7 +674,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -687,7 +687,7 @@ public interface AvroEndpointBuilderFactory {
          */
         default AdvancedAvroEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -699,7 +699,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAvroEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -711,7 +711,7 @@ public interface AvroEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAvroEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

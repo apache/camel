@@ -59,7 +59,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointConsumerBuilder alias(String alias) {
-            setProperty("alias", alias);
+            doSetProperty("alias", alias);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointConsumerBuilder cipherSuites(String cipherSuites) {
-            setProperty("cipherSuites", cipherSuites);
+            doSetProperty("cipherSuites", cipherSuites);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointConsumerBuilder clientAuthentication(
                 String clientAuthentication) {
-            setProperty("clientAuthentication", clientAuthentication);
+            doSetProperty("clientAuthentication", clientAuthentication);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointConsumerBuilder privateKey(PrivateKey privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointConsumerBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -124,7 +124,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointConsumerBuilder pskStore(Object pskStore) {
-            setProperty("pskStore", pskStore);
+            doSetProperty("pskStore", pskStore);
             return this;
         }
         /**
@@ -137,7 +137,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointConsumerBuilder pskStore(String pskStore) {
-            setProperty("pskStore", pskStore);
+            doSetProperty("pskStore", pskStore);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointConsumerBuilder publicKey(PublicKey publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointConsumerBuilder publicKey(String publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -175,7 +175,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointConsumerBuilder trustedRpkStore(
                 Object trustedRpkStore) {
-            setProperty("trustedRpkStore", trustedRpkStore);
+            doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
         /**
@@ -216,7 +216,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointConsumerBuilder trustedRpkStore(
                 String trustedRpkStore) {
-            setProperty("trustedRpkStore", trustedRpkStore);
+            doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
         /**
@@ -234,7 +234,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -252,7 +252,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointConsumerBuilder coapMethodRestrict(
                 String coapMethodRestrict) {
-            setProperty("coapMethodRestrict", coapMethodRestrict);
+            doSetProperty("coapMethodRestrict", coapMethodRestrict);
             return this;
         }
     }
@@ -292,7 +292,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -308,7 +308,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -320,7 +320,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -333,7 +333,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -346,7 +346,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -372,7 +372,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -385,7 +385,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -414,7 +414,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointProducerBuilder alias(String alias) {
-            setProperty("alias", alias);
+            doSetProperty("alias", alias);
             return this;
         }
         /**
@@ -427,7 +427,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointProducerBuilder cipherSuites(String cipherSuites) {
-            setProperty("cipherSuites", cipherSuites);
+            doSetProperty("cipherSuites", cipherSuites);
             return this;
         }
         /**
@@ -443,7 +443,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointProducerBuilder clientAuthentication(
                 String clientAuthentication) {
-            setProperty("clientAuthentication", clientAuthentication);
+            doSetProperty("clientAuthentication", clientAuthentication);
             return this;
         }
         /**
@@ -454,7 +454,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointProducerBuilder privateKey(PrivateKey privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -466,7 +466,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointProducerBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -479,7 +479,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointProducerBuilder pskStore(Object pskStore) {
-            setProperty("pskStore", pskStore);
+            doSetProperty("pskStore", pskStore);
             return this;
         }
         /**
@@ -492,7 +492,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointProducerBuilder pskStore(String pskStore) {
-            setProperty("pskStore", pskStore);
+            doSetProperty("pskStore", pskStore);
             return this;
         }
         /**
@@ -503,7 +503,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointProducerBuilder publicKey(PublicKey publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -515,7 +515,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointProducerBuilder publicKey(String publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -530,7 +530,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -545,7 +545,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -558,7 +558,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointProducerBuilder trustedRpkStore(
                 Object trustedRpkStore) {
-            setProperty("trustedRpkStore", trustedRpkStore);
+            doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointProducerBuilder trustedRpkStore(
                 String trustedRpkStore) {
-            setProperty("trustedRpkStore", trustedRpkStore);
+            doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
         /**
@@ -591,7 +591,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -611,7 +611,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -635,7 +635,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -648,7 +648,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -661,7 +661,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -674,7 +674,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -703,7 +703,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointBuilder alias(String alias) {
-            setProperty("alias", alias);
+            doSetProperty("alias", alias);
             return this;
         }
         /**
@@ -716,7 +716,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointBuilder cipherSuites(String cipherSuites) {
-            setProperty("cipherSuites", cipherSuites);
+            doSetProperty("cipherSuites", cipherSuites);
             return this;
         }
         /**
@@ -732,7 +732,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointBuilder clientAuthentication(
                 String clientAuthentication) {
-            setProperty("clientAuthentication", clientAuthentication);
+            doSetProperty("clientAuthentication", clientAuthentication);
             return this;
         }
         /**
@@ -743,7 +743,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointBuilder privateKey(PrivateKey privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -755,7 +755,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -768,7 +768,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointBuilder pskStore(Object pskStore) {
-            setProperty("pskStore", pskStore);
+            doSetProperty("pskStore", pskStore);
             return this;
         }
         /**
@@ -781,7 +781,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointBuilder pskStore(String pskStore) {
-            setProperty("pskStore", pskStore);
+            doSetProperty("pskStore", pskStore);
             return this;
         }
         /**
@@ -792,7 +792,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointBuilder publicKey(PublicKey publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -804,7 +804,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointBuilder publicKey(String publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -819,7 +819,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -834,7 +834,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -846,7 +846,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointBuilder trustedRpkStore(Object trustedRpkStore) {
-            setProperty("trustedRpkStore", trustedRpkStore);
+            doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
         /**
@@ -858,7 +858,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: common
          */
         default CoAPEndpointBuilder trustedRpkStore(String trustedRpkStore) {
-            setProperty("trustedRpkStore", trustedRpkStore);
+            doSetProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
     }
@@ -882,7 +882,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -895,7 +895,7 @@ public interface CoAPEndpointBuilderFactory {
          */
         default AdvancedCoAPEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -907,7 +907,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCoAPEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -919,7 +919,7 @@ public interface CoAPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCoAPEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

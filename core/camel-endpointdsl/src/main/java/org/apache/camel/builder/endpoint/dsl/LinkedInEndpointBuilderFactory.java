@@ -68,7 +68,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder expiryTime(Long expiryTime) {
-            setProperty("expiryTime", expiryTime);
+            doSetProperty("expiryTime", expiryTime);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder expiryTime(String expiryTime) {
-            setProperty("expiryTime", expiryTime);
+            doSetProperty("expiryTime", expiryTime);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default LinkedInEndpointConsumerBuilder httpParams(
                 Map<String, Object> httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder httpParams(String httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder lazyAuth(boolean lazyAuth) {
-            setProperty("lazyAuth", lazyAuth);
+            doSetProperty("lazyAuth", lazyAuth);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder lazyAuth(String lazyAuth) {
-            setProperty("lazyAuth", lazyAuth);
+            doSetProperty("lazyAuth", lazyAuth);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder redirectUri(String redirectUri) {
-            setProperty("redirectUri", redirectUri);
+            doSetProperty("redirectUri", redirectUri);
             return this;
         }
         /**
@@ -208,7 +208,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder scopes(OAuthScope[] scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -222,7 +222,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -239,7 +239,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default LinkedInEndpointConsumerBuilder secureStorage(
                 Object secureStorage) {
-            setProperty("secureStorage", secureStorage);
+            doSetProperty("secureStorage", secureStorage);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default LinkedInEndpointConsumerBuilder secureStorage(
                 String secureStorage) {
-            setProperty("secureStorage", secureStorage);
+            doSetProperty("secureStorage", secureStorage);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -278,7 +278,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointConsumerBuilder userPassword(String userPassword) {
-            setProperty("userPassword", userPassword);
+            doSetProperty("userPassword", userPassword);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default LinkedInEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -314,7 +314,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default LinkedInEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -341,7 +341,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -382,7 +382,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -408,7 +408,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -421,7 +421,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -434,7 +434,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -473,7 +473,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -484,7 +484,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -508,7 +508,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder expiryTime(Long expiryTime) {
-            setProperty("expiryTime", expiryTime);
+            doSetProperty("expiryTime", expiryTime);
             return this;
         }
         /**
@@ -521,7 +521,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder expiryTime(String expiryTime) {
-            setProperty("expiryTime", expiryTime);
+            doSetProperty("expiryTime", expiryTime);
             return this;
         }
         /**
@@ -535,7 +535,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default LinkedInEndpointProducerBuilder httpParams(
                 Map<String, Object> httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -549,7 +549,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder httpParams(String httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -560,7 +560,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -573,7 +573,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder lazyAuth(boolean lazyAuth) {
-            setProperty("lazyAuth", lazyAuth);
+            doSetProperty("lazyAuth", lazyAuth);
             return this;
         }
         /**
@@ -586,7 +586,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder lazyAuth(String lazyAuth) {
-            setProperty("lazyAuth", lazyAuth);
+            doSetProperty("lazyAuth", lazyAuth);
             return this;
         }
         /**
@@ -599,7 +599,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder redirectUri(String redirectUri) {
-            setProperty("redirectUri", redirectUri);
+            doSetProperty("redirectUri", redirectUri);
             return this;
         }
         /**
@@ -613,7 +613,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder scopes(OAuthScope[] scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -627,7 +627,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -644,7 +644,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default LinkedInEndpointProducerBuilder secureStorage(
                 Object secureStorage) {
-            setProperty("secureStorage", secureStorage);
+            doSetProperty("secureStorage", secureStorage);
             return this;
         }
         /**
@@ -661,7 +661,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default LinkedInEndpointProducerBuilder secureStorage(
                 String secureStorage) {
-            setProperty("secureStorage", secureStorage);
+            doSetProperty("secureStorage", secureStorage);
             return this;
         }
         /**
@@ -672,7 +672,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -683,7 +683,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointProducerBuilder userPassword(String userPassword) {
-            setProperty("userPassword", userPassword);
+            doSetProperty("userPassword", userPassword);
             return this;
         }
         /**
@@ -703,7 +703,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default LinkedInEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -723,7 +723,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default LinkedInEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -747,7 +747,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -760,7 +760,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -773,7 +773,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -786,7 +786,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -825,7 +825,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -836,7 +836,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -847,7 +847,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -860,7 +860,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder expiryTime(Long expiryTime) {
-            setProperty("expiryTime", expiryTime);
+            doSetProperty("expiryTime", expiryTime);
             return this;
         }
         /**
@@ -873,7 +873,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder expiryTime(String expiryTime) {
-            setProperty("expiryTime", expiryTime);
+            doSetProperty("expiryTime", expiryTime);
             return this;
         }
         /**
@@ -887,7 +887,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default LinkedInEndpointBuilder httpParams(
                 Map<String, Object> httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -901,7 +901,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder httpParams(String httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -912,7 +912,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -925,7 +925,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder lazyAuth(boolean lazyAuth) {
-            setProperty("lazyAuth", lazyAuth);
+            doSetProperty("lazyAuth", lazyAuth);
             return this;
         }
         /**
@@ -938,7 +938,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder lazyAuth(String lazyAuth) {
-            setProperty("lazyAuth", lazyAuth);
+            doSetProperty("lazyAuth", lazyAuth);
             return this;
         }
         /**
@@ -951,7 +951,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder redirectUri(String redirectUri) {
-            setProperty("redirectUri", redirectUri);
+            doSetProperty("redirectUri", redirectUri);
             return this;
         }
         /**
@@ -965,7 +965,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder scopes(OAuthScope[] scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -979,7 +979,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -995,7 +995,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder secureStorage(Object secureStorage) {
-            setProperty("secureStorage", secureStorage);
+            doSetProperty("secureStorage", secureStorage);
             return this;
         }
         /**
@@ -1011,7 +1011,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder secureStorage(String secureStorage) {
-            setProperty("secureStorage", secureStorage);
+            doSetProperty("secureStorage", secureStorage);
             return this;
         }
         /**
@@ -1022,7 +1022,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -1033,7 +1033,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: common
          */
         default LinkedInEndpointBuilder userPassword(String userPassword) {
-            setProperty("userPassword", userPassword);
+            doSetProperty("userPassword", userPassword);
             return this;
         }
     }
@@ -1057,7 +1057,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1070,7 +1070,7 @@ public interface LinkedInEndpointBuilderFactory {
          */
         default AdvancedLinkedInEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1082,7 +1082,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLinkedInEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1094,7 +1094,7 @@ public interface LinkedInEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLinkedInEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

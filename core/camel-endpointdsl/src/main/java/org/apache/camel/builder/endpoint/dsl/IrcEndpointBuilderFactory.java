@@ -49,7 +49,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointConsumerBuilder autoRejoin(boolean autoRejoin) {
-            setProperty("autoRejoin", autoRejoin);
+            doSetProperty("autoRejoin", autoRejoin);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointConsumerBuilder autoRejoin(String autoRejoin) {
-            setProperty("autoRejoin", autoRejoin);
+            doSetProperty("autoRejoin", autoRejoin);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointConsumerBuilder commandTimeout(long commandTimeout) {
-            setProperty("commandTimeout", commandTimeout);
+            doSetProperty("commandTimeout", commandTimeout);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointConsumerBuilder commandTimeout(String commandTimeout) {
-            setProperty("commandTimeout", commandTimeout);
+            doSetProperty("commandTimeout", commandTimeout);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointConsumerBuilder namesOnJoin(boolean namesOnJoin) {
-            setProperty("namesOnJoin", namesOnJoin);
+            doSetProperty("namesOnJoin", namesOnJoin);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointConsumerBuilder namesOnJoin(String namesOnJoin) {
-            setProperty("namesOnJoin", namesOnJoin);
+            doSetProperty("namesOnJoin", namesOnJoin);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointConsumerBuilder nickname(String nickname) {
-            setProperty("nickname", nickname);
+            doSetProperty("nickname", nickname);
             return this;
         }
         /**
@@ -133,7 +133,7 @@ public interface IrcEndpointBuilderFactory {
          */
         @Deprecated
         default IrcEndpointConsumerBuilder persistent(boolean persistent) {
-            setProperty("persistent", persistent);
+            doSetProperty("persistent", persistent);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface IrcEndpointBuilderFactory {
          */
         @Deprecated
         default IrcEndpointConsumerBuilder persistent(String persistent) {
-            setProperty("persistent", persistent);
+            doSetProperty("persistent", persistent);
             return this;
         }
         /**
@@ -156,7 +156,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointConsumerBuilder realname(String realname) {
-            setProperty("realname", realname);
+            doSetProperty("realname", realname);
             return this;
         }
         /**
@@ -174,7 +174,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onJoin(boolean onJoin) {
-            setProperty("onJoin", onJoin);
+            doSetProperty("onJoin", onJoin);
             return this;
         }
         /**
@@ -214,7 +214,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onJoin(String onJoin) {
-            setProperty("onJoin", onJoin);
+            doSetProperty("onJoin", onJoin);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onKick(boolean onKick) {
-            setProperty("onKick", onKick);
+            doSetProperty("onKick", onKick);
             return this;
         }
         /**
@@ -236,7 +236,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onKick(String onKick) {
-            setProperty("onKick", onKick);
+            doSetProperty("onKick", onKick);
             return this;
         }
         /**
@@ -247,7 +247,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onMode(boolean onMode) {
-            setProperty("onMode", onMode);
+            doSetProperty("onMode", onMode);
             return this;
         }
         /**
@@ -258,7 +258,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onMode(String onMode) {
-            setProperty("onMode", onMode);
+            doSetProperty("onMode", onMode);
             return this;
         }
         /**
@@ -269,7 +269,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onNick(boolean onNick) {
-            setProperty("onNick", onNick);
+            doSetProperty("onNick", onNick);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onNick(String onNick) {
-            setProperty("onNick", onNick);
+            doSetProperty("onNick", onNick);
             return this;
         }
         /**
@@ -291,7 +291,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onPart(boolean onPart) {
-            setProperty("onPart", onPart);
+            doSetProperty("onPart", onPart);
             return this;
         }
         /**
@@ -302,7 +302,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onPart(String onPart) {
-            setProperty("onPart", onPart);
+            doSetProperty("onPart", onPart);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onPrivmsg(boolean onPrivmsg) {
-            setProperty("onPrivmsg", onPrivmsg);
+            doSetProperty("onPrivmsg", onPrivmsg);
             return this;
         }
         /**
@@ -324,7 +324,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onPrivmsg(String onPrivmsg) {
-            setProperty("onPrivmsg", onPrivmsg);
+            doSetProperty("onPrivmsg", onPrivmsg);
             return this;
         }
         /**
@@ -335,7 +335,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onQuit(boolean onQuit) {
-            setProperty("onQuit", onQuit);
+            doSetProperty("onQuit", onQuit);
             return this;
         }
         /**
@@ -346,7 +346,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onQuit(String onQuit) {
-            setProperty("onQuit", onQuit);
+            doSetProperty("onQuit", onQuit);
             return this;
         }
         /**
@@ -358,7 +358,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onReply(boolean onReply) {
-            setProperty("onReply", onReply);
+            doSetProperty("onReply", onReply);
             return this;
         }
         /**
@@ -370,7 +370,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onReply(String onReply) {
-            setProperty("onReply", onReply);
+            doSetProperty("onReply", onReply);
             return this;
         }
         /**
@@ -381,7 +381,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onTopic(boolean onTopic) {
-            setProperty("onTopic", onTopic);
+            doSetProperty("onTopic", onTopic);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onTopic(String onTopic) {
-            setProperty("onTopic", onTopic);
+            doSetProperty("onTopic", onTopic);
             return this;
         }
         /**
@@ -403,7 +403,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointConsumerBuilder nickPassword(String nickPassword) {
-            setProperty("nickPassword", nickPassword);
+            doSetProperty("nickPassword", nickPassword);
             return this;
         }
         /**
@@ -414,7 +414,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -448,7 +448,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -460,7 +460,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointConsumerBuilder trustManager(Object trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -472,7 +472,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointConsumerBuilder trustManager(String trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -483,7 +483,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -510,7 +510,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -526,7 +526,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -538,7 +538,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -551,7 +551,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -577,7 +577,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -588,7 +588,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIrcEndpointConsumerBuilder colors(boolean colors) {
-            setProperty("colors", colors);
+            doSetProperty("colors", colors);
             return this;
         }
         /**
@@ -599,7 +599,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIrcEndpointConsumerBuilder colors(String colors) {
-            setProperty("colors", colors);
+            doSetProperty("colors", colors);
             return this;
         }
         /**
@@ -612,7 +612,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -625,7 +625,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -647,7 +647,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointProducerBuilder autoRejoin(boolean autoRejoin) {
-            setProperty("autoRejoin", autoRejoin);
+            doSetProperty("autoRejoin", autoRejoin);
             return this;
         }
         /**
@@ -658,7 +658,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointProducerBuilder autoRejoin(String autoRejoin) {
-            setProperty("autoRejoin", autoRejoin);
+            doSetProperty("autoRejoin", autoRejoin);
             return this;
         }
         /**
@@ -670,7 +670,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointProducerBuilder commandTimeout(long commandTimeout) {
-            setProperty("commandTimeout", commandTimeout);
+            doSetProperty("commandTimeout", commandTimeout);
             return this;
         }
         /**
@@ -682,7 +682,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointProducerBuilder commandTimeout(String commandTimeout) {
-            setProperty("commandTimeout", commandTimeout);
+            doSetProperty("commandTimeout", commandTimeout);
             return this;
         }
         /**
@@ -695,7 +695,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointProducerBuilder namesOnJoin(boolean namesOnJoin) {
-            setProperty("namesOnJoin", namesOnJoin);
+            doSetProperty("namesOnJoin", namesOnJoin);
             return this;
         }
         /**
@@ -708,7 +708,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointProducerBuilder namesOnJoin(String namesOnJoin) {
-            setProperty("namesOnJoin", namesOnJoin);
+            doSetProperty("namesOnJoin", namesOnJoin);
             return this;
         }
         /**
@@ -719,7 +719,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointProducerBuilder nickname(String nickname) {
-            setProperty("nickname", nickname);
+            doSetProperty("nickname", nickname);
             return this;
         }
         /**
@@ -731,7 +731,7 @@ public interface IrcEndpointBuilderFactory {
          */
         @Deprecated
         default IrcEndpointProducerBuilder persistent(boolean persistent) {
-            setProperty("persistent", persistent);
+            doSetProperty("persistent", persistent);
             return this;
         }
         /**
@@ -743,7 +743,7 @@ public interface IrcEndpointBuilderFactory {
          */
         @Deprecated
         default IrcEndpointProducerBuilder persistent(String persistent) {
-            setProperty("persistent", persistent);
+            doSetProperty("persistent", persistent);
             return this;
         }
         /**
@@ -754,7 +754,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointProducerBuilder realname(String realname) {
-            setProperty("realname", realname);
+            doSetProperty("realname", realname);
             return this;
         }
         /**
@@ -774,7 +774,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -794,7 +794,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -805,7 +805,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onJoin(boolean onJoin) {
-            setProperty("onJoin", onJoin);
+            doSetProperty("onJoin", onJoin);
             return this;
         }
         /**
@@ -816,7 +816,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onJoin(String onJoin) {
-            setProperty("onJoin", onJoin);
+            doSetProperty("onJoin", onJoin);
             return this;
         }
         /**
@@ -827,7 +827,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onKick(boolean onKick) {
-            setProperty("onKick", onKick);
+            doSetProperty("onKick", onKick);
             return this;
         }
         /**
@@ -838,7 +838,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onKick(String onKick) {
-            setProperty("onKick", onKick);
+            doSetProperty("onKick", onKick);
             return this;
         }
         /**
@@ -849,7 +849,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onMode(boolean onMode) {
-            setProperty("onMode", onMode);
+            doSetProperty("onMode", onMode);
             return this;
         }
         /**
@@ -860,7 +860,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onMode(String onMode) {
-            setProperty("onMode", onMode);
+            doSetProperty("onMode", onMode);
             return this;
         }
         /**
@@ -871,7 +871,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onNick(boolean onNick) {
-            setProperty("onNick", onNick);
+            doSetProperty("onNick", onNick);
             return this;
         }
         /**
@@ -882,7 +882,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onNick(String onNick) {
-            setProperty("onNick", onNick);
+            doSetProperty("onNick", onNick);
             return this;
         }
         /**
@@ -893,7 +893,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onPart(boolean onPart) {
-            setProperty("onPart", onPart);
+            doSetProperty("onPart", onPart);
             return this;
         }
         /**
@@ -904,7 +904,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onPart(String onPart) {
-            setProperty("onPart", onPart);
+            doSetProperty("onPart", onPart);
             return this;
         }
         /**
@@ -915,7 +915,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onPrivmsg(boolean onPrivmsg) {
-            setProperty("onPrivmsg", onPrivmsg);
+            doSetProperty("onPrivmsg", onPrivmsg);
             return this;
         }
         /**
@@ -926,7 +926,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onPrivmsg(String onPrivmsg) {
-            setProperty("onPrivmsg", onPrivmsg);
+            doSetProperty("onPrivmsg", onPrivmsg);
             return this;
         }
         /**
@@ -937,7 +937,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onQuit(boolean onQuit) {
-            setProperty("onQuit", onQuit);
+            doSetProperty("onQuit", onQuit);
             return this;
         }
         /**
@@ -948,7 +948,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onQuit(String onQuit) {
-            setProperty("onQuit", onQuit);
+            doSetProperty("onQuit", onQuit);
             return this;
         }
         /**
@@ -960,7 +960,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onReply(boolean onReply) {
-            setProperty("onReply", onReply);
+            doSetProperty("onReply", onReply);
             return this;
         }
         /**
@@ -972,7 +972,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onReply(String onReply) {
-            setProperty("onReply", onReply);
+            doSetProperty("onReply", onReply);
             return this;
         }
         /**
@@ -983,7 +983,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onTopic(boolean onTopic) {
-            setProperty("onTopic", onTopic);
+            doSetProperty("onTopic", onTopic);
             return this;
         }
         /**
@@ -994,7 +994,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointProducerBuilder onTopic(String onTopic) {
-            setProperty("onTopic", onTopic);
+            doSetProperty("onTopic", onTopic);
             return this;
         }
         /**
@@ -1005,7 +1005,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointProducerBuilder nickPassword(String nickPassword) {
-            setProperty("nickPassword", nickPassword);
+            doSetProperty("nickPassword", nickPassword);
             return this;
         }
         /**
@@ -1016,7 +1016,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1033,7 +1033,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1050,7 +1050,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1062,7 +1062,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointProducerBuilder trustManager(Object trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -1074,7 +1074,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointProducerBuilder trustManager(String trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -1085,7 +1085,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1109,7 +1109,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1122,7 +1122,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1133,7 +1133,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIrcEndpointProducerBuilder colors(boolean colors) {
-            setProperty("colors", colors);
+            doSetProperty("colors", colors);
             return this;
         }
         /**
@@ -1144,7 +1144,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIrcEndpointProducerBuilder colors(String colors) {
-            setProperty("colors", colors);
+            doSetProperty("colors", colors);
             return this;
         }
         /**
@@ -1157,7 +1157,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1170,7 +1170,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1192,7 +1192,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointBuilder autoRejoin(boolean autoRejoin) {
-            setProperty("autoRejoin", autoRejoin);
+            doSetProperty("autoRejoin", autoRejoin);
             return this;
         }
         /**
@@ -1203,7 +1203,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointBuilder autoRejoin(String autoRejoin) {
-            setProperty("autoRejoin", autoRejoin);
+            doSetProperty("autoRejoin", autoRejoin);
             return this;
         }
         /**
@@ -1215,7 +1215,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointBuilder commandTimeout(long commandTimeout) {
-            setProperty("commandTimeout", commandTimeout);
+            doSetProperty("commandTimeout", commandTimeout);
             return this;
         }
         /**
@@ -1227,7 +1227,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointBuilder commandTimeout(String commandTimeout) {
-            setProperty("commandTimeout", commandTimeout);
+            doSetProperty("commandTimeout", commandTimeout);
             return this;
         }
         /**
@@ -1240,7 +1240,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointBuilder namesOnJoin(boolean namesOnJoin) {
-            setProperty("namesOnJoin", namesOnJoin);
+            doSetProperty("namesOnJoin", namesOnJoin);
             return this;
         }
         /**
@@ -1253,7 +1253,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointBuilder namesOnJoin(String namesOnJoin) {
-            setProperty("namesOnJoin", namesOnJoin);
+            doSetProperty("namesOnJoin", namesOnJoin);
             return this;
         }
         /**
@@ -1264,7 +1264,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointBuilder nickname(String nickname) {
-            setProperty("nickname", nickname);
+            doSetProperty("nickname", nickname);
             return this;
         }
         /**
@@ -1276,7 +1276,7 @@ public interface IrcEndpointBuilderFactory {
          */
         @Deprecated
         default IrcEndpointBuilder persistent(boolean persistent) {
-            setProperty("persistent", persistent);
+            doSetProperty("persistent", persistent);
             return this;
         }
         /**
@@ -1288,7 +1288,7 @@ public interface IrcEndpointBuilderFactory {
          */
         @Deprecated
         default IrcEndpointBuilder persistent(String persistent) {
-            setProperty("persistent", persistent);
+            doSetProperty("persistent", persistent);
             return this;
         }
         /**
@@ -1299,7 +1299,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: common
          */
         default IrcEndpointBuilder realname(String realname) {
-            setProperty("realname", realname);
+            doSetProperty("realname", realname);
             return this;
         }
         /**
@@ -1310,7 +1310,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onJoin(boolean onJoin) {
-            setProperty("onJoin", onJoin);
+            doSetProperty("onJoin", onJoin);
             return this;
         }
         /**
@@ -1321,7 +1321,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onJoin(String onJoin) {
-            setProperty("onJoin", onJoin);
+            doSetProperty("onJoin", onJoin);
             return this;
         }
         /**
@@ -1332,7 +1332,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onKick(boolean onKick) {
-            setProperty("onKick", onKick);
+            doSetProperty("onKick", onKick);
             return this;
         }
         /**
@@ -1343,7 +1343,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onKick(String onKick) {
-            setProperty("onKick", onKick);
+            doSetProperty("onKick", onKick);
             return this;
         }
         /**
@@ -1354,7 +1354,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onMode(boolean onMode) {
-            setProperty("onMode", onMode);
+            doSetProperty("onMode", onMode);
             return this;
         }
         /**
@@ -1365,7 +1365,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onMode(String onMode) {
-            setProperty("onMode", onMode);
+            doSetProperty("onMode", onMode);
             return this;
         }
         /**
@@ -1376,7 +1376,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onNick(boolean onNick) {
-            setProperty("onNick", onNick);
+            doSetProperty("onNick", onNick);
             return this;
         }
         /**
@@ -1387,7 +1387,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onNick(String onNick) {
-            setProperty("onNick", onNick);
+            doSetProperty("onNick", onNick);
             return this;
         }
         /**
@@ -1398,7 +1398,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onPart(boolean onPart) {
-            setProperty("onPart", onPart);
+            doSetProperty("onPart", onPart);
             return this;
         }
         /**
@@ -1409,7 +1409,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onPart(String onPart) {
-            setProperty("onPart", onPart);
+            doSetProperty("onPart", onPart);
             return this;
         }
         /**
@@ -1420,7 +1420,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onPrivmsg(boolean onPrivmsg) {
-            setProperty("onPrivmsg", onPrivmsg);
+            doSetProperty("onPrivmsg", onPrivmsg);
             return this;
         }
         /**
@@ -1431,7 +1431,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onPrivmsg(String onPrivmsg) {
-            setProperty("onPrivmsg", onPrivmsg);
+            doSetProperty("onPrivmsg", onPrivmsg);
             return this;
         }
         /**
@@ -1442,7 +1442,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onQuit(boolean onQuit) {
-            setProperty("onQuit", onQuit);
+            doSetProperty("onQuit", onQuit);
             return this;
         }
         /**
@@ -1453,7 +1453,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onQuit(String onQuit) {
-            setProperty("onQuit", onQuit);
+            doSetProperty("onQuit", onQuit);
             return this;
         }
         /**
@@ -1465,7 +1465,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onReply(boolean onReply) {
-            setProperty("onReply", onReply);
+            doSetProperty("onReply", onReply);
             return this;
         }
         /**
@@ -1477,7 +1477,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onReply(String onReply) {
-            setProperty("onReply", onReply);
+            doSetProperty("onReply", onReply);
             return this;
         }
         /**
@@ -1488,7 +1488,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onTopic(boolean onTopic) {
-            setProperty("onTopic", onTopic);
+            doSetProperty("onTopic", onTopic);
             return this;
         }
         /**
@@ -1499,7 +1499,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: filter
          */
         default IrcEndpointBuilder onTopic(String onTopic) {
-            setProperty("onTopic", onTopic);
+            doSetProperty("onTopic", onTopic);
             return this;
         }
         /**
@@ -1510,7 +1510,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointBuilder nickPassword(String nickPassword) {
-            setProperty("nickPassword", nickPassword);
+            doSetProperty("nickPassword", nickPassword);
             return this;
         }
         /**
@@ -1521,7 +1521,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1538,7 +1538,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1555,7 +1555,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1567,7 +1567,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointBuilder trustManager(Object trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -1579,7 +1579,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointBuilder trustManager(String trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -1590,7 +1590,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: security
          */
         default IrcEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1614,7 +1614,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1627,7 +1627,7 @@ public interface IrcEndpointBuilderFactory {
          */
         default AdvancedIrcEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1638,7 +1638,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIrcEndpointBuilder colors(boolean colors) {
-            setProperty("colors", colors);
+            doSetProperty("colors", colors);
             return this;
         }
         /**
@@ -1649,7 +1649,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIrcEndpointBuilder colors(String colors) {
-            setProperty("colors", colors);
+            doSetProperty("colors", colors);
             return this;
         }
         /**
@@ -1661,7 +1661,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIrcEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1673,7 +1673,7 @@ public interface IrcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIrcEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

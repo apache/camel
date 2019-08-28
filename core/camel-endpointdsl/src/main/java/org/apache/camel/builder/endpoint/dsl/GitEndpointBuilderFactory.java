@@ -49,7 +49,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointConsumerBuilder branchName(String branchName) {
-            setProperty("branchName", branchName);
+            doSetProperty("branchName", branchName);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointConsumerBuilder remoteName(String remoteName) {
-            setProperty("remoteName", remoteName);
+            doSetProperty("remoteName", remoteName);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointConsumerBuilder remotePath(String remotePath) {
-            setProperty("remotePath", remotePath);
+            doSetProperty("remotePath", remotePath);
             return this;
         }
         /**
@@ -93,7 +93,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointConsumerBuilder tagName(String tagName) {
-            setProperty("tagName", tagName);
+            doSetProperty("tagName", tagName);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -122,7 +122,7 @@ public interface GitEndpointBuilderFactory {
          */
         default GitEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface GitEndpointBuilderFactory {
          */
         default GitEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface GitEndpointBuilderFactory {
          * Group: consumer
          */
         default GitEndpointConsumerBuilder type(GitType type) {
-            setProperty("type", type);
+            doSetProperty("type", type);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface GitEndpointBuilderFactory {
          * Group: consumer
          */
         default GitEndpointConsumerBuilder type(String type) {
-            setProperty("type", type);
+            doSetProperty("type", type);
             return this;
         }
     }
@@ -191,7 +191,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -219,7 +219,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -258,7 +258,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -271,7 +271,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -284,7 +284,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -306,7 +306,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointProducerBuilder branchName(String branchName) {
-            setProperty("branchName", branchName);
+            doSetProperty("branchName", branchName);
             return this;
         }
         /**
@@ -317,7 +317,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -328,7 +328,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointProducerBuilder remoteName(String remoteName) {
-            setProperty("remoteName", remoteName);
+            doSetProperty("remoteName", remoteName);
             return this;
         }
         /**
@@ -339,7 +339,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointProducerBuilder remotePath(String remotePath) {
-            setProperty("remotePath", remotePath);
+            doSetProperty("remotePath", remotePath);
             return this;
         }
         /**
@@ -350,7 +350,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointProducerBuilder tagName(String tagName) {
-            setProperty("tagName", tagName);
+            doSetProperty("tagName", tagName);
             return this;
         }
         /**
@@ -361,7 +361,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -372,7 +372,7 @@ public interface GitEndpointBuilderFactory {
          * Group: producer
          */
         default GitEndpointProducerBuilder allowEmpty(boolean allowEmpty) {
-            setProperty("allowEmpty", allowEmpty);
+            doSetProperty("allowEmpty", allowEmpty);
             return this;
         }
         /**
@@ -383,7 +383,7 @@ public interface GitEndpointBuilderFactory {
          * Group: producer
          */
         default GitEndpointProducerBuilder allowEmpty(String allowEmpty) {
-            setProperty("allowEmpty", allowEmpty);
+            doSetProperty("allowEmpty", allowEmpty);
             return this;
         }
         /**
@@ -403,7 +403,7 @@ public interface GitEndpointBuilderFactory {
          */
         default GitEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -423,7 +423,7 @@ public interface GitEndpointBuilderFactory {
          */
         default GitEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -434,7 +434,7 @@ public interface GitEndpointBuilderFactory {
          * Group: producer
          */
         default GitEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
     }
@@ -458,7 +458,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -471,7 +471,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -484,7 +484,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -497,7 +497,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -519,7 +519,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointBuilder branchName(String branchName) {
-            setProperty("branchName", branchName);
+            doSetProperty("branchName", branchName);
             return this;
         }
         /**
@@ -530,7 +530,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -541,7 +541,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointBuilder remoteName(String remoteName) {
-            setProperty("remoteName", remoteName);
+            doSetProperty("remoteName", remoteName);
             return this;
         }
         /**
@@ -552,7 +552,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointBuilder remotePath(String remotePath) {
-            setProperty("remotePath", remotePath);
+            doSetProperty("remotePath", remotePath);
             return this;
         }
         /**
@@ -563,7 +563,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointBuilder tagName(String tagName) {
-            setProperty("tagName", tagName);
+            doSetProperty("tagName", tagName);
             return this;
         }
         /**
@@ -574,7 +574,7 @@ public interface GitEndpointBuilderFactory {
          * Group: common
          */
         default GitEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -598,7 +598,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -611,7 +611,7 @@ public interface GitEndpointBuilderFactory {
          */
         default AdvancedGitEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -623,7 +623,7 @@ public interface GitEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGitEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -635,7 +635,7 @@ public interface GitEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGitEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

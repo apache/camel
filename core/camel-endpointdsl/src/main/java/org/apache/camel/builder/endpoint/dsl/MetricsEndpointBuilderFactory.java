@@ -48,7 +48,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder action(MetricsTimerAction action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder decrement(Long decrement) {
-            setProperty("decrement", decrement);
+            doSetProperty("decrement", decrement);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder decrement(String decrement) {
-            setProperty("decrement", decrement);
+            doSetProperty("decrement", decrement);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder increment(Long increment) {
-            setProperty("increment", increment);
+            doSetProperty("increment", increment);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder increment(String increment) {
-            setProperty("increment", increment);
+            doSetProperty("increment", increment);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder mark(Long mark) {
-            setProperty("mark", mark);
+            doSetProperty("mark", mark);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder mark(String mark) {
-            setProperty("mark", mark);
+            doSetProperty("mark", mark);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder subject(Object subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -149,7 +149,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder value(Long value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -171,7 +171,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder value(String value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
     }
@@ -195,7 +195,7 @@ public interface MetricsEndpointBuilderFactory {
          */
         default AdvancedMetricsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -208,7 +208,7 @@ public interface MetricsEndpointBuilderFactory {
          */
         default AdvancedMetricsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -220,7 +220,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMetricsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMetricsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

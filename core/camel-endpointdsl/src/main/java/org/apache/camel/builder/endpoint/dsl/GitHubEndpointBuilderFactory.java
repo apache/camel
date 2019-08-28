@@ -49,7 +49,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointConsumerBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointConsumerBuilder repoName(String repoName) {
-            setProperty("repoName", repoName);
+            doSetProperty("repoName", repoName);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointConsumerBuilder repoOwner(String repoOwner) {
-            setProperty("repoOwner", repoOwner);
+            doSetProperty("repoOwner", repoOwner);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default GitHubEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default GitHubEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -158,7 +158,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -174,7 +174,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -186,7 +186,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -199,7 +199,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -251,7 +251,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -273,7 +273,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointProducerBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -284,7 +284,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointProducerBuilder repoName(String repoName) {
-            setProperty("repoName", repoName);
+            doSetProperty("repoName", repoName);
             return this;
         }
         /**
@@ -308,7 +308,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointProducerBuilder repoOwner(String repoOwner) {
-            setProperty("repoOwner", repoOwner);
+            doSetProperty("repoOwner", repoOwner);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: producer
          */
         default GitHubEndpointProducerBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -350,7 +350,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default GitHubEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -370,7 +370,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default GitHubEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -381,7 +381,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: producer
          */
         default GitHubEndpointProducerBuilder state(String state) {
-            setProperty("state", state);
+            doSetProperty("state", state);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: producer
          */
         default GitHubEndpointProducerBuilder targetUrl(String targetUrl) {
-            setProperty("targetUrl", targetUrl);
+            doSetProperty("targetUrl", targetUrl);
             return this;
         }
     }
@@ -416,7 +416,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -442,7 +442,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -477,7 +477,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -488,7 +488,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -500,7 +500,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointBuilder repoName(String repoName) {
-            setProperty("repoName", repoName);
+            doSetProperty("repoName", repoName);
             return this;
         }
         /**
@@ -512,7 +512,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointBuilder repoOwner(String repoOwner) {
-            setProperty("repoOwner", repoOwner);
+            doSetProperty("repoOwner", repoOwner);
             return this;
         }
         /**
@@ -523,7 +523,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: common
          */
         default GitHubEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -547,7 +547,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -560,7 +560,7 @@ public interface GitHubEndpointBuilderFactory {
          */
         default AdvancedGitHubEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -572,7 +572,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGitHubEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -584,7 +584,7 @@ public interface GitHubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGitHubEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -56,7 +56,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: common
          */
         default KafkaEndpointConsumerBuilder brokers(String brokers) {
-            setProperty("brokers", brokers);
+            doSetProperty("brokers", brokers);
             return this;
         }
         /**
@@ -69,7 +69,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: common
          */
         default KafkaEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder reconnectBackoffMaxMs(
                 Integer reconnectBackoffMaxMs) {
-            setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
+            doSetProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder reconnectBackoffMaxMs(
                 String reconnectBackoffMaxMs) {
-            setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
+            doSetProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder allowManualCommit(
                 boolean allowManualCommit) {
-            setProperty("allowManualCommit", allowManualCommit);
+            doSetProperty("allowManualCommit", allowManualCommit);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder allowManualCommit(
                 String allowManualCommit) {
-            setProperty("allowManualCommit", allowManualCommit);
+            doSetProperty("allowManualCommit", allowManualCommit);
             return this;
         }
         /**
@@ -175,7 +175,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder autoCommitEnable(
                 Boolean autoCommitEnable) {
-            setProperty("autoCommitEnable", autoCommitEnable);
+            doSetProperty("autoCommitEnable", autoCommitEnable);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder autoCommitEnable(
                 String autoCommitEnable) {
-            setProperty("autoCommitEnable", autoCommitEnable);
+            doSetProperty("autoCommitEnable", autoCommitEnable);
             return this;
         }
         /**
@@ -204,7 +204,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder autoCommitIntervalMs(
                 Integer autoCommitIntervalMs) {
-            setProperty("autoCommitIntervalMs", autoCommitIntervalMs);
+            doSetProperty("autoCommitIntervalMs", autoCommitIntervalMs);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder autoCommitIntervalMs(
                 String autoCommitIntervalMs) {
-            setProperty("autoCommitIntervalMs", autoCommitIntervalMs);
+            doSetProperty("autoCommitIntervalMs", autoCommitIntervalMs);
             return this;
         }
         /**
@@ -233,7 +233,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder autoCommitOnStop(
                 String autoCommitOnStop) {
-            setProperty("autoCommitOnStop", autoCommitOnStop);
+            doSetProperty("autoCommitOnStop", autoCommitOnStop);
             return this;
         }
         /**
@@ -248,7 +248,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder autoOffsetReset(
                 String autoOffsetReset) {
-            setProperty("autoOffsetReset", autoOffsetReset);
+            doSetProperty("autoOffsetReset", autoOffsetReset);
             return this;
         }
         /**
@@ -268,7 +268,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder breakOnFirstError(
                 boolean breakOnFirstError) {
-            setProperty("breakOnFirstError", breakOnFirstError);
+            doSetProperty("breakOnFirstError", breakOnFirstError);
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder breakOnFirstError(
                 String breakOnFirstError) {
-            setProperty("breakOnFirstError", breakOnFirstError);
+            doSetProperty("breakOnFirstError", breakOnFirstError);
             return this;
         }
         /**
@@ -306,7 +306,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -324,7 +324,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -338,7 +338,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder checkCrcs(Boolean checkCrcs) {
-            setProperty("checkCrcs", checkCrcs);
+            doSetProperty("checkCrcs", checkCrcs);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder checkCrcs(String checkCrcs) {
-            setProperty("checkCrcs", checkCrcs);
+            doSetProperty("checkCrcs", checkCrcs);
             return this;
         }
         /**
@@ -368,7 +368,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder consumerRequestTimeoutMs(
                 Integer consumerRequestTimeoutMs) {
-            setProperty("consumerRequestTimeoutMs", consumerRequestTimeoutMs);
+            doSetProperty("consumerRequestTimeoutMs", consumerRequestTimeoutMs);
             return this;
         }
         /**
@@ -384,7 +384,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder consumerRequestTimeoutMs(
                 String consumerRequestTimeoutMs) {
-            setProperty("consumerRequestTimeoutMs", consumerRequestTimeoutMs);
+            doSetProperty("consumerRequestTimeoutMs", consumerRequestTimeoutMs);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder consumersCount(int consumersCount) {
-            setProperty("consumersCount", consumersCount);
+            doSetProperty("consumersCount", consumersCount);
             return this;
         }
         /**
@@ -407,7 +407,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder consumersCount(
                 String consumersCount) {
-            setProperty("consumersCount", consumersCount);
+            doSetProperty("consumersCount", consumersCount);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder consumerStreams(int consumerStreams) {
-            setProperty("consumerStreams", consumerStreams);
+            doSetProperty("consumerStreams", consumerStreams);
             return this;
         }
         /**
@@ -430,7 +430,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder consumerStreams(
                 String consumerStreams) {
-            setProperty("consumerStreams", consumerStreams);
+            doSetProperty("consumerStreams", consumerStreams);
             return this;
         }
         /**
@@ -448,7 +448,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder fetchMaxBytes(Integer fetchMaxBytes) {
-            setProperty("fetchMaxBytes", fetchMaxBytes);
+            doSetProperty("fetchMaxBytes", fetchMaxBytes);
             return this;
         }
         /**
@@ -467,7 +467,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder fetchMaxBytes(String fetchMaxBytes) {
-            setProperty("fetchMaxBytes", fetchMaxBytes);
+            doSetProperty("fetchMaxBytes", fetchMaxBytes);
             return this;
         }
         /**
@@ -480,7 +480,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder fetchMinBytes(Integer fetchMinBytes) {
-            setProperty("fetchMinBytes", fetchMinBytes);
+            doSetProperty("fetchMinBytes", fetchMinBytes);
             return this;
         }
         /**
@@ -494,7 +494,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder fetchMinBytes(String fetchMinBytes) {
-            setProperty("fetchMinBytes", fetchMinBytes);
+            doSetProperty("fetchMinBytes", fetchMinBytes);
             return this;
         }
         /**
@@ -508,7 +508,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder fetchWaitMaxMs(
                 Integer fetchWaitMaxMs) {
-            setProperty("fetchWaitMaxMs", fetchWaitMaxMs);
+            doSetProperty("fetchWaitMaxMs", fetchWaitMaxMs);
             return this;
         }
         /**
@@ -523,7 +523,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder fetchWaitMaxMs(
                 String fetchWaitMaxMs) {
-            setProperty("fetchWaitMaxMs", fetchWaitMaxMs);
+            doSetProperty("fetchWaitMaxMs", fetchWaitMaxMs);
             return this;
         }
         /**
@@ -537,7 +537,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder groupId(String groupId) {
-            setProperty("groupId", groupId);
+            doSetProperty("groupId", groupId);
             return this;
         }
         /**
@@ -555,7 +555,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder heartbeatIntervalMs(
                 Integer heartbeatIntervalMs) {
-            setProperty("heartbeatIntervalMs", heartbeatIntervalMs);
+            doSetProperty("heartbeatIntervalMs", heartbeatIntervalMs);
             return this;
         }
         /**
@@ -574,7 +574,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder heartbeatIntervalMs(
                 String heartbeatIntervalMs) {
-            setProperty("heartbeatIntervalMs", heartbeatIntervalMs);
+            doSetProperty("heartbeatIntervalMs", heartbeatIntervalMs);
             return this;
         }
         /**
@@ -588,7 +588,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder kafkaHeaderDeserializer(
                 Object kafkaHeaderDeserializer) {
-            setProperty("kafkaHeaderDeserializer", kafkaHeaderDeserializer);
+            doSetProperty("kafkaHeaderDeserializer", kafkaHeaderDeserializer);
             return this;
         }
         /**
@@ -602,7 +602,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder kafkaHeaderDeserializer(
                 String kafkaHeaderDeserializer) {
-            setProperty("kafkaHeaderDeserializer", kafkaHeaderDeserializer);
+            doSetProperty("kafkaHeaderDeserializer", kafkaHeaderDeserializer);
             return this;
         }
         /**
@@ -615,7 +615,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder keyDeserializer(
                 String keyDeserializer) {
-            setProperty("keyDeserializer", keyDeserializer);
+            doSetProperty("keyDeserializer", keyDeserializer);
             return this;
         }
         /**
@@ -633,7 +633,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder maxPartitionFetchBytes(
                 Integer maxPartitionFetchBytes) {
-            setProperty("maxPartitionFetchBytes", maxPartitionFetchBytes);
+            doSetProperty("maxPartitionFetchBytes", maxPartitionFetchBytes);
             return this;
         }
         /**
@@ -652,7 +652,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder maxPartitionFetchBytes(
                 String maxPartitionFetchBytes) {
-            setProperty("maxPartitionFetchBytes", maxPartitionFetchBytes);
+            doSetProperty("maxPartitionFetchBytes", maxPartitionFetchBytes);
             return this;
         }
         /**
@@ -669,7 +669,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder maxPollIntervalMs(
                 Long maxPollIntervalMs) {
-            setProperty("maxPollIntervalMs", maxPollIntervalMs);
+            doSetProperty("maxPollIntervalMs", maxPollIntervalMs);
             return this;
         }
         /**
@@ -686,7 +686,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder maxPollIntervalMs(
                 String maxPollIntervalMs) {
-            setProperty("maxPollIntervalMs", maxPollIntervalMs);
+            doSetProperty("maxPollIntervalMs", maxPollIntervalMs);
             return this;
         }
         /**
@@ -698,7 +698,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder maxPollRecords(
                 Integer maxPollRecords) {
-            setProperty("maxPollRecords", maxPollRecords);
+            doSetProperty("maxPollRecords", maxPollRecords);
             return this;
         }
         /**
@@ -711,7 +711,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder maxPollRecords(
                 String maxPollRecords) {
-            setProperty("maxPollRecords", maxPollRecords);
+            doSetProperty("maxPollRecords", maxPollRecords);
             return this;
         }
         /**
@@ -727,7 +727,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder offsetRepository(
                 StateRepository<String, String> offsetRepository) {
-            setProperty("offsetRepository", offsetRepository);
+            doSetProperty("offsetRepository", offsetRepository);
             return this;
         }
         /**
@@ -743,7 +743,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder offsetRepository(
                 String offsetRepository) {
-            setProperty("offsetRepository", offsetRepository);
+            doSetProperty("offsetRepository", offsetRepository);
             return this;
         }
         /**
@@ -757,7 +757,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder partitionAssignor(
                 String partitionAssignor) {
-            setProperty("partitionAssignor", partitionAssignor);
+            doSetProperty("partitionAssignor", partitionAssignor);
             return this;
         }
         /**
@@ -768,7 +768,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder pollTimeoutMs(Long pollTimeoutMs) {
-            setProperty("pollTimeoutMs", pollTimeoutMs);
+            doSetProperty("pollTimeoutMs", pollTimeoutMs);
             return this;
         }
         /**
@@ -779,7 +779,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder pollTimeoutMs(String pollTimeoutMs) {
-            setProperty("pollTimeoutMs", pollTimeoutMs);
+            doSetProperty("pollTimeoutMs", pollTimeoutMs);
             return this;
         }
         /**
@@ -792,7 +792,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder seekTo(String seekTo) {
-            setProperty("seekTo", seekTo);
+            doSetProperty("seekTo", seekTo);
             return this;
         }
         /**
@@ -805,7 +805,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder sessionTimeoutMs(
                 Integer sessionTimeoutMs) {
-            setProperty("sessionTimeoutMs", sessionTimeoutMs);
+            doSetProperty("sessionTimeoutMs", sessionTimeoutMs);
             return this;
         }
         /**
@@ -819,7 +819,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder sessionTimeoutMs(
                 String sessionTimeoutMs) {
-            setProperty("sessionTimeoutMs", sessionTimeoutMs);
+            doSetProperty("sessionTimeoutMs", sessionTimeoutMs);
             return this;
         }
         /**
@@ -834,7 +834,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder specificAvroReader(
                 boolean specificAvroReader) {
-            setProperty("specificAvroReader", specificAvroReader);
+            doSetProperty("specificAvroReader", specificAvroReader);
             return this;
         }
         /**
@@ -849,7 +849,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder specificAvroReader(
                 String specificAvroReader) {
-            setProperty("specificAvroReader", specificAvroReader);
+            doSetProperty("specificAvroReader", specificAvroReader);
             return this;
         }
         /**
@@ -862,7 +862,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder topicIsPattern(
                 boolean topicIsPattern) {
-            setProperty("topicIsPattern", topicIsPattern);
+            doSetProperty("topicIsPattern", topicIsPattern);
             return this;
         }
         /**
@@ -875,7 +875,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder topicIsPattern(
                 String topicIsPattern) {
-            setProperty("topicIsPattern", topicIsPattern);
+            doSetProperty("topicIsPattern", topicIsPattern);
             return this;
         }
         /**
@@ -888,7 +888,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder valueDeserializer(
                 String valueDeserializer) {
-            setProperty("valueDeserializer", valueDeserializer);
+            doSetProperty("valueDeserializer", valueDeserializer);
             return this;
         }
         /**
@@ -906,7 +906,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder interceptorClasses(
                 String interceptorClasses) {
-            setProperty("interceptorClasses", interceptorClasses);
+            doSetProperty("interceptorClasses", interceptorClasses);
             return this;
         }
         /**
@@ -918,7 +918,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder kerberosBeforeReloginMinTime(
                 Integer kerberosBeforeReloginMinTime) {
-            setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
+            doSetProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
         }
         /**
@@ -931,7 +931,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder kerberosBeforeReloginMinTime(
                 String kerberosBeforeReloginMinTime) {
-            setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
+            doSetProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
         }
         /**
@@ -943,7 +943,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder kerberosInitCmd(
                 String kerberosInitCmd) {
-            setProperty("kerberosInitCmd", kerberosInitCmd);
+            doSetProperty("kerberosInitCmd", kerberosInitCmd);
             return this;
         }
         /**
@@ -962,7 +962,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder kerberosPrincipalToLocalRules(
                 String kerberosPrincipalToLocalRules) {
-            setProperty("kerberosPrincipalToLocalRules", kerberosPrincipalToLocalRules);
+            doSetProperty("kerberosPrincipalToLocalRules", kerberosPrincipalToLocalRules);
             return this;
         }
         /**
@@ -974,7 +974,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder kerberosRenewJitter(
                 Double kerberosRenewJitter) {
-            setProperty("kerberosRenewJitter", kerberosRenewJitter);
+            doSetProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
         }
         /**
@@ -986,7 +986,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder kerberosRenewJitter(
                 String kerberosRenewJitter) {
-            setProperty("kerberosRenewJitter", kerberosRenewJitter);
+            doSetProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
         }
         /**
@@ -1000,7 +1000,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder kerberosRenewWindowFactor(
                 Double kerberosRenewWindowFactor) {
-            setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
+            doSetProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
         }
         /**
@@ -1014,7 +1014,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder kerberosRenewWindowFactor(
                 String kerberosRenewWindowFactor) {
-            setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
+            doSetProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
         }
         /**
@@ -1028,7 +1028,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder saslJaasConfig(
                 String saslJaasConfig) {
-            setProperty("saslJaasConfig", saslJaasConfig);
+            doSetProperty("saslJaasConfig", saslJaasConfig);
             return this;
         }
         /**
@@ -1041,7 +1041,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder saslKerberosServiceName(
                 String saslKerberosServiceName) {
-            setProperty("saslKerberosServiceName", saslKerberosServiceName);
+            doSetProperty("saslKerberosServiceName", saslKerberosServiceName);
             return this;
         }
         /**
@@ -1054,7 +1054,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointConsumerBuilder saslMechanism(String saslMechanism) {
-            setProperty("saslMechanism", saslMechanism);
+            doSetProperty("saslMechanism", saslMechanism);
             return this;
         }
         /**
@@ -1067,7 +1067,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder securityProtocol(
                 String securityProtocol) {
-            setProperty("securityProtocol", securityProtocol);
+            doSetProperty("securityProtocol", securityProtocol);
             return this;
         }
         /**
@@ -1083,7 +1083,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder sslCipherSuites(
                 String sslCipherSuites) {
-            setProperty("sslCipherSuites", sslCipherSuites);
+            doSetProperty("sslCipherSuites", sslCipherSuites);
             return this;
         }
         /**
@@ -1097,7 +1097,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1111,7 +1111,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1124,7 +1124,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder sslEnabledProtocols(
                 String sslEnabledProtocols) {
-            setProperty("sslEnabledProtocols", sslEnabledProtocols);
+            doSetProperty("sslEnabledProtocols", sslEnabledProtocols);
             return this;
         }
         /**
@@ -1137,7 +1137,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder sslEndpointAlgorithm(
                 String sslEndpointAlgorithm) {
-            setProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
+            doSetProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
             return this;
         }
         /**
@@ -1151,7 +1151,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder sslKeymanagerAlgorithm(
                 String sslKeymanagerAlgorithm) {
-            setProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
+            doSetProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
             return this;
         }
         /**
@@ -1164,7 +1164,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder sslKeystoreType(
                 String sslKeystoreType) {
-            setProperty("sslKeystoreType", sslKeystoreType);
+            doSetProperty("sslKeystoreType", sslKeystoreType);
             return this;
         }
         /**
@@ -1179,7 +1179,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslProtocol(String sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -1191,7 +1191,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslProvider(String sslProvider) {
-            setProperty("sslProvider", sslProvider);
+            doSetProperty("sslProvider", sslProvider);
             return this;
         }
         /**
@@ -1205,7 +1205,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder sslTrustmanagerAlgorithm(
                 String sslTrustmanagerAlgorithm) {
-            setProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
+            doSetProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
             return this;
         }
         /**
@@ -1217,7 +1217,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder sslTruststoreType(
                 String sslTruststoreType) {
-            setProperty("sslTruststoreType", sslTruststoreType);
+            doSetProperty("sslTruststoreType", sslTruststoreType);
             return this;
         }
         /**
@@ -1233,7 +1233,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder schemaRegistryURL(
                 String schemaRegistryURL) {
-            setProperty("schemaRegistryURL", schemaRegistryURL);
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
     }
@@ -1260,7 +1260,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -1276,7 +1276,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -1288,7 +1288,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -1301,7 +1301,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -1314,7 +1314,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1327,7 +1327,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1340,7 +1340,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1353,7 +1353,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1378,7 +1378,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: common
          */
         default KafkaEndpointProducerBuilder brokers(String brokers) {
-            setProperty("brokers", brokers);
+            doSetProperty("brokers", brokers);
             return this;
         }
         /**
@@ -1391,7 +1391,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: common
          */
         default KafkaEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -1405,7 +1405,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1419,7 +1419,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1435,7 +1435,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder reconnectBackoffMaxMs(
                 Integer reconnectBackoffMaxMs) {
-            setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
+            doSetProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
         }
         /**
@@ -1452,7 +1452,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder reconnectBackoffMaxMs(
                 String reconnectBackoffMaxMs) {
-            setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
+            doSetProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
         }
         /**
@@ -1465,7 +1465,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder bridgeEndpoint(
                 boolean bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -1478,7 +1478,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder bridgeEndpoint(
                 String bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -1498,7 +1498,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder bufferMemorySize(
                 Integer bufferMemorySize) {
-            setProperty("bufferMemorySize", bufferMemorySize);
+            doSetProperty("bufferMemorySize", bufferMemorySize);
             return this;
         }
         /**
@@ -1519,7 +1519,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder bufferMemorySize(
                 String bufferMemorySize) {
-            setProperty("bufferMemorySize", bufferMemorySize);
+            doSetProperty("bufferMemorySize", bufferMemorySize);
             return this;
         }
         /**
@@ -1538,7 +1538,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder circularTopicDetection(
                 boolean circularTopicDetection) {
-            setProperty("circularTopicDetection", circularTopicDetection);
+            doSetProperty("circularTopicDetection", circularTopicDetection);
             return this;
         }
         /**
@@ -1557,7 +1557,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder circularTopicDetection(
                 String circularTopicDetection) {
-            setProperty("circularTopicDetection", circularTopicDetection);
+            doSetProperty("circularTopicDetection", circularTopicDetection);
             return this;
         }
         /**
@@ -1571,7 +1571,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder compressionCodec(
                 String compressionCodec) {
-            setProperty("compressionCodec", compressionCodec);
+            doSetProperty("compressionCodec", compressionCodec);
             return this;
         }
         /**
@@ -1584,7 +1584,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder connectionMaxIdleMs(
                 Integer connectionMaxIdleMs) {
-            setProperty("connectionMaxIdleMs", connectionMaxIdleMs);
+            doSetProperty("connectionMaxIdleMs", connectionMaxIdleMs);
             return this;
         }
         /**
@@ -1598,7 +1598,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder connectionMaxIdleMs(
                 String connectionMaxIdleMs) {
-            setProperty("connectionMaxIdleMs", connectionMaxIdleMs);
+            doSetProperty("connectionMaxIdleMs", connectionMaxIdleMs);
             return this;
         }
         /**
@@ -1615,7 +1615,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder enableIdempotence(
                 boolean enableIdempotence) {
-            setProperty("enableIdempotence", enableIdempotence);
+            doSetProperty("enableIdempotence", enableIdempotence);
             return this;
         }
         /**
@@ -1632,7 +1632,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder enableIdempotence(
                 String enableIdempotence) {
-            setProperty("enableIdempotence", enableIdempotence);
+            doSetProperty("enableIdempotence", enableIdempotence);
             return this;
         }
         /**
@@ -1646,7 +1646,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder kafkaHeaderSerializer(
                 Object kafkaHeaderSerializer) {
-            setProperty("kafkaHeaderSerializer", kafkaHeaderSerializer);
+            doSetProperty("kafkaHeaderSerializer", kafkaHeaderSerializer);
             return this;
         }
         /**
@@ -1660,7 +1660,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder kafkaHeaderSerializer(
                 String kafkaHeaderSerializer) {
-            setProperty("kafkaHeaderSerializer", kafkaHeaderSerializer);
+            doSetProperty("kafkaHeaderSerializer", kafkaHeaderSerializer);
             return this;
         }
         /**
@@ -1673,7 +1673,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: producer
          */
         default KafkaEndpointProducerBuilder key(String key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -1686,7 +1686,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder keySerializerClass(
                 String keySerializerClass) {
-            setProperty("keySerializerClass", keySerializerClass);
+            doSetProperty("keySerializerClass", keySerializerClass);
             return this;
         }
         /**
@@ -1706,7 +1706,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1726,7 +1726,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1754,7 +1754,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: producer
          */
         default KafkaEndpointProducerBuilder lingerMs(Integer lingerMs) {
-            setProperty("lingerMs", lingerMs);
+            doSetProperty("lingerMs", lingerMs);
             return this;
         }
         /**
@@ -1783,7 +1783,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: producer
          */
         default KafkaEndpointProducerBuilder lingerMs(String lingerMs) {
-            setProperty("lingerMs", lingerMs);
+            doSetProperty("lingerMs", lingerMs);
             return this;
         }
         /**
@@ -1800,7 +1800,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: producer
          */
         default KafkaEndpointProducerBuilder maxBlockMs(Integer maxBlockMs) {
-            setProperty("maxBlockMs", maxBlockMs);
+            doSetProperty("maxBlockMs", maxBlockMs);
             return this;
         }
         /**
@@ -1818,7 +1818,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: producer
          */
         default KafkaEndpointProducerBuilder maxBlockMs(String maxBlockMs) {
-            setProperty("maxBlockMs", maxBlockMs);
+            doSetProperty("maxBlockMs", maxBlockMs);
             return this;
         }
         /**
@@ -1833,7 +1833,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder maxInFlightRequest(
                 Integer maxInFlightRequest) {
-            setProperty("maxInFlightRequest", maxInFlightRequest);
+            doSetProperty("maxInFlightRequest", maxInFlightRequest);
             return this;
         }
         /**
@@ -1849,7 +1849,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder maxInFlightRequest(
                 String maxInFlightRequest) {
-            setProperty("maxInFlightRequest", maxInFlightRequest);
+            doSetProperty("maxInFlightRequest", maxInFlightRequest);
             return this;
         }
         /**
@@ -1865,7 +1865,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder maxRequestSize(
                 Integer maxRequestSize) {
-            setProperty("maxRequestSize", maxRequestSize);
+            doSetProperty("maxRequestSize", maxRequestSize);
             return this;
         }
         /**
@@ -1882,7 +1882,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder maxRequestSize(
                 String maxRequestSize) {
-            setProperty("maxRequestSize", maxRequestSize);
+            doSetProperty("maxRequestSize", maxRequestSize);
             return this;
         }
         /**
@@ -1896,7 +1896,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder metadataMaxAgeMs(
                 Integer metadataMaxAgeMs) {
-            setProperty("metadataMaxAgeMs", metadataMaxAgeMs);
+            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
             return this;
         }
         /**
@@ -1911,7 +1911,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder metadataMaxAgeMs(
                 String metadataMaxAgeMs) {
-            setProperty("metadataMaxAgeMs", metadataMaxAgeMs);
+            doSetProperty("metadataMaxAgeMs", metadataMaxAgeMs);
             return this;
         }
         /**
@@ -1926,7 +1926,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder metricReporters(
                 String metricReporters) {
-            setProperty("metricReporters", metricReporters);
+            doSetProperty("metricReporters", metricReporters);
             return this;
         }
         /**
@@ -1938,7 +1938,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder metricsSampleWindowMs(
                 Integer metricsSampleWindowMs) {
-            setProperty("metricsSampleWindowMs", metricsSampleWindowMs);
+            doSetProperty("metricsSampleWindowMs", metricsSampleWindowMs);
             return this;
         }
         /**
@@ -1951,7 +1951,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder metricsSampleWindowMs(
                 String metricsSampleWindowMs) {
-            setProperty("metricsSampleWindowMs", metricsSampleWindowMs);
+            doSetProperty("metricsSampleWindowMs", metricsSampleWindowMs);
             return this;
         }
         /**
@@ -1963,7 +1963,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder noOfMetricsSample(
                 Integer noOfMetricsSample) {
-            setProperty("noOfMetricsSample", noOfMetricsSample);
+            doSetProperty("noOfMetricsSample", noOfMetricsSample);
             return this;
         }
         /**
@@ -1976,7 +1976,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder noOfMetricsSample(
                 String noOfMetricsSample) {
-            setProperty("noOfMetricsSample", noOfMetricsSample);
+            doSetProperty("noOfMetricsSample", noOfMetricsSample);
             return this;
         }
         /**
@@ -1988,7 +1988,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: producer
          */
         default KafkaEndpointProducerBuilder partitioner(String partitioner) {
-            setProperty("partitioner", partitioner);
+            doSetProperty("partitioner", partitioner);
             return this;
         }
         /**
@@ -2001,7 +2001,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: producer
          */
         default KafkaEndpointProducerBuilder partitionKey(Integer partitionKey) {
-            setProperty("partitionKey", partitionKey);
+            doSetProperty("partitionKey", partitionKey);
             return this;
         }
         /**
@@ -2015,7 +2015,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: producer
          */
         default KafkaEndpointProducerBuilder partitionKey(String partitionKey) {
-            setProperty("partitionKey", partitionKey);
+            doSetProperty("partitionKey", partitionKey);
             return this;
         }
         /**
@@ -2037,7 +2037,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder producerBatchSize(
                 Integer producerBatchSize) {
-            setProperty("producerBatchSize", producerBatchSize);
+            doSetProperty("producerBatchSize", producerBatchSize);
             return this;
         }
         /**
@@ -2060,7 +2060,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder producerBatchSize(
                 String producerBatchSize) {
-            setProperty("producerBatchSize", producerBatchSize);
+            doSetProperty("producerBatchSize", producerBatchSize);
             return this;
         }
         /**
@@ -2074,7 +2074,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder queueBufferingMaxMessages(
                 Integer queueBufferingMaxMessages) {
-            setProperty("queueBufferingMaxMessages", queueBufferingMaxMessages);
+            doSetProperty("queueBufferingMaxMessages", queueBufferingMaxMessages);
             return this;
         }
         /**
@@ -2089,7 +2089,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder queueBufferingMaxMessages(
                 String queueBufferingMaxMessages) {
-            setProperty("queueBufferingMaxMessages", queueBufferingMaxMessages);
+            doSetProperty("queueBufferingMaxMessages", queueBufferingMaxMessages);
             return this;
         }
         /**
@@ -2102,7 +2102,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder receiveBufferBytes(
                 Integer receiveBufferBytes) {
-            setProperty("receiveBufferBytes", receiveBufferBytes);
+            doSetProperty("receiveBufferBytes", receiveBufferBytes);
             return this;
         }
         /**
@@ -2116,7 +2116,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder receiveBufferBytes(
                 String receiveBufferBytes) {
-            setProperty("receiveBufferBytes", receiveBufferBytes);
+            doSetProperty("receiveBufferBytes", receiveBufferBytes);
             return this;
         }
         /**
@@ -2131,7 +2131,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder reconnectBackoffMs(
                 Integer reconnectBackoffMs) {
-            setProperty("reconnectBackoffMs", reconnectBackoffMs);
+            doSetProperty("reconnectBackoffMs", reconnectBackoffMs);
             return this;
         }
         /**
@@ -2147,7 +2147,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder reconnectBackoffMs(
                 String reconnectBackoffMs) {
-            setProperty("reconnectBackoffMs", reconnectBackoffMs);
+            doSetProperty("reconnectBackoffMs", reconnectBackoffMs);
             return this;
         }
         /**
@@ -2162,7 +2162,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder recordMetadata(
                 boolean recordMetadata) {
-            setProperty("recordMetadata", recordMetadata);
+            doSetProperty("recordMetadata", recordMetadata);
             return this;
         }
         /**
@@ -2177,7 +2177,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder recordMetadata(
                 String recordMetadata) {
-            setProperty("recordMetadata", recordMetadata);
+            doSetProperty("recordMetadata", recordMetadata);
             return this;
         }
         /**
@@ -2206,7 +2206,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder requestRequiredAcks(
                 String requestRequiredAcks) {
-            setProperty("requestRequiredAcks", requestRequiredAcks);
+            doSetProperty("requestRequiredAcks", requestRequiredAcks);
             return this;
         }
         /**
@@ -2220,7 +2220,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder requestTimeoutMs(
                 Integer requestTimeoutMs) {
-            setProperty("requestTimeoutMs", requestTimeoutMs);
+            doSetProperty("requestTimeoutMs", requestTimeoutMs);
             return this;
         }
         /**
@@ -2235,7 +2235,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder requestTimeoutMs(
                 String requestTimeoutMs) {
-            setProperty("requestTimeoutMs", requestTimeoutMs);
+            doSetProperty("requestTimeoutMs", requestTimeoutMs);
             return this;
         }
         /**
@@ -2252,7 +2252,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: producer
          */
         default KafkaEndpointProducerBuilder retries(Integer retries) {
-            setProperty("retries", retries);
+            doSetProperty("retries", retries);
             return this;
         }
         /**
@@ -2270,7 +2270,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: producer
          */
         default KafkaEndpointProducerBuilder retries(String retries) {
-            setProperty("retries", retries);
+            doSetProperty("retries", retries);
             return this;
         }
         /**
@@ -2285,7 +2285,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder retryBackoffMs(
                 Integer retryBackoffMs) {
-            setProperty("retryBackoffMs", retryBackoffMs);
+            doSetProperty("retryBackoffMs", retryBackoffMs);
             return this;
         }
         /**
@@ -2301,7 +2301,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder retryBackoffMs(
                 String retryBackoffMs) {
-            setProperty("retryBackoffMs", retryBackoffMs);
+            doSetProperty("retryBackoffMs", retryBackoffMs);
             return this;
         }
         /**
@@ -2313,7 +2313,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sendBufferBytes(
                 Integer sendBufferBytes) {
-            setProperty("sendBufferBytes", sendBufferBytes);
+            doSetProperty("sendBufferBytes", sendBufferBytes);
             return this;
         }
         /**
@@ -2326,7 +2326,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sendBufferBytes(
                 String sendBufferBytes) {
-            setProperty("sendBufferBytes", sendBufferBytes);
+            doSetProperty("sendBufferBytes", sendBufferBytes);
             return this;
         }
         /**
@@ -2338,7 +2338,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder serializerClass(
                 String serializerClass) {
-            setProperty("serializerClass", serializerClass);
+            doSetProperty("serializerClass", serializerClass);
             return this;
         }
         /**
@@ -2353,7 +2353,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder workerPool(
                 ExecutorService workerPool) {
-            setProperty("workerPool", workerPool);
+            doSetProperty("workerPool", workerPool);
             return this;
         }
         /**
@@ -2367,7 +2367,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: producer
          */
         default KafkaEndpointProducerBuilder workerPool(String workerPool) {
-            setProperty("workerPool", workerPool);
+            doSetProperty("workerPool", workerPool);
             return this;
         }
         /**
@@ -2381,7 +2381,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder workerPoolCoreSize(
                 Integer workerPoolCoreSize) {
-            setProperty("workerPoolCoreSize", workerPoolCoreSize);
+            doSetProperty("workerPoolCoreSize", workerPoolCoreSize);
             return this;
         }
         /**
@@ -2396,7 +2396,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder workerPoolCoreSize(
                 String workerPoolCoreSize) {
-            setProperty("workerPoolCoreSize", workerPoolCoreSize);
+            doSetProperty("workerPoolCoreSize", workerPoolCoreSize);
             return this;
         }
         /**
@@ -2410,7 +2410,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder workerPoolMaxSize(
                 Integer workerPoolMaxSize) {
-            setProperty("workerPoolMaxSize", workerPoolMaxSize);
+            doSetProperty("workerPoolMaxSize", workerPoolMaxSize);
             return this;
         }
         /**
@@ -2425,7 +2425,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder workerPoolMaxSize(
                 String workerPoolMaxSize) {
-            setProperty("workerPoolMaxSize", workerPoolMaxSize);
+            doSetProperty("workerPoolMaxSize", workerPoolMaxSize);
             return this;
         }
         /**
@@ -2443,7 +2443,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder interceptorClasses(
                 String interceptorClasses) {
-            setProperty("interceptorClasses", interceptorClasses);
+            doSetProperty("interceptorClasses", interceptorClasses);
             return this;
         }
         /**
@@ -2455,7 +2455,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder kerberosBeforeReloginMinTime(
                 Integer kerberosBeforeReloginMinTime) {
-            setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
+            doSetProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
         }
         /**
@@ -2468,7 +2468,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder kerberosBeforeReloginMinTime(
                 String kerberosBeforeReloginMinTime) {
-            setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
+            doSetProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
         }
         /**
@@ -2480,7 +2480,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder kerberosInitCmd(
                 String kerberosInitCmd) {
-            setProperty("kerberosInitCmd", kerberosInitCmd);
+            doSetProperty("kerberosInitCmd", kerberosInitCmd);
             return this;
         }
         /**
@@ -2499,7 +2499,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder kerberosPrincipalToLocalRules(
                 String kerberosPrincipalToLocalRules) {
-            setProperty("kerberosPrincipalToLocalRules", kerberosPrincipalToLocalRules);
+            doSetProperty("kerberosPrincipalToLocalRules", kerberosPrincipalToLocalRules);
             return this;
         }
         /**
@@ -2511,7 +2511,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder kerberosRenewJitter(
                 Double kerberosRenewJitter) {
-            setProperty("kerberosRenewJitter", kerberosRenewJitter);
+            doSetProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
         }
         /**
@@ -2523,7 +2523,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder kerberosRenewJitter(
                 String kerberosRenewJitter) {
-            setProperty("kerberosRenewJitter", kerberosRenewJitter);
+            doSetProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
         }
         /**
@@ -2537,7 +2537,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder kerberosRenewWindowFactor(
                 Double kerberosRenewWindowFactor) {
-            setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
+            doSetProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
         }
         /**
@@ -2551,7 +2551,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder kerberosRenewWindowFactor(
                 String kerberosRenewWindowFactor) {
-            setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
+            doSetProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
         }
         /**
@@ -2565,7 +2565,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder saslJaasConfig(
                 String saslJaasConfig) {
-            setProperty("saslJaasConfig", saslJaasConfig);
+            doSetProperty("saslJaasConfig", saslJaasConfig);
             return this;
         }
         /**
@@ -2578,7 +2578,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder saslKerberosServiceName(
                 String saslKerberosServiceName) {
-            setProperty("saslKerberosServiceName", saslKerberosServiceName);
+            doSetProperty("saslKerberosServiceName", saslKerberosServiceName);
             return this;
         }
         /**
@@ -2591,7 +2591,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointProducerBuilder saslMechanism(String saslMechanism) {
-            setProperty("saslMechanism", saslMechanism);
+            doSetProperty("saslMechanism", saslMechanism);
             return this;
         }
         /**
@@ -2604,7 +2604,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder securityProtocol(
                 String securityProtocol) {
-            setProperty("securityProtocol", securityProtocol);
+            doSetProperty("securityProtocol", securityProtocol);
             return this;
         }
         /**
@@ -2620,7 +2620,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslCipherSuites(
                 String sslCipherSuites) {
-            setProperty("sslCipherSuites", sslCipherSuites);
+            doSetProperty("sslCipherSuites", sslCipherSuites);
             return this;
         }
         /**
@@ -2634,7 +2634,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -2648,7 +2648,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -2661,7 +2661,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslEnabledProtocols(
                 String sslEnabledProtocols) {
-            setProperty("sslEnabledProtocols", sslEnabledProtocols);
+            doSetProperty("sslEnabledProtocols", sslEnabledProtocols);
             return this;
         }
         /**
@@ -2674,7 +2674,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslEndpointAlgorithm(
                 String sslEndpointAlgorithm) {
-            setProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
+            doSetProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
             return this;
         }
         /**
@@ -2688,7 +2688,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslKeymanagerAlgorithm(
                 String sslKeymanagerAlgorithm) {
-            setProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
+            doSetProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
             return this;
         }
         /**
@@ -2701,7 +2701,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslKeyPassword(
                 String sslKeyPassword) {
-            setProperty("sslKeyPassword", sslKeyPassword);
+            doSetProperty("sslKeyPassword", sslKeyPassword);
             return this;
         }
         /**
@@ -2714,7 +2714,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslKeystoreLocation(
                 String sslKeystoreLocation) {
-            setProperty("sslKeystoreLocation", sslKeystoreLocation);
+            doSetProperty("sslKeystoreLocation", sslKeystoreLocation);
             return this;
         }
         /**
@@ -2727,7 +2727,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslKeystorePassword(
                 String sslKeystorePassword) {
-            setProperty("sslKeystorePassword", sslKeystorePassword);
+            doSetProperty("sslKeystorePassword", sslKeystorePassword);
             return this;
         }
         /**
@@ -2740,7 +2740,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslKeystoreType(
                 String sslKeystoreType) {
-            setProperty("sslKeystoreType", sslKeystoreType);
+            doSetProperty("sslKeystoreType", sslKeystoreType);
             return this;
         }
         /**
@@ -2755,7 +2755,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslProtocol(String sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -2767,7 +2767,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslProvider(String sslProvider) {
-            setProperty("sslProvider", sslProvider);
+            doSetProperty("sslProvider", sslProvider);
             return this;
         }
         /**
@@ -2781,7 +2781,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslTrustmanagerAlgorithm(
                 String sslTrustmanagerAlgorithm) {
-            setProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
+            doSetProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
             return this;
         }
         /**
@@ -2793,7 +2793,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslTruststoreType(
                 String sslTruststoreType) {
-            setProperty("sslTruststoreType", sslTruststoreType);
+            doSetProperty("sslTruststoreType", sslTruststoreType);
             return this;
         }
         /**
@@ -2809,7 +2809,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder schemaRegistryURL(
                 String schemaRegistryURL) {
-            setProperty("schemaRegistryURL", schemaRegistryURL);
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
         /**
@@ -2821,7 +2821,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslTruststoreLocation(
                 String sslTruststoreLocation) {
-            setProperty("sslTruststoreLocation", sslTruststoreLocation);
+            doSetProperty("sslTruststoreLocation", sslTruststoreLocation);
             return this;
         }
         /**
@@ -2833,7 +2833,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder sslTruststorePassword(
                 String sslTruststorePassword) {
-            setProperty("sslTruststorePassword", sslTruststorePassword);
+            doSetProperty("sslTruststorePassword", sslTruststorePassword);
             return this;
         }
     }
@@ -2857,7 +2857,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2870,7 +2870,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2883,7 +2883,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2896,7 +2896,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -2921,7 +2921,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: common
          */
         default KafkaEndpointBuilder brokers(String brokers) {
-            setProperty("brokers", brokers);
+            doSetProperty("brokers", brokers);
             return this;
         }
         /**
@@ -2934,7 +2934,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: common
          */
         default KafkaEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -2948,7 +2948,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -2962,7 +2962,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -2978,7 +2978,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder reconnectBackoffMaxMs(
                 Integer reconnectBackoffMaxMs) {
-            setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
+            doSetProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
         }
         /**
@@ -2995,7 +2995,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder reconnectBackoffMaxMs(
                 String reconnectBackoffMaxMs) {
-            setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
+            doSetProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
         }
         /**
@@ -3013,7 +3013,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder interceptorClasses(
                 String interceptorClasses) {
-            setProperty("interceptorClasses", interceptorClasses);
+            doSetProperty("interceptorClasses", interceptorClasses);
             return this;
         }
         /**
@@ -3025,7 +3025,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder kerberosBeforeReloginMinTime(
                 Integer kerberosBeforeReloginMinTime) {
-            setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
+            doSetProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
         }
         /**
@@ -3038,7 +3038,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder kerberosBeforeReloginMinTime(
                 String kerberosBeforeReloginMinTime) {
-            setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
+            doSetProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
         }
         /**
@@ -3049,7 +3049,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointBuilder kerberosInitCmd(String kerberosInitCmd) {
-            setProperty("kerberosInitCmd", kerberosInitCmd);
+            doSetProperty("kerberosInitCmd", kerberosInitCmd);
             return this;
         }
         /**
@@ -3068,7 +3068,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder kerberosPrincipalToLocalRules(
                 String kerberosPrincipalToLocalRules) {
-            setProperty("kerberosPrincipalToLocalRules", kerberosPrincipalToLocalRules);
+            doSetProperty("kerberosPrincipalToLocalRules", kerberosPrincipalToLocalRules);
             return this;
         }
         /**
@@ -3080,7 +3080,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder kerberosRenewJitter(
                 Double kerberosRenewJitter) {
-            setProperty("kerberosRenewJitter", kerberosRenewJitter);
+            doSetProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
         }
         /**
@@ -3092,7 +3092,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder kerberosRenewJitter(
                 String kerberosRenewJitter) {
-            setProperty("kerberosRenewJitter", kerberosRenewJitter);
+            doSetProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
         }
         /**
@@ -3106,7 +3106,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder kerberosRenewWindowFactor(
                 Double kerberosRenewWindowFactor) {
-            setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
+            doSetProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
         }
         /**
@@ -3120,7 +3120,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder kerberosRenewWindowFactor(
                 String kerberosRenewWindowFactor) {
-            setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
+            doSetProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
         }
         /**
@@ -3133,7 +3133,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointBuilder saslJaasConfig(String saslJaasConfig) {
-            setProperty("saslJaasConfig", saslJaasConfig);
+            doSetProperty("saslJaasConfig", saslJaasConfig);
             return this;
         }
         /**
@@ -3146,7 +3146,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder saslKerberosServiceName(
                 String saslKerberosServiceName) {
-            setProperty("saslKerberosServiceName", saslKerberosServiceName);
+            doSetProperty("saslKerberosServiceName", saslKerberosServiceName);
             return this;
         }
         /**
@@ -3159,7 +3159,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointBuilder saslMechanism(String saslMechanism) {
-            setProperty("saslMechanism", saslMechanism);
+            doSetProperty("saslMechanism", saslMechanism);
             return this;
         }
         /**
@@ -3171,7 +3171,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointBuilder securityProtocol(String securityProtocol) {
-            setProperty("securityProtocol", securityProtocol);
+            doSetProperty("securityProtocol", securityProtocol);
             return this;
         }
         /**
@@ -3186,7 +3186,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointBuilder sslCipherSuites(String sslCipherSuites) {
-            setProperty("sslCipherSuites", sslCipherSuites);
+            doSetProperty("sslCipherSuites", sslCipherSuites);
             return this;
         }
         /**
@@ -3200,7 +3200,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -3214,7 +3214,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -3227,7 +3227,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder sslEnabledProtocols(
                 String sslEnabledProtocols) {
-            setProperty("sslEnabledProtocols", sslEnabledProtocols);
+            doSetProperty("sslEnabledProtocols", sslEnabledProtocols);
             return this;
         }
         /**
@@ -3240,7 +3240,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder sslEndpointAlgorithm(
                 String sslEndpointAlgorithm) {
-            setProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
+            doSetProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
             return this;
         }
         /**
@@ -3254,7 +3254,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder sslKeymanagerAlgorithm(
                 String sslKeymanagerAlgorithm) {
-            setProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
+            doSetProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
             return this;
         }
         /**
@@ -3266,7 +3266,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointBuilder sslKeystoreType(String sslKeystoreType) {
-            setProperty("sslKeystoreType", sslKeystoreType);
+            doSetProperty("sslKeystoreType", sslKeystoreType);
             return this;
         }
         /**
@@ -3281,7 +3281,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointBuilder sslProtocol(String sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -3293,7 +3293,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointBuilder sslProvider(String sslProvider) {
-            setProperty("sslProvider", sslProvider);
+            doSetProperty("sslProvider", sslProvider);
             return this;
         }
         /**
@@ -3307,7 +3307,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder sslTrustmanagerAlgorithm(
                 String sslTrustmanagerAlgorithm) {
-            setProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
+            doSetProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
             return this;
         }
         /**
@@ -3318,7 +3318,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: security
          */
         default KafkaEndpointBuilder sslTruststoreType(String sslTruststoreType) {
-            setProperty("sslTruststoreType", sslTruststoreType);
+            doSetProperty("sslTruststoreType", sslTruststoreType);
             return this;
         }
         /**
@@ -3333,7 +3333,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: confluent
          */
         default KafkaEndpointBuilder schemaRegistryURL(String schemaRegistryURL) {
-            setProperty("schemaRegistryURL", schemaRegistryURL);
+            doSetProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
     }
@@ -3357,7 +3357,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3370,7 +3370,7 @@ public interface KafkaEndpointBuilderFactory {
          */
         default AdvancedKafkaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3382,7 +3382,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedKafkaEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3394,7 +3394,7 @@ public interface KafkaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedKafkaEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

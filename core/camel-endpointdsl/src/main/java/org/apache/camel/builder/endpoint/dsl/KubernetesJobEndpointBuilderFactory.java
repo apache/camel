@@ -51,7 +51,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesJobEndpointConsumerBuilder dnsDomain(String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesJobEndpointConsumerBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: consumer
          */
         default KubernetesJobEndpointConsumerBuilder labelKey(String labelKey) {
-            setProperty("labelKey", labelKey);
+            doSetProperty("labelKey", labelKey);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder labelValue(
                 String labelValue) {
-            setProperty("labelValue", labelValue);
+            doSetProperty("labelValue", labelValue);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: consumer
          */
         default KubernetesJobEndpointConsumerBuilder namespace(String namespace) {
-            setProperty("namespace", namespace);
+            doSetProperty("namespace", namespace);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: consumer
          */
         default KubernetesJobEndpointConsumerBuilder poolSize(int poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: consumer
          */
         default KubernetesJobEndpointConsumerBuilder poolSize(String poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
@@ -215,7 +215,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder resourceName(
                 String resourceName) {
-            setProperty("resourceName", resourceName);
+            doSetProperty("resourceName", resourceName);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder caCertData(
                 String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -239,7 +239,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -251,7 +251,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -275,7 +275,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -323,7 +323,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -334,7 +334,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -346,7 +346,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -370,7 +370,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -397,7 +397,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -413,7 +413,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -425,7 +425,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -438,7 +438,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -451,7 +451,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -464,7 +464,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -477,7 +477,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -491,7 +491,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -504,7 +504,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -517,7 +517,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -540,7 +540,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder apiVersion(
                 String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -551,7 +551,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesJobEndpointProducerBuilder dnsDomain(String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -577,7 +577,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -588,7 +588,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesJobEndpointProducerBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -600,7 +600,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder portProtocol(
                 String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -620,7 +620,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -640,7 +640,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -651,7 +651,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: producer
          */
         default KubernetesJobEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -663,7 +663,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder caCertData(
                 String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -675,7 +675,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder caCertFile(
                 String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -687,7 +687,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -699,7 +699,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -711,7 +711,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -723,7 +723,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -735,7 +735,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -747,7 +747,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -759,7 +759,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder oauthToken(
                 String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -770,7 +770,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -782,7 +782,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -795,7 +795,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointProducerBuilder trustCerts(
                 String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -806,7 +806,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -830,7 +830,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -843,7 +843,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -856,7 +856,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -870,7 +870,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -883,7 +883,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -896,7 +896,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -918,7 +918,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesJobEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -929,7 +929,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesJobEndpointBuilder dnsDomain(String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -942,7 +942,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -955,7 +955,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -966,7 +966,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesJobEndpointBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -977,7 +977,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesJobEndpointBuilder portProtocol(String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -988,7 +988,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointBuilder caCertData(String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -999,7 +999,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointBuilder caCertFile(String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -1011,7 +1011,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -1023,7 +1023,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -1034,7 +1034,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointBuilder clientKeyAlgo(String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -1045,7 +1045,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointBuilder clientKeyData(String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -1056,7 +1056,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointBuilder clientKeyFile(String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -1068,7 +1068,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default KubernetesJobEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -1079,7 +1079,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -1090,7 +1090,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1101,7 +1101,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointBuilder trustCerts(Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -1113,7 +1113,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointBuilder trustCerts(String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -1124,7 +1124,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesJobEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1148,7 +1148,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1161,7 +1161,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1174,7 +1174,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1188,7 +1188,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1201,7 +1201,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1214,7 +1214,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          */
         default AdvancedKubernetesJobEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

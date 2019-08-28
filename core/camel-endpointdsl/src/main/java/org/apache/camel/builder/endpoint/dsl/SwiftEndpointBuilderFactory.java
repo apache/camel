@@ -46,7 +46,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder config(Object config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder config(String config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder domain(String domain) {
-            setProperty("domain", domain);
+            doSetProperty("domain", domain);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder project(String project) {
-            setProperty("project", project);
+            doSetProperty("project", project);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder subsystem(String subsystem) {
-            setProperty("subsystem", subsystem);
+            doSetProperty("subsystem", subsystem);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -164,7 +164,7 @@ public interface SwiftEndpointBuilderFactory {
          */
         default AdvancedSwiftEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface SwiftEndpointBuilderFactory {
          */
         default AdvancedSwiftEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSwiftEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSwiftEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

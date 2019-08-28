@@ -54,7 +54,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder azureBlobClient(
                 Object azureBlobClient) {
-            setProperty("azureBlobClient", azureBlobClient);
+            doSetProperty("azureBlobClient", azureBlobClient);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder azureBlobClient(
                 String azureBlobClient) {
-            setProperty("azureBlobClient", azureBlobClient);
+            doSetProperty("azureBlobClient", azureBlobClient);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder blobOffset(Long blobOffset) {
-            setProperty("blobOffset", blobOffset);
+            doSetProperty("blobOffset", blobOffset);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder blobOffset(String blobOffset) {
-            setProperty("blobOffset", blobOffset);
+            doSetProperty("blobOffset", blobOffset);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder blobType(BlobType blobType) {
-            setProperty("blobType", blobType);
+            doSetProperty("blobType", blobType);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder blobType(String blobType) {
-            setProperty("blobType", blobType);
+            doSetProperty("blobType", blobType);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder closeStreamAfterRead(
                 boolean closeStreamAfterRead) {
-            setProperty("closeStreamAfterRead", closeStreamAfterRead);
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder closeStreamAfterRead(
                 String closeStreamAfterRead) {
-            setProperty("closeStreamAfterRead", closeStreamAfterRead);
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder credentials(
                 Object credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder credentials(
                 String credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder dataLength(Long dataLength) {
-            setProperty("dataLength", dataLength);
+            doSetProperty("dataLength", dataLength);
             return this;
         }
         /**
@@ -187,7 +187,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder dataLength(String dataLength) {
-            setProperty("dataLength", dataLength);
+            doSetProperty("dataLength", dataLength);
             return this;
         }
         /**
@@ -198,7 +198,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder fileDir(String fileDir) {
-            setProperty("fileDir", fileDir);
+            doSetProperty("fileDir", fileDir);
             return this;
         }
         /**
@@ -211,7 +211,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder publicForRead(
                 boolean publicForRead) {
-            setProperty("publicForRead", publicForRead);
+            doSetProperty("publicForRead", publicForRead);
             return this;
         }
         /**
@@ -224,7 +224,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder publicForRead(
                 String publicForRead) {
-            setProperty("publicForRead", publicForRead);
+            doSetProperty("publicForRead", publicForRead);
             return this;
         }
         /**
@@ -236,7 +236,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder streamReadSize(
                 int streamReadSize) {
-            setProperty("streamReadSize", streamReadSize);
+            doSetProperty("streamReadSize", streamReadSize);
             return this;
         }
         /**
@@ -248,7 +248,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder streamReadSize(
                 String streamReadSize) {
-            setProperty("streamReadSize", streamReadSize);
+            doSetProperty("streamReadSize", streamReadSize);
             return this;
         }
         /**
@@ -266,7 +266,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -284,7 +284,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -312,7 +312,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -328,7 +328,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -340,7 +340,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -379,7 +379,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -405,7 +405,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -430,7 +430,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder azureBlobClient(
                 Object azureBlobClient) {
-            setProperty("azureBlobClient", azureBlobClient);
+            doSetProperty("azureBlobClient", azureBlobClient);
             return this;
         }
         /**
@@ -443,7 +443,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder azureBlobClient(
                 String azureBlobClient) {
-            setProperty("azureBlobClient", azureBlobClient);
+            doSetProperty("azureBlobClient", azureBlobClient);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder blobOffset(Long blobOffset) {
-            setProperty("blobOffset", blobOffset);
+            doSetProperty("blobOffset", blobOffset);
             return this;
         }
         /**
@@ -467,7 +467,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder blobOffset(String blobOffset) {
-            setProperty("blobOffset", blobOffset);
+            doSetProperty("blobOffset", blobOffset);
             return this;
         }
         /**
@@ -479,7 +479,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder blobType(BlobType blobType) {
-            setProperty("blobType", blobType);
+            doSetProperty("blobType", blobType);
             return this;
         }
         /**
@@ -491,7 +491,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder blobType(String blobType) {
-            setProperty("blobType", blobType);
+            doSetProperty("blobType", blobType);
             return this;
         }
         /**
@@ -503,7 +503,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder closeStreamAfterRead(
                 boolean closeStreamAfterRead) {
-            setProperty("closeStreamAfterRead", closeStreamAfterRead);
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
         }
         /**
@@ -515,7 +515,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder closeStreamAfterRead(
                 String closeStreamAfterRead) {
-            setProperty("closeStreamAfterRead", closeStreamAfterRead);
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
         }
         /**
@@ -528,7 +528,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder credentials(
                 Object credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -541,7 +541,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder credentials(
                 String credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -552,7 +552,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder dataLength(Long dataLength) {
-            setProperty("dataLength", dataLength);
+            doSetProperty("dataLength", dataLength);
             return this;
         }
         /**
@@ -563,7 +563,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder dataLength(String dataLength) {
-            setProperty("dataLength", dataLength);
+            doSetProperty("dataLength", dataLength);
             return this;
         }
         /**
@@ -574,7 +574,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder fileDir(String fileDir) {
-            setProperty("fileDir", fileDir);
+            doSetProperty("fileDir", fileDir);
             return this;
         }
         /**
@@ -587,7 +587,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder publicForRead(
                 boolean publicForRead) {
-            setProperty("publicForRead", publicForRead);
+            doSetProperty("publicForRead", publicForRead);
             return this;
         }
         /**
@@ -600,7 +600,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder publicForRead(
                 String publicForRead) {
-            setProperty("publicForRead", publicForRead);
+            doSetProperty("publicForRead", publicForRead);
             return this;
         }
         /**
@@ -612,7 +612,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder streamReadSize(
                 int streamReadSize) {
-            setProperty("streamReadSize", streamReadSize);
+            doSetProperty("streamReadSize", streamReadSize);
             return this;
         }
         /**
@@ -624,7 +624,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder streamReadSize(
                 String streamReadSize) {
-            setProperty("streamReadSize", streamReadSize);
+            doSetProperty("streamReadSize", streamReadSize);
             return this;
         }
         /**
@@ -637,7 +637,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder blobMetadata(
                 Map<String, String> blobMetadata) {
-            setProperty("blobMetadata", blobMetadata);
+            doSetProperty("blobMetadata", blobMetadata);
             return this;
         }
         /**
@@ -651,7 +651,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder blobMetadata(
                 String blobMetadata) {
-            setProperty("blobMetadata", blobMetadata);
+            doSetProperty("blobMetadata", blobMetadata);
             return this;
         }
         /**
@@ -662,7 +662,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder blobPrefix(String blobPrefix) {
-            setProperty("blobPrefix", blobPrefix);
+            doSetProperty("blobPrefix", blobPrefix);
             return this;
         }
         /**
@@ -674,7 +674,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder closeStreamAfterWrite(
                 boolean closeStreamAfterWrite) {
-            setProperty("closeStreamAfterWrite", closeStreamAfterWrite);
+            doSetProperty("closeStreamAfterWrite", closeStreamAfterWrite);
             return this;
         }
         /**
@@ -686,7 +686,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder closeStreamAfterWrite(
                 String closeStreamAfterWrite) {
-            setProperty("closeStreamAfterWrite", closeStreamAfterWrite);
+            doSetProperty("closeStreamAfterWrite", closeStreamAfterWrite);
             return this;
         }
         /**
@@ -706,7 +706,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -726,7 +726,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -739,7 +739,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder operation(
                 BlobServiceOperations operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -751,7 +751,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -763,7 +763,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder streamWriteSize(
                 int streamWriteSize) {
-            setProperty("streamWriteSize", streamWriteSize);
+            doSetProperty("streamWriteSize", streamWriteSize);
             return this;
         }
         /**
@@ -775,7 +775,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder streamWriteSize(
                 String streamWriteSize) {
-            setProperty("streamWriteSize", streamWriteSize);
+            doSetProperty("streamWriteSize", streamWriteSize);
             return this;
         }
         /**
@@ -787,7 +787,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder useFlatListing(
                 boolean useFlatListing) {
-            setProperty("useFlatListing", useFlatListing);
+            doSetProperty("useFlatListing", useFlatListing);
             return this;
         }
         /**
@@ -799,7 +799,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointProducerBuilder useFlatListing(
                 String useFlatListing) {
-            setProperty("useFlatListing", useFlatListing);
+            doSetProperty("useFlatListing", useFlatListing);
             return this;
         }
     }
@@ -824,7 +824,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -837,7 +837,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -850,7 +850,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -863,7 +863,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -887,7 +887,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointBuilder azureBlobClient(
                 Object azureBlobClient) {
-            setProperty("azureBlobClient", azureBlobClient);
+            doSetProperty("azureBlobClient", azureBlobClient);
             return this;
         }
         /**
@@ -900,7 +900,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointBuilder azureBlobClient(
                 String azureBlobClient) {
-            setProperty("azureBlobClient", azureBlobClient);
+            doSetProperty("azureBlobClient", azureBlobClient);
             return this;
         }
         /**
@@ -912,7 +912,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder blobOffset(Long blobOffset) {
-            setProperty("blobOffset", blobOffset);
+            doSetProperty("blobOffset", blobOffset);
             return this;
         }
         /**
@@ -924,7 +924,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder blobOffset(String blobOffset) {
-            setProperty("blobOffset", blobOffset);
+            doSetProperty("blobOffset", blobOffset);
             return this;
         }
         /**
@@ -936,7 +936,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder blobType(BlobType blobType) {
-            setProperty("blobType", blobType);
+            doSetProperty("blobType", blobType);
             return this;
         }
         /**
@@ -948,7 +948,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder blobType(String blobType) {
-            setProperty("blobType", blobType);
+            doSetProperty("blobType", blobType);
             return this;
         }
         /**
@@ -960,7 +960,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointBuilder closeStreamAfterRead(
                 boolean closeStreamAfterRead) {
-            setProperty("closeStreamAfterRead", closeStreamAfterRead);
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
         }
         /**
@@ -972,7 +972,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default BlobServiceEndpointBuilder closeStreamAfterRead(
                 String closeStreamAfterRead) {
-            setProperty("closeStreamAfterRead", closeStreamAfterRead);
+            doSetProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
         }
         /**
@@ -984,7 +984,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder credentials(Object credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -996,7 +996,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder credentials(String credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -1007,7 +1007,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder dataLength(Long dataLength) {
-            setProperty("dataLength", dataLength);
+            doSetProperty("dataLength", dataLength);
             return this;
         }
         /**
@@ -1018,7 +1018,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder dataLength(String dataLength) {
-            setProperty("dataLength", dataLength);
+            doSetProperty("dataLength", dataLength);
             return this;
         }
         /**
@@ -1029,7 +1029,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder fileDir(String fileDir) {
-            setProperty("fileDir", fileDir);
+            doSetProperty("fileDir", fileDir);
             return this;
         }
         /**
@@ -1041,7 +1041,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder publicForRead(boolean publicForRead) {
-            setProperty("publicForRead", publicForRead);
+            doSetProperty("publicForRead", publicForRead);
             return this;
         }
         /**
@@ -1053,7 +1053,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder publicForRead(String publicForRead) {
-            setProperty("publicForRead", publicForRead);
+            doSetProperty("publicForRead", publicForRead);
             return this;
         }
         /**
@@ -1064,7 +1064,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder streamReadSize(int streamReadSize) {
-            setProperty("streamReadSize", streamReadSize);
+            doSetProperty("streamReadSize", streamReadSize);
             return this;
         }
         /**
@@ -1075,7 +1075,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Group: common
          */
         default BlobServiceEndpointBuilder streamReadSize(String streamReadSize) {
-            setProperty("streamReadSize", streamReadSize);
+            doSetProperty("streamReadSize", streamReadSize);
             return this;
         }
     }
@@ -1100,7 +1100,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1113,7 +1113,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1126,7 +1126,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1139,7 +1139,7 @@ public interface BlobServiceEndpointBuilderFactory {
          */
         default AdvancedBlobServiceEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

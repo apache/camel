@@ -47,7 +47,7 @@ public interface RestApiEndpointBuilderFactory {
          * Group: consumer
          */
         default RestApiEndpointBuilder apiComponentName(String apiComponentName) {
-            setProperty("apiComponentName", apiComponentName);
+            doSetProperty("apiComponentName", apiComponentName);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface RestApiEndpointBuilderFactory {
          */
         default RestApiEndpointBuilder consumerComponentName(
                 String consumerComponentName) {
-            setProperty("consumerComponentName", consumerComponentName);
+            doSetProperty("consumerComponentName", consumerComponentName);
             return this;
         }
     }
@@ -88,7 +88,7 @@ public interface RestApiEndpointBuilderFactory {
          */
         default AdvancedRestApiEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -101,7 +101,7 @@ public interface RestApiEndpointBuilderFactory {
          */
         default AdvancedRestApiEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface RestApiEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRestApiEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -125,7 +125,7 @@ public interface RestApiEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRestApiEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

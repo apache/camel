@@ -47,7 +47,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupActiveOnly(Boolean groupActiveOnly) {
-            setProperty("groupActiveOnly", groupActiveOnly);
+            doSetProperty("groupActiveOnly", groupActiveOnly);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupActiveOnly(String groupActiveOnly) {
-            setProperty("groupActiveOnly", groupActiveOnly);
+            doSetProperty("groupActiveOnly", groupActiveOnly);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupDelay(Long groupDelay) {
-            setProperty("groupDelay", groupDelay);
+            doSetProperty("groupDelay", groupDelay);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupDelay(String groupDelay) {
-            setProperty("groupDelay", groupDelay);
+            doSetProperty("groupDelay", groupDelay);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupInterval(Long groupInterval) {
-            setProperty("groupInterval", groupInterval);
+            doSetProperty("groupInterval", groupInterval);
             return this;
         }
         /**
@@ -106,7 +106,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupInterval(String groupInterval) {
-            setProperty("groupInterval", groupInterval);
+            doSetProperty("groupInterval", groupInterval);
             return this;
         }
         /**
@@ -117,7 +117,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupSize(Integer groupSize) {
-            setProperty("groupSize", groupSize);
+            doSetProperty("groupSize", groupSize);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupSize(String groupSize) {
-            setProperty("groupSize", groupSize);
+            doSetProperty("groupSize", groupSize);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder level(String level) {
-            setProperty("level", level);
+            doSetProperty("level", level);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder logMask(Boolean logMask) {
-            setProperty("logMask", logMask);
+            doSetProperty("logMask", logMask);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder logMask(String logMask) {
-            setProperty("logMask", logMask);
+            doSetProperty("logMask", logMask);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder marker(String marker) {
-            setProperty("marker", marker);
+            doSetProperty("marker", marker);
             return this;
         }
         /**
@@ -187,7 +187,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder maxChars(int maxChars) {
-            setProperty("maxChars", maxChars);
+            doSetProperty("maxChars", maxChars);
             return this;
         }
         /**
@@ -198,7 +198,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder maxChars(String maxChars) {
-            setProperty("maxChars", maxChars);
+            doSetProperty("maxChars", maxChars);
             return this;
         }
         /**
@@ -209,7 +209,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder multiline(boolean multiline) {
-            setProperty("multiline", multiline);
+            doSetProperty("multiline", multiline);
             return this;
         }
         /**
@@ -220,7 +220,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder multiline(String multiline) {
-            setProperty("multiline", multiline);
+            doSetProperty("multiline", multiline);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showAll(boolean showAll) {
-            setProperty("showAll", showAll);
+            doSetProperty("showAll", showAll);
             return this;
         }
         /**
@@ -244,7 +244,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showAll(String showAll) {
-            setProperty("showAll", showAll);
+            doSetProperty("showAll", showAll);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showBody(boolean showBody) {
-            setProperty("showBody", showBody);
+            doSetProperty("showBody", showBody);
             return this;
         }
         /**
@@ -266,7 +266,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showBody(String showBody) {
-            setProperty("showBody", showBody);
+            doSetProperty("showBody", showBody);
             return this;
         }
         /**
@@ -277,7 +277,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showBodyType(boolean showBodyType) {
-            setProperty("showBodyType", showBodyType);
+            doSetProperty("showBodyType", showBodyType);
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showBodyType(String showBodyType) {
-            setProperty("showBodyType", showBodyType);
+            doSetProperty("showBodyType", showBodyType);
             return this;
         }
         /**
@@ -303,7 +303,7 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder showCaughtException(
                 boolean showCaughtException) {
-            setProperty("showCaughtException", showCaughtException);
+            doSetProperty("showCaughtException", showCaughtException);
             return this;
         }
         /**
@@ -318,7 +318,7 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder showCaughtException(
                 String showCaughtException) {
-            setProperty("showCaughtException", showCaughtException);
+            doSetProperty("showCaughtException", showCaughtException);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showException(boolean showException) {
-            setProperty("showException", showException);
+            doSetProperty("showException", showException);
             return this;
         }
         /**
@@ -342,7 +342,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showException(String showException) {
-            setProperty("showException", showException);
+            doSetProperty("showException", showException);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showExchangeId(boolean showExchangeId) {
-            setProperty("showExchangeId", showExchangeId);
+            doSetProperty("showExchangeId", showExchangeId);
             return this;
         }
         /**
@@ -364,7 +364,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showExchangeId(String showExchangeId) {
-            setProperty("showExchangeId", showExchangeId);
+            doSetProperty("showExchangeId", showExchangeId);
             return this;
         }
         /**
@@ -376,7 +376,7 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder showExchangePattern(
                 boolean showExchangePattern) {
-            setProperty("showExchangePattern", showExchangePattern);
+            doSetProperty("showExchangePattern", showExchangePattern);
             return this;
         }
         /**
@@ -388,7 +388,7 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder showExchangePattern(
                 String showExchangePattern) {
-            setProperty("showExchangePattern", showExchangePattern);
+            doSetProperty("showExchangePattern", showExchangePattern);
             return this;
         }
         /**
@@ -399,7 +399,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showFiles(boolean showFiles) {
-            setProperty("showFiles", showFiles);
+            doSetProperty("showFiles", showFiles);
             return this;
         }
         /**
@@ -410,7 +410,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showFiles(String showFiles) {
-            setProperty("showFiles", showFiles);
+            doSetProperty("showFiles", showFiles);
             return this;
         }
         /**
@@ -422,7 +422,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showFuture(boolean showFuture) {
-            setProperty("showFuture", showFuture);
+            doSetProperty("showFuture", showFuture);
             return this;
         }
         /**
@@ -434,7 +434,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showFuture(String showFuture) {
-            setProperty("showFuture", showFuture);
+            doSetProperty("showFuture", showFuture);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showHeaders(boolean showHeaders) {
-            setProperty("showHeaders", showHeaders);
+            doSetProperty("showHeaders", showHeaders);
             return this;
         }
         /**
@@ -456,7 +456,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showHeaders(String showHeaders) {
-            setProperty("showHeaders", showHeaders);
+            doSetProperty("showHeaders", showHeaders);
             return this;
         }
         /**
@@ -467,7 +467,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showProperties(boolean showProperties) {
-            setProperty("showProperties", showProperties);
+            doSetProperty("showProperties", showProperties);
             return this;
         }
         /**
@@ -478,7 +478,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showProperties(String showProperties) {
-            setProperty("showProperties", showProperties);
+            doSetProperty("showProperties", showProperties);
             return this;
         }
         /**
@@ -490,7 +490,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showStackTrace(boolean showStackTrace) {
-            setProperty("showStackTrace", showStackTrace);
+            doSetProperty("showStackTrace", showStackTrace);
             return this;
         }
         /**
@@ -502,7 +502,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showStackTrace(String showStackTrace) {
-            setProperty("showStackTrace", showStackTrace);
+            doSetProperty("showStackTrace", showStackTrace);
             return this;
         }
         /**
@@ -517,7 +517,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showStreams(boolean showStreams) {
-            setProperty("showStreams", showStreams);
+            doSetProperty("showStreams", showStreams);
             return this;
         }
         /**
@@ -532,7 +532,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showStreams(String showStreams) {
-            setProperty("showStreams", showStreams);
+            doSetProperty("showStreams", showStreams);
             return this;
         }
         /**
@@ -547,7 +547,7 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder skipBodyLineSeparator(
                 boolean skipBodyLineSeparator) {
-            setProperty("skipBodyLineSeparator", skipBodyLineSeparator);
+            doSetProperty("skipBodyLineSeparator", skipBodyLineSeparator);
             return this;
         }
         /**
@@ -562,7 +562,7 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder skipBodyLineSeparator(
                 String skipBodyLineSeparator) {
-            setProperty("skipBodyLineSeparator", skipBodyLineSeparator);
+            doSetProperty("skipBodyLineSeparator", skipBodyLineSeparator);
             return this;
         }
         /**
@@ -574,7 +574,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder style(OutputStyle style) {
-            setProperty("style", style);
+            doSetProperty("style", style);
             return this;
         }
         /**
@@ -586,7 +586,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder style(String style) {
-            setProperty("style", style);
+            doSetProperty("style", style);
             return this;
         }
     }
@@ -610,7 +610,7 @@ public interface LogEndpointBuilderFactory {
          */
         default AdvancedLogEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -623,7 +623,7 @@ public interface LogEndpointBuilderFactory {
          */
         default AdvancedLogEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -636,7 +636,7 @@ public interface LogEndpointBuilderFactory {
          */
         default AdvancedLogEndpointBuilder exchangeFormatter(
                 ExchangeFormatter exchangeFormatter) {
-            setProperty("exchangeFormatter", exchangeFormatter);
+            doSetProperty("exchangeFormatter", exchangeFormatter);
             return this;
         }
         /**
@@ -649,7 +649,7 @@ public interface LogEndpointBuilderFactory {
          */
         default AdvancedLogEndpointBuilder exchangeFormatter(
                 String exchangeFormatter) {
-            setProperty("exchangeFormatter", exchangeFormatter);
+            doSetProperty("exchangeFormatter", exchangeFormatter);
             return this;
         }
         /**
@@ -661,7 +661,7 @@ public interface LogEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLogEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -673,7 +673,7 @@ public interface LogEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLogEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

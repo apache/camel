@@ -48,7 +48,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder dnsDomain(String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default KubernetesSecretsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default KubernetesSecretsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -108,7 +108,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default KubernetesSecretsEndpointBuilder portProtocol(
                 String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder caCertData(String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder caCertFile(String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default KubernetesSecretsEndpointBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default KubernetesSecretsEndpointBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default KubernetesSecretsEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default KubernetesSecretsEndpointBuilder clientKeyData(
                 String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default KubernetesSecretsEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default KubernetesSecretsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -224,7 +224,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -235,7 +235,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder trustCerts(Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -247,7 +247,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder trustCerts(String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -258,7 +258,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesSecretsEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -282,7 +282,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default AdvancedKubernetesSecretsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -295,7 +295,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default AdvancedKubernetesSecretsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -308,7 +308,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default AdvancedKubernetesSecretsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -322,7 +322,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default AdvancedKubernetesSecretsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -335,7 +335,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default AdvancedKubernetesSecretsEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          */
         default AdvancedKubernetesSecretsEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

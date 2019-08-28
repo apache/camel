@@ -52,7 +52,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointConsumerBuilder amazonSWClient(Object amazonSWClient) {
-            setProperty("amazonSWClient", amazonSWClient);
+            doSetProperty("amazonSWClient", amazonSWClient);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointConsumerBuilder amazonSWClient(String amazonSWClient) {
-            setProperty("amazonSWClient", amazonSWClient);
+            doSetProperty("amazonSWClient", amazonSWClient);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointConsumerBuilder dataConverter(Object dataConverter) {
-            setProperty("dataConverter", dataConverter);
+            doSetProperty("dataConverter", dataConverter);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointConsumerBuilder dataConverter(String dataConverter) {
-            setProperty("dataConverter", dataConverter);
+            doSetProperty("dataConverter", dataConverter);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointConsumerBuilder domainName(String domainName) {
-            setProperty("domainName", domainName);
+            doSetProperty("domainName", domainName);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointConsumerBuilder eventName(String eventName) {
-            setProperty("eventName", eventName);
+            doSetProperty("eventName", eventName);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointConsumerBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointConsumerBuilder version(String version) {
-            setProperty("version", version);
+            doSetProperty("version", version);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -187,7 +187,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: activity
          */
         default SWFEndpointConsumerBuilder activityList(String activityList) {
-            setProperty("activityList", activityList);
+            doSetProperty("activityList", activityList);
             return this;
         }
         /**
@@ -199,7 +199,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointConsumerBuilder activityThreadPoolSize(
                 int activityThreadPoolSize) {
-            setProperty("activityThreadPoolSize", activityThreadPoolSize);
+            doSetProperty("activityThreadPoolSize", activityThreadPoolSize);
             return this;
         }
         /**
@@ -211,7 +211,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointConsumerBuilder activityThreadPoolSize(
                 String activityThreadPoolSize) {
-            setProperty("activityThreadPoolSize", activityThreadPoolSize);
+            doSetProperty("activityThreadPoolSize", activityThreadPoolSize);
             return this;
         }
         /**
@@ -224,7 +224,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointConsumerBuilder activityTypeExecutionOptions(
                 Object activityTypeExecutionOptions) {
-            setProperty("activityTypeExecutionOptions", activityTypeExecutionOptions);
+            doSetProperty("activityTypeExecutionOptions", activityTypeExecutionOptions);
             return this;
         }
         /**
@@ -237,7 +237,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointConsumerBuilder activityTypeExecutionOptions(
                 String activityTypeExecutionOptions) {
-            setProperty("activityTypeExecutionOptions", activityTypeExecutionOptions);
+            doSetProperty("activityTypeExecutionOptions", activityTypeExecutionOptions);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointConsumerBuilder activityTypeRegistrationOptions(
                 Object activityTypeRegistrationOptions) {
-            setProperty("activityTypeRegistrationOptions", activityTypeRegistrationOptions);
+            doSetProperty("activityTypeRegistrationOptions", activityTypeRegistrationOptions);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointConsumerBuilder activityTypeRegistrationOptions(
                 String activityTypeRegistrationOptions) {
-            setProperty("activityTypeRegistrationOptions", activityTypeRegistrationOptions);
+            doSetProperty("activityTypeRegistrationOptions", activityTypeRegistrationOptions);
             return this;
         }
         /**
@@ -274,7 +274,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: workflow
          */
         default SWFEndpointConsumerBuilder workflowList(String workflowList) {
-            setProperty("workflowList", workflowList);
+            doSetProperty("workflowList", workflowList);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointConsumerBuilder workflowTypeRegistrationOptions(
                 Object workflowTypeRegistrationOptions) {
-            setProperty("workflowTypeRegistrationOptions", workflowTypeRegistrationOptions);
+            doSetProperty("workflowTypeRegistrationOptions", workflowTypeRegistrationOptions);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointConsumerBuilder workflowTypeRegistrationOptions(
                 String workflowTypeRegistrationOptions) {
-            setProperty("workflowTypeRegistrationOptions", workflowTypeRegistrationOptions);
+            doSetProperty("workflowTypeRegistrationOptions", workflowTypeRegistrationOptions);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: security
          */
         default SWFEndpointConsumerBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -322,7 +322,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: security
          */
         default SWFEndpointConsumerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -350,7 +350,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -378,7 +378,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -391,7 +391,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -404,7 +404,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -417,7 +417,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder clientConfigurationParameters(
                 Map<String, Object> clientConfigurationParameters) {
-            setProperty("clientConfigurationParameters", clientConfigurationParameters);
+            doSetProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
         }
         /**
@@ -446,7 +446,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder clientConfigurationParameters(
                 String clientConfigurationParameters) {
-            setProperty("clientConfigurationParameters", clientConfigurationParameters);
+            doSetProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
         }
         /**
@@ -460,7 +460,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder startWorkflowOptionsParameters(
                 Map<String, Object> startWorkflowOptionsParameters) {
-            setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
+            doSetProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
         }
         /**
@@ -475,7 +475,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder startWorkflowOptionsParameters(
                 String startWorkflowOptionsParameters) {
-            setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
+            doSetProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
         }
         /**
@@ -489,7 +489,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder sWClientParameters(
                 Map<String, Object> sWClientParameters) {
-            setProperty("sWClientParameters", sWClientParameters);
+            doSetProperty("sWClientParameters", sWClientParameters);
             return this;
         }
         /**
@@ -504,7 +504,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder sWClientParameters(
                 String sWClientParameters) {
-            setProperty("sWClientParameters", sWClientParameters);
+            doSetProperty("sWClientParameters", sWClientParameters);
             return this;
         }
         /**
@@ -517,7 +517,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -530,7 +530,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -553,7 +553,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointProducerBuilder amazonSWClient(Object amazonSWClient) {
-            setProperty("amazonSWClient", amazonSWClient);
+            doSetProperty("amazonSWClient", amazonSWClient);
             return this;
         }
         /**
@@ -565,7 +565,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointProducerBuilder amazonSWClient(String amazonSWClient) {
-            setProperty("amazonSWClient", amazonSWClient);
+            doSetProperty("amazonSWClient", amazonSWClient);
             return this;
         }
         /**
@@ -580,7 +580,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointProducerBuilder dataConverter(Object dataConverter) {
-            setProperty("dataConverter", dataConverter);
+            doSetProperty("dataConverter", dataConverter);
             return this;
         }
         /**
@@ -595,7 +595,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointProducerBuilder dataConverter(String dataConverter) {
-            setProperty("dataConverter", dataConverter);
+            doSetProperty("dataConverter", dataConverter);
             return this;
         }
         /**
@@ -606,7 +606,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointProducerBuilder domainName(String domainName) {
-            setProperty("domainName", domainName);
+            doSetProperty("domainName", domainName);
             return this;
         }
         /**
@@ -617,7 +617,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointProducerBuilder eventName(String eventName) {
-            setProperty("eventName", eventName);
+            doSetProperty("eventName", eventName);
             return this;
         }
         /**
@@ -630,7 +630,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointProducerBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -641,7 +641,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointProducerBuilder version(String version) {
-            setProperty("version", version);
+            doSetProperty("version", version);
             return this;
         }
         /**
@@ -661,7 +661,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -681,7 +681,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -694,7 +694,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointProducerBuilder activitySchedulingOptions(
                 Object activitySchedulingOptions) {
-            setProperty("activitySchedulingOptions", activitySchedulingOptions);
+            doSetProperty("activitySchedulingOptions", activitySchedulingOptions);
             return this;
         }
         /**
@@ -707,7 +707,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointProducerBuilder activitySchedulingOptions(
                 String activitySchedulingOptions) {
-            setProperty("activitySchedulingOptions", activitySchedulingOptions);
+            doSetProperty("activitySchedulingOptions", activitySchedulingOptions);
             return this;
         }
         /**
@@ -718,7 +718,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: workflow
          */
         default SWFEndpointProducerBuilder childPolicy(String childPolicy) {
-            setProperty("childPolicy", childPolicy);
+            doSetProperty("childPolicy", childPolicy);
             return this;
         }
         /**
@@ -730,7 +730,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointProducerBuilder executionStartToCloseTimeout(
                 String executionStartToCloseTimeout) {
-            setProperty("executionStartToCloseTimeout", executionStartToCloseTimeout);
+            doSetProperty("executionStartToCloseTimeout", executionStartToCloseTimeout);
             return this;
         }
         /**
@@ -741,7 +741,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: workflow
          */
         default SWFEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -752,7 +752,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: workflow
          */
         default SWFEndpointProducerBuilder signalName(String signalName) {
-            setProperty("signalName", signalName);
+            doSetProperty("signalName", signalName);
             return this;
         }
         /**
@@ -764,7 +764,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointProducerBuilder stateResultType(
                 String stateResultType) {
-            setProperty("stateResultType", stateResultType);
+            doSetProperty("stateResultType", stateResultType);
             return this;
         }
         /**
@@ -776,7 +776,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointProducerBuilder taskStartToCloseTimeout(
                 String taskStartToCloseTimeout) {
-            setProperty("taskStartToCloseTimeout", taskStartToCloseTimeout);
+            doSetProperty("taskStartToCloseTimeout", taskStartToCloseTimeout);
             return this;
         }
         /**
@@ -788,7 +788,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointProducerBuilder terminationDetails(
                 String terminationDetails) {
-            setProperty("terminationDetails", terminationDetails);
+            doSetProperty("terminationDetails", terminationDetails);
             return this;
         }
         /**
@@ -800,7 +800,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default SWFEndpointProducerBuilder terminationReason(
                 String terminationReason) {
-            setProperty("terminationReason", terminationReason);
+            doSetProperty("terminationReason", terminationReason);
             return this;
         }
         /**
@@ -811,7 +811,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: security
          */
         default SWFEndpointProducerBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -822,7 +822,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: security
          */
         default SWFEndpointProducerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -847,7 +847,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -860,7 +860,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -874,7 +874,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointProducerBuilder clientConfigurationParameters(
                 Map<String, Object> clientConfigurationParameters) {
-            setProperty("clientConfigurationParameters", clientConfigurationParameters);
+            doSetProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
         }
         /**
@@ -889,7 +889,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointProducerBuilder clientConfigurationParameters(
                 String clientConfigurationParameters) {
-            setProperty("clientConfigurationParameters", clientConfigurationParameters);
+            doSetProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
         }
         /**
@@ -903,7 +903,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointProducerBuilder startWorkflowOptionsParameters(
                 Map<String, Object> startWorkflowOptionsParameters) {
-            setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
+            doSetProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
         }
         /**
@@ -918,7 +918,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointProducerBuilder startWorkflowOptionsParameters(
                 String startWorkflowOptionsParameters) {
-            setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
+            doSetProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
         }
         /**
@@ -932,7 +932,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointProducerBuilder sWClientParameters(
                 Map<String, Object> sWClientParameters) {
-            setProperty("sWClientParameters", sWClientParameters);
+            doSetProperty("sWClientParameters", sWClientParameters);
             return this;
         }
         /**
@@ -947,7 +947,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointProducerBuilder sWClientParameters(
                 String sWClientParameters) {
-            setProperty("sWClientParameters", sWClientParameters);
+            doSetProperty("sWClientParameters", sWClientParameters);
             return this;
         }
         /**
@@ -960,7 +960,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -973,7 +973,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -996,7 +996,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointBuilder amazonSWClient(Object amazonSWClient) {
-            setProperty("amazonSWClient", amazonSWClient);
+            doSetProperty("amazonSWClient", amazonSWClient);
             return this;
         }
         /**
@@ -1008,7 +1008,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointBuilder amazonSWClient(String amazonSWClient) {
-            setProperty("amazonSWClient", amazonSWClient);
+            doSetProperty("amazonSWClient", amazonSWClient);
             return this;
         }
         /**
@@ -1023,7 +1023,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointBuilder dataConverter(Object dataConverter) {
-            setProperty("dataConverter", dataConverter);
+            doSetProperty("dataConverter", dataConverter);
             return this;
         }
         /**
@@ -1038,7 +1038,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointBuilder dataConverter(String dataConverter) {
-            setProperty("dataConverter", dataConverter);
+            doSetProperty("dataConverter", dataConverter);
             return this;
         }
         /**
@@ -1049,7 +1049,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointBuilder domainName(String domainName) {
-            setProperty("domainName", domainName);
+            doSetProperty("domainName", domainName);
             return this;
         }
         /**
@@ -1060,7 +1060,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointBuilder eventName(String eventName) {
-            setProperty("eventName", eventName);
+            doSetProperty("eventName", eventName);
             return this;
         }
         /**
@@ -1073,7 +1073,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -1084,7 +1084,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: common
          */
         default SWFEndpointBuilder version(String version) {
-            setProperty("version", version);
+            doSetProperty("version", version);
             return this;
         }
         /**
@@ -1095,7 +1095,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: security
          */
         default SWFEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -1106,7 +1106,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: security
          */
         default SWFEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -1130,7 +1130,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1143,7 +1143,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1157,7 +1157,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointBuilder clientConfigurationParameters(
                 Map<String, Object> clientConfigurationParameters) {
-            setProperty("clientConfigurationParameters", clientConfigurationParameters);
+            doSetProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
         }
         /**
@@ -1172,7 +1172,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointBuilder clientConfigurationParameters(
                 String clientConfigurationParameters) {
-            setProperty("clientConfigurationParameters", clientConfigurationParameters);
+            doSetProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
         }
         /**
@@ -1186,7 +1186,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointBuilder startWorkflowOptionsParameters(
                 Map<String, Object> startWorkflowOptionsParameters) {
-            setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
+            doSetProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
         }
         /**
@@ -1201,7 +1201,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointBuilder startWorkflowOptionsParameters(
                 String startWorkflowOptionsParameters) {
-            setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
+            doSetProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
         }
         /**
@@ -1215,7 +1215,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointBuilder sWClientParameters(
                 Map<String, Object> sWClientParameters) {
-            setProperty("sWClientParameters", sWClientParameters);
+            doSetProperty("sWClientParameters", sWClientParameters);
             return this;
         }
         /**
@@ -1230,7 +1230,7 @@ public interface SWFEndpointBuilderFactory {
          */
         default AdvancedSWFEndpointBuilder sWClientParameters(
                 String sWClientParameters) {
-            setProperty("sWClientParameters", sWClientParameters);
+            doSetProperty("sWClientParameters", sWClientParameters);
             return this;
         }
         /**
@@ -1242,7 +1242,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1254,7 +1254,7 @@ public interface SWFEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

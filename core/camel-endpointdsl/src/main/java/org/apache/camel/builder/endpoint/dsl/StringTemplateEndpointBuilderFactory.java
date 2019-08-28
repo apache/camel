@@ -47,7 +47,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * Group: producer
          */
         default StringTemplateEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * Group: producer
          */
         default StringTemplateEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -69,7 +69,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStart(char delimiterStart) {
-            setProperty("delimiterStart", delimiterStart);
+            doSetProperty("delimiterStart", delimiterStart);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface StringTemplateEndpointBuilderFactory {
          */
         default StringTemplateEndpointBuilder delimiterStart(
                 String delimiterStart) {
-            setProperty("delimiterStart", delimiterStart);
+            doSetProperty("delimiterStart", delimiterStart);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStop(char delimiterStop) {
-            setProperty("delimiterStop", delimiterStop);
+            doSetProperty("delimiterStop", delimiterStop);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStop(String delimiterStop) {
-            setProperty("delimiterStop", delimiterStop);
+            doSetProperty("delimiterStop", delimiterStop);
             return this;
         }
     }
@@ -127,7 +127,7 @@ public interface StringTemplateEndpointBuilderFactory {
          */
         default AdvancedStringTemplateEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface StringTemplateEndpointBuilderFactory {
          */
         default AdvancedStringTemplateEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface StringTemplateEndpointBuilderFactory {
          */
         default AdvancedStringTemplateEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface StringTemplateEndpointBuilderFactory {
          */
         default AdvancedStringTemplateEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

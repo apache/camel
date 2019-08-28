@@ -55,7 +55,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: common
          */
         default CouchbaseEndpointConsumerBuilder bucket(String bucket) {
-            setProperty("bucket", bucket);
+            doSetProperty("bucket", bucket);
             return this;
         }
         /**
@@ -66,7 +66,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: common
          */
         default CouchbaseEndpointConsumerBuilder key(String key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder consumerProcessedStrategy(
                 String consumerProcessedStrategy) {
-            setProperty("consumerProcessedStrategy", consumerProcessedStrategy);
+            doSetProperty("consumerProcessedStrategy", consumerProcessedStrategy);
             return this;
         }
         /**
@@ -125,7 +125,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder descending(boolean descending) {
-            setProperty("descending", descending);
+            doSetProperty("descending", descending);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder descending(String descending) {
-            setProperty("descending", descending);
+            doSetProperty("descending", descending);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder designDocumentName(
                 String designDocumentName) {
-            setProperty("designDocumentName", designDocumentName);
+            doSetProperty("designDocumentName", designDocumentName);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder limit(int limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder limit(String limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder rangeEndKey(String rangeEndKey) {
-            setProperty("rangeEndKey", rangeEndKey);
+            doSetProperty("rangeEndKey", rangeEndKey);
             return this;
         }
         /**
@@ -193,7 +193,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder rangeStartKey(
                 String rangeStartKey) {
-            setProperty("rangeStartKey", rangeStartKey);
+            doSetProperty("rangeStartKey", rangeStartKey);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -219,7 +219,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder skip(int skip) {
-            setProperty("skip", skip);
+            doSetProperty("skip", skip);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder skip(String skip) {
-            setProperty("skip", skip);
+            doSetProperty("skip", skip);
             return this;
         }
         /**
@@ -252,7 +252,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder viewName(String viewName) {
-            setProperty("viewName", viewName);
+            doSetProperty("viewName", viewName);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -278,7 +278,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -291,7 +291,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -304,7 +304,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -321,7 +321,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -338,7 +338,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -351,7 +351,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -364,7 +364,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -376,7 +376,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -388,7 +388,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -401,7 +401,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -415,7 +415,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -428,7 +428,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -442,7 +442,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -457,7 +457,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -472,7 +472,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -484,7 +484,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -498,7 +498,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -513,7 +513,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -525,7 +525,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -537,7 +537,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -548,7 +548,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -560,7 +560,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -573,7 +573,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -586,7 +586,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -597,7 +597,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: security
          */
         default CouchbaseEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -608,7 +608,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: security
          */
         default CouchbaseEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -635,7 +635,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -651,7 +651,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -663,7 +663,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -676,7 +676,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -692,7 +692,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -708,7 +708,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -720,7 +720,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder additionalHosts(
                 String additionalHosts) {
-            setProperty("additionalHosts", additionalHosts);
+            doSetProperty("additionalHosts", additionalHosts);
             return this;
         }
         /**
@@ -733,7 +733,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -746,7 +746,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -758,7 +758,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder maxReconnectDelay(
                 long maxReconnectDelay) {
-            setProperty("maxReconnectDelay", maxReconnectDelay);
+            doSetProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
         }
         /**
@@ -770,7 +770,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder maxReconnectDelay(
                 String maxReconnectDelay) {
-            setProperty("maxReconnectDelay", maxReconnectDelay);
+            doSetProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
         }
         /**
@@ -782,7 +782,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder obsPollInterval(
                 long obsPollInterval) {
-            setProperty("obsPollInterval", obsPollInterval);
+            doSetProperty("obsPollInterval", obsPollInterval);
             return this;
         }
         /**
@@ -794,7 +794,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder obsPollInterval(
                 String obsPollInterval) {
-            setProperty("obsPollInterval", obsPollInterval);
+            doSetProperty("obsPollInterval", obsPollInterval);
             return this;
         }
         /**
@@ -806,7 +806,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder obsTimeout(
                 long obsTimeout) {
-            setProperty("obsTimeout", obsTimeout);
+            doSetProperty("obsTimeout", obsTimeout);
             return this;
         }
         /**
@@ -818,7 +818,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder obsTimeout(
                 String obsTimeout) {
-            setProperty("obsTimeout", obsTimeout);
+            doSetProperty("obsTimeout", obsTimeout);
             return this;
         }
         /**
@@ -830,7 +830,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder opQueueMaxBlockTime(
                 long opQueueMaxBlockTime) {
-            setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
+            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
         }
         /**
@@ -842,7 +842,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder opQueueMaxBlockTime(
                 String opQueueMaxBlockTime) {
-            setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
+            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
         }
         /**
@@ -854,7 +854,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder opTimeOut(
                 long opTimeOut) {
-            setProperty("opTimeOut", opTimeOut);
+            doSetProperty("opTimeOut", opTimeOut);
             return this;
         }
         /**
@@ -866,7 +866,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder opTimeOut(
                 String opTimeOut) {
-            setProperty("opTimeOut", opTimeOut);
+            doSetProperty("opTimeOut", opTimeOut);
             return this;
         }
         /**
@@ -878,7 +878,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder readBufferSize(
                 int readBufferSize) {
-            setProperty("readBufferSize", readBufferSize);
+            doSetProperty("readBufferSize", readBufferSize);
             return this;
         }
         /**
@@ -890,7 +890,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder readBufferSize(
                 String readBufferSize) {
-            setProperty("readBufferSize", readBufferSize);
+            doSetProperty("readBufferSize", readBufferSize);
             return this;
         }
         /**
@@ -902,7 +902,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder shouldOptimize(
                 boolean shouldOptimize) {
-            setProperty("shouldOptimize", shouldOptimize);
+            doSetProperty("shouldOptimize", shouldOptimize);
             return this;
         }
         /**
@@ -914,7 +914,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder shouldOptimize(
                 String shouldOptimize) {
-            setProperty("shouldOptimize", shouldOptimize);
+            doSetProperty("shouldOptimize", shouldOptimize);
             return this;
         }
         /**
@@ -927,7 +927,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -940,7 +940,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -952,7 +952,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder timeoutExceptionThreshold(
                 int timeoutExceptionThreshold) {
-            setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
+            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
         }
         /**
@@ -964,7 +964,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointConsumerBuilder timeoutExceptionThreshold(
                 String timeoutExceptionThreshold) {
-            setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
+            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
         }
     }
@@ -986,7 +986,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: common
          */
         default CouchbaseEndpointProducerBuilder bucket(String bucket) {
-            setProperty("bucket", bucket);
+            doSetProperty("bucket", bucket);
             return this;
         }
         /**
@@ -997,7 +997,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: common
          */
         default CouchbaseEndpointProducerBuilder key(String key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -1010,7 +1010,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointProducerBuilder autoStartIdForInserts(
                 boolean autoStartIdForInserts) {
-            setProperty("autoStartIdForInserts", autoStartIdForInserts);
+            doSetProperty("autoStartIdForInserts", autoStartIdForInserts);
             return this;
         }
         /**
@@ -1023,7 +1023,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointProducerBuilder autoStartIdForInserts(
                 String autoStartIdForInserts) {
-            setProperty("autoStartIdForInserts", autoStartIdForInserts);
+            doSetProperty("autoStartIdForInserts", autoStartIdForInserts);
             return this;
         }
         /**
@@ -1043,7 +1043,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1063,7 +1063,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1074,7 +1074,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -1085,7 +1085,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder persistTo(int persistTo) {
-            setProperty("persistTo", persistTo);
+            doSetProperty("persistTo", persistTo);
             return this;
         }
         /**
@@ -1096,7 +1096,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder persistTo(String persistTo) {
-            setProperty("persistTo", persistTo);
+            doSetProperty("persistTo", persistTo);
             return this;
         }
         /**
@@ -1108,7 +1108,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointProducerBuilder producerRetryAttempts(
                 int producerRetryAttempts) {
-            setProperty("producerRetryAttempts", producerRetryAttempts);
+            doSetProperty("producerRetryAttempts", producerRetryAttempts);
             return this;
         }
         /**
@@ -1120,7 +1120,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointProducerBuilder producerRetryAttempts(
                 String producerRetryAttempts) {
-            setProperty("producerRetryAttempts", producerRetryAttempts);
+            doSetProperty("producerRetryAttempts", producerRetryAttempts);
             return this;
         }
         /**
@@ -1132,7 +1132,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointProducerBuilder producerRetryPause(
                 int producerRetryPause) {
-            setProperty("producerRetryPause", producerRetryPause);
+            doSetProperty("producerRetryPause", producerRetryPause);
             return this;
         }
         /**
@@ -1144,7 +1144,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointProducerBuilder producerRetryPause(
                 String producerRetryPause) {
-            setProperty("producerRetryPause", producerRetryPause);
+            doSetProperty("producerRetryPause", producerRetryPause);
             return this;
         }
         /**
@@ -1155,7 +1155,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder replicateTo(int replicateTo) {
-            setProperty("replicateTo", replicateTo);
+            doSetProperty("replicateTo", replicateTo);
             return this;
         }
         /**
@@ -1166,7 +1166,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder replicateTo(String replicateTo) {
-            setProperty("replicateTo", replicateTo);
+            doSetProperty("replicateTo", replicateTo);
             return this;
         }
         /**
@@ -1178,7 +1178,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointProducerBuilder startingIdForInsertsFrom(
                 long startingIdForInsertsFrom) {
-            setProperty("startingIdForInsertsFrom", startingIdForInsertsFrom);
+            doSetProperty("startingIdForInsertsFrom", startingIdForInsertsFrom);
             return this;
         }
         /**
@@ -1190,7 +1190,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default CouchbaseEndpointProducerBuilder startingIdForInsertsFrom(
                 String startingIdForInsertsFrom) {
-            setProperty("startingIdForInsertsFrom", startingIdForInsertsFrom);
+            doSetProperty("startingIdForInsertsFrom", startingIdForInsertsFrom);
             return this;
         }
         /**
@@ -1201,7 +1201,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: security
          */
         default CouchbaseEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1212,7 +1212,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: security
          */
         default CouchbaseEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1235,7 +1235,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder additionalHosts(
                 String additionalHosts) {
-            setProperty("additionalHosts", additionalHosts);
+            doSetProperty("additionalHosts", additionalHosts);
             return this;
         }
         /**
@@ -1248,7 +1248,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1261,7 +1261,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1273,7 +1273,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder maxReconnectDelay(
                 long maxReconnectDelay) {
-            setProperty("maxReconnectDelay", maxReconnectDelay);
+            doSetProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
         }
         /**
@@ -1285,7 +1285,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder maxReconnectDelay(
                 String maxReconnectDelay) {
-            setProperty("maxReconnectDelay", maxReconnectDelay);
+            doSetProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
         }
         /**
@@ -1297,7 +1297,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder obsPollInterval(
                 long obsPollInterval) {
-            setProperty("obsPollInterval", obsPollInterval);
+            doSetProperty("obsPollInterval", obsPollInterval);
             return this;
         }
         /**
@@ -1309,7 +1309,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder obsPollInterval(
                 String obsPollInterval) {
-            setProperty("obsPollInterval", obsPollInterval);
+            doSetProperty("obsPollInterval", obsPollInterval);
             return this;
         }
         /**
@@ -1321,7 +1321,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder obsTimeout(
                 long obsTimeout) {
-            setProperty("obsTimeout", obsTimeout);
+            doSetProperty("obsTimeout", obsTimeout);
             return this;
         }
         /**
@@ -1333,7 +1333,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder obsTimeout(
                 String obsTimeout) {
-            setProperty("obsTimeout", obsTimeout);
+            doSetProperty("obsTimeout", obsTimeout);
             return this;
         }
         /**
@@ -1345,7 +1345,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder opQueueMaxBlockTime(
                 long opQueueMaxBlockTime) {
-            setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
+            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
         }
         /**
@@ -1357,7 +1357,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder opQueueMaxBlockTime(
                 String opQueueMaxBlockTime) {
-            setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
+            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
         }
         /**
@@ -1369,7 +1369,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder opTimeOut(
                 long opTimeOut) {
-            setProperty("opTimeOut", opTimeOut);
+            doSetProperty("opTimeOut", opTimeOut);
             return this;
         }
         /**
@@ -1381,7 +1381,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder opTimeOut(
                 String opTimeOut) {
-            setProperty("opTimeOut", opTimeOut);
+            doSetProperty("opTimeOut", opTimeOut);
             return this;
         }
         /**
@@ -1393,7 +1393,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder readBufferSize(
                 int readBufferSize) {
-            setProperty("readBufferSize", readBufferSize);
+            doSetProperty("readBufferSize", readBufferSize);
             return this;
         }
         /**
@@ -1405,7 +1405,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder readBufferSize(
                 String readBufferSize) {
-            setProperty("readBufferSize", readBufferSize);
+            doSetProperty("readBufferSize", readBufferSize);
             return this;
         }
         /**
@@ -1417,7 +1417,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder shouldOptimize(
                 boolean shouldOptimize) {
-            setProperty("shouldOptimize", shouldOptimize);
+            doSetProperty("shouldOptimize", shouldOptimize);
             return this;
         }
         /**
@@ -1429,7 +1429,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder shouldOptimize(
                 String shouldOptimize) {
-            setProperty("shouldOptimize", shouldOptimize);
+            doSetProperty("shouldOptimize", shouldOptimize);
             return this;
         }
         /**
@@ -1442,7 +1442,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1455,7 +1455,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1467,7 +1467,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder timeoutExceptionThreshold(
                 int timeoutExceptionThreshold) {
-            setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
+            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
         }
         /**
@@ -1479,7 +1479,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointProducerBuilder timeoutExceptionThreshold(
                 String timeoutExceptionThreshold) {
-            setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
+            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
         }
     }
@@ -1501,7 +1501,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: common
          */
         default CouchbaseEndpointBuilder bucket(String bucket) {
-            setProperty("bucket", bucket);
+            doSetProperty("bucket", bucket);
             return this;
         }
         /**
@@ -1512,7 +1512,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: common
          */
         default CouchbaseEndpointBuilder key(String key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -1523,7 +1523,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: security
          */
         default CouchbaseEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1534,7 +1534,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: security
          */
         default CouchbaseEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1557,7 +1557,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder additionalHosts(
                 String additionalHosts) {
-            setProperty("additionalHosts", additionalHosts);
+            doSetProperty("additionalHosts", additionalHosts);
             return this;
         }
         /**
@@ -1570,7 +1570,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1583,7 +1583,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1595,7 +1595,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder maxReconnectDelay(
                 long maxReconnectDelay) {
-            setProperty("maxReconnectDelay", maxReconnectDelay);
+            doSetProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
         }
         /**
@@ -1607,7 +1607,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder maxReconnectDelay(
                 String maxReconnectDelay) {
-            setProperty("maxReconnectDelay", maxReconnectDelay);
+            doSetProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
         }
         /**
@@ -1619,7 +1619,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder obsPollInterval(
                 long obsPollInterval) {
-            setProperty("obsPollInterval", obsPollInterval);
+            doSetProperty("obsPollInterval", obsPollInterval);
             return this;
         }
         /**
@@ -1631,7 +1631,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder obsPollInterval(
                 String obsPollInterval) {
-            setProperty("obsPollInterval", obsPollInterval);
+            doSetProperty("obsPollInterval", obsPollInterval);
             return this;
         }
         /**
@@ -1642,7 +1642,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder obsTimeout(long obsTimeout) {
-            setProperty("obsTimeout", obsTimeout);
+            doSetProperty("obsTimeout", obsTimeout);
             return this;
         }
         /**
@@ -1653,7 +1653,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder obsTimeout(String obsTimeout) {
-            setProperty("obsTimeout", obsTimeout);
+            doSetProperty("obsTimeout", obsTimeout);
             return this;
         }
         /**
@@ -1665,7 +1665,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder opQueueMaxBlockTime(
                 long opQueueMaxBlockTime) {
-            setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
+            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
         }
         /**
@@ -1677,7 +1677,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder opQueueMaxBlockTime(
                 String opQueueMaxBlockTime) {
-            setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
+            doSetProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
         }
         /**
@@ -1688,7 +1688,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder opTimeOut(long opTimeOut) {
-            setProperty("opTimeOut", opTimeOut);
+            doSetProperty("opTimeOut", opTimeOut);
             return this;
         }
         /**
@@ -1699,7 +1699,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder opTimeOut(String opTimeOut) {
-            setProperty("opTimeOut", opTimeOut);
+            doSetProperty("opTimeOut", opTimeOut);
             return this;
         }
         /**
@@ -1711,7 +1711,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder readBufferSize(
                 int readBufferSize) {
-            setProperty("readBufferSize", readBufferSize);
+            doSetProperty("readBufferSize", readBufferSize);
             return this;
         }
         /**
@@ -1723,7 +1723,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder readBufferSize(
                 String readBufferSize) {
-            setProperty("readBufferSize", readBufferSize);
+            doSetProperty("readBufferSize", readBufferSize);
             return this;
         }
         /**
@@ -1735,7 +1735,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder shouldOptimize(
                 boolean shouldOptimize) {
-            setProperty("shouldOptimize", shouldOptimize);
+            doSetProperty("shouldOptimize", shouldOptimize);
             return this;
         }
         /**
@@ -1747,7 +1747,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder shouldOptimize(
                 String shouldOptimize) {
-            setProperty("shouldOptimize", shouldOptimize);
+            doSetProperty("shouldOptimize", shouldOptimize);
             return this;
         }
         /**
@@ -1759,7 +1759,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1771,7 +1771,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1783,7 +1783,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder timeoutExceptionThreshold(
                 int timeoutExceptionThreshold) {
-            setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
+            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
         }
         /**
@@ -1795,7 +1795,7 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder timeoutExceptionThreshold(
                 String timeoutExceptionThreshold) {
-            setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
+            doSetProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
         }
     }

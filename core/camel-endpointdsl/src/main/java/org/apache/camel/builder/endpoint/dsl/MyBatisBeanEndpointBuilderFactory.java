@@ -61,7 +61,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          */
         default AdvancedMyBatisBeanEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          */
         default AdvancedMyBatisBeanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          */
         default AdvancedMyBatisBeanEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          */
         default AdvancedMyBatisBeanEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

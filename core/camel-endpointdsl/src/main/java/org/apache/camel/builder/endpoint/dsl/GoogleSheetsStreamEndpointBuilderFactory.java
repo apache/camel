@@ -49,7 +49,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default GoogleSheetsStreamEndpointBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default GoogleSheetsStreamEndpointBuilder clientSecret(
                 String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default GoogleSheetsStreamEndpointBuilder includeGridData(
                 boolean includeGridData) {
-            setProperty("includeGridData", includeGridData);
+            doSetProperty("includeGridData", includeGridData);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default GoogleSheetsStreamEndpointBuilder includeGridData(
                 String includeGridData) {
-            setProperty("includeGridData", includeGridData);
+            doSetProperty("includeGridData", includeGridData);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default GoogleSheetsStreamEndpointBuilder majorDimension(
                 String majorDimension) {
-            setProperty("majorDimension", majorDimension);
+            doSetProperty("majorDimension", majorDimension);
             return this;
         }
         /**
@@ -134,7 +134,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder maxResults(int maxResults) {
-            setProperty("maxResults", maxResults);
+            doSetProperty("maxResults", maxResults);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder maxResults(String maxResults) {
-            setProperty("maxResults", maxResults);
+            doSetProperty("maxResults", maxResults);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder range(String range) {
-            setProperty("range", range);
+            doSetProperty("range", range);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default GoogleSheetsStreamEndpointBuilder refreshToken(
                 String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -187,7 +187,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder scopes(List<String> scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default GoogleSheetsStreamEndpointBuilder splitResults(
                 boolean splitResults) {
-            setProperty("splitResults", splitResults);
+            doSetProperty("splitResults", splitResults);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default GoogleSheetsStreamEndpointBuilder splitResults(
                 String splitResults) {
-            setProperty("splitResults", splitResults);
+            doSetProperty("splitResults", splitResults);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default GoogleSheetsStreamEndpointBuilder spreadsheetId(
                 String spreadsheetId) {
-            setProperty("spreadsheetId", spreadsheetId);
+            doSetProperty("spreadsheetId", spreadsheetId);
             return this;
         }
         /**
@@ -257,7 +257,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default GoogleSheetsStreamEndpointBuilder valueRenderOption(
                 String valueRenderOption) {
-            setProperty("valueRenderOption", valueRenderOption);
+            doSetProperty("valueRenderOption", valueRenderOption);
             return this;
         }
     }
@@ -281,7 +281,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -307,7 +307,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -320,7 +320,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

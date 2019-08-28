@@ -51,7 +51,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder analyzer(Object analyzer) {
-            setProperty("analyzer", analyzer);
+            doSetProperty("analyzer", analyzer);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder analyzer(String analyzer) {
-            setProperty("analyzer", analyzer);
+            doSetProperty("analyzer", analyzer);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder indexDir(File indexDir) {
-            setProperty("indexDir", indexDir);
+            doSetProperty("indexDir", indexDir);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder indexDir(String indexDir) {
-            setProperty("indexDir", indexDir);
+            doSetProperty("indexDir", indexDir);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder maxHits(int maxHits) {
-            setProperty("maxHits", maxHits);
+            doSetProperty("maxHits", maxHits);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder maxHits(String maxHits) {
-            setProperty("maxHits", maxHits);
+            doSetProperty("maxHits", maxHits);
             return this;
         }
         /**
@@ -125,7 +125,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder srcDir(File srcDir) {
-            setProperty("srcDir", srcDir);
+            doSetProperty("srcDir", srcDir);
             return this;
         }
         /**
@@ -137,7 +137,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder srcDir(String srcDir) {
-            setProperty("srcDir", srcDir);
+            doSetProperty("srcDir", srcDir);
             return this;
         }
     }
@@ -161,7 +161,7 @@ public interface LuceneEndpointBuilderFactory {
          */
         default AdvancedLuceneEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -174,7 +174,7 @@ public interface LuceneEndpointBuilderFactory {
          */
         default AdvancedLuceneEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -186,7 +186,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLuceneEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -198,7 +198,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLuceneEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

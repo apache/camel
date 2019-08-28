@@ -51,7 +51,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointConsumerBuilder enterpriseId(String enterpriseId) {
-            setProperty("enterpriseId", enterpriseId);
+            doSetProperty("enterpriseId", enterpriseId);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointConsumerBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointConsumerBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder authenticationType(
                 String authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -156,7 +156,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
-            setProperty("privateKeyFile", privateKeyFile);
+            doSetProperty("privateKeyFile", privateKeyFile);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder privateKeyPassword(
                 String privateKeyPassword) {
-            setProperty("privateKeyPassword", privateKeyPassword);
+            doSetProperty("privateKeyPassword", privateKeyPassword);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointConsumerBuilder publicKeyId(String publicKeyId) {
-            setProperty("publicKeyId", publicKeyId);
+            doSetProperty("publicKeyId", publicKeyId);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -205,7 +205,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -216,7 +216,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointConsumerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -228,7 +228,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointConsumerBuilder userPassword(String userPassword) {
-            setProperty("userPassword", userPassword);
+            doSetProperty("userPassword", userPassword);
             return this;
         }
     }
@@ -255,7 +255,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -271,7 +271,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -283,7 +283,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -309,7 +309,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -322,7 +322,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -335,7 +335,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder httpParams(
                 Map<String, Object> httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder httpParams(String httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -361,7 +361,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -374,7 +374,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -386,7 +386,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
                 Object accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -399,7 +399,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
                 String accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -412,7 +412,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -426,7 +426,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -438,7 +438,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
                 int maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
         /**
@@ -450,7 +450,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
                 String maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
     }
@@ -472,7 +472,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -483,7 +483,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointProducerBuilder enterpriseId(String enterpriseId) {
-            setProperty("enterpriseId", enterpriseId);
+            doSetProperty("enterpriseId", enterpriseId);
             return this;
         }
         /**
@@ -494,7 +494,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -505,7 +505,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointProducerBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -525,7 +525,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -545,7 +545,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -556,7 +556,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointProducerBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -570,7 +570,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder authenticationType(
                 String authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -581,7 +581,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
-            setProperty("privateKeyFile", privateKeyFile);
+            doSetProperty("privateKeyFile", privateKeyFile);
             return this;
         }
         /**
@@ -593,7 +593,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder privateKeyPassword(
                 String privateKeyPassword) {
-            setProperty("privateKeyPassword", privateKeyPassword);
+            doSetProperty("privateKeyPassword", privateKeyPassword);
             return this;
         }
         /**
@@ -604,7 +604,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointProducerBuilder publicKeyId(String publicKeyId) {
-            setProperty("publicKeyId", publicKeyId);
+            doSetProperty("publicKeyId", publicKeyId);
             return this;
         }
         /**
@@ -617,7 +617,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -630,7 +630,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -641,7 +641,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointProducerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -653,7 +653,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointProducerBuilder userPassword(String userPassword) {
-            setProperty("userPassword", userPassword);
+            doSetProperty("userPassword", userPassword);
             return this;
         }
     }
@@ -677,7 +677,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -690,7 +690,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -703,7 +703,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder httpParams(
                 Map<String, Object> httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -716,7 +716,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder httpParams(String httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -729,7 +729,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -742,7 +742,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -754,7 +754,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder accessTokenCache(
                 Object accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -767,7 +767,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder accessTokenCache(
                 String accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -780,7 +780,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -794,7 +794,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -806,7 +806,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
                 int maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
         /**
@@ -818,7 +818,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
                 String maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
     }
@@ -840,7 +840,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -851,7 +851,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointBuilder enterpriseId(String enterpriseId) {
-            setProperty("enterpriseId", enterpriseId);
+            doSetProperty("enterpriseId", enterpriseId);
             return this;
         }
         /**
@@ -862,7 +862,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -873,7 +873,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -884,7 +884,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -897,7 +897,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: authentication
          */
         default BoxEndpointBuilder authenticationType(String authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -908,7 +908,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder privateKeyFile(String privateKeyFile) {
-            setProperty("privateKeyFile", privateKeyFile);
+            doSetProperty("privateKeyFile", privateKeyFile);
             return this;
         }
         /**
@@ -919,7 +919,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder privateKeyPassword(String privateKeyPassword) {
-            setProperty("privateKeyPassword", privateKeyPassword);
+            doSetProperty("privateKeyPassword", privateKeyPassword);
             return this;
         }
         /**
@@ -930,7 +930,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder publicKeyId(String publicKeyId) {
-            setProperty("publicKeyId", publicKeyId);
+            doSetProperty("publicKeyId", publicKeyId);
             return this;
         }
         /**
@@ -943,7 +943,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -956,7 +956,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -967,7 +967,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -979,7 +979,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder userPassword(String userPassword) {
-            setProperty("userPassword", userPassword);
+            doSetProperty("userPassword", userPassword);
             return this;
         }
     }
@@ -1003,7 +1003,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1016,7 +1016,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1029,7 +1029,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder httpParams(
                 Map<String, Object> httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -1042,7 +1042,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBoxEndpointBuilder httpParams(String httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -1054,7 +1054,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBoxEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1066,7 +1066,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBoxEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1078,7 +1078,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder accessTokenCache(
                 Object accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -1091,7 +1091,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder accessTokenCache(
                 String accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -1104,7 +1104,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -1118,7 +1118,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -1129,7 +1129,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default AdvancedBoxEndpointBuilder maxCacheEntries(int maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
         /**
@@ -1141,7 +1141,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder maxCacheEntries(
                 String maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
     }

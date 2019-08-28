@@ -53,7 +53,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder addresses(String addresses) {
-            setProperty("addresses", addresses);
+            doSetProperty("addresses", addresses);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder autoDelete(boolean autoDelete) {
-            setProperty("autoDelete", autoDelete);
+            doSetProperty("autoDelete", autoDelete);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder autoDelete(String autoDelete) {
-            setProperty("autoDelete", autoDelete);
+            doSetProperty("autoDelete", autoDelete);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder automaticRecoveryEnabled(
                 Boolean automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
+            doSetProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
             return this;
         }
         /**
@@ -106,7 +106,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder automaticRecoveryEnabled(
                 String automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
+            doSetProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder deadLetterExchange(
                 String deadLetterExchange) {
-            setProperty("deadLetterExchange", deadLetterExchange);
+            doSetProperty("deadLetterExchange", deadLetterExchange);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder deadLetterExchangeType(
                 String deadLetterExchangeType) {
-            setProperty("deadLetterExchangeType", deadLetterExchangeType);
+            doSetProperty("deadLetterExchangeType", deadLetterExchangeType);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder deadLetterQueue(
                 String deadLetterQueue) {
-            setProperty("deadLetterQueue", deadLetterQueue);
+            doSetProperty("deadLetterQueue", deadLetterQueue);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder deadLetterRoutingKey(
                 String deadLetterRoutingKey) {
-            setProperty("deadLetterRoutingKey", deadLetterRoutingKey);
+            doSetProperty("deadLetterRoutingKey", deadLetterRoutingKey);
             return this;
         }
         /**
@@ -197,7 +197,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder declare(boolean declare) {
-            setProperty("declare", declare);
+            doSetProperty("declare", declare);
             return this;
         }
         /**
@@ -210,7 +210,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder declare(String declare) {
-            setProperty("declare", declare);
+            doSetProperty("declare", declare);
             return this;
         }
         /**
@@ -222,7 +222,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder durable(boolean durable) {
-            setProperty("durable", durable);
+            doSetProperty("durable", durable);
             return this;
         }
         /**
@@ -234,7 +234,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder durable(String durable) {
-            setProperty("durable", durable);
+            doSetProperty("durable", durable);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder exchangeType(String exchangeType) {
-            setProperty("exchangeType", exchangeType);
+            doSetProperty("exchangeType", exchangeType);
             return this;
         }
         /**
@@ -257,7 +257,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder exclusive(boolean exclusive) {
-            setProperty("exclusive", exclusive);
+            doSetProperty("exclusive", exclusive);
             return this;
         }
         /**
@@ -269,7 +269,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder exclusive(String exclusive) {
-            setProperty("exclusive", exclusive);
+            doSetProperty("exclusive", exclusive);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
+            doSetProperty("hostname", hostname);
             return this;
         }
         /**
@@ -292,7 +292,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder passive(boolean passive) {
-            setProperty("passive", passive);
+            doSetProperty("passive", passive);
             return this;
         }
         /**
@@ -304,7 +304,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder passive(String passive) {
-            setProperty("passive", passive);
+            doSetProperty("passive", passive);
             return this;
         }
         /**
@@ -316,7 +316,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder portNumber(int portNumber) {
-            setProperty("portNumber", portNumber);
+            doSetProperty("portNumber", portNumber);
             return this;
         }
         /**
@@ -328,7 +328,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder portNumber(String portNumber) {
-            setProperty("portNumber", portNumber);
+            doSetProperty("portNumber", portNumber);
             return this;
         }
         /**
@@ -339,7 +339,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder queue(String queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -351,7 +351,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder routingKey(String routingKey) {
-            setProperty("routingKey", routingKey);
+            doSetProperty("routingKey", routingKey);
             return this;
         }
         /**
@@ -364,7 +364,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder skipExchangeDeclare(
                 boolean skipExchangeDeclare) {
-            setProperty("skipExchangeDeclare", skipExchangeDeclare);
+            doSetProperty("skipExchangeDeclare", skipExchangeDeclare);
             return this;
         }
         /**
@@ -377,7 +377,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder skipExchangeDeclare(
                 String skipExchangeDeclare) {
-            setProperty("skipExchangeDeclare", skipExchangeDeclare);
+            doSetProperty("skipExchangeDeclare", skipExchangeDeclare);
             return this;
         }
         /**
@@ -390,7 +390,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder skipQueueBind(
                 boolean skipQueueBind) {
-            setProperty("skipQueueBind", skipQueueBind);
+            doSetProperty("skipQueueBind", skipQueueBind);
             return this;
         }
         /**
@@ -403,7 +403,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder skipQueueBind(
                 String skipQueueBind) {
-            setProperty("skipQueueBind", skipQueueBind);
+            doSetProperty("skipQueueBind", skipQueueBind);
             return this;
         }
         /**
@@ -416,7 +416,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder skipQueueDeclare(
                 boolean skipQueueDeclare) {
-            setProperty("skipQueueDeclare", skipQueueDeclare);
+            doSetProperty("skipQueueDeclare", skipQueueDeclare);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder skipQueueDeclare(
                 String skipQueueDeclare) {
-            setProperty("skipQueueDeclare", skipQueueDeclare);
+            doSetProperty("skipQueueDeclare", skipQueueDeclare);
             return this;
         }
         /**
@@ -440,7 +440,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder vhost(String vhost) {
-            setProperty("vhost", vhost);
+            doSetProperty("vhost", vhost);
             return this;
         }
         /**
@@ -451,7 +451,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder autoAck(boolean autoAck) {
-            setProperty("autoAck", autoAck);
+            doSetProperty("autoAck", autoAck);
             return this;
         }
         /**
@@ -462,7 +462,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder autoAck(String autoAck) {
-            setProperty("autoAck", autoAck);
+            doSetProperty("autoAck", autoAck);
             return this;
         }
         /**
@@ -480,7 +480,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -498,7 +498,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -511,7 +511,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -524,7 +524,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -538,7 +538,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder exclusiveConsumer(
                 boolean exclusiveConsumer) {
-            setProperty("exclusiveConsumer", exclusiveConsumer);
+            doSetProperty("exclusiveConsumer", exclusiveConsumer);
             return this;
         }
         /**
@@ -552,7 +552,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder exclusiveConsumer(
                 String exclusiveConsumer) {
-            setProperty("exclusiveConsumer", exclusiveConsumer);
+            doSetProperty("exclusiveConsumer", exclusiveConsumer);
             return this;
         }
         /**
@@ -565,7 +565,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder prefetchCount(int prefetchCount) {
-            setProperty("prefetchCount", prefetchCount);
+            doSetProperty("prefetchCount", prefetchCount);
             return this;
         }
         /**
@@ -579,7 +579,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder prefetchCount(
                 String prefetchCount) {
-            setProperty("prefetchCount", prefetchCount);
+            doSetProperty("prefetchCount", prefetchCount);
             return this;
         }
         /**
@@ -593,7 +593,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder prefetchEnabled(
                 boolean prefetchEnabled) {
-            setProperty("prefetchEnabled", prefetchEnabled);
+            doSetProperty("prefetchEnabled", prefetchEnabled);
             return this;
         }
         /**
@@ -607,7 +607,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder prefetchEnabled(
                 String prefetchEnabled) {
-            setProperty("prefetchEnabled", prefetchEnabled);
+            doSetProperty("prefetchEnabled", prefetchEnabled);
             return this;
         }
         /**
@@ -621,7 +621,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder prefetchGlobal(
                 boolean prefetchGlobal) {
-            setProperty("prefetchGlobal", prefetchGlobal);
+            doSetProperty("prefetchGlobal", prefetchGlobal);
             return this;
         }
         /**
@@ -635,7 +635,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointConsumerBuilder prefetchGlobal(
                 String prefetchGlobal) {
-            setProperty("prefetchGlobal", prefetchGlobal);
+            doSetProperty("prefetchGlobal", prefetchGlobal);
             return this;
         }
         /**
@@ -648,7 +648,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder prefetchSize(int prefetchSize) {
-            setProperty("prefetchSize", prefetchSize);
+            doSetProperty("prefetchSize", prefetchSize);
             return this;
         }
         /**
@@ -661,7 +661,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder prefetchSize(String prefetchSize) {
-            setProperty("prefetchSize", prefetchSize);
+            doSetProperty("prefetchSize", prefetchSize);
             return this;
         }
         /**
@@ -672,7 +672,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -683,7 +683,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointConsumerBuilder sslProtocol(String sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -695,7 +695,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointConsumerBuilder trustManager(Object trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -708,7 +708,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointConsumerBuilder trustManager(String trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -719,7 +719,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -746,7 +746,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -762,7 +762,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -774,7 +774,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -787,7 +787,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -800,7 +800,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder threadPoolSize(
                 int threadPoolSize) {
-            setProperty("threadPoolSize", threadPoolSize);
+            doSetProperty("threadPoolSize", threadPoolSize);
             return this;
         }
         /**
@@ -813,7 +813,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder threadPoolSize(
                 String threadPoolSize) {
-            setProperty("threadPoolSize", threadPoolSize);
+            doSetProperty("threadPoolSize", threadPoolSize);
             return this;
         }
         /**
@@ -830,7 +830,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder args(
                 Map<String, Object> args) {
-            setProperty("args", args);
+            doSetProperty("args", args);
             return this;
         }
         /**
@@ -847,7 +847,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder args(String args) {
-            setProperty("args", args);
+            doSetProperty("args", args);
             return this;
         }
         /**
@@ -860,7 +860,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -873,7 +873,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -887,7 +887,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder clientProperties(
                 Map<String, Object> clientProperties) {
-            setProperty("clientProperties", clientProperties);
+            doSetProperty("clientProperties", clientProperties);
             return this;
         }
         /**
@@ -902,7 +902,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder clientProperties(
                 String clientProperties) {
-            setProperty("clientProperties", clientProperties);
+            doSetProperty("clientProperties", clientProperties);
             return this;
         }
         /**
@@ -914,7 +914,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -926,7 +926,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -939,7 +939,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder networkRecoveryInterval(
                 Integer networkRecoveryInterval) {
-            setProperty("networkRecoveryInterval", networkRecoveryInterval);
+            doSetProperty("networkRecoveryInterval", networkRecoveryInterval);
             return this;
         }
         /**
@@ -953,7 +953,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder networkRecoveryInterval(
                 String networkRecoveryInterval) {
-            setProperty("networkRecoveryInterval", networkRecoveryInterval);
+            doSetProperty("networkRecoveryInterval", networkRecoveryInterval);
             return this;
         }
         /**
@@ -965,7 +965,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedChannelMax(
                 int requestedChannelMax) {
-            setProperty("requestedChannelMax", requestedChannelMax);
+            doSetProperty("requestedChannelMax", requestedChannelMax);
             return this;
         }
         /**
@@ -977,7 +977,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedChannelMax(
                 String requestedChannelMax) {
-            setProperty("requestedChannelMax", requestedChannelMax);
+            doSetProperty("requestedChannelMax", requestedChannelMax);
             return this;
         }
         /**
@@ -989,7 +989,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedFrameMax(
                 int requestedFrameMax) {
-            setProperty("requestedFrameMax", requestedFrameMax);
+            doSetProperty("requestedFrameMax", requestedFrameMax);
             return this;
         }
         /**
@@ -1001,7 +1001,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedFrameMax(
                 String requestedFrameMax) {
-            setProperty("requestedFrameMax", requestedFrameMax);
+            doSetProperty("requestedFrameMax", requestedFrameMax);
             return this;
         }
         /**
@@ -1013,7 +1013,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedHeartbeat(
                 int requestedHeartbeat) {
-            setProperty("requestedHeartbeat", requestedHeartbeat);
+            doSetProperty("requestedHeartbeat", requestedHeartbeat);
             return this;
         }
         /**
@@ -1025,7 +1025,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedHeartbeat(
                 String requestedHeartbeat) {
-            setProperty("requestedHeartbeat", requestedHeartbeat);
+            doSetProperty("requestedHeartbeat", requestedHeartbeat);
             return this;
         }
         /**
@@ -1038,7 +1038,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestTimeout(
                 long requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -1051,7 +1051,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestTimeout(
                 String requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -1063,7 +1063,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -1075,7 +1075,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -1088,7 +1088,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1101,7 +1101,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1114,7 +1114,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder topologyRecoveryEnabled(
                 Boolean topologyRecoveryEnabled) {
-            setProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
+            doSetProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
             return this;
         }
         /**
@@ -1128,7 +1128,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder topologyRecoveryEnabled(
                 String topologyRecoveryEnabled) {
-            setProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
+            doSetProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
             return this;
         }
         /**
@@ -1141,7 +1141,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -1154,7 +1154,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointConsumerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
     }
@@ -1178,7 +1178,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder addresses(String addresses) {
-            setProperty("addresses", addresses);
+            doSetProperty("addresses", addresses);
             return this;
         }
         /**
@@ -1190,7 +1190,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder autoDelete(boolean autoDelete) {
-            setProperty("autoDelete", autoDelete);
+            doSetProperty("autoDelete", autoDelete);
             return this;
         }
         /**
@@ -1202,7 +1202,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder autoDelete(String autoDelete) {
-            setProperty("autoDelete", autoDelete);
+            doSetProperty("autoDelete", autoDelete);
             return this;
         }
         /**
@@ -1216,7 +1216,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder automaticRecoveryEnabled(
                 Boolean automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
+            doSetProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
             return this;
         }
         /**
@@ -1231,7 +1231,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder automaticRecoveryEnabled(
                 String automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
+            doSetProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
             return this;
         }
         /**
@@ -1246,7 +1246,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -1261,7 +1261,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -1273,7 +1273,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder deadLetterExchange(
                 String deadLetterExchange) {
-            setProperty("deadLetterExchange", deadLetterExchange);
+            doSetProperty("deadLetterExchange", deadLetterExchange);
             return this;
         }
         /**
@@ -1285,7 +1285,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder deadLetterExchangeType(
                 String deadLetterExchangeType) {
-            setProperty("deadLetterExchangeType", deadLetterExchangeType);
+            doSetProperty("deadLetterExchangeType", deadLetterExchangeType);
             return this;
         }
         /**
@@ -1297,7 +1297,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder deadLetterQueue(
                 String deadLetterQueue) {
-            setProperty("deadLetterQueue", deadLetterQueue);
+            doSetProperty("deadLetterQueue", deadLetterQueue);
             return this;
         }
         /**
@@ -1309,7 +1309,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder deadLetterRoutingKey(
                 String deadLetterRoutingKey) {
-            setProperty("deadLetterRoutingKey", deadLetterRoutingKey);
+            doSetProperty("deadLetterRoutingKey", deadLetterRoutingKey);
             return this;
         }
         /**
@@ -1322,7 +1322,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder declare(boolean declare) {
-            setProperty("declare", declare);
+            doSetProperty("declare", declare);
             return this;
         }
         /**
@@ -1335,7 +1335,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder declare(String declare) {
-            setProperty("declare", declare);
+            doSetProperty("declare", declare);
             return this;
         }
         /**
@@ -1347,7 +1347,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder durable(boolean durable) {
-            setProperty("durable", durable);
+            doSetProperty("durable", durable);
             return this;
         }
         /**
@@ -1359,7 +1359,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder durable(String durable) {
-            setProperty("durable", durable);
+            doSetProperty("durable", durable);
             return this;
         }
         /**
@@ -1370,7 +1370,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder exchangeType(String exchangeType) {
-            setProperty("exchangeType", exchangeType);
+            doSetProperty("exchangeType", exchangeType);
             return this;
         }
         /**
@@ -1382,7 +1382,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder exclusive(boolean exclusive) {
-            setProperty("exclusive", exclusive);
+            doSetProperty("exclusive", exclusive);
             return this;
         }
         /**
@@ -1394,7 +1394,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder exclusive(String exclusive) {
-            setProperty("exclusive", exclusive);
+            doSetProperty("exclusive", exclusive);
             return this;
         }
         /**
@@ -1405,7 +1405,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
+            doSetProperty("hostname", hostname);
             return this;
         }
         /**
@@ -1417,7 +1417,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder passive(boolean passive) {
-            setProperty("passive", passive);
+            doSetProperty("passive", passive);
             return this;
         }
         /**
@@ -1429,7 +1429,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder passive(String passive) {
-            setProperty("passive", passive);
+            doSetProperty("passive", passive);
             return this;
         }
         /**
@@ -1441,7 +1441,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder portNumber(int portNumber) {
-            setProperty("portNumber", portNumber);
+            doSetProperty("portNumber", portNumber);
             return this;
         }
         /**
@@ -1453,7 +1453,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder portNumber(String portNumber) {
-            setProperty("portNumber", portNumber);
+            doSetProperty("portNumber", portNumber);
             return this;
         }
         /**
@@ -1464,7 +1464,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder queue(String queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -1476,7 +1476,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder routingKey(String routingKey) {
-            setProperty("routingKey", routingKey);
+            doSetProperty("routingKey", routingKey);
             return this;
         }
         /**
@@ -1489,7 +1489,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder skipExchangeDeclare(
                 boolean skipExchangeDeclare) {
-            setProperty("skipExchangeDeclare", skipExchangeDeclare);
+            doSetProperty("skipExchangeDeclare", skipExchangeDeclare);
             return this;
         }
         /**
@@ -1502,7 +1502,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder skipExchangeDeclare(
                 String skipExchangeDeclare) {
-            setProperty("skipExchangeDeclare", skipExchangeDeclare);
+            doSetProperty("skipExchangeDeclare", skipExchangeDeclare);
             return this;
         }
         /**
@@ -1515,7 +1515,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder skipQueueBind(
                 boolean skipQueueBind) {
-            setProperty("skipQueueBind", skipQueueBind);
+            doSetProperty("skipQueueBind", skipQueueBind);
             return this;
         }
         /**
@@ -1528,7 +1528,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder skipQueueBind(
                 String skipQueueBind) {
-            setProperty("skipQueueBind", skipQueueBind);
+            doSetProperty("skipQueueBind", skipQueueBind);
             return this;
         }
         /**
@@ -1541,7 +1541,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder skipQueueDeclare(
                 boolean skipQueueDeclare) {
-            setProperty("skipQueueDeclare", skipQueueDeclare);
+            doSetProperty("skipQueueDeclare", skipQueueDeclare);
             return this;
         }
         /**
@@ -1554,7 +1554,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder skipQueueDeclare(
                 String skipQueueDeclare) {
-            setProperty("skipQueueDeclare", skipQueueDeclare);
+            doSetProperty("skipQueueDeclare", skipQueueDeclare);
             return this;
         }
         /**
@@ -1565,7 +1565,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder vhost(String vhost) {
-            setProperty("vhost", vhost);
+            doSetProperty("vhost", vhost);
             return this;
         }
         /**
@@ -1577,7 +1577,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder allowNullHeaders(
                 boolean allowNullHeaders) {
-            setProperty("allowNullHeaders", allowNullHeaders);
+            doSetProperty("allowNullHeaders", allowNullHeaders);
             return this;
         }
         /**
@@ -1589,7 +1589,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder allowNullHeaders(
                 String allowNullHeaders) {
-            setProperty("allowNullHeaders", allowNullHeaders);
+            doSetProperty("allowNullHeaders", allowNullHeaders);
             return this;
         }
         /**
@@ -1602,7 +1602,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder bridgeEndpoint(
                 boolean bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -1615,7 +1615,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder bridgeEndpoint(
                 String bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -1627,7 +1627,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder channelPoolMaxSize(
                 int channelPoolMaxSize) {
-            setProperty("channelPoolMaxSize", channelPoolMaxSize);
+            doSetProperty("channelPoolMaxSize", channelPoolMaxSize);
             return this;
         }
         /**
@@ -1639,7 +1639,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder channelPoolMaxSize(
                 String channelPoolMaxSize) {
-            setProperty("channelPoolMaxSize", channelPoolMaxSize);
+            doSetProperty("channelPoolMaxSize", channelPoolMaxSize);
             return this;
         }
         /**
@@ -1652,7 +1652,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder channelPoolMaxWait(
                 long channelPoolMaxWait) {
-            setProperty("channelPoolMaxWait", channelPoolMaxWait);
+            doSetProperty("channelPoolMaxWait", channelPoolMaxWait);
             return this;
         }
         /**
@@ -1665,7 +1665,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder channelPoolMaxWait(
                 String channelPoolMaxWait) {
-            setProperty("channelPoolMaxWait", channelPoolMaxWait);
+            doSetProperty("channelPoolMaxWait", channelPoolMaxWait);
             return this;
         }
         /**
@@ -1680,7 +1680,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder guaranteedDeliveries(
                 boolean guaranteedDeliveries) {
-            setProperty("guaranteedDeliveries", guaranteedDeliveries);
+            doSetProperty("guaranteedDeliveries", guaranteedDeliveries);
             return this;
         }
         /**
@@ -1695,7 +1695,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder guaranteedDeliveries(
                 String guaranteedDeliveries) {
-            setProperty("guaranteedDeliveries", guaranteedDeliveries);
+            doSetProperty("guaranteedDeliveries", guaranteedDeliveries);
             return this;
         }
         /**
@@ -1711,7 +1711,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder immediate(boolean immediate) {
-            setProperty("immediate", immediate);
+            doSetProperty("immediate", immediate);
             return this;
         }
         /**
@@ -1727,7 +1727,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder immediate(String immediate) {
-            setProperty("immediate", immediate);
+            doSetProperty("immediate", immediate);
             return this;
         }
         /**
@@ -1747,7 +1747,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1767,7 +1767,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1782,7 +1782,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder mandatory(boolean mandatory) {
-            setProperty("mandatory", mandatory);
+            doSetProperty("mandatory", mandatory);
             return this;
         }
         /**
@@ -1797,7 +1797,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder mandatory(String mandatory) {
-            setProperty("mandatory", mandatory);
+            doSetProperty("mandatory", mandatory);
             return this;
         }
         /**
@@ -1810,7 +1810,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder publisherAcknowledgements(
                 boolean publisherAcknowledgements) {
-            setProperty("publisherAcknowledgements", publisherAcknowledgements);
+            doSetProperty("publisherAcknowledgements", publisherAcknowledgements);
             return this;
         }
         /**
@@ -1823,7 +1823,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder publisherAcknowledgements(
                 String publisherAcknowledgements) {
-            setProperty("publisherAcknowledgements", publisherAcknowledgements);
+            doSetProperty("publisherAcknowledgements", publisherAcknowledgements);
             return this;
         }
         /**
@@ -1836,7 +1836,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder publisherAcknowledgementsTimeout(
                 long publisherAcknowledgementsTimeout) {
-            setProperty("publisherAcknowledgementsTimeout", publisherAcknowledgementsTimeout);
+            doSetProperty("publisherAcknowledgementsTimeout", publisherAcknowledgementsTimeout);
             return this;
         }
         /**
@@ -1849,7 +1849,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointProducerBuilder publisherAcknowledgementsTimeout(
                 String publisherAcknowledgementsTimeout) {
-            setProperty("publisherAcknowledgementsTimeout", publisherAcknowledgementsTimeout);
+            doSetProperty("publisherAcknowledgementsTimeout", publisherAcknowledgementsTimeout);
             return this;
         }
         /**
@@ -1860,7 +1860,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1871,7 +1871,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointProducerBuilder sslProtocol(String sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -1883,7 +1883,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointProducerBuilder trustManager(Object trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -1896,7 +1896,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointProducerBuilder trustManager(String trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -1907,7 +1907,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1935,7 +1935,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder args(
                 Map<String, Object> args) {
-            setProperty("args", args);
+            doSetProperty("args", args);
             return this;
         }
         /**
@@ -1952,7 +1952,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder args(String args) {
-            setProperty("args", args);
+            doSetProperty("args", args);
             return this;
         }
         /**
@@ -1965,7 +1965,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1978,7 +1978,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1992,7 +1992,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder clientProperties(
                 Map<String, Object> clientProperties) {
-            setProperty("clientProperties", clientProperties);
+            doSetProperty("clientProperties", clientProperties);
             return this;
         }
         /**
@@ -2007,7 +2007,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder clientProperties(
                 String clientProperties) {
-            setProperty("clientProperties", clientProperties);
+            doSetProperty("clientProperties", clientProperties);
             return this;
         }
         /**
@@ -2019,7 +2019,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -2031,7 +2031,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -2044,7 +2044,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder networkRecoveryInterval(
                 Integer networkRecoveryInterval) {
-            setProperty("networkRecoveryInterval", networkRecoveryInterval);
+            doSetProperty("networkRecoveryInterval", networkRecoveryInterval);
             return this;
         }
         /**
@@ -2058,7 +2058,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder networkRecoveryInterval(
                 String networkRecoveryInterval) {
-            setProperty("networkRecoveryInterval", networkRecoveryInterval);
+            doSetProperty("networkRecoveryInterval", networkRecoveryInterval);
             return this;
         }
         /**
@@ -2070,7 +2070,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedChannelMax(
                 int requestedChannelMax) {
-            setProperty("requestedChannelMax", requestedChannelMax);
+            doSetProperty("requestedChannelMax", requestedChannelMax);
             return this;
         }
         /**
@@ -2082,7 +2082,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedChannelMax(
                 String requestedChannelMax) {
-            setProperty("requestedChannelMax", requestedChannelMax);
+            doSetProperty("requestedChannelMax", requestedChannelMax);
             return this;
         }
         /**
@@ -2094,7 +2094,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedFrameMax(
                 int requestedFrameMax) {
-            setProperty("requestedFrameMax", requestedFrameMax);
+            doSetProperty("requestedFrameMax", requestedFrameMax);
             return this;
         }
         /**
@@ -2106,7 +2106,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedFrameMax(
                 String requestedFrameMax) {
-            setProperty("requestedFrameMax", requestedFrameMax);
+            doSetProperty("requestedFrameMax", requestedFrameMax);
             return this;
         }
         /**
@@ -2118,7 +2118,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedHeartbeat(
                 int requestedHeartbeat) {
-            setProperty("requestedHeartbeat", requestedHeartbeat);
+            doSetProperty("requestedHeartbeat", requestedHeartbeat);
             return this;
         }
         /**
@@ -2130,7 +2130,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedHeartbeat(
                 String requestedHeartbeat) {
-            setProperty("requestedHeartbeat", requestedHeartbeat);
+            doSetProperty("requestedHeartbeat", requestedHeartbeat);
             return this;
         }
         /**
@@ -2143,7 +2143,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestTimeout(
                 long requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -2156,7 +2156,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestTimeout(
                 String requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -2168,7 +2168,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -2180,7 +2180,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -2193,7 +2193,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2206,7 +2206,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2219,7 +2219,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder topologyRecoveryEnabled(
                 Boolean topologyRecoveryEnabled) {
-            setProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
+            doSetProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
             return this;
         }
         /**
@@ -2233,7 +2233,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder topologyRecoveryEnabled(
                 String topologyRecoveryEnabled) {
-            setProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
+            doSetProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
             return this;
         }
         /**
@@ -2246,7 +2246,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -2259,7 +2259,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointProducerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
     }
@@ -2283,7 +2283,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder addresses(String addresses) {
-            setProperty("addresses", addresses);
+            doSetProperty("addresses", addresses);
             return this;
         }
         /**
@@ -2295,7 +2295,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder autoDelete(boolean autoDelete) {
-            setProperty("autoDelete", autoDelete);
+            doSetProperty("autoDelete", autoDelete);
             return this;
         }
         /**
@@ -2307,7 +2307,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder autoDelete(String autoDelete) {
-            setProperty("autoDelete", autoDelete);
+            doSetProperty("autoDelete", autoDelete);
             return this;
         }
         /**
@@ -2321,7 +2321,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder automaticRecoveryEnabled(
                 Boolean automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
+            doSetProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
             return this;
         }
         /**
@@ -2336,7 +2336,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder automaticRecoveryEnabled(
                 String automaticRecoveryEnabled) {
-            setProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
+            doSetProperty("automaticRecoveryEnabled", automaticRecoveryEnabled);
             return this;
         }
         /**
@@ -2351,7 +2351,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -2366,7 +2366,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -2378,7 +2378,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder deadLetterExchange(
                 String deadLetterExchange) {
-            setProperty("deadLetterExchange", deadLetterExchange);
+            doSetProperty("deadLetterExchange", deadLetterExchange);
             return this;
         }
         /**
@@ -2390,7 +2390,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder deadLetterExchangeType(
                 String deadLetterExchangeType) {
-            setProperty("deadLetterExchangeType", deadLetterExchangeType);
+            doSetProperty("deadLetterExchangeType", deadLetterExchangeType);
             return this;
         }
         /**
@@ -2401,7 +2401,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder deadLetterQueue(String deadLetterQueue) {
-            setProperty("deadLetterQueue", deadLetterQueue);
+            doSetProperty("deadLetterQueue", deadLetterQueue);
             return this;
         }
         /**
@@ -2413,7 +2413,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder deadLetterRoutingKey(
                 String deadLetterRoutingKey) {
-            setProperty("deadLetterRoutingKey", deadLetterRoutingKey);
+            doSetProperty("deadLetterRoutingKey", deadLetterRoutingKey);
             return this;
         }
         /**
@@ -2426,7 +2426,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder declare(boolean declare) {
-            setProperty("declare", declare);
+            doSetProperty("declare", declare);
             return this;
         }
         /**
@@ -2439,7 +2439,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder declare(String declare) {
-            setProperty("declare", declare);
+            doSetProperty("declare", declare);
             return this;
         }
         /**
@@ -2451,7 +2451,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder durable(boolean durable) {
-            setProperty("durable", durable);
+            doSetProperty("durable", durable);
             return this;
         }
         /**
@@ -2463,7 +2463,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder durable(String durable) {
-            setProperty("durable", durable);
+            doSetProperty("durable", durable);
             return this;
         }
         /**
@@ -2474,7 +2474,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder exchangeType(String exchangeType) {
-            setProperty("exchangeType", exchangeType);
+            doSetProperty("exchangeType", exchangeType);
             return this;
         }
         /**
@@ -2486,7 +2486,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder exclusive(boolean exclusive) {
-            setProperty("exclusive", exclusive);
+            doSetProperty("exclusive", exclusive);
             return this;
         }
         /**
@@ -2498,7 +2498,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder exclusive(String exclusive) {
-            setProperty("exclusive", exclusive);
+            doSetProperty("exclusive", exclusive);
             return this;
         }
         /**
@@ -2509,7 +2509,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
+            doSetProperty("hostname", hostname);
             return this;
         }
         /**
@@ -2521,7 +2521,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder passive(boolean passive) {
-            setProperty("passive", passive);
+            doSetProperty("passive", passive);
             return this;
         }
         /**
@@ -2533,7 +2533,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder passive(String passive) {
-            setProperty("passive", passive);
+            doSetProperty("passive", passive);
             return this;
         }
         /**
@@ -2545,7 +2545,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder portNumber(int portNumber) {
-            setProperty("portNumber", portNumber);
+            doSetProperty("portNumber", portNumber);
             return this;
         }
         /**
@@ -2557,7 +2557,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder portNumber(String portNumber) {
-            setProperty("portNumber", portNumber);
+            doSetProperty("portNumber", portNumber);
             return this;
         }
         /**
@@ -2568,7 +2568,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder queue(String queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -2580,7 +2580,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder routingKey(String routingKey) {
-            setProperty("routingKey", routingKey);
+            doSetProperty("routingKey", routingKey);
             return this;
         }
         /**
@@ -2593,7 +2593,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder skipExchangeDeclare(
                 boolean skipExchangeDeclare) {
-            setProperty("skipExchangeDeclare", skipExchangeDeclare);
+            doSetProperty("skipExchangeDeclare", skipExchangeDeclare);
             return this;
         }
         /**
@@ -2606,7 +2606,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder skipExchangeDeclare(
                 String skipExchangeDeclare) {
-            setProperty("skipExchangeDeclare", skipExchangeDeclare);
+            doSetProperty("skipExchangeDeclare", skipExchangeDeclare);
             return this;
         }
         /**
@@ -2618,7 +2618,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder skipQueueBind(boolean skipQueueBind) {
-            setProperty("skipQueueBind", skipQueueBind);
+            doSetProperty("skipQueueBind", skipQueueBind);
             return this;
         }
         /**
@@ -2630,7 +2630,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder skipQueueBind(String skipQueueBind) {
-            setProperty("skipQueueBind", skipQueueBind);
+            doSetProperty("skipQueueBind", skipQueueBind);
             return this;
         }
         /**
@@ -2643,7 +2643,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default RabbitMQEndpointBuilder skipQueueDeclare(
                 boolean skipQueueDeclare) {
-            setProperty("skipQueueDeclare", skipQueueDeclare);
+            doSetProperty("skipQueueDeclare", skipQueueDeclare);
             return this;
         }
         /**
@@ -2655,7 +2655,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder skipQueueDeclare(String skipQueueDeclare) {
-            setProperty("skipQueueDeclare", skipQueueDeclare);
+            doSetProperty("skipQueueDeclare", skipQueueDeclare);
             return this;
         }
         /**
@@ -2666,7 +2666,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: common
          */
         default RabbitMQEndpointBuilder vhost(String vhost) {
-            setProperty("vhost", vhost);
+            doSetProperty("vhost", vhost);
             return this;
         }
         /**
@@ -2677,7 +2677,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -2688,7 +2688,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointBuilder sslProtocol(String sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -2700,7 +2700,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointBuilder trustManager(Object trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -2713,7 +2713,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointBuilder trustManager(String trustManager) {
-            setProperty("trustManager", trustManager);
+            doSetProperty("trustManager", trustManager);
             return this;
         }
         /**
@@ -2724,7 +2724,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: security
          */
         default RabbitMQEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -2751,7 +2751,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder args(Map<String, Object> args) {
-            setProperty("args", args);
+            doSetProperty("args", args);
             return this;
         }
         /**
@@ -2768,7 +2768,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder args(String args) {
-            setProperty("args", args);
+            doSetProperty("args", args);
             return this;
         }
         /**
@@ -2781,7 +2781,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2794,7 +2794,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2808,7 +2808,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder clientProperties(
                 Map<String, Object> clientProperties) {
-            setProperty("clientProperties", clientProperties);
+            doSetProperty("clientProperties", clientProperties);
             return this;
         }
         /**
@@ -2823,7 +2823,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder clientProperties(
                 String clientProperties) {
-            setProperty("clientProperties", clientProperties);
+            doSetProperty("clientProperties", clientProperties);
             return this;
         }
         /**
@@ -2835,7 +2835,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -2847,7 +2847,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -2860,7 +2860,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder networkRecoveryInterval(
                 Integer networkRecoveryInterval) {
-            setProperty("networkRecoveryInterval", networkRecoveryInterval);
+            doSetProperty("networkRecoveryInterval", networkRecoveryInterval);
             return this;
         }
         /**
@@ -2874,7 +2874,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder networkRecoveryInterval(
                 String networkRecoveryInterval) {
-            setProperty("networkRecoveryInterval", networkRecoveryInterval);
+            doSetProperty("networkRecoveryInterval", networkRecoveryInterval);
             return this;
         }
         /**
@@ -2886,7 +2886,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder requestedChannelMax(
                 int requestedChannelMax) {
-            setProperty("requestedChannelMax", requestedChannelMax);
+            doSetProperty("requestedChannelMax", requestedChannelMax);
             return this;
         }
         /**
@@ -2898,7 +2898,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder requestedChannelMax(
                 String requestedChannelMax) {
-            setProperty("requestedChannelMax", requestedChannelMax);
+            doSetProperty("requestedChannelMax", requestedChannelMax);
             return this;
         }
         /**
@@ -2910,7 +2910,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder requestedFrameMax(
                 int requestedFrameMax) {
-            setProperty("requestedFrameMax", requestedFrameMax);
+            doSetProperty("requestedFrameMax", requestedFrameMax);
             return this;
         }
         /**
@@ -2922,7 +2922,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder requestedFrameMax(
                 String requestedFrameMax) {
-            setProperty("requestedFrameMax", requestedFrameMax);
+            doSetProperty("requestedFrameMax", requestedFrameMax);
             return this;
         }
         /**
@@ -2934,7 +2934,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder requestedHeartbeat(
                 int requestedHeartbeat) {
-            setProperty("requestedHeartbeat", requestedHeartbeat);
+            doSetProperty("requestedHeartbeat", requestedHeartbeat);
             return this;
         }
         /**
@@ -2946,7 +2946,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder requestedHeartbeat(
                 String requestedHeartbeat) {
-            setProperty("requestedHeartbeat", requestedHeartbeat);
+            doSetProperty("requestedHeartbeat", requestedHeartbeat);
             return this;
         }
         /**
@@ -2959,7 +2959,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder requestTimeout(
                 long requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -2972,7 +2972,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder requestTimeout(
                 String requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -2984,7 +2984,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -2996,7 +2996,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -3008,7 +3008,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3020,7 +3020,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3033,7 +3033,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder topologyRecoveryEnabled(
                 Boolean topologyRecoveryEnabled) {
-            setProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
+            doSetProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
             return this;
         }
         /**
@@ -3047,7 +3047,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder topologyRecoveryEnabled(
                 String topologyRecoveryEnabled) {
-            setProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
+            doSetProperty("topologyRecoveryEnabled", topologyRecoveryEnabled);
             return this;
         }
         /**
@@ -3060,7 +3060,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -3073,7 +3073,7 @@ public interface RabbitMQEndpointBuilderFactory {
          */
         default AdvancedRabbitMQEndpointBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
     }

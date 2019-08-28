@@ -46,7 +46,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder config(Object config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder config(String config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder domain(String domain) {
-            setProperty("domain", domain);
+            doSetProperty("domain", domain);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder project(String project) {
-            setProperty("project", project);
+            doSetProperty("project", project);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -152,7 +152,7 @@ public interface GlanceEndpointBuilderFactory {
          */
         default AdvancedGlanceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface GlanceEndpointBuilderFactory {
          */
         default AdvancedGlanceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

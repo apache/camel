@@ -47,7 +47,7 @@ public interface JingEndpointBuilderFactory {
          * Group: producer
          */
         default JingEndpointBuilder compactSyntax(boolean compactSyntax) {
-            setProperty("compactSyntax", compactSyntax);
+            doSetProperty("compactSyntax", compactSyntax);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface JingEndpointBuilderFactory {
          * Group: producer
          */
         default JingEndpointBuilder compactSyntax(String compactSyntax) {
-            setProperty("compactSyntax", compactSyntax);
+            doSetProperty("compactSyntax", compactSyntax);
             return this;
         }
     }
@@ -84,7 +84,7 @@ public interface JingEndpointBuilderFactory {
          */
         default AdvancedJingEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface JingEndpointBuilderFactory {
          */
         default AdvancedJingEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface JingEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJingEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface JingEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJingEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -57,7 +57,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default DirectEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default DirectEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -102,7 +102,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -156,7 +156,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -219,7 +219,7 @@ public interface DirectEndpointBuilderFactory {
          * Group: producer
          */
         default DirectEndpointProducerBuilder block(boolean block) {
-            setProperty("block", block);
+            doSetProperty("block", block);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface DirectEndpointBuilderFactory {
          * Group: producer
          */
         default DirectEndpointProducerBuilder block(String block) {
-            setProperty("block", block);
+            doSetProperty("block", block);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default DirectEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
-            setProperty("failIfNoConsumers", failIfNoConsumers);
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
         }
         /**
@@ -258,7 +258,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default DirectEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
-            setProperty("failIfNoConsumers", failIfNoConsumers);
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
         }
         /**
@@ -278,7 +278,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default DirectEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -298,7 +298,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default DirectEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -309,7 +309,7 @@ public interface DirectEndpointBuilderFactory {
          * Group: producer
          */
         default DirectEndpointProducerBuilder timeout(long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -320,7 +320,7 @@ public interface DirectEndpointBuilderFactory {
          * Group: producer
          */
         default DirectEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -344,7 +344,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -370,7 +370,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -383,7 +383,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -418,7 +418,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface DirectEndpointBuilderFactory {
          */
         default AdvancedDirectEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -443,7 +443,7 @@ public interface DirectEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDirectEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface DirectEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDirectEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

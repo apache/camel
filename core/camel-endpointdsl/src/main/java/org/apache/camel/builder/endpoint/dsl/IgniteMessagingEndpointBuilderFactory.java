@@ -52,7 +52,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointConsumerBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointConsumerBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -155,7 +155,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -171,7 +171,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -183,7 +183,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -209,7 +209,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -222,7 +222,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -235,7 +235,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -248,7 +248,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -272,7 +272,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -285,7 +285,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -298,7 +298,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointProducerBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointProducerBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -325,7 +325,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointProducerBuilder clusterGroupExpression(
                 Object clusterGroupExpression) {
-            setProperty("clusterGroupExpression", clusterGroupExpression);
+            doSetProperty("clusterGroupExpression", clusterGroupExpression);
             return this;
         }
         /**
@@ -339,7 +339,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointProducerBuilder clusterGroupExpression(
                 String clusterGroupExpression) {
-            setProperty("clusterGroupExpression", clusterGroupExpression);
+            doSetProperty("clusterGroupExpression", clusterGroupExpression);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -379,7 +379,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointProducerBuilder sendMode(
                 IgniteMessagingSendMode sendMode) {
-            setProperty("sendMode", sendMode);
+            doSetProperty("sendMode", sendMode);
             return this;
         }
         /**
@@ -404,7 +404,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Group: producer
          */
         default IgniteMessagingEndpointProducerBuilder sendMode(String sendMode) {
-            setProperty("sendMode", sendMode);
+            doSetProperty("sendMode", sendMode);
             return this;
         }
         /**
@@ -415,7 +415,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Group: producer
          */
         default IgniteMessagingEndpointProducerBuilder timeout(Long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -426,7 +426,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Group: producer
          */
         default IgniteMessagingEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -451,7 +451,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -464,7 +464,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -477,7 +477,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -490,7 +490,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -514,7 +514,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -527,7 +527,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -540,7 +540,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -553,7 +553,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default IgniteMessagingEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
     }
@@ -577,7 +577,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -590,7 +590,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -603,7 +603,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -616,7 +616,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          */
         default AdvancedIgniteMessagingEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

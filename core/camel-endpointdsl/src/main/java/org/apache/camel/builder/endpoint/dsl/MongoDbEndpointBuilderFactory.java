@@ -49,7 +49,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder collection(String collection) {
-            setProperty("collection", collection);
+            doSetProperty("collection", collection);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder collectionIndex(
                 String collectionIndex) {
-            setProperty("collectionIndex", collectionIndex);
+            doSetProperty("collectionIndex", collectionIndex);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder createCollection(
                 boolean createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder createCollection(
                 String createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder database(String database) {
-            setProperty("database", database);
+            doSetProperty("database", database);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder mongoConnection(
                 Object mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
@@ -124,7 +124,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder mongoConnection(
                 String mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder operation(
                 MongoDbOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder outputType(
                 MongoDbOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -220,7 +220,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -231,7 +231,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: consumer
          */
         default MongoDbEndpointConsumerBuilder consumerType(String consumerType) {
-            setProperty("consumerType", consumerType);
+            doSetProperty("consumerType", consumerType);
             return this;
         }
         /**
@@ -242,7 +242,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: changeStream
          */
         default MongoDbEndpointConsumerBuilder streamFilter(String streamFilter) {
-            setProperty("streamFilter", streamFilter);
+            doSetProperty("streamFilter", streamFilter);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointConsumerBuilder persistentId(String persistentId) {
-            setProperty("persistentId", persistentId);
+            doSetProperty("persistentId", persistentId);
             return this;
         }
         /**
@@ -270,7 +270,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder persistentTailTracking(
                 boolean persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -285,7 +285,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder persistentTailTracking(
                 String persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder tailTrackCollection(
                 String tailTrackCollection) {
-            setProperty("tailTrackCollection", tailTrackCollection);
+            doSetProperty("tailTrackCollection", tailTrackCollection);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointConsumerBuilder tailTrackDb(String tailTrackDb) {
-            setProperty("tailTrackDb", tailTrackDb);
+            doSetProperty("tailTrackDb", tailTrackDb);
             return this;
         }
         /**
@@ -326,7 +326,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder tailTrackField(
                 String tailTrackField) {
-            setProperty("tailTrackField", tailTrackField);
+            doSetProperty("tailTrackField", tailTrackField);
             return this;
         }
         /**
@@ -344,7 +344,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder tailTrackIncreasingField(
                 String tailTrackIncreasingField) {
-            setProperty("tailTrackIncreasingField", tailTrackIncreasingField);
+            doSetProperty("tailTrackIncreasingField", tailTrackIncreasingField);
             return this;
         }
     }
@@ -371,7 +371,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -387,7 +387,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -399,7 +399,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -412,7 +412,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -425,7 +425,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -438,7 +438,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -456,7 +456,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder cursorRegenerationDelay(
                 long cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -474,7 +474,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder cursorRegenerationDelay(
                 String cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -491,7 +491,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder dynamicity(
                 boolean dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
             return this;
         }
         /**
@@ -508,7 +508,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder dynamicity(
                 String dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
             return this;
         }
         /**
@@ -521,7 +521,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -534,7 +534,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -548,7 +548,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder writeResultAsHeader(
                 boolean writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
         /**
@@ -562,7 +562,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
     }
@@ -584,7 +584,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointProducerBuilder collection(String collection) {
-            setProperty("collection", collection);
+            doSetProperty("collection", collection);
             return this;
         }
         /**
@@ -597,7 +597,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder collectionIndex(
                 String collectionIndex) {
-            setProperty("collectionIndex", collectionIndex);
+            doSetProperty("collectionIndex", collectionIndex);
             return this;
         }
         /**
@@ -610,7 +610,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder createCollection(
                 boolean createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -623,7 +623,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder createCollection(
                 String createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -634,7 +634,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointProducerBuilder database(String database) {
-            setProperty("database", database);
+            doSetProperty("database", database);
             return this;
         }
         /**
@@ -646,7 +646,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder mongoConnection(
                 Object mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
@@ -659,7 +659,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder mongoConnection(
                 String mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
@@ -673,7 +673,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder operation(
                 MongoDbOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -686,7 +686,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -703,7 +703,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder outputType(
                 MongoDbOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -719,7 +719,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointProducerBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -739,7 +739,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -759,7 +759,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -770,7 +770,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: changeStream
          */
         default MongoDbEndpointProducerBuilder streamFilter(String streamFilter) {
-            setProperty("streamFilter", streamFilter);
+            doSetProperty("streamFilter", streamFilter);
             return this;
         }
         /**
@@ -783,7 +783,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointProducerBuilder persistentId(String persistentId) {
-            setProperty("persistentId", persistentId);
+            doSetProperty("persistentId", persistentId);
             return this;
         }
         /**
@@ -798,7 +798,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder persistentTailTracking(
                 boolean persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -813,7 +813,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder persistentTailTracking(
                 String persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -827,7 +827,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder tailTrackCollection(
                 String tailTrackCollection) {
-            setProperty("tailTrackCollection", tailTrackCollection);
+            doSetProperty("tailTrackCollection", tailTrackCollection);
             return this;
         }
         /**
@@ -841,7 +841,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointProducerBuilder tailTrackDb(String tailTrackDb) {
-            setProperty("tailTrackDb", tailTrackDb);
+            doSetProperty("tailTrackDb", tailTrackDb);
             return this;
         }
         /**
@@ -854,7 +854,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder tailTrackField(
                 String tailTrackField) {
-            setProperty("tailTrackField", tailTrackField);
+            doSetProperty("tailTrackField", tailTrackField);
             return this;
         }
         /**
@@ -872,7 +872,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder tailTrackIncreasingField(
                 String tailTrackIncreasingField) {
-            setProperty("tailTrackIncreasingField", tailTrackIncreasingField);
+            doSetProperty("tailTrackIncreasingField", tailTrackIncreasingField);
             return this;
         }
     }
@@ -896,7 +896,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -909,7 +909,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -927,7 +927,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder cursorRegenerationDelay(
                 long cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -945,7 +945,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder cursorRegenerationDelay(
                 String cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -962,7 +962,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder dynamicity(
                 boolean dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
             return this;
         }
         /**
@@ -979,7 +979,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder dynamicity(
                 String dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
             return this;
         }
         /**
@@ -992,7 +992,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1005,7 +1005,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1019,7 +1019,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder writeResultAsHeader(
                 boolean writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
         /**
@@ -1033,7 +1033,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
     }
@@ -1055,7 +1055,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder collection(String collection) {
-            setProperty("collection", collection);
+            doSetProperty("collection", collection);
             return this;
         }
         /**
@@ -1067,7 +1067,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder collectionIndex(String collectionIndex) {
-            setProperty("collectionIndex", collectionIndex);
+            doSetProperty("collectionIndex", collectionIndex);
             return this;
         }
         /**
@@ -1079,7 +1079,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder createCollection(boolean createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -1091,7 +1091,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder createCollection(String createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -1102,7 +1102,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder database(String database) {
-            setProperty("database", database);
+            doSetProperty("database", database);
             return this;
         }
         /**
@@ -1113,7 +1113,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder mongoConnection(Object mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
@@ -1125,7 +1125,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder mongoConnection(String mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
@@ -1138,7 +1138,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder operation(MongoDbOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -1151,7 +1151,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -1167,7 +1167,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder outputType(MongoDbOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1183,7 +1183,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1194,7 +1194,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: changeStream
          */
         default MongoDbEndpointBuilder streamFilter(String streamFilter) {
-            setProperty("streamFilter", streamFilter);
+            doSetProperty("streamFilter", streamFilter);
             return this;
         }
         /**
@@ -1207,7 +1207,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointBuilder persistentId(String persistentId) {
-            setProperty("persistentId", persistentId);
+            doSetProperty("persistentId", persistentId);
             return this;
         }
         /**
@@ -1222,7 +1222,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder persistentTailTracking(
                 boolean persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -1237,7 +1237,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder persistentTailTracking(
                 String persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -1251,7 +1251,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder tailTrackCollection(
                 String tailTrackCollection) {
-            setProperty("tailTrackCollection", tailTrackCollection);
+            doSetProperty("tailTrackCollection", tailTrackCollection);
             return this;
         }
         /**
@@ -1265,7 +1265,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointBuilder tailTrackDb(String tailTrackDb) {
-            setProperty("tailTrackDb", tailTrackDb);
+            doSetProperty("tailTrackDb", tailTrackDb);
             return this;
         }
         /**
@@ -1277,7 +1277,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointBuilder tailTrackField(String tailTrackField) {
-            setProperty("tailTrackField", tailTrackField);
+            doSetProperty("tailTrackField", tailTrackField);
             return this;
         }
         /**
@@ -1295,7 +1295,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder tailTrackIncreasingField(
                 String tailTrackIncreasingField) {
-            setProperty("tailTrackIncreasingField", tailTrackIncreasingField);
+            doSetProperty("tailTrackIncreasingField", tailTrackIncreasingField);
             return this;
         }
     }
@@ -1319,7 +1319,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1332,7 +1332,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1350,7 +1350,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder cursorRegenerationDelay(
                 long cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -1368,7 +1368,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder cursorRegenerationDelay(
                 String cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -1384,7 +1384,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder dynamicity(boolean dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
             return this;
         }
         /**
@@ -1400,7 +1400,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder dynamicity(String dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
             return this;
         }
         /**
@@ -1412,7 +1412,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1424,7 +1424,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1438,7 +1438,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder writeResultAsHeader(
                 boolean writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
         /**
@@ -1452,7 +1452,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
     }

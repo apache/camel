@@ -62,7 +62,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -80,7 +80,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -125,7 +125,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder onConsume(String onConsume) {
-            setProperty("onConsume", onConsume);
+            doSetProperty("onConsume", onConsume);
             return this;
         }
         /**
@@ -137,7 +137,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder routeEmptyResultSet(
                 boolean routeEmptyResultSet) {
-            setProperty("routeEmptyResultSet", routeEmptyResultSet);
+            doSetProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
         }
         /**
@@ -149,7 +149,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder routeEmptyResultSet(
                 String routeEmptyResultSet) {
-            setProperty("routeEmptyResultSet", routeEmptyResultSet);
+            doSetProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
         }
         /**
@@ -162,7 +162,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -175,7 +175,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder useIterator(boolean useIterator) {
-            setProperty("useIterator", useIterator);
+            doSetProperty("useIterator", useIterator);
             return this;
         }
         /**
@@ -223,7 +223,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder useIterator(String useIterator) {
-            setProperty("useIterator", useIterator);
+            doSetProperty("useIterator", useIterator);
             return this;
         }
         /**
@@ -236,7 +236,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -262,7 +262,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -275,7 +275,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -292,7 +292,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -309,7 +309,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -322,7 +322,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -335,7 +335,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -347,7 +347,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -372,7 +372,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -385,7 +385,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -398,7 +398,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -412,7 +412,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -427,7 +427,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -442,7 +442,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -454,7 +454,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -468,7 +468,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -483,7 +483,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -507,7 +507,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -518,7 +518,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -530,7 +530,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -543,7 +543,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -556,7 +556,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -583,7 +583,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -599,7 +599,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -611,7 +611,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -624,7 +624,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -640,7 +640,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -656,7 +656,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -669,7 +669,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder processingStrategy(
                 Object processingStrategy) {
-            setProperty("processingStrategy", processingStrategy);
+            doSetProperty("processingStrategy", processingStrategy);
             return this;
         }
         /**
@@ -682,7 +682,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder processingStrategy(
                 String processingStrategy) {
-            setProperty("processingStrategy", processingStrategy);
+            doSetProperty("processingStrategy", processingStrategy);
             return this;
         }
         /**
@@ -695,7 +695,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -708,7 +708,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -721,7 +721,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -734,7 +734,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -760,7 +760,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointProducerBuilder executorType(
                 ExecutorType executorType) {
-            setProperty("executorType", executorType);
+            doSetProperty("executorType", executorType);
             return this;
         }
         /**
@@ -774,7 +774,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: producer
          */
         default MyBatisEndpointProducerBuilder executorType(String executorType) {
-            setProperty("executorType", executorType);
+            doSetProperty("executorType", executorType);
             return this;
         }
         /**
@@ -789,7 +789,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: producer
          */
         default MyBatisEndpointProducerBuilder inputHeader(String inputHeader) {
-            setProperty("inputHeader", inputHeader);
+            doSetProperty("inputHeader", inputHeader);
             return this;
         }
         /**
@@ -809,7 +809,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -829,7 +829,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -847,7 +847,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: producer
          */
         default MyBatisEndpointProducerBuilder outputHeader(String outputHeader) {
-            setProperty("outputHeader", outputHeader);
+            doSetProperty("outputHeader", outputHeader);
             return this;
         }
         /**
@@ -861,7 +861,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointProducerBuilder statementType(
                 StatementType statementType) {
-            setProperty("statementType", statementType);
+            doSetProperty("statementType", statementType);
             return this;
         }
         /**
@@ -875,7 +875,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default MyBatisEndpointProducerBuilder statementType(
                 String statementType) {
-            setProperty("statementType", statementType);
+            doSetProperty("statementType", statementType);
             return this;
         }
     }
@@ -899,7 +899,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -912,7 +912,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -925,7 +925,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -938,7 +938,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -973,7 +973,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -986,7 +986,7 @@ public interface MyBatisEndpointBuilderFactory {
          */
         default AdvancedMyBatisEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -998,7 +998,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMyBatisEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1010,7 +1010,7 @@ public interface MyBatisEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMyBatisEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

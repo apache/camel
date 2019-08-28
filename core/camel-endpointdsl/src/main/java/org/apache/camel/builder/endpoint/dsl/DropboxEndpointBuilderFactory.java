@@ -51,7 +51,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointConsumerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointConsumerBuilder client(Object client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointConsumerBuilder client(String client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointConsumerBuilder clientIdentifier(
                 String clientIdentifier) {
-            setProperty("clientIdentifier", clientIdentifier);
+            doSetProperty("clientIdentifier", clientIdentifier);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointConsumerBuilder localPath(String localPath) {
-            setProperty("localPath", localPath);
+            doSetProperty("localPath", localPath);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointConsumerBuilder newRemotePath(
                 String newRemotePath) {
-            setProperty("newRemotePath", newRemotePath);
+            doSetProperty("newRemotePath", newRemotePath);
             return this;
         }
         /**
@@ -124,7 +124,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointConsumerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointConsumerBuilder remotePath(String remotePath) {
-            setProperty("remotePath", remotePath);
+            doSetProperty("remotePath", remotePath);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointConsumerBuilder uploadMode(
                 DropboxUploadMode uploadMode) {
-            setProperty("uploadMode", uploadMode);
+            doSetProperty("uploadMode", uploadMode);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointConsumerBuilder uploadMode(String uploadMode) {
-            setProperty("uploadMode", uploadMode);
+            doSetProperty("uploadMode", uploadMode);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -229,7 +229,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -257,7 +257,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -270,7 +270,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -283,7 +283,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -309,7 +309,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -322,7 +322,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -345,7 +345,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointProducerBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -356,7 +356,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointProducerBuilder client(Object client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -368,7 +368,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointProducerBuilder client(String client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointProducerBuilder clientIdentifier(
                 String clientIdentifier) {
-            setProperty("clientIdentifier", clientIdentifier);
+            doSetProperty("clientIdentifier", clientIdentifier);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointProducerBuilder localPath(String localPath) {
-            setProperty("localPath", localPath);
+            doSetProperty("localPath", localPath);
             return this;
         }
         /**
@@ -405,7 +405,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointProducerBuilder newRemotePath(
                 String newRemotePath) {
-            setProperty("newRemotePath", newRemotePath);
+            doSetProperty("newRemotePath", newRemotePath);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointProducerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointProducerBuilder remotePath(String remotePath) {
-            setProperty("remotePath", remotePath);
+            doSetProperty("remotePath", remotePath);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointProducerBuilder uploadMode(
                 DropboxUploadMode uploadMode) {
-            setProperty("uploadMode", uploadMode);
+            doSetProperty("uploadMode", uploadMode);
             return this;
         }
         /**
@@ -460,7 +460,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointProducerBuilder uploadMode(String uploadMode) {
-            setProperty("uploadMode", uploadMode);
+            doSetProperty("uploadMode", uploadMode);
             return this;
         }
         /**
@@ -480,7 +480,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -500,7 +500,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default DropboxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -524,7 +524,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -537,7 +537,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -550,7 +550,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -563,7 +563,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -586,7 +586,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -597,7 +597,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointBuilder client(Object client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -609,7 +609,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointBuilder client(String client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -620,7 +620,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointBuilder clientIdentifier(String clientIdentifier) {
-            setProperty("clientIdentifier", clientIdentifier);
+            doSetProperty("clientIdentifier", clientIdentifier);
             return this;
         }
         /**
@@ -633,7 +633,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointBuilder localPath(String localPath) {
-            setProperty("localPath", localPath);
+            doSetProperty("localPath", localPath);
             return this;
         }
         /**
@@ -644,7 +644,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointBuilder newRemotePath(String newRemotePath) {
-            setProperty("newRemotePath", newRemotePath);
+            doSetProperty("newRemotePath", newRemotePath);
             return this;
         }
         /**
@@ -657,7 +657,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -668,7 +668,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointBuilder remotePath(String remotePath) {
-            setProperty("remotePath", remotePath);
+            doSetProperty("remotePath", remotePath);
             return this;
         }
         /**
@@ -683,7 +683,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointBuilder uploadMode(DropboxUploadMode uploadMode) {
-            setProperty("uploadMode", uploadMode);
+            doSetProperty("uploadMode", uploadMode);
             return this;
         }
         /**
@@ -698,7 +698,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: common
          */
         default DropboxEndpointBuilder uploadMode(String uploadMode) {
-            setProperty("uploadMode", uploadMode);
+            doSetProperty("uploadMode", uploadMode);
             return this;
         }
     }
@@ -722,7 +722,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -735,7 +735,7 @@ public interface DropboxEndpointBuilderFactory {
          */
         default AdvancedDropboxEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -747,7 +747,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDropboxEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -759,7 +759,7 @@ public interface DropboxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDropboxEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

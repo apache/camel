@@ -55,7 +55,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder allowNamedParameters(
                 String allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointConsumerBuilder dataSource(Object dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointConsumerBuilder dataSource(String dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface SqlEndpointBuilderFactory {
          */
         @Deprecated
         default SqlEndpointConsumerBuilder dataSourceRef(String dataSourceRef) {
-            setProperty("dataSourceRef", dataSourceRef);
+            doSetProperty("dataSourceRef", dataSourceRef);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointConsumerBuilder outputClass(String outputClass) {
-            setProperty("outputClass", outputClass);
+            doSetProperty("outputClass", outputClass);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointConsumerBuilder outputHeader(String outputHeader) {
-            setProperty("outputHeader", outputHeader);
+            doSetProperty("outputHeader", outputHeader);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointConsumerBuilder outputType(SqlOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointConsumerBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -186,7 +186,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointConsumerBuilder separator(char separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointConsumerBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder breakBatchOnConsumeFail(
                 boolean breakBatchOnConsumeFail) {
-            setProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
+            doSetProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
             return this;
         }
         /**
@@ -224,7 +224,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder breakBatchOnConsumeFail(
                 String breakBatchOnConsumeFail) {
-            setProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
+            doSetProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
             return this;
         }
         /**
@@ -242,7 +242,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -260,7 +260,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -272,7 +272,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder expectedUpdateCount(
                 int expectedUpdateCount) {
-            setProperty("expectedUpdateCount", expectedUpdateCount);
+            doSetProperty("expectedUpdateCount", expectedUpdateCount);
             return this;
         }
         /**
@@ -284,7 +284,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder expectedUpdateCount(
                 String expectedUpdateCount) {
-            setProperty("expectedUpdateCount", expectedUpdateCount);
+            doSetProperty("expectedUpdateCount", expectedUpdateCount);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -308,7 +308,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -321,7 +321,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder onConsume(String onConsume) {
-            setProperty("onConsume", onConsume);
+            doSetProperty("onConsume", onConsume);
             return this;
         }
         /**
@@ -334,7 +334,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder onConsumeBatchComplete(
                 String onConsumeBatchComplete) {
-            setProperty("onConsumeBatchComplete", onConsumeBatchComplete);
+            doSetProperty("onConsumeBatchComplete", onConsumeBatchComplete);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder onConsumeFailed(
                 String onConsumeFailed) {
-            setProperty("onConsumeFailed", onConsumeFailed);
+            doSetProperty("onConsumeFailed", onConsumeFailed);
             return this;
         }
         /**
@@ -361,7 +361,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder routeEmptyResultSet(
                 boolean routeEmptyResultSet) {
-            setProperty("routeEmptyResultSet", routeEmptyResultSet);
+            doSetProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
         }
         /**
@@ -374,7 +374,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder routeEmptyResultSet(
                 String routeEmptyResultSet) {
-            setProperty("routeEmptyResultSet", routeEmptyResultSet);
+            doSetProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
         }
         /**
@@ -387,7 +387,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -400,7 +400,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -413,7 +413,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -426,7 +426,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -438,7 +438,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder useIterator(boolean useIterator) {
-            setProperty("useIterator", useIterator);
+            doSetProperty("useIterator", useIterator);
             return this;
         }
         /**
@@ -450,7 +450,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder useIterator(String useIterator) {
-            setProperty("useIterator", useIterator);
+            doSetProperty("useIterator", useIterator);
             return this;
         }
         /**
@@ -463,7 +463,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -476,7 +476,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -489,7 +489,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -502,7 +502,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -519,7 +519,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -536,7 +536,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -549,7 +549,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -562,7 +562,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -574,7 +574,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -586,7 +586,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -599,7 +599,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -612,7 +612,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -625,7 +625,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -639,7 +639,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -654,7 +654,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -669,7 +669,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -681,7 +681,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -695,7 +695,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -710,7 +710,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -721,7 +721,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder startScheduler(boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -732,7 +732,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder startScheduler(String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -743,7 +743,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -755,7 +755,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -767,7 +767,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -779,7 +779,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -806,7 +806,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -822,7 +822,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -834,7 +834,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -847,7 +847,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -863,7 +863,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -879,7 +879,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -895,7 +895,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder processingStrategy(
                 Object processingStrategy) {
-            setProperty("processingStrategy", processingStrategy);
+            doSetProperty("processingStrategy", processingStrategy);
             return this;
         }
         /**
@@ -911,7 +911,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder processingStrategy(
                 String processingStrategy) {
-            setProperty("processingStrategy", processingStrategy);
+            doSetProperty("processingStrategy", processingStrategy);
             return this;
         }
         /**
@@ -928,7 +928,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -945,7 +945,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -958,7 +958,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -971,7 +971,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -986,7 +986,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder parametersCount(
                 int parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -1001,7 +1001,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder parametersCount(
                 String parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -1015,7 +1015,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder placeholder(
                 String placeholder) {
-            setProperty("placeholder", placeholder);
+            doSetProperty("placeholder", placeholder);
             return this;
         }
         /**
@@ -1030,7 +1030,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -1045,7 +1045,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -1058,7 +1058,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1071,7 +1071,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1084,7 +1084,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder templateOptions(
                 Map<String, Object> templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -1098,7 +1098,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder templateOptions(
                 String templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -1111,7 +1111,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder usePlaceholder(
                 boolean usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
         /**
@@ -1124,7 +1124,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointConsumerBuilder usePlaceholder(
                 String usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
     }
@@ -1147,7 +1147,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointProducerBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -1159,7 +1159,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointProducerBuilder allowNamedParameters(
                 String allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -1170,7 +1170,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointProducerBuilder dataSource(Object dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -1182,7 +1182,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointProducerBuilder dataSource(String dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -1195,7 +1195,7 @@ public interface SqlEndpointBuilderFactory {
          */
         @Deprecated
         default SqlEndpointProducerBuilder dataSourceRef(String dataSourceRef) {
-            setProperty("dataSourceRef", dataSourceRef);
+            doSetProperty("dataSourceRef", dataSourceRef);
             return this;
         }
         /**
@@ -1207,7 +1207,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointProducerBuilder outputClass(String outputClass) {
-            setProperty("outputClass", outputClass);
+            doSetProperty("outputClass", outputClass);
             return this;
         }
         /**
@@ -1222,7 +1222,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointProducerBuilder outputHeader(String outputHeader) {
-            setProperty("outputHeader", outputHeader);
+            doSetProperty("outputHeader", outputHeader);
             return this;
         }
         /**
@@ -1243,7 +1243,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointProducerBuilder outputType(SqlOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1264,7 +1264,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointProducerBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1278,7 +1278,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointProducerBuilder separator(char separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -1292,7 +1292,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointProducerBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -1303,7 +1303,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: producer
          */
         default SqlEndpointProducerBuilder batch(boolean batch) {
-            setProperty("batch", batch);
+            doSetProperty("batch", batch);
             return this;
         }
         /**
@@ -1314,7 +1314,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: producer
          */
         default SqlEndpointProducerBuilder batch(String batch) {
-            setProperty("batch", batch);
+            doSetProperty("batch", batch);
             return this;
         }
         /**
@@ -1334,7 +1334,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1354,7 +1354,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1366,7 +1366,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: producer
          */
         default SqlEndpointProducerBuilder noop(boolean noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -1378,7 +1378,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: producer
          */
         default SqlEndpointProducerBuilder noop(String noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -1392,7 +1392,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointProducerBuilder useMessageBodyForSql(
                 boolean useMessageBodyForSql) {
-            setProperty("useMessageBodyForSql", useMessageBodyForSql);
+            doSetProperty("useMessageBodyForSql", useMessageBodyForSql);
             return this;
         }
         /**
@@ -1406,7 +1406,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointProducerBuilder useMessageBodyForSql(
                 String useMessageBodyForSql) {
-            setProperty("useMessageBodyForSql", useMessageBodyForSql);
+            doSetProperty("useMessageBodyForSql", useMessageBodyForSql);
             return this;
         }
     }
@@ -1434,7 +1434,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -1451,7 +1451,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -1464,7 +1464,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1477,7 +1477,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1492,7 +1492,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder parametersCount(
                 int parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -1507,7 +1507,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder parametersCount(
                 String parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -1521,7 +1521,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder placeholder(
                 String placeholder) {
-            setProperty("placeholder", placeholder);
+            doSetProperty("placeholder", placeholder);
             return this;
         }
         /**
@@ -1536,7 +1536,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -1551,7 +1551,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -1564,7 +1564,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1577,7 +1577,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1590,7 +1590,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder templateOptions(
                 Map<String, Object> templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -1604,7 +1604,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder templateOptions(
                 String templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -1617,7 +1617,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder usePlaceholder(
                 boolean usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
         /**
@@ -1630,7 +1630,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointProducerBuilder usePlaceholder(
                 String usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
     }
@@ -1653,7 +1653,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -1665,7 +1665,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default SqlEndpointBuilder allowNamedParameters(
                 String allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -1676,7 +1676,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointBuilder dataSource(Object dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -1688,7 +1688,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointBuilder dataSource(String dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -1701,7 +1701,7 @@ public interface SqlEndpointBuilderFactory {
          */
         @Deprecated
         default SqlEndpointBuilder dataSourceRef(String dataSourceRef) {
-            setProperty("dataSourceRef", dataSourceRef);
+            doSetProperty("dataSourceRef", dataSourceRef);
             return this;
         }
         /**
@@ -1713,7 +1713,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointBuilder outputClass(String outputClass) {
-            setProperty("outputClass", outputClass);
+            doSetProperty("outputClass", outputClass);
             return this;
         }
         /**
@@ -1728,7 +1728,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointBuilder outputHeader(String outputHeader) {
-            setProperty("outputHeader", outputHeader);
+            doSetProperty("outputHeader", outputHeader);
             return this;
         }
         /**
@@ -1749,7 +1749,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointBuilder outputType(SqlOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1770,7 +1770,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1784,7 +1784,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointBuilder separator(char separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -1798,7 +1798,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: common
          */
         default SqlEndpointBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
     }
@@ -1826,7 +1826,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -1843,7 +1843,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -1856,7 +1856,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1869,7 +1869,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1883,7 +1883,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder parametersCount(int parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -1898,7 +1898,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointBuilder parametersCount(
                 String parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -1911,7 +1911,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder placeholder(String placeholder) {
-            setProperty("placeholder", placeholder);
+            doSetProperty("placeholder", placeholder);
             return this;
         }
         /**
@@ -1926,7 +1926,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -1941,7 +1941,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -1953,7 +1953,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1965,7 +1965,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1978,7 +1978,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointBuilder templateOptions(
                 Map<String, Object> templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -1992,7 +1992,7 @@ public interface SqlEndpointBuilderFactory {
          */
         default AdvancedSqlEndpointBuilder templateOptions(
                 String templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -2004,7 +2004,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder usePlaceholder(boolean usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
         /**
@@ -2016,7 +2016,7 @@ public interface SqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder usePlaceholder(String usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
     }

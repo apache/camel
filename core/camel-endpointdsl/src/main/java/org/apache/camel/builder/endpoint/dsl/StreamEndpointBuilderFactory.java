@@ -53,7 +53,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: common
          */
         default StreamEndpointConsumerBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: common
          */
         default StreamEndpointConsumerBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: common
          */
         default StreamEndpointConsumerBuilder url(String url) {
-            setProperty("url", url);
+            doSetProperty("url", url);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default StreamEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default StreamEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder fileWatcher(boolean fileWatcher) {
-            setProperty("fileWatcher", fileWatcher);
+            doSetProperty("fileWatcher", fileWatcher);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder fileWatcher(String fileWatcher) {
-            setProperty("fileWatcher", fileWatcher);
+            doSetProperty("fileWatcher", fileWatcher);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupLines(int groupLines) {
-            setProperty("groupLines", groupLines);
+            doSetProperty("groupLines", groupLines);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupLines(String groupLines) {
-            setProperty("groupLines", groupLines);
+            doSetProperty("groupLines", groupLines);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupStrategy(Object groupStrategy) {
-            setProperty("groupStrategy", groupStrategy);
+            doSetProperty("groupStrategy", groupStrategy);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupStrategy(String groupStrategy) {
-            setProperty("groupStrategy", groupStrategy);
+            doSetProperty("groupStrategy", groupStrategy);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default StreamEndpointConsumerBuilder initialPromptDelay(
                 long initialPromptDelay) {
-            setProperty("initialPromptDelay", initialPromptDelay);
+            doSetProperty("initialPromptDelay", initialPromptDelay);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default StreamEndpointConsumerBuilder initialPromptDelay(
                 String initialPromptDelay) {
-            setProperty("initialPromptDelay", initialPromptDelay);
+            doSetProperty("initialPromptDelay", initialPromptDelay);
             return this;
         }
         /**
@@ -229,7 +229,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder promptDelay(long promptDelay) {
-            setProperty("promptDelay", promptDelay);
+            doSetProperty("promptDelay", promptDelay);
             return this;
         }
         /**
@@ -240,7 +240,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder promptDelay(String promptDelay) {
-            setProperty("promptDelay", promptDelay);
+            doSetProperty("promptDelay", promptDelay);
             return this;
         }
         /**
@@ -252,7 +252,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder promptMessage(String promptMessage) {
-            setProperty("promptMessage", promptMessage);
+            doSetProperty("promptMessage", promptMessage);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder retry(boolean retry) {
-            setProperty("retry", retry);
+            doSetProperty("retry", retry);
             return this;
         }
         /**
@@ -278,7 +278,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder retry(String retry) {
-            setProperty("retry", retry);
+            doSetProperty("retry", retry);
             return this;
         }
         /**
@@ -290,7 +290,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder scanStream(boolean scanStream) {
-            setProperty("scanStream", scanStream);
+            doSetProperty("scanStream", scanStream);
             return this;
         }
         /**
@@ -302,7 +302,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder scanStream(String scanStream) {
-            setProperty("scanStream", scanStream);
+            doSetProperty("scanStream", scanStream);
             return this;
         }
         /**
@@ -314,7 +314,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default StreamEndpointConsumerBuilder scanStreamDelay(
                 long scanStreamDelay) {
-            setProperty("scanStreamDelay", scanStreamDelay);
+            doSetProperty("scanStreamDelay", scanStreamDelay);
             return this;
         }
         /**
@@ -326,7 +326,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default StreamEndpointConsumerBuilder scanStreamDelay(
                 String scanStreamDelay) {
-            setProperty("scanStreamDelay", scanStreamDelay);
+            doSetProperty("scanStreamDelay", scanStreamDelay);
             return this;
         }
     }
@@ -353,7 +353,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -381,7 +381,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -394,7 +394,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -407,7 +407,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -420,7 +420,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -436,7 +436,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder connectTimeout(
                 int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -452,7 +452,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -465,7 +465,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder httpHeaders(
                 Map<String, Object> httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -479,7 +479,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder httpHeaders(
                 String httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -496,7 +496,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder readTimeout(
                 int readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -513,7 +513,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder readTimeout(
                 String readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -526,7 +526,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -539,7 +539,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -563,7 +563,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: common
          */
         default StreamEndpointProducerBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -575,7 +575,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: common
          */
         default StreamEndpointProducerBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -588,7 +588,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: common
          */
         default StreamEndpointProducerBuilder url(String url) {
-            setProperty("url", url);
+            doSetProperty("url", url);
             return this;
         }
         /**
@@ -602,7 +602,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: producer
          */
         default StreamEndpointProducerBuilder autoCloseCount(int autoCloseCount) {
-            setProperty("autoCloseCount", autoCloseCount);
+            doSetProperty("autoCloseCount", autoCloseCount);
             return this;
         }
         /**
@@ -617,7 +617,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default StreamEndpointProducerBuilder autoCloseCount(
                 String autoCloseCount) {
-            setProperty("autoCloseCount", autoCloseCount);
+            doSetProperty("autoCloseCount", autoCloseCount);
             return this;
         }
         /**
@@ -631,7 +631,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: producer
          */
         default StreamEndpointProducerBuilder closeOnDone(boolean closeOnDone) {
-            setProperty("closeOnDone", closeOnDone);
+            doSetProperty("closeOnDone", closeOnDone);
             return this;
         }
         /**
@@ -645,7 +645,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: producer
          */
         default StreamEndpointProducerBuilder closeOnDone(String closeOnDone) {
-            setProperty("closeOnDone", closeOnDone);
+            doSetProperty("closeOnDone", closeOnDone);
             return this;
         }
         /**
@@ -656,7 +656,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: producer
          */
         default StreamEndpointProducerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -667,7 +667,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: producer
          */
         default StreamEndpointProducerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -687,7 +687,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default StreamEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -707,7 +707,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default StreamEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -731,7 +731,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -744,7 +744,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -760,7 +760,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -776,7 +776,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -789,7 +789,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointProducerBuilder httpHeaders(
                 Map<String, Object> httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -803,7 +803,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointProducerBuilder httpHeaders(
                 String httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -820,7 +820,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointProducerBuilder readTimeout(
                 int readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -837,7 +837,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointProducerBuilder readTimeout(
                 String readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -850,7 +850,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -863,7 +863,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -887,7 +887,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: common
          */
         default StreamEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -899,7 +899,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: common
          */
         default StreamEndpointBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -912,7 +912,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: common
          */
         default StreamEndpointBuilder url(String url) {
-            setProperty("url", url);
+            doSetProperty("url", url);
             return this;
         }
     }
@@ -936,7 +936,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -949,7 +949,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -964,7 +964,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStreamEndpointBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -980,7 +980,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -993,7 +993,7 @@ public interface StreamEndpointBuilderFactory {
          */
         default AdvancedStreamEndpointBuilder httpHeaders(
                 Map<String, Object> httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -1006,7 +1006,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStreamEndpointBuilder httpHeaders(String httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -1022,7 +1022,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStreamEndpointBuilder readTimeout(int readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -1038,7 +1038,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStreamEndpointBuilder readTimeout(String readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -1050,7 +1050,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStreamEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1062,7 +1062,7 @@ public interface StreamEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStreamEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

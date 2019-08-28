@@ -46,7 +46,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: consumer
          */
         default QuartzEndpointBuilder cron(String cron) {
-            setProperty("cron", cron);
+            doSetProperty("cron", cron);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: consumer
          */
         default QuartzEndpointBuilder deleteJob(boolean deleteJob) {
-            setProperty("deleteJob", deleteJob);
+            doSetProperty("deleteJob", deleteJob);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: consumer
          */
         default QuartzEndpointBuilder deleteJob(String deleteJob) {
-            setProperty("deleteJob", deleteJob);
+            doSetProperty("deleteJob", deleteJob);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: consumer
          */
         default QuartzEndpointBuilder durableJob(boolean durableJob) {
-            setProperty("durableJob", durableJob);
+            doSetProperty("durableJob", durableJob);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: consumer
          */
         default QuartzEndpointBuilder durableJob(String durableJob) {
-            setProperty("durableJob", durableJob);
+            doSetProperty("durableJob", durableJob);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: consumer
          */
         default QuartzEndpointBuilder pauseJob(boolean pauseJob) {
-            setProperty("pauseJob", pauseJob);
+            doSetProperty("pauseJob", pauseJob);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: consumer
          */
         default QuartzEndpointBuilder pauseJob(String pauseJob) {
-            setProperty("pauseJob", pauseJob);
+            doSetProperty("pauseJob", pauseJob);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: consumer
          */
         default QuartzEndpointBuilder recoverableJob(boolean recoverableJob) {
-            setProperty("recoverableJob", recoverableJob);
+            doSetProperty("recoverableJob", recoverableJob);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: consumer
          */
         default QuartzEndpointBuilder recoverableJob(String recoverableJob) {
-            setProperty("recoverableJob", recoverableJob);
+            doSetProperty("recoverableJob", recoverableJob);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: consumer
          */
         default QuartzEndpointBuilder stateful(boolean stateful) {
-            setProperty("stateful", stateful);
+            doSetProperty("stateful", stateful);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: consumer
          */
         default QuartzEndpointBuilder stateful(String stateful) {
-            setProperty("stateful", stateful);
+            doSetProperty("stateful", stateful);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default QuartzEndpointBuilder autoStartScheduler(
                 boolean autoStartScheduler) {
-            setProperty("autoStartScheduler", autoStartScheduler);
+            doSetProperty("autoStartScheduler", autoStartScheduler);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default QuartzEndpointBuilder autoStartScheduler(
                 String autoStartScheduler) {
-            setProperty("autoStartScheduler", autoStartScheduler);
+            doSetProperty("autoStartScheduler", autoStartScheduler);
             return this;
         }
         /**
@@ -214,7 +214,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: scheduler
          */
         default QuartzEndpointBuilder fireNow(boolean fireNow) {
-            setProperty("fireNow", fireNow);
+            doSetProperty("fireNow", fireNow);
             return this;
         }
         /**
@@ -226,7 +226,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: scheduler
          */
         default QuartzEndpointBuilder fireNow(String fireNow) {
-            setProperty("fireNow", fireNow);
+            doSetProperty("fireNow", fireNow);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default QuartzEndpointBuilder startDelayedSeconds(
                 int startDelayedSeconds) {
-            setProperty("startDelayedSeconds", startDelayedSeconds);
+            doSetProperty("startDelayedSeconds", startDelayedSeconds);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default QuartzEndpointBuilder startDelayedSeconds(
                 String startDelayedSeconds) {
-            setProperty("startDelayedSeconds", startDelayedSeconds);
+            doSetProperty("startDelayedSeconds", startDelayedSeconds);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: scheduler
          */
         default QuartzEndpointBuilder triggerStartDelay(long triggerStartDelay) {
-            setProperty("triggerStartDelay", triggerStartDelay);
+            doSetProperty("triggerStartDelay", triggerStartDelay);
             return this;
         }
         /**
@@ -276,7 +276,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: scheduler
          */
         default QuartzEndpointBuilder triggerStartDelay(String triggerStartDelay) {
-            setProperty("triggerStartDelay", triggerStartDelay);
+            doSetProperty("triggerStartDelay", triggerStartDelay);
             return this;
         }
     }
@@ -300,7 +300,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default AdvancedQuartzEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default AdvancedQuartzEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -325,7 +325,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default AdvancedQuartzEndpointBuilder customCalendar(
                 Object customCalendar) {
-            setProperty("customCalendar", customCalendar);
+            doSetProperty("customCalendar", customCalendar);
             return this;
         }
         /**
@@ -338,7 +338,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default AdvancedQuartzEndpointBuilder customCalendar(
                 String customCalendar) {
-            setProperty("customCalendar", customCalendar);
+            doSetProperty("customCalendar", customCalendar);
             return this;
         }
         /**
@@ -351,7 +351,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default AdvancedQuartzEndpointBuilder jobParameters(
                 Map<String, Object> jobParameters) {
-            setProperty("jobParameters", jobParameters);
+            doSetProperty("jobParameters", jobParameters);
             return this;
         }
         /**
@@ -364,7 +364,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder jobParameters(String jobParameters) {
-            setProperty("jobParameters", jobParameters);
+            doSetProperty("jobParameters", jobParameters);
             return this;
         }
         /**
@@ -376,7 +376,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default AdvancedQuartzEndpointBuilder prefixJobNameWithEndpointId(
                 boolean prefixJobNameWithEndpointId) {
-            setProperty("prefixJobNameWithEndpointId", prefixJobNameWithEndpointId);
+            doSetProperty("prefixJobNameWithEndpointId", prefixJobNameWithEndpointId);
             return this;
         }
         /**
@@ -388,7 +388,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default AdvancedQuartzEndpointBuilder prefixJobNameWithEndpointId(
                 String prefixJobNameWithEndpointId) {
-            setProperty("prefixJobNameWithEndpointId", prefixJobNameWithEndpointId);
+            doSetProperty("prefixJobNameWithEndpointId", prefixJobNameWithEndpointId);
             return this;
         }
         /**
@@ -400,7 +400,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -412,7 +412,7 @@ public interface QuartzEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -425,7 +425,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default AdvancedQuartzEndpointBuilder triggerParameters(
                 Map<String, Object> triggerParameters) {
-            setProperty("triggerParameters", triggerParameters);
+            doSetProperty("triggerParameters", triggerParameters);
             return this;
         }
         /**
@@ -439,7 +439,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default AdvancedQuartzEndpointBuilder triggerParameters(
                 String triggerParameters) {
-            setProperty("triggerParameters", triggerParameters);
+            doSetProperty("triggerParameters", triggerParameters);
             return this;
         }
         /**
@@ -454,7 +454,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default AdvancedQuartzEndpointBuilder usingFixedCamelContextName(
                 boolean usingFixedCamelContextName) {
-            setProperty("usingFixedCamelContextName", usingFixedCamelContextName);
+            doSetProperty("usingFixedCamelContextName", usingFixedCamelContextName);
             return this;
         }
         /**
@@ -469,7 +469,7 @@ public interface QuartzEndpointBuilderFactory {
          */
         default AdvancedQuartzEndpointBuilder usingFixedCamelContextName(
                 String usingFixedCamelContextName) {
-            setProperty("usingFixedCamelContextName", usingFixedCamelContextName);
+            doSetProperty("usingFixedCamelContextName", usingFixedCamelContextName);
             return this;
         }
     }

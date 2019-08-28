@@ -56,7 +56,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder allowNamedParameters(
                 String allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder databaseVendor(
                 ElSqlDatabaseVendor databaseVendor) {
-            setProperty("databaseVendor", databaseVendor);
+            doSetProperty("databaseVendor", databaseVendor);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder databaseVendor(
                 String databaseVendor) {
-            setProperty("databaseVendor", databaseVendor);
+            doSetProperty("databaseVendor", databaseVendor);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder dataSource(Object dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder dataSource(String dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         @Deprecated
         default ElsqlEndpointConsumerBuilder dataSourceRef(String dataSourceRef) {
-            setProperty("dataSourceRef", dataSourceRef);
+            doSetProperty("dataSourceRef", dataSourceRef);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder outputClass(String outputClass) {
-            setProperty("outputClass", outputClass);
+            doSetProperty("outputClass", outputClass);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder outputHeader(String outputHeader) {
-            setProperty("outputHeader", outputHeader);
+            doSetProperty("outputHeader", outputHeader);
             return this;
         }
         /**
@@ -183,7 +183,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder outputType(SqlOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -221,7 +221,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder separator(char separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -235,7 +235,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -247,7 +247,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder breakBatchOnConsumeFail(
                 boolean breakBatchOnConsumeFail) {
-            setProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
+            doSetProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
             return this;
         }
         /**
@@ -259,7 +259,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder breakBatchOnConsumeFail(
                 String breakBatchOnConsumeFail) {
-            setProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
+            doSetProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
             return this;
         }
         /**
@@ -277,7 +277,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -295,7 +295,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -307,7 +307,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder expectedUpdateCount(
                 int expectedUpdateCount) {
-            setProperty("expectedUpdateCount", expectedUpdateCount);
+            doSetProperty("expectedUpdateCount", expectedUpdateCount);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder expectedUpdateCount(
                 String expectedUpdateCount) {
-            setProperty("expectedUpdateCount", expectedUpdateCount);
+            doSetProperty("expectedUpdateCount", expectedUpdateCount);
             return this;
         }
         /**
@@ -331,7 +331,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -343,7 +343,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -356,7 +356,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder onConsume(String onConsume) {
-            setProperty("onConsume", onConsume);
+            doSetProperty("onConsume", onConsume);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder onConsumeBatchComplete(
                 String onConsumeBatchComplete) {
-            setProperty("onConsumeBatchComplete", onConsumeBatchComplete);
+            doSetProperty("onConsumeBatchComplete", onConsumeBatchComplete);
             return this;
         }
         /**
@@ -383,7 +383,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder onConsumeFailed(
                 String onConsumeFailed) {
-            setProperty("onConsumeFailed", onConsumeFailed);
+            doSetProperty("onConsumeFailed", onConsumeFailed);
             return this;
         }
         /**
@@ -396,7 +396,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder routeEmptyResultSet(
                 boolean routeEmptyResultSet) {
-            setProperty("routeEmptyResultSet", routeEmptyResultSet);
+            doSetProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
         }
         /**
@@ -409,7 +409,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder routeEmptyResultSet(
                 String routeEmptyResultSet) {
-            setProperty("routeEmptyResultSet", routeEmptyResultSet);
+            doSetProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
         }
         /**
@@ -422,7 +422,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -435,7 +435,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -448,7 +448,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -461,7 +461,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -473,7 +473,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder useIterator(boolean useIterator) {
-            setProperty("useIterator", useIterator);
+            doSetProperty("useIterator", useIterator);
             return this;
         }
         /**
@@ -485,7 +485,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder useIterator(String useIterator) {
-            setProperty("useIterator", useIterator);
+            doSetProperty("useIterator", useIterator);
             return this;
         }
         /**
@@ -498,7 +498,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -511,7 +511,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -524,7 +524,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -537,7 +537,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -554,7 +554,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -584,7 +584,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -597,7 +597,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -609,7 +609,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -621,7 +621,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -634,7 +634,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -647,7 +647,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -660,7 +660,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -674,7 +674,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -689,7 +689,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -704,7 +704,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -716,7 +716,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -730,7 +730,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -745,7 +745,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -757,7 +757,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -769,7 +769,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -780,7 +780,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -792,7 +792,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -804,7 +804,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -816,7 +816,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -843,7 +843,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -859,7 +859,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -871,7 +871,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -884,7 +884,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -900,7 +900,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -916,7 +916,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -932,7 +932,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder processingStrategy(
                 Object processingStrategy) {
-            setProperty("processingStrategy", processingStrategy);
+            doSetProperty("processingStrategy", processingStrategy);
             return this;
         }
         /**
@@ -948,7 +948,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder processingStrategy(
                 String processingStrategy) {
-            setProperty("processingStrategy", processingStrategy);
+            doSetProperty("processingStrategy", processingStrategy);
             return this;
         }
         /**
@@ -965,7 +965,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -982,7 +982,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -995,7 +995,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1008,7 +1008,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1021,7 +1021,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder elSqlConfig(
                 Object elSqlConfig) {
-            setProperty("elSqlConfig", elSqlConfig);
+            doSetProperty("elSqlConfig", elSqlConfig);
             return this;
         }
         /**
@@ -1035,7 +1035,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder elSqlConfig(
                 String elSqlConfig) {
-            setProperty("elSqlConfig", elSqlConfig);
+            doSetProperty("elSqlConfig", elSqlConfig);
             return this;
         }
         /**
@@ -1050,7 +1050,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder parametersCount(
                 int parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -1065,7 +1065,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder parametersCount(
                 String parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -1079,7 +1079,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder placeholder(
                 String placeholder) {
-            setProperty("placeholder", placeholder);
+            doSetProperty("placeholder", placeholder);
             return this;
         }
         /**
@@ -1094,7 +1094,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -1109,7 +1109,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -1122,7 +1122,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1135,7 +1135,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1148,7 +1148,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder templateOptions(
                 Map<String, Object> templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -1162,7 +1162,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder templateOptions(
                 String templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -1175,7 +1175,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder usePlaceholder(
                 boolean usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
         /**
@@ -1188,7 +1188,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointConsumerBuilder usePlaceholder(
                 String usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
     }
@@ -1211,7 +1211,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointProducerBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -1223,7 +1223,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointProducerBuilder allowNamedParameters(
                 String allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -1237,7 +1237,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointProducerBuilder databaseVendor(
                 ElSqlDatabaseVendor databaseVendor) {
-            setProperty("databaseVendor", databaseVendor);
+            doSetProperty("databaseVendor", databaseVendor);
             return this;
         }
         /**
@@ -1251,7 +1251,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointProducerBuilder databaseVendor(
                 String databaseVendor) {
-            setProperty("databaseVendor", databaseVendor);
+            doSetProperty("databaseVendor", databaseVendor);
             return this;
         }
         /**
@@ -1262,7 +1262,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointProducerBuilder dataSource(Object dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -1274,7 +1274,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointProducerBuilder dataSource(String dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -1287,7 +1287,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         @Deprecated
         default ElsqlEndpointProducerBuilder dataSourceRef(String dataSourceRef) {
-            setProperty("dataSourceRef", dataSourceRef);
+            doSetProperty("dataSourceRef", dataSourceRef);
             return this;
         }
         /**
@@ -1299,7 +1299,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointProducerBuilder outputClass(String outputClass) {
-            setProperty("outputClass", outputClass);
+            doSetProperty("outputClass", outputClass);
             return this;
         }
         /**
@@ -1314,7 +1314,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointProducerBuilder outputHeader(String outputHeader) {
-            setProperty("outputHeader", outputHeader);
+            doSetProperty("outputHeader", outputHeader);
             return this;
         }
         /**
@@ -1338,7 +1338,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointProducerBuilder outputType(SqlOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1362,7 +1362,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointProducerBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1376,7 +1376,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointProducerBuilder separator(char separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -1390,7 +1390,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointProducerBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -1401,7 +1401,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: producer
          */
         default ElsqlEndpointProducerBuilder batch(boolean batch) {
-            setProperty("batch", batch);
+            doSetProperty("batch", batch);
             return this;
         }
         /**
@@ -1412,7 +1412,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: producer
          */
         default ElsqlEndpointProducerBuilder batch(String batch) {
-            setProperty("batch", batch);
+            doSetProperty("batch", batch);
             return this;
         }
         /**
@@ -1432,7 +1432,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1452,7 +1452,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1464,7 +1464,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: producer
          */
         default ElsqlEndpointProducerBuilder noop(boolean noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -1476,7 +1476,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: producer
          */
         default ElsqlEndpointProducerBuilder noop(String noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -1490,7 +1490,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointProducerBuilder useMessageBodyForSql(
                 boolean useMessageBodyForSql) {
-            setProperty("useMessageBodyForSql", useMessageBodyForSql);
+            doSetProperty("useMessageBodyForSql", useMessageBodyForSql);
             return this;
         }
         /**
@@ -1504,7 +1504,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointProducerBuilder useMessageBodyForSql(
                 String useMessageBodyForSql) {
-            setProperty("useMessageBodyForSql", useMessageBodyForSql);
+            doSetProperty("useMessageBodyForSql", useMessageBodyForSql);
             return this;
         }
     }
@@ -1532,7 +1532,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -1549,7 +1549,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -1562,7 +1562,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1575,7 +1575,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1588,7 +1588,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder elSqlConfig(
                 Object elSqlConfig) {
-            setProperty("elSqlConfig", elSqlConfig);
+            doSetProperty("elSqlConfig", elSqlConfig);
             return this;
         }
         /**
@@ -1602,7 +1602,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder elSqlConfig(
                 String elSqlConfig) {
-            setProperty("elSqlConfig", elSqlConfig);
+            doSetProperty("elSqlConfig", elSqlConfig);
             return this;
         }
         /**
@@ -1617,7 +1617,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder parametersCount(
                 int parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -1632,7 +1632,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder parametersCount(
                 String parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -1646,7 +1646,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder placeholder(
                 String placeholder) {
-            setProperty("placeholder", placeholder);
+            doSetProperty("placeholder", placeholder);
             return this;
         }
         /**
@@ -1661,7 +1661,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -1676,7 +1676,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -1689,7 +1689,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1702,7 +1702,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1715,7 +1715,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder templateOptions(
                 Map<String, Object> templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -1729,7 +1729,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder templateOptions(
                 String templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -1742,7 +1742,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder usePlaceholder(
                 boolean usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
         /**
@@ -1755,7 +1755,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointProducerBuilder usePlaceholder(
                 String usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
     }
@@ -1778,7 +1778,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -1790,7 +1790,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointBuilder allowNamedParameters(
                 String allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -1804,7 +1804,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default ElsqlEndpointBuilder databaseVendor(
                 ElSqlDatabaseVendor databaseVendor) {
-            setProperty("databaseVendor", databaseVendor);
+            doSetProperty("databaseVendor", databaseVendor);
             return this;
         }
         /**
@@ -1817,7 +1817,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointBuilder databaseVendor(String databaseVendor) {
-            setProperty("databaseVendor", databaseVendor);
+            doSetProperty("databaseVendor", databaseVendor);
             return this;
         }
         /**
@@ -1828,7 +1828,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointBuilder dataSource(Object dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -1840,7 +1840,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointBuilder dataSource(String dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -1853,7 +1853,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         @Deprecated
         default ElsqlEndpointBuilder dataSourceRef(String dataSourceRef) {
-            setProperty("dataSourceRef", dataSourceRef);
+            doSetProperty("dataSourceRef", dataSourceRef);
             return this;
         }
         /**
@@ -1865,7 +1865,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointBuilder outputClass(String outputClass) {
-            setProperty("outputClass", outputClass);
+            doSetProperty("outputClass", outputClass);
             return this;
         }
         /**
@@ -1880,7 +1880,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointBuilder outputHeader(String outputHeader) {
-            setProperty("outputHeader", outputHeader);
+            doSetProperty("outputHeader", outputHeader);
             return this;
         }
         /**
@@ -1904,7 +1904,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointBuilder outputType(SqlOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1928,7 +1928,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1942,7 +1942,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointBuilder separator(char separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -1956,7 +1956,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: common
          */
         default ElsqlEndpointBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
     }
@@ -1984,7 +1984,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -2001,7 +2001,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
-            setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
+            doSetProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
         }
         /**
@@ -2014,7 +2014,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2027,7 +2027,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2039,7 +2039,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder elSqlConfig(Object elSqlConfig) {
-            setProperty("elSqlConfig", elSqlConfig);
+            doSetProperty("elSqlConfig", elSqlConfig);
             return this;
         }
         /**
@@ -2052,7 +2052,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder elSqlConfig(String elSqlConfig) {
-            setProperty("elSqlConfig", elSqlConfig);
+            doSetProperty("elSqlConfig", elSqlConfig);
             return this;
         }
         /**
@@ -2066,7 +2066,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder parametersCount(int parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -2081,7 +2081,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointBuilder parametersCount(
                 String parametersCount) {
-            setProperty("parametersCount", parametersCount);
+            doSetProperty("parametersCount", parametersCount);
             return this;
         }
         /**
@@ -2094,7 +2094,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder placeholder(String placeholder) {
-            setProperty("placeholder", placeholder);
+            doSetProperty("placeholder", placeholder);
             return this;
         }
         /**
@@ -2109,7 +2109,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -2124,7 +2124,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -2136,7 +2136,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2148,7 +2148,7 @@ public interface ElsqlEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2161,7 +2161,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointBuilder templateOptions(
                 Map<String, Object> templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -2175,7 +2175,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointBuilder templateOptions(
                 String templateOptions) {
-            setProperty("templateOptions", templateOptions);
+            doSetProperty("templateOptions", templateOptions);
             return this;
         }
         /**
@@ -2188,7 +2188,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointBuilder usePlaceholder(
                 boolean usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
         /**
@@ -2201,7 +2201,7 @@ public interface ElsqlEndpointBuilderFactory {
          */
         default AdvancedElsqlEndpointBuilder usePlaceholder(
                 String usePlaceholder) {
-            setProperty("usePlaceholder", usePlaceholder);
+            doSetProperty("usePlaceholder", usePlaceholder);
             return this;
         }
     }
