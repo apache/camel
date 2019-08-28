@@ -49,7 +49,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder apiVersion(
                 String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder dnsDomain(
                 String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder portName(
                 String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder portProtocol(
                 String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -123,7 +123,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder caCertData(
                 String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder caCertFile(
                 String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -171,7 +171,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -183,7 +183,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder clientKeyData(
                 String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -219,7 +219,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder oauthToken(
                 String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -231,7 +231,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder password(
                 String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder trustCerts(
                 Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder trustCerts(
                 String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -268,7 +268,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default KubernetesPersistentVolumesEndpointBuilder username(
                 String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -293,7 +293,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -306,7 +306,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -333,7 +333,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -346,7 +346,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

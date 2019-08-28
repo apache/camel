@@ -48,7 +48,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * Group: producer
          */
         default ChatScriptEndpointBuilder chatUserName(String chatUserName) {
-            setProperty("chatUserName", chatUserName);
+            doSetProperty("chatUserName", chatUserName);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * Group: producer
          */
         default ChatScriptEndpointBuilder resetChat(boolean resetChat) {
-            setProperty("resetChat", resetChat);
+            doSetProperty("resetChat", resetChat);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * Group: producer
          */
         default ChatScriptEndpointBuilder resetChat(String resetChat) {
-            setProperty("resetChat", resetChat);
+            doSetProperty("resetChat", resetChat);
             return this;
         }
     }
@@ -94,7 +94,7 @@ public interface ChatScriptEndpointBuilderFactory {
          */
         default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface ChatScriptEndpointBuilderFactory {
          */
         default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface ChatScriptEndpointBuilderFactory {
          */
         default AdvancedChatScriptEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedChatScriptEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

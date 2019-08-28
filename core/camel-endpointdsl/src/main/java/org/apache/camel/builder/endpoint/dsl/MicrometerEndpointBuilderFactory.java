@@ -48,7 +48,7 @@ public interface MicrometerEndpointBuilderFactory {
          * Group: producer
          */
         default MicrometerEndpointBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface MicrometerEndpointBuilderFactory {
          * Group: producer
          */
         default MicrometerEndpointBuilder decrement(String decrement) {
-            setProperty("decrement", decrement);
+            doSetProperty("decrement", decrement);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface MicrometerEndpointBuilderFactory {
          * Group: producer
          */
         default MicrometerEndpointBuilder increment(String increment) {
-            setProperty("increment", increment);
+            doSetProperty("increment", increment);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface MicrometerEndpointBuilderFactory {
          * Group: producer
          */
         default MicrometerEndpointBuilder value(String value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
     }
@@ -105,7 +105,7 @@ public interface MicrometerEndpointBuilderFactory {
          */
         default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface MicrometerEndpointBuilderFactory {
          */
         default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface MicrometerEndpointBuilderFactory {
          */
         default AdvancedMicrometerEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface MicrometerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMicrometerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

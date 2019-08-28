@@ -51,7 +51,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default JSR356WebSocketEndpointConsumerBuilder sessionCount(
                 int sessionCount) {
-            setProperty("sessionCount", sessionCount);
+            doSetProperty("sessionCount", sessionCount);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default JSR356WebSocketEndpointConsumerBuilder sessionCount(
                 String sessionCount) {
-            setProperty("sessionCount", sessionCount);
+            doSetProperty("sessionCount", sessionCount);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -128,7 +128,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -156,7 +156,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -208,7 +208,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -221,7 +221,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -245,7 +245,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default JSR356WebSocketEndpointProducerBuilder sessionCount(
                 int sessionCount) {
-            setProperty("sessionCount", sessionCount);
+            doSetProperty("sessionCount", sessionCount);
             return this;
         }
         /**
@@ -258,7 +258,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default JSR356WebSocketEndpointProducerBuilder sessionCount(
                 String sessionCount) {
-            setProperty("sessionCount", sessionCount);
+            doSetProperty("sessionCount", sessionCount);
             return this;
         }
         /**
@@ -278,7 +278,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -298,7 +298,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -323,7 +323,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -336,7 +336,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -349,7 +349,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -362,7 +362,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -385,7 +385,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Group: common
          */
         default JSR356WebSocketEndpointBuilder sessionCount(int sessionCount) {
-            setProperty("sessionCount", sessionCount);
+            doSetProperty("sessionCount", sessionCount);
             return this;
         }
         /**
@@ -397,7 +397,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Group: common
          */
         default JSR356WebSocketEndpointBuilder sessionCount(String sessionCount) {
-            setProperty("sessionCount", sessionCount);
+            doSetProperty("sessionCount", sessionCount);
             return this;
         }
     }
@@ -421,7 +421,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -434,7 +434,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -447,7 +447,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -460,7 +460,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          */
         default AdvancedJSR356WebSocketEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

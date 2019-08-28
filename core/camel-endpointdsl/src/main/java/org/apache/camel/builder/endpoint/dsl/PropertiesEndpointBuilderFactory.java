@@ -57,7 +57,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default PropertiesEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default PropertiesEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -102,7 +102,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -156,7 +156,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -226,7 +226,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default PropertiesEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -246,7 +246,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default PropertiesEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -270,7 +270,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -283,7 +283,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -309,7 +309,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -344,7 +344,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -370,7 +370,7 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default AdvancedPropertiesEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -382,7 +382,7 @@ public interface PropertiesEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPropertiesEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -51,7 +51,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder httpClientBuilder(
                 Object httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder httpClientBuilder(
                 String httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder httpHeaders(String httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder proxy(Object proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder proxy(String proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -242,7 +242,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder serviceUri(String serviceUri) {
-            setProperty("serviceUri", serviceUri);
+            doSetProperty("serviceUri", serviceUri);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder socketTimeout(int socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder socketTimeout(
                 String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -293,7 +293,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -329,7 +329,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -356,7 +356,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -372,7 +372,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -384,7 +384,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -397,7 +397,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -410,7 +410,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -423,7 +423,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -436,7 +436,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -449,7 +449,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -472,7 +472,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -485,7 +485,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -497,7 +497,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -510,7 +510,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -523,7 +523,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -540,7 +540,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -557,7 +557,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -573,7 +573,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder httpClientBuilder(
                 Object httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -589,7 +589,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder httpClientBuilder(
                 String httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -603,7 +603,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -617,7 +617,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder httpHeaders(String httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -628,7 +628,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -639,7 +639,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder proxy(Object proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -651,7 +651,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder proxy(String proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -663,7 +663,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder serviceUri(String serviceUri) {
-            setProperty("serviceUri", serviceUri);
+            doSetProperty("serviceUri", serviceUri);
             return this;
         }
         /**
@@ -675,7 +675,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder socketTimeout(int socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -688,7 +688,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder socketTimeout(
                 String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -701,7 +701,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -714,7 +714,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -734,7 +734,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -754,7 +754,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -778,7 +778,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -791,7 +791,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -804,7 +804,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -817,7 +817,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -840,7 +840,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -852,7 +852,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder connectTimeout(String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -864,7 +864,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -877,7 +877,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -890,7 +890,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -907,7 +907,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -924,7 +924,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -940,7 +940,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder httpClientBuilder(
                 Object httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -956,7 +956,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder httpClientBuilder(
                 String httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -970,7 +970,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -984,7 +984,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder httpHeaders(String httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -995,7 +995,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -1006,7 +1006,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder proxy(Object proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -1018,7 +1018,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder proxy(String proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -1030,7 +1030,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder serviceUri(String serviceUri) {
-            setProperty("serviceUri", serviceUri);
+            doSetProperty("serviceUri", serviceUri);
             return this;
         }
         /**
@@ -1042,7 +1042,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder socketTimeout(int socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -1054,7 +1054,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder socketTimeout(String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -1067,7 +1067,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1080,7 +1080,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -1104,7 +1104,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1117,7 +1117,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1129,7 +1129,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedOlingo4EndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1141,7 +1141,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedOlingo4EndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

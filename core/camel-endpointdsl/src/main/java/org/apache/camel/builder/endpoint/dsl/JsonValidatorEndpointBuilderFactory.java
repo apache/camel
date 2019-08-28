@@ -47,7 +47,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * Group: producer
          */
         default JsonValidatorEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * Group: producer
          */
         default JsonValidatorEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default JsonValidatorEndpointBuilder failOnNullBody(
                 boolean failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default JsonValidatorEndpointBuilder failOnNullBody(
                 String failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default JsonValidatorEndpointBuilder failOnNullHeader(
                 boolean failOnNullHeader) {
-            setProperty("failOnNullHeader", failOnNullHeader);
+            doSetProperty("failOnNullHeader", failOnNullHeader);
             return this;
         }
         /**
@@ -106,7 +106,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default JsonValidatorEndpointBuilder failOnNullHeader(
                 String failOnNullHeader) {
-            setProperty("failOnNullHeader", failOnNullHeader);
+            doSetProperty("failOnNullHeader", failOnNullHeader);
             return this;
         }
         /**
@@ -117,7 +117,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * Group: producer
          */
         default JsonValidatorEndpointBuilder headerName(String headerName) {
-            setProperty("headerName", headerName);
+            doSetProperty("headerName", headerName);
             return this;
         }
     }
@@ -141,7 +141,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder errorHandler(
                 Object errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder errorHandler(
                 String errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -197,7 +197,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder schemaLoader(
                 Object schemaLoader) {
-            setProperty("schemaLoader", schemaLoader);
+            doSetProperty("schemaLoader", schemaLoader);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder schemaLoader(
                 String schemaLoader) {
-            setProperty("schemaLoader", schemaLoader);
+            doSetProperty("schemaLoader", schemaLoader);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

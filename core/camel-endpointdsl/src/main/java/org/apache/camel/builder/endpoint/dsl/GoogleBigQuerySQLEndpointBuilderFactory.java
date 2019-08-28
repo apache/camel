@@ -50,7 +50,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default GoogleBigQuerySQLEndpointBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default GoogleBigQuerySQLEndpointBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
     }
@@ -89,7 +89,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

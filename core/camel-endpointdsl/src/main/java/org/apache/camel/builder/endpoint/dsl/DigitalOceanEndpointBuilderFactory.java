@@ -48,7 +48,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalOceanEndpointBuilder page(Integer page) {
-            setProperty("page", page);
+            doSetProperty("page", page);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalOceanEndpointBuilder page(String page) {
-            setProperty("page", page);
+            doSetProperty("page", page);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalOceanEndpointBuilder perPage(Integer perPage) {
-            setProperty("perPage", perPage);
+            doSetProperty("perPage", perPage);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalOceanEndpointBuilder perPage(String perPage) {
-            setProperty("perPage", perPage);
+            doSetProperty("perPage", perPage);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          */
         default DigitalOceanEndpointBuilder resource(
                 DigitalOceanResources resource) {
-            setProperty("resource", resource);
+            doSetProperty("resource", resource);
             return this;
         }
         /**
@@ -112,7 +112,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalOceanEndpointBuilder resource(String resource) {
-            setProperty("resource", resource);
+            doSetProperty("resource", resource);
             return this;
         }
         /**
@@ -123,7 +123,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyHost(String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          */
         default DigitalOceanEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -146,7 +146,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyPort(Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyPort(String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyUser(String httpProxyUser) {
-            setProperty("httpProxyUser", httpProxyUser);
+            doSetProperty("httpProxyUser", httpProxyUser);
             return this;
         }
         /**
@@ -180,7 +180,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * Group: security
          */
         default DigitalOceanEndpointBuilder oAuthToken(String oAuthToken) {
-            setProperty("oAuthToken", oAuthToken);
+            doSetProperty("oAuthToken", oAuthToken);
             return this;
         }
     }
@@ -204,7 +204,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          */
         default AdvancedDigitalOceanEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          */
         default AdvancedDigitalOceanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          */
         default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
                 Object digitalOceanClient) {
-            setProperty("digitalOceanClient", digitalOceanClient);
+            doSetProperty("digitalOceanClient", digitalOceanClient);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          */
         default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
                 String digitalOceanClient) {
-            setProperty("digitalOceanClient", digitalOceanClient);
+            doSetProperty("digitalOceanClient", digitalOceanClient);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          */
         default AdvancedDigitalOceanEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -269,7 +269,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          */
         default AdvancedDigitalOceanEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

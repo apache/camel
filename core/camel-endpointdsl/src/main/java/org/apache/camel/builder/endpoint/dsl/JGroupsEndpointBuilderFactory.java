@@ -52,7 +52,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default JGroupsEndpointConsumerBuilder channelProperties(
                 String channelProperties) {
-            setProperty("channelProperties", channelProperties);
+            doSetProperty("channelProperties", channelProperties);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default JGroupsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default JGroupsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default JGroupsEndpointConsumerBuilder enableViewMessages(
                 boolean enableViewMessages) {
-            setProperty("enableViewMessages", enableViewMessages);
+            doSetProperty("enableViewMessages", enableViewMessages);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default JGroupsEndpointConsumerBuilder enableViewMessages(
                 String enableViewMessages) {
-            setProperty("enableViewMessages", enableViewMessages);
+            doSetProperty("enableViewMessages", enableViewMessages);
             return this;
         }
     }
@@ -143,7 +143,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -171,7 +171,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -197,7 +197,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -210,7 +210,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -223,7 +223,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -236,7 +236,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -260,7 +260,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default JGroupsEndpointProducerBuilder channelProperties(
                 String channelProperties) {
-            setProperty("channelProperties", channelProperties);
+            doSetProperty("channelProperties", channelProperties);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default JGroupsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default JGroupsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -324,7 +324,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -337,7 +337,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -350,7 +350,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -363,7 +363,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -387,7 +387,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default JGroupsEndpointBuilder channelProperties(
                 String channelProperties) {
-            setProperty("channelProperties", channelProperties);
+            doSetProperty("channelProperties", channelProperties);
             return this;
         }
     }
@@ -411,7 +411,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -424,7 +424,7 @@ public interface JGroupsEndpointBuilderFactory {
          */
         default AdvancedJGroupsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -436,7 +436,7 @@ public interface JGroupsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJGroupsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -448,7 +448,7 @@ public interface JGroupsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJGroupsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

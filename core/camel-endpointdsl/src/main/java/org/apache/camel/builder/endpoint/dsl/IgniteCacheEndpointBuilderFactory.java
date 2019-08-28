@@ -52,7 +52,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder autoUnsubscribe(
                 boolean autoUnsubscribe) {
-            setProperty("autoUnsubscribe", autoUnsubscribe);
+            doSetProperty("autoUnsubscribe", autoUnsubscribe);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder autoUnsubscribe(
                 String autoUnsubscribe) {
-            setProperty("autoUnsubscribe", autoUnsubscribe);
+            doSetProperty("autoUnsubscribe", autoUnsubscribe);
             return this;
         }
         /**
@@ -133,7 +133,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder fireExistingQueryResults(
                 boolean fireExistingQueryResults) {
-            setProperty("fireExistingQueryResults", fireExistingQueryResults);
+            doSetProperty("fireExistingQueryResults", fireExistingQueryResults);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder fireExistingQueryResults(
                 String fireExistingQueryResults) {
-            setProperty("fireExistingQueryResults", fireExistingQueryResults);
+            doSetProperty("fireExistingQueryResults", fireExistingQueryResults);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder oneExchangePerUpdate(
                 boolean oneExchangePerUpdate) {
-            setProperty("oneExchangePerUpdate", oneExchangePerUpdate);
+            doSetProperty("oneExchangePerUpdate", oneExchangePerUpdate);
             return this;
         }
         /**
@@ -205,7 +205,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder oneExchangePerUpdate(
                 String oneExchangePerUpdate) {
-            setProperty("oneExchangePerUpdate", oneExchangePerUpdate);
+            doSetProperty("oneExchangePerUpdate", oneExchangePerUpdate);
             return this;
         }
         /**
@@ -216,7 +216,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Group: consumer
          */
         default IgniteCacheEndpointConsumerBuilder pageSize(int pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Group: consumer
          */
         default IgniteCacheEndpointConsumerBuilder pageSize(String pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -240,7 +240,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder remoteFilter(
                 Object remoteFilter) {
-            setProperty("remoteFilter", remoteFilter);
+            doSetProperty("remoteFilter", remoteFilter);
             return this;
         }
         /**
@@ -253,7 +253,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder remoteFilter(
                 String remoteFilter) {
-            setProperty("remoteFilter", remoteFilter);
+            doSetProperty("remoteFilter", remoteFilter);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder timeInterval(
                 long timeInterval) {
-            setProperty("timeInterval", timeInterval);
+            doSetProperty("timeInterval", timeInterval);
             return this;
         }
         /**
@@ -277,7 +277,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointConsumerBuilder timeInterval(
                 String timeInterval) {
-            setProperty("timeInterval", timeInterval);
+            doSetProperty("timeInterval", timeInterval);
             return this;
         }
     }
@@ -304,7 +304,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -320,7 +320,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -332,7 +332,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -345,7 +345,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -358,7 +358,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -371,7 +371,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -384,7 +384,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -397,7 +397,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -421,7 +421,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -434,7 +434,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -447,7 +447,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointProducerBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -460,7 +460,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointProducerBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -473,7 +473,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Group: consumer
          */
         default IgniteCacheEndpointProducerBuilder query(Object query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -486,7 +486,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Group: consumer
          */
         default IgniteCacheEndpointProducerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -500,7 +500,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointProducerBuilder cachePeekMode(
                 CachePeekMode cachePeekMode) {
-            setProperty("cachePeekMode", cachePeekMode);
+            doSetProperty("cachePeekMode", cachePeekMode);
             return this;
         }
         /**
@@ -514,7 +514,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointProducerBuilder cachePeekMode(
                 String cachePeekMode) {
-            setProperty("cachePeekMode", cachePeekMode);
+            doSetProperty("cachePeekMode", cachePeekMode);
             return this;
         }
         /**
@@ -526,7 +526,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointProducerBuilder failIfInexistentCache(
                 boolean failIfInexistentCache) {
-            setProperty("failIfInexistentCache", failIfInexistentCache);
+            doSetProperty("failIfInexistentCache", failIfInexistentCache);
             return this;
         }
         /**
@@ -538,7 +538,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointProducerBuilder failIfInexistentCache(
                 String failIfInexistentCache) {
-            setProperty("failIfInexistentCache", failIfInexistentCache);
+            doSetProperty("failIfInexistentCache", failIfInexistentCache);
             return this;
         }
         /**
@@ -558,7 +558,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -578,7 +578,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -592,7 +592,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointProducerBuilder operation(
                 IgniteCacheOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -605,7 +605,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Group: producer
          */
         default IgniteCacheEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
     }
@@ -629,7 +629,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -642,7 +642,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -655,7 +655,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -668,7 +668,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -692,7 +692,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -705,7 +705,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -718,7 +718,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -731,7 +731,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default IgniteCacheEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
     }
@@ -755,7 +755,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -768,7 +768,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -781,7 +781,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -794,7 +794,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          */
         default AdvancedIgniteCacheEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

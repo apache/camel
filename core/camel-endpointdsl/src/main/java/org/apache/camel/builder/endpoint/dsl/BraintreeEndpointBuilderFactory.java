@@ -51,7 +51,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder environment(String environment) {
-            setProperty("environment", environment);
+            doSetProperty("environment", environment);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder merchantId(String merchantId) {
-            setProperty("merchantId", merchantId);
+            doSetProperty("merchantId", merchantId);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder publicKey(String publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
     }
@@ -192,7 +192,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -208,7 +208,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -220,7 +220,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -233,7 +233,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -247,7 +247,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -260,7 +260,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -273,7 +273,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -285,7 +285,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -298,7 +298,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
                 String httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -324,7 +324,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -336,7 +336,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
                 Level httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
         /**
@@ -349,7 +349,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
                 String httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
     }
@@ -371,7 +371,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointProducerBuilder environment(String environment) {
-            setProperty("environment", environment);
+            doSetProperty("environment", environment);
             return this;
         }
         /**
@@ -382,7 +382,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointProducerBuilder merchantId(String merchantId) {
-            setProperty("merchantId", merchantId);
+            doSetProperty("merchantId", merchantId);
             return this;
         }
         /**
@@ -404,7 +404,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointProducerBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -415,7 +415,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointProducerBuilder publicKey(String publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -435,7 +435,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default BraintreeEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default BraintreeEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -466,7 +466,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -477,7 +477,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -489,7 +489,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
     }
@@ -514,7 +514,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -527,7 +527,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -540,7 +540,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -552,7 +552,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -565,7 +565,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
                 String httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -578,7 +578,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -591,7 +591,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -603,7 +603,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
                 Level httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
         /**
@@ -616,7 +616,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
                 String httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
     }
@@ -638,7 +638,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointBuilder environment(String environment) {
-            setProperty("environment", environment);
+            doSetProperty("environment", environment);
             return this;
         }
         /**
@@ -649,7 +649,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -660,7 +660,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointBuilder merchantId(String merchantId) {
-            setProperty("merchantId", merchantId);
+            doSetProperty("merchantId", merchantId);
             return this;
         }
         /**
@@ -671,7 +671,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -682,7 +682,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointBuilder publicKey(String publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -693,7 +693,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -704,7 +704,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -716,7 +716,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
     }
@@ -740,7 +740,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -753,7 +753,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -766,7 +766,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -778,7 +778,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -791,7 +791,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 String httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -803,7 +803,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -815,7 +815,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -826,7 +826,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: logging
          */
         default AdvancedBraintreeEndpointBuilder httpLogLevel(Level httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
         /**
@@ -839,7 +839,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointBuilder httpLogLevel(
                 String httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
     }

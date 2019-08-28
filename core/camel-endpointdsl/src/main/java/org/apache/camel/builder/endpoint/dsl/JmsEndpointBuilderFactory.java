@@ -56,7 +56,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointConsumerBuilder disableReplyTo(boolean disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -123,7 +123,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointConsumerBuilder disableReplyTo(String disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
-            setProperty("durableSubscriptionName", durableSubscriptionName);
+            doSetProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder jmsMessageType(
                 JmsMessageType jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointConsumerBuilder jmsMessageType(String jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -185,7 +185,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -214,7 +214,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder acknowledgementModeName(
                 String acknowledgementModeName) {
-            setProperty("acknowledgementModeName", acknowledgementModeName);
+            doSetProperty("acknowledgementModeName", acknowledgementModeName);
             return this;
         }
         /**
@@ -234,7 +234,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder asyncConsumer(boolean asyncConsumer) {
-            setProperty("asyncConsumer", asyncConsumer);
+            doSetProperty("asyncConsumer", asyncConsumer);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder asyncConsumer(String asyncConsumer) {
-            setProperty("asyncConsumer", asyncConsumer);
+            doSetProperty("asyncConsumer", asyncConsumer);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder autoStartup(boolean autoStartup) {
-            setProperty("autoStartup", autoStartup);
+            doSetProperty("autoStartup", autoStartup);
             return this;
         }
         /**
@@ -276,7 +276,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder autoStartup(String autoStartup) {
-            setProperty("autoStartup", autoStartup);
+            doSetProperty("autoStartup", autoStartup);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -312,7 +312,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -324,7 +324,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder cacheLevel(int cacheLevel) {
-            setProperty("cacheLevel", cacheLevel);
+            doSetProperty("cacheLevel", cacheLevel);
             return this;
         }
         /**
@@ -336,7 +336,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder cacheLevel(String cacheLevel) {
-            setProperty("cacheLevel", cacheLevel);
+            doSetProperty("cacheLevel", cacheLevel);
             return this;
         }
         /**
@@ -351,7 +351,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder cacheLevelName(String cacheLevelName) {
-            setProperty("cacheLevelName", cacheLevelName);
+            doSetProperty("cacheLevelName", cacheLevelName);
             return this;
         }
         /**
@@ -368,7 +368,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -385,7 +385,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -402,7 +402,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
-            setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
         }
         /**
@@ -419,7 +419,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder maxConcurrentConsumers(
                 String maxConcurrentConsumers) {
-            setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder replyTo(String replyTo) {
-            setProperty("replyTo", replyTo);
+            doSetProperty("replyTo", replyTo);
             return this;
         }
         /**
@@ -443,7 +443,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder replyToDeliveryPersistent(
                 boolean replyToDeliveryPersistent) {
-            setProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
+            doSetProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder replyToDeliveryPersistent(
                 String replyToDeliveryPersistent) {
-            setProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
+            doSetProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
             return this;
         }
         /**
@@ -466,7 +466,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder selector(String selector) {
-            setProperty("selector", selector);
+            doSetProperty("selector", selector);
             return this;
         }
         /**
@@ -485,7 +485,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder subscriptionDurable(
                 boolean subscriptionDurable) {
-            setProperty("subscriptionDurable", subscriptionDurable);
+            doSetProperty("subscriptionDurable", subscriptionDurable);
             return this;
         }
         /**
@@ -504,7 +504,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder subscriptionDurable(
                 String subscriptionDurable) {
-            setProperty("subscriptionDurable", subscriptionDurable);
+            doSetProperty("subscriptionDurable", subscriptionDurable);
             return this;
         }
         /**
@@ -522,7 +522,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder subscriptionName(
                 String subscriptionName) {
-            setProperty("subscriptionName", subscriptionName);
+            doSetProperty("subscriptionName", subscriptionName);
             return this;
         }
         /**
@@ -544,7 +544,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder subscriptionShared(
                 boolean subscriptionShared) {
-            setProperty("subscriptionShared", subscriptionShared);
+            doSetProperty("subscriptionShared", subscriptionShared);
             return this;
         }
         /**
@@ -566,7 +566,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder subscriptionShared(
                 String subscriptionShared) {
-            setProperty("subscriptionShared", subscriptionShared);
+            doSetProperty("subscriptionShared", subscriptionShared);
             return this;
         }
         /**
@@ -579,7 +579,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder errorHandlerLoggingLevel(
                 LoggingLevel errorHandlerLoggingLevel) {
-            setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
+            doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
         }
         /**
@@ -593,7 +593,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder errorHandlerLoggingLevel(
                 String errorHandlerLoggingLevel) {
-            setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
+            doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
         }
         /**
@@ -606,7 +606,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
-            setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
+            doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
         }
         /**
@@ -619,7 +619,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointConsumerBuilder errorHandlerLogStackTrace(
                 String errorHandlerLogStackTrace) {
-            setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
+            doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
         }
         /**
@@ -631,7 +631,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: security
          */
         default JmsEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -643,7 +643,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: security
          */
         default JmsEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -654,7 +654,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: transaction
          */
         default JmsEndpointConsumerBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -665,7 +665,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: transaction
          */
         default JmsEndpointConsumerBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
     }
@@ -695,7 +695,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder acceptMessagesWhileStopping(
                 boolean acceptMessagesWhileStopping) {
-            setProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
+            doSetProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
             return this;
         }
         /**
@@ -714,7 +714,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder acceptMessagesWhileStopping(
                 String acceptMessagesWhileStopping) {
-            setProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
+            doSetProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
             return this;
         }
         /**
@@ -732,7 +732,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder allowReplyManagerQuickStop(
                 boolean allowReplyManagerQuickStop) {
-            setProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
+            doSetProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
             return this;
         }
         /**
@@ -750,7 +750,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder allowReplyManagerQuickStop(
                 String allowReplyManagerQuickStop) {
-            setProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
+            doSetProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
             return this;
         }
         /**
@@ -772,7 +772,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder consumerType(
                 ConsumerType consumerType) {
-            setProperty("consumerType", consumerType);
+            doSetProperty("consumerType", consumerType);
             return this;
         }
         /**
@@ -794,7 +794,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder consumerType(
                 String consumerType) {
-            setProperty("consumerType", consumerType);
+            doSetProperty("consumerType", consumerType);
             return this;
         }
         /**
@@ -817,7 +817,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder defaultTaskExecutorType(
                 DefaultTaskExecutorType defaultTaskExecutorType) {
-            setProperty("defaultTaskExecutorType", defaultTaskExecutorType);
+            doSetProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
         }
         /**
@@ -840,7 +840,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder defaultTaskExecutorType(
                 String defaultTaskExecutorType) {
-            setProperty("defaultTaskExecutorType", defaultTaskExecutorType);
+            doSetProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
         }
         /**
@@ -856,7 +856,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder eagerLoadingOfProperties(
                 boolean eagerLoadingOfProperties) {
-            setProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
+            doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
             return this;
         }
         /**
@@ -872,7 +872,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder eagerLoadingOfProperties(
                 String eagerLoadingOfProperties) {
-            setProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
+            doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
             return this;
         }
         /**
@@ -888,7 +888,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -904,7 +904,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -916,7 +916,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -929,7 +929,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -942,7 +942,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder exposeListenerSession(
                 boolean exposeListenerSession) {
-            setProperty("exposeListenerSession", exposeListenerSession);
+            doSetProperty("exposeListenerSession", exposeListenerSession);
             return this;
         }
         /**
@@ -955,7 +955,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder exposeListenerSession(
                 String exposeListenerSession) {
-            setProperty("exposeListenerSession", exposeListenerSession);
+            doSetProperty("exposeListenerSession", exposeListenerSession);
             return this;
         }
         /**
@@ -970,7 +970,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder replyToSameDestinationAllowed(
                 boolean replyToSameDestinationAllowed) {
-            setProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
+            doSetProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
             return this;
         }
         /**
@@ -985,7 +985,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder replyToSameDestinationAllowed(
                 String replyToSameDestinationAllowed) {
-            setProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
+            doSetProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
             return this;
         }
         /**
@@ -998,7 +998,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder taskExecutor(
                 Object taskExecutor) {
-            setProperty("taskExecutor", taskExecutor);
+            doSetProperty("taskExecutor", taskExecutor);
             return this;
         }
         /**
@@ -1011,7 +1011,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder taskExecutor(
                 String taskExecutor) {
-            setProperty("taskExecutor", taskExecutor);
+            doSetProperty("taskExecutor", taskExecutor);
             return this;
         }
         /**
@@ -1026,7 +1026,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -1041,7 +1041,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -1062,7 +1062,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder asyncStartListener(
                 boolean asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -1083,7 +1083,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder asyncStartListener(
                 String asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -1096,7 +1096,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder asyncStopListener(
                 boolean asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -1109,7 +1109,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder asyncStopListener(
                 String asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -1122,7 +1122,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1135,7 +1135,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1151,7 +1151,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder destinationResolver(
                 Object destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -1167,7 +1167,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder destinationResolver(
                 String destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -1186,7 +1186,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder errorHandler(
                 Object errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -1205,7 +1205,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder errorHandler(
                 String errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -1218,7 +1218,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder exceptionListener(
                 Object exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -1232,7 +1232,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder exceptionListener(
                 String exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -1246,7 +1246,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1260,7 +1260,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1273,7 +1273,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -1286,7 +1286,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -1302,7 +1302,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -1318,7 +1318,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -1333,7 +1333,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -1348,7 +1348,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -1370,7 +1370,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -1392,7 +1392,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -1405,7 +1405,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -1418,7 +1418,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder mapJmsMessage(
                 String mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -1433,7 +1433,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -1448,7 +1448,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -1463,7 +1463,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder messageConverter(
                 Object messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -1478,7 +1478,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder messageConverter(
                 String messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -1494,7 +1494,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -1510,7 +1510,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -1526,7 +1526,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -1542,7 +1542,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder messageIdEnabled(
                 String messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -1559,7 +1559,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -1576,7 +1576,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -1592,7 +1592,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -1608,7 +1608,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -1621,7 +1621,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder pubSubNoLocal(
                 boolean pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -1634,7 +1634,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder pubSubNoLocal(
                 String pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -1646,7 +1646,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder receiveTimeout(
                 long receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -1658,7 +1658,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder receiveTimeout(
                 String receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -1672,7 +1672,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder recoveryInterval(
                 long recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -1686,7 +1686,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder recoveryInterval(
                 String recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -1702,7 +1702,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -1718,7 +1718,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -1731,7 +1731,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1744,7 +1744,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1769,7 +1769,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -1794,7 +1794,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -1817,7 +1817,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -1840,7 +1840,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -1853,7 +1853,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -1866,7 +1866,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -1880,7 +1880,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -1894,7 +1894,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -1907,7 +1907,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -1920,7 +1920,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -1933,7 +1933,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -1946,7 +1946,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -1959,7 +1959,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder transactionManager(
                 Object transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -1972,7 +1972,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder transactionManager(
                 String transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -1984,7 +1984,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder transactionName(
                 String transactionName) {
-            setProperty("transactionName", transactionName);
+            doSetProperty("transactionName", transactionName);
             return this;
         }
         /**
@@ -1997,7 +1997,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder transactionTimeout(
                 int transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
         /**
@@ -2010,7 +2010,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointConsumerBuilder transactionTimeout(
                 String transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
     }
@@ -2036,7 +2036,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -2051,7 +2051,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -2067,7 +2067,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -2085,7 +2085,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointProducerBuilder disableReplyTo(boolean disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -2103,7 +2103,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointProducerBuilder disableReplyTo(String disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -2116,7 +2116,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
-            setProperty("durableSubscriptionName", durableSubscriptionName);
+            doSetProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
         }
         /**
@@ -2133,7 +2133,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder jmsMessageType(
                 JmsMessageType jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -2149,7 +2149,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointProducerBuilder jmsMessageType(String jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -2165,7 +2165,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -2181,7 +2181,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -2193,7 +2193,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder deliveryDelay(long deliveryDelay) {
-            setProperty("deliveryDelay", deliveryDelay);
+            doSetProperty("deliveryDelay", deliveryDelay);
             return this;
         }
         /**
@@ -2205,7 +2205,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder deliveryDelay(String deliveryDelay) {
-            setProperty("deliveryDelay", deliveryDelay);
+            doSetProperty("deliveryDelay", deliveryDelay);
             return this;
         }
         /**
@@ -2218,7 +2218,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder deliveryMode(Integer deliveryMode) {
-            setProperty("deliveryMode", deliveryMode);
+            doSetProperty("deliveryMode", deliveryMode);
             return this;
         }
         /**
@@ -2232,7 +2232,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder deliveryMode(String deliveryMode) {
-            setProperty("deliveryMode", deliveryMode);
+            doSetProperty("deliveryMode", deliveryMode);
             return this;
         }
         /**
@@ -2244,7 +2244,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder deliveryPersistent(
                 boolean deliveryPersistent) {
-            setProperty("deliveryPersistent", deliveryPersistent);
+            doSetProperty("deliveryPersistent", deliveryPersistent);
             return this;
         }
         /**
@@ -2256,7 +2256,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder deliveryPersistent(
                 String deliveryPersistent) {
-            setProperty("deliveryPersistent", deliveryPersistent);
+            doSetProperty("deliveryPersistent", deliveryPersistent);
             return this;
         }
         /**
@@ -2273,7 +2273,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder explicitQosEnabled(
                 Boolean explicitQosEnabled) {
-            setProperty("explicitQosEnabled", explicitQosEnabled);
+            doSetProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
         }
         /**
@@ -2291,7 +2291,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder explicitQosEnabled(
                 String explicitQosEnabled) {
-            setProperty("explicitQosEnabled", explicitQosEnabled);
+            doSetProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
         }
         /**
@@ -2304,7 +2304,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder formatDateHeadersToIso8601(
                 boolean formatDateHeadersToIso8601) {
-            setProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
+            doSetProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
             return this;
         }
         /**
@@ -2317,7 +2317,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder formatDateHeadersToIso8601(
                 String formatDateHeadersToIso8601) {
-            setProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
+            doSetProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
             return this;
         }
         /**
@@ -2337,7 +2337,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -2357,7 +2357,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -2377,7 +2377,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder preserveMessageQos(
                 boolean preserveMessageQos) {
-            setProperty("preserveMessageQos", preserveMessageQos);
+            doSetProperty("preserveMessageQos", preserveMessageQos);
             return this;
         }
         /**
@@ -2397,7 +2397,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder preserveMessageQos(
                 String preserveMessageQos) {
-            setProperty("preserveMessageQos", preserveMessageQos);
+            doSetProperty("preserveMessageQos", preserveMessageQos);
             return this;
         }
         /**
@@ -2411,7 +2411,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder priority(int priority) {
-            setProperty("priority", priority);
+            doSetProperty("priority", priority);
             return this;
         }
         /**
@@ -2425,7 +2425,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder priority(String priority) {
-            setProperty("priority", priority);
+            doSetProperty("priority", priority);
             return this;
         }
         /**
@@ -2439,7 +2439,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder replyToConcurrentConsumers(
                 int replyToConcurrentConsumers) {
-            setProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
+            doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
             return this;
         }
         /**
@@ -2453,7 +2453,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder replyToConcurrentConsumers(
                 String replyToConcurrentConsumers) {
-            setProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
+            doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
             return this;
         }
         /**
@@ -2467,7 +2467,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder replyToMaxConcurrentConsumers(
                 int replyToMaxConcurrentConsumers) {
-            setProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
+            doSetProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
             return this;
         }
         /**
@@ -2481,7 +2481,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder replyToMaxConcurrentConsumers(
                 String replyToMaxConcurrentConsumers) {
-            setProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
+            doSetProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
             return this;
         }
         /**
@@ -2494,7 +2494,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
                 int replyToOnTimeoutMaxConcurrentConsumers) {
-            setProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
+            doSetProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
             return this;
         }
         /**
@@ -2507,7 +2507,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
                 String replyToOnTimeoutMaxConcurrentConsumers) {
-            setProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
+            doSetProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
             return this;
         }
         /**
@@ -2522,7 +2522,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder replyToOverride(
                 String replyToOverride) {
-            setProperty("replyToOverride", replyToOverride);
+            doSetProperty("replyToOverride", replyToOverride);
             return this;
         }
         /**
@@ -2542,7 +2542,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder replyToType(ReplyToType replyToType) {
-            setProperty("replyToType", replyToType);
+            doSetProperty("replyToType", replyToType);
             return this;
         }
         /**
@@ -2562,7 +2562,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder replyToType(String replyToType) {
-            setProperty("replyToType", replyToType);
+            doSetProperty("replyToType", replyToType);
             return this;
         }
         /**
@@ -2577,7 +2577,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder requestTimeout(long requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -2592,7 +2592,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder requestTimeout(String requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -2604,7 +2604,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder timeToLive(long timeToLive) {
-            setProperty("timeToLive", timeToLive);
+            doSetProperty("timeToLive", timeToLive);
             return this;
         }
         /**
@@ -2616,7 +2616,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: producer
          */
         default JmsEndpointProducerBuilder timeToLive(String timeToLive) {
-            setProperty("timeToLive", timeToLive);
+            doSetProperty("timeToLive", timeToLive);
             return this;
         }
         /**
@@ -2628,7 +2628,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: security
          */
         default JmsEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -2640,7 +2640,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: security
          */
         default JmsEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -2651,7 +2651,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: transaction
          */
         default JmsEndpointProducerBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -2662,7 +2662,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: transaction
          */
         default JmsEndpointProducerBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
     }
@@ -2690,7 +2690,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder allowAdditionalHeaders(
                 String allowAdditionalHeaders) {
-            setProperty("allowAdditionalHeaders", allowAdditionalHeaders);
+            doSetProperty("allowAdditionalHeaders", allowAdditionalHeaders);
             return this;
         }
         /**
@@ -2703,7 +2703,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -2716,7 +2716,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -2733,7 +2733,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder alwaysCopyMessage(
                 boolean alwaysCopyMessage) {
-            setProperty("alwaysCopyMessage", alwaysCopyMessage);
+            doSetProperty("alwaysCopyMessage", alwaysCopyMessage);
             return this;
         }
         /**
@@ -2750,7 +2750,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder alwaysCopyMessage(
                 String alwaysCopyMessage) {
-            setProperty("alwaysCopyMessage", alwaysCopyMessage);
+            doSetProperty("alwaysCopyMessage", alwaysCopyMessage);
             return this;
         }
         /**
@@ -2768,7 +2768,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder correlationProperty(
                 String correlationProperty) {
-            setProperty("correlationProperty", correlationProperty);
+            doSetProperty("correlationProperty", correlationProperty);
             return this;
         }
         /**
@@ -2788,7 +2788,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder disableTimeToLive(
                 boolean disableTimeToLive) {
-            setProperty("disableTimeToLive", disableTimeToLive);
+            doSetProperty("disableTimeToLive", disableTimeToLive);
             return this;
         }
         /**
@@ -2808,7 +2808,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder disableTimeToLive(
                 String disableTimeToLive) {
-            setProperty("disableTimeToLive", disableTimeToLive);
+            doSetProperty("disableTimeToLive", disableTimeToLive);
             return this;
         }
         /**
@@ -2823,7 +2823,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder forceSendOriginalMessage(
                 boolean forceSendOriginalMessage) {
-            setProperty("forceSendOriginalMessage", forceSendOriginalMessage);
+            doSetProperty("forceSendOriginalMessage", forceSendOriginalMessage);
             return this;
         }
         /**
@@ -2838,7 +2838,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder forceSendOriginalMessage(
                 String forceSendOriginalMessage) {
-            setProperty("forceSendOriginalMessage", forceSendOriginalMessage);
+            doSetProperty("forceSendOriginalMessage", forceSendOriginalMessage);
             return this;
         }
         /**
@@ -2853,7 +2853,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder includeSentJMSMessageID(
                 boolean includeSentJMSMessageID) {
-            setProperty("includeSentJMSMessageID", includeSentJMSMessageID);
+            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
         }
         /**
@@ -2868,7 +2868,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder includeSentJMSMessageID(
                 String includeSentJMSMessageID) {
-            setProperty("includeSentJMSMessageID", includeSentJMSMessageID);
+            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
         }
         /**
@@ -2888,7 +2888,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder replyToCacheLevelName(
                 String replyToCacheLevelName) {
-            setProperty("replyToCacheLevelName", replyToCacheLevelName);
+            doSetProperty("replyToCacheLevelName", replyToCacheLevelName);
             return this;
         }
         /**
@@ -2902,7 +2902,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder replyToDestinationSelectorName(
                 String replyToDestinationSelectorName) {
-            setProperty("replyToDestinationSelectorName", replyToDestinationSelectorName);
+            doSetProperty("replyToDestinationSelectorName", replyToDestinationSelectorName);
             return this;
         }
         /**
@@ -2920,7 +2920,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder streamMessageTypeEnabled(
                 boolean streamMessageTypeEnabled) {
-            setProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
+            doSetProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
         }
         /**
@@ -2938,7 +2938,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder streamMessageTypeEnabled(
                 String streamMessageTypeEnabled) {
-            setProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
+            doSetProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
         }
         /**
@@ -2953,7 +2953,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -2968,7 +2968,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -2989,7 +2989,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder asyncStartListener(
                 boolean asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -3010,7 +3010,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder asyncStartListener(
                 String asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -3023,7 +3023,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder asyncStopListener(
                 boolean asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -3036,7 +3036,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder asyncStopListener(
                 String asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -3049,7 +3049,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3062,7 +3062,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3078,7 +3078,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder destinationResolver(
                 Object destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -3094,7 +3094,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder destinationResolver(
                 String destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -3113,7 +3113,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder errorHandler(
                 Object errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -3132,7 +3132,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder errorHandler(
                 String errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -3145,7 +3145,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder exceptionListener(
                 Object exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -3159,7 +3159,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder exceptionListener(
                 String exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -3173,7 +3173,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -3187,7 +3187,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -3200,7 +3200,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -3213,7 +3213,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -3229,7 +3229,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -3245,7 +3245,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -3260,7 +3260,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -3275,7 +3275,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -3297,7 +3297,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -3319,7 +3319,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -3332,7 +3332,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -3345,7 +3345,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder mapJmsMessage(
                 String mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -3360,7 +3360,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -3375,7 +3375,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -3390,7 +3390,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder messageConverter(
                 Object messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -3405,7 +3405,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder messageConverter(
                 String messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -3421,7 +3421,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -3437,7 +3437,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -3453,7 +3453,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -3469,7 +3469,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder messageIdEnabled(
                 String messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -3486,7 +3486,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -3503,7 +3503,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -3519,7 +3519,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -3535,7 +3535,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -3548,7 +3548,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder pubSubNoLocal(
                 boolean pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -3561,7 +3561,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder pubSubNoLocal(
                 String pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -3573,7 +3573,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder receiveTimeout(
                 long receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -3585,7 +3585,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder receiveTimeout(
                 String receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -3599,7 +3599,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder recoveryInterval(
                 long recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -3613,7 +3613,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder recoveryInterval(
                 String recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -3629,7 +3629,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -3645,7 +3645,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -3658,7 +3658,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3671,7 +3671,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3696,7 +3696,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -3721,7 +3721,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -3744,7 +3744,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -3767,7 +3767,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -3780,7 +3780,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -3793,7 +3793,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -3807,7 +3807,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -3821,7 +3821,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -3834,7 +3834,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -3847,7 +3847,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -3860,7 +3860,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -3873,7 +3873,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -3886,7 +3886,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder transactionManager(
                 Object transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -3899,7 +3899,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder transactionManager(
                 String transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -3911,7 +3911,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder transactionName(
                 String transactionName) {
-            setProperty("transactionName", transactionName);
+            doSetProperty("transactionName", transactionName);
             return this;
         }
         /**
@@ -3924,7 +3924,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder transactionTimeout(
                 int transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
         /**
@@ -3937,7 +3937,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointProducerBuilder transactionTimeout(
                 String transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
     }
@@ -3963,7 +3963,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -3977,7 +3977,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointBuilder connectionFactory(Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -3992,7 +3992,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointBuilder connectionFactory(String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -4010,7 +4010,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointBuilder disableReplyTo(boolean disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -4028,7 +4028,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointBuilder disableReplyTo(String disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -4041,7 +4041,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
-            setProperty("durableSubscriptionName", durableSubscriptionName);
+            doSetProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
         }
         /**
@@ -4057,7 +4057,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointBuilder jmsMessageType(JmsMessageType jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -4073,7 +4073,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: common
          */
         default JmsEndpointBuilder jmsMessageType(String jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -4089,7 +4089,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -4105,7 +4105,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -4117,7 +4117,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: security
          */
         default JmsEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -4129,7 +4129,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: security
          */
         default JmsEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -4140,7 +4140,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: transaction
          */
         default JmsEndpointBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -4151,7 +4151,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: transaction
          */
         default JmsEndpointBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
     }
@@ -4177,7 +4177,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -4192,7 +4192,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -4213,7 +4213,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder asyncStartListener(
                 boolean asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -4234,7 +4234,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder asyncStartListener(
                 String asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -4247,7 +4247,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder asyncStopListener(
                 boolean asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -4260,7 +4260,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder asyncStopListener(
                 String asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -4273,7 +4273,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -4286,7 +4286,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -4302,7 +4302,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder destinationResolver(
                 Object destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -4318,7 +4318,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder destinationResolver(
                 String destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -4336,7 +4336,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder errorHandler(Object errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -4354,7 +4354,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder errorHandler(String errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -4367,7 +4367,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder exceptionListener(
                 Object exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -4381,7 +4381,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder exceptionListener(
                 String exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -4395,7 +4395,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -4409,7 +4409,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -4422,7 +4422,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -4435,7 +4435,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -4451,7 +4451,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -4467,7 +4467,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -4482,7 +4482,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -4497,7 +4497,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -4519,7 +4519,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -4541,7 +4541,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -4553,7 +4553,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder mapJmsMessage(boolean mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -4565,7 +4565,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder mapJmsMessage(String mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -4580,7 +4580,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -4595,7 +4595,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -4610,7 +4610,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder messageConverter(
                 Object messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -4625,7 +4625,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder messageConverter(
                 String messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -4641,7 +4641,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -4657,7 +4657,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -4673,7 +4673,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -4689,7 +4689,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder messageIdEnabled(
                 String messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -4706,7 +4706,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -4723,7 +4723,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -4739,7 +4739,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -4755,7 +4755,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -4767,7 +4767,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder pubSubNoLocal(boolean pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -4779,7 +4779,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder pubSubNoLocal(String pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -4790,7 +4790,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder receiveTimeout(long receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -4801,7 +4801,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder receiveTimeout(String receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -4815,7 +4815,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder recoveryInterval(
                 long recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -4829,7 +4829,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder recoveryInterval(
                 String recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -4845,7 +4845,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -4861,7 +4861,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -4873,7 +4873,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -4885,7 +4885,7 @@ public interface JmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -4910,7 +4910,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -4935,7 +4935,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -4958,7 +4958,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -4981,7 +4981,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -4994,7 +4994,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -5007,7 +5007,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -5021,7 +5021,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -5035,7 +5035,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -5048,7 +5048,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -5061,7 +5061,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -5074,7 +5074,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -5087,7 +5087,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -5100,7 +5100,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder transactionManager(
                 Object transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -5113,7 +5113,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder transactionManager(
                 String transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -5125,7 +5125,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder transactionName(
                 String transactionName) {
-            setProperty("transactionName", transactionName);
+            doSetProperty("transactionName", transactionName);
             return this;
         }
         /**
@@ -5138,7 +5138,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder transactionTimeout(
                 int transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
         /**
@@ -5151,7 +5151,7 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder transactionTimeout(
                 String transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
     }

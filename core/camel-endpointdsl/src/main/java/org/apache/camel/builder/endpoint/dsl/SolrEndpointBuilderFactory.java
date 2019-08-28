@@ -45,7 +45,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder allowCompression(Boolean allowCompression) {
-            setProperty("allowCompression", allowCompression);
+            doSetProperty("allowCompression", allowCompression);
             return this;
         }
         /**
@@ -57,7 +57,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder allowCompression(String allowCompression) {
-            setProperty("allowCompression", allowCompression);
+            doSetProperty("allowCompression", allowCompression);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder connectionTimeout(Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -80,7 +80,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder connectionTimeout(String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder defaultMaxConnectionsPerHost(
                 Integer defaultMaxConnectionsPerHost) {
-            setProperty("defaultMaxConnectionsPerHost", defaultMaxConnectionsPerHost);
+            doSetProperty("defaultMaxConnectionsPerHost", defaultMaxConnectionsPerHost);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder defaultMaxConnectionsPerHost(
                 String defaultMaxConnectionsPerHost) {
-            setProperty("defaultMaxConnectionsPerHost", defaultMaxConnectionsPerHost);
+            doSetProperty("defaultMaxConnectionsPerHost", defaultMaxConnectionsPerHost);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder followRedirects(Boolean followRedirects) {
-            setProperty("followRedirects", followRedirects);
+            doSetProperty("followRedirects", followRedirects);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder followRedirects(String followRedirects) {
-            setProperty("followRedirects", followRedirects);
+            doSetProperty("followRedirects", followRedirects);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder maxRetries(Integer maxRetries) {
-            setProperty("maxRetries", maxRetries);
+            doSetProperty("maxRetries", maxRetries);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder maxRetries(String maxRetries) {
-            setProperty("maxRetries", maxRetries);
+            doSetProperty("maxRetries", maxRetries);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder maxTotalConnections(
                 Integer maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder maxTotalConnections(
                 String maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder requestHandler(String requestHandler) {
-            setProperty("requestHandler", requestHandler);
+            doSetProperty("requestHandler", requestHandler);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder soTimeout(Integer soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -214,7 +214,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder soTimeout(String soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder streamingQueueSize(int streamingQueueSize) {
-            setProperty("streamingQueueSize", streamingQueueSize);
+            doSetProperty("streamingQueueSize", streamingQueueSize);
             return this;
         }
         /**
@@ -236,7 +236,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder streamingQueueSize(String streamingQueueSize) {
-            setProperty("streamingQueueSize", streamingQueueSize);
+            doSetProperty("streamingQueueSize", streamingQueueSize);
             return this;
         }
         /**
@@ -248,7 +248,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder streamingThreadCount(
                 int streamingThreadCount) {
-            setProperty("streamingThreadCount", streamingThreadCount);
+            doSetProperty("streamingThreadCount", streamingThreadCount);
             return this;
         }
         /**
@@ -260,7 +260,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder streamingThreadCount(
                 String streamingThreadCount) {
-            setProperty("streamingThreadCount", streamingThreadCount);
+            doSetProperty("streamingThreadCount", streamingThreadCount);
             return this;
         }
         /**
@@ -271,7 +271,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: security
          */
         default SolrEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -282,7 +282,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: security
          */
         default SolrEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -293,7 +293,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: solrCloud
          */
         default SolrEndpointBuilder collection(String collection) {
-            setProperty("collection", collection);
+            doSetProperty("collection", collection);
             return this;
         }
         /**
@@ -305,7 +305,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: solrCloud
          */
         default SolrEndpointBuilder zkHost(String zkHost) {
-            setProperty("zkHost", zkHost);
+            doSetProperty("zkHost", zkHost);
             return this;
         }
     }
@@ -329,7 +329,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default AdvancedSolrEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -342,7 +342,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default AdvancedSolrEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -354,7 +354,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSolrEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSolrEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

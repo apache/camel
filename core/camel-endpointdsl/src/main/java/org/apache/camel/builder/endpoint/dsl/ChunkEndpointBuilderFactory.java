@@ -45,7 +45,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder extension(String extension) {
-            setProperty("extension", extension);
+            doSetProperty("extension", extension);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder themeFolder(String themeFolder) {
-            setProperty("themeFolder", themeFolder);
+            doSetProperty("themeFolder", themeFolder);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder themeLayer(String themeLayer) {
-            setProperty("themeLayer", themeLayer);
+            doSetProperty("themeLayer", themeLayer);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder themeSubfolder(String themeSubfolder) {
-            setProperty("themeSubfolder", themeSubfolder);
+            doSetProperty("themeSubfolder", themeSubfolder);
             return this;
         }
     }
@@ -135,7 +135,7 @@ public interface ChunkEndpointBuilderFactory {
          */
         default AdvancedChunkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface ChunkEndpointBuilderFactory {
          */
         default AdvancedChunkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedChunkEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedChunkEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

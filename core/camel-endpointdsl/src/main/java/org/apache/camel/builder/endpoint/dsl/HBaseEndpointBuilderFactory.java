@@ -54,7 +54,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
-            setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
+            doSetProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
-            setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
+            doSetProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
         }
         /**
@@ -80,7 +80,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointConsumerBuilder filters(List<Object> filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointConsumerBuilder filters(String filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointConsumerBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
-            setProperty("mappingStrategyClassName", mappingStrategyClassName);
+            doSetProperty("mappingStrategyClassName", mappingStrategyClassName);
             return this;
         }
         /**
@@ -117,7 +117,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointConsumerBuilder mappingStrategyName(
                 String mappingStrategyName) {
-            setProperty("mappingStrategyName", mappingStrategyName);
+            doSetProperty("mappingStrategyName", mappingStrategyName);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointConsumerBuilder rowMapping(
                 Map<String, Object> rowMapping) {
-            setProperty("rowMapping", rowMapping);
+            doSetProperty("rowMapping", rowMapping);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointConsumerBuilder rowMapping(String rowMapping) {
-            setProperty("rowMapping", rowMapping);
+            doSetProperty("rowMapping", rowMapping);
             return this;
         }
         /**
@@ -174,7 +174,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointConsumerBuilder rowModel(Object rowModel) {
-            setProperty("rowModel", rowModel);
+            doSetProperty("rowModel", rowModel);
             return this;
         }
         /**
@@ -187,7 +187,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointConsumerBuilder rowModel(String rowModel) {
-            setProperty("rowModel", rowModel);
+            doSetProperty("rowModel", rowModel);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointConsumerBuilder userGroupInformation(
                 Object userGroupInformation) {
-            setProperty("userGroupInformation", userGroupInformation);
+            doSetProperty("userGroupInformation", userGroupInformation);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointConsumerBuilder userGroupInformation(
                 String userGroupInformation) {
-            setProperty("userGroupInformation", userGroupInformation);
+            doSetProperty("userGroupInformation", userGroupInformation);
             return this;
         }
         /**
@@ -231,7 +231,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -277,7 +277,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder remove(boolean remove) {
-            setProperty("remove", remove);
+            doSetProperty("remove", remove);
             return this;
         }
         /**
@@ -312,7 +312,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder remove(String remove) {
-            setProperty("remove", remove);
+            doSetProperty("remove", remove);
             return this;
         }
         /**
@@ -326,7 +326,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder removeHandler(Object removeHandler) {
-            setProperty("removeHandler", removeHandler);
+            doSetProperty("removeHandler", removeHandler);
             return this;
         }
         /**
@@ -340,7 +340,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder removeHandler(String removeHandler) {
-            setProperty("removeHandler", removeHandler);
+            doSetProperty("removeHandler", removeHandler);
             return this;
         }
     }
@@ -367,7 +367,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -383,7 +383,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -408,7 +408,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -421,7 +421,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -434,7 +434,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -447,7 +447,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -460,7 +460,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -485,7 +485,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
-            setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
+            doSetProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
         }
         /**
@@ -499,7 +499,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
-            setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
+            doSetProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
         }
         /**
@@ -511,7 +511,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointProducerBuilder filters(List<Object> filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -523,7 +523,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointProducerBuilder filters(String filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -535,7 +535,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointProducerBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
-            setProperty("mappingStrategyClassName", mappingStrategyClassName);
+            doSetProperty("mappingStrategyClassName", mappingStrategyClassName);
             return this;
         }
         /**
@@ -548,7 +548,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointProducerBuilder mappingStrategyName(
                 String mappingStrategyName) {
-            setProperty("mappingStrategyName", mappingStrategyName);
+            doSetProperty("mappingStrategyName", mappingStrategyName);
             return this;
         }
         /**
@@ -570,7 +570,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointProducerBuilder rowMapping(
                 Map<String, Object> rowMapping) {
-            setProperty("rowMapping", rowMapping);
+            doSetProperty("rowMapping", rowMapping);
             return this;
         }
         /**
@@ -592,7 +592,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointProducerBuilder rowMapping(String rowMapping) {
-            setProperty("rowMapping", rowMapping);
+            doSetProperty("rowMapping", rowMapping);
             return this;
         }
         /**
@@ -605,7 +605,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointProducerBuilder rowModel(Object rowModel) {
-            setProperty("rowModel", rowModel);
+            doSetProperty("rowModel", rowModel);
             return this;
         }
         /**
@@ -618,7 +618,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointProducerBuilder rowModel(String rowModel) {
-            setProperty("rowModel", rowModel);
+            doSetProperty("rowModel", rowModel);
             return this;
         }
         /**
@@ -631,7 +631,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointProducerBuilder userGroupInformation(
                 Object userGroupInformation) {
-            setProperty("userGroupInformation", userGroupInformation);
+            doSetProperty("userGroupInformation", userGroupInformation);
             return this;
         }
         /**
@@ -644,7 +644,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointProducerBuilder userGroupInformation(
                 String userGroupInformation) {
-            setProperty("userGroupInformation", userGroupInformation);
+            doSetProperty("userGroupInformation", userGroupInformation);
             return this;
         }
         /**
@@ -664,7 +664,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -684,7 +684,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -695,7 +695,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: producer
          */
         default HBaseEndpointProducerBuilder maxResults(int maxResults) {
-            setProperty("maxResults", maxResults);
+            doSetProperty("maxResults", maxResults);
             return this;
         }
         /**
@@ -706,7 +706,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: producer
          */
         default HBaseEndpointProducerBuilder maxResults(String maxResults) {
-            setProperty("maxResults", maxResults);
+            doSetProperty("maxResults", maxResults);
             return this;
         }
     }
@@ -730,7 +730,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -743,7 +743,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -756,7 +756,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -769,7 +769,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -794,7 +794,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
-            setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
+            doSetProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
         }
         /**
@@ -808,7 +808,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
-            setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
+            doSetProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
         }
         /**
@@ -820,7 +820,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointBuilder filters(List<Object> filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -832,7 +832,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointBuilder filters(String filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -844,7 +844,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
-            setProperty("mappingStrategyClassName", mappingStrategyClassName);
+            doSetProperty("mappingStrategyClassName", mappingStrategyClassName);
             return this;
         }
         /**
@@ -857,7 +857,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointBuilder mappingStrategyName(
                 String mappingStrategyName) {
-            setProperty("mappingStrategyName", mappingStrategyName);
+            doSetProperty("mappingStrategyName", mappingStrategyName);
             return this;
         }
         /**
@@ -878,7 +878,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointBuilder rowMapping(Map<String, Object> rowMapping) {
-            setProperty("rowMapping", rowMapping);
+            doSetProperty("rowMapping", rowMapping);
             return this;
         }
         /**
@@ -900,7 +900,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointBuilder rowMapping(String rowMapping) {
-            setProperty("rowMapping", rowMapping);
+            doSetProperty("rowMapping", rowMapping);
             return this;
         }
         /**
@@ -913,7 +913,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointBuilder rowModel(Object rowModel) {
-            setProperty("rowModel", rowModel);
+            doSetProperty("rowModel", rowModel);
             return this;
         }
         /**
@@ -926,7 +926,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: common
          */
         default HBaseEndpointBuilder rowModel(String rowModel) {
-            setProperty("rowModel", rowModel);
+            doSetProperty("rowModel", rowModel);
             return this;
         }
         /**
@@ -939,7 +939,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointBuilder userGroupInformation(
                 Object userGroupInformation) {
-            setProperty("userGroupInformation", userGroupInformation);
+            doSetProperty("userGroupInformation", userGroupInformation);
             return this;
         }
         /**
@@ -952,7 +952,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default HBaseEndpointBuilder userGroupInformation(
                 String userGroupInformation) {
-            setProperty("userGroupInformation", userGroupInformation);
+            doSetProperty("userGroupInformation", userGroupInformation);
             return this;
         }
     }
@@ -976,7 +976,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -989,7 +989,7 @@ public interface HBaseEndpointBuilderFactory {
          */
         default AdvancedHBaseEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1001,7 +1001,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHBaseEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1013,7 +1013,7 @@ public interface HBaseEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHBaseEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

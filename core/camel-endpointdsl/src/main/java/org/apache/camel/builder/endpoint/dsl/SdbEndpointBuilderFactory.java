@@ -46,7 +46,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder amazonSDBClient(Object amazonSDBClient) {
-            setProperty("amazonSDBClient", amazonSDBClient);
+            doSetProperty("amazonSDBClient", amazonSDBClient);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder amazonSDBClient(String amazonSDBClient) {
-            setProperty("amazonSDBClient", amazonSDBClient);
+            doSetProperty("amazonSDBClient", amazonSDBClient);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder consistentRead(boolean consistentRead) {
-            setProperty("consistentRead", consistentRead);
+            doSetProperty("consistentRead", consistentRead);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder consistentRead(String consistentRead) {
-            setProperty("consistentRead", consistentRead);
+            doSetProperty("consistentRead", consistentRead);
             return this;
         }
         /**
@@ -106,7 +106,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder maxNumberOfDomains(Integer maxNumberOfDomains) {
-            setProperty("maxNumberOfDomains", maxNumberOfDomains);
+            doSetProperty("maxNumberOfDomains", maxNumberOfDomains);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder maxNumberOfDomains(String maxNumberOfDomains) {
-            setProperty("maxNumberOfDomains", maxNumberOfDomains);
+            doSetProperty("maxNumberOfDomains", maxNumberOfDomains);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder operation(SdbOperations operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -226,7 +226,7 @@ public interface SdbEndpointBuilderFactory {
          */
         default AdvancedSdbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -239,7 +239,7 @@ public interface SdbEndpointBuilderFactory {
          */
         default AdvancedSdbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -251,7 +251,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSdbEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSdbEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

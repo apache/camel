@@ -46,7 +46,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: producer
          */
         default LdapEndpointBuilder base(String base) {
-            setProperty("base", base);
+            doSetProperty("base", base);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: producer
          */
         default LdapEndpointBuilder pageSize(Integer pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: producer
          */
         default LdapEndpointBuilder pageSize(String pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: producer
          */
         default LdapEndpointBuilder returnedAttributes(String returnedAttributes) {
-            setProperty("returnedAttributes", returnedAttributes);
+            doSetProperty("returnedAttributes", returnedAttributes);
             return this;
         }
         /**
@@ -101,7 +101,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: producer
          */
         default LdapEndpointBuilder scope(String scope) {
-            setProperty("scope", scope);
+            doSetProperty("scope", scope);
             return this;
         }
     }
@@ -125,7 +125,7 @@ public interface LdapEndpointBuilderFactory {
          */
         default AdvancedLdapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface LdapEndpointBuilderFactory {
          */
         default AdvancedLdapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -150,7 +150,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLdapEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -162,7 +162,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLdapEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

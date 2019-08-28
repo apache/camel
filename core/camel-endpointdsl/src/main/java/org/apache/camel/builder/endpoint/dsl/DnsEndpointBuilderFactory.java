@@ -58,7 +58,7 @@ public interface DnsEndpointBuilderFactory {
          */
         default AdvancedDnsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface DnsEndpointBuilderFactory {
          */
         default AdvancedDnsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface DnsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDnsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface DnsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDnsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -50,7 +50,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointConsumerBuilder pageSize(int pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointConsumerBuilder pageSize(String pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointConsumerBuilder readContent(boolean readContent) {
-            setProperty("readContent", readContent);
+            doSetProperty("readContent", readContent);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointConsumerBuilder readContent(String readContent) {
-            setProperty("readContent", readContent);
+            doSetProperty("readContent", readContent);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointConsumerBuilder readCount(int readCount) {
-            setProperty("readCount", readCount);
+            doSetProperty("readCount", readCount);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointConsumerBuilder readCount(String readCount) {
-            setProperty("readCount", readCount);
+            doSetProperty("readCount", readCount);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointConsumerBuilder repositoryId(String repositoryId) {
-            setProperty("repositoryId", repositoryId);
+            doSetProperty("repositoryId", repositoryId);
             return this;
         }
         /**
@@ -137,7 +137,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default CMISEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default CMISEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: consumer
          */
         default CMISEndpointConsumerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: security
          */
         default CMISEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: security
          */
         default CMISEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -217,7 +217,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -233,7 +233,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -258,7 +258,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -271,7 +271,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -284,7 +284,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
-            setProperty("sessionFacadeFactory", sessionFacadeFactory);
+            doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
         }
         /**
@@ -314,7 +314,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
-            setProperty("sessionFacadeFactory", sessionFacadeFactory);
+            doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
         }
         /**
@@ -327,7 +327,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -340,7 +340,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -362,7 +362,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointProducerBuilder pageSize(int pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -373,7 +373,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointProducerBuilder pageSize(String pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -385,7 +385,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointProducerBuilder readContent(boolean readContent) {
-            setProperty("readContent", readContent);
+            doSetProperty("readContent", readContent);
             return this;
         }
         /**
@@ -397,7 +397,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointProducerBuilder readContent(String readContent) {
-            setProperty("readContent", readContent);
+            doSetProperty("readContent", readContent);
             return this;
         }
         /**
@@ -408,7 +408,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointProducerBuilder readCount(int readCount) {
-            setProperty("readCount", readCount);
+            doSetProperty("readCount", readCount);
             return this;
         }
         /**
@@ -419,7 +419,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointProducerBuilder readCount(String readCount) {
-            setProperty("readCount", readCount);
+            doSetProperty("readCount", readCount);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointProducerBuilder repositoryId(String repositoryId) {
-            setProperty("repositoryId", repositoryId);
+            doSetProperty("repositoryId", repositoryId);
             return this;
         }
         /**
@@ -451,7 +451,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default CMISEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -471,7 +471,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default CMISEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -483,7 +483,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: producer
          */
         default CMISEndpointProducerBuilder queryMode(boolean queryMode) {
-            setProperty("queryMode", queryMode);
+            doSetProperty("queryMode", queryMode);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: producer
          */
         default CMISEndpointProducerBuilder queryMode(String queryMode) {
-            setProperty("queryMode", queryMode);
+            doSetProperty("queryMode", queryMode);
             return this;
         }
         /**
@@ -506,7 +506,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: security
          */
         default CMISEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -517,7 +517,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: security
          */
         default CMISEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -541,7 +541,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -554,7 +554,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -569,7 +569,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
-            setProperty("sessionFacadeFactory", sessionFacadeFactory);
+            doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
         }
         /**
@@ -584,7 +584,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
-            setProperty("sessionFacadeFactory", sessionFacadeFactory);
+            doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
         }
         /**
@@ -597,7 +597,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -610,7 +610,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -632,7 +632,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointBuilder pageSize(int pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -643,7 +643,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointBuilder pageSize(String pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -655,7 +655,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointBuilder readContent(boolean readContent) {
-            setProperty("readContent", readContent);
+            doSetProperty("readContent", readContent);
             return this;
         }
         /**
@@ -667,7 +667,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointBuilder readContent(String readContent) {
-            setProperty("readContent", readContent);
+            doSetProperty("readContent", readContent);
             return this;
         }
         /**
@@ -678,7 +678,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointBuilder readCount(int readCount) {
-            setProperty("readCount", readCount);
+            doSetProperty("readCount", readCount);
             return this;
         }
         /**
@@ -689,7 +689,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointBuilder readCount(String readCount) {
-            setProperty("readCount", readCount);
+            doSetProperty("readCount", readCount);
             return this;
         }
         /**
@@ -701,7 +701,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: common
          */
         default CMISEndpointBuilder repositoryId(String repositoryId) {
-            setProperty("repositoryId", repositoryId);
+            doSetProperty("repositoryId", repositoryId);
             return this;
         }
         /**
@@ -712,7 +712,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: security
          */
         default CMISEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -723,7 +723,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: security
          */
         default CMISEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -747,7 +747,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -760,7 +760,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -775,7 +775,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
-            setProperty("sessionFacadeFactory", sessionFacadeFactory);
+            doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
         }
         /**
@@ -790,7 +790,7 @@ public interface CMISEndpointBuilderFactory {
          */
         default AdvancedCMISEndpointBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
-            setProperty("sessionFacadeFactory", sessionFacadeFactory);
+            doSetProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
         }
         /**
@@ -802,7 +802,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCMISEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -814,7 +814,7 @@ public interface CMISEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCMISEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

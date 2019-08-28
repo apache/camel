@@ -51,7 +51,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * Group: producer
          */
         default SpringLdapEndpointBuilder operation(LdapOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * Group: producer
          */
         default SpringLdapEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * Group: producer
          */
         default SpringLdapEndpointBuilder scope(String scope) {
-            setProperty("scope", scope);
+            doSetProperty("scope", scope);
             return this;
         }
     }
@@ -100,7 +100,7 @@ public interface SpringLdapEndpointBuilderFactory {
          */
         default AdvancedSpringLdapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface SpringLdapEndpointBuilderFactory {
          */
         default AdvancedSpringLdapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface SpringLdapEndpointBuilderFactory {
          */
         default AdvancedSpringLdapEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSpringLdapEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

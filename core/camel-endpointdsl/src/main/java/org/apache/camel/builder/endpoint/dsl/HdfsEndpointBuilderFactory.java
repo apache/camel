@@ -60,7 +60,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder connectOnStartup(
                 boolean connectOnStartup) {
-            setProperty("connectOnStartup", connectOnStartup);
+            doSetProperty("connectOnStartup", connectOnStartup);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder connectOnStartup(
                 String connectOnStartup) {
-            setProperty("connectOnStartup", connectOnStartup);
+            doSetProperty("connectOnStartup", connectOnStartup);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder fileSystemType(
                 HdfsFileSystemType fileSystemType) {
-            setProperty("fileSystemType", fileSystemType);
+            doSetProperty("fileSystemType", fileSystemType);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointConsumerBuilder fileSystemType(String fileSystemType) {
-            setProperty("fileSystemType", fileSystemType);
+            doSetProperty("fileSystemType", fileSystemType);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointConsumerBuilder fileType(HdfsFileType fileType) {
-            setProperty("fileType", fileType);
+            doSetProperty("fileType", fileType);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointConsumerBuilder fileType(String fileType) {
-            setProperty("fileType", fileType);
+            doSetProperty("fileType", fileType);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointConsumerBuilder keyType(WritableType keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointConsumerBuilder keyType(String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointConsumerBuilder owner(String owner) {
-            setProperty("owner", owner);
+            doSetProperty("owner", owner);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointConsumerBuilder valueType(WritableType valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointConsumerBuilder valueType(String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -224,7 +224,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -235,7 +235,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: consumer
          */
         default HdfsEndpointConsumerBuilder pattern(String pattern) {
-            setProperty("pattern", pattern);
+            doSetProperty("pattern", pattern);
             return this;
         }
         /**
@@ -248,7 +248,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -261,7 +261,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -274,7 +274,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -347,7 +347,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -360,7 +360,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -373,7 +373,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -385,7 +385,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -397,7 +397,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -410,7 +410,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -423,7 +423,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -436,7 +436,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -450,7 +450,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -465,7 +465,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -480,7 +480,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -492,7 +492,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -506,7 +506,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -521,7 +521,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -533,7 +533,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -544,7 +544,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder startScheduler(String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -555,7 +555,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -567,7 +567,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -579,7 +579,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -591,7 +591,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -618,7 +618,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -634,7 +634,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -646,7 +646,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -659,7 +659,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -675,7 +675,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -691,7 +691,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -704,7 +704,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -717,7 +717,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -728,7 +728,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder blockSize(long blockSize) {
-            setProperty("blockSize", blockSize);
+            doSetProperty("blockSize", blockSize);
             return this;
         }
         /**
@@ -739,7 +739,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder blockSize(String blockSize) {
-            setProperty("blockSize", blockSize);
+            doSetProperty("blockSize", blockSize);
             return this;
         }
         /**
@@ -750,7 +750,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -761,7 +761,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -774,7 +774,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder checkIdleInterval(
                 int checkIdleInterval) {
-            setProperty("checkIdleInterval", checkIdleInterval);
+            doSetProperty("checkIdleInterval", checkIdleInterval);
             return this;
         }
         /**
@@ -787,7 +787,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder checkIdleInterval(
                 String checkIdleInterval) {
-            setProperty("checkIdleInterval", checkIdleInterval);
+            doSetProperty("checkIdleInterval", checkIdleInterval);
             return this;
         }
         /**
@@ -799,7 +799,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder chunkSize(int chunkSize) {
-            setProperty("chunkSize", chunkSize);
+            doSetProperty("chunkSize", chunkSize);
             return this;
         }
         /**
@@ -811,7 +811,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder chunkSize(String chunkSize) {
-            setProperty("chunkSize", chunkSize);
+            doSetProperty("chunkSize", chunkSize);
             return this;
         }
         /**
@@ -825,7 +825,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionCodec(
                 HdfsCompressionCodec compressionCodec) {
-            setProperty("compressionCodec", compressionCodec);
+            doSetProperty("compressionCodec", compressionCodec);
             return this;
         }
         /**
@@ -839,7 +839,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionCodec(
                 String compressionCodec) {
-            setProperty("compressionCodec", compressionCodec);
+            doSetProperty("compressionCodec", compressionCodec);
             return this;
         }
         /**
@@ -852,7 +852,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionType(
                 CompressionType compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -865,7 +865,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionType(
                 String compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -878,7 +878,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder openedSuffix(
                 String openedSuffix) {
-            setProperty("openedSuffix", openedSuffix);
+            doSetProperty("openedSuffix", openedSuffix);
             return this;
         }
         /**
@@ -890,7 +890,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder readSuffix(String readSuffix) {
-            setProperty("readSuffix", readSuffix);
+            doSetProperty("readSuffix", readSuffix);
             return this;
         }
         /**
@@ -902,7 +902,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder replication(
                 short replication) {
-            setProperty("replication", replication);
+            doSetProperty("replication", replication);
             return this;
         }
         /**
@@ -914,7 +914,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder replication(
                 String replication) {
-            setProperty("replication", replication);
+            doSetProperty("replication", replication);
             return this;
         }
         /**
@@ -939,7 +939,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder splitStrategy(
                 String splitStrategy) {
-            setProperty("splitStrategy", splitStrategy);
+            doSetProperty("splitStrategy", splitStrategy);
             return this;
         }
         /**
@@ -952,7 +952,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -965,7 +965,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -993,7 +993,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointProducerBuilder connectOnStartup(
                 boolean connectOnStartup) {
-            setProperty("connectOnStartup", connectOnStartup);
+            doSetProperty("connectOnStartup", connectOnStartup);
             return this;
         }
         /**
@@ -1010,7 +1010,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointProducerBuilder connectOnStartup(
                 String connectOnStartup) {
-            setProperty("connectOnStartup", connectOnStartup);
+            doSetProperty("connectOnStartup", connectOnStartup);
             return this;
         }
         /**
@@ -1023,7 +1023,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointProducerBuilder fileSystemType(
                 HdfsFileSystemType fileSystemType) {
-            setProperty("fileSystemType", fileSystemType);
+            doSetProperty("fileSystemType", fileSystemType);
             return this;
         }
         /**
@@ -1035,7 +1035,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointProducerBuilder fileSystemType(String fileSystemType) {
-            setProperty("fileSystemType", fileSystemType);
+            doSetProperty("fileSystemType", fileSystemType);
             return this;
         }
         /**
@@ -1048,7 +1048,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointProducerBuilder fileType(HdfsFileType fileType) {
-            setProperty("fileType", fileType);
+            doSetProperty("fileType", fileType);
             return this;
         }
         /**
@@ -1061,7 +1061,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointProducerBuilder fileType(String fileType) {
-            setProperty("fileType", fileType);
+            doSetProperty("fileType", fileType);
             return this;
         }
         /**
@@ -1073,7 +1073,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointProducerBuilder keyType(WritableType keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -1085,7 +1085,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointProducerBuilder keyType(String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -1097,7 +1097,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointProducerBuilder owner(String owner) {
-            setProperty("owner", owner);
+            doSetProperty("owner", owner);
             return this;
         }
         /**
@@ -1109,7 +1109,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointProducerBuilder valueType(WritableType valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
         /**
@@ -1121,7 +1121,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointProducerBuilder valueType(String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
         /**
@@ -1133,7 +1133,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: producer
          */
         default HdfsEndpointProducerBuilder append(boolean append) {
-            setProperty("append", append);
+            doSetProperty("append", append);
             return this;
         }
         /**
@@ -1145,7 +1145,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: producer
          */
         default HdfsEndpointProducerBuilder append(String append) {
-            setProperty("append", append);
+            doSetProperty("append", append);
             return this;
         }
         /**
@@ -1165,7 +1165,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1185,7 +1185,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1196,7 +1196,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: producer
          */
         default HdfsEndpointProducerBuilder overwrite(boolean overwrite) {
-            setProperty("overwrite", overwrite);
+            doSetProperty("overwrite", overwrite);
             return this;
         }
         /**
@@ -1207,7 +1207,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: producer
          */
         default HdfsEndpointProducerBuilder overwrite(String overwrite) {
-            setProperty("overwrite", overwrite);
+            doSetProperty("overwrite", overwrite);
             return this;
         }
     }
@@ -1231,7 +1231,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1244,7 +1244,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1255,7 +1255,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder blockSize(long blockSize) {
-            setProperty("blockSize", blockSize);
+            doSetProperty("blockSize", blockSize);
             return this;
         }
         /**
@@ -1266,7 +1266,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder blockSize(String blockSize) {
-            setProperty("blockSize", blockSize);
+            doSetProperty("blockSize", blockSize);
             return this;
         }
         /**
@@ -1277,7 +1277,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -1288,7 +1288,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -1301,7 +1301,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder checkIdleInterval(
                 int checkIdleInterval) {
-            setProperty("checkIdleInterval", checkIdleInterval);
+            doSetProperty("checkIdleInterval", checkIdleInterval);
             return this;
         }
         /**
@@ -1314,7 +1314,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder checkIdleInterval(
                 String checkIdleInterval) {
-            setProperty("checkIdleInterval", checkIdleInterval);
+            doSetProperty("checkIdleInterval", checkIdleInterval);
             return this;
         }
         /**
@@ -1326,7 +1326,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder chunkSize(int chunkSize) {
-            setProperty("chunkSize", chunkSize);
+            doSetProperty("chunkSize", chunkSize);
             return this;
         }
         /**
@@ -1338,7 +1338,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder chunkSize(String chunkSize) {
-            setProperty("chunkSize", chunkSize);
+            doSetProperty("chunkSize", chunkSize);
             return this;
         }
         /**
@@ -1352,7 +1352,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder compressionCodec(
                 HdfsCompressionCodec compressionCodec) {
-            setProperty("compressionCodec", compressionCodec);
+            doSetProperty("compressionCodec", compressionCodec);
             return this;
         }
         /**
@@ -1366,7 +1366,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder compressionCodec(
                 String compressionCodec) {
-            setProperty("compressionCodec", compressionCodec);
+            doSetProperty("compressionCodec", compressionCodec);
             return this;
         }
         /**
@@ -1379,7 +1379,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder compressionType(
                 CompressionType compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -1392,7 +1392,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder compressionType(
                 String compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -1405,7 +1405,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder openedSuffix(
                 String openedSuffix) {
-            setProperty("openedSuffix", openedSuffix);
+            doSetProperty("openedSuffix", openedSuffix);
             return this;
         }
         /**
@@ -1417,7 +1417,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder readSuffix(String readSuffix) {
-            setProperty("readSuffix", readSuffix);
+            doSetProperty("readSuffix", readSuffix);
             return this;
         }
         /**
@@ -1429,7 +1429,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder replication(
                 short replication) {
-            setProperty("replication", replication);
+            doSetProperty("replication", replication);
             return this;
         }
         /**
@@ -1441,7 +1441,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder replication(
                 String replication) {
-            setProperty("replication", replication);
+            doSetProperty("replication", replication);
             return this;
         }
         /**
@@ -1466,7 +1466,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder splitStrategy(
                 String splitStrategy) {
-            setProperty("splitStrategy", splitStrategy);
+            doSetProperty("splitStrategy", splitStrategy);
             return this;
         }
         /**
@@ -1479,7 +1479,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1492,7 +1492,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1519,7 +1519,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointBuilder connectOnStartup(boolean connectOnStartup) {
-            setProperty("connectOnStartup", connectOnStartup);
+            doSetProperty("connectOnStartup", connectOnStartup);
             return this;
         }
         /**
@@ -1535,7 +1535,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointBuilder connectOnStartup(String connectOnStartup) {
-            setProperty("connectOnStartup", connectOnStartup);
+            doSetProperty("connectOnStartup", connectOnStartup);
             return this;
         }
         /**
@@ -1548,7 +1548,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointBuilder fileSystemType(
                 HdfsFileSystemType fileSystemType) {
-            setProperty("fileSystemType", fileSystemType);
+            doSetProperty("fileSystemType", fileSystemType);
             return this;
         }
         /**
@@ -1560,7 +1560,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointBuilder fileSystemType(String fileSystemType) {
-            setProperty("fileSystemType", fileSystemType);
+            doSetProperty("fileSystemType", fileSystemType);
             return this;
         }
         /**
@@ -1573,7 +1573,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointBuilder fileType(HdfsFileType fileType) {
-            setProperty("fileType", fileType);
+            doSetProperty("fileType", fileType);
             return this;
         }
         /**
@@ -1586,7 +1586,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointBuilder fileType(String fileType) {
-            setProperty("fileType", fileType);
+            doSetProperty("fileType", fileType);
             return this;
         }
         /**
@@ -1598,7 +1598,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointBuilder keyType(WritableType keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -1610,7 +1610,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointBuilder keyType(String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -1622,7 +1622,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointBuilder owner(String owner) {
-            setProperty("owner", owner);
+            doSetProperty("owner", owner);
             return this;
         }
         /**
@@ -1634,7 +1634,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointBuilder valueType(WritableType valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
         /**
@@ -1646,7 +1646,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: common
          */
         default HdfsEndpointBuilder valueType(String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
     }
@@ -1670,7 +1670,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1683,7 +1683,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1694,7 +1694,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder blockSize(long blockSize) {
-            setProperty("blockSize", blockSize);
+            doSetProperty("blockSize", blockSize);
             return this;
         }
         /**
@@ -1705,7 +1705,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder blockSize(String blockSize) {
-            setProperty("blockSize", blockSize);
+            doSetProperty("blockSize", blockSize);
             return this;
         }
         /**
@@ -1716,7 +1716,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -1727,7 +1727,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -1740,7 +1740,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointBuilder checkIdleInterval(
                 int checkIdleInterval) {
-            setProperty("checkIdleInterval", checkIdleInterval);
+            doSetProperty("checkIdleInterval", checkIdleInterval);
             return this;
         }
         /**
@@ -1753,7 +1753,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointBuilder checkIdleInterval(
                 String checkIdleInterval) {
-            setProperty("checkIdleInterval", checkIdleInterval);
+            doSetProperty("checkIdleInterval", checkIdleInterval);
             return this;
         }
         /**
@@ -1765,7 +1765,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder chunkSize(int chunkSize) {
-            setProperty("chunkSize", chunkSize);
+            doSetProperty("chunkSize", chunkSize);
             return this;
         }
         /**
@@ -1777,7 +1777,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder chunkSize(String chunkSize) {
-            setProperty("chunkSize", chunkSize);
+            doSetProperty("chunkSize", chunkSize);
             return this;
         }
         /**
@@ -1791,7 +1791,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointBuilder compressionCodec(
                 HdfsCompressionCodec compressionCodec) {
-            setProperty("compressionCodec", compressionCodec);
+            doSetProperty("compressionCodec", compressionCodec);
             return this;
         }
         /**
@@ -1805,7 +1805,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointBuilder compressionCodec(
                 String compressionCodec) {
-            setProperty("compressionCodec", compressionCodec);
+            doSetProperty("compressionCodec", compressionCodec);
             return this;
         }
         /**
@@ -1818,7 +1818,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointBuilder compressionType(
                 CompressionType compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -1831,7 +1831,7 @@ public interface HdfsEndpointBuilderFactory {
          */
         default AdvancedHdfsEndpointBuilder compressionType(
                 String compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -1843,7 +1843,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder openedSuffix(String openedSuffix) {
-            setProperty("openedSuffix", openedSuffix);
+            doSetProperty("openedSuffix", openedSuffix);
             return this;
         }
         /**
@@ -1855,7 +1855,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder readSuffix(String readSuffix) {
-            setProperty("readSuffix", readSuffix);
+            doSetProperty("readSuffix", readSuffix);
             return this;
         }
         /**
@@ -1866,7 +1866,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder replication(short replication) {
-            setProperty("replication", replication);
+            doSetProperty("replication", replication);
             return this;
         }
         /**
@@ -1877,7 +1877,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder replication(String replication) {
-            setProperty("replication", replication);
+            doSetProperty("replication", replication);
             return this;
         }
         /**
@@ -1901,7 +1901,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder splitStrategy(String splitStrategy) {
-            setProperty("splitStrategy", splitStrategy);
+            doSetProperty("splitStrategy", splitStrategy);
             return this;
         }
         /**
@@ -1913,7 +1913,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1925,7 +1925,7 @@ public interface HdfsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

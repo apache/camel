@@ -53,7 +53,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder maxBinaryMessageSize(
                 Integer maxBinaryMessageSize) {
-            setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
+            doSetProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder maxBinaryMessageSize(
                 String maxBinaryMessageSize) {
-            setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
+            doSetProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -117,7 +117,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder sessionSupport(
                 boolean sessionSupport) {
-            setProperty("sessionSupport", sessionSupport);
+            doSetProperty("sessionSupport", sessionSupport);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder sessionSupport(
                 String sessionSupport) {
-            setProperty("sessionSupport", sessionSupport);
+            doSetProperty("sessionSupport", sessionSupport);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder staticResources(
                 String staticResources) {
-            setProperty("staticResources", staticResources);
+            doSetProperty("staticResources", staticResources);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder allowedOrigins(
                 String allowedOrigins) {
-            setProperty("allowedOrigins", allowedOrigins);
+            doSetProperty("allowedOrigins", allowedOrigins);
             return this;
         }
         /**
@@ -171,7 +171,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -183,7 +183,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: cors
          */
         default WebsocketEndpointConsumerBuilder filterPath(String filterPath) {
-            setProperty("filterPath", filterPath);
+            doSetProperty("filterPath", filterPath);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: monitoring
          */
         default WebsocketEndpointConsumerBuilder enableJmx(boolean enableJmx) {
-            setProperty("enableJmx", enableJmx);
+            doSetProperty("enableJmx", enableJmx);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: monitoring
          */
         default WebsocketEndpointConsumerBuilder enableJmx(String enableJmx) {
-            setProperty("enableJmx", enableJmx);
+            doSetProperty("enableJmx", enableJmx);
             return this;
         }
         /**
@@ -231,7 +231,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -244,7 +244,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -272,7 +272,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -326,7 +326,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -339,7 +339,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -352,7 +352,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder bufferSize(
                 Integer bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder bufferSize(
                 String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -379,7 +379,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder maxIdleTime(
                 Integer maxIdleTime) {
-            setProperty("maxIdleTime", maxIdleTime);
+            doSetProperty("maxIdleTime", maxIdleTime);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder maxIdleTime(
                 String maxIdleTime) {
-            setProperty("maxIdleTime", maxIdleTime);
+            doSetProperty("maxIdleTime", maxIdleTime);
             return this;
         }
         /**
@@ -406,7 +406,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder maxTextMessageSize(
                 Integer maxTextMessageSize) {
-            setProperty("maxTextMessageSize", maxTextMessageSize);
+            doSetProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
         }
         /**
@@ -420,7 +420,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder maxTextMessageSize(
                 String maxTextMessageSize) {
-            setProperty("maxTextMessageSize", maxTextMessageSize);
+            doSetProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
         }
         /**
@@ -433,7 +433,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder minVersion(
                 Integer minVersion) {
-            setProperty("minVersion", minVersion);
+            doSetProperty("minVersion", minVersion);
             return this;
         }
         /**
@@ -447,7 +447,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder minVersion(
                 String minVersion) {
-            setProperty("minVersion", minVersion);
+            doSetProperty("minVersion", minVersion);
             return this;
         }
         /**
@@ -460,7 +460,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -473,7 +473,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -498,7 +498,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointProducerBuilder maxBinaryMessageSize(
                 Integer maxBinaryMessageSize) {
-            setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
+            doSetProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
         }
         /**
@@ -513,7 +513,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointProducerBuilder maxBinaryMessageSize(
                 String maxBinaryMessageSize) {
-            setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
+            doSetProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
         }
         /**
@@ -533,7 +533,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -553,7 +553,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -565,7 +565,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: producer
          */
         default WebsocketEndpointProducerBuilder sendTimeout(Integer sendTimeout) {
-            setProperty("sendTimeout", sendTimeout);
+            doSetProperty("sendTimeout", sendTimeout);
             return this;
         }
         /**
@@ -578,7 +578,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: producer
          */
         default WebsocketEndpointProducerBuilder sendTimeout(String sendTimeout) {
-            setProperty("sendTimeout", sendTimeout);
+            doSetProperty("sendTimeout", sendTimeout);
             return this;
         }
         /**
@@ -591,7 +591,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: producer
          */
         default WebsocketEndpointProducerBuilder sendToAll(Boolean sendToAll) {
-            setProperty("sendToAll", sendToAll);
+            doSetProperty("sendToAll", sendToAll);
             return this;
         }
         /**
@@ -605,7 +605,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: producer
          */
         default WebsocketEndpointProducerBuilder sendToAll(String sendToAll) {
-            setProperty("sendToAll", sendToAll);
+            doSetProperty("sendToAll", sendToAll);
             return this;
         }
         /**
@@ -617,7 +617,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointProducerBuilder allowedOrigins(
                 String allowedOrigins) {
-            setProperty("allowedOrigins", allowedOrigins);
+            doSetProperty("allowedOrigins", allowedOrigins);
             return this;
         }
         /**
@@ -629,7 +629,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointProducerBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -641,7 +641,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointProducerBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -652,7 +652,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: cors
          */
         default WebsocketEndpointProducerBuilder filterPath(String filterPath) {
-            setProperty("filterPath", filterPath);
+            doSetProperty("filterPath", filterPath);
             return this;
         }
         /**
@@ -664,7 +664,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: monitoring
          */
         default WebsocketEndpointProducerBuilder enableJmx(boolean enableJmx) {
-            setProperty("enableJmx", enableJmx);
+            doSetProperty("enableJmx", enableJmx);
             return this;
         }
         /**
@@ -676,7 +676,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: monitoring
          */
         default WebsocketEndpointProducerBuilder enableJmx(String enableJmx) {
-            setProperty("enableJmx", enableJmx);
+            doSetProperty("enableJmx", enableJmx);
             return this;
         }
         /**
@@ -689,7 +689,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -702,7 +702,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -727,7 +727,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -740,7 +740,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -753,7 +753,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder bufferSize(
                 Integer bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -767,7 +767,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder bufferSize(
                 String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -780,7 +780,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder maxIdleTime(
                 Integer maxIdleTime) {
-            setProperty("maxIdleTime", maxIdleTime);
+            doSetProperty("maxIdleTime", maxIdleTime);
             return this;
         }
         /**
@@ -794,7 +794,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder maxIdleTime(
                 String maxIdleTime) {
-            setProperty("maxIdleTime", maxIdleTime);
+            doSetProperty("maxIdleTime", maxIdleTime);
             return this;
         }
         /**
@@ -807,7 +807,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder maxTextMessageSize(
                 Integer maxTextMessageSize) {
-            setProperty("maxTextMessageSize", maxTextMessageSize);
+            doSetProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
         }
         /**
@@ -821,7 +821,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder maxTextMessageSize(
                 String maxTextMessageSize) {
-            setProperty("maxTextMessageSize", maxTextMessageSize);
+            doSetProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
         }
         /**
@@ -834,7 +834,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder minVersion(
                 Integer minVersion) {
-            setProperty("minVersion", minVersion);
+            doSetProperty("minVersion", minVersion);
             return this;
         }
         /**
@@ -848,7 +848,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder minVersion(
                 String minVersion) {
-            setProperty("minVersion", minVersion);
+            doSetProperty("minVersion", minVersion);
             return this;
         }
         /**
@@ -861,7 +861,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -874,7 +874,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -899,7 +899,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointBuilder maxBinaryMessageSize(
                 Integer maxBinaryMessageSize) {
-            setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
+            doSetProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
         }
         /**
@@ -914,7 +914,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointBuilder maxBinaryMessageSize(
                 String maxBinaryMessageSize) {
-            setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
+            doSetProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
         }
         /**
@@ -925,7 +925,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: cors
          */
         default WebsocketEndpointBuilder allowedOrigins(String allowedOrigins) {
-            setProperty("allowedOrigins", allowedOrigins);
+            doSetProperty("allowedOrigins", allowedOrigins);
             return this;
         }
         /**
@@ -937,7 +937,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -949,7 +949,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
-            setProperty("crossOriginFilterOn", crossOriginFilterOn);
+            doSetProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
         }
         /**
@@ -960,7 +960,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: cors
          */
         default WebsocketEndpointBuilder filterPath(String filterPath) {
-            setProperty("filterPath", filterPath);
+            doSetProperty("filterPath", filterPath);
             return this;
         }
         /**
@@ -972,7 +972,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: monitoring
          */
         default WebsocketEndpointBuilder enableJmx(boolean enableJmx) {
-            setProperty("enableJmx", enableJmx);
+            doSetProperty("enableJmx", enableJmx);
             return this;
         }
         /**
@@ -984,7 +984,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: monitoring
          */
         default WebsocketEndpointBuilder enableJmx(String enableJmx) {
-            setProperty("enableJmx", enableJmx);
+            doSetProperty("enableJmx", enableJmx);
             return this;
         }
         /**
@@ -997,7 +997,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1010,7 +1010,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default WebsocketEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -1034,7 +1034,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1047,7 +1047,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1059,7 +1059,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder bufferSize(Integer bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -1072,7 +1072,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -1084,7 +1084,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder maxIdleTime(Integer maxIdleTime) {
-            setProperty("maxIdleTime", maxIdleTime);
+            doSetProperty("maxIdleTime", maxIdleTime);
             return this;
         }
         /**
@@ -1097,7 +1097,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder maxIdleTime(String maxIdleTime) {
-            setProperty("maxIdleTime", maxIdleTime);
+            doSetProperty("maxIdleTime", maxIdleTime);
             return this;
         }
         /**
@@ -1110,7 +1110,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointBuilder maxTextMessageSize(
                 Integer maxTextMessageSize) {
-            setProperty("maxTextMessageSize", maxTextMessageSize);
+            doSetProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
         }
         /**
@@ -1124,7 +1124,7 @@ public interface WebsocketEndpointBuilderFactory {
          */
         default AdvancedWebsocketEndpointBuilder maxTextMessageSize(
                 String maxTextMessageSize) {
-            setProperty("maxTextMessageSize", maxTextMessageSize);
+            doSetProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
         }
         /**
@@ -1136,7 +1136,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder minVersion(Integer minVersion) {
-            setProperty("minVersion", minVersion);
+            doSetProperty("minVersion", minVersion);
             return this;
         }
         /**
@@ -1149,7 +1149,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder minVersion(String minVersion) {
-            setProperty("minVersion", minVersion);
+            doSetProperty("minVersion", minVersion);
             return this;
         }
         /**
@@ -1161,7 +1161,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1173,7 +1173,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -52,7 +52,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder atomix(Object atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder atomix(String atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointConsumerBuilder defaultAction(
                 Action defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointConsumerBuilder defaultAction(
                 String defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder nodes(List<Object> nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder nodes(String nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointConsumerBuilder resultHeader(
                 String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -150,7 +150,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointConsumerBuilder transportClassName(
                 String transportClassName) {
-            setProperty("transportClassName", transportClassName);
+            doSetProperty("transportClassName", transportClassName);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -186,7 +186,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -213,7 +213,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -229,7 +229,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -292,7 +292,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -305,7 +305,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -317,7 +317,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -344,7 +344,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder ephemeral(
                 boolean ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -358,7 +358,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder ephemeral(
                 String ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -371,7 +371,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder readConsistency(
                 ReadConsistency readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -384,7 +384,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder readConsistency(
                 String readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -397,7 +397,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -411,7 +411,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceConfigs(
                 String resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -424,7 +424,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -438,7 +438,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceOptions(
                 String resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -451,7 +451,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -464,7 +464,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -486,7 +486,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder atomix(Object atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -498,7 +498,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder atomix(String atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -510,7 +510,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointProducerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -523,7 +523,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointProducerBuilder defaultAction(
                 Action defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -536,7 +536,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointProducerBuilder defaultAction(
                 String defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -548,7 +548,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder nodes(List<Object> nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -560,7 +560,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder nodes(String nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -572,7 +572,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointProducerBuilder resultHeader(
                 String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -584,7 +584,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointProducerBuilder transportClassName(
                 String transportClassName) {
-            setProperty("transportClassName", transportClassName);
+            doSetProperty("transportClassName", transportClassName);
             return this;
         }
         /**
@@ -604,7 +604,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -624,7 +624,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -648,7 +648,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -661,7 +661,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -673,7 +673,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -686,7 +686,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -698,7 +698,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -711,7 +711,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -725,7 +725,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder ephemeral(
                 boolean ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -739,7 +739,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder ephemeral(
                 String ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -752,7 +752,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder readConsistency(
                 ReadConsistency readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -765,7 +765,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder readConsistency(
                 String readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -778,7 +778,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -792,7 +792,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceConfigs(
                 String resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -805,7 +805,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -819,7 +819,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceOptions(
                 String resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -832,7 +832,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -845,7 +845,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -867,7 +867,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointBuilder atomix(Object atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -879,7 +879,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointBuilder atomix(String atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -891,7 +891,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -903,7 +903,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointBuilder defaultAction(Action defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -915,7 +915,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointBuilder defaultAction(String defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -927,7 +927,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointBuilder nodes(List<Object> nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -939,7 +939,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointBuilder nodes(String nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -950,7 +950,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixQueueEndpointBuilder resultHeader(String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -962,7 +962,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AtomixQueueEndpointBuilder transportClassName(
                 String transportClassName) {
-            setProperty("transportClassName", transportClassName);
+            doSetProperty("transportClassName", transportClassName);
             return this;
         }
     }
@@ -986,7 +986,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -999,7 +999,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1011,7 +1011,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -1024,7 +1024,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -1036,7 +1036,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -1049,7 +1049,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -1062,7 +1062,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder ephemeral(boolean ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -1075,7 +1075,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder ephemeral(String ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -1088,7 +1088,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder readConsistency(
                 ReadConsistency readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -1101,7 +1101,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder readConsistency(
                 String readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -1114,7 +1114,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -1128,7 +1128,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder resourceConfigs(
                 String resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -1141,7 +1141,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -1155,7 +1155,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder resourceOptions(
                 String resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -1168,7 +1168,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1181,7 +1181,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          */
         default AdvancedAtomixQueueEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

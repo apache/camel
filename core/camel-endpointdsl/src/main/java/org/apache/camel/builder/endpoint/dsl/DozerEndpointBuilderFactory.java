@@ -53,7 +53,7 @@ public interface DozerEndpointBuilderFactory {
          */
         default DozerEndpointBuilder mappingConfiguration(
                 Object mappingConfiguration) {
-            setProperty("mappingConfiguration", mappingConfiguration);
+            doSetProperty("mappingConfiguration", mappingConfiguration);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface DozerEndpointBuilderFactory {
          */
         default DozerEndpointBuilder mappingConfiguration(
                 String mappingConfiguration) {
-            setProperty("mappingConfiguration", mappingConfiguration);
+            doSetProperty("mappingConfiguration", mappingConfiguration);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: producer
          */
         default DozerEndpointBuilder mappingFile(String mappingFile) {
-            setProperty("mappingFile", mappingFile);
+            doSetProperty("mappingFile", mappingFile);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: producer
          */
         default DozerEndpointBuilder marshalId(String marshalId) {
-            setProperty("marshalId", marshalId);
+            doSetProperty("marshalId", marshalId);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: producer
          */
         default DozerEndpointBuilder sourceModel(String sourceModel) {
-            setProperty("sourceModel", sourceModel);
+            doSetProperty("sourceModel", sourceModel);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: producer
          */
         default DozerEndpointBuilder targetModel(String targetModel) {
-            setProperty("targetModel", targetModel);
+            doSetProperty("targetModel", targetModel);
             return this;
         }
         /**
@@ -133,7 +133,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: producer
          */
         default DozerEndpointBuilder unmarshalId(String unmarshalId) {
-            setProperty("unmarshalId", unmarshalId);
+            doSetProperty("unmarshalId", unmarshalId);
             return this;
         }
     }
@@ -157,7 +157,7 @@ public interface DozerEndpointBuilderFactory {
          */
         default AdvancedDozerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface DozerEndpointBuilderFactory {
          */
         default AdvancedDozerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDozerEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDozerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

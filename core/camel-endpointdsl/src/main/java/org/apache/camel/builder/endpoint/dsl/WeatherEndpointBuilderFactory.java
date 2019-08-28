@@ -56,7 +56,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointConsumerBuilder appid(String appid) {
-            setProperty("appid", appid);
+            doSetProperty("appid", appid);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointConsumerBuilder headerName(String headerName) {
-            setProperty("headerName", headerName);
+            doSetProperty("headerName", headerName);
             return this;
         }
         /**
@@ -80,7 +80,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointConsumerBuilder language(WeatherLanguage language) {
-            setProperty("language", language);
+            doSetProperty("language", language);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointConsumerBuilder language(String language) {
-            setProperty("language", language);
+            doSetProperty("language", language);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointConsumerBuilder mode(WeatherMode mode) {
-            setProperty("mode", mode);
+            doSetProperty("mode", mode);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointConsumerBuilder mode(String mode) {
-            setProperty("mode", mode);
+            doSetProperty("mode", mode);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointConsumerBuilder period(String period) {
-            setProperty("period", period);
+            doSetProperty("period", period);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointConsumerBuilder units(WeatherUnits units) {
-            setProperty("units", units);
+            doSetProperty("units", units);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointConsumerBuilder units(String units) {
-            setProperty("units", units);
+            doSetProperty("units", units);
             return this;
         }
         /**
@@ -167,7 +167,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointConsumerBuilder weatherApi(WeatherApi weatherApi) {
-            setProperty("weatherApi", weatherApi);
+            doSetProperty("weatherApi", weatherApi);
             return this;
         }
         /**
@@ -180,7 +180,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointConsumerBuilder weatherApi(String weatherApi) {
-            setProperty("weatherApi", weatherApi);
+            doSetProperty("weatherApi", weatherApi);
             return this;
         }
         /**
@@ -198,7 +198,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -216,7 +216,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -229,7 +229,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -242,7 +242,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -268,7 +268,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -281,7 +281,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -328,7 +328,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -341,7 +341,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -354,7 +354,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -378,7 +378,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -391,7 +391,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -404,7 +404,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -417,7 +417,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -446,7 +446,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -461,7 +461,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -473,7 +473,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -487,7 +487,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -502,7 +502,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -514,7 +514,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -526,7 +526,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -537,7 +537,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -549,7 +549,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -562,7 +562,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -575,7 +575,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -586,7 +586,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder cnt(Integer cnt) {
-            setProperty("cnt", cnt);
+            doSetProperty("cnt", cnt);
             return this;
         }
         /**
@@ -598,7 +598,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder cnt(String cnt) {
-            setProperty("cnt", cnt);
+            doSetProperty("cnt", cnt);
             return this;
         }
         /**
@@ -611,7 +611,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder ids(List<String> ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -624,7 +624,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder ids(String ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -636,7 +636,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder lat(String lat) {
-            setProperty("lat", lat);
+            doSetProperty("lat", lat);
             return this;
         }
         /**
@@ -654,7 +654,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder location(String location) {
-            setProperty("location", location);
+            doSetProperty("location", location);
             return this;
         }
         /**
@@ -666,7 +666,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder lon(String lon) {
-            setProperty("lon", lon);
+            doSetProperty("lon", lon);
             return this;
         }
         /**
@@ -678,7 +678,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder rightLon(String rightLon) {
-            setProperty("rightLon", rightLon);
+            doSetProperty("rightLon", rightLon);
             return this;
         }
         /**
@@ -690,7 +690,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder topLat(String topLat) {
-            setProperty("topLat", topLat);
+            doSetProperty("topLat", topLat);
             return this;
         }
         /**
@@ -701,7 +701,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder zip(String zip) {
-            setProperty("zip", zip);
+            doSetProperty("zip", zip);
             return this;
         }
         /**
@@ -713,7 +713,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder zoom(Integer zoom) {
-            setProperty("zoom", zoom);
+            doSetProperty("zoom", zoom);
             return this;
         }
         /**
@@ -726,7 +726,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointConsumerBuilder zoom(String zoom) {
-            setProperty("zoom", zoom);
+            doSetProperty("zoom", zoom);
             return this;
         }
         /**
@@ -738,7 +738,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder proxyAuthDomain(
                 String proxyAuthDomain) {
-            setProperty("proxyAuthDomain", proxyAuthDomain);
+            doSetProperty("proxyAuthDomain", proxyAuthDomain);
             return this;
         }
         /**
@@ -750,7 +750,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder proxyAuthHost(
                 String proxyAuthHost) {
-            setProperty("proxyAuthHost", proxyAuthHost);
+            doSetProperty("proxyAuthHost", proxyAuthHost);
             return this;
         }
         /**
@@ -762,7 +762,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder proxyAuthMethod(
                 String proxyAuthMethod) {
-            setProperty("proxyAuthMethod", proxyAuthMethod);
+            doSetProperty("proxyAuthMethod", proxyAuthMethod);
             return this;
         }
         /**
@@ -774,7 +774,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder proxyAuthPassword(
                 String proxyAuthPassword) {
-            setProperty("proxyAuthPassword", proxyAuthPassword);
+            doSetProperty("proxyAuthPassword", proxyAuthPassword);
             return this;
         }
         /**
@@ -786,7 +786,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder proxyAuthUsername(
                 String proxyAuthUsername) {
-            setProperty("proxyAuthUsername", proxyAuthUsername);
+            doSetProperty("proxyAuthUsername", proxyAuthUsername);
             return this;
         }
         /**
@@ -797,7 +797,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointConsumerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -808,7 +808,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -820,7 +820,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointConsumerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -833,7 +833,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder geolocationAccessKey(
                 String geolocationAccessKey) {
-            setProperty("geolocationAccessKey", geolocationAccessKey);
+            doSetProperty("geolocationAccessKey", geolocationAccessKey);
             return this;
         }
         /**
@@ -847,7 +847,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointConsumerBuilder geolocationRequestHostIP(
                 String geolocationRequestHostIP) {
-            setProperty("geolocationRequestHostIP", geolocationRequestHostIP);
+            doSetProperty("geolocationRequestHostIP", geolocationRequestHostIP);
             return this;
         }
     }
@@ -874,7 +874,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -890,7 +890,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -902,7 +902,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -915,7 +915,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -931,7 +931,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -947,7 +947,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -960,7 +960,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -973,7 +973,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -987,7 +987,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder httpConnectionManager(
                 Object httpConnectionManager) {
-            setProperty("httpConnectionManager", httpConnectionManager);
+            doSetProperty("httpConnectionManager", httpConnectionManager);
             return this;
         }
         /**
@@ -1001,7 +1001,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder httpConnectionManager(
                 String httpConnectionManager) {
-            setProperty("httpConnectionManager", httpConnectionManager);
+            doSetProperty("httpConnectionManager", httpConnectionManager);
             return this;
         }
         /**
@@ -1014,7 +1014,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1027,7 +1027,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1050,7 +1050,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointProducerBuilder appid(String appid) {
-            setProperty("appid", appid);
+            doSetProperty("appid", appid);
             return this;
         }
         /**
@@ -1062,7 +1062,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointProducerBuilder headerName(String headerName) {
-            setProperty("headerName", headerName);
+            doSetProperty("headerName", headerName);
             return this;
         }
         /**
@@ -1074,7 +1074,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointProducerBuilder language(WeatherLanguage language) {
-            setProperty("language", language);
+            doSetProperty("language", language);
             return this;
         }
         /**
@@ -1086,7 +1086,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointProducerBuilder language(String language) {
-            setProperty("language", language);
+            doSetProperty("language", language);
             return this;
         }
         /**
@@ -1098,7 +1098,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointProducerBuilder mode(WeatherMode mode) {
-            setProperty("mode", mode);
+            doSetProperty("mode", mode);
             return this;
         }
         /**
@@ -1110,7 +1110,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointProducerBuilder mode(String mode) {
-            setProperty("mode", mode);
+            doSetProperty("mode", mode);
             return this;
         }
         /**
@@ -1124,7 +1124,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointProducerBuilder period(String period) {
-            setProperty("period", period);
+            doSetProperty("period", period);
             return this;
         }
         /**
@@ -1136,7 +1136,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointProducerBuilder units(WeatherUnits units) {
-            setProperty("units", units);
+            doSetProperty("units", units);
             return this;
         }
         /**
@@ -1148,7 +1148,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointProducerBuilder units(String units) {
-            setProperty("units", units);
+            doSetProperty("units", units);
             return this;
         }
         /**
@@ -1161,7 +1161,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointProducerBuilder weatherApi(WeatherApi weatherApi) {
-            setProperty("weatherApi", weatherApi);
+            doSetProperty("weatherApi", weatherApi);
             return this;
         }
         /**
@@ -1174,7 +1174,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointProducerBuilder weatherApi(String weatherApi) {
-            setProperty("weatherApi", weatherApi);
+            doSetProperty("weatherApi", weatherApi);
             return this;
         }
         /**
@@ -1194,7 +1194,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1214,7 +1214,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1225,7 +1225,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder cnt(Integer cnt) {
-            setProperty("cnt", cnt);
+            doSetProperty("cnt", cnt);
             return this;
         }
         /**
@@ -1237,7 +1237,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder cnt(String cnt) {
-            setProperty("cnt", cnt);
+            doSetProperty("cnt", cnt);
             return this;
         }
         /**
@@ -1250,7 +1250,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder ids(List<String> ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -1263,7 +1263,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder ids(String ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -1275,7 +1275,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder lat(String lat) {
-            setProperty("lat", lat);
+            doSetProperty("lat", lat);
             return this;
         }
         /**
@@ -1293,7 +1293,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder location(String location) {
-            setProperty("location", location);
+            doSetProperty("location", location);
             return this;
         }
         /**
@@ -1305,7 +1305,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder lon(String lon) {
-            setProperty("lon", lon);
+            doSetProperty("lon", lon);
             return this;
         }
         /**
@@ -1317,7 +1317,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder rightLon(String rightLon) {
-            setProperty("rightLon", rightLon);
+            doSetProperty("rightLon", rightLon);
             return this;
         }
         /**
@@ -1329,7 +1329,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder topLat(String topLat) {
-            setProperty("topLat", topLat);
+            doSetProperty("topLat", topLat);
             return this;
         }
         /**
@@ -1340,7 +1340,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder zip(String zip) {
-            setProperty("zip", zip);
+            doSetProperty("zip", zip);
             return this;
         }
         /**
@@ -1352,7 +1352,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder zoom(Integer zoom) {
-            setProperty("zoom", zoom);
+            doSetProperty("zoom", zoom);
             return this;
         }
         /**
@@ -1365,7 +1365,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointProducerBuilder zoom(String zoom) {
-            setProperty("zoom", zoom);
+            doSetProperty("zoom", zoom);
             return this;
         }
         /**
@@ -1377,7 +1377,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointProducerBuilder proxyAuthDomain(
                 String proxyAuthDomain) {
-            setProperty("proxyAuthDomain", proxyAuthDomain);
+            doSetProperty("proxyAuthDomain", proxyAuthDomain);
             return this;
         }
         /**
@@ -1389,7 +1389,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointProducerBuilder proxyAuthHost(
                 String proxyAuthHost) {
-            setProperty("proxyAuthHost", proxyAuthHost);
+            doSetProperty("proxyAuthHost", proxyAuthHost);
             return this;
         }
         /**
@@ -1401,7 +1401,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointProducerBuilder proxyAuthMethod(
                 String proxyAuthMethod) {
-            setProperty("proxyAuthMethod", proxyAuthMethod);
+            doSetProperty("proxyAuthMethod", proxyAuthMethod);
             return this;
         }
         /**
@@ -1413,7 +1413,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointProducerBuilder proxyAuthPassword(
                 String proxyAuthPassword) {
-            setProperty("proxyAuthPassword", proxyAuthPassword);
+            doSetProperty("proxyAuthPassword", proxyAuthPassword);
             return this;
         }
         /**
@@ -1425,7 +1425,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointProducerBuilder proxyAuthUsername(
                 String proxyAuthUsername) {
-            setProperty("proxyAuthUsername", proxyAuthUsername);
+            doSetProperty("proxyAuthUsername", proxyAuthUsername);
             return this;
         }
         /**
@@ -1436,7 +1436,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointProducerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -1447,7 +1447,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointProducerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1459,7 +1459,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointProducerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1472,7 +1472,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointProducerBuilder geolocationAccessKey(
                 String geolocationAccessKey) {
-            setProperty("geolocationAccessKey", geolocationAccessKey);
+            doSetProperty("geolocationAccessKey", geolocationAccessKey);
             return this;
         }
         /**
@@ -1486,7 +1486,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointProducerBuilder geolocationRequestHostIP(
                 String geolocationRequestHostIP) {
-            setProperty("geolocationRequestHostIP", geolocationRequestHostIP);
+            doSetProperty("geolocationRequestHostIP", geolocationRequestHostIP);
             return this;
         }
     }
@@ -1510,7 +1510,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1523,7 +1523,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1537,7 +1537,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointProducerBuilder httpConnectionManager(
                 Object httpConnectionManager) {
-            setProperty("httpConnectionManager", httpConnectionManager);
+            doSetProperty("httpConnectionManager", httpConnectionManager);
             return this;
         }
         /**
@@ -1551,7 +1551,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointProducerBuilder httpConnectionManager(
                 String httpConnectionManager) {
-            setProperty("httpConnectionManager", httpConnectionManager);
+            doSetProperty("httpConnectionManager", httpConnectionManager);
             return this;
         }
         /**
@@ -1564,7 +1564,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1577,7 +1577,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1600,7 +1600,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointBuilder appid(String appid) {
-            setProperty("appid", appid);
+            doSetProperty("appid", appid);
             return this;
         }
         /**
@@ -1612,7 +1612,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointBuilder headerName(String headerName) {
-            setProperty("headerName", headerName);
+            doSetProperty("headerName", headerName);
             return this;
         }
         /**
@@ -1624,7 +1624,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointBuilder language(WeatherLanguage language) {
-            setProperty("language", language);
+            doSetProperty("language", language);
             return this;
         }
         /**
@@ -1636,7 +1636,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointBuilder language(String language) {
-            setProperty("language", language);
+            doSetProperty("language", language);
             return this;
         }
         /**
@@ -1648,7 +1648,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointBuilder mode(WeatherMode mode) {
-            setProperty("mode", mode);
+            doSetProperty("mode", mode);
             return this;
         }
         /**
@@ -1660,7 +1660,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointBuilder mode(String mode) {
-            setProperty("mode", mode);
+            doSetProperty("mode", mode);
             return this;
         }
         /**
@@ -1674,7 +1674,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointBuilder period(String period) {
-            setProperty("period", period);
+            doSetProperty("period", period);
             return this;
         }
         /**
@@ -1686,7 +1686,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointBuilder units(WeatherUnits units) {
-            setProperty("units", units);
+            doSetProperty("units", units);
             return this;
         }
         /**
@@ -1698,7 +1698,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointBuilder units(String units) {
-            setProperty("units", units);
+            doSetProperty("units", units);
             return this;
         }
         /**
@@ -1711,7 +1711,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointBuilder weatherApi(WeatherApi weatherApi) {
-            setProperty("weatherApi", weatherApi);
+            doSetProperty("weatherApi", weatherApi);
             return this;
         }
         /**
@@ -1724,7 +1724,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: common
          */
         default WeatherEndpointBuilder weatherApi(String weatherApi) {
-            setProperty("weatherApi", weatherApi);
+            doSetProperty("weatherApi", weatherApi);
             return this;
         }
         /**
@@ -1735,7 +1735,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder cnt(Integer cnt) {
-            setProperty("cnt", cnt);
+            doSetProperty("cnt", cnt);
             return this;
         }
         /**
@@ -1747,7 +1747,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder cnt(String cnt) {
-            setProperty("cnt", cnt);
+            doSetProperty("cnt", cnt);
             return this;
         }
         /**
@@ -1760,7 +1760,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder ids(List<String> ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -1773,7 +1773,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder ids(String ids) {
-            setProperty("ids", ids);
+            doSetProperty("ids", ids);
             return this;
         }
         /**
@@ -1785,7 +1785,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder lat(String lat) {
-            setProperty("lat", lat);
+            doSetProperty("lat", lat);
             return this;
         }
         /**
@@ -1803,7 +1803,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder location(String location) {
-            setProperty("location", location);
+            doSetProperty("location", location);
             return this;
         }
         /**
@@ -1815,7 +1815,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder lon(String lon) {
-            setProperty("lon", lon);
+            doSetProperty("lon", lon);
             return this;
         }
         /**
@@ -1827,7 +1827,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder rightLon(String rightLon) {
-            setProperty("rightLon", rightLon);
+            doSetProperty("rightLon", rightLon);
             return this;
         }
         /**
@@ -1839,7 +1839,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder topLat(String topLat) {
-            setProperty("topLat", topLat);
+            doSetProperty("topLat", topLat);
             return this;
         }
         /**
@@ -1850,7 +1850,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder zip(String zip) {
-            setProperty("zip", zip);
+            doSetProperty("zip", zip);
             return this;
         }
         /**
@@ -1862,7 +1862,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder zoom(Integer zoom) {
-            setProperty("zoom", zoom);
+            doSetProperty("zoom", zoom);
             return this;
         }
         /**
@@ -1875,7 +1875,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: filter
          */
         default WeatherEndpointBuilder zoom(String zoom) {
-            setProperty("zoom", zoom);
+            doSetProperty("zoom", zoom);
             return this;
         }
         /**
@@ -1886,7 +1886,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
-            setProperty("proxyAuthDomain", proxyAuthDomain);
+            doSetProperty("proxyAuthDomain", proxyAuthDomain);
             return this;
         }
         /**
@@ -1897,7 +1897,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointBuilder proxyAuthHost(String proxyAuthHost) {
-            setProperty("proxyAuthHost", proxyAuthHost);
+            doSetProperty("proxyAuthHost", proxyAuthHost);
             return this;
         }
         /**
@@ -1908,7 +1908,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointBuilder proxyAuthMethod(String proxyAuthMethod) {
-            setProperty("proxyAuthMethod", proxyAuthMethod);
+            doSetProperty("proxyAuthMethod", proxyAuthMethod);
             return this;
         }
         /**
@@ -1920,7 +1920,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointBuilder proxyAuthPassword(
                 String proxyAuthPassword) {
-            setProperty("proxyAuthPassword", proxyAuthPassword);
+            doSetProperty("proxyAuthPassword", proxyAuthPassword);
             return this;
         }
         /**
@@ -1932,7 +1932,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointBuilder proxyAuthUsername(
                 String proxyAuthUsername) {
-            setProperty("proxyAuthUsername", proxyAuthUsername);
+            doSetProperty("proxyAuthUsername", proxyAuthUsername);
             return this;
         }
         /**
@@ -1943,7 +1943,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -1954,7 +1954,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1966,7 +1966,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: proxy
          */
         default WeatherEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -1979,7 +1979,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointBuilder geolocationAccessKey(
                 String geolocationAccessKey) {
-            setProperty("geolocationAccessKey", geolocationAccessKey);
+            doSetProperty("geolocationAccessKey", geolocationAccessKey);
             return this;
         }
         /**
@@ -1993,7 +1993,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default WeatherEndpointBuilder geolocationRequestHostIP(
                 String geolocationRequestHostIP) {
-            setProperty("geolocationRequestHostIP", geolocationRequestHostIP);
+            doSetProperty("geolocationRequestHostIP", geolocationRequestHostIP);
             return this;
         }
     }
@@ -2017,7 +2017,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2030,7 +2030,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2044,7 +2044,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointBuilder httpConnectionManager(
                 Object httpConnectionManager) {
-            setProperty("httpConnectionManager", httpConnectionManager);
+            doSetProperty("httpConnectionManager", httpConnectionManager);
             return this;
         }
         /**
@@ -2058,7 +2058,7 @@ public interface WeatherEndpointBuilderFactory {
          */
         default AdvancedWeatherEndpointBuilder httpConnectionManager(
                 String httpConnectionManager) {
-            setProperty("httpConnectionManager", httpConnectionManager);
+            doSetProperty("httpConnectionManager", httpConnectionManager);
             return this;
         }
         /**
@@ -2070,7 +2070,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWeatherEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2082,7 +2082,7 @@ public interface WeatherEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWeatherEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

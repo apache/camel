@@ -50,7 +50,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: producer
          */
         default LambdaEndpointBuilder operation(LambdaOperations operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: producer
          */
         default LambdaEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: proxy
          */
         default LambdaEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: proxy
          */
         default LambdaEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: proxy
          */
         default LambdaEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: security
          */
         default LambdaEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: security
          */
         default LambdaEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -145,7 +145,7 @@ public interface LambdaEndpointBuilderFactory {
          */
         default AdvancedLambdaEndpointBuilder awsLambdaClient(
                 Object awsLambdaClient) {
-            setProperty("awsLambdaClient", awsLambdaClient);
+            doSetProperty("awsLambdaClient", awsLambdaClient);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface LambdaEndpointBuilderFactory {
          */
         default AdvancedLambdaEndpointBuilder awsLambdaClient(
                 String awsLambdaClient) {
-            setProperty("awsLambdaClient", awsLambdaClient);
+            doSetProperty("awsLambdaClient", awsLambdaClient);
             return this;
         }
         /**
@@ -171,7 +171,7 @@ public interface LambdaEndpointBuilderFactory {
          */
         default AdvancedLambdaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface LambdaEndpointBuilderFactory {
          */
         default AdvancedLambdaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -208,7 +208,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -53,7 +53,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointConsumerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -66,7 +66,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointConsumerBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -80,7 +80,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointConsumerBuilder clientFactory(
                 Object clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointConsumerBuilder clientFactory(
                 String clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -117,7 +117,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -156,7 +156,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder scopes(List<String> scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -233,7 +233,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -261,7 +261,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -274,7 +274,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -326,7 +326,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -350,7 +350,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointProducerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -363,7 +363,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointProducerBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -377,7 +377,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointProducerBuilder clientFactory(
                 Object clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -391,7 +391,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointProducerBuilder clientFactory(
                 String clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -402,7 +402,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -414,7 +414,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointProducerBuilder clientSecret(
                 String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -425,7 +425,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -439,7 +439,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointProducerBuilder refreshToken(
                 String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -453,7 +453,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder scopes(List<String> scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -467,7 +467,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointProducerBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -487,7 +487,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -507,7 +507,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -531,7 +531,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -544,7 +544,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -557,7 +557,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -570,7 +570,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -593,7 +593,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -606,7 +606,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default GoogleDriveEndpointBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -619,7 +619,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointBuilder clientFactory(Object clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -632,7 +632,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointBuilder clientFactory(String clientFactory) {
-            setProperty("clientFactory", clientFactory);
+            doSetProperty("clientFactory", clientFactory);
             return this;
         }
         /**
@@ -643,7 +643,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -654,7 +654,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -665,7 +665,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -678,7 +678,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointBuilder refreshToken(String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -692,7 +692,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointBuilder scopes(List<String> scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -706,7 +706,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Group: common
          */
         default GoogleDriveEndpointBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
     }
@@ -730,7 +730,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -743,7 +743,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -756,7 +756,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -769,7 +769,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          */
         default AdvancedGoogleDriveEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

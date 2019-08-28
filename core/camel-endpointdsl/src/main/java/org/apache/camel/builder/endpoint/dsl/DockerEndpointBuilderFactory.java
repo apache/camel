@@ -49,7 +49,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointConsumerBuilder email(String email) {
-            setProperty("email", email);
+            doSetProperty("email", email);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointConsumerBuilder port(Integer port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default DockerEndpointConsumerBuilder requestTimeout(
                 Integer requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default DockerEndpointConsumerBuilder requestTimeout(
                 String requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default DockerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default DockerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -156,7 +156,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointConsumerBuilder certPath(String certPath) {
-            setProperty("certPath", certPath);
+            doSetProperty("certPath", certPath);
             return this;
         }
         /**
@@ -167,7 +167,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointConsumerBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointConsumerBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointConsumerBuilder tlsVerify(boolean tlsVerify) {
-            setProperty("tlsVerify", tlsVerify);
+            doSetProperty("tlsVerify", tlsVerify);
             return this;
         }
         /**
@@ -211,7 +211,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointConsumerBuilder tlsVerify(String tlsVerify) {
-            setProperty("tlsVerify", tlsVerify);
+            doSetProperty("tlsVerify", tlsVerify);
             return this;
         }
         /**
@@ -222,7 +222,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -249,7 +249,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -277,7 +277,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -290,7 +290,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -303,7 +303,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -316,7 +316,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -329,7 +329,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder cmdExecFactory(
                 String cmdExecFactory) {
-            setProperty("cmdExecFactory", cmdExecFactory);
+            doSetProperty("cmdExecFactory", cmdExecFactory);
             return this;
         }
         /**
@@ -341,7 +341,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder followRedirectFilter(
                 boolean followRedirectFilter) {
-            setProperty("followRedirectFilter", followRedirectFilter);
+            doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder followRedirectFilter(
                 String followRedirectFilter) {
-            setProperty("followRedirectFilter", followRedirectFilter);
+            doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
@@ -365,7 +365,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder loggingFilter(
                 boolean loggingFilter) {
-            setProperty("loggingFilter", loggingFilter);
+            doSetProperty("loggingFilter", loggingFilter);
             return this;
         }
         /**
@@ -377,7 +377,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder loggingFilter(
                 String loggingFilter) {
-            setProperty("loggingFilter", loggingFilter);
+            doSetProperty("loggingFilter", loggingFilter);
             return this;
         }
         /**
@@ -389,7 +389,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder maxPerRouteConnections(
                 Integer maxPerRouteConnections) {
-            setProperty("maxPerRouteConnections", maxPerRouteConnections);
+            doSetProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
         }
         /**
@@ -402,7 +402,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder maxPerRouteConnections(
                 String maxPerRouteConnections) {
-            setProperty("maxPerRouteConnections", maxPerRouteConnections);
+            doSetProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
         }
         /**
@@ -414,7 +414,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder maxTotalConnections(
                 Integer maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -427,7 +427,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder maxTotalConnections(
                 String maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -439,7 +439,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder serverAddress(
                 String serverAddress) {
-            setProperty("serverAddress", serverAddress);
+            doSetProperty("serverAddress", serverAddress);
             return this;
         }
         /**
@@ -450,7 +450,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder socket(boolean socket) {
-            setProperty("socket", socket);
+            doSetProperty("socket", socket);
             return this;
         }
         /**
@@ -461,7 +461,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder socket(String socket) {
-            setProperty("socket", socket);
+            doSetProperty("socket", socket);
             return this;
         }
         /**
@@ -474,7 +474,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -487,7 +487,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -509,7 +509,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointProducerBuilder email(String email) {
-            setProperty("email", email);
+            doSetProperty("email", email);
             return this;
         }
         /**
@@ -521,7 +521,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -532,7 +532,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointProducerBuilder port(Integer port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -544,7 +544,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -556,7 +556,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default DockerEndpointProducerBuilder requestTimeout(
                 Integer requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -569,7 +569,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default DockerEndpointProducerBuilder requestTimeout(
                 String requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -589,7 +589,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default DockerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -609,7 +609,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default DockerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -620,7 +620,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointProducerBuilder certPath(String certPath) {
-            setProperty("certPath", certPath);
+            doSetProperty("certPath", certPath);
             return this;
         }
         /**
@@ -631,7 +631,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -642,7 +642,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointProducerBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -653,7 +653,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointProducerBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -664,7 +664,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointProducerBuilder tlsVerify(boolean tlsVerify) {
-            setProperty("tlsVerify", tlsVerify);
+            doSetProperty("tlsVerify", tlsVerify);
             return this;
         }
         /**
@@ -675,7 +675,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointProducerBuilder tlsVerify(String tlsVerify) {
-            setProperty("tlsVerify", tlsVerify);
+            doSetProperty("tlsVerify", tlsVerify);
             return this;
         }
         /**
@@ -686,7 +686,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -710,7 +710,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -723,7 +723,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -736,7 +736,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder cmdExecFactory(
                 String cmdExecFactory) {
-            setProperty("cmdExecFactory", cmdExecFactory);
+            doSetProperty("cmdExecFactory", cmdExecFactory);
             return this;
         }
         /**
@@ -748,7 +748,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder followRedirectFilter(
                 boolean followRedirectFilter) {
-            setProperty("followRedirectFilter", followRedirectFilter);
+            doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
@@ -760,7 +760,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder followRedirectFilter(
                 String followRedirectFilter) {
-            setProperty("followRedirectFilter", followRedirectFilter);
+            doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
@@ -772,7 +772,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder loggingFilter(
                 boolean loggingFilter) {
-            setProperty("loggingFilter", loggingFilter);
+            doSetProperty("loggingFilter", loggingFilter);
             return this;
         }
         /**
@@ -784,7 +784,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder loggingFilter(
                 String loggingFilter) {
-            setProperty("loggingFilter", loggingFilter);
+            doSetProperty("loggingFilter", loggingFilter);
             return this;
         }
         /**
@@ -796,7 +796,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder maxPerRouteConnections(
                 Integer maxPerRouteConnections) {
-            setProperty("maxPerRouteConnections", maxPerRouteConnections);
+            doSetProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
         }
         /**
@@ -809,7 +809,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder maxPerRouteConnections(
                 String maxPerRouteConnections) {
-            setProperty("maxPerRouteConnections", maxPerRouteConnections);
+            doSetProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
         }
         /**
@@ -821,7 +821,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder maxTotalConnections(
                 Integer maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -834,7 +834,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder maxTotalConnections(
                 String maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -846,7 +846,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder serverAddress(
                 String serverAddress) {
-            setProperty("serverAddress", serverAddress);
+            doSetProperty("serverAddress", serverAddress);
             return this;
         }
         /**
@@ -857,7 +857,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder socket(boolean socket) {
-            setProperty("socket", socket);
+            doSetProperty("socket", socket);
             return this;
         }
         /**
@@ -868,7 +868,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder socket(String socket) {
-            setProperty("socket", socket);
+            doSetProperty("socket", socket);
             return this;
         }
         /**
@@ -881,7 +881,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -894,7 +894,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -916,7 +916,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointBuilder email(String email) {
-            setProperty("email", email);
+            doSetProperty("email", email);
             return this;
         }
         /**
@@ -928,7 +928,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -939,7 +939,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointBuilder port(Integer port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -951,7 +951,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointBuilder port(String port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -962,7 +962,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointBuilder requestTimeout(Integer requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -974,7 +974,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: common
          */
         default DockerEndpointBuilder requestTimeout(String requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -985,7 +985,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointBuilder certPath(String certPath) {
-            setProperty("certPath", certPath);
+            doSetProperty("certPath", certPath);
             return this;
         }
         /**
@@ -996,7 +996,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1007,7 +1007,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -1018,7 +1018,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -1029,7 +1029,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointBuilder tlsVerify(boolean tlsVerify) {
-            setProperty("tlsVerify", tlsVerify);
+            doSetProperty("tlsVerify", tlsVerify);
             return this;
         }
         /**
@@ -1040,7 +1040,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointBuilder tlsVerify(String tlsVerify) {
-            setProperty("tlsVerify", tlsVerify);
+            doSetProperty("tlsVerify", tlsVerify);
             return this;
         }
         /**
@@ -1051,7 +1051,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: security
          */
         default DockerEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1075,7 +1075,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1088,7 +1088,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1101,7 +1101,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointBuilder cmdExecFactory(
                 String cmdExecFactory) {
-            setProperty("cmdExecFactory", cmdExecFactory);
+            doSetProperty("cmdExecFactory", cmdExecFactory);
             return this;
         }
         /**
@@ -1113,7 +1113,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointBuilder followRedirectFilter(
                 boolean followRedirectFilter) {
-            setProperty("followRedirectFilter", followRedirectFilter);
+            doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
@@ -1125,7 +1125,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointBuilder followRedirectFilter(
                 String followRedirectFilter) {
-            setProperty("followRedirectFilter", followRedirectFilter);
+            doSetProperty("followRedirectFilter", followRedirectFilter);
             return this;
         }
         /**
@@ -1137,7 +1137,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointBuilder loggingFilter(
                 boolean loggingFilter) {
-            setProperty("loggingFilter", loggingFilter);
+            doSetProperty("loggingFilter", loggingFilter);
             return this;
         }
         /**
@@ -1148,7 +1148,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder loggingFilter(String loggingFilter) {
-            setProperty("loggingFilter", loggingFilter);
+            doSetProperty("loggingFilter", loggingFilter);
             return this;
         }
         /**
@@ -1160,7 +1160,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointBuilder maxPerRouteConnections(
                 Integer maxPerRouteConnections) {
-            setProperty("maxPerRouteConnections", maxPerRouteConnections);
+            doSetProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
         }
         /**
@@ -1173,7 +1173,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointBuilder maxPerRouteConnections(
                 String maxPerRouteConnections) {
-            setProperty("maxPerRouteConnections", maxPerRouteConnections);
+            doSetProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
         }
         /**
@@ -1185,7 +1185,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointBuilder maxTotalConnections(
                 Integer maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -1198,7 +1198,7 @@ public interface DockerEndpointBuilderFactory {
          */
         default AdvancedDockerEndpointBuilder maxTotalConnections(
                 String maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -1209,7 +1209,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder serverAddress(String serverAddress) {
-            setProperty("serverAddress", serverAddress);
+            doSetProperty("serverAddress", serverAddress);
             return this;
         }
         /**
@@ -1220,7 +1220,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder socket(boolean socket) {
-            setProperty("socket", socket);
+            doSetProperty("socket", socket);
             return this;
         }
         /**
@@ -1231,7 +1231,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder socket(String socket) {
-            setProperty("socket", socket);
+            doSetProperty("socket", socket);
             return this;
         }
         /**
@@ -1243,7 +1243,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1255,7 +1255,7 @@ public interface DockerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

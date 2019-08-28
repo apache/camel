@@ -48,7 +48,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder amazonSNSClient(Object amazonSNSClient) {
-            setProperty("amazonSNSClient", amazonSNSClient);
+            doSetProperty("amazonSNSClient", amazonSNSClient);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder amazonSNSClient(String amazonSNSClient) {
-            setProperty("amazonSNSClient", amazonSNSClient);
+            doSetProperty("amazonSNSClient", amazonSNSClient);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder amazonSQSClient(Object amazonSQSClient) {
-            setProperty("amazonSQSClient", amazonSQSClient);
+            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder amazonSQSClient(String amazonSQSClient) {
-            setProperty("amazonSQSClient", amazonSQSClient);
+            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder autoCreateTopic(boolean autoCreateTopic) {
-            setProperty("autoCreateTopic", autoCreateTopic);
+            doSetProperty("autoCreateTopic", autoCreateTopic);
             return this;
         }
         /**
@@ -106,7 +106,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder autoCreateTopic(String autoCreateTopic) {
-            setProperty("autoCreateTopic", autoCreateTopic);
+            doSetProperty("autoCreateTopic", autoCreateTopic);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default SnsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default SnsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder kmsMasterKeyId(String kmsMasterKeyId) {
-            setProperty("kmsMasterKeyId", kmsMasterKeyId);
+            doSetProperty("kmsMasterKeyId", kmsMasterKeyId);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder messageStructure(String messageStructure) {
-            setProperty("messageStructure", messageStructure);
+            doSetProperty("messageStructure", messageStructure);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder policy(String policy) {
-            setProperty("policy", policy);
+            doSetProperty("policy", policy);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -211,7 +211,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder queueUrl(String queueUrl) {
-            setProperty("queueUrl", queueUrl);
+            doSetProperty("queueUrl", queueUrl);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -237,7 +237,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default SnsEndpointBuilder serverSideEncryptionEnabled(
                 boolean serverSideEncryptionEnabled) {
-            setProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
+            doSetProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default SnsEndpointBuilder serverSideEncryptionEnabled(
                 String serverSideEncryptionEnabled) {
-            setProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
+            doSetProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
             return this;
         }
         /**
@@ -261,7 +261,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -273,7 +273,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder subscribeSNStoSQS(boolean subscribeSNStoSQS) {
-            setProperty("subscribeSNStoSQS", subscribeSNStoSQS);
+            doSetProperty("subscribeSNStoSQS", subscribeSNStoSQS);
             return this;
         }
         /**
@@ -285,7 +285,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder subscribeSNStoSQS(String subscribeSNStoSQS) {
-            setProperty("subscribeSNStoSQS", subscribeSNStoSQS);
+            doSetProperty("subscribeSNStoSQS", subscribeSNStoSQS);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: security
          */
         default SnsEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -307,7 +307,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: security
          */
         default SnsEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -332,7 +332,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default AdvancedSnsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -345,7 +345,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default AdvancedSnsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSnsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSnsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

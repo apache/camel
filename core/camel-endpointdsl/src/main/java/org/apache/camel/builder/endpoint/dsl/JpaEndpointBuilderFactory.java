@@ -60,7 +60,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder joinTransaction(
                 boolean joinTransaction) {
-            setProperty("joinTransaction", joinTransaction);
+            doSetProperty("joinTransaction", joinTransaction);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder joinTransaction(
                 String joinTransaction) {
-            setProperty("joinTransaction", joinTransaction);
+            doSetProperty("joinTransaction", joinTransaction);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointConsumerBuilder maximumResults(int maximumResults) {
-            setProperty("maximumResults", maximumResults);
+            doSetProperty("maximumResults", maximumResults);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointConsumerBuilder maximumResults(String maximumResults) {
-            setProperty("maximumResults", maximumResults);
+            doSetProperty("maximumResults", maximumResults);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointConsumerBuilder namedQuery(String namedQuery) {
-            setProperty("namedQuery", namedQuery);
+            doSetProperty("namedQuery", namedQuery);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointConsumerBuilder nativeQuery(String nativeQuery) {
-            setProperty("nativeQuery", nativeQuery);
+            doSetProperty("nativeQuery", nativeQuery);
             return this;
         }
         /**
@@ -134,7 +134,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder persistenceUnit(
                 String persistenceUnit) {
-            setProperty("persistenceUnit", persistenceUnit);
+            doSetProperty("persistenceUnit", persistenceUnit);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointConsumerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointConsumerBuilder resultClass(Class<Object> resultClass) {
-            setProperty("resultClass", resultClass);
+            doSetProperty("resultClass", resultClass);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointConsumerBuilder resultClass(String resultClass) {
-            setProperty("resultClass", resultClass);
+            doSetProperty("resultClass", resultClass);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder consumeDelete(boolean consumeDelete) {
-            setProperty("consumeDelete", consumeDelete);
+            doSetProperty("consumeDelete", consumeDelete);
             return this;
         }
         /**
@@ -237,7 +237,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder consumeDelete(String consumeDelete) {
-            setProperty("consumeDelete", consumeDelete);
+            doSetProperty("consumeDelete", consumeDelete);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder consumeLockEntity(
                 boolean consumeLockEntity) {
-            setProperty("consumeLockEntity", consumeLockEntity);
+            doSetProperty("consumeLockEntity", consumeLockEntity);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder consumeLockEntity(
                 String consumeLockEntity) {
-            setProperty("consumeLockEntity", consumeLockEntity);
+            doSetProperty("consumeLockEntity", consumeLockEntity);
             return this;
         }
         /**
@@ -276,7 +276,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder deleteHandler(Object deleteHandler) {
-            setProperty("deleteHandler", deleteHandler);
+            doSetProperty("deleteHandler", deleteHandler);
             return this;
         }
         /**
@@ -289,7 +289,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder deleteHandler(String deleteHandler) {
-            setProperty("deleteHandler", deleteHandler);
+            doSetProperty("deleteHandler", deleteHandler);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder lockModeType(
                 LockModeType lockModeType) {
-            setProperty("lockModeType", lockModeType);
+            doSetProperty("lockModeType", lockModeType);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder lockModeType(String lockModeType) {
-            setProperty("lockModeType", lockModeType);
+            doSetProperty("lockModeType", lockModeType);
             return this;
         }
         /**
@@ -328,7 +328,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -343,7 +343,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder preDeleteHandler(
                 Object preDeleteHandler) {
-            setProperty("preDeleteHandler", preDeleteHandler);
+            doSetProperty("preDeleteHandler", preDeleteHandler);
             return this;
         }
         /**
@@ -371,7 +371,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder preDeleteHandler(
                 String preDeleteHandler) {
-            setProperty("preDeleteHandler", preDeleteHandler);
+            doSetProperty("preDeleteHandler", preDeleteHandler);
             return this;
         }
         /**
@@ -384,7 +384,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -397,7 +397,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -410,7 +410,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder skipLockedEntity(
                 boolean skipLockedEntity) {
-            setProperty("skipLockedEntity", skipLockedEntity);
+            doSetProperty("skipLockedEntity", skipLockedEntity);
             return this;
         }
         /**
@@ -423,7 +423,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder skipLockedEntity(
                 String skipLockedEntity) {
-            setProperty("skipLockedEntity", skipLockedEntity);
+            doSetProperty("skipLockedEntity", skipLockedEntity);
             return this;
         }
         /**
@@ -438,7 +438,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -453,7 +453,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -466,7 +466,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -479,7 +479,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -492,7 +492,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -505,7 +505,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -522,7 +522,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -539,7 +539,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -552,7 +552,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -565,7 +565,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -577,7 +577,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -589,7 +589,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -602,7 +602,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -615,7 +615,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -628,7 +628,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -642,7 +642,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -657,7 +657,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -672,7 +672,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -684,7 +684,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -698,7 +698,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -713,7 +713,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -724,7 +724,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder startScheduler(boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -735,7 +735,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder startScheduler(String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -746,7 +746,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -758,7 +758,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -770,7 +770,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -782,7 +782,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -809,7 +809,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -825,7 +825,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -837,7 +837,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -850,7 +850,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -869,7 +869,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder parameters(
                 Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -888,7 +888,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -904,7 +904,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -920,7 +920,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -933,7 +933,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -946,7 +946,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -959,7 +959,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder entityManagerProperties(
                 Map<String, Object> entityManagerProperties) {
-            setProperty("entityManagerProperties", entityManagerProperties);
+            doSetProperty("entityManagerProperties", entityManagerProperties);
             return this;
         }
         /**
@@ -973,7 +973,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder entityManagerProperties(
                 String entityManagerProperties) {
-            setProperty("entityManagerProperties", entityManagerProperties);
+            doSetProperty("entityManagerProperties", entityManagerProperties);
             return this;
         }
         /**
@@ -987,7 +987,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder sharedEntityManager(
                 boolean sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
+            doSetProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
         /**
@@ -1001,7 +1001,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder sharedEntityManager(
                 String sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
+            doSetProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
         /**
@@ -1014,7 +1014,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1027,7 +1027,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1054,7 +1054,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointProducerBuilder joinTransaction(
                 boolean joinTransaction) {
-            setProperty("joinTransaction", joinTransaction);
+            doSetProperty("joinTransaction", joinTransaction);
             return this;
         }
         /**
@@ -1070,7 +1070,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointProducerBuilder joinTransaction(
                 String joinTransaction) {
-            setProperty("joinTransaction", joinTransaction);
+            doSetProperty("joinTransaction", joinTransaction);
             return this;
         }
         /**
@@ -1081,7 +1081,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointProducerBuilder maximumResults(int maximumResults) {
-            setProperty("maximumResults", maximumResults);
+            doSetProperty("maximumResults", maximumResults);
             return this;
         }
         /**
@@ -1092,7 +1092,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointProducerBuilder maximumResults(String maximumResults) {
-            setProperty("maximumResults", maximumResults);
+            doSetProperty("maximumResults", maximumResults);
             return this;
         }
         /**
@@ -1103,7 +1103,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointProducerBuilder namedQuery(String namedQuery) {
-            setProperty("namedQuery", namedQuery);
+            doSetProperty("namedQuery", namedQuery);
             return this;
         }
         /**
@@ -1115,7 +1115,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointProducerBuilder nativeQuery(String nativeQuery) {
-            setProperty("nativeQuery", nativeQuery);
+            doSetProperty("nativeQuery", nativeQuery);
             return this;
         }
         /**
@@ -1128,7 +1128,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointProducerBuilder persistenceUnit(
                 String persistenceUnit) {
-            setProperty("persistenceUnit", persistenceUnit);
+            doSetProperty("persistenceUnit", persistenceUnit);
             return this;
         }
         /**
@@ -1139,7 +1139,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointProducerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -1155,7 +1155,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointProducerBuilder resultClass(Class<Object> resultClass) {
-            setProperty("resultClass", resultClass);
+            doSetProperty("resultClass", resultClass);
             return this;
         }
         /**
@@ -1171,7 +1171,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointProducerBuilder resultClass(String resultClass) {
-            setProperty("resultClass", resultClass);
+            doSetProperty("resultClass", resultClass);
             return this;
         }
         /**
@@ -1184,7 +1184,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: producer
          */
         default JpaEndpointProducerBuilder findEntity(boolean findEntity) {
-            setProperty("findEntity", findEntity);
+            doSetProperty("findEntity", findEntity);
             return this;
         }
         /**
@@ -1197,7 +1197,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: producer
          */
         default JpaEndpointProducerBuilder findEntity(String findEntity) {
-            setProperty("findEntity", findEntity);
+            doSetProperty("findEntity", findEntity);
             return this;
         }
         /**
@@ -1208,7 +1208,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: producer
          */
         default JpaEndpointProducerBuilder flushOnSend(boolean flushOnSend) {
-            setProperty("flushOnSend", flushOnSend);
+            doSetProperty("flushOnSend", flushOnSend);
             return this;
         }
         /**
@@ -1219,7 +1219,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: producer
          */
         default JpaEndpointProducerBuilder flushOnSend(String flushOnSend) {
-            setProperty("flushOnSend", flushOnSend);
+            doSetProperty("flushOnSend", flushOnSend);
             return this;
         }
         /**
@@ -1239,7 +1239,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1259,7 +1259,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1270,7 +1270,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: producer
          */
         default JpaEndpointProducerBuilder remove(boolean remove) {
-            setProperty("remove", remove);
+            doSetProperty("remove", remove);
             return this;
         }
         /**
@@ -1281,7 +1281,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: producer
          */
         default JpaEndpointProducerBuilder remove(String remove) {
-            setProperty("remove", remove);
+            doSetProperty("remove", remove);
             return this;
         }
         /**
@@ -1295,7 +1295,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointProducerBuilder useExecuteUpdate(
                 Boolean useExecuteUpdate) {
-            setProperty("useExecuteUpdate", useExecuteUpdate);
+            doSetProperty("useExecuteUpdate", useExecuteUpdate);
             return this;
         }
         /**
@@ -1310,7 +1310,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default JpaEndpointProducerBuilder useExecuteUpdate(
                 String useExecuteUpdate) {
-            setProperty("useExecuteUpdate", useExecuteUpdate);
+            doSetProperty("useExecuteUpdate", useExecuteUpdate);
             return this;
         }
         /**
@@ -1324,7 +1324,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: producer
          */
         default JpaEndpointProducerBuilder usePersist(boolean usePersist) {
-            setProperty("usePersist", usePersist);
+            doSetProperty("usePersist", usePersist);
             return this;
         }
         /**
@@ -1338,7 +1338,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: producer
          */
         default JpaEndpointProducerBuilder usePersist(String usePersist) {
-            setProperty("usePersist", usePersist);
+            doSetProperty("usePersist", usePersist);
             return this;
         }
     }
@@ -1364,7 +1364,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointProducerBuilder usePassedInEntityManager(
                 boolean usePassedInEntityManager) {
-            setProperty("usePassedInEntityManager", usePassedInEntityManager);
+            doSetProperty("usePassedInEntityManager", usePassedInEntityManager);
             return this;
         }
         /**
@@ -1379,7 +1379,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointProducerBuilder usePassedInEntityManager(
                 String usePassedInEntityManager) {
-            setProperty("usePassedInEntityManager", usePassedInEntityManager);
+            doSetProperty("usePassedInEntityManager", usePassedInEntityManager);
             return this;
         }
         /**
@@ -1392,7 +1392,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1405,7 +1405,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1418,7 +1418,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointProducerBuilder entityManagerProperties(
                 Map<String, Object> entityManagerProperties) {
-            setProperty("entityManagerProperties", entityManagerProperties);
+            doSetProperty("entityManagerProperties", entityManagerProperties);
             return this;
         }
         /**
@@ -1432,7 +1432,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointProducerBuilder entityManagerProperties(
                 String entityManagerProperties) {
-            setProperty("entityManagerProperties", entityManagerProperties);
+            doSetProperty("entityManagerProperties", entityManagerProperties);
             return this;
         }
         /**
@@ -1446,7 +1446,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointProducerBuilder sharedEntityManager(
                 boolean sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
+            doSetProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
         /**
@@ -1460,7 +1460,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointProducerBuilder sharedEntityManager(
                 String sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
+            doSetProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
         /**
@@ -1473,7 +1473,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1486,7 +1486,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1512,7 +1512,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointBuilder joinTransaction(boolean joinTransaction) {
-            setProperty("joinTransaction", joinTransaction);
+            doSetProperty("joinTransaction", joinTransaction);
             return this;
         }
         /**
@@ -1527,7 +1527,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointBuilder joinTransaction(String joinTransaction) {
-            setProperty("joinTransaction", joinTransaction);
+            doSetProperty("joinTransaction", joinTransaction);
             return this;
         }
         /**
@@ -1538,7 +1538,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointBuilder maximumResults(int maximumResults) {
-            setProperty("maximumResults", maximumResults);
+            doSetProperty("maximumResults", maximumResults);
             return this;
         }
         /**
@@ -1549,7 +1549,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointBuilder maximumResults(String maximumResults) {
-            setProperty("maximumResults", maximumResults);
+            doSetProperty("maximumResults", maximumResults);
             return this;
         }
         /**
@@ -1560,7 +1560,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointBuilder namedQuery(String namedQuery) {
-            setProperty("namedQuery", namedQuery);
+            doSetProperty("namedQuery", namedQuery);
             return this;
         }
         /**
@@ -1572,7 +1572,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointBuilder nativeQuery(String nativeQuery) {
-            setProperty("nativeQuery", nativeQuery);
+            doSetProperty("nativeQuery", nativeQuery);
             return this;
         }
         /**
@@ -1584,7 +1584,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointBuilder persistenceUnit(String persistenceUnit) {
-            setProperty("persistenceUnit", persistenceUnit);
+            doSetProperty("persistenceUnit", persistenceUnit);
             return this;
         }
         /**
@@ -1595,7 +1595,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -1611,7 +1611,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointBuilder resultClass(Class<Object> resultClass) {
-            setProperty("resultClass", resultClass);
+            doSetProperty("resultClass", resultClass);
             return this;
         }
         /**
@@ -1627,7 +1627,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: common
          */
         default JpaEndpointBuilder resultClass(String resultClass) {
-            setProperty("resultClass", resultClass);
+            doSetProperty("resultClass", resultClass);
             return this;
         }
     }
@@ -1651,7 +1651,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1664,7 +1664,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1677,7 +1677,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointBuilder entityManagerProperties(
                 Map<String, Object> entityManagerProperties) {
-            setProperty("entityManagerProperties", entityManagerProperties);
+            doSetProperty("entityManagerProperties", entityManagerProperties);
             return this;
         }
         /**
@@ -1691,7 +1691,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointBuilder entityManagerProperties(
                 String entityManagerProperties) {
-            setProperty("entityManagerProperties", entityManagerProperties);
+            doSetProperty("entityManagerProperties", entityManagerProperties);
             return this;
         }
         /**
@@ -1705,7 +1705,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointBuilder sharedEntityManager(
                 boolean sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
+            doSetProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
         /**
@@ -1719,7 +1719,7 @@ public interface JpaEndpointBuilderFactory {
          */
         default AdvancedJpaEndpointBuilder sharedEntityManager(
                 String sharedEntityManager) {
-            setProperty("sharedEntityManager", sharedEntityManager);
+            doSetProperty("sharedEntityManager", sharedEntityManager);
             return this;
         }
         /**
@@ -1731,7 +1731,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJpaEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1743,7 +1743,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJpaEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

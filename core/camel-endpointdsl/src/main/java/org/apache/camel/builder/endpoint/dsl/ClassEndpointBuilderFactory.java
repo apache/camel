@@ -48,7 +48,7 @@ public interface ClassEndpointBuilderFactory {
          * Group: common
          */
         default ClassEndpointBuilder cache(Boolean cache) {
-            setProperty("cache", cache);
+            doSetProperty("cache", cache);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface ClassEndpointBuilderFactory {
          * Group: common
          */
         default ClassEndpointBuilder cache(String cache) {
-            setProperty("cache", cache);
+            doSetProperty("cache", cache);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface ClassEndpointBuilderFactory {
          * Group: common
          */
         default ClassEndpointBuilder method(String method) {
-            setProperty("method", method);
+            doSetProperty("method", method);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface ClassEndpointBuilderFactory {
          * Group: common
          */
         default ClassEndpointBuilder parameters(Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface ClassEndpointBuilderFactory {
          * Group: common
          */
         default ClassEndpointBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
     }
@@ -122,7 +122,7 @@ public interface ClassEndpointBuilderFactory {
          */
         default AdvancedClassEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface ClassEndpointBuilderFactory {
          */
         default AdvancedClassEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface ClassEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedClassEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface ClassEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedClassEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

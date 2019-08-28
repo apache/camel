@@ -50,7 +50,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -163,7 +163,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder transferException(boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder transferException(String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -242,7 +242,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -268,7 +268,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -281,7 +281,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfig(Object clientConfig) {
-            setProperty("clientConfig", clientConfig);
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -307,7 +307,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfig(String clientConfig) {
-            setProperty("clientConfig", clientConfig);
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -321,7 +321,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
-            setProperty("clientConfigOptions", clientConfigOptions);
+            doSetProperty("clientConfigOptions", clientConfigOptions);
             return this;
         }
         /**
@@ -336,7 +336,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder clientConfigOptions(
                 String clientConfigOptions) {
-            setProperty("clientConfigOptions", clientConfigOptions);
+            doSetProperty("clientConfigOptions", clientConfigOptions);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -360,7 +360,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -374,7 +374,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
-            setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
         }
         /**
@@ -389,7 +389,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {
-            setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
         }
     }

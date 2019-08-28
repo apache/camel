@@ -49,7 +49,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointConsumerBuilder localPath(String localPath) {
-            setProperty("localPath", localPath);
+            doSetProperty("localPath", localPath);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointConsumerBuilder newRemotePath(String newRemotePath) {
-            setProperty("newRemotePath", newRemotePath);
+            doSetProperty("newRemotePath", newRemotePath);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointConsumerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointConsumerBuilder remotePath(String remotePath) {
-            setProperty("remotePath", remotePath);
+            doSetProperty("remotePath", remotePath);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AtmosEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AtmosEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointConsumerBuilder fullTokenId(String fullTokenId) {
-            setProperty("fullTokenId", fullTokenId);
+            doSetProperty("fullTokenId", fullTokenId);
             return this;
         }
         /**
@@ -141,7 +141,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointConsumerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointConsumerBuilder sslValidation(boolean sslValidation) {
-            setProperty("sslValidation", sslValidation);
+            doSetProperty("sslValidation", sslValidation);
             return this;
         }
         /**
@@ -163,7 +163,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointConsumerBuilder sslValidation(String sslValidation) {
-            setProperty("sslValidation", sslValidation);
+            doSetProperty("sslValidation", sslValidation);
             return this;
         }
     }
@@ -190,7 +190,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -231,7 +231,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -244,7 +244,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -257,7 +257,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -270,7 +270,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -283,7 +283,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAtmosEndpointConsumerBuilder uri(String uri) {
-            setProperty("uri", uri);
+            doSetProperty("uri", uri);
             return this;
         }
     }
@@ -316,7 +316,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointProducerBuilder localPath(String localPath) {
-            setProperty("localPath", localPath);
+            doSetProperty("localPath", localPath);
             return this;
         }
         /**
@@ -327,7 +327,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointProducerBuilder newRemotePath(String newRemotePath) {
-            setProperty("newRemotePath", newRemotePath);
+            doSetProperty("newRemotePath", newRemotePath);
             return this;
         }
         /**
@@ -338,7 +338,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointProducerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -349,7 +349,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointProducerBuilder remotePath(String remotePath) {
-            setProperty("remotePath", remotePath);
+            doSetProperty("remotePath", remotePath);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AtmosEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -389,7 +389,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AtmosEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -400,7 +400,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointProducerBuilder fullTokenId(String fullTokenId) {
-            setProperty("fullTokenId", fullTokenId);
+            doSetProperty("fullTokenId", fullTokenId);
             return this;
         }
         /**
@@ -412,7 +412,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointProducerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -423,7 +423,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointProducerBuilder sslValidation(boolean sslValidation) {
-            setProperty("sslValidation", sslValidation);
+            doSetProperty("sslValidation", sslValidation);
             return this;
         }
         /**
@@ -434,7 +434,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointProducerBuilder sslValidation(String sslValidation) {
-            setProperty("sslValidation", sslValidation);
+            doSetProperty("sslValidation", sslValidation);
             return this;
         }
     }
@@ -458,7 +458,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -471,7 +471,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -484,7 +484,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -497,7 +497,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -508,7 +508,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAtmosEndpointProducerBuilder uri(String uri) {
-            setProperty("uri", uri);
+            doSetProperty("uri", uri);
             return this;
         }
     }
@@ -530,7 +530,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointBuilder localPath(String localPath) {
-            setProperty("localPath", localPath);
+            doSetProperty("localPath", localPath);
             return this;
         }
         /**
@@ -541,7 +541,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointBuilder newRemotePath(String newRemotePath) {
-            setProperty("newRemotePath", newRemotePath);
+            doSetProperty("newRemotePath", newRemotePath);
             return this;
         }
         /**
@@ -552,7 +552,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -563,7 +563,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: common
          */
         default AtmosEndpointBuilder remotePath(String remotePath) {
-            setProperty("remotePath", remotePath);
+            doSetProperty("remotePath", remotePath);
             return this;
         }
         /**
@@ -574,7 +574,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointBuilder fullTokenId(String fullTokenId) {
-            setProperty("fullTokenId", fullTokenId);
+            doSetProperty("fullTokenId", fullTokenId);
             return this;
         }
         /**
@@ -586,7 +586,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -597,7 +597,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointBuilder sslValidation(boolean sslValidation) {
-            setProperty("sslValidation", sslValidation);
+            doSetProperty("sslValidation", sslValidation);
             return this;
         }
         /**
@@ -608,7 +608,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: security
          */
         default AtmosEndpointBuilder sslValidation(String sslValidation) {
-            setProperty("sslValidation", sslValidation);
+            doSetProperty("sslValidation", sslValidation);
             return this;
         }
     }
@@ -632,7 +632,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -645,7 +645,7 @@ public interface AtmosEndpointBuilderFactory {
          */
         default AdvancedAtmosEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -657,7 +657,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAtmosEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -669,7 +669,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAtmosEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -680,7 +680,7 @@ public interface AtmosEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAtmosEndpointBuilder uri(String uri) {
-            setProperty("uri", uri);
+            doSetProperty("uri", uri);
             return this;
         }
     }

@@ -51,7 +51,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointConsumerBuilder sendMessageOnError(
                 boolean sendMessageOnError) {
-            setProperty("sendMessageOnError", sendMessageOnError);
+            doSetProperty("sendMessageOnError", sendMessageOnError);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointConsumerBuilder sendMessageOnError(
                 String sendMessageOnError) {
-            setProperty("sendMessageOnError", sendMessageOnError);
+            doSetProperty("sendMessageOnError", sendMessageOnError);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointConsumerBuilder bridgeEndpoint(boolean bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointConsumerBuilder bridgeEndpoint(String bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointConsumerBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointConsumerBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointConsumerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointConsumerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointConsumerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointConsumerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -248,7 +248,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -272,7 +272,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -285,7 +285,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -298,7 +298,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -325,7 +325,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointConsumerBuilder clientConfig(
                 Object clientConfig) {
-            setProperty("clientConfig", clientConfig);
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -339,7 +339,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointConsumerBuilder clientConfig(
                 String clientConfig) {
-            setProperty("clientConfig", clientConfig);
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
-            setProperty("clientConfigOptions", clientConfigOptions);
+            doSetProperty("clientConfigOptions", clientConfigOptions);
             return this;
         }
         /**
@@ -368,7 +368,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
                 String clientConfigOptions) {
-            setProperty("clientConfigOptions", clientConfigOptions);
+            doSetProperty("clientConfigOptions", clientConfigOptions);
             return this;
         }
         /**
@@ -381,7 +381,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -407,7 +407,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
-            setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
         }
         /**
@@ -422,7 +422,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {
-            setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
         }
     }
@@ -444,7 +444,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointProducerBuilder useStreaming(boolean useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointProducerBuilder useStreaming(String useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -469,7 +469,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointProducerBuilder bridgeEndpoint(boolean bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -483,7 +483,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointProducerBuilder bridgeEndpoint(String bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointProducerBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -507,7 +507,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointProducerBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -520,7 +520,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder connectionClose(
                 boolean connectionClose) {
-            setProperty("connectionClose", connectionClose);
+            doSetProperty("connectionClose", connectionClose);
             return this;
         }
         /**
@@ -532,7 +532,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointProducerBuilder connectionClose(String connectionClose) {
-            setProperty("connectionClose", connectionClose);
+            doSetProperty("connectionClose", connectionClose);
             return this;
         }
         /**
@@ -544,7 +544,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointProducerBuilder cookieHandler(Object cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -556,7 +556,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointProducerBuilder cookieHandler(String cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -570,7 +570,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -584,7 +584,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -604,7 +604,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -624,7 +624,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -638,7 +638,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -652,7 +652,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -672,7 +672,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -692,7 +692,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -710,7 +710,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -728,7 +728,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -752,7 +752,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -765,7 +765,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -778,7 +778,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -791,7 +791,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -805,7 +805,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointProducerBuilder clientConfig(
                 Object clientConfig) {
-            setProperty("clientConfig", clientConfig);
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -819,7 +819,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointProducerBuilder clientConfig(
                 String clientConfig) {
-            setProperty("clientConfig", clientConfig);
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -833,7 +833,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointProducerBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
-            setProperty("clientConfigOptions", clientConfigOptions);
+            doSetProperty("clientConfigOptions", clientConfigOptions);
             return this;
         }
         /**
@@ -848,7 +848,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointProducerBuilder clientConfigOptions(
                 String clientConfigOptions) {
-            setProperty("clientConfigOptions", clientConfigOptions);
+            doSetProperty("clientConfigOptions", clientConfigOptions);
             return this;
         }
         /**
@@ -861,7 +861,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -873,7 +873,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -887,7 +887,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
-            setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
         }
         /**
@@ -902,7 +902,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {
-            setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
         }
     }
@@ -927,7 +927,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -941,7 +941,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -953,7 +953,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -965,7 +965,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -979,7 +979,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -993,7 +993,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1007,7 +1007,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -1021,7 +1021,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -1040,7 +1040,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointBuilder transferException(boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -1059,7 +1059,7 @@ public interface WsEndpointBuilderFactory {
          * Group: producer
          */
         default WsEndpointBuilder transferException(String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -1077,7 +1077,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1095,7 +1095,7 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -1119,7 +1119,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1132,7 +1132,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1145,7 +1145,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -1158,7 +1158,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -1171,7 +1171,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder clientConfig(Object clientConfig) {
-            setProperty("clientConfig", clientConfig);
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -1184,7 +1184,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder clientConfig(String clientConfig) {
-            setProperty("clientConfig", clientConfig);
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -1198,7 +1198,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
-            setProperty("clientConfigOptions", clientConfigOptions);
+            doSetProperty("clientConfigOptions", clientConfigOptions);
             return this;
         }
         /**
@@ -1213,7 +1213,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointBuilder clientConfigOptions(
                 String clientConfigOptions) {
-            setProperty("clientConfigOptions", clientConfigOptions);
+            doSetProperty("clientConfigOptions", clientConfigOptions);
             return this;
         }
         /**
@@ -1225,7 +1225,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1237,7 +1237,7 @@ public interface WsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1251,7 +1251,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
-            setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
         }
         /**
@@ -1266,7 +1266,7 @@ public interface WsEndpointBuilderFactory {
          */
         default AdvancedWsEndpointBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {
-            setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
         }
     }

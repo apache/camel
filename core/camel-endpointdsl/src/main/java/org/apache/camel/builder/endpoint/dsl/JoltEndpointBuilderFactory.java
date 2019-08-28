@@ -46,7 +46,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -57,7 +57,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder inputType(JoltInputOutputType inputType) {
-            setProperty("inputType", inputType);
+            doSetProperty("inputType", inputType);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder inputType(String inputType) {
-            setProperty("inputType", inputType);
+            doSetProperty("inputType", inputType);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder outputType(JoltInputOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -122,7 +122,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder transformDsl(JoltTransformType transformDsl) {
-            setProperty("transformDsl", transformDsl);
+            doSetProperty("transformDsl", transformDsl);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder transformDsl(String transformDsl) {
-            setProperty("transformDsl", transformDsl);
+            doSetProperty("transformDsl", transformDsl);
             return this;
         }
     }
@@ -159,7 +159,7 @@ public interface JoltEndpointBuilderFactory {
          */
         default AdvancedJoltEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface JoltEndpointBuilderFactory {
          */
         default AdvancedJoltEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJoltEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJoltEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

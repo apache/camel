@@ -52,7 +52,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointConsumerBuilder initialReconnectDelay(
                 long initialReconnectDelay) {
-            setProperty("initialReconnectDelay", initialReconnectDelay);
+            doSetProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointConsumerBuilder initialReconnectDelay(
                 String initialReconnectDelay) {
-            setProperty("initialReconnectDelay", initialReconnectDelay);
+            doSetProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointConsumerBuilder maxReconnect(int maxReconnect) {
-            setProperty("maxReconnect", maxReconnect);
+            doSetProperty("maxReconnect", maxReconnect);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointConsumerBuilder maxReconnect(String maxReconnect) {
-            setProperty("maxReconnect", maxReconnect);
+            doSetProperty("maxReconnect", maxReconnect);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointConsumerBuilder reconnectDelay(long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointConsumerBuilder reconnectDelay(String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointConsumerBuilder splittingPolicy(
                 SmppSplittingPolicy splittingPolicy) {
-            setProperty("splittingPolicy", splittingPolicy);
+            doSetProperty("splittingPolicy", splittingPolicy);
             return this;
         }
         /**
@@ -157,7 +157,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointConsumerBuilder splittingPolicy(
                 String splittingPolicy) {
-            setProperty("splittingPolicy", splittingPolicy);
+            doSetProperty("splittingPolicy", splittingPolicy);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointConsumerBuilder systemType(String systemType) {
-            setProperty("systemType", systemType);
+            doSetProperty("systemType", systemType);
             return this;
         }
         /**
@@ -183,7 +183,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: consumer
          */
         default SmppEndpointConsumerBuilder addressRange(String addressRange) {
-            setProperty("addressRange", addressRange);
+            doSetProperty("addressRange", addressRange);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -219,7 +219,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointConsumerBuilder alphabet(byte alphabet) {
-            setProperty("alphabet", alphabet);
+            doSetProperty("alphabet", alphabet);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointConsumerBuilder alphabet(String alphabet) {
-            setProperty("alphabet", alphabet);
+            doSetProperty("alphabet", alphabet);
             return this;
         }
         /**
@@ -259,7 +259,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointConsumerBuilder dataCoding(byte dataCoding) {
-            setProperty("dataCoding", dataCoding);
+            doSetProperty("dataCoding", dataCoding);
             return this;
         }
         /**
@@ -273,7 +273,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointConsumerBuilder dataCoding(String dataCoding) {
-            setProperty("dataCoding", dataCoding);
+            doSetProperty("dataCoding", dataCoding);
             return this;
         }
         /**
@@ -285,7 +285,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointConsumerBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -297,7 +297,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointConsumerBuilder httpProxyHost(String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -310,7 +310,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -322,7 +322,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointConsumerBuilder httpProxyPort(Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -335,7 +335,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointConsumerBuilder httpProxyPort(String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointConsumerBuilder httpProxyUsername(
                 String httpProxyUsername) {
-            setProperty("httpProxyUsername", httpProxyUsername);
+            doSetProperty("httpProxyUsername", httpProxyUsername);
             return this;
         }
         /**
@@ -362,7 +362,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointConsumerBuilder proxyHeaders(
                 Map<String, String> proxyHeaders) {
-            setProperty("proxyHeaders", proxyHeaders);
+            doSetProperty("proxyHeaders", proxyHeaders);
             return this;
         }
         /**
@@ -376,7 +376,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointConsumerBuilder proxyHeaders(String proxyHeaders) {
-            setProperty("proxyHeaders", proxyHeaders);
+            doSetProperty("proxyHeaders", proxyHeaders);
             return this;
         }
         /**
@@ -387,7 +387,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -398,7 +398,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointConsumerBuilder systemId(String systemId) {
-            setProperty("systemId", systemId);
+            doSetProperty("systemId", systemId);
             return this;
         }
         /**
@@ -409,7 +409,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointConsumerBuilder usingSSL(boolean usingSSL) {
-            setProperty("usingSSL", usingSSL);
+            doSetProperty("usingSSL", usingSSL);
             return this;
         }
         /**
@@ -420,7 +420,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointConsumerBuilder usingSSL(String usingSSL) {
-            setProperty("usingSSL", usingSSL);
+            doSetProperty("usingSSL", usingSSL);
             return this;
         }
     }
@@ -447,7 +447,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -463,7 +463,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -475,7 +475,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -488,7 +488,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -501,7 +501,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -514,7 +514,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -528,7 +528,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder enquireLinkTimer(
                 Integer enquireLinkTimer) {
-            setProperty("enquireLinkTimer", enquireLinkTimer);
+            doSetProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
         }
         /**
@@ -543,7 +543,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
-            setProperty("enquireLinkTimer", enquireLinkTimer);
+            doSetProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
         }
         /**
@@ -557,7 +557,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
                 Object sessionStateListener) {
-            setProperty("sessionStateListener", sessionStateListener);
+            doSetProperty("sessionStateListener", sessionStateListener);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
                 String sessionStateListener) {
-            setProperty("sessionStateListener", sessionStateListener);
+            doSetProperty("sessionStateListener", sessionStateListener);
             return this;
         }
         /**
@@ -584,7 +584,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -597,7 +597,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -612,7 +612,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder transactionTimer(
                 Integer transactionTimer) {
-            setProperty("transactionTimer", transactionTimer);
+            doSetProperty("transactionTimer", transactionTimer);
             return this;
         }
         /**
@@ -628,7 +628,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointConsumerBuilder transactionTimer(
                 String transactionTimer) {
-            setProperty("transactionTimer", transactionTimer);
+            doSetProperty("transactionTimer", transactionTimer);
             return this;
         }
     }
@@ -652,7 +652,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder initialReconnectDelay(
                 long initialReconnectDelay) {
-            setProperty("initialReconnectDelay", initialReconnectDelay);
+            doSetProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
         }
         /**
@@ -665,7 +665,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder initialReconnectDelay(
                 String initialReconnectDelay) {
-            setProperty("initialReconnectDelay", initialReconnectDelay);
+            doSetProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
         }
         /**
@@ -677,7 +677,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointProducerBuilder maxReconnect(int maxReconnect) {
-            setProperty("maxReconnect", maxReconnect);
+            doSetProperty("maxReconnect", maxReconnect);
             return this;
         }
         /**
@@ -689,7 +689,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointProducerBuilder maxReconnect(String maxReconnect) {
-            setProperty("maxReconnect", maxReconnect);
+            doSetProperty("maxReconnect", maxReconnect);
             return this;
         }
         /**
@@ -702,7 +702,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointProducerBuilder reconnectDelay(long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -715,7 +715,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointProducerBuilder reconnectDelay(String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -736,7 +736,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder splittingPolicy(
                 SmppSplittingPolicy splittingPolicy) {
-            setProperty("splittingPolicy", splittingPolicy);
+            doSetProperty("splittingPolicy", splittingPolicy);
             return this;
         }
         /**
@@ -757,7 +757,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder splittingPolicy(
                 String splittingPolicy) {
-            setProperty("splittingPolicy", splittingPolicy);
+            doSetProperty("splittingPolicy", splittingPolicy);
             return this;
         }
         /**
@@ -769,7 +769,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointProducerBuilder systemType(String systemType) {
-            setProperty("systemType", systemType);
+            doSetProperty("systemType", systemType);
             return this;
         }
         /**
@@ -782,7 +782,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder destAddr(String destAddr) {
-            setProperty("destAddr", destAddr);
+            doSetProperty("destAddr", destAddr);
             return this;
         }
         /**
@@ -798,7 +798,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder destAddrNpi(byte destAddrNpi) {
-            setProperty("destAddrNpi", destAddrNpi);
+            doSetProperty("destAddrNpi", destAddrNpi);
             return this;
         }
         /**
@@ -814,7 +814,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder destAddrNpi(String destAddrNpi) {
-            setProperty("destAddrNpi", destAddrNpi);
+            doSetProperty("destAddrNpi", destAddrNpi);
             return this;
         }
         /**
@@ -829,7 +829,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder destAddrTon(byte destAddrTon) {
-            setProperty("destAddrTon", destAddrTon);
+            doSetProperty("destAddrTon", destAddrTon);
             return this;
         }
         /**
@@ -844,7 +844,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder destAddrTon(String destAddrTon) {
-            setProperty("destAddrTon", destAddrTon);
+            doSetProperty("destAddrTon", destAddrTon);
             return this;
         }
         /**
@@ -860,7 +860,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder lazySessionCreation(
                 boolean lazySessionCreation) {
-            setProperty("lazySessionCreation", lazySessionCreation);
+            doSetProperty("lazySessionCreation", lazySessionCreation);
             return this;
         }
         /**
@@ -876,7 +876,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder lazySessionCreation(
                 String lazySessionCreation) {
-            setProperty("lazySessionCreation", lazySessionCreation);
+            doSetProperty("lazySessionCreation", lazySessionCreation);
             return this;
         }
         /**
@@ -896,7 +896,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -916,7 +916,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -932,7 +932,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder numberingPlanIndicator(
                 byte numberingPlanIndicator) {
-            setProperty("numberingPlanIndicator", numberingPlanIndicator);
+            doSetProperty("numberingPlanIndicator", numberingPlanIndicator);
             return this;
         }
         /**
@@ -948,7 +948,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder numberingPlanIndicator(
                 String numberingPlanIndicator) {
-            setProperty("numberingPlanIndicator", numberingPlanIndicator);
+            doSetProperty("numberingPlanIndicator", numberingPlanIndicator);
             return this;
         }
         /**
@@ -962,7 +962,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder priorityFlag(byte priorityFlag) {
-            setProperty("priorityFlag", priorityFlag);
+            doSetProperty("priorityFlag", priorityFlag);
             return this;
         }
         /**
@@ -976,7 +976,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder priorityFlag(String priorityFlag) {
-            setProperty("priorityFlag", priorityFlag);
+            doSetProperty("priorityFlag", priorityFlag);
             return this;
         }
         /**
@@ -987,7 +987,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder protocolId(byte protocolId) {
-            setProperty("protocolId", protocolId);
+            doSetProperty("protocolId", protocolId);
             return this;
         }
         /**
@@ -998,7 +998,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder protocolId(String protocolId) {
-            setProperty("protocolId", protocolId);
+            doSetProperty("protocolId", protocolId);
             return this;
         }
         /**
@@ -1015,7 +1015,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder registeredDelivery(
                 byte registeredDelivery) {
-            setProperty("registeredDelivery", registeredDelivery);
+            doSetProperty("registeredDelivery", registeredDelivery);
             return this;
         }
         /**
@@ -1032,7 +1032,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder registeredDelivery(
                 String registeredDelivery) {
-            setProperty("registeredDelivery", registeredDelivery);
+            doSetProperty("registeredDelivery", registeredDelivery);
             return this;
         }
         /**
@@ -1049,7 +1049,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder replaceIfPresentFlag(
                 byte replaceIfPresentFlag) {
-            setProperty("replaceIfPresentFlag", replaceIfPresentFlag);
+            doSetProperty("replaceIfPresentFlag", replaceIfPresentFlag);
             return this;
         }
         /**
@@ -1066,7 +1066,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder replaceIfPresentFlag(
                 String replaceIfPresentFlag) {
-            setProperty("replaceIfPresentFlag", replaceIfPresentFlag);
+            doSetProperty("replaceIfPresentFlag", replaceIfPresentFlag);
             return this;
         }
         /**
@@ -1082,7 +1082,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder serviceType(String serviceType) {
-            setProperty("serviceType", serviceType);
+            doSetProperty("serviceType", serviceType);
             return this;
         }
         /**
@@ -1094,7 +1094,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder sourceAddr(String sourceAddr) {
-            setProperty("sourceAddr", sourceAddr);
+            doSetProperty("sourceAddr", sourceAddr);
             return this;
         }
         /**
@@ -1109,7 +1109,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder sourceAddrNpi(byte sourceAddrNpi) {
-            setProperty("sourceAddrNpi", sourceAddrNpi);
+            doSetProperty("sourceAddrNpi", sourceAddrNpi);
             return this;
         }
         /**
@@ -1124,7 +1124,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder sourceAddrNpi(String sourceAddrNpi) {
-            setProperty("sourceAddrNpi", sourceAddrNpi);
+            doSetProperty("sourceAddrNpi", sourceAddrNpi);
             return this;
         }
         /**
@@ -1138,7 +1138,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder sourceAddrTon(byte sourceAddrTon) {
-            setProperty("sourceAddrTon", sourceAddrTon);
+            doSetProperty("sourceAddrTon", sourceAddrTon);
             return this;
         }
         /**
@@ -1152,7 +1152,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder sourceAddrTon(String sourceAddrTon) {
-            setProperty("sourceAddrTon", sourceAddrTon);
+            doSetProperty("sourceAddrTon", sourceAddrTon);
             return this;
         }
         /**
@@ -1165,7 +1165,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder typeOfNumber(byte typeOfNumber) {
-            setProperty("typeOfNumber", typeOfNumber);
+            doSetProperty("typeOfNumber", typeOfNumber);
             return this;
         }
         /**
@@ -1178,7 +1178,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: producer
          */
         default SmppEndpointProducerBuilder typeOfNumber(String typeOfNumber) {
-            setProperty("typeOfNumber", typeOfNumber);
+            doSetProperty("typeOfNumber", typeOfNumber);
             return this;
         }
         /**
@@ -1191,7 +1191,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointProducerBuilder alphabet(byte alphabet) {
-            setProperty("alphabet", alphabet);
+            doSetProperty("alphabet", alphabet);
             return this;
         }
         /**
@@ -1204,7 +1204,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointProducerBuilder alphabet(String alphabet) {
-            setProperty("alphabet", alphabet);
+            doSetProperty("alphabet", alphabet);
             return this;
         }
         /**
@@ -1218,7 +1218,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointProducerBuilder dataCoding(byte dataCoding) {
-            setProperty("dataCoding", dataCoding);
+            doSetProperty("dataCoding", dataCoding);
             return this;
         }
         /**
@@ -1232,7 +1232,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointProducerBuilder dataCoding(String dataCoding) {
-            setProperty("dataCoding", dataCoding);
+            doSetProperty("dataCoding", dataCoding);
             return this;
         }
         /**
@@ -1244,7 +1244,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointProducerBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -1256,7 +1256,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointProducerBuilder httpProxyHost(String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -1269,7 +1269,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -1281,7 +1281,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointProducerBuilder httpProxyPort(Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1294,7 +1294,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointProducerBuilder httpProxyPort(String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1307,7 +1307,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder httpProxyUsername(
                 String httpProxyUsername) {
-            setProperty("httpProxyUsername", httpProxyUsername);
+            doSetProperty("httpProxyUsername", httpProxyUsername);
             return this;
         }
         /**
@@ -1321,7 +1321,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointProducerBuilder proxyHeaders(
                 Map<String, String> proxyHeaders) {
-            setProperty("proxyHeaders", proxyHeaders);
+            doSetProperty("proxyHeaders", proxyHeaders);
             return this;
         }
         /**
@@ -1335,7 +1335,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointProducerBuilder proxyHeaders(String proxyHeaders) {
-            setProperty("proxyHeaders", proxyHeaders);
+            doSetProperty("proxyHeaders", proxyHeaders);
             return this;
         }
         /**
@@ -1346,7 +1346,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1357,7 +1357,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointProducerBuilder systemId(String systemId) {
-            setProperty("systemId", systemId);
+            doSetProperty("systemId", systemId);
             return this;
         }
         /**
@@ -1368,7 +1368,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointProducerBuilder usingSSL(boolean usingSSL) {
-            setProperty("usingSSL", usingSSL);
+            doSetProperty("usingSSL", usingSSL);
             return this;
         }
         /**
@@ -1379,7 +1379,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointProducerBuilder usingSSL(String usingSSL) {
-            setProperty("usingSSL", usingSSL);
+            doSetProperty("usingSSL", usingSSL);
             return this;
         }
     }
@@ -1403,7 +1403,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1416,7 +1416,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1430,7 +1430,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointProducerBuilder enquireLinkTimer(
                 Integer enquireLinkTimer) {
-            setProperty("enquireLinkTimer", enquireLinkTimer);
+            doSetProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
         }
         /**
@@ -1445,7 +1445,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointProducerBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
-            setProperty("enquireLinkTimer", enquireLinkTimer);
+            doSetProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
         }
         /**
@@ -1459,7 +1459,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointProducerBuilder sessionStateListener(
                 Object sessionStateListener) {
-            setProperty("sessionStateListener", sessionStateListener);
+            doSetProperty("sessionStateListener", sessionStateListener);
             return this;
         }
         /**
@@ -1473,7 +1473,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointProducerBuilder sessionStateListener(
                 String sessionStateListener) {
-            setProperty("sessionStateListener", sessionStateListener);
+            doSetProperty("sessionStateListener", sessionStateListener);
             return this;
         }
         /**
@@ -1486,7 +1486,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1499,7 +1499,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1514,7 +1514,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointProducerBuilder transactionTimer(
                 Integer transactionTimer) {
-            setProperty("transactionTimer", transactionTimer);
+            doSetProperty("transactionTimer", transactionTimer);
             return this;
         }
         /**
@@ -1530,7 +1530,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointProducerBuilder transactionTimer(
                 String transactionTimer) {
-            setProperty("transactionTimer", transactionTimer);
+            doSetProperty("transactionTimer", transactionTimer);
             return this;
         }
     }
@@ -1554,7 +1554,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointBuilder initialReconnectDelay(
                 long initialReconnectDelay) {
-            setProperty("initialReconnectDelay", initialReconnectDelay);
+            doSetProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
         }
         /**
@@ -1567,7 +1567,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointBuilder initialReconnectDelay(
                 String initialReconnectDelay) {
-            setProperty("initialReconnectDelay", initialReconnectDelay);
+            doSetProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
         }
         /**
@@ -1579,7 +1579,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointBuilder maxReconnect(int maxReconnect) {
-            setProperty("maxReconnect", maxReconnect);
+            doSetProperty("maxReconnect", maxReconnect);
             return this;
         }
         /**
@@ -1591,7 +1591,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointBuilder maxReconnect(String maxReconnect) {
-            setProperty("maxReconnect", maxReconnect);
+            doSetProperty("maxReconnect", maxReconnect);
             return this;
         }
         /**
@@ -1604,7 +1604,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointBuilder reconnectDelay(long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -1617,7 +1617,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointBuilder reconnectDelay(String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -1638,7 +1638,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointBuilder splittingPolicy(
                 SmppSplittingPolicy splittingPolicy) {
-            setProperty("splittingPolicy", splittingPolicy);
+            doSetProperty("splittingPolicy", splittingPolicy);
             return this;
         }
         /**
@@ -1658,7 +1658,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointBuilder splittingPolicy(String splittingPolicy) {
-            setProperty("splittingPolicy", splittingPolicy);
+            doSetProperty("splittingPolicy", splittingPolicy);
             return this;
         }
         /**
@@ -1670,7 +1670,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: common
          */
         default SmppEndpointBuilder systemType(String systemType) {
-            setProperty("systemType", systemType);
+            doSetProperty("systemType", systemType);
             return this;
         }
         /**
@@ -1683,7 +1683,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointBuilder alphabet(byte alphabet) {
-            setProperty("alphabet", alphabet);
+            doSetProperty("alphabet", alphabet);
             return this;
         }
         /**
@@ -1696,7 +1696,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointBuilder alphabet(String alphabet) {
-            setProperty("alphabet", alphabet);
+            doSetProperty("alphabet", alphabet);
             return this;
         }
         /**
@@ -1710,7 +1710,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointBuilder dataCoding(byte dataCoding) {
-            setProperty("dataCoding", dataCoding);
+            doSetProperty("dataCoding", dataCoding);
             return this;
         }
         /**
@@ -1724,7 +1724,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointBuilder dataCoding(String dataCoding) {
-            setProperty("dataCoding", dataCoding);
+            doSetProperty("dataCoding", dataCoding);
             return this;
         }
         /**
@@ -1736,7 +1736,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: codec
          */
         default SmppEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -1748,7 +1748,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointBuilder httpProxyHost(String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -1760,7 +1760,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointBuilder httpProxyPassword(String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -1772,7 +1772,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointBuilder httpProxyPort(Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1785,7 +1785,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointBuilder httpProxyPort(String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1797,7 +1797,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointBuilder httpProxyUsername(String httpProxyUsername) {
-            setProperty("httpProxyUsername", httpProxyUsername);
+            doSetProperty("httpProxyUsername", httpProxyUsername);
             return this;
         }
         /**
@@ -1811,7 +1811,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointBuilder proxyHeaders(
                 Map<String, String> proxyHeaders) {
-            setProperty("proxyHeaders", proxyHeaders);
+            doSetProperty("proxyHeaders", proxyHeaders);
             return this;
         }
         /**
@@ -1825,7 +1825,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: proxy
          */
         default SmppEndpointBuilder proxyHeaders(String proxyHeaders) {
-            setProperty("proxyHeaders", proxyHeaders);
+            doSetProperty("proxyHeaders", proxyHeaders);
             return this;
         }
         /**
@@ -1836,7 +1836,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1847,7 +1847,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointBuilder systemId(String systemId) {
-            setProperty("systemId", systemId);
+            doSetProperty("systemId", systemId);
             return this;
         }
         /**
@@ -1858,7 +1858,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointBuilder usingSSL(boolean usingSSL) {
-            setProperty("usingSSL", usingSSL);
+            doSetProperty("usingSSL", usingSSL);
             return this;
         }
         /**
@@ -1869,7 +1869,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: security
          */
         default SmppEndpointBuilder usingSSL(String usingSSL) {
-            setProperty("usingSSL", usingSSL);
+            doSetProperty("usingSSL", usingSSL);
             return this;
         }
     }
@@ -1893,7 +1893,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1906,7 +1906,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1920,7 +1920,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointBuilder enquireLinkTimer(
                 Integer enquireLinkTimer) {
-            setProperty("enquireLinkTimer", enquireLinkTimer);
+            doSetProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
         }
         /**
@@ -1935,7 +1935,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
-            setProperty("enquireLinkTimer", enquireLinkTimer);
+            doSetProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
         }
         /**
@@ -1949,7 +1949,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointBuilder sessionStateListener(
                 Object sessionStateListener) {
-            setProperty("sessionStateListener", sessionStateListener);
+            doSetProperty("sessionStateListener", sessionStateListener);
             return this;
         }
         /**
@@ -1963,7 +1963,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointBuilder sessionStateListener(
                 String sessionStateListener) {
-            setProperty("sessionStateListener", sessionStateListener);
+            doSetProperty("sessionStateListener", sessionStateListener);
             return this;
         }
         /**
@@ -1975,7 +1975,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSmppEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1987,7 +1987,7 @@ public interface SmppEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSmppEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2002,7 +2002,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointBuilder transactionTimer(
                 Integer transactionTimer) {
-            setProperty("transactionTimer", transactionTimer);
+            doSetProperty("transactionTimer", transactionTimer);
             return this;
         }
         /**
@@ -2018,7 +2018,7 @@ public interface SmppEndpointBuilderFactory {
          */
         default AdvancedSmppEndpointBuilder transactionTimer(
                 String transactionTimer) {
-            setProperty("transactionTimer", transactionTimer);
+            doSetProperty("transactionTimer", transactionTimer);
             return this;
         }
     }

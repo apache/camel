@@ -48,7 +48,7 @@ public interface ECSEndpointBuilderFactory {
          * Group: producer
          */
         default ECSEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
     }
@@ -72,7 +72,7 @@ public interface ECSEndpointBuilderFactory {
          */
         default AdvancedECSEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface ECSEndpointBuilderFactory {
          */
         default AdvancedECSEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface ECSEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedECSEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface ECSEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedECSEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

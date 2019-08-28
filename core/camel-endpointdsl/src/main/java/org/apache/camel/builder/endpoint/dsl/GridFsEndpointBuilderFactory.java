@@ -50,7 +50,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointConsumerBuilder bucket(String bucket) {
-            setProperty("bucket", bucket);
+            doSetProperty("bucket", bucket);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointConsumerBuilder database(String database) {
-            setProperty("database", database);
+            doSetProperty("database", database);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointConsumerBuilder readPreference(
                 Object readPreference) {
-            setProperty("readPreference", readPreference);
+            doSetProperty("readPreference", readPreference);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointConsumerBuilder readPreference(
                 String readPreference) {
-            setProperty("readPreference", readPreference);
+            doSetProperty("readPreference", readPreference);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointConsumerBuilder writeConcern(Object writeConcern) {
-            setProperty("writeConcern", writeConcern);
+            doSetProperty("writeConcern", writeConcern);
             return this;
         }
         /**
@@ -124,7 +124,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointConsumerBuilder writeConcern(String writeConcern) {
-            setProperty("writeConcern", writeConcern);
+            doSetProperty("writeConcern", writeConcern);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -171,7 +171,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointConsumerBuilder fileAttributeName(
                 String fileAttributeName) {
-            setProperty("fileAttributeName", fileAttributeName);
+            doSetProperty("fileAttributeName", fileAttributeName);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -219,7 +219,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointConsumerBuilder persistentTSCollection(
                 String persistentTSCollection) {
-            setProperty("persistentTSCollection", persistentTSCollection);
+            doSetProperty("persistentTSCollection", persistentTSCollection);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointConsumerBuilder persistentTSObject(
                 String persistentTSObject) {
-            setProperty("persistentTSObject", persistentTSObject);
+            doSetProperty("persistentTSObject", persistentTSObject);
             return this;
         }
         /**
@@ -257,7 +257,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -272,7 +272,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointConsumerBuilder queryStrategy(
                 QueryStrategy queryStrategy) {
-            setProperty("queryStrategy", queryStrategy);
+            doSetProperty("queryStrategy", queryStrategy);
             return this;
         }
         /**
@@ -286,7 +286,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder queryStrategy(String queryStrategy) {
-            setProperty("queryStrategy", queryStrategy);
+            doSetProperty("queryStrategy", queryStrategy);
             return this;
         }
     }
@@ -313,7 +313,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -329,7 +329,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -341,7 +341,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -354,7 +354,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -367,7 +367,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -406,7 +406,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -429,7 +429,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointProducerBuilder bucket(String bucket) {
-            setProperty("bucket", bucket);
+            doSetProperty("bucket", bucket);
             return this;
         }
         /**
@@ -441,7 +441,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointProducerBuilder database(String database) {
-            setProperty("database", database);
+            doSetProperty("database", database);
             return this;
         }
         /**
@@ -458,7 +458,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointProducerBuilder readPreference(
                 Object readPreference) {
-            setProperty("readPreference", readPreference);
+            doSetProperty("readPreference", readPreference);
             return this;
         }
         /**
@@ -476,7 +476,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointProducerBuilder readPreference(
                 String readPreference) {
-            setProperty("readPreference", readPreference);
+            doSetProperty("readPreference", readPreference);
             return this;
         }
         /**
@@ -489,7 +489,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointProducerBuilder writeConcern(Object writeConcern) {
-            setProperty("writeConcern", writeConcern);
+            doSetProperty("writeConcern", writeConcern);
             return this;
         }
         /**
@@ -503,7 +503,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointProducerBuilder writeConcern(String writeConcern) {
-            setProperty("writeConcern", writeConcern);
+            doSetProperty("writeConcern", writeConcern);
             return this;
         }
         /**
@@ -523,7 +523,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -543,7 +543,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default GridFsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -554,7 +554,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: producer
          */
         default GridFsEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
     }
@@ -578,7 +578,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -591,7 +591,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -604,7 +604,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -617,7 +617,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -640,7 +640,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointBuilder bucket(String bucket) {
-            setProperty("bucket", bucket);
+            doSetProperty("bucket", bucket);
             return this;
         }
         /**
@@ -652,7 +652,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointBuilder database(String database) {
-            setProperty("database", database);
+            doSetProperty("database", database);
             return this;
         }
         /**
@@ -668,7 +668,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointBuilder readPreference(Object readPreference) {
-            setProperty("readPreference", readPreference);
+            doSetProperty("readPreference", readPreference);
             return this;
         }
         /**
@@ -685,7 +685,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointBuilder readPreference(String readPreference) {
-            setProperty("readPreference", readPreference);
+            doSetProperty("readPreference", readPreference);
             return this;
         }
         /**
@@ -698,7 +698,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointBuilder writeConcern(Object writeConcern) {
-            setProperty("writeConcern", writeConcern);
+            doSetProperty("writeConcern", writeConcern);
             return this;
         }
         /**
@@ -712,7 +712,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: common
          */
         default GridFsEndpointBuilder writeConcern(String writeConcern) {
-            setProperty("writeConcern", writeConcern);
+            doSetProperty("writeConcern", writeConcern);
             return this;
         }
     }
@@ -736,7 +736,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -749,7 +749,7 @@ public interface GridFsEndpointBuilderFactory {
          */
         default AdvancedGridFsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -761,7 +761,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGridFsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -773,7 +773,7 @@ public interface GridFsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGridFsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

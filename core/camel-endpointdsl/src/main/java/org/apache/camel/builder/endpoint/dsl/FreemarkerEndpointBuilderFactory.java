@@ -47,7 +47,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * Group: producer
          */
         default FreemarkerEndpointBuilder configuration(Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * Group: producer
          */
         default FreemarkerEndpointBuilder configuration(String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * Group: producer
          */
         default FreemarkerEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * Group: producer
          */
         default FreemarkerEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * Group: producer
          */
         default FreemarkerEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface FreemarkerEndpointBuilderFactory {
          */
         default FreemarkerEndpointBuilder templateUpdateDelay(
                 int templateUpdateDelay) {
-            setProperty("templateUpdateDelay", templateUpdateDelay);
+            doSetProperty("templateUpdateDelay", templateUpdateDelay);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface FreemarkerEndpointBuilderFactory {
          */
         default FreemarkerEndpointBuilder templateUpdateDelay(
                 String templateUpdateDelay) {
-            setProperty("templateUpdateDelay", templateUpdateDelay);
+            doSetProperty("templateUpdateDelay", templateUpdateDelay);
             return this;
         }
     }
@@ -142,7 +142,7 @@ public interface FreemarkerEndpointBuilderFactory {
          */
         default AdvancedFreemarkerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface FreemarkerEndpointBuilderFactory {
          */
         default AdvancedFreemarkerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface FreemarkerEndpointBuilderFactory {
          */
         default AdvancedFreemarkerEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -180,7 +180,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFreemarkerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

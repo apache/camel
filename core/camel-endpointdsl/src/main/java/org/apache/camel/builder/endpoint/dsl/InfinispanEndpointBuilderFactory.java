@@ -53,7 +53,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: common
          */
         default InfinispanEndpointConsumerBuilder hosts(String hosts) {
-            setProperty("hosts", hosts);
+            doSetProperty("hosts", hosts);
             return this;
         }
         /**
@@ -66,7 +66,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointConsumerBuilder queryBuilder(
                 Object queryBuilder) {
-            setProperty("queryBuilder", queryBuilder);
+            doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointConsumerBuilder queryBuilder(
                 String queryBuilder) {
-            setProperty("queryBuilder", queryBuilder);
+            doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointConsumerBuilder clusteredListener(
                 boolean clusteredListener) {
-            setProperty("clusteredListener", clusteredListener);
+            doSetProperty("clusteredListener", clusteredListener);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointConsumerBuilder clusteredListener(
                 String clusteredListener) {
-            setProperty("clusteredListener", clusteredListener);
+            doSetProperty("clusteredListener", clusteredListener);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         @Deprecated
         default InfinispanEndpointConsumerBuilder command(String command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointConsumerBuilder customListener(
                 Object customListener) {
-            setProperty("customListener", customListener);
+            doSetProperty("customListener", customListener);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointConsumerBuilder customListener(
                 String customListener) {
-            setProperty("customListener", customListener);
+            doSetProperty("customListener", customListener);
             return this;
         }
         /**
@@ -197,7 +197,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointConsumerBuilder eventTypes(
                 Set<String> eventTypes) {
-            setProperty("eventTypes", eventTypes);
+            doSetProperty("eventTypes", eventTypes);
             return this;
         }
         /**
@@ -216,7 +216,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: consumer
          */
         default InfinispanEndpointConsumerBuilder eventTypes(String eventTypes) {
-            setProperty("eventTypes", eventTypes);
+            doSetProperty("eventTypes", eventTypes);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: consumer
          */
         default InfinispanEndpointConsumerBuilder sync(boolean sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: consumer
          */
         default InfinispanEndpointConsumerBuilder sync(String sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
     }
@@ -265,7 +265,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -281,7 +281,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -293,7 +293,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -306,7 +306,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -332,7 +332,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -345,7 +345,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainer(
                 Object cacheContainer) {
-            setProperty("cacheContainer", cacheContainer);
+            doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
         /**
@@ -358,7 +358,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainer(
                 String cacheContainer) {
-            setProperty("cacheContainer", cacheContainer);
+            doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
         /**
@@ -375,7 +375,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainerConfiguration(
                 Object cacheContainerConfiguration) {
-            setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
+            doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder cacheContainerConfiguration(
                 String cacheContainerConfiguration) {
-            setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
+            doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
         /**
@@ -405,7 +405,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder configurationProperties(
                 Map<String, String> configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -419,7 +419,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder configurationProperties(
                 String configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -443,7 +443,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder flags(Flag[] flags) {
-            setProperty("flags", flags);
+            doSetProperty("flags", flags);
             return this;
         }
         /**
@@ -456,7 +456,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder flags(String flags) {
-            setProperty("flags", flags);
+            doSetProperty("flags", flags);
             return this;
         }
         /**
@@ -468,7 +468,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder remappingFunction(
                 BiFunction remappingFunction) {
-            setProperty("remappingFunction", remappingFunction);
+            doSetProperty("remappingFunction", remappingFunction);
             return this;
         }
         /**
@@ -481,7 +481,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder remappingFunction(
                 String remappingFunction) {
-            setProperty("remappingFunction", remappingFunction);
+            doSetProperty("remappingFunction", remappingFunction);
             return this;
         }
         /**
@@ -499,7 +499,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder resultHeader(
                 Object resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -517,7 +517,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder resultHeader(
                 String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -530,7 +530,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -543,7 +543,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -565,7 +565,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: common
          */
         default InfinispanEndpointProducerBuilder hosts(String hosts) {
-            setProperty("hosts", hosts);
+            doSetProperty("hosts", hosts);
             return this;
         }
         /**
@@ -578,7 +578,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointProducerBuilder queryBuilder(
                 Object queryBuilder) {
-            setProperty("queryBuilder", queryBuilder);
+            doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
         /**
@@ -591,7 +591,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointProducerBuilder queryBuilder(
                 String queryBuilder) {
-            setProperty("queryBuilder", queryBuilder);
+            doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
         /**
@@ -611,7 +611,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -631,7 +631,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -644,7 +644,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointProducerBuilder operation(
                 InfinispanOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -656,7 +656,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: producer
          */
         default InfinispanEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
     }
@@ -680,7 +680,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -693,7 +693,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -706,7 +706,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainer(
                 Object cacheContainer) {
-            setProperty("cacheContainer", cacheContainer);
+            doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
         /**
@@ -719,7 +719,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainer(
                 String cacheContainer) {
-            setProperty("cacheContainer", cacheContainer);
+            doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
         /**
@@ -736,7 +736,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainerConfiguration(
                 Object cacheContainerConfiguration) {
-            setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
+            doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
         /**
@@ -753,7 +753,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder cacheContainerConfiguration(
                 String cacheContainerConfiguration) {
-            setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
+            doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
         /**
@@ -766,7 +766,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder configurationProperties(
                 Map<String, String> configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -780,7 +780,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder configurationProperties(
                 String configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -792,7 +792,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -804,7 +804,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder flags(Flag[] flags) {
-            setProperty("flags", flags);
+            doSetProperty("flags", flags);
             return this;
         }
         /**
@@ -817,7 +817,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder flags(String flags) {
-            setProperty("flags", flags);
+            doSetProperty("flags", flags);
             return this;
         }
         /**
@@ -829,7 +829,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder remappingFunction(
                 BiFunction remappingFunction) {
-            setProperty("remappingFunction", remappingFunction);
+            doSetProperty("remappingFunction", remappingFunction);
             return this;
         }
         /**
@@ -842,7 +842,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder remappingFunction(
                 String remappingFunction) {
-            setProperty("remappingFunction", remappingFunction);
+            doSetProperty("remappingFunction", remappingFunction);
             return this;
         }
         /**
@@ -860,7 +860,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder resultHeader(
                 Object resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -878,7 +878,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder resultHeader(
                 String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -891,7 +891,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -904,7 +904,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -926,7 +926,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: common
          */
         default InfinispanEndpointBuilder hosts(String hosts) {
-            setProperty("hosts", hosts);
+            doSetProperty("hosts", hosts);
             return this;
         }
         /**
@@ -938,7 +938,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: common
          */
         default InfinispanEndpointBuilder queryBuilder(Object queryBuilder) {
-            setProperty("queryBuilder", queryBuilder);
+            doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
         /**
@@ -950,7 +950,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: common
          */
         default InfinispanEndpointBuilder queryBuilder(String queryBuilder) {
-            setProperty("queryBuilder", queryBuilder);
+            doSetProperty("queryBuilder", queryBuilder);
             return this;
         }
     }
@@ -974,7 +974,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -987,7 +987,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1000,7 +1000,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder cacheContainer(
                 Object cacheContainer) {
-            setProperty("cacheContainer", cacheContainer);
+            doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
         /**
@@ -1013,7 +1013,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder cacheContainer(
                 String cacheContainer) {
-            setProperty("cacheContainer", cacheContainer);
+            doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
         /**
@@ -1030,7 +1030,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder cacheContainerConfiguration(
                 Object cacheContainerConfiguration) {
-            setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
+            doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
         /**
@@ -1047,7 +1047,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder cacheContainerConfiguration(
                 String cacheContainerConfiguration) {
-            setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
+            doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
         /**
@@ -1060,7 +1060,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder configurationProperties(
                 Map<String, String> configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -1074,7 +1074,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder configurationProperties(
                 String configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -1086,7 +1086,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -1098,7 +1098,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder flags(Flag[] flags) {
-            setProperty("flags", flags);
+            doSetProperty("flags", flags);
             return this;
         }
         /**
@@ -1111,7 +1111,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder flags(String flags) {
-            setProperty("flags", flags);
+            doSetProperty("flags", flags);
             return this;
         }
         /**
@@ -1123,7 +1123,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder remappingFunction(
                 BiFunction remappingFunction) {
-            setProperty("remappingFunction", remappingFunction);
+            doSetProperty("remappingFunction", remappingFunction);
             return this;
         }
         /**
@@ -1136,7 +1136,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder remappingFunction(
                 String remappingFunction) {
-            setProperty("remappingFunction", remappingFunction);
+            doSetProperty("remappingFunction", remappingFunction);
             return this;
         }
         /**
@@ -1154,7 +1154,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder resultHeader(
                 Object resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -1172,7 +1172,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder resultHeader(
                 String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -1185,7 +1185,7 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default AdvancedInfinispanEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1197,7 +1197,7 @@ public interface InfinispanEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

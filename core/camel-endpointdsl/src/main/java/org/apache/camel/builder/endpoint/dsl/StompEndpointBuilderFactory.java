@@ -52,7 +52,7 @@ public interface StompEndpointBuilderFactory {
          * Group: common
          */
         default StompEndpointConsumerBuilder brokerURL(String brokerURL) {
-            setProperty("brokerURL", brokerURL);
+            doSetProperty("brokerURL", brokerURL);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface StompEndpointBuilderFactory {
          * Group: common
          */
         default StompEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface StompEndpointBuilderFactory {
          * Group: security
          */
         default StompEndpointConsumerBuilder login(String login) {
-            setProperty("login", login);
+            doSetProperty("login", login);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface StompEndpointBuilderFactory {
          * Group: security
          */
         default StompEndpointConsumerBuilder passcode(String passcode) {
-            setProperty("passcode", passcode);
+            doSetProperty("passcode", passcode);
             return this;
         }
         /**
@@ -134,7 +134,7 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -174,7 +174,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -215,7 +215,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -228,7 +228,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -269,7 +269,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -282,7 +282,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -295,7 +295,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -318,7 +318,7 @@ public interface StompEndpointBuilderFactory {
          * Group: common
          */
         default StompEndpointProducerBuilder brokerURL(String brokerURL) {
-            setProperty("brokerURL", brokerURL);
+            doSetProperty("brokerURL", brokerURL);
             return this;
         }
         /**
@@ -329,7 +329,7 @@ public interface StompEndpointBuilderFactory {
          * Group: common
          */
         default StompEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -349,7 +349,7 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface StompEndpointBuilderFactory {
          * Group: security
          */
         default StompEndpointProducerBuilder login(String login) {
-            setProperty("login", login);
+            doSetProperty("login", login);
             return this;
         }
         /**
@@ -391,7 +391,7 @@ public interface StompEndpointBuilderFactory {
          * Group: security
          */
         default StompEndpointProducerBuilder passcode(String passcode) {
-            setProperty("passcode", passcode);
+            doSetProperty("passcode", passcode);
             return this;
         }
         /**
@@ -404,7 +404,7 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -417,7 +417,7 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -441,7 +441,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -454,7 +454,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -468,7 +468,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -482,7 +482,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -508,7 +508,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -531,7 +531,7 @@ public interface StompEndpointBuilderFactory {
          * Group: common
          */
         default StompEndpointBuilder brokerURL(String brokerURL) {
-            setProperty("brokerURL", brokerURL);
+            doSetProperty("brokerURL", brokerURL);
             return this;
         }
         /**
@@ -542,7 +542,7 @@ public interface StompEndpointBuilderFactory {
          * Group: common
          */
         default StompEndpointBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -553,7 +553,7 @@ public interface StompEndpointBuilderFactory {
          * Group: security
          */
         default StompEndpointBuilder login(String login) {
-            setProperty("login", login);
+            doSetProperty("login", login);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface StompEndpointBuilderFactory {
          * Group: security
          */
         default StompEndpointBuilder passcode(String passcode) {
-            setProperty("passcode", passcode);
+            doSetProperty("passcode", passcode);
             return this;
         }
         /**
@@ -577,7 +577,7 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -590,7 +590,7 @@ public interface StompEndpointBuilderFactory {
          */
         default StompEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -614,7 +614,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -627,7 +627,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -641,7 +641,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -655,7 +655,7 @@ public interface StompEndpointBuilderFactory {
          */
         default AdvancedStompEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -667,7 +667,7 @@ public interface StompEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStompEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -679,7 +679,7 @@ public interface StompEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStompEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

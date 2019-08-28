@@ -45,7 +45,7 @@ public interface MvelEndpointBuilderFactory {
          * Group: producer
          */
         default MvelEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface MvelEndpointBuilderFactory {
          * Group: producer
          */
         default MvelEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface MvelEndpointBuilderFactory {
          * Group: producer
          */
         default MvelEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
     }
@@ -91,7 +91,7 @@ public interface MvelEndpointBuilderFactory {
          */
         default AdvancedMvelEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface MvelEndpointBuilderFactory {
          */
         default AdvancedMvelEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface MvelEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMvelEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface MvelEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMvelEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

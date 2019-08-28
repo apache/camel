@@ -57,7 +57,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default JGroupsRaftEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default JGroupsRaftEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default JGroupsRaftEndpointConsumerBuilder enableRoleChangeEvents(
                 boolean enableRoleChangeEvents) {
-            setProperty("enableRoleChangeEvents", enableRoleChangeEvents);
+            doSetProperty("enableRoleChangeEvents", enableRoleChangeEvents);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default JGroupsRaftEndpointConsumerBuilder enableRoleChangeEvents(
                 String enableRoleChangeEvents) {
-            setProperty("enableRoleChangeEvents", enableRoleChangeEvents);
+            doSetProperty("enableRoleChangeEvents", enableRoleChangeEvents);
             return this;
         }
     }
@@ -130,7 +130,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -146,7 +146,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -171,7 +171,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -197,7 +197,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -210,7 +210,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -223,7 +223,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -254,7 +254,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default JGroupsRaftEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -274,7 +274,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default JGroupsRaftEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -298,7 +298,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -324,7 +324,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -337,7 +337,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -372,7 +372,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -385,7 +385,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -398,7 +398,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -411,7 +411,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          */
         default AdvancedJGroupsRaftEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

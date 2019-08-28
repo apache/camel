@@ -48,7 +48,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: common
          */
         default BeanEndpointBuilder cache(Boolean cache) {
-            setProperty("cache", cache);
+            doSetProperty("cache", cache);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: common
          */
         default BeanEndpointBuilder cache(String cache) {
-            setProperty("cache", cache);
+            doSetProperty("cache", cache);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: common
          */
         default BeanEndpointBuilder method(String method) {
-            setProperty("method", method);
+            doSetProperty("method", method);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: common
          */
         default BeanEndpointBuilder parameters(Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: common
          */
         default BeanEndpointBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
     }
@@ -122,7 +122,7 @@ public interface BeanEndpointBuilderFactory {
          */
         default AdvancedBeanEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface BeanEndpointBuilderFactory {
          */
         default AdvancedBeanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBeanEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBeanEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

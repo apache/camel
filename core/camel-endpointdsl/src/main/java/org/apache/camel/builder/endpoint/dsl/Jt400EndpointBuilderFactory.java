@@ -55,7 +55,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointConsumerBuilder ccsid(int ccsid) {
-            setProperty("ccsid", ccsid);
+            doSetProperty("ccsid", ccsid);
             return this;
         }
         /**
@@ -66,7 +66,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointConsumerBuilder ccsid(String ccsid) {
-            setProperty("ccsid", ccsid);
+            doSetProperty("ccsid", ccsid);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointConsumerBuilder format(Format format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointConsumerBuilder format(String format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointConsumerBuilder guiAvailable(boolean guiAvailable) {
-            setProperty("guiAvailable", guiAvailable);
+            doSetProperty("guiAvailable", guiAvailable);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointConsumerBuilder guiAvailable(String guiAvailable) {
-            setProperty("guiAvailable", guiAvailable);
+            doSetProperty("guiAvailable", guiAvailable);
             return this;
         }
         /**
@@ -125,7 +125,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointConsumerBuilder keyed(boolean keyed) {
-            setProperty("keyed", keyed);
+            doSetProperty("keyed", keyed);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointConsumerBuilder keyed(String keyed) {
-            setProperty("keyed", keyed);
+            doSetProperty("keyed", keyed);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder outputFieldsIdxArray(
                 Integer[] outputFieldsIdxArray) {
-            setProperty("outputFieldsIdxArray", outputFieldsIdxArray);
+            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder outputFieldsIdxArray(
                 String outputFieldsIdxArray) {
-            setProperty("outputFieldsIdxArray", outputFieldsIdxArray);
+            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
             return this;
         }
         /**
@@ -174,7 +174,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder outputFieldsLengthArray(
                 Integer[] outputFieldsLengthArray) {
-            setProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder outputFieldsLengthArray(
                 String outputFieldsLengthArray) {
-            setProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
             return this;
         }
         /**
@@ -199,7 +199,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointConsumerBuilder searchKey(String searchKey) {
-            setProperty("searchKey", searchKey);
+            doSetProperty("searchKey", searchKey);
             return this;
         }
         /**
@@ -211,7 +211,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointConsumerBuilder searchType(SearchType searchType) {
-            setProperty("searchType", searchType);
+            doSetProperty("searchType", searchType);
             return this;
         }
         /**
@@ -223,7 +223,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointConsumerBuilder searchType(String searchType) {
-            setProperty("searchType", searchType);
+            doSetProperty("searchType", searchType);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -259,7 +259,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -271,7 +271,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: consumer
          */
         default Jt400EndpointConsumerBuilder readTimeout(int readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -283,7 +283,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: consumer
          */
         default Jt400EndpointConsumerBuilder readTimeout(String readTimeout) {
-            setProperty("readTimeout", readTimeout);
+            doSetProperty("readTimeout", readTimeout);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -309,7 +309,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -322,7 +322,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -335,7 +335,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -361,7 +361,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -378,7 +378,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -408,7 +408,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -421,7 +421,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -433,7 +433,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -458,7 +458,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -471,7 +471,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -484,7 +484,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -498,7 +498,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -513,7 +513,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -528,7 +528,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -540,7 +540,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -554,7 +554,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -569,7 +569,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -581,7 +581,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -593,7 +593,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -604,7 +604,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -616,7 +616,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -628,7 +628,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -640,7 +640,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -651,7 +651,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: procedureName
          */
         default Jt400EndpointConsumerBuilder procedureName(String procedureName) {
-            setProperty("procedureName", procedureName);
+            doSetProperty("procedureName", procedureName);
             return this;
         }
         /**
@@ -662,7 +662,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: security
          */
         default Jt400EndpointConsumerBuilder secured(boolean secured) {
-            setProperty("secured", secured);
+            doSetProperty("secured", secured);
             return this;
         }
         /**
@@ -673,7 +673,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: security
          */
         default Jt400EndpointConsumerBuilder secured(String secured) {
-            setProperty("secured", secured);
+            doSetProperty("secured", secured);
             return this;
         }
     }
@@ -700,7 +700,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -716,7 +716,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -728,7 +728,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -741,7 +741,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -757,7 +757,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -773,7 +773,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -786,7 +786,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -799,7 +799,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -812,7 +812,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -825,7 +825,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -847,7 +847,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointProducerBuilder ccsid(int ccsid) {
-            setProperty("ccsid", ccsid);
+            doSetProperty("ccsid", ccsid);
             return this;
         }
         /**
@@ -858,7 +858,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointProducerBuilder ccsid(String ccsid) {
-            setProperty("ccsid", ccsid);
+            doSetProperty("ccsid", ccsid);
             return this;
         }
         /**
@@ -870,7 +870,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointProducerBuilder format(Format format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -882,7 +882,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointProducerBuilder format(String format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -894,7 +894,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointProducerBuilder guiAvailable(boolean guiAvailable) {
-            setProperty("guiAvailable", guiAvailable);
+            doSetProperty("guiAvailable", guiAvailable);
             return this;
         }
         /**
@@ -906,7 +906,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointProducerBuilder guiAvailable(String guiAvailable) {
-            setProperty("guiAvailable", guiAvailable);
+            doSetProperty("guiAvailable", guiAvailable);
             return this;
         }
         /**
@@ -917,7 +917,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointProducerBuilder keyed(boolean keyed) {
-            setProperty("keyed", keyed);
+            doSetProperty("keyed", keyed);
             return this;
         }
         /**
@@ -928,7 +928,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointProducerBuilder keyed(String keyed) {
-            setProperty("keyed", keyed);
+            doSetProperty("keyed", keyed);
             return this;
         }
         /**
@@ -940,7 +940,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointProducerBuilder outputFieldsIdxArray(
                 Integer[] outputFieldsIdxArray) {
-            setProperty("outputFieldsIdxArray", outputFieldsIdxArray);
+            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
             return this;
         }
         /**
@@ -953,7 +953,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointProducerBuilder outputFieldsIdxArray(
                 String outputFieldsIdxArray) {
-            setProperty("outputFieldsIdxArray", outputFieldsIdxArray);
+            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
             return this;
         }
         /**
@@ -966,7 +966,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointProducerBuilder outputFieldsLengthArray(
                 Integer[] outputFieldsLengthArray) {
-            setProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
             return this;
         }
         /**
@@ -980,7 +980,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointProducerBuilder outputFieldsLengthArray(
                 String outputFieldsLengthArray) {
-            setProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
             return this;
         }
         /**
@@ -991,7 +991,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointProducerBuilder searchKey(String searchKey) {
-            setProperty("searchKey", searchKey);
+            doSetProperty("searchKey", searchKey);
             return this;
         }
         /**
@@ -1003,7 +1003,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointProducerBuilder searchType(SearchType searchType) {
-            setProperty("searchType", searchType);
+            doSetProperty("searchType", searchType);
             return this;
         }
         /**
@@ -1015,7 +1015,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointProducerBuilder searchType(String searchType) {
-            setProperty("searchType", searchType);
+            doSetProperty("searchType", searchType);
             return this;
         }
         /**
@@ -1035,7 +1035,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1055,7 +1055,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1066,7 +1066,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: procedureName
          */
         default Jt400EndpointProducerBuilder procedureName(String procedureName) {
-            setProperty("procedureName", procedureName);
+            doSetProperty("procedureName", procedureName);
             return this;
         }
         /**
@@ -1077,7 +1077,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: security
          */
         default Jt400EndpointProducerBuilder secured(boolean secured) {
-            setProperty("secured", secured);
+            doSetProperty("secured", secured);
             return this;
         }
         /**
@@ -1088,7 +1088,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: security
          */
         default Jt400EndpointProducerBuilder secured(String secured) {
-            setProperty("secured", secured);
+            doSetProperty("secured", secured);
             return this;
         }
     }
@@ -1112,7 +1112,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1125,7 +1125,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1138,7 +1138,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1151,7 +1151,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1173,7 +1173,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointBuilder ccsid(int ccsid) {
-            setProperty("ccsid", ccsid);
+            doSetProperty("ccsid", ccsid);
             return this;
         }
         /**
@@ -1184,7 +1184,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointBuilder ccsid(String ccsid) {
-            setProperty("ccsid", ccsid);
+            doSetProperty("ccsid", ccsid);
             return this;
         }
         /**
@@ -1196,7 +1196,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointBuilder format(Format format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -1208,7 +1208,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointBuilder format(String format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -1220,7 +1220,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointBuilder guiAvailable(boolean guiAvailable) {
-            setProperty("guiAvailable", guiAvailable);
+            doSetProperty("guiAvailable", guiAvailable);
             return this;
         }
         /**
@@ -1232,7 +1232,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointBuilder guiAvailable(String guiAvailable) {
-            setProperty("guiAvailable", guiAvailable);
+            doSetProperty("guiAvailable", guiAvailable);
             return this;
         }
         /**
@@ -1243,7 +1243,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointBuilder keyed(boolean keyed) {
-            setProperty("keyed", keyed);
+            doSetProperty("keyed", keyed);
             return this;
         }
         /**
@@ -1254,7 +1254,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointBuilder keyed(String keyed) {
-            setProperty("keyed", keyed);
+            doSetProperty("keyed", keyed);
             return this;
         }
         /**
@@ -1266,7 +1266,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointBuilder outputFieldsIdxArray(
                 Integer[] outputFieldsIdxArray) {
-            setProperty("outputFieldsIdxArray", outputFieldsIdxArray);
+            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
             return this;
         }
         /**
@@ -1279,7 +1279,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointBuilder outputFieldsIdxArray(
                 String outputFieldsIdxArray) {
-            setProperty("outputFieldsIdxArray", outputFieldsIdxArray);
+            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
             return this;
         }
         /**
@@ -1292,7 +1292,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointBuilder outputFieldsLengthArray(
                 Integer[] outputFieldsLengthArray) {
-            setProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
             return this;
         }
         /**
@@ -1306,7 +1306,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointBuilder outputFieldsLengthArray(
                 String outputFieldsLengthArray) {
-            setProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
             return this;
         }
         /**
@@ -1317,7 +1317,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointBuilder searchKey(String searchKey) {
-            setProperty("searchKey", searchKey);
+            doSetProperty("searchKey", searchKey);
             return this;
         }
         /**
@@ -1329,7 +1329,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointBuilder searchType(SearchType searchType) {
-            setProperty("searchType", searchType);
+            doSetProperty("searchType", searchType);
             return this;
         }
         /**
@@ -1341,7 +1341,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: common
          */
         default Jt400EndpointBuilder searchType(String searchType) {
-            setProperty("searchType", searchType);
+            doSetProperty("searchType", searchType);
             return this;
         }
         /**
@@ -1352,7 +1352,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: procedureName
          */
         default Jt400EndpointBuilder procedureName(String procedureName) {
-            setProperty("procedureName", procedureName);
+            doSetProperty("procedureName", procedureName);
             return this;
         }
         /**
@@ -1363,7 +1363,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: security
          */
         default Jt400EndpointBuilder secured(boolean secured) {
-            setProperty("secured", secured);
+            doSetProperty("secured", secured);
             return this;
         }
         /**
@@ -1374,7 +1374,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: security
          */
         default Jt400EndpointBuilder secured(String secured) {
-            setProperty("secured", secured);
+            doSetProperty("secured", secured);
             return this;
         }
     }
@@ -1398,7 +1398,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1411,7 +1411,7 @@ public interface Jt400EndpointBuilderFactory {
          */
         default AdvancedJt400EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1423,7 +1423,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJt400EndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1435,7 +1435,7 @@ public interface Jt400EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJt400EndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

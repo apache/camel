@@ -55,7 +55,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointConsumerBuilder allowStAX(boolean allowStAX) {
-            setProperty("allowStAX", allowStAX);
+            doSetProperty("allowStAX", allowStAX);
             return this;
         }
         /**
@@ -66,7 +66,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointConsumerBuilder allowStAX(String allowStAX) {
-            setProperty("allowStAX", allowStAX);
+            doSetProperty("allowStAX", allowStAX);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointConsumerBuilder headerName(String headerName) {
-            setProperty("headerName", headerName);
+            doSetProperty("headerName", headerName);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder namespacePrefixes(
                 Map<String, String> namespacePrefixes) {
-            setProperty("namespacePrefixes", namespacePrefixes);
+            doSetProperty("namespacePrefixes", namespacePrefixes);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder namespacePrefixes(
                 String namespacePrefixes) {
-            setProperty("namespacePrefixes", namespacePrefixes);
+            doSetProperty("namespacePrefixes", namespacePrefixes);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder resultsFormat(
                 ResultFormat resultsFormat) {
-            setProperty("resultsFormat", resultsFormat);
+            doSetProperty("resultsFormat", resultsFormat);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointConsumerBuilder resultsFormat(String resultsFormat) {
-            setProperty("resultsFormat", resultsFormat);
+            doSetProperty("resultsFormat", resultsFormat);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder resultType(
                 Class<Object> resultType) {
-            setProperty("resultType", resultType);
+            doSetProperty("resultType", resultType);
             return this;
         }
         /**
@@ -157,7 +157,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointConsumerBuilder resultType(String resultType) {
-            setProperty("resultType", resultType);
+            doSetProperty("resultType", resultType);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder stripsAllWhiteSpace(
                 boolean stripsAllWhiteSpace) {
-            setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
+            doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
-            setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
+            doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
         }
         /**
@@ -199,7 +199,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -269,7 +269,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -282,7 +282,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -295,7 +295,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -312,7 +312,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -329,7 +329,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -342,7 +342,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -355,7 +355,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -367,7 +367,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -379,7 +379,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -405,7 +405,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -432,7 +432,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -447,7 +447,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -462,7 +462,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -474,7 +474,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -488,7 +488,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -503,7 +503,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -515,7 +515,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -527,7 +527,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -538,7 +538,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -550,7 +550,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -563,7 +563,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -575,7 +575,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -602,7 +602,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -618,7 +618,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -630,7 +630,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -643,7 +643,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -659,7 +659,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -675,7 +675,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -688,7 +688,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -701,7 +701,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -713,7 +713,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder configuration(
                 Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -726,7 +726,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder configuration(
                 String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -739,7 +739,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder configurationProperties(
                 Map<String, Object> configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -753,7 +753,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder configurationProperties(
                 String configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -766,7 +766,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder moduleURIResolver(
                 Object moduleURIResolver) {
-            setProperty("moduleURIResolver", moduleURIResolver);
+            doSetProperty("moduleURIResolver", moduleURIResolver);
             return this;
         }
         /**
@@ -779,7 +779,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder moduleURIResolver(
                 String moduleURIResolver) {
-            setProperty("moduleURIResolver", moduleURIResolver);
+            doSetProperty("moduleURIResolver", moduleURIResolver);
             return this;
         }
         /**
@@ -792,7 +792,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder parameters(
                 Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -806,7 +806,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder parameters(
                 String parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -818,7 +818,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder properties(
                 Properties properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -831,7 +831,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder properties(
                 String properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -844,7 +844,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder staticQueryContext(
                 Object staticQueryContext) {
-            setProperty("staticQueryContext", staticQueryContext);
+            doSetProperty("staticQueryContext", staticQueryContext);
             return this;
         }
         /**
@@ -857,7 +857,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder staticQueryContext(
                 String staticQueryContext) {
-            setProperty("staticQueryContext", staticQueryContext);
+            doSetProperty("staticQueryContext", staticQueryContext);
             return this;
         }
         /**
@@ -870,7 +870,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -883,7 +883,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -905,7 +905,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointProducerBuilder allowStAX(boolean allowStAX) {
-            setProperty("allowStAX", allowStAX);
+            doSetProperty("allowStAX", allowStAX);
             return this;
         }
         /**
@@ -916,7 +916,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointProducerBuilder allowStAX(String allowStAX) {
-            setProperty("allowStAX", allowStAX);
+            doSetProperty("allowStAX", allowStAX);
             return this;
         }
         /**
@@ -928,7 +928,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointProducerBuilder headerName(String headerName) {
-            setProperty("headerName", headerName);
+            doSetProperty("headerName", headerName);
             return this;
         }
         /**
@@ -942,7 +942,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointProducerBuilder namespacePrefixes(
                 Map<String, String> namespacePrefixes) {
-            setProperty("namespacePrefixes", namespacePrefixes);
+            doSetProperty("namespacePrefixes", namespacePrefixes);
             return this;
         }
         /**
@@ -957,7 +957,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointProducerBuilder namespacePrefixes(
                 String namespacePrefixes) {
-            setProperty("namespacePrefixes", namespacePrefixes);
+            doSetProperty("namespacePrefixes", namespacePrefixes);
             return this;
         }
         /**
@@ -970,7 +970,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointProducerBuilder resultsFormat(
                 ResultFormat resultsFormat) {
-            setProperty("resultsFormat", resultsFormat);
+            doSetProperty("resultsFormat", resultsFormat);
             return this;
         }
         /**
@@ -982,7 +982,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointProducerBuilder resultsFormat(String resultsFormat) {
-            setProperty("resultsFormat", resultsFormat);
+            doSetProperty("resultsFormat", resultsFormat);
             return this;
         }
         /**
@@ -995,7 +995,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointProducerBuilder resultType(
                 Class<Object> resultType) {
-            setProperty("resultType", resultType);
+            doSetProperty("resultType", resultType);
             return this;
         }
         /**
@@ -1007,7 +1007,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointProducerBuilder resultType(String resultType) {
-            setProperty("resultType", resultType);
+            doSetProperty("resultType", resultType);
             return this;
         }
         /**
@@ -1019,7 +1019,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointProducerBuilder stripsAllWhiteSpace(
                 boolean stripsAllWhiteSpace) {
-            setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
+            doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
         }
         /**
@@ -1031,7 +1031,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointProducerBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
-            setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
+            doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
         }
         /**
@@ -1051,7 +1051,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1071,7 +1071,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -1095,7 +1095,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1108,7 +1108,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1120,7 +1120,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder configuration(
                 Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -1133,7 +1133,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder configuration(
                 String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -1146,7 +1146,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder configurationProperties(
                 Map<String, Object> configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -1160,7 +1160,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder configurationProperties(
                 String configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -1173,7 +1173,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder moduleURIResolver(
                 Object moduleURIResolver) {
-            setProperty("moduleURIResolver", moduleURIResolver);
+            doSetProperty("moduleURIResolver", moduleURIResolver);
             return this;
         }
         /**
@@ -1186,7 +1186,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder moduleURIResolver(
                 String moduleURIResolver) {
-            setProperty("moduleURIResolver", moduleURIResolver);
+            doSetProperty("moduleURIResolver", moduleURIResolver);
             return this;
         }
         /**
@@ -1199,7 +1199,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder parameters(
                 Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -1213,7 +1213,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder parameters(
                 String parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -1225,7 +1225,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder properties(
                 Properties properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -1238,7 +1238,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder properties(
                 String properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -1251,7 +1251,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder staticQueryContext(
                 Object staticQueryContext) {
-            setProperty("staticQueryContext", staticQueryContext);
+            doSetProperty("staticQueryContext", staticQueryContext);
             return this;
         }
         /**
@@ -1264,7 +1264,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder staticQueryContext(
                 String staticQueryContext) {
-            setProperty("staticQueryContext", staticQueryContext);
+            doSetProperty("staticQueryContext", staticQueryContext);
             return this;
         }
         /**
@@ -1277,7 +1277,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1290,7 +1290,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1312,7 +1312,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointBuilder allowStAX(boolean allowStAX) {
-            setProperty("allowStAX", allowStAX);
+            doSetProperty("allowStAX", allowStAX);
             return this;
         }
         /**
@@ -1323,7 +1323,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointBuilder allowStAX(String allowStAX) {
-            setProperty("allowStAX", allowStAX);
+            doSetProperty("allowStAX", allowStAX);
             return this;
         }
         /**
@@ -1335,7 +1335,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointBuilder headerName(String headerName) {
-            setProperty("headerName", headerName);
+            doSetProperty("headerName", headerName);
             return this;
         }
         /**
@@ -1349,7 +1349,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointBuilder namespacePrefixes(
                 Map<String, String> namespacePrefixes) {
-            setProperty("namespacePrefixes", namespacePrefixes);
+            doSetProperty("namespacePrefixes", namespacePrefixes);
             return this;
         }
         /**
@@ -1363,7 +1363,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointBuilder namespacePrefixes(String namespacePrefixes) {
-            setProperty("namespacePrefixes", namespacePrefixes);
+            doSetProperty("namespacePrefixes", namespacePrefixes);
             return this;
         }
         /**
@@ -1375,7 +1375,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointBuilder resultsFormat(ResultFormat resultsFormat) {
-            setProperty("resultsFormat", resultsFormat);
+            doSetProperty("resultsFormat", resultsFormat);
             return this;
         }
         /**
@@ -1387,7 +1387,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointBuilder resultsFormat(String resultsFormat) {
-            setProperty("resultsFormat", resultsFormat);
+            doSetProperty("resultsFormat", resultsFormat);
             return this;
         }
         /**
@@ -1399,7 +1399,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointBuilder resultType(Class<Object> resultType) {
-            setProperty("resultType", resultType);
+            doSetProperty("resultType", resultType);
             return this;
         }
         /**
@@ -1411,7 +1411,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: common
          */
         default XQueryEndpointBuilder resultType(String resultType) {
-            setProperty("resultType", resultType);
+            doSetProperty("resultType", resultType);
             return this;
         }
         /**
@@ -1423,7 +1423,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointBuilder stripsAllWhiteSpace(
                 boolean stripsAllWhiteSpace) {
-            setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
+            doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
         }
         /**
@@ -1435,7 +1435,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default XQueryEndpointBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
-            setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
+            doSetProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
         }
     }
@@ -1459,7 +1459,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1472,7 +1472,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1483,7 +1483,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXQueryEndpointBuilder configuration(Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -1495,7 +1495,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXQueryEndpointBuilder configuration(String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -1508,7 +1508,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointBuilder configurationProperties(
                 Map<String, Object> configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -1522,7 +1522,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointBuilder configurationProperties(
                 String configurationProperties) {
-            setProperty("configurationProperties", configurationProperties);
+            doSetProperty("configurationProperties", configurationProperties);
             return this;
         }
         /**
@@ -1535,7 +1535,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointBuilder moduleURIResolver(
                 Object moduleURIResolver) {
-            setProperty("moduleURIResolver", moduleURIResolver);
+            doSetProperty("moduleURIResolver", moduleURIResolver);
             return this;
         }
         /**
@@ -1548,7 +1548,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointBuilder moduleURIResolver(
                 String moduleURIResolver) {
-            setProperty("moduleURIResolver", moduleURIResolver);
+            doSetProperty("moduleURIResolver", moduleURIResolver);
             return this;
         }
         /**
@@ -1561,7 +1561,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointBuilder parameters(
                 Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -1574,7 +1574,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXQueryEndpointBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -1585,7 +1585,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXQueryEndpointBuilder properties(Properties properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -1597,7 +1597,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXQueryEndpointBuilder properties(String properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -1610,7 +1610,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointBuilder staticQueryContext(
                 Object staticQueryContext) {
-            setProperty("staticQueryContext", staticQueryContext);
+            doSetProperty("staticQueryContext", staticQueryContext);
             return this;
         }
         /**
@@ -1623,7 +1623,7 @@ public interface XQueryEndpointBuilderFactory {
          */
         default AdvancedXQueryEndpointBuilder staticQueryContext(
                 String staticQueryContext) {
-            setProperty("staticQueryContext", staticQueryContext);
+            doSetProperty("staticQueryContext", staticQueryContext);
             return this;
         }
         /**
@@ -1635,7 +1635,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXQueryEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1647,7 +1647,7 @@ public interface XQueryEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXQueryEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

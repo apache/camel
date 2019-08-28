@@ -51,7 +51,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointConsumerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointConsumerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -127,7 +127,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder keyType(
                 String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -219,7 +219,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -244,7 +244,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder valueType(
                 String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
     }
@@ -268,7 +268,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -281,7 +281,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -293,7 +293,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -305,7 +305,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder cache(Object cache) {
-            setProperty("cache", cache);
+            doSetProperty("cache", cache);
             return this;
         }
         /**
@@ -317,7 +317,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder cache(String cache) {
-            setProperty("cache", cache);
+            doSetProperty("cache", cache);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder cacheLoader(
                 Object cacheLoader) {
-            setProperty("cacheLoader", cacheLoader);
+            doSetProperty("cacheLoader", cacheLoader);
             return this;
         }
         /**
@@ -343,7 +343,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder cacheLoader(
                 String cacheLoader) {
-            setProperty("cacheLoader", cacheLoader);
+            doSetProperty("cacheLoader", cacheLoader);
             return this;
         }
         /**
@@ -356,7 +356,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder evictionType(
                 EvictionType evictionType) {
-            setProperty("evictionType", evictionType);
+            doSetProperty("evictionType", evictionType);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder evictionType(
                 String evictionType) {
-            setProperty("evictionType", evictionType);
+            doSetProperty("evictionType", evictionType);
             return this;
         }
         /**
@@ -382,7 +382,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder expireAfterAccessTime(
                 int expireAfterAccessTime) {
-            setProperty("expireAfterAccessTime", expireAfterAccessTime);
+            doSetProperty("expireAfterAccessTime", expireAfterAccessTime);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder expireAfterAccessTime(
                 String expireAfterAccessTime) {
-            setProperty("expireAfterAccessTime", expireAfterAccessTime);
+            doSetProperty("expireAfterAccessTime", expireAfterAccessTime);
             return this;
         }
         /**
@@ -408,7 +408,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder expireAfterWriteTime(
                 int expireAfterWriteTime) {
-            setProperty("expireAfterWriteTime", expireAfterWriteTime);
+            doSetProperty("expireAfterWriteTime", expireAfterWriteTime);
             return this;
         }
         /**
@@ -421,7 +421,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder expireAfterWriteTime(
                 String expireAfterWriteTime) {
-            setProperty("expireAfterWriteTime", expireAfterWriteTime);
+            doSetProperty("expireAfterWriteTime", expireAfterWriteTime);
             return this;
         }
         /**
@@ -433,7 +433,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder initialCapacity(
                 int initialCapacity) {
-            setProperty("initialCapacity", initialCapacity);
+            doSetProperty("initialCapacity", initialCapacity);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder initialCapacity(
                 String initialCapacity) {
-            setProperty("initialCapacity", initialCapacity);
+            doSetProperty("initialCapacity", initialCapacity);
             return this;
         }
         /**
@@ -457,7 +457,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder key(Object key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -469,7 +469,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder key(String key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -489,7 +489,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -509,7 +509,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -520,7 +520,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder maximumSize(int maximumSize) {
-            setProperty("maximumSize", maximumSize);
+            doSetProperty("maximumSize", maximumSize);
             return this;
         }
         /**
@@ -532,7 +532,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder maximumSize(
                 String maximumSize) {
-            setProperty("maximumSize", maximumSize);
+            doSetProperty("maximumSize", maximumSize);
             return this;
         }
         /**
@@ -545,7 +545,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder removalListener(
                 Object removalListener) {
-            setProperty("removalListener", removalListener);
+            doSetProperty("removalListener", removalListener);
             return this;
         }
         /**
@@ -558,7 +558,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder removalListener(
                 String removalListener) {
-            setProperty("removalListener", removalListener);
+            doSetProperty("removalListener", removalListener);
             return this;
         }
         /**
@@ -572,7 +572,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder statsCounter(
                 Object statsCounter) {
-            setProperty("statsCounter", statsCounter);
+            doSetProperty("statsCounter", statsCounter);
             return this;
         }
         /**
@@ -586,7 +586,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder statsCounter(
                 String statsCounter) {
-            setProperty("statsCounter", statsCounter);
+            doSetProperty("statsCounter", statsCounter);
             return this;
         }
         /**
@@ -598,7 +598,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder statsEnabled(
                 boolean statsEnabled) {
-            setProperty("statsEnabled", statsEnabled);
+            doSetProperty("statsEnabled", statsEnabled);
             return this;
         }
         /**
@@ -610,7 +610,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointProducerBuilder statsEnabled(
                 String statsEnabled) {
-            setProperty("statsEnabled", statsEnabled);
+            doSetProperty("statsEnabled", statsEnabled);
             return this;
         }
     }
@@ -634,7 +634,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -647,7 +647,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -659,7 +659,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder keyType(
                 String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -672,7 +672,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -685,7 +685,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -697,7 +697,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder valueType(
                 String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
     }
@@ -721,7 +721,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -734,7 +734,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default CaffeineCacheEndpointBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
     }
@@ -758,7 +758,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -771,7 +771,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -782,7 +782,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder keyType(String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -795,7 +795,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -808,7 +808,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          */
         default AdvancedCaffeineCacheEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -819,7 +819,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder valueType(String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
     }

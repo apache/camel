@@ -47,7 +47,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder amazonDDBClient(Object amazonDDBClient) {
-            setProperty("amazonDDBClient", amazonDDBClient);
+            doSetProperty("amazonDDBClient", amazonDDBClient);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder amazonDDBClient(String amazonDDBClient) {
-            setProperty("amazonDDBClient", amazonDDBClient);
+            doSetProperty("amazonDDBClient", amazonDDBClient);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder consistentRead(boolean consistentRead) {
-            setProperty("consistentRead", consistentRead);
+            doSetProperty("consistentRead", consistentRead);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder consistentRead(String consistentRead) {
-            setProperty("consistentRead", consistentRead);
+            doSetProperty("consistentRead", consistentRead);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder keyAttributeName(String keyAttributeName) {
-            setProperty("keyAttributeName", keyAttributeName);
+            doSetProperty("keyAttributeName", keyAttributeName);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder keyAttributeType(String keyAttributeType) {
-            setProperty("keyAttributeType", keyAttributeType);
+            doSetProperty("keyAttributeType", keyAttributeType);
             return this;
         }
         /**
@@ -117,7 +117,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder operation(DdbOperations operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder readCapacity(Long readCapacity) {
-            setProperty("readCapacity", readCapacity);
+            doSetProperty("readCapacity", readCapacity);
             return this;
         }
         /**
@@ -193,7 +193,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder readCapacity(String readCapacity) {
-            setProperty("readCapacity", readCapacity);
+            doSetProperty("readCapacity", readCapacity);
             return this;
         }
         /**
@@ -204,7 +204,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -216,7 +216,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder writeCapacity(Long writeCapacity) {
-            setProperty("writeCapacity", writeCapacity);
+            doSetProperty("writeCapacity", writeCapacity);
             return this;
         }
         /**
@@ -228,7 +228,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder writeCapacity(String writeCapacity) {
-            setProperty("writeCapacity", writeCapacity);
+            doSetProperty("writeCapacity", writeCapacity);
             return this;
         }
         /**
@@ -239,7 +239,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: security
          */
         default DdbEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: security
          */
         default DdbEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -274,7 +274,7 @@ public interface DdbEndpointBuilderFactory {
          */
         default AdvancedDdbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface DdbEndpointBuilderFactory {
          */
         default AdvancedDdbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDdbEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDdbEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

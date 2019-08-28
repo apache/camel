@@ -50,7 +50,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: common
          */
         default AsteriskEndpointConsumerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
+            doSetProperty("hostname", hostname);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: common
          */
         default AsteriskEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: common
          */
         default AsteriskEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AsteriskEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AsteriskEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -137,7 +137,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -204,7 +204,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -253,7 +253,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: common
          */
         default AsteriskEndpointProducerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
+            doSetProperty("hostname", hostname);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: common
          */
         default AsteriskEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -277,7 +277,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: common
          */
         default AsteriskEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -290,7 +290,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: producer
          */
         default AsteriskEndpointProducerBuilder action(AsteriskAction action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -303,7 +303,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: producer
          */
         default AsteriskEndpointProducerBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -323,7 +323,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AsteriskEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -343,7 +343,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AsteriskEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -367,7 +367,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -406,7 +406,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -429,7 +429,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: common
          */
         default AsteriskEndpointBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
+            doSetProperty("hostname", hostname);
             return this;
         }
         /**
@@ -441,7 +441,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: common
          */
         default AsteriskEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -453,7 +453,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: common
          */
         default AsteriskEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -477,7 +477,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -490,7 +490,7 @@ public interface AsteriskEndpointBuilderFactory {
          */
         default AdvancedAsteriskEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -502,7 +502,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAsteriskEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -514,7 +514,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAsteriskEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

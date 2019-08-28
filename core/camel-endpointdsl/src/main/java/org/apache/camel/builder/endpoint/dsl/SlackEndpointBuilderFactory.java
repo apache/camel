@@ -61,7 +61,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: consumer
          */
         default SlackEndpointConsumerBuilder maxResults(String maxResults) {
-            setProperty("maxResults", maxResults);
+            doSetProperty("maxResults", maxResults);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: consumer
          */
         default SlackEndpointConsumerBuilder serverUrl(String serverUrl) {
-            setProperty("serverUrl", serverUrl);
+            doSetProperty("serverUrl", serverUrl);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: consumer
          */
         default SlackEndpointConsumerBuilder token(String token) {
-            setProperty("token", token);
+            doSetProperty("token", token);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -224,7 +224,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -237,7 +237,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -262,7 +262,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -274,7 +274,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -327,7 +327,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -342,7 +342,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -383,7 +383,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -398,7 +398,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -410,7 +410,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -422,7 +422,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -433,7 +433,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -457,7 +457,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -469,7 +469,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -496,7 +496,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -512,7 +512,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -524,7 +524,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -537,7 +537,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -553,7 +553,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -569,7 +569,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -582,7 +582,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -595,7 +595,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -608,7 +608,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -621,7 +621,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -643,7 +643,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: producer
          */
         default SlackEndpointProducerBuilder iconEmoji(String iconEmoji) {
-            setProperty("iconEmoji", iconEmoji);
+            doSetProperty("iconEmoji", iconEmoji);
             return this;
         }
         /**
@@ -655,7 +655,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: producer
          */
         default SlackEndpointProducerBuilder iconUrl(String iconUrl) {
-            setProperty("iconUrl", iconUrl);
+            doSetProperty("iconUrl", iconUrl);
             return this;
         }
         /**
@@ -675,7 +675,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -695,7 +695,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default SlackEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -707,7 +707,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: producer
          */
         default SlackEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -718,7 +718,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: producer
          */
         default SlackEndpointProducerBuilder webhookUrl(String webhookUrl) {
-            setProperty("webhookUrl", webhookUrl);
+            doSetProperty("webhookUrl", webhookUrl);
             return this;
         }
     }
@@ -742,7 +742,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -755,7 +755,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -768,7 +768,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -781,7 +781,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -816,7 +816,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -829,7 +829,7 @@ public interface SlackEndpointBuilderFactory {
          */
         default AdvancedSlackEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -841,7 +841,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSlackEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -853,7 +853,7 @@ public interface SlackEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSlackEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

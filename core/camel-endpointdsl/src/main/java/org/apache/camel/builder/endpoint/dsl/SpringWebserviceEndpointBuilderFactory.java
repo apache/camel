@@ -54,7 +54,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointConsumerBuilder messageFilter(
                 Object messageFilter) {
-            setProperty("messageFilter", messageFilter);
+            doSetProperty("messageFilter", messageFilter);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointConsumerBuilder messageFilter(
                 String messageFilter) {
-            setProperty("messageFilter", messageFilter);
+            doSetProperty("messageFilter", messageFilter);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointConsumerBuilder endpointDispatcher(
                 Object endpointDispatcher) {
-            setProperty("endpointDispatcher", endpointDispatcher);
+            doSetProperty("endpointDispatcher", endpointDispatcher);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointConsumerBuilder endpointDispatcher(
                 String endpointDispatcher) {
-            setProperty("endpointDispatcher", endpointDispatcher);
+            doSetProperty("endpointDispatcher", endpointDispatcher);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointConsumerBuilder endpointMapping(
                 Object endpointMapping) {
-            setProperty("endpointMapping", endpointMapping);
+            doSetProperty("endpointMapping", endpointMapping);
             return this;
         }
         /**
@@ -174,7 +174,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointConsumerBuilder endpointMapping(
                 String endpointMapping) {
-            setProperty("endpointMapping", endpointMapping);
+            doSetProperty("endpointMapping", endpointMapping);
             return this;
         }
         /**
@@ -187,7 +187,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -228,7 +228,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -244,7 +244,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -269,7 +269,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -282,7 +282,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -295,7 +295,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -308,7 +308,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -321,7 +321,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -346,7 +346,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder messageFilter(
                 Object messageFilter) {
-            setProperty("messageFilter", messageFilter);
+            doSetProperty("messageFilter", messageFilter);
             return this;
         }
         /**
@@ -360,7 +360,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder messageFilter(
                 String messageFilter) {
-            setProperty("messageFilter", messageFilter);
+            doSetProperty("messageFilter", messageFilter);
             return this;
         }
         /**
@@ -376,7 +376,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder allowResponseAttachmentOverride(
                 boolean allowResponseAttachmentOverride) {
-            setProperty("allowResponseAttachmentOverride", allowResponseAttachmentOverride);
+            doSetProperty("allowResponseAttachmentOverride", allowResponseAttachmentOverride);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder allowResponseAttachmentOverride(
                 String allowResponseAttachmentOverride) {
-            setProperty("allowResponseAttachmentOverride", allowResponseAttachmentOverride);
+            doSetProperty("allowResponseAttachmentOverride", allowResponseAttachmentOverride);
             return this;
         }
         /**
@@ -408,7 +408,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder allowResponseHeaderOverride(
                 boolean allowResponseHeaderOverride) {
-            setProperty("allowResponseHeaderOverride", allowResponseHeaderOverride);
+            doSetProperty("allowResponseHeaderOverride", allowResponseHeaderOverride);
             return this;
         }
         /**
@@ -424,7 +424,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder allowResponseHeaderOverride(
                 String allowResponseHeaderOverride) {
-            setProperty("allowResponseHeaderOverride", allowResponseHeaderOverride);
+            doSetProperty("allowResponseHeaderOverride", allowResponseHeaderOverride);
             return this;
         }
         /**
@@ -437,7 +437,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder faultAction(
                 URI faultAction) {
-            setProperty("faultAction", faultAction);
+            doSetProperty("faultAction", faultAction);
             return this;
         }
         /**
@@ -450,7 +450,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder faultAction(
                 String faultAction) {
-            setProperty("faultAction", faultAction);
+            doSetProperty("faultAction", faultAction);
             return this;
         }
         /**
@@ -462,7 +462,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder faultTo(URI faultTo) {
-            setProperty("faultTo", faultTo);
+            doSetProperty("faultTo", faultTo);
             return this;
         }
         /**
@@ -474,7 +474,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder faultTo(String faultTo) {
-            setProperty("faultTo", faultTo);
+            doSetProperty("faultTo", faultTo);
             return this;
         }
         /**
@@ -494,7 +494,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -514,7 +514,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -528,7 +528,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder messageFactory(
                 Object messageFactory) {
-            setProperty("messageFactory", messageFactory);
+            doSetProperty("messageFactory", messageFactory);
             return this;
         }
         /**
@@ -542,7 +542,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder messageFactory(
                 String messageFactory) {
-            setProperty("messageFactory", messageFactory);
+            doSetProperty("messageFactory", messageFactory);
             return this;
         }
         /**
@@ -556,7 +556,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
                 Object messageIdStrategy) {
-            setProperty("messageIdStrategy", messageIdStrategy);
+            doSetProperty("messageIdStrategy", messageIdStrategy);
             return this;
         }
         /**
@@ -570,7 +570,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
                 String messageIdStrategy) {
-            setProperty("messageIdStrategy", messageIdStrategy);
+            doSetProperty("messageIdStrategy", messageIdStrategy);
             return this;
         }
         /**
@@ -585,7 +585,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder messageSender(
                 Object messageSender) {
-            setProperty("messageSender", messageSender);
+            doSetProperty("messageSender", messageSender);
             return this;
         }
         /**
@@ -600,7 +600,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder messageSender(
                 String messageSender) {
-            setProperty("messageSender", messageSender);
+            doSetProperty("messageSender", messageSender);
             return this;
         }
         /**
@@ -613,7 +613,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder outputAction(
                 URI outputAction) {
-            setProperty("outputAction", outputAction);
+            doSetProperty("outputAction", outputAction);
             return this;
         }
         /**
@@ -626,7 +626,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder outputAction(
                 String outputAction) {
-            setProperty("outputAction", outputAction);
+            doSetProperty("outputAction", outputAction);
             return this;
         }
         /**
@@ -638,7 +638,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder replyTo(URI replyTo) {
-            setProperty("replyTo", replyTo);
+            doSetProperty("replyTo", replyTo);
             return this;
         }
         /**
@@ -650,7 +650,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder replyTo(String replyTo) {
-            setProperty("replyTo", replyTo);
+            doSetProperty("replyTo", replyTo);
             return this;
         }
         /**
@@ -663,7 +663,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder soapAction(
                 String soapAction) {
-            setProperty("soapAction", soapAction);
+            doSetProperty("soapAction", soapAction);
             return this;
         }
         /**
@@ -685,7 +685,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -707,7 +707,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -724,7 +724,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder webServiceTemplate(
                 Object webServiceTemplate) {
-            setProperty("webServiceTemplate", webServiceTemplate);
+            doSetProperty("webServiceTemplate", webServiceTemplate);
             return this;
         }
         /**
@@ -741,7 +741,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder webServiceTemplate(
                 String webServiceTemplate) {
-            setProperty("webServiceTemplate", webServiceTemplate);
+            doSetProperty("webServiceTemplate", webServiceTemplate);
             return this;
         }
         /**
@@ -755,7 +755,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder wsAddressingAction(
                 URI wsAddressingAction) {
-            setProperty("wsAddressingAction", wsAddressingAction);
+            doSetProperty("wsAddressingAction", wsAddressingAction);
             return this;
         }
         /**
@@ -769,7 +769,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder wsAddressingAction(
                 String wsAddressingAction) {
-            setProperty("wsAddressingAction", wsAddressingAction);
+            doSetProperty("wsAddressingAction", wsAddressingAction);
             return this;
         }
         /**
@@ -782,7 +782,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -795,7 +795,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -820,7 +820,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -833,7 +833,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -846,7 +846,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -859,7 +859,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -884,7 +884,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointBuilder messageFilter(
                 Object messageFilter) {
-            setProperty("messageFilter", messageFilter);
+            doSetProperty("messageFilter", messageFilter);
             return this;
         }
         /**
@@ -898,7 +898,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointBuilder messageFilter(
                 String messageFilter) {
-            setProperty("messageFilter", messageFilter);
+            doSetProperty("messageFilter", messageFilter);
             return this;
         }
         /**
@@ -911,7 +911,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -924,7 +924,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default SpringWebserviceEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -948,7 +948,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -961,7 +961,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -974,7 +974,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -987,7 +987,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          */
         default AdvancedSpringWebserviceEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -47,7 +47,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder binary(boolean binary) {
-            setProperty("binary", binary);
+            doSetProperty("binary", binary);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder binary(String binary) {
-            setProperty("binary", binary);
+            doSetProperty("binary", binary);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder cacheScript(boolean cacheScript) {
-            setProperty("cacheScript", cacheScript);
+            doSetProperty("cacheScript", cacheScript);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder cacheScript(String cacheScript) {
-            setProperty("cacheScript", cacheScript);
+            doSetProperty("cacheScript", cacheScript);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder script(String script) {
-            setProperty("script", script);
+            doSetProperty("script", script);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder transform(boolean transform) {
-            setProperty("transform", transform);
+            doSetProperty("transform", transform);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder transform(String transform) {
-            setProperty("transform", transform);
+            doSetProperty("transform", transform);
             return this;
         }
     }
@@ -166,7 +166,7 @@ public interface LanguageEndpointBuilderFactory {
          */
         default AdvancedLanguageEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface LanguageEndpointBuilderFactory {
          */
         default AdvancedLanguageEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

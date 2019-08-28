@@ -51,7 +51,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          */
         default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
                 Object amazonKinesisFirehoseClient) {
-            setProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
+            doSetProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          */
         default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
                 String amazonKinesisFirehoseClient) {
-            setProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
+            doSetProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -124,7 +124,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * Group: security
          */
         default KinesisFirehoseEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * Group: security
          */
         default KinesisFirehoseEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -159,7 +159,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          */
         default AdvancedKinesisFirehoseEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          */
         default AdvancedKinesisFirehoseEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -185,7 +185,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          */
         default AdvancedKinesisFirehoseEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -198,7 +198,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          */
         default AdvancedKinesisFirehoseEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

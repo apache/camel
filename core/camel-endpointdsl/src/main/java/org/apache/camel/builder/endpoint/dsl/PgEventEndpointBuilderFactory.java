@@ -51,7 +51,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: common
          */
         default PgEventEndpointConsumerBuilder datasource(Object datasource) {
-            setProperty("datasource", datasource);
+            doSetProperty("datasource", datasource);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: common
          */
         default PgEventEndpointConsumerBuilder datasource(String datasource) {
-            setProperty("datasource", datasource);
+            doSetProperty("datasource", datasource);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default PgEventEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default PgEventEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: security
          */
         default PgEventEndpointConsumerBuilder pass(String pass) {
-            setProperty("pass", pass);
+            doSetProperty("pass", pass);
             return this;
         }
         /**
@@ -122,7 +122,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: security
          */
         default PgEventEndpointConsumerBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -150,7 +150,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -204,7 +204,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -266,7 +266,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: common
          */
         default PgEventEndpointProducerBuilder datasource(Object datasource) {
-            setProperty("datasource", datasource);
+            doSetProperty("datasource", datasource);
             return this;
         }
         /**
@@ -279,7 +279,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: common
          */
         default PgEventEndpointProducerBuilder datasource(String datasource) {
-            setProperty("datasource", datasource);
+            doSetProperty("datasource", datasource);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default PgEventEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default PgEventEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: security
          */
         default PgEventEndpointProducerBuilder pass(String pass) {
-            setProperty("pass", pass);
+            doSetProperty("pass", pass);
             return this;
         }
         /**
@@ -341,7 +341,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: security
          */
         default PgEventEndpointProducerBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -366,7 +366,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -379,7 +379,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -405,7 +405,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -428,7 +428,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: common
          */
         default PgEventEndpointBuilder datasource(Object datasource) {
-            setProperty("datasource", datasource);
+            doSetProperty("datasource", datasource);
             return this;
         }
         /**
@@ -441,7 +441,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: common
          */
         default PgEventEndpointBuilder datasource(String datasource) {
-            setProperty("datasource", datasource);
+            doSetProperty("datasource", datasource);
             return this;
         }
         /**
@@ -452,7 +452,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: security
          */
         default PgEventEndpointBuilder pass(String pass) {
-            setProperty("pass", pass);
+            doSetProperty("pass", pass);
             return this;
         }
         /**
@@ -463,7 +463,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: security
          */
         default PgEventEndpointBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -487,7 +487,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -500,7 +500,7 @@ public interface PgEventEndpointBuilderFactory {
          */
         default AdvancedPgEventEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -512,7 +512,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPgEventEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -524,7 +524,7 @@ public interface PgEventEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPgEventEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

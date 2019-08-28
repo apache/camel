@@ -48,7 +48,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Group: producer
          */
         default OpenshiftBuildsEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Group: producer
          */
         default OpenshiftBuildsEndpointBuilder dnsDomain(String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default OpenshiftBuildsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default OpenshiftBuildsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Group: producer
          */
         default OpenshiftBuildsEndpointBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Group: producer
          */
         default OpenshiftBuildsEndpointBuilder portProtocol(String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Group: security
          */
         default OpenshiftBuildsEndpointBuilder caCertData(String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Group: security
          */
         default OpenshiftBuildsEndpointBuilder caCertFile(String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -141,7 +141,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default OpenshiftBuildsEndpointBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default OpenshiftBuildsEndpointBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default OpenshiftBuildsEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default OpenshiftBuildsEndpointBuilder clientKeyData(
                 String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default OpenshiftBuildsEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default OpenshiftBuildsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Group: security
          */
         default OpenshiftBuildsEndpointBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -223,7 +223,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Group: security
          */
         default OpenshiftBuildsEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -234,7 +234,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Group: security
          */
         default OpenshiftBuildsEndpointBuilder trustCerts(Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -246,7 +246,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Group: security
          */
         default OpenshiftBuildsEndpointBuilder trustCerts(String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -257,7 +257,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Group: security
          */
         default OpenshiftBuildsEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -281,7 +281,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default AdvancedOpenshiftBuildsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default AdvancedOpenshiftBuildsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -307,7 +307,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default AdvancedOpenshiftBuildsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -321,7 +321,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default AdvancedOpenshiftBuildsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -334,7 +334,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default AdvancedOpenshiftBuildsEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -347,7 +347,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          */
         default AdvancedOpenshiftBuildsEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

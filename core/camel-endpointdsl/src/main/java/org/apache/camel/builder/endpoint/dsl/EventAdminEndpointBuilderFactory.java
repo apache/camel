@@ -51,7 +51,7 @@ public interface EventAdminEndpointBuilderFactory {
          * Group: common
          */
         default EventAdminEndpointConsumerBuilder send(boolean send) {
-            setProperty("send", send);
+            doSetProperty("send", send);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface EventAdminEndpointBuilderFactory {
          * Group: common
          */
         default EventAdminEndpointConsumerBuilder send(String send) {
-            setProperty("send", send);
+            doSetProperty("send", send);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default EventAdminEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default EventAdminEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -127,7 +127,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -220,7 +220,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -243,7 +243,7 @@ public interface EventAdminEndpointBuilderFactory {
          * Group: common
          */
         default EventAdminEndpointProducerBuilder send(boolean send) {
-            setProperty("send", send);
+            doSetProperty("send", send);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface EventAdminEndpointBuilderFactory {
          * Group: common
          */
         default EventAdminEndpointProducerBuilder send(String send) {
-            setProperty("send", send);
+            doSetProperty("send", send);
             return this;
         }
         /**
@@ -275,7 +275,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default EventAdminEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -295,7 +295,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default EventAdminEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -320,7 +320,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -333,7 +333,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -346,7 +346,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -382,7 +382,7 @@ public interface EventAdminEndpointBuilderFactory {
          * Group: common
          */
         default EventAdminEndpointBuilder send(boolean send) {
-            setProperty("send", send);
+            doSetProperty("send", send);
             return this;
         }
         /**
@@ -394,7 +394,7 @@ public interface EventAdminEndpointBuilderFactory {
          * Group: common
          */
         default EventAdminEndpointBuilder send(String send) {
-            setProperty("send", send);
+            doSetProperty("send", send);
             return this;
         }
     }
@@ -418,7 +418,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -444,7 +444,7 @@ public interface EventAdminEndpointBuilderFactory {
          */
         default AdvancedEventAdminEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -456,7 +456,7 @@ public interface EventAdminEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedEventAdminEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

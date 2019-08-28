@@ -52,7 +52,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder attachmentId(Long attachmentId) {
-            setProperty("attachmentId", attachmentId);
+            doSetProperty("attachmentId", attachmentId);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder attachmentId(String attachmentId) {
-            setProperty("attachmentId", attachmentId);
+            doSetProperty("attachmentId", attachmentId);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder contentId(Long contentId) {
-            setProperty("contentId", contentId);
+            doSetProperty("contentId", contentId);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder contentId(String contentId) {
-            setProperty("contentId", contentId);
+            doSetProperty("contentId", contentId);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder deploymentId(String deploymentId) {
-            setProperty("deploymentId", deploymentId);
+            doSetProperty("deploymentId", deploymentId);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointConsumerBuilder emitterSendItems(
                 Boolean emitterSendItems) {
-            setProperty("emitterSendItems", emitterSendItems);
+            doSetProperty("emitterSendItems", emitterSendItems);
             return this;
         }
         /**
@@ -124,7 +124,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointConsumerBuilder emitterSendItems(
                 String emitterSendItems) {
-            setProperty("emitterSendItems", emitterSendItems);
+            doSetProperty("emitterSendItems", emitterSendItems);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder event(Object event) {
-            setProperty("event", event);
+            doSetProperty("event", event);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder event(String event) {
-            setProperty("event", event);
+            doSetProperty("event", event);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder eventType(String eventType) {
-            setProperty("eventType", eventType);
+            doSetProperty("eventType", eventType);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder identifier(String identifier) {
-            setProperty("identifier", identifier);
+            doSetProperty("identifier", identifier);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder maxNumber(Integer maxNumber) {
-            setProperty("maxNumber", maxNumber);
+            doSetProperty("maxNumber", maxNumber);
             return this;
         }
         /**
@@ -193,7 +193,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder maxNumber(String maxNumber) {
-            setProperty("maxNumber", maxNumber);
+            doSetProperty("maxNumber", maxNumber);
             return this;
         }
         /**
@@ -204,7 +204,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder page(Integer page) {
-            setProperty("page", page);
+            doSetProperty("page", page);
             return this;
         }
         /**
@@ -216,7 +216,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder page(String page) {
-            setProperty("page", page);
+            doSetProperty("page", page);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder pageSize(Integer pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -239,7 +239,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder pageSize(String pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder processId(String processId) {
-            setProperty("processId", processId);
+            doSetProperty("processId", processId);
             return this;
         }
         /**
@@ -262,7 +262,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointConsumerBuilder processInstanceId(
                 Long processInstanceId) {
-            setProperty("processInstanceId", processInstanceId);
+            doSetProperty("processInstanceId", processInstanceId);
             return this;
         }
         /**
@@ -274,7 +274,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointConsumerBuilder processInstanceId(
                 String processInstanceId) {
-            setProperty("processInstanceId", processInstanceId);
+            doSetProperty("processInstanceId", processInstanceId);
             return this;
         }
         /**
@@ -285,7 +285,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder targetUserId(String targetUserId) {
-            setProperty("targetUserId", targetUserId);
+            doSetProperty("targetUserId", targetUserId);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder task(Object task) {
-            setProperty("task", task);
+            doSetProperty("task", task);
             return this;
         }
         /**
@@ -308,7 +308,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder task(String task) {
-            setProperty("task", task);
+            doSetProperty("task", task);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder taskId(Long taskId) {
-            setProperty("taskId", taskId);
+            doSetProperty("taskId", taskId);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder taskId(String taskId) {
-            setProperty("taskId", taskId);
+            doSetProperty("taskId", taskId);
             return this;
         }
         /**
@@ -341,7 +341,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder timeout(Integer timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -364,7 +364,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -375,7 +375,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder value(Object value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -386,7 +386,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder value(String value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -397,7 +397,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder workItemId(Long workItemId) {
-            setProperty("workItemId", workItemId);
+            doSetProperty("workItemId", workItemId);
             return this;
         }
         /**
@@ -408,7 +408,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointConsumerBuilder workItemId(String workItemId) {
-            setProperty("workItemId", workItemId);
+            doSetProperty("workItemId", workItemId);
             return this;
         }
         /**
@@ -426,7 +426,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -444,7 +444,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -456,7 +456,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: filter
          */
         default JBPMEndpointConsumerBuilder statuses(List<String> statuses) {
-            setProperty("statuses", statuses);
+            doSetProperty("statuses", statuses);
             return this;
         }
         /**
@@ -468,7 +468,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: filter
          */
         default JBPMEndpointConsumerBuilder statuses(String statuses) {
-            setProperty("statuses", statuses);
+            doSetProperty("statuses", statuses);
             return this;
         }
         /**
@@ -479,7 +479,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: security
          */
         default JBPMEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -490,7 +490,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: security
          */
         default JBPMEndpointConsumerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -517,7 +517,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -533,7 +533,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -545,7 +545,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -558,7 +558,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -584,7 +584,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -597,7 +597,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder entities(
                 List<String> entities) {
-            setProperty("entities", entities);
+            doSetProperty("entities", entities);
             return this;
         }
         /**
@@ -609,7 +609,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJBPMEndpointConsumerBuilder entities(String entities) {
-            setProperty("entities", entities);
+            doSetProperty("entities", entities);
             return this;
         }
         /**
@@ -621,7 +621,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder extraJaxbClasses(
                 Class[] extraJaxbClasses) {
-            setProperty("extraJaxbClasses", extraJaxbClasses);
+            doSetProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
         }
         /**
@@ -634,7 +634,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder extraJaxbClasses(
                 String extraJaxbClasses) {
-            setProperty("extraJaxbClasses", extraJaxbClasses);
+            doSetProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
         }
         /**
@@ -647,7 +647,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder parameters(
                 Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -660,7 +660,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJBPMEndpointConsumerBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -673,7 +673,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -686,7 +686,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -708,7 +708,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder attachmentId(Long attachmentId) {
-            setProperty("attachmentId", attachmentId);
+            doSetProperty("attachmentId", attachmentId);
             return this;
         }
         /**
@@ -719,7 +719,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder attachmentId(String attachmentId) {
-            setProperty("attachmentId", attachmentId);
+            doSetProperty("attachmentId", attachmentId);
             return this;
         }
         /**
@@ -730,7 +730,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder contentId(Long contentId) {
-            setProperty("contentId", contentId);
+            doSetProperty("contentId", contentId);
             return this;
         }
         /**
@@ -741,7 +741,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder contentId(String contentId) {
-            setProperty("contentId", contentId);
+            doSetProperty("contentId", contentId);
             return this;
         }
         /**
@@ -753,7 +753,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder deploymentId(String deploymentId) {
-            setProperty("deploymentId", deploymentId);
+            doSetProperty("deploymentId", deploymentId);
             return this;
         }
         /**
@@ -766,7 +766,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointProducerBuilder emitterSendItems(
                 Boolean emitterSendItems) {
-            setProperty("emitterSendItems", emitterSendItems);
+            doSetProperty("emitterSendItems", emitterSendItems);
             return this;
         }
         /**
@@ -780,7 +780,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointProducerBuilder emitterSendItems(
                 String emitterSendItems) {
-            setProperty("emitterSendItems", emitterSendItems);
+            doSetProperty("emitterSendItems", emitterSendItems);
             return this;
         }
         /**
@@ -792,7 +792,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder event(Object event) {
-            setProperty("event", event);
+            doSetProperty("event", event);
             return this;
         }
         /**
@@ -804,7 +804,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder event(String event) {
-            setProperty("event", event);
+            doSetProperty("event", event);
             return this;
         }
         /**
@@ -815,7 +815,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder eventType(String eventType) {
-            setProperty("eventType", eventType);
+            doSetProperty("eventType", eventType);
             return this;
         }
         /**
@@ -826,7 +826,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder identifier(String identifier) {
-            setProperty("identifier", identifier);
+            doSetProperty("identifier", identifier);
             return this;
         }
         /**
@@ -837,7 +837,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder maxNumber(Integer maxNumber) {
-            setProperty("maxNumber", maxNumber);
+            doSetProperty("maxNumber", maxNumber);
             return this;
         }
         /**
@@ -849,7 +849,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder maxNumber(String maxNumber) {
-            setProperty("maxNumber", maxNumber);
+            doSetProperty("maxNumber", maxNumber);
             return this;
         }
         /**
@@ -860,7 +860,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder page(Integer page) {
-            setProperty("page", page);
+            doSetProperty("page", page);
             return this;
         }
         /**
@@ -872,7 +872,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder page(String page) {
-            setProperty("page", page);
+            doSetProperty("page", page);
             return this;
         }
         /**
@@ -883,7 +883,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder pageSize(Integer pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -895,7 +895,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder pageSize(String pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -906,7 +906,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder processId(String processId) {
-            setProperty("processId", processId);
+            doSetProperty("processId", processId);
             return this;
         }
         /**
@@ -918,7 +918,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointProducerBuilder processInstanceId(
                 Long processInstanceId) {
-            setProperty("processInstanceId", processInstanceId);
+            doSetProperty("processInstanceId", processInstanceId);
             return this;
         }
         /**
@@ -930,7 +930,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointProducerBuilder processInstanceId(
                 String processInstanceId) {
-            setProperty("processInstanceId", processInstanceId);
+            doSetProperty("processInstanceId", processInstanceId);
             return this;
         }
         /**
@@ -941,7 +941,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder targetUserId(String targetUserId) {
-            setProperty("targetUserId", targetUserId);
+            doSetProperty("targetUserId", targetUserId);
             return this;
         }
         /**
@@ -952,7 +952,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder task(Object task) {
-            setProperty("task", task);
+            doSetProperty("task", task);
             return this;
         }
         /**
@@ -964,7 +964,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder task(String task) {
-            setProperty("task", task);
+            doSetProperty("task", task);
             return this;
         }
         /**
@@ -975,7 +975,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder taskId(Long taskId) {
-            setProperty("taskId", taskId);
+            doSetProperty("taskId", taskId);
             return this;
         }
         /**
@@ -986,7 +986,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder taskId(String taskId) {
-            setProperty("taskId", taskId);
+            doSetProperty("taskId", taskId);
             return this;
         }
         /**
@@ -997,7 +997,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder timeout(Integer timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -1009,7 +1009,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -1020,7 +1020,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -1031,7 +1031,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder value(Object value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -1042,7 +1042,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder value(String value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -1053,7 +1053,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder workItemId(Long workItemId) {
-            setProperty("workItemId", workItemId);
+            doSetProperty("workItemId", workItemId);
             return this;
         }
         /**
@@ -1064,7 +1064,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointProducerBuilder workItemId(String workItemId) {
-            setProperty("workItemId", workItemId);
+            doSetProperty("workItemId", workItemId);
             return this;
         }
         /**
@@ -1084,7 +1084,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1104,7 +1104,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default JBPMEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1115,7 +1115,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: producer
          */
         default JBPMEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -1127,7 +1127,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: filter
          */
         default JBPMEndpointProducerBuilder statuses(List<String> statuses) {
-            setProperty("statuses", statuses);
+            doSetProperty("statuses", statuses);
             return this;
         }
         /**
@@ -1139,7 +1139,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: filter
          */
         default JBPMEndpointProducerBuilder statuses(String statuses) {
-            setProperty("statuses", statuses);
+            doSetProperty("statuses", statuses);
             return this;
         }
         /**
@@ -1150,7 +1150,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: security
          */
         default JBPMEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1161,7 +1161,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: security
          */
         default JBPMEndpointProducerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -1185,7 +1185,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1198,7 +1198,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1211,7 +1211,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointProducerBuilder entities(
                 List<String> entities) {
-            setProperty("entities", entities);
+            doSetProperty("entities", entities);
             return this;
         }
         /**
@@ -1223,7 +1223,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJBPMEndpointProducerBuilder entities(String entities) {
-            setProperty("entities", entities);
+            doSetProperty("entities", entities);
             return this;
         }
         /**
@@ -1235,7 +1235,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointProducerBuilder extraJaxbClasses(
                 Class[] extraJaxbClasses) {
-            setProperty("extraJaxbClasses", extraJaxbClasses);
+            doSetProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
         }
         /**
@@ -1248,7 +1248,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointProducerBuilder extraJaxbClasses(
                 String extraJaxbClasses) {
-            setProperty("extraJaxbClasses", extraJaxbClasses);
+            doSetProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
         }
         /**
@@ -1261,7 +1261,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointProducerBuilder parameters(
                 Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -1274,7 +1274,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJBPMEndpointProducerBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -1287,7 +1287,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1300,7 +1300,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1322,7 +1322,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder attachmentId(Long attachmentId) {
-            setProperty("attachmentId", attachmentId);
+            doSetProperty("attachmentId", attachmentId);
             return this;
         }
         /**
@@ -1333,7 +1333,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder attachmentId(String attachmentId) {
-            setProperty("attachmentId", attachmentId);
+            doSetProperty("attachmentId", attachmentId);
             return this;
         }
         /**
@@ -1344,7 +1344,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder contentId(Long contentId) {
-            setProperty("contentId", contentId);
+            doSetProperty("contentId", contentId);
             return this;
         }
         /**
@@ -1355,7 +1355,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder contentId(String contentId) {
-            setProperty("contentId", contentId);
+            doSetProperty("contentId", contentId);
             return this;
         }
         /**
@@ -1367,7 +1367,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder deploymentId(String deploymentId) {
-            setProperty("deploymentId", deploymentId);
+            doSetProperty("deploymentId", deploymentId);
             return this;
         }
         /**
@@ -1379,7 +1379,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder emitterSendItems(Boolean emitterSendItems) {
-            setProperty("emitterSendItems", emitterSendItems);
+            doSetProperty("emitterSendItems", emitterSendItems);
             return this;
         }
         /**
@@ -1392,7 +1392,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder emitterSendItems(String emitterSendItems) {
-            setProperty("emitterSendItems", emitterSendItems);
+            doSetProperty("emitterSendItems", emitterSendItems);
             return this;
         }
         /**
@@ -1404,7 +1404,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder event(Object event) {
-            setProperty("event", event);
+            doSetProperty("event", event);
             return this;
         }
         /**
@@ -1416,7 +1416,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder event(String event) {
-            setProperty("event", event);
+            doSetProperty("event", event);
             return this;
         }
         /**
@@ -1427,7 +1427,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder eventType(String eventType) {
-            setProperty("eventType", eventType);
+            doSetProperty("eventType", eventType);
             return this;
         }
         /**
@@ -1438,7 +1438,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder identifier(String identifier) {
-            setProperty("identifier", identifier);
+            doSetProperty("identifier", identifier);
             return this;
         }
         /**
@@ -1449,7 +1449,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder maxNumber(Integer maxNumber) {
-            setProperty("maxNumber", maxNumber);
+            doSetProperty("maxNumber", maxNumber);
             return this;
         }
         /**
@@ -1461,7 +1461,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder maxNumber(String maxNumber) {
-            setProperty("maxNumber", maxNumber);
+            doSetProperty("maxNumber", maxNumber);
             return this;
         }
         /**
@@ -1472,7 +1472,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder page(Integer page) {
-            setProperty("page", page);
+            doSetProperty("page", page);
             return this;
         }
         /**
@@ -1484,7 +1484,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder page(String page) {
-            setProperty("page", page);
+            doSetProperty("page", page);
             return this;
         }
         /**
@@ -1495,7 +1495,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder pageSize(Integer pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -1507,7 +1507,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder pageSize(String pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -1518,7 +1518,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder processId(String processId) {
-            setProperty("processId", processId);
+            doSetProperty("processId", processId);
             return this;
         }
         /**
@@ -1529,7 +1529,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder processInstanceId(Long processInstanceId) {
-            setProperty("processInstanceId", processInstanceId);
+            doSetProperty("processInstanceId", processInstanceId);
             return this;
         }
         /**
@@ -1540,7 +1540,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder processInstanceId(String processInstanceId) {
-            setProperty("processInstanceId", processInstanceId);
+            doSetProperty("processInstanceId", processInstanceId);
             return this;
         }
         /**
@@ -1551,7 +1551,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder targetUserId(String targetUserId) {
-            setProperty("targetUserId", targetUserId);
+            doSetProperty("targetUserId", targetUserId);
             return this;
         }
         /**
@@ -1562,7 +1562,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder task(Object task) {
-            setProperty("task", task);
+            doSetProperty("task", task);
             return this;
         }
         /**
@@ -1574,7 +1574,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder task(String task) {
-            setProperty("task", task);
+            doSetProperty("task", task);
             return this;
         }
         /**
@@ -1585,7 +1585,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder taskId(Long taskId) {
-            setProperty("taskId", taskId);
+            doSetProperty("taskId", taskId);
             return this;
         }
         /**
@@ -1596,7 +1596,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder taskId(String taskId) {
-            setProperty("taskId", taskId);
+            doSetProperty("taskId", taskId);
             return this;
         }
         /**
@@ -1607,7 +1607,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder timeout(Integer timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -1619,7 +1619,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -1630,7 +1630,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -1641,7 +1641,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder value(Object value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -1652,7 +1652,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder value(String value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -1663,7 +1663,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder workItemId(Long workItemId) {
-            setProperty("workItemId", workItemId);
+            doSetProperty("workItemId", workItemId);
             return this;
         }
         /**
@@ -1674,7 +1674,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: common
          */
         default JBPMEndpointBuilder workItemId(String workItemId) {
-            setProperty("workItemId", workItemId);
+            doSetProperty("workItemId", workItemId);
             return this;
         }
         /**
@@ -1686,7 +1686,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: filter
          */
         default JBPMEndpointBuilder statuses(List<String> statuses) {
-            setProperty("statuses", statuses);
+            doSetProperty("statuses", statuses);
             return this;
         }
         /**
@@ -1698,7 +1698,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: filter
          */
         default JBPMEndpointBuilder statuses(String statuses) {
-            setProperty("statuses", statuses);
+            doSetProperty("statuses", statuses);
             return this;
         }
         /**
@@ -1709,7 +1709,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: security
          */
         default JBPMEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1720,7 +1720,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: security
          */
         default JBPMEndpointBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -1744,7 +1744,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1757,7 +1757,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1769,7 +1769,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder entities(List<String> entities) {
-            setProperty("entities", entities);
+            doSetProperty("entities", entities);
             return this;
         }
         /**
@@ -1781,7 +1781,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder entities(String entities) {
-            setProperty("entities", entities);
+            doSetProperty("entities", entities);
             return this;
         }
         /**
@@ -1793,7 +1793,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointBuilder extraJaxbClasses(
                 Class[] extraJaxbClasses) {
-            setProperty("extraJaxbClasses", extraJaxbClasses);
+            doSetProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
         }
         /**
@@ -1806,7 +1806,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointBuilder extraJaxbClasses(
                 String extraJaxbClasses) {
-            setProperty("extraJaxbClasses", extraJaxbClasses);
+            doSetProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
         }
         /**
@@ -1819,7 +1819,7 @@ public interface JBPMEndpointBuilderFactory {
          */
         default AdvancedJBPMEndpointBuilder parameters(
                 Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -1832,7 +1832,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -1844,7 +1844,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1856,7 +1856,7 @@ public interface JBPMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

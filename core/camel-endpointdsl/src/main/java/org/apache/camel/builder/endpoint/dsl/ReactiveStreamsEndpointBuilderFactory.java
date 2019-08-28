@@ -56,7 +56,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder exchangesRefillLowWatermark(
                 double exchangesRefillLowWatermark) {
-            setProperty("exchangesRefillLowWatermark", exchangesRefillLowWatermark);
+            doSetProperty("exchangesRefillLowWatermark", exchangesRefillLowWatermark);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder exchangesRefillLowWatermark(
                 String exchangesRefillLowWatermark) {
-            setProperty("exchangesRefillLowWatermark", exchangesRefillLowWatermark);
+            doSetProperty("exchangesRefillLowWatermark", exchangesRefillLowWatermark);
             return this;
         }
         /**
@@ -150,7 +150,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder forwardOnComplete(
                 boolean forwardOnComplete) {
-            setProperty("forwardOnComplete", forwardOnComplete);
+            doSetProperty("forwardOnComplete", forwardOnComplete);
             return this;
         }
         /**
@@ -162,7 +162,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder forwardOnComplete(
                 String forwardOnComplete) {
-            setProperty("forwardOnComplete", forwardOnComplete);
+            doSetProperty("forwardOnComplete", forwardOnComplete);
             return this;
         }
         /**
@@ -175,7 +175,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder forwardOnError(
                 boolean forwardOnError) {
-            setProperty("forwardOnError", forwardOnError);
+            doSetProperty("forwardOnError", forwardOnError);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder forwardOnError(
                 String forwardOnError) {
-            setProperty("forwardOnError", forwardOnError);
+            doSetProperty("forwardOnError", forwardOnError);
             return this;
         }
         /**
@@ -202,7 +202,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder maxInflightExchanges(
                 Integer maxInflightExchanges) {
-            setProperty("maxInflightExchanges", maxInflightExchanges);
+            doSetProperty("maxInflightExchanges", maxInflightExchanges);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointConsumerBuilder maxInflightExchanges(
                 String maxInflightExchanges) {
-            setProperty("maxInflightExchanges", maxInflightExchanges);
+            doSetProperty("maxInflightExchanges", maxInflightExchanges);
             return this;
         }
     }
@@ -245,7 +245,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -261,7 +261,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -273,7 +273,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -286,7 +286,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -312,7 +312,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -325,7 +325,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -338,7 +338,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -363,7 +363,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointProducerBuilder backpressureStrategy(
                 ReactiveStreamsBackpressureStrategy backpressureStrategy) {
-            setProperty("backpressureStrategy", backpressureStrategy);
+            doSetProperty("backpressureStrategy", backpressureStrategy);
             return this;
         }
         /**
@@ -377,7 +377,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointProducerBuilder backpressureStrategy(
                 String backpressureStrategy) {
-            setProperty("backpressureStrategy", backpressureStrategy);
+            doSetProperty("backpressureStrategy", backpressureStrategy);
             return this;
         }
         /**
@@ -397,7 +397,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -417,7 +417,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default ReactiveStreamsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -442,7 +442,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -468,7 +468,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -481,7 +481,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -516,7 +516,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -529,7 +529,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -542,7 +542,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -555,7 +555,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          */
         default AdvancedReactiveStreamsEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

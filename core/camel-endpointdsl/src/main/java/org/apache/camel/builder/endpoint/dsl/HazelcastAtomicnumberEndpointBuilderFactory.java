@@ -52,7 +52,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          */
         default HazelcastAtomicnumberEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          */
         default HazelcastAtomicnumberEndpointBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
     }
@@ -133,7 +133,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          */
         default AdvancedHazelcastAtomicnumberEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -146,7 +146,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          */
         default AdvancedHazelcastAtomicnumberEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          */
         default AdvancedHazelcastAtomicnumberEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          */
         default AdvancedHazelcastAtomicnumberEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

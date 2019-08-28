@@ -50,7 +50,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointConsumerBuilder channels(String channels) {
-            setProperty("channels", channels);
+            doSetProperty("channels", channels);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointConsumerBuilder command(Command command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointConsumerBuilder command(String command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default RedisEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default RedisEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointConsumerBuilder redisTemplate(Object redisTemplate) {
-            setProperty("redisTemplate", redisTemplate);
+            doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointConsumerBuilder redisTemplate(String redisTemplate) {
-            setProperty("redisTemplate", redisTemplate);
+            doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointConsumerBuilder serializer(Object serializer) {
-            setProperty("serializer", serializer);
+            doSetProperty("serializer", serializer);
             return this;
         }
         /**
@@ -152,7 +152,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointConsumerBuilder serializer(String serializer) {
-            setProperty("serializer", serializer);
+            doSetProperty("serializer", serializer);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default RedisEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default RedisEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -215,7 +215,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -231,7 +231,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -270,7 +270,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointConsumerBuilder listenerContainer(
                 Object listenerContainer) {
-            setProperty("listenerContainer", listenerContainer);
+            doSetProperty("listenerContainer", listenerContainer);
             return this;
         }
         /**
@@ -284,7 +284,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointConsumerBuilder listenerContainer(
                 String listenerContainer) {
-            setProperty("listenerContainer", listenerContainer);
+            doSetProperty("listenerContainer", listenerContainer);
             return this;
         }
         /**
@@ -297,7 +297,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -310,7 +310,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -323,7 +323,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -336,7 +336,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -359,7 +359,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointProducerBuilder channels(String channels) {
-            setProperty("channels", channels);
+            doSetProperty("channels", channels);
             return this;
         }
         /**
@@ -373,7 +373,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointProducerBuilder command(Command command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -387,7 +387,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointProducerBuilder command(String command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -400,7 +400,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default RedisEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -413,7 +413,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default RedisEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -425,7 +425,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointProducerBuilder redisTemplate(Object redisTemplate) {
-            setProperty("redisTemplate", redisTemplate);
+            doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
         /**
@@ -437,7 +437,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointProducerBuilder redisTemplate(String redisTemplate) {
-            setProperty("redisTemplate", redisTemplate);
+            doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
         /**
@@ -449,7 +449,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointProducerBuilder serializer(Object serializer) {
-            setProperty("serializer", serializer);
+            doSetProperty("serializer", serializer);
             return this;
         }
         /**
@@ -461,7 +461,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointProducerBuilder serializer(String serializer) {
-            setProperty("serializer", serializer);
+            doSetProperty("serializer", serializer);
             return this;
         }
         /**
@@ -481,7 +481,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default RedisEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -501,7 +501,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default RedisEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -525,7 +525,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -538,7 +538,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -551,7 +551,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -587,7 +587,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointBuilder channels(String channels) {
-            setProperty("channels", channels);
+            doSetProperty("channels", channels);
             return this;
         }
         /**
@@ -601,7 +601,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointBuilder command(Command command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -615,7 +615,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointBuilder command(String command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -627,7 +627,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointBuilder connectionFactory(Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -639,7 +639,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointBuilder connectionFactory(String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -651,7 +651,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointBuilder redisTemplate(Object redisTemplate) {
-            setProperty("redisTemplate", redisTemplate);
+            doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
         /**
@@ -663,7 +663,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointBuilder redisTemplate(String redisTemplate) {
-            setProperty("redisTemplate", redisTemplate);
+            doSetProperty("redisTemplate", redisTemplate);
             return this;
         }
         /**
@@ -675,7 +675,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointBuilder serializer(Object serializer) {
-            setProperty("serializer", serializer);
+            doSetProperty("serializer", serializer);
             return this;
         }
         /**
@@ -687,7 +687,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: common
          */
         default RedisEndpointBuilder serializer(String serializer) {
-            setProperty("serializer", serializer);
+            doSetProperty("serializer", serializer);
             return this;
         }
     }
@@ -711,7 +711,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -724,7 +724,7 @@ public interface RedisEndpointBuilderFactory {
          */
         default AdvancedRedisEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -736,7 +736,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRedisEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -748,7 +748,7 @@ public interface RedisEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRedisEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

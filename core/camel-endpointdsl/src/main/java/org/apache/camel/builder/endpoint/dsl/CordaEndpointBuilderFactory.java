@@ -56,7 +56,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default CordaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default CordaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -101,7 +101,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -117,7 +117,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -225,7 +225,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default CordaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default CordaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -269,7 +269,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -282,7 +282,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -295,7 +295,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -308,7 +308,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -343,7 +343,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -356,7 +356,7 @@ public interface CordaEndpointBuilderFactory {
          */
         default AdvancedCordaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -368,7 +368,7 @@ public interface CordaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCordaEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface CordaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCordaEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

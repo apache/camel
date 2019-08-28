@@ -45,7 +45,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default DdbStreamEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default DdbStreamEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default DdbStreamEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default DdbStreamEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * Group: security
          */
         default DdbStreamEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -101,7 +101,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * Group: security
          */
         default DdbStreamEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -125,7 +125,7 @@ public interface DdbStreamEndpointBuilderFactory {
          */
         default AdvancedDdbStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface DdbStreamEndpointBuilderFactory {
          */
         default AdvancedDdbStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -150,7 +150,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDdbStreamEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -162,7 +162,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDdbStreamEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

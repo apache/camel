@@ -50,7 +50,7 @@ public interface LumberjackEndpointBuilderFactory {
          */
         default LumberjackEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface LumberjackEndpointBuilderFactory {
          */
         default LumberjackEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -87,7 +87,7 @@ public interface LumberjackEndpointBuilderFactory {
          */
         default AdvancedLumberjackEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface LumberjackEndpointBuilderFactory {
          */
         default AdvancedLumberjackEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface LumberjackEndpointBuilderFactory {
          */
         default AdvancedLumberjackEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -125,7 +125,7 @@ public interface LumberjackEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLumberjackEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

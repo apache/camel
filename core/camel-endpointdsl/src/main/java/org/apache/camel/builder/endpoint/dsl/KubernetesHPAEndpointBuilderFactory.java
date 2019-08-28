@@ -51,7 +51,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesHPAEndpointConsumerBuilder dnsDomain(String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesHPAEndpointConsumerBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder labelKey(String labelKey) {
-            setProperty("labelKey", labelKey);
+            doSetProperty("labelKey", labelKey);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder labelValue(
                 String labelValue) {
-            setProperty("labelValue", labelValue);
+            doSetProperty("labelValue", labelValue);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder namespace(String namespace) {
-            setProperty("namespace", namespace);
+            doSetProperty("namespace", namespace);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder poolSize(int poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder poolSize(String poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
@@ -215,7 +215,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder resourceName(
                 String resourceName) {
-            setProperty("resourceName", resourceName);
+            doSetProperty("resourceName", resourceName);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder caCertData(
                 String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -239,7 +239,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -251,7 +251,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -275,7 +275,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -323,7 +323,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -334,7 +334,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -346,7 +346,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -370,7 +370,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -397,7 +397,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -413,7 +413,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -425,7 +425,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -438,7 +438,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -451,7 +451,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -464,7 +464,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -477,7 +477,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -491,7 +491,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -504,7 +504,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -517,7 +517,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -540,7 +540,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder apiVersion(
                 String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -551,7 +551,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesHPAEndpointProducerBuilder dnsDomain(String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -577,7 +577,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -588,7 +588,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesHPAEndpointProducerBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -600,7 +600,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder portProtocol(
                 String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -620,7 +620,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -640,7 +640,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -651,7 +651,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: producer
          */
         default KubernetesHPAEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -663,7 +663,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder caCertData(
                 String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -675,7 +675,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder caCertFile(
                 String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -687,7 +687,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -699,7 +699,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -711,7 +711,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -723,7 +723,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -735,7 +735,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -747,7 +747,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -759,7 +759,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder oauthToken(
                 String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -770,7 +770,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -782,7 +782,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -795,7 +795,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointProducerBuilder trustCerts(
                 String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -806,7 +806,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -830,7 +830,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -843,7 +843,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -856,7 +856,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -870,7 +870,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -883,7 +883,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -896,7 +896,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -918,7 +918,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesHPAEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -929,7 +929,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesHPAEndpointBuilder dnsDomain(String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -942,7 +942,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -955,7 +955,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -966,7 +966,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesHPAEndpointBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -977,7 +977,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesHPAEndpointBuilder portProtocol(String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -988,7 +988,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointBuilder caCertData(String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -999,7 +999,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointBuilder caCertFile(String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -1011,7 +1011,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -1023,7 +1023,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -1034,7 +1034,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointBuilder clientKeyAlgo(String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -1045,7 +1045,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointBuilder clientKeyData(String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -1056,7 +1056,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointBuilder clientKeyFile(String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -1068,7 +1068,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default KubernetesHPAEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -1079,7 +1079,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -1090,7 +1090,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1101,7 +1101,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointBuilder trustCerts(Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -1113,7 +1113,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointBuilder trustCerts(String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -1124,7 +1124,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesHPAEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1148,7 +1148,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1161,7 +1161,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1174,7 +1174,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1188,7 +1188,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1201,7 +1201,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1214,7 +1214,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          */
         default AdvancedKubernetesHPAEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -60,7 +60,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          */
         default AdvancedRestSwaggerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          */
         default AdvancedRestSwaggerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          */
         default AdvancedRestSwaggerEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          */
         default AdvancedRestSwaggerEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -59,7 +59,7 @@ public interface StAXEndpointBuilderFactory {
          */
         default AdvancedStAXEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface StAXEndpointBuilderFactory {
          */
         default AdvancedStAXEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface StAXEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStAXEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface StAXEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStAXEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

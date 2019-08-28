@@ -48,7 +48,7 @@ public interface IAMEndpointBuilderFactory {
          * Group: producer
          */
         default IAMEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
     }
@@ -72,7 +72,7 @@ public interface IAMEndpointBuilderFactory {
          */
         default AdvancedIAMEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface IAMEndpointBuilderFactory {
          */
         default AdvancedIAMEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface IAMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIAMEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface IAMEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIAMEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

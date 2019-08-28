@@ -55,7 +55,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointConsumerBuilder authToken(String authToken) {
-            setProperty("authToken", authToken);
+            doSetProperty("authToken", authToken);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointConsumerBuilder consumeUsers(String consumeUsers) {
-            setProperty("consumeUsers", consumeUsers);
+            doSetProperty("consumeUsers", consumeUsers);
             return this;
         }
         /**
@@ -80,7 +80,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointConsumerBuilder httpClient(Object httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -93,7 +93,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointConsumerBuilder httpClient(String httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -224,7 +224,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -279,7 +279,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -291,7 +291,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -304,7 +304,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -317,7 +317,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -344,7 +344,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -374,7 +374,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -386,7 +386,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -400,7 +400,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -415,7 +415,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -427,7 +427,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -439,7 +439,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -450,7 +450,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -462,7 +462,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -475,7 +475,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -488,7 +488,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -515,7 +515,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -531,7 +531,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -543,7 +543,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -556,7 +556,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -572,7 +572,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -588,7 +588,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -601,7 +601,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -614,7 +614,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -627,7 +627,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -640,7 +640,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -662,7 +662,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointProducerBuilder authToken(String authToken) {
-            setProperty("authToken", authToken);
+            doSetProperty("authToken", authToken);
             return this;
         }
         /**
@@ -674,7 +674,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointProducerBuilder consumeUsers(String consumeUsers) {
-            setProperty("consumeUsers", consumeUsers);
+            doSetProperty("consumeUsers", consumeUsers);
             return this;
         }
         /**
@@ -687,7 +687,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointProducerBuilder httpClient(Object httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -700,7 +700,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointProducerBuilder httpClient(String httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -720,7 +720,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -740,7 +740,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default HipchatEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -764,7 +764,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -777,7 +777,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -790,7 +790,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -803,7 +803,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -825,7 +825,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointBuilder authToken(String authToken) {
-            setProperty("authToken", authToken);
+            doSetProperty("authToken", authToken);
             return this;
         }
         /**
@@ -837,7 +837,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointBuilder consumeUsers(String consumeUsers) {
-            setProperty("consumeUsers", consumeUsers);
+            doSetProperty("consumeUsers", consumeUsers);
             return this;
         }
         /**
@@ -850,7 +850,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointBuilder httpClient(Object httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -863,7 +863,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: common
          */
         default HipchatEndpointBuilder httpClient(String httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
     }
@@ -887,7 +887,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -900,7 +900,7 @@ public interface HipchatEndpointBuilderFactory {
          */
         default AdvancedHipchatEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -912,7 +912,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHipchatEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -924,7 +924,7 @@ public interface HipchatEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHipchatEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

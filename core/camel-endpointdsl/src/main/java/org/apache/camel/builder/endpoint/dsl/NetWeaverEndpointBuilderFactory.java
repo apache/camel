@@ -47,7 +47,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder flatternMap(boolean flatternMap) {
-            setProperty("flatternMap", flatternMap);
+            doSetProperty("flatternMap", flatternMap);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder flatternMap(String flatternMap) {
-            setProperty("flatternMap", flatternMap);
+            doSetProperty("flatternMap", flatternMap);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder json(boolean json) {
-            setProperty("json", json);
+            doSetProperty("json", json);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder json(String json) {
-            setProperty("json", json);
+            doSetProperty("json", json);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder jsonAsMap(boolean jsonAsMap) {
-            setProperty("jsonAsMap", jsonAsMap);
+            doSetProperty("jsonAsMap", jsonAsMap);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder jsonAsMap(String jsonAsMap) {
-            setProperty("jsonAsMap", jsonAsMap);
+            doSetProperty("jsonAsMap", jsonAsMap);
             return this;
         }
         /**
@@ -117,7 +117,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -153,7 +153,7 @@ public interface NetWeaverEndpointBuilderFactory {
          */
         default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface NetWeaverEndpointBuilderFactory {
          */
         default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

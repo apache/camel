@@ -47,7 +47,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: producer
          */
         default SchematronEndpointBuilder abort(boolean abort) {
-            setProperty("abort", abort);
+            doSetProperty("abort", abort);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: producer
          */
         default SchematronEndpointBuilder abort(String abort) {
-            setProperty("abort", abort);
+            doSetProperty("abort", abort);
             return this;
         }
         /**
@@ -69,7 +69,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: producer
          */
         default SchematronEndpointBuilder rules(Object rules) {
-            setProperty("rules", rules);
+            doSetProperty("rules", rules);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: producer
          */
         default SchematronEndpointBuilder rules(String rules) {
-            setProperty("rules", rules);
+            doSetProperty("rules", rules);
             return this;
         }
     }
@@ -105,7 +105,7 @@ public interface SchematronEndpointBuilderFactory {
          */
         default AdvancedSchematronEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface SchematronEndpointBuilderFactory {
          */
         default AdvancedSchematronEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface SchematronEndpointBuilderFactory {
          */
         default AdvancedSchematronEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder uriResolver(Object uriResolver) {
-            setProperty("uriResolver", uriResolver);
+            doSetProperty("uriResolver", uriResolver);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder uriResolver(String uriResolver) {
-            setProperty("uriResolver", uriResolver);
+            doSetProperty("uriResolver", uriResolver);
             return this;
         }
     }

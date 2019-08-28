@@ -55,7 +55,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder blockingExecutor(
                 Executor blockingExecutor) {
-            setProperty("blockingExecutor", blockingExecutor);
+            doSetProperty("blockingExecutor", blockingExecutor);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder blockingExecutor(
                 String blockingExecutor) {
-            setProperty("blockingExecutor", blockingExecutor);
+            doSetProperty("blockingExecutor", blockingExecutor);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder byDefaultRetain(
                 boolean byDefaultRetain) {
-            setProperty("byDefaultRetain", byDefaultRetain);
+            doSetProperty("byDefaultRetain", byDefaultRetain);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder byDefaultRetain(
                 String byDefaultRetain) {
-            setProperty("byDefaultRetain", byDefaultRetain);
+            doSetProperty("byDefaultRetain", byDefaultRetain);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder cleanSession(boolean cleanSession) {
-            setProperty("cleanSession", cleanSession);
+            doSetProperty("cleanSession", cleanSession);
             return this;
         }
         /**
@@ -122,7 +122,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder cleanSession(String cleanSession) {
-            setProperty("cleanSession", cleanSession);
+            doSetProperty("cleanSession", cleanSession);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -150,7 +150,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder connectAttemptsMax(
                 long connectAttemptsMax) {
-            setProperty("connectAttemptsMax", connectAttemptsMax);
+            doSetProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder connectAttemptsMax(
                 String connectAttemptsMax) {
-            setProperty("connectAttemptsMax", connectAttemptsMax);
+            doSetProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder connectWaitInSeconds(
                 int connectWaitInSeconds) {
-            setProperty("connectWaitInSeconds", connectWaitInSeconds);
+            doSetProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder connectWaitInSeconds(
                 String connectWaitInSeconds) {
-            setProperty("connectWaitInSeconds", connectWaitInSeconds);
+            doSetProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder disconnectWaitInSeconds(
                 int disconnectWaitInSeconds) {
-            setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
+            doSetProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
         }
         /**
@@ -216,7 +216,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder disconnectWaitInSeconds(
                 String disconnectWaitInSeconds) {
-            setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
+            doSetProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder dispatchQueue(Object dispatchQueue) {
-            setProperty("dispatchQueue", dispatchQueue);
+            doSetProperty("dispatchQueue", dispatchQueue);
             return this;
         }
         /**
@@ -248,7 +248,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder dispatchQueue(String dispatchQueue) {
-            setProperty("dispatchQueue", dispatchQueue);
+            doSetProperty("dispatchQueue", dispatchQueue);
             return this;
         }
         /**
@@ -260,7 +260,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -274,7 +274,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder keepAlive(short keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder keepAlive(String keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder localAddress(URI localAddress) {
-            setProperty("localAddress", localAddress);
+            doSetProperty("localAddress", localAddress);
             return this;
         }
         /**
@@ -310,7 +310,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder localAddress(String localAddress) {
-            setProperty("localAddress", localAddress);
+            doSetProperty("localAddress", localAddress);
             return this;
         }
         /**
@@ -323,7 +323,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder maxReadRate(int maxReadRate) {
-            setProperty("maxReadRate", maxReadRate);
+            doSetProperty("maxReadRate", maxReadRate);
             return this;
         }
         /**
@@ -336,7 +336,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder maxReadRate(String maxReadRate) {
-            setProperty("maxReadRate", maxReadRate);
+            doSetProperty("maxReadRate", maxReadRate);
             return this;
         }
         /**
@@ -349,7 +349,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder maxWriteRate(int maxWriteRate) {
-            setProperty("maxWriteRate", maxWriteRate);
+            doSetProperty("maxWriteRate", maxWriteRate);
             return this;
         }
         /**
@@ -362,7 +362,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder maxWriteRate(String maxWriteRate) {
-            setProperty("maxWriteRate", maxWriteRate);
+            doSetProperty("maxWriteRate", maxWriteRate);
             return this;
         }
         /**
@@ -377,7 +377,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder mqttQosPropertyName(
                 String mqttQosPropertyName) {
-            setProperty("mqttQosPropertyName", mqttQosPropertyName);
+            doSetProperty("mqttQosPropertyName", mqttQosPropertyName);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder mqttRetainPropertyName(
                 String mqttRetainPropertyName) {
-            setProperty("mqttRetainPropertyName", mqttRetainPropertyName);
+            doSetProperty("mqttRetainPropertyName", mqttRetainPropertyName);
             return this;
         }
         /**
@@ -405,7 +405,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder mqttTopicPropertyName(
                 String mqttTopicPropertyName) {
-            setProperty("mqttTopicPropertyName", mqttTopicPropertyName);
+            doSetProperty("mqttTopicPropertyName", mqttTopicPropertyName);
             return this;
         }
         /**
@@ -417,7 +417,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder publishTopicName(
                 String publishTopicName) {
-            setProperty("publishTopicName", publishTopicName);
+            doSetProperty("publishTopicName", publishTopicName);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder qualityOfService(
                 String qualityOfService) {
-            setProperty("qualityOfService", qualityOfService);
+            doSetProperty("qualityOfService", qualityOfService);
             return this;
         }
         /**
@@ -442,7 +442,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder receiveBufferSize(
                 int receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder receiveBufferSize(
                 String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -469,7 +469,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder reconnectAttemptsMax(
                 long reconnectAttemptsMax) {
-            setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
+            doSetProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
         }
         /**
@@ -483,7 +483,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder reconnectAttemptsMax(
                 String reconnectAttemptsMax) {
-            setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
+            doSetProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
         }
         /**
@@ -496,7 +496,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder reconnectBackOffMultiplier(
                 double reconnectBackOffMultiplier) {
-            setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
+            doSetProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
         }
         /**
@@ -509,7 +509,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder reconnectBackOffMultiplier(
                 String reconnectBackOffMultiplier) {
-            setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
+            doSetProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
         }
         /**
@@ -521,7 +521,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder reconnectDelay(long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -533,7 +533,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder reconnectDelay(String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -546,7 +546,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder reconnectDelayMax(
                 long reconnectDelayMax) {
-            setProperty("reconnectDelayMax", reconnectDelayMax);
+            doSetProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
         }
         /**
@@ -559,7 +559,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder reconnectDelayMax(
                 String reconnectDelayMax) {
-            setProperty("reconnectDelayMax", reconnectDelayMax);
+            doSetProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder sendBufferSize(int sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -583,7 +583,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder sendBufferSize(String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -597,7 +597,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder sendWaitInSeconds(
                 int sendWaitInSeconds) {
-            setProperty("sendWaitInSeconds", sendWaitInSeconds);
+            doSetProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
         }
         /**
@@ -611,7 +611,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder sendWaitInSeconds(
                 String sendWaitInSeconds) {
-            setProperty("sendWaitInSeconds", sendWaitInSeconds);
+            doSetProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
         }
         /**
@@ -622,7 +622,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder sslContext(Object sslContext) {
-            setProperty("sslContext", sslContext);
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**
@@ -634,7 +634,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder sslContext(String sslContext) {
-            setProperty("sslContext", sslContext);
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**
@@ -648,7 +648,7 @@ public interface MQTTEndpointBuilderFactory {
         @Deprecated
         default MQTTEndpointConsumerBuilder subscribeTopicName(
                 String subscribeTopicName) {
-            setProperty("subscribeTopicName", subscribeTopicName);
+            doSetProperty("subscribeTopicName", subscribeTopicName);
             return this;
         }
         /**
@@ -667,7 +667,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder subscribeTopicNames(
                 String subscribeTopicNames) {
-            setProperty("subscribeTopicNames", subscribeTopicNames);
+            doSetProperty("subscribeTopicNames", subscribeTopicNames);
             return this;
         }
         /**
@@ -680,7 +680,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder trafficClass(int trafficClass) {
-            setProperty("trafficClass", trafficClass);
+            doSetProperty("trafficClass", trafficClass);
             return this;
         }
         /**
@@ -693,7 +693,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder trafficClass(String trafficClass) {
-            setProperty("trafficClass", trafficClass);
+            doSetProperty("trafficClass", trafficClass);
             return this;
         }
         /**
@@ -705,7 +705,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder version(String version) {
-            setProperty("version", version);
+            doSetProperty("version", version);
             return this;
         }
         /**
@@ -716,7 +716,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder willMessage(String willMessage) {
-            setProperty("willMessage", willMessage);
+            doSetProperty("willMessage", willMessage);
             return this;
         }
         /**
@@ -728,7 +728,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder willQos(QoS willQos) {
-            setProperty("willQos", willQos);
+            doSetProperty("willQos", willQos);
             return this;
         }
         /**
@@ -741,7 +741,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder willQos(String willQos) {
-            setProperty("willQos", willQos);
+            doSetProperty("willQos", willQos);
             return this;
         }
         /**
@@ -753,7 +753,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder willRetain(boolean willRetain) {
-            setProperty("willRetain", willRetain);
+            doSetProperty("willRetain", willRetain);
             return this;
         }
         /**
@@ -765,7 +765,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder willRetain(String willRetain) {
-            setProperty("willRetain", willRetain);
+            doSetProperty("willRetain", willRetain);
             return this;
         }
         /**
@@ -777,7 +777,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointConsumerBuilder willTopic(String willTopic) {
-            setProperty("willTopic", willTopic);
+            doSetProperty("willTopic", willTopic);
             return this;
         }
         /**
@@ -795,7 +795,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -813,7 +813,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -840,7 +840,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -856,7 +856,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -868,7 +868,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -881,7 +881,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -894,7 +894,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -907,7 +907,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -920,7 +920,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -933,7 +933,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -958,7 +958,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder blockingExecutor(
                 Executor blockingExecutor) {
-            setProperty("blockingExecutor", blockingExecutor);
+            doSetProperty("blockingExecutor", blockingExecutor);
             return this;
         }
         /**
@@ -973,7 +973,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder blockingExecutor(
                 String blockingExecutor) {
-            setProperty("blockingExecutor", blockingExecutor);
+            doSetProperty("blockingExecutor", blockingExecutor);
             return this;
         }
         /**
@@ -986,7 +986,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder byDefaultRetain(
                 boolean byDefaultRetain) {
-            setProperty("byDefaultRetain", byDefaultRetain);
+            doSetProperty("byDefaultRetain", byDefaultRetain);
             return this;
         }
         /**
@@ -999,7 +999,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder byDefaultRetain(
                 String byDefaultRetain) {
-            setProperty("byDefaultRetain", byDefaultRetain);
+            doSetProperty("byDefaultRetain", byDefaultRetain);
             return this;
         }
         /**
@@ -1012,7 +1012,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder cleanSession(boolean cleanSession) {
-            setProperty("cleanSession", cleanSession);
+            doSetProperty("cleanSession", cleanSession);
             return this;
         }
         /**
@@ -1025,7 +1025,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder cleanSession(String cleanSession) {
-            setProperty("cleanSession", cleanSession);
+            doSetProperty("cleanSession", cleanSession);
             return this;
         }
         /**
@@ -1039,7 +1039,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -1053,7 +1053,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder connectAttemptsMax(
                 long connectAttemptsMax) {
-            setProperty("connectAttemptsMax", connectAttemptsMax);
+            doSetProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
         }
         /**
@@ -1067,7 +1067,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder connectAttemptsMax(
                 String connectAttemptsMax) {
-            setProperty("connectAttemptsMax", connectAttemptsMax);
+            doSetProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
         }
         /**
@@ -1080,7 +1080,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder connectWaitInSeconds(
                 int connectWaitInSeconds) {
-            setProperty("connectWaitInSeconds", connectWaitInSeconds);
+            doSetProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
         }
         /**
@@ -1093,7 +1093,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder connectWaitInSeconds(
                 String connectWaitInSeconds) {
-            setProperty("connectWaitInSeconds", connectWaitInSeconds);
+            doSetProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
         }
         /**
@@ -1106,7 +1106,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder disconnectWaitInSeconds(
                 int disconnectWaitInSeconds) {
-            setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
+            doSetProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
         }
         /**
@@ -1119,7 +1119,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder disconnectWaitInSeconds(
                 String disconnectWaitInSeconds) {
-            setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
+            doSetProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
         }
         /**
@@ -1135,7 +1135,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder dispatchQueue(Object dispatchQueue) {
-            setProperty("dispatchQueue", dispatchQueue);
+            doSetProperty("dispatchQueue", dispatchQueue);
             return this;
         }
         /**
@@ -1151,7 +1151,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder dispatchQueue(String dispatchQueue) {
-            setProperty("dispatchQueue", dispatchQueue);
+            doSetProperty("dispatchQueue", dispatchQueue);
             return this;
         }
         /**
@@ -1163,7 +1163,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -1177,7 +1177,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder keepAlive(short keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -1191,7 +1191,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder keepAlive(String keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -1202,7 +1202,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder localAddress(URI localAddress) {
-            setProperty("localAddress", localAddress);
+            doSetProperty("localAddress", localAddress);
             return this;
         }
         /**
@@ -1213,7 +1213,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder localAddress(String localAddress) {
-            setProperty("localAddress", localAddress);
+            doSetProperty("localAddress", localAddress);
             return this;
         }
         /**
@@ -1226,7 +1226,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder maxReadRate(int maxReadRate) {
-            setProperty("maxReadRate", maxReadRate);
+            doSetProperty("maxReadRate", maxReadRate);
             return this;
         }
         /**
@@ -1239,7 +1239,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder maxReadRate(String maxReadRate) {
-            setProperty("maxReadRate", maxReadRate);
+            doSetProperty("maxReadRate", maxReadRate);
             return this;
         }
         /**
@@ -1252,7 +1252,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder maxWriteRate(int maxWriteRate) {
-            setProperty("maxWriteRate", maxWriteRate);
+            doSetProperty("maxWriteRate", maxWriteRate);
             return this;
         }
         /**
@@ -1265,7 +1265,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder maxWriteRate(String maxWriteRate) {
-            setProperty("maxWriteRate", maxWriteRate);
+            doSetProperty("maxWriteRate", maxWriteRate);
             return this;
         }
         /**
@@ -1280,7 +1280,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder mqttQosPropertyName(
                 String mqttQosPropertyName) {
-            setProperty("mqttQosPropertyName", mqttQosPropertyName);
+            doSetProperty("mqttQosPropertyName", mqttQosPropertyName);
             return this;
         }
         /**
@@ -1295,7 +1295,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder mqttRetainPropertyName(
                 String mqttRetainPropertyName) {
-            setProperty("mqttRetainPropertyName", mqttRetainPropertyName);
+            doSetProperty("mqttRetainPropertyName", mqttRetainPropertyName);
             return this;
         }
         /**
@@ -1308,7 +1308,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder mqttTopicPropertyName(
                 String mqttTopicPropertyName) {
-            setProperty("mqttTopicPropertyName", mqttTopicPropertyName);
+            doSetProperty("mqttTopicPropertyName", mqttTopicPropertyName);
             return this;
         }
         /**
@@ -1320,7 +1320,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder publishTopicName(
                 String publishTopicName) {
-            setProperty("publishTopicName", publishTopicName);
+            doSetProperty("publishTopicName", publishTopicName);
             return this;
         }
         /**
@@ -1332,7 +1332,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder qualityOfService(
                 String qualityOfService) {
-            setProperty("qualityOfService", qualityOfService);
+            doSetProperty("qualityOfService", qualityOfService);
             return this;
         }
         /**
@@ -1345,7 +1345,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder receiveBufferSize(
                 int receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1358,7 +1358,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder receiveBufferSize(
                 String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1372,7 +1372,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder reconnectAttemptsMax(
                 long reconnectAttemptsMax) {
-            setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
+            doSetProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
         }
         /**
@@ -1386,7 +1386,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder reconnectAttemptsMax(
                 String reconnectAttemptsMax) {
-            setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
+            doSetProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
         }
         /**
@@ -1399,7 +1399,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder reconnectBackOffMultiplier(
                 double reconnectBackOffMultiplier) {
-            setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
+            doSetProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
         }
         /**
@@ -1412,7 +1412,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder reconnectBackOffMultiplier(
                 String reconnectBackOffMultiplier) {
-            setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
+            doSetProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
         }
         /**
@@ -1424,7 +1424,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder reconnectDelay(long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -1436,7 +1436,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder reconnectDelay(String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -1449,7 +1449,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder reconnectDelayMax(
                 long reconnectDelayMax) {
-            setProperty("reconnectDelayMax", reconnectDelayMax);
+            doSetProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
         }
         /**
@@ -1462,7 +1462,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder reconnectDelayMax(
                 String reconnectDelayMax) {
-            setProperty("reconnectDelayMax", reconnectDelayMax);
+            doSetProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
         }
         /**
@@ -1474,7 +1474,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder sendBufferSize(int sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1486,7 +1486,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder sendBufferSize(String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1500,7 +1500,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder sendWaitInSeconds(
                 int sendWaitInSeconds) {
-            setProperty("sendWaitInSeconds", sendWaitInSeconds);
+            doSetProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
         }
         /**
@@ -1514,7 +1514,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder sendWaitInSeconds(
                 String sendWaitInSeconds) {
-            setProperty("sendWaitInSeconds", sendWaitInSeconds);
+            doSetProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
         }
         /**
@@ -1525,7 +1525,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder sslContext(Object sslContext) {
-            setProperty("sslContext", sslContext);
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**
@@ -1537,7 +1537,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder sslContext(String sslContext) {
-            setProperty("sslContext", sslContext);
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**
@@ -1551,7 +1551,7 @@ public interface MQTTEndpointBuilderFactory {
         @Deprecated
         default MQTTEndpointProducerBuilder subscribeTopicName(
                 String subscribeTopicName) {
-            setProperty("subscribeTopicName", subscribeTopicName);
+            doSetProperty("subscribeTopicName", subscribeTopicName);
             return this;
         }
         /**
@@ -1570,7 +1570,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder subscribeTopicNames(
                 String subscribeTopicNames) {
-            setProperty("subscribeTopicNames", subscribeTopicNames);
+            doSetProperty("subscribeTopicNames", subscribeTopicNames);
             return this;
         }
         /**
@@ -1583,7 +1583,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder trafficClass(int trafficClass) {
-            setProperty("trafficClass", trafficClass);
+            doSetProperty("trafficClass", trafficClass);
             return this;
         }
         /**
@@ -1596,7 +1596,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder trafficClass(String trafficClass) {
-            setProperty("trafficClass", trafficClass);
+            doSetProperty("trafficClass", trafficClass);
             return this;
         }
         /**
@@ -1608,7 +1608,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder version(String version) {
-            setProperty("version", version);
+            doSetProperty("version", version);
             return this;
         }
         /**
@@ -1619,7 +1619,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder willMessage(String willMessage) {
-            setProperty("willMessage", willMessage);
+            doSetProperty("willMessage", willMessage);
             return this;
         }
         /**
@@ -1631,7 +1631,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder willQos(QoS willQos) {
-            setProperty("willQos", willQos);
+            doSetProperty("willQos", willQos);
             return this;
         }
         /**
@@ -1644,7 +1644,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder willQos(String willQos) {
-            setProperty("willQos", willQos);
+            doSetProperty("willQos", willQos);
             return this;
         }
         /**
@@ -1656,7 +1656,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder willRetain(boolean willRetain) {
-            setProperty("willRetain", willRetain);
+            doSetProperty("willRetain", willRetain);
             return this;
         }
         /**
@@ -1668,7 +1668,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder willRetain(String willRetain) {
-            setProperty("willRetain", willRetain);
+            doSetProperty("willRetain", willRetain);
             return this;
         }
         /**
@@ -1680,7 +1680,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointProducerBuilder willTopic(String willTopic) {
-            setProperty("willTopic", willTopic);
+            doSetProperty("willTopic", willTopic);
             return this;
         }
         /**
@@ -1700,7 +1700,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1720,7 +1720,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -1744,7 +1744,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointProducerBuilder lazySessionCreation(
                 boolean lazySessionCreation) {
-            setProperty("lazySessionCreation", lazySessionCreation);
+            doSetProperty("lazySessionCreation", lazySessionCreation);
             return this;
         }
         /**
@@ -1757,7 +1757,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointProducerBuilder lazySessionCreation(
                 String lazySessionCreation) {
-            setProperty("lazySessionCreation", lazySessionCreation);
+            doSetProperty("lazySessionCreation", lazySessionCreation);
             return this;
         }
         /**
@@ -1770,7 +1770,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1783,7 +1783,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1796,7 +1796,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1809,7 +1809,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1833,7 +1833,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder blockingExecutor(Executor blockingExecutor) {
-            setProperty("blockingExecutor", blockingExecutor);
+            doSetProperty("blockingExecutor", blockingExecutor);
             return this;
         }
         /**
@@ -1847,7 +1847,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder blockingExecutor(String blockingExecutor) {
-            setProperty("blockingExecutor", blockingExecutor);
+            doSetProperty("blockingExecutor", blockingExecutor);
             return this;
         }
         /**
@@ -1859,7 +1859,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder byDefaultRetain(boolean byDefaultRetain) {
-            setProperty("byDefaultRetain", byDefaultRetain);
+            doSetProperty("byDefaultRetain", byDefaultRetain);
             return this;
         }
         /**
@@ -1871,7 +1871,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder byDefaultRetain(String byDefaultRetain) {
-            setProperty("byDefaultRetain", byDefaultRetain);
+            doSetProperty("byDefaultRetain", byDefaultRetain);
             return this;
         }
         /**
@@ -1884,7 +1884,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder cleanSession(boolean cleanSession) {
-            setProperty("cleanSession", cleanSession);
+            doSetProperty("cleanSession", cleanSession);
             return this;
         }
         /**
@@ -1897,7 +1897,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder cleanSession(String cleanSession) {
-            setProperty("cleanSession", cleanSession);
+            doSetProperty("cleanSession", cleanSession);
             return this;
         }
         /**
@@ -1911,7 +1911,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -1924,7 +1924,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder connectAttemptsMax(long connectAttemptsMax) {
-            setProperty("connectAttemptsMax", connectAttemptsMax);
+            doSetProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
         }
         /**
@@ -1937,7 +1937,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder connectAttemptsMax(String connectAttemptsMax) {
-            setProperty("connectAttemptsMax", connectAttemptsMax);
+            doSetProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
         }
         /**
@@ -1950,7 +1950,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder connectWaitInSeconds(
                 int connectWaitInSeconds) {
-            setProperty("connectWaitInSeconds", connectWaitInSeconds);
+            doSetProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
         }
         /**
@@ -1963,7 +1963,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder connectWaitInSeconds(
                 String connectWaitInSeconds) {
-            setProperty("connectWaitInSeconds", connectWaitInSeconds);
+            doSetProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
         }
         /**
@@ -1976,7 +1976,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder disconnectWaitInSeconds(
                 int disconnectWaitInSeconds) {
-            setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
+            doSetProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
         }
         /**
@@ -1989,7 +1989,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder disconnectWaitInSeconds(
                 String disconnectWaitInSeconds) {
-            setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
+            doSetProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
         }
         /**
@@ -2005,7 +2005,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder dispatchQueue(Object dispatchQueue) {
-            setProperty("dispatchQueue", dispatchQueue);
+            doSetProperty("dispatchQueue", dispatchQueue);
             return this;
         }
         /**
@@ -2021,7 +2021,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder dispatchQueue(String dispatchQueue) {
-            setProperty("dispatchQueue", dispatchQueue);
+            doSetProperty("dispatchQueue", dispatchQueue);
             return this;
         }
         /**
@@ -2033,7 +2033,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -2047,7 +2047,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder keepAlive(short keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -2061,7 +2061,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder keepAlive(String keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -2072,7 +2072,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder localAddress(URI localAddress) {
-            setProperty("localAddress", localAddress);
+            doSetProperty("localAddress", localAddress);
             return this;
         }
         /**
@@ -2083,7 +2083,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder localAddress(String localAddress) {
-            setProperty("localAddress", localAddress);
+            doSetProperty("localAddress", localAddress);
             return this;
         }
         /**
@@ -2096,7 +2096,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder maxReadRate(int maxReadRate) {
-            setProperty("maxReadRate", maxReadRate);
+            doSetProperty("maxReadRate", maxReadRate);
             return this;
         }
         /**
@@ -2109,7 +2109,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder maxReadRate(String maxReadRate) {
-            setProperty("maxReadRate", maxReadRate);
+            doSetProperty("maxReadRate", maxReadRate);
             return this;
         }
         /**
@@ -2122,7 +2122,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder maxWriteRate(int maxWriteRate) {
-            setProperty("maxWriteRate", maxWriteRate);
+            doSetProperty("maxWriteRate", maxWriteRate);
             return this;
         }
         /**
@@ -2135,7 +2135,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder maxWriteRate(String maxWriteRate) {
-            setProperty("maxWriteRate", maxWriteRate);
+            doSetProperty("maxWriteRate", maxWriteRate);
             return this;
         }
         /**
@@ -2150,7 +2150,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder mqttQosPropertyName(
                 String mqttQosPropertyName) {
-            setProperty("mqttQosPropertyName", mqttQosPropertyName);
+            doSetProperty("mqttQosPropertyName", mqttQosPropertyName);
             return this;
         }
         /**
@@ -2165,7 +2165,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder mqttRetainPropertyName(
                 String mqttRetainPropertyName) {
-            setProperty("mqttRetainPropertyName", mqttRetainPropertyName);
+            doSetProperty("mqttRetainPropertyName", mqttRetainPropertyName);
             return this;
         }
         /**
@@ -2178,7 +2178,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder mqttTopicPropertyName(
                 String mqttTopicPropertyName) {
-            setProperty("mqttTopicPropertyName", mqttTopicPropertyName);
+            doSetProperty("mqttTopicPropertyName", mqttTopicPropertyName);
             return this;
         }
         /**
@@ -2189,7 +2189,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder publishTopicName(String publishTopicName) {
-            setProperty("publishTopicName", publishTopicName);
+            doSetProperty("publishTopicName", publishTopicName);
             return this;
         }
         /**
@@ -2200,7 +2200,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder qualityOfService(String qualityOfService) {
-            setProperty("qualityOfService", qualityOfService);
+            doSetProperty("qualityOfService", qualityOfService);
             return this;
         }
         /**
@@ -2212,7 +2212,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder receiveBufferSize(int receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -2224,7 +2224,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder receiveBufferSize(String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -2238,7 +2238,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder reconnectAttemptsMax(
                 long reconnectAttemptsMax) {
-            setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
+            doSetProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
         }
         /**
@@ -2252,7 +2252,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder reconnectAttemptsMax(
                 String reconnectAttemptsMax) {
-            setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
+            doSetProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
         }
         /**
@@ -2265,7 +2265,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder reconnectBackOffMultiplier(
                 double reconnectBackOffMultiplier) {
-            setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
+            doSetProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
         }
         /**
@@ -2278,7 +2278,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder reconnectBackOffMultiplier(
                 String reconnectBackOffMultiplier) {
-            setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
+            doSetProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
         }
         /**
@@ -2290,7 +2290,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder reconnectDelay(long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -2302,7 +2302,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder reconnectDelay(String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -2314,7 +2314,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder reconnectDelayMax(long reconnectDelayMax) {
-            setProperty("reconnectDelayMax", reconnectDelayMax);
+            doSetProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
         }
         /**
@@ -2326,7 +2326,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder reconnectDelayMax(String reconnectDelayMax) {
-            setProperty("reconnectDelayMax", reconnectDelayMax);
+            doSetProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
         }
         /**
@@ -2338,7 +2338,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder sendBufferSize(int sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -2350,7 +2350,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder sendBufferSize(String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -2363,7 +2363,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder sendWaitInSeconds(int sendWaitInSeconds) {
-            setProperty("sendWaitInSeconds", sendWaitInSeconds);
+            doSetProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
         }
         /**
@@ -2376,7 +2376,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder sendWaitInSeconds(String sendWaitInSeconds) {
-            setProperty("sendWaitInSeconds", sendWaitInSeconds);
+            doSetProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
         }
         /**
@@ -2387,7 +2387,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder sslContext(Object sslContext) {
-            setProperty("sslContext", sslContext);
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**
@@ -2399,7 +2399,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder sslContext(String sslContext) {
-            setProperty("sslContext", sslContext);
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**
@@ -2412,7 +2412,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         @Deprecated
         default MQTTEndpointBuilder subscribeTopicName(String subscribeTopicName) {
-            setProperty("subscribeTopicName", subscribeTopicName);
+            doSetProperty("subscribeTopicName", subscribeTopicName);
             return this;
         }
         /**
@@ -2431,7 +2431,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default MQTTEndpointBuilder subscribeTopicNames(
                 String subscribeTopicNames) {
-            setProperty("subscribeTopicNames", subscribeTopicNames);
+            doSetProperty("subscribeTopicNames", subscribeTopicNames);
             return this;
         }
         /**
@@ -2444,7 +2444,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder trafficClass(int trafficClass) {
-            setProperty("trafficClass", trafficClass);
+            doSetProperty("trafficClass", trafficClass);
             return this;
         }
         /**
@@ -2457,7 +2457,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder trafficClass(String trafficClass) {
-            setProperty("trafficClass", trafficClass);
+            doSetProperty("trafficClass", trafficClass);
             return this;
         }
         /**
@@ -2469,7 +2469,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder version(String version) {
-            setProperty("version", version);
+            doSetProperty("version", version);
             return this;
         }
         /**
@@ -2480,7 +2480,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder willMessage(String willMessage) {
-            setProperty("willMessage", willMessage);
+            doSetProperty("willMessage", willMessage);
             return this;
         }
         /**
@@ -2492,7 +2492,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder willQos(QoS willQos) {
-            setProperty("willQos", willQos);
+            doSetProperty("willQos", willQos);
             return this;
         }
         /**
@@ -2505,7 +2505,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder willQos(String willQos) {
-            setProperty("willQos", willQos);
+            doSetProperty("willQos", willQos);
             return this;
         }
         /**
@@ -2517,7 +2517,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder willRetain(boolean willRetain) {
-            setProperty("willRetain", willRetain);
+            doSetProperty("willRetain", willRetain);
             return this;
         }
         /**
@@ -2529,7 +2529,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder willRetain(String willRetain) {
-            setProperty("willRetain", willRetain);
+            doSetProperty("willRetain", willRetain);
             return this;
         }
         /**
@@ -2541,7 +2541,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: common
          */
         default MQTTEndpointBuilder willTopic(String willTopic) {
-            setProperty("willTopic", willTopic);
+            doSetProperty("willTopic", willTopic);
             return this;
         }
     }
@@ -2565,7 +2565,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2578,7 +2578,7 @@ public interface MQTTEndpointBuilderFactory {
          */
         default AdvancedMQTTEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2590,7 +2590,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMQTTEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2602,7 +2602,7 @@ public interface MQTTEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMQTTEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

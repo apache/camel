@@ -45,7 +45,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder connectionTimeout(int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder connectionTimeout(String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -69,7 +69,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder sendSync(boolean sendSync) {
-            setProperty("sendSync", sendSync);
+            doSetProperty("sendSync", sendSync);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder sendSync(String sendSync) {
-            setProperty("sendSync", sendSync);
+            doSetProperty("sendSync", sendSync);
             return this;
         }
         /**
@@ -93,7 +93,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: security
          */
         default NagiosEndpointBuilder encryption(Encryption encryption) {
-            setProperty("encryption", encryption);
+            doSetProperty("encryption", encryption);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: security
          */
         default NagiosEndpointBuilder encryption(String encryption) {
-            setProperty("encryption", encryption);
+            doSetProperty("encryption", encryption);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface NagiosEndpointBuilderFactory {
         @Deprecated
         default NagiosEndpointBuilder encryptionMethod(
                 NagiosEncryptionMethod encryptionMethod) {
-            setProperty("encryptionMethod", encryptionMethod);
+            doSetProperty("encryptionMethod", encryptionMethod);
             return this;
         }
         /**
@@ -157,7 +157,7 @@ public interface NagiosEndpointBuilderFactory {
          */
         @Deprecated
         default NagiosEndpointBuilder encryptionMethod(String encryptionMethod) {
-            setProperty("encryptionMethod", encryptionMethod);
+            doSetProperty("encryptionMethod", encryptionMethod);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: security
          */
         default NagiosEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
     }
@@ -192,7 +192,7 @@ public interface NagiosEndpointBuilderFactory {
          */
         default AdvancedNagiosEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -205,7 +205,7 @@ public interface NagiosEndpointBuilderFactory {
          */
         default AdvancedNagiosEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNagiosEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -229,7 +229,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNagiosEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

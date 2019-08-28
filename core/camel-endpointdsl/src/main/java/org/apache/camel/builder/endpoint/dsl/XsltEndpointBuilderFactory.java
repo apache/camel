@@ -46,7 +46,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder allowStAX(boolean allowStAX) {
-            setProperty("allowStAX", allowStAX);
+            doSetProperty("allowStAX", allowStAX);
             return this;
         }
         /**
@@ -57,7 +57,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder allowStAX(String allowStAX) {
-            setProperty("allowStAX", allowStAX);
+            doSetProperty("allowStAX", allowStAX);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -101,7 +101,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder deleteOutputFile(boolean deleteOutputFile) {
-            setProperty("deleteOutputFile", deleteOutputFile);
+            doSetProperty("deleteOutputFile", deleteOutputFile);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder deleteOutputFile(String deleteOutputFile) {
-            setProperty("deleteOutputFile", deleteOutputFile);
+            doSetProperty("deleteOutputFile", deleteOutputFile);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder failOnNullBody(boolean failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -137,7 +137,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder failOnNullBody(String failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder output(XsltOutput output) {
-            setProperty("output", output);
+            doSetProperty("output", output);
             return this;
         }
         /**
@@ -173,7 +173,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder output(String output) {
-            setProperty("output", output);
+            doSetProperty("output", output);
             return this;
         }
         /**
@@ -186,7 +186,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder saxon(boolean saxon) {
-            setProperty("saxon", saxon);
+            doSetProperty("saxon", saxon);
             return this;
         }
         /**
@@ -199,7 +199,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: producer
          */
         default XsltEndpointBuilder saxon(String saxon) {
-            setProperty("saxon", saxon);
+            doSetProperty("saxon", saxon);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default XsltEndpointBuilder transformerCacheSize(
                 int transformerCacheSize) {
-            setProperty("transformerCacheSize", transformerCacheSize);
+            doSetProperty("transformerCacheSize", transformerCacheSize);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default XsltEndpointBuilder transformerCacheSize(
                 String transformerCacheSize) {
-            setProperty("transformerCacheSize", transformerCacheSize);
+            doSetProperty("transformerCacheSize", transformerCacheSize);
             return this;
         }
     }
@@ -249,7 +249,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default AdvancedXsltEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -262,7 +262,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default AdvancedXsltEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -274,7 +274,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder entityResolver(Object entityResolver) {
-            setProperty("entityResolver", entityResolver);
+            doSetProperty("entityResolver", entityResolver);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder entityResolver(String entityResolver) {
-            setProperty("entityResolver", entityResolver);
+            doSetProperty("entityResolver", entityResolver);
             return this;
         }
         /**
@@ -302,7 +302,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder errorListener(Object errorListener) {
-            setProperty("errorListener", errorListener);
+            doSetProperty("errorListener", errorListener);
             return this;
         }
         /**
@@ -318,7 +318,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder errorListener(String errorListener) {
-            setProperty("errorListener", errorListener);
+            doSetProperty("errorListener", errorListener);
             return this;
         }
         /**
@@ -334,7 +334,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default AdvancedXsltEndpointBuilder resultHandlerFactory(
                 Object resultHandlerFactory) {
-            setProperty("resultHandlerFactory", resultHandlerFactory);
+            doSetProperty("resultHandlerFactory", resultHandlerFactory);
             return this;
         }
         /**
@@ -350,7 +350,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default AdvancedXsltEndpointBuilder resultHandlerFactory(
                 String resultHandlerFactory) {
-            setProperty("resultHandlerFactory", resultHandlerFactory);
+            doSetProperty("resultHandlerFactory", resultHandlerFactory);
             return this;
         }
         /**
@@ -362,7 +362,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default AdvancedXsltEndpointBuilder saxonConfiguration(
                 Object saxonConfiguration) {
-            setProperty("saxonConfiguration", saxonConfiguration);
+            doSetProperty("saxonConfiguration", saxonConfiguration);
             return this;
         }
         /**
@@ -374,7 +374,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default AdvancedXsltEndpointBuilder saxonConfiguration(
                 String saxonConfiguration) {
-            setProperty("saxonConfiguration", saxonConfiguration);
+            doSetProperty("saxonConfiguration", saxonConfiguration);
             return this;
         }
         /**
@@ -390,7 +390,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default AdvancedXsltEndpointBuilder saxonExtensionFunctions(
                 List<Object> saxonExtensionFunctions) {
-            setProperty("saxonExtensionFunctions", saxonExtensionFunctions);
+            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
             return this;
         }
         /**
@@ -406,7 +406,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default AdvancedXsltEndpointBuilder saxonExtensionFunctions(
                 String saxonExtensionFunctions) {
-            setProperty("saxonExtensionFunctions", saxonExtensionFunctions);
+            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -430,7 +430,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -443,7 +443,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default AdvancedXsltEndpointBuilder transformerFactory(
                 Object transformerFactory) {
-            setProperty("transformerFactory", transformerFactory);
+            doSetProperty("transformerFactory", transformerFactory);
             return this;
         }
         /**
@@ -456,7 +456,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default AdvancedXsltEndpointBuilder transformerFactory(
                 String transformerFactory) {
-            setProperty("transformerFactory", transformerFactory);
+            doSetProperty("transformerFactory", transformerFactory);
             return this;
         }
         /**
@@ -469,7 +469,7 @@ public interface XsltEndpointBuilderFactory {
          */
         default AdvancedXsltEndpointBuilder transformerFactoryClass(
                 String transformerFactoryClass) {
-            setProperty("transformerFactoryClass", transformerFactoryClass);
+            doSetProperty("transformerFactoryClass", transformerFactoryClass);
             return this;
         }
         /**
@@ -480,7 +480,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder uriResolver(Object uriResolver) {
-            setProperty("uriResolver", uriResolver);
+            doSetProperty("uriResolver", uriResolver);
             return this;
         }
         /**
@@ -492,7 +492,7 @@ public interface XsltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder uriResolver(String uriResolver) {
-            setProperty("uriResolver", uriResolver);
+            doSetProperty("uriResolver", uriResolver);
             return this;
         }
     }

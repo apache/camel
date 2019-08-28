@@ -55,7 +55,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder acknowledgementMode(
                 SessionAcknowledgementType acknowledgementMode) {
-            setProperty("acknowledgementMode", acknowledgementMode);
+            doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
         /**
@@ -69,7 +69,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder acknowledgementMode(
                 String acknowledgementMode) {
-            setProperty("acknowledgementMode", acknowledgementMode);
+            doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsEndpointConsumerBuilder consumerCount(int consumerCount) {
-            setProperty("consumerCount", consumerCount);
+            doSetProperty("consumerCount", consumerCount);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsEndpointConsumerBuilder consumerCount(String consumerCount) {
-            setProperty("consumerCount", consumerCount);
+            doSetProperty("consumerCount", consumerCount);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder durableSubscriptionId(
                 String durableSubscriptionId) {
-            setProperty("durableSubscriptionId", durableSubscriptionId);
+            doSetProperty("durableSubscriptionId", durableSubscriptionId);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsEndpointConsumerBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -163,7 +163,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsEndpointConsumerBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder errorHandlerLoggingLevel(
                 LoggingLevel errorHandlerLoggingLevel) {
-            setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
+            doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder errorHandlerLoggingLevel(
                 String errorHandlerLoggingLevel) {
-            setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
+            doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
-            setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
+            doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
         }
         /**
@@ -216,7 +216,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder errorHandlerLogStackTrace(
                 String errorHandlerLogStackTrace) {
-            setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
+            doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: transaction
          */
         default SjmsEndpointConsumerBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: transaction
          */
         default SjmsEndpointConsumerBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -251,7 +251,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder transactionBatchCount(
                 int transactionBatchCount) {
-            setProperty("transactionBatchCount", transactionBatchCount);
+            doSetProperty("transactionBatchCount", transactionBatchCount);
             return this;
         }
         /**
@@ -264,7 +264,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder transactionBatchCount(
                 String transactionBatchCount) {
-            setProperty("transactionBatchCount", transactionBatchCount);
+            doSetProperty("transactionBatchCount", transactionBatchCount);
             return this;
         }
         /**
@@ -277,7 +277,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder transactionBatchTimeout(
                 long transactionBatchTimeout) {
-            setProperty("transactionBatchTimeout", transactionBatchTimeout);
+            doSetProperty("transactionBatchTimeout", transactionBatchTimeout);
             return this;
         }
         /**
@@ -290,7 +290,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder transactionBatchTimeout(
                 String transactionBatchTimeout) {
-            setProperty("transactionBatchTimeout", transactionBatchTimeout);
+            doSetProperty("transactionBatchTimeout", transactionBatchTimeout);
             return this;
         }
         /**
@@ -303,7 +303,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder transactionCommitStrategy(
                 Object transactionCommitStrategy) {
-            setProperty("transactionCommitStrategy", transactionCommitStrategy);
+            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
         }
         /**
@@ -316,7 +316,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder transactionCommitStrategy(
                 String transactionCommitStrategy) {
-            setProperty("transactionCommitStrategy", transactionCommitStrategy);
+            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
         }
     }
@@ -343,7 +343,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -371,7 +371,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -384,7 +384,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -396,7 +396,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder messageSelector(
                 String messageSelector) {
-            setProperty("messageSelector", messageSelector);
+            doSetProperty("messageSelector", messageSelector);
             return this;
         }
         /**
@@ -417,7 +417,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder asyncStartListener(
                 boolean asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -438,7 +438,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder asyncStartListener(
                 String asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -451,7 +451,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder asyncStopListener(
                 boolean asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -464,7 +464,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder asyncStopListener(
                 String asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -477,7 +477,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -490,7 +490,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -502,7 +502,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionCount(
                 Integer connectionCount) {
-            setProperty("connectionCount", connectionCount);
+            doSetProperty("connectionCount", connectionCount);
             return this;
         }
         /**
@@ -515,7 +515,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionCount(
                 String connectionCount) {
-            setProperty("connectionCount", connectionCount);
+            doSetProperty("connectionCount", connectionCount);
             return this;
         }
         /**
@@ -528,7 +528,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -542,7 +542,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -557,7 +557,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionResource(
                 Object connectionResource) {
-            setProperty("connectionResource", connectionResource);
+            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -572,7 +572,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder connectionResource(
                 String connectionResource) {
-            setProperty("connectionResource", connectionResource);
+            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -585,7 +585,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder destinationCreationStrategy(
                 Object destinationCreationStrategy) {
-            setProperty("destinationCreationStrategy", destinationCreationStrategy);
+            doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
         }
         /**
@@ -598,7 +598,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder destinationCreationStrategy(
                 String destinationCreationStrategy) {
-            setProperty("destinationCreationStrategy", destinationCreationStrategy);
+            doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
         }
         /**
@@ -611,7 +611,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder exceptionListener(
                 Object exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -625,7 +625,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder exceptionListener(
                 String exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -639,7 +639,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -653,7 +653,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -668,7 +668,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -683,7 +683,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -705,7 +705,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -727,7 +727,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -741,7 +741,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -755,7 +755,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder mapJmsMessage(
                 String mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -770,7 +770,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -785,7 +785,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -800,7 +800,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder sharedJMSSession(
                 boolean sharedJMSSession) {
-            setProperty("sharedJMSSession", sharedJMSSession);
+            doSetProperty("sharedJMSSession", sharedJMSSession);
             return this;
         }
         /**
@@ -815,7 +815,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointConsumerBuilder sharedJMSSession(
                 String sharedJMSSession) {
-            setProperty("sharedJMSSession", sharedJMSSession);
+            doSetProperty("sharedJMSSession", sharedJMSSession);
             return this;
         }
     }
@@ -840,7 +840,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointProducerBuilder acknowledgementMode(
                 SessionAcknowledgementType acknowledgementMode) {
-            setProperty("acknowledgementMode", acknowledgementMode);
+            doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
         /**
@@ -854,7 +854,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointProducerBuilder acknowledgementMode(
                 String acknowledgementMode) {
-            setProperty("acknowledgementMode", acknowledgementMode);
+            doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
         /**
@@ -874,7 +874,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -894,7 +894,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -907,7 +907,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: producer
          */
         default SjmsEndpointProducerBuilder namedReplyTo(String namedReplyTo) {
-            setProperty("namedReplyTo", namedReplyTo);
+            doSetProperty("namedReplyTo", namedReplyTo);
             return this;
         }
         /**
@@ -918,7 +918,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: producer
          */
         default SjmsEndpointProducerBuilder persistent(boolean persistent) {
-            setProperty("persistent", persistent);
+            doSetProperty("persistent", persistent);
             return this;
         }
         /**
@@ -929,7 +929,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: producer
          */
         default SjmsEndpointProducerBuilder persistent(String persistent) {
-            setProperty("persistent", persistent);
+            doSetProperty("persistent", persistent);
             return this;
         }
         /**
@@ -940,7 +940,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: producer
          */
         default SjmsEndpointProducerBuilder producerCount(int producerCount) {
-            setProperty("producerCount", producerCount);
+            doSetProperty("producerCount", producerCount);
             return this;
         }
         /**
@@ -951,7 +951,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: producer
          */
         default SjmsEndpointProducerBuilder producerCount(String producerCount) {
-            setProperty("producerCount", producerCount);
+            doSetProperty("producerCount", producerCount);
             return this;
         }
         /**
@@ -962,7 +962,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: producer
          */
         default SjmsEndpointProducerBuilder ttl(long ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -973,7 +973,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: producer
          */
         default SjmsEndpointProducerBuilder ttl(String ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -986,7 +986,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointProducerBuilder transactionCommitStrategy(
                 Object transactionCommitStrategy) {
-            setProperty("transactionCommitStrategy", transactionCommitStrategy);
+            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
         }
         /**
@@ -999,7 +999,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointProducerBuilder transactionCommitStrategy(
                 String transactionCommitStrategy) {
-            setProperty("transactionCommitStrategy", transactionCommitStrategy);
+            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
         }
     }
@@ -1023,7 +1023,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -1036,7 +1036,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -1049,7 +1049,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder prefillPool(
                 boolean prefillPool) {
-            setProperty("prefillPool", prefillPool);
+            doSetProperty("prefillPool", prefillPool);
             return this;
         }
         /**
@@ -1062,7 +1062,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder prefillPool(
                 String prefillPool) {
-            setProperty("prefillPool", prefillPool);
+            doSetProperty("prefillPool", prefillPool);
             return this;
         }
         /**
@@ -1075,7 +1075,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder responseTimeOut(
                 long responseTimeOut) {
-            setProperty("responseTimeOut", responseTimeOut);
+            doSetProperty("responseTimeOut", responseTimeOut);
             return this;
         }
         /**
@@ -1088,7 +1088,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder responseTimeOut(
                 String responseTimeOut) {
-            setProperty("responseTimeOut", responseTimeOut);
+            doSetProperty("responseTimeOut", responseTimeOut);
             return this;
         }
         /**
@@ -1109,7 +1109,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder asyncStartListener(
                 boolean asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -1130,7 +1130,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder asyncStartListener(
                 String asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -1143,7 +1143,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder asyncStopListener(
                 boolean asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -1156,7 +1156,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder asyncStopListener(
                 String asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -1169,7 +1169,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1182,7 +1182,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1194,7 +1194,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder connectionCount(
                 Integer connectionCount) {
-            setProperty("connectionCount", connectionCount);
+            doSetProperty("connectionCount", connectionCount);
             return this;
         }
         /**
@@ -1207,7 +1207,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder connectionCount(
                 String connectionCount) {
-            setProperty("connectionCount", connectionCount);
+            doSetProperty("connectionCount", connectionCount);
             return this;
         }
         /**
@@ -1220,7 +1220,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -1234,7 +1234,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -1249,7 +1249,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder connectionResource(
                 Object connectionResource) {
-            setProperty("connectionResource", connectionResource);
+            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -1264,7 +1264,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder connectionResource(
                 String connectionResource) {
-            setProperty("connectionResource", connectionResource);
+            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -1277,7 +1277,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder destinationCreationStrategy(
                 Object destinationCreationStrategy) {
-            setProperty("destinationCreationStrategy", destinationCreationStrategy);
+            doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
         }
         /**
@@ -1290,7 +1290,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder destinationCreationStrategy(
                 String destinationCreationStrategy) {
-            setProperty("destinationCreationStrategy", destinationCreationStrategy);
+            doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
         }
         /**
@@ -1303,7 +1303,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder exceptionListener(
                 Object exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -1317,7 +1317,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder exceptionListener(
                 String exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -1331,7 +1331,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1345,7 +1345,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1360,7 +1360,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -1375,7 +1375,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -1397,7 +1397,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -1419,7 +1419,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -1433,7 +1433,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -1447,7 +1447,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder mapJmsMessage(
                 String mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -1462,7 +1462,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -1477,7 +1477,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -1492,7 +1492,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder sharedJMSSession(
                 boolean sharedJMSSession) {
-            setProperty("sharedJMSSession", sharedJMSSession);
+            doSetProperty("sharedJMSSession", sharedJMSSession);
             return this;
         }
         /**
@@ -1507,7 +1507,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointProducerBuilder sharedJMSSession(
                 String sharedJMSSession) {
-            setProperty("sharedJMSSession", sharedJMSSession);
+            doSetProperty("sharedJMSSession", sharedJMSSession);
             return this;
         }
     }
@@ -1532,7 +1532,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointBuilder acknowledgementMode(
                 SessionAcknowledgementType acknowledgementMode) {
-            setProperty("acknowledgementMode", acknowledgementMode);
+            doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
         /**
@@ -1546,7 +1546,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointBuilder acknowledgementMode(
                 String acknowledgementMode) {
-            setProperty("acknowledgementMode", acknowledgementMode);
+            doSetProperty("acknowledgementMode", acknowledgementMode);
             return this;
         }
         /**
@@ -1559,7 +1559,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointBuilder transactionCommitStrategy(
                 Object transactionCommitStrategy) {
-            setProperty("transactionCommitStrategy", transactionCommitStrategy);
+            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
         }
         /**
@@ -1572,7 +1572,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointBuilder transactionCommitStrategy(
                 String transactionCommitStrategy) {
-            setProperty("transactionCommitStrategy", transactionCommitStrategy);
+            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
         }
     }
@@ -1604,7 +1604,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder asyncStartListener(
                 boolean asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -1625,7 +1625,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder asyncStartListener(
                 String asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -1638,7 +1638,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder asyncStopListener(
                 boolean asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -1651,7 +1651,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder asyncStopListener(
                 String asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -1664,7 +1664,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1677,7 +1677,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1689,7 +1689,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder connectionCount(
                 Integer connectionCount) {
-            setProperty("connectionCount", connectionCount);
+            doSetProperty("connectionCount", connectionCount);
             return this;
         }
         /**
@@ -1702,7 +1702,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder connectionCount(
                 String connectionCount) {
-            setProperty("connectionCount", connectionCount);
+            doSetProperty("connectionCount", connectionCount);
             return this;
         }
         /**
@@ -1715,7 +1715,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -1729,7 +1729,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -1744,7 +1744,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder connectionResource(
                 Object connectionResource) {
-            setProperty("connectionResource", connectionResource);
+            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -1759,7 +1759,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder connectionResource(
                 String connectionResource) {
-            setProperty("connectionResource", connectionResource);
+            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -1772,7 +1772,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder destinationCreationStrategy(
                 Object destinationCreationStrategy) {
-            setProperty("destinationCreationStrategy", destinationCreationStrategy);
+            doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
         }
         /**
@@ -1785,7 +1785,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder destinationCreationStrategy(
                 String destinationCreationStrategy) {
-            setProperty("destinationCreationStrategy", destinationCreationStrategy);
+            doSetProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
         }
         /**
@@ -1798,7 +1798,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder exceptionListener(
                 Object exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -1812,7 +1812,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder exceptionListener(
                 String exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -1826,7 +1826,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1840,7 +1840,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1855,7 +1855,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -1870,7 +1870,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -1892,7 +1892,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -1914,7 +1914,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -1927,7 +1927,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder mapJmsMessage(boolean mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -1940,7 +1940,7 @@ public interface SjmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder mapJmsMessage(String mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -1955,7 +1955,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -1970,7 +1970,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -1985,7 +1985,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder sharedJMSSession(
                 boolean sharedJMSSession) {
-            setProperty("sharedJMSSession", sharedJMSSession);
+            doSetProperty("sharedJMSSession", sharedJMSSession);
             return this;
         }
         /**
@@ -2000,7 +2000,7 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder sharedJMSSession(
                 String sharedJMSSession) {
-            setProperty("sharedJMSSession", sharedJMSSession);
+            doSetProperty("sharedJMSSession", sharedJMSSession);
             return this;
         }
     }

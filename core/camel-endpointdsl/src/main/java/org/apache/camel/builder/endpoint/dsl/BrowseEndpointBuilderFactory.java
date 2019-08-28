@@ -57,7 +57,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default BrowseEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default BrowseEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -102,7 +102,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -156,7 +156,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -226,7 +226,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default BrowseEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -246,7 +246,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default BrowseEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -270,7 +270,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -283,7 +283,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -309,7 +309,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -344,7 +344,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface BrowseEndpointBuilderFactory {
          */
         default AdvancedBrowseEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface BrowseEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBrowseEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -381,7 +381,7 @@ public interface BrowseEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBrowseEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

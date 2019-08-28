@@ -59,7 +59,7 @@ public interface FileWatchEndpointBuilderFactory {
          */
         default AdvancedFileWatchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface FileWatchEndpointBuilderFactory {
          */
         default AdvancedFileWatchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface FileWatchEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileWatchEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface FileWatchEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileWatchEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

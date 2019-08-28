@@ -51,7 +51,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointConsumerBuilder consumes(String consumes) {
-            setProperty("consumes", consumes);
+            doSetProperty("consumes", consumes);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointConsumerBuilder inType(String inType) {
-            setProperty("inType", inType);
+            doSetProperty("inType", inType);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointConsumerBuilder outType(String outType) {
-            setProperty("outType", outType);
+            doSetProperty("outType", outType);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointConsumerBuilder produces(String produces) {
-            setProperty("produces", produces);
+            doSetProperty("produces", produces);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointConsumerBuilder routeId(String routeId) {
-            setProperty("routeId", routeId);
+            doSetProperty("routeId", routeId);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface RestEndpointBuilderFactory {
          */
         default RestEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface RestEndpointBuilderFactory {
          */
         default RestEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -149,7 +149,7 @@ public interface RestEndpointBuilderFactory {
          */
         default RestEndpointConsumerBuilder consumerComponentName(
                 String consumerComponentName) {
-            setProperty("consumerComponentName", consumerComponentName);
+            doSetProperty("consumerComponentName", consumerComponentName);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface RestEndpointBuilderFactory {
          * Group: consumer
          */
         default RestEndpointConsumerBuilder description(String description) {
-            setProperty("description", description);
+            doSetProperty("description", description);
             return this;
         }
     }
@@ -187,7 +187,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -215,7 +215,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -228,7 +228,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -303,7 +303,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointProducerBuilder consumes(String consumes) {
-            setProperty("consumes", consumes);
+            doSetProperty("consumes", consumes);
             return this;
         }
         /**
@@ -314,7 +314,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointProducerBuilder inType(String inType) {
-            setProperty("inType", inType);
+            doSetProperty("inType", inType);
             return this;
         }
         /**
@@ -325,7 +325,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointProducerBuilder outType(String outType) {
-            setProperty("outType", outType);
+            doSetProperty("outType", outType);
             return this;
         }
         /**
@@ -337,7 +337,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointProducerBuilder produces(String produces) {
-            setProperty("produces", produces);
+            doSetProperty("produces", produces);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointProducerBuilder routeId(String routeId) {
-            setProperty("routeId", routeId);
+            doSetProperty("routeId", routeId);
             return this;
         }
         /**
@@ -360,7 +360,7 @@ public interface RestEndpointBuilderFactory {
          * Group: producer
          */
         default RestEndpointProducerBuilder apiDoc(String apiDoc) {
-            setProperty("apiDoc", apiDoc);
+            doSetProperty("apiDoc", apiDoc);
             return this;
         }
         /**
@@ -377,7 +377,7 @@ public interface RestEndpointBuilderFactory {
          */
         default RestEndpointProducerBuilder bindingMode(
                 RestBindingMode bindingMode) {
-            setProperty("bindingMode", bindingMode);
+            doSetProperty("bindingMode", bindingMode);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface RestEndpointBuilderFactory {
          * Group: producer
          */
         default RestEndpointProducerBuilder bindingMode(String bindingMode) {
-            setProperty("bindingMode", bindingMode);
+            doSetProperty("bindingMode", bindingMode);
             return this;
         }
         /**
@@ -405,7 +405,7 @@ public interface RestEndpointBuilderFactory {
          * Group: producer
          */
         default RestEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -425,7 +425,7 @@ public interface RestEndpointBuilderFactory {
          */
         default RestEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface RestEndpointBuilderFactory {
          */
         default RestEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -462,7 +462,7 @@ public interface RestEndpointBuilderFactory {
          */
         default RestEndpointProducerBuilder producerComponentName(
                 String producerComponentName) {
-            setProperty("producerComponentName", producerComponentName);
+            doSetProperty("producerComponentName", producerComponentName);
             return this;
         }
         /**
@@ -474,7 +474,7 @@ public interface RestEndpointBuilderFactory {
          */
         default RestEndpointProducerBuilder queryParameters(
                 String queryParameters) {
-            setProperty("queryParameters", queryParameters);
+            doSetProperty("queryParameters", queryParameters);
             return this;
         }
     }
@@ -498,7 +498,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -511,7 +511,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -524,7 +524,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -537,7 +537,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -560,7 +560,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointBuilder consumes(String consumes) {
-            setProperty("consumes", consumes);
+            doSetProperty("consumes", consumes);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointBuilder inType(String inType) {
-            setProperty("inType", inType);
+            doSetProperty("inType", inType);
             return this;
         }
         /**
@@ -582,7 +582,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointBuilder outType(String outType) {
-            setProperty("outType", outType);
+            doSetProperty("outType", outType);
             return this;
         }
         /**
@@ -594,7 +594,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointBuilder produces(String produces) {
-            setProperty("produces", produces);
+            doSetProperty("produces", produces);
             return this;
         }
         /**
@@ -605,7 +605,7 @@ public interface RestEndpointBuilderFactory {
          * Group: common
          */
         default RestEndpointBuilder routeId(String routeId) {
-            setProperty("routeId", routeId);
+            doSetProperty("routeId", routeId);
             return this;
         }
     }
@@ -629,7 +629,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -642,7 +642,7 @@ public interface RestEndpointBuilderFactory {
          */
         default AdvancedRestEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -654,7 +654,7 @@ public interface RestEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRestEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -666,7 +666,7 @@ public interface RestEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRestEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

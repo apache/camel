@@ -51,7 +51,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder autoReconnect(boolean autoReconnect) {
-            setProperty("autoReconnect", autoReconnect);
+            doSetProperty("autoReconnect", autoReconnect);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder autoReconnect(String autoReconnect) {
-            setProperty("autoReconnect", autoReconnect);
+            doSetProperty("autoReconnect", autoReconnect);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder brokerUrl(String brokerUrl) {
-            setProperty("brokerUrl", brokerUrl);
+            doSetProperty("brokerUrl", brokerUrl);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -97,7 +97,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder connectOptions(Object connectOptions) {
-            setProperty("connectOptions", connectOptions);
+            doSetProperty("connectOptions", connectOptions);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder connectOptions(String connectOptions) {
-            setProperty("connectOptions", connectOptions);
+            doSetProperty("connectOptions", connectOptions);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointConsumerBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
-            setProperty("filePersistenceDirectory", filePersistenceDirectory);
+            doSetProperty("filePersistenceDirectory", filePersistenceDirectory);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointConsumerBuilder persistence(
                 PahoPersistence persistence) {
-            setProperty("persistence", persistence);
+            doSetProperty("persistence", persistence);
             return this;
         }
         /**
@@ -157,7 +157,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder persistence(String persistence) {
-            setProperty("persistence", persistence);
+            doSetProperty("persistence", persistence);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder qos(int qos) {
-            setProperty("qos", qos);
+            doSetProperty("qos", qos);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder qos(String qos) {
-            setProperty("qos", qos);
+            doSetProperty("qos", qos);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointConsumerBuilder resolveMqttConnectOptions(
                 boolean resolveMqttConnectOptions) {
-            setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
@@ -205,7 +205,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointConsumerBuilder resolveMqttConnectOptions(
                 String resolveMqttConnectOptions) {
-            setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
@@ -216,7 +216,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder retained(boolean retained) {
-            setProperty("retained", retained);
+            doSetProperty("retained", retained);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder retained(String retained) {
-            setProperty("retained", retained);
+            doSetProperty("retained", retained);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointConsumerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -274,7 +274,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -301,7 +301,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -317,7 +317,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -329,7 +329,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -342,7 +342,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -355,7 +355,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -368,7 +368,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -381,7 +381,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -394,7 +394,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -417,7 +417,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder autoReconnect(boolean autoReconnect) {
-            setProperty("autoReconnect", autoReconnect);
+            doSetProperty("autoReconnect", autoReconnect);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder autoReconnect(String autoReconnect) {
-            setProperty("autoReconnect", autoReconnect);
+            doSetProperty("autoReconnect", autoReconnect);
             return this;
         }
         /**
@@ -440,7 +440,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder brokerUrl(String brokerUrl) {
-            setProperty("brokerUrl", brokerUrl);
+            doSetProperty("brokerUrl", brokerUrl);
             return this;
         }
         /**
@@ -451,7 +451,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -463,7 +463,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder connectOptions(Object connectOptions) {
-            setProperty("connectOptions", connectOptions);
+            doSetProperty("connectOptions", connectOptions);
             return this;
         }
         /**
@@ -475,7 +475,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder connectOptions(String connectOptions) {
-            setProperty("connectOptions", connectOptions);
+            doSetProperty("connectOptions", connectOptions);
             return this;
         }
         /**
@@ -487,7 +487,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointProducerBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
-            setProperty("filePersistenceDirectory", filePersistenceDirectory);
+            doSetProperty("filePersistenceDirectory", filePersistenceDirectory);
             return this;
         }
         /**
@@ -498,7 +498,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -511,7 +511,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointProducerBuilder persistence(
                 PahoPersistence persistence) {
-            setProperty("persistence", persistence);
+            doSetProperty("persistence", persistence);
             return this;
         }
         /**
@@ -523,7 +523,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder persistence(String persistence) {
-            setProperty("persistence", persistence);
+            doSetProperty("persistence", persistence);
             return this;
         }
         /**
@@ -534,7 +534,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder qos(int qos) {
-            setProperty("qos", qos);
+            doSetProperty("qos", qos);
             return this;
         }
         /**
@@ -545,7 +545,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder qos(String qos) {
-            setProperty("qos", qos);
+            doSetProperty("qos", qos);
             return this;
         }
         /**
@@ -558,7 +558,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointProducerBuilder resolveMqttConnectOptions(
                 boolean resolveMqttConnectOptions) {
-            setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointProducerBuilder resolveMqttConnectOptions(
                 String resolveMqttConnectOptions) {
-            setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
@@ -582,7 +582,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder retained(boolean retained) {
-            setProperty("retained", retained);
+            doSetProperty("retained", retained);
             return this;
         }
         /**
@@ -593,7 +593,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder retained(String retained) {
-            setProperty("retained", retained);
+            doSetProperty("retained", retained);
             return this;
         }
         /**
@@ -604,7 +604,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointProducerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -624,7 +624,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -644,7 +644,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -668,7 +668,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -681,7 +681,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -694,7 +694,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -707,7 +707,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -730,7 +730,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder autoReconnect(boolean autoReconnect) {
-            setProperty("autoReconnect", autoReconnect);
+            doSetProperty("autoReconnect", autoReconnect);
             return this;
         }
         /**
@@ -742,7 +742,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder autoReconnect(String autoReconnect) {
-            setProperty("autoReconnect", autoReconnect);
+            doSetProperty("autoReconnect", autoReconnect);
             return this;
         }
         /**
@@ -753,7 +753,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder brokerUrl(String brokerUrl) {
-            setProperty("brokerUrl", brokerUrl);
+            doSetProperty("brokerUrl", brokerUrl);
             return this;
         }
         /**
@@ -764,7 +764,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -776,7 +776,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder connectOptions(Object connectOptions) {
-            setProperty("connectOptions", connectOptions);
+            doSetProperty("connectOptions", connectOptions);
             return this;
         }
         /**
@@ -788,7 +788,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder connectOptions(String connectOptions) {
-            setProperty("connectOptions", connectOptions);
+            doSetProperty("connectOptions", connectOptions);
             return this;
         }
         /**
@@ -800,7 +800,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
-            setProperty("filePersistenceDirectory", filePersistenceDirectory);
+            doSetProperty("filePersistenceDirectory", filePersistenceDirectory);
             return this;
         }
         /**
@@ -811,7 +811,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -823,7 +823,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder persistence(PahoPersistence persistence) {
-            setProperty("persistence", persistence);
+            doSetProperty("persistence", persistence);
             return this;
         }
         /**
@@ -835,7 +835,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder persistence(String persistence) {
-            setProperty("persistence", persistence);
+            doSetProperty("persistence", persistence);
             return this;
         }
         /**
@@ -846,7 +846,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder qos(int qos) {
-            setProperty("qos", qos);
+            doSetProperty("qos", qos);
             return this;
         }
         /**
@@ -857,7 +857,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder qos(String qos) {
-            setProperty("qos", qos);
+            doSetProperty("qos", qos);
             return this;
         }
         /**
@@ -870,7 +870,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointBuilder resolveMqttConnectOptions(
                 boolean resolveMqttConnectOptions) {
-            setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
@@ -883,7 +883,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointBuilder resolveMqttConnectOptions(
                 String resolveMqttConnectOptions) {
-            setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
@@ -894,7 +894,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder retained(boolean retained) {
-            setProperty("retained", retained);
+            doSetProperty("retained", retained);
             return this;
         }
         /**
@@ -905,7 +905,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder retained(String retained) {
-            setProperty("retained", retained);
+            doSetProperty("retained", retained);
             return this;
         }
         /**
@@ -916,7 +916,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: common
          */
         default PahoEndpointBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -940,7 +940,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -953,7 +953,7 @@ public interface PahoEndpointBuilderFactory {
          */
         default AdvancedPahoEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -965,7 +965,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPahoEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -977,7 +977,7 @@ public interface PahoEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPahoEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -51,7 +51,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder emailAddress(
                 String emailAddress) {
-            setProperty("emailAddress", emailAddress);
+            doSetProperty("emailAddress", emailAddress);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -123,7 +123,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder p12FileName(
                 String p12FileName) {
-            setProperty("p12FileName", p12FileName);
+            doSetProperty("p12FileName", p12FileName);
             return this;
         }
         /**
@@ -137,7 +137,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -163,7 +163,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -199,7 +199,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -227,7 +227,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -255,7 +255,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -268,7 +268,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -281,7 +281,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -307,7 +307,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -320,7 +320,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -344,7 +344,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -368,7 +368,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder clientSecret(
                 String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder emailAddress(
                 String emailAddress) {
-            setProperty("emailAddress", emailAddress);
+            doSetProperty("emailAddress", emailAddress);
             return this;
         }
         /**
@@ -403,7 +403,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -416,7 +416,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder p12FileName(
                 String p12FileName) {
-            setProperty("p12FileName", p12FileName);
+            doSetProperty("p12FileName", p12FileName);
             return this;
         }
         /**
@@ -430,7 +430,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder refreshToken(
                 String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -444,7 +444,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -456,7 +456,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
         /**
@@ -476,7 +476,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -496,7 +496,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -521,7 +521,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -534,7 +534,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -547,7 +547,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -560,7 +560,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -583,7 +583,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -596,7 +596,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -607,7 +607,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -618,7 +618,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -629,7 +629,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder emailAddress(String emailAddress) {
-            setProperty("emailAddress", emailAddress);
+            doSetProperty("emailAddress", emailAddress);
             return this;
         }
         /**
@@ -640,7 +640,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -652,7 +652,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder p12FileName(String p12FileName) {
-            setProperty("p12FileName", p12FileName);
+            doSetProperty("p12FileName", p12FileName);
             return this;
         }
         /**
@@ -665,7 +665,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder refreshToken(String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -679,7 +679,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -691,7 +691,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -715,7 +715,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -728,7 +728,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -741,7 +741,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -754,7 +754,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

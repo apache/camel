@@ -63,7 +63,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: common
          */
         default HttpEndpointBuilder disableStreamCache(String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -117,7 +117,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: producer
          */
         default HttpEndpointBuilder chunked(boolean chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -141,7 +141,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: producer
          */
         default HttpEndpointBuilder chunked(String chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: producer
          */
         default HttpEndpointBuilder transferException(boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: producer
          */
         default HttpEndpointBuilder transferException(String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -226,7 +226,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder x509HostnameVerifier(
                 Object x509HostnameVerifier) {
-            setProperty("x509HostnameVerifier", x509HostnameVerifier);
+            doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
         }
         /**
@@ -240,7 +240,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder x509HostnameVerifier(
                 String x509HostnameVerifier) {
-            setProperty("x509HostnameVerifier", x509HostnameVerifier);
+            doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
         }
     }
@@ -264,7 +264,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedHttpEndpointBuilder httpBinding(Object httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -277,7 +277,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedHttpEndpointBuilder httpBinding(String httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -290,7 +290,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -303,7 +303,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -317,7 +317,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientBuilder(Object clientBuilder) {
-            setProperty("clientBuilder", clientBuilder);
+            doSetProperty("clientBuilder", clientBuilder);
             return this;
         }
         /**
@@ -331,7 +331,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientBuilder(String clientBuilder) {
-            setProperty("clientBuilder", clientBuilder);
+            doSetProperty("clientBuilder", clientBuilder);
             return this;
         }
         /**
@@ -344,7 +344,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder clientConnectionManager(
                 Object clientConnectionManager) {
-            setProperty("clientConnectionManager", clientConnectionManager);
+            doSetProperty("clientConnectionManager", clientConnectionManager);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder clientConnectionManager(
                 String clientConnectionManager) {
-            setProperty("clientConnectionManager", clientConnectionManager);
+            doSetProperty("clientConnectionManager", clientConnectionManager);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder connectionsPerRoute(
                 int connectionsPerRoute) {
-            setProperty("connectionsPerRoute", connectionsPerRoute);
+            doSetProperty("connectionsPerRoute", connectionsPerRoute);
             return this;
         }
         /**
@@ -381,7 +381,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder connectionsPerRoute(
                 String connectionsPerRoute) {
-            setProperty("connectionsPerRoute", connectionsPerRoute);
+            doSetProperty("connectionsPerRoute", connectionsPerRoute);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClient(Object httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -404,7 +404,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClient(String httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -420,7 +420,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder httpClientConfigurer(
                 Object httpClientConfigurer) {
-            setProperty("httpClientConfigurer", httpClientConfigurer);
+            doSetProperty("httpClientConfigurer", httpClientConfigurer);
             return this;
         }
         /**
@@ -436,7 +436,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder httpClientConfigurer(
                 String httpClientConfigurer) {
-            setProperty("httpClientConfigurer", httpClientConfigurer);
+            doSetProperty("httpClientConfigurer", httpClientConfigurer);
             return this;
         }
         /**
@@ -449,7 +449,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder httpClientOptions(
                 Map<String, Object> httpClientOptions) {
-            setProperty("httpClientOptions", httpClientOptions);
+            doSetProperty("httpClientOptions", httpClientOptions);
             return this;
         }
         /**
@@ -463,7 +463,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder httpClientOptions(
                 String httpClientOptions) {
-            setProperty("httpClientOptions", httpClientOptions);
+            doSetProperty("httpClientOptions", httpClientOptions);
             return this;
         }
         /**
@@ -475,7 +475,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpContext(Object httpContext) {
-            setProperty("httpContext", httpContext);
+            doSetProperty("httpContext", httpContext);
             return this;
         }
         /**
@@ -487,7 +487,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpContext(String httpContext) {
-            setProperty("httpContext", httpContext);
+            doSetProperty("httpContext", httpContext);
             return this;
         }
         /**
@@ -501,7 +501,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -515,7 +515,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -529,7 +529,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -543,7 +543,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -557,7 +557,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -571,7 +571,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -583,7 +583,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder maxTotalConnections(
                 int maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -595,7 +595,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder maxTotalConnections(
                 String maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -607,7 +607,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -619,7 +619,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -631,7 +631,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder useSystemProperties(
                 boolean useSystemProperties) {
-            setProperty("useSystemProperties", useSystemProperties);
+            doSetProperty("useSystemProperties", useSystemProperties);
             return this;
         }
         /**
@@ -643,7 +643,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder useSystemProperties(
                 String useSystemProperties) {
-            setProperty("useSystemProperties", useSystemProperties);
+            doSetProperty("useSystemProperties", useSystemProperties);
             return this;
         }
     }

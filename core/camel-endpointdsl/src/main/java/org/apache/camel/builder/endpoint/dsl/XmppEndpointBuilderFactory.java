@@ -50,7 +50,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointConsumerBuilder login(boolean login) {
-            setProperty("login", login);
+            doSetProperty("login", login);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointConsumerBuilder login(String login) {
-            setProperty("login", login);
+            doSetProperty("login", login);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointConsumerBuilder nickname(String nickname) {
-            setProperty("nickname", nickname);
+            doSetProperty("nickname", nickname);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointConsumerBuilder pubsub(boolean pubsub) {
-            setProperty("pubsub", pubsub);
+            doSetProperty("pubsub", pubsub);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointConsumerBuilder pubsub(String pubsub) {
-            setProperty("pubsub", pubsub);
+            doSetProperty("pubsub", pubsub);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointConsumerBuilder room(String room) {
-            setProperty("room", room);
+            doSetProperty("room", room);
             return this;
         }
         /**
@@ -125,7 +125,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointConsumerBuilder serviceName(String serviceName) {
-            setProperty("serviceName", serviceName);
+            doSetProperty("serviceName", serviceName);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointConsumerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointConsumerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -197,7 +197,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointConsumerBuilder connectionPollDelay(
                 int connectionPollDelay) {
-            setProperty("connectionPollDelay", connectionPollDelay);
+            doSetProperty("connectionPollDelay", connectionPollDelay);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointConsumerBuilder connectionPollDelay(
                 String connectionPollDelay) {
-            setProperty("connectionPollDelay", connectionPollDelay);
+            doSetProperty("connectionPollDelay", connectionPollDelay);
             return this;
         }
         /**
@@ -240,7 +240,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: consumer
          */
         default XmppEndpointConsumerBuilder doc(boolean doc) {
-            setProperty("doc", doc);
+            doSetProperty("doc", doc);
             return this;
         }
         /**
@@ -253,7 +253,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: consumer
          */
         default XmppEndpointConsumerBuilder doc(String doc) {
-            setProperty("doc", doc);
+            doSetProperty("doc", doc);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -281,7 +281,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -292,7 +292,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: security
          */
         default XmppEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -303,7 +303,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: security
          */
         default XmppEndpointConsumerBuilder roomPassword(String roomPassword) {
-            setProperty("roomPassword", roomPassword);
+            doSetProperty("roomPassword", roomPassword);
             return this;
         }
         /**
@@ -315,7 +315,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: security
          */
         default XmppEndpointConsumerBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -339,7 +339,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder createAccount(
                 boolean createAccount) {
-            setProperty("createAccount", createAccount);
+            doSetProperty("createAccount", createAccount);
             return this;
         }
         /**
@@ -352,7 +352,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder createAccount(
                 String createAccount) {
-            setProperty("createAccount", createAccount);
+            doSetProperty("createAccount", createAccount);
             return this;
         }
         /**
@@ -363,7 +363,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedXmppEndpointConsumerBuilder resource(String resource) {
-            setProperty("resource", resource);
+            doSetProperty("resource", resource);
             return this;
         }
         /**
@@ -379,7 +379,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -407,7 +407,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -420,7 +420,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -433,7 +433,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -446,7 +446,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -461,7 +461,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder connectionConfig(
                 Object connectionConfig) {
-            setProperty("connectionConfig", connectionConfig);
+            doSetProperty("connectionConfig", connectionConfig);
             return this;
         }
         /**
@@ -476,7 +476,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder connectionConfig(
                 String connectionConfig) {
-            setProperty("connectionConfig", connectionConfig);
+            doSetProperty("connectionConfig", connectionConfig);
             return this;
         }
         /**
@@ -489,7 +489,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -502,7 +502,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -524,7 +524,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointProducerBuilder login(boolean login) {
-            setProperty("login", login);
+            doSetProperty("login", login);
             return this;
         }
         /**
@@ -535,7 +535,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointProducerBuilder login(String login) {
-            setProperty("login", login);
+            doSetProperty("login", login);
             return this;
         }
         /**
@@ -547,7 +547,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointProducerBuilder nickname(String nickname) {
-            setProperty("nickname", nickname);
+            doSetProperty("nickname", nickname);
             return this;
         }
         /**
@@ -558,7 +558,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointProducerBuilder pubsub(boolean pubsub) {
-            setProperty("pubsub", pubsub);
+            doSetProperty("pubsub", pubsub);
             return this;
         }
         /**
@@ -569,7 +569,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointProducerBuilder pubsub(String pubsub) {
-            setProperty("pubsub", pubsub);
+            doSetProperty("pubsub", pubsub);
             return this;
         }
         /**
@@ -587,7 +587,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointProducerBuilder room(String room) {
-            setProperty("room", room);
+            doSetProperty("room", room);
             return this;
         }
         /**
@@ -599,7 +599,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointProducerBuilder serviceName(String serviceName) {
-            setProperty("serviceName", serviceName);
+            doSetProperty("serviceName", serviceName);
             return this;
         }
         /**
@@ -617,7 +617,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointProducerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -635,7 +635,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointProducerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -655,7 +655,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -675,7 +675,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -689,7 +689,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -703,7 +703,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -714,7 +714,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: security
          */
         default XmppEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -725,7 +725,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: security
          */
         default XmppEndpointProducerBuilder roomPassword(String roomPassword) {
-            setProperty("roomPassword", roomPassword);
+            doSetProperty("roomPassword", roomPassword);
             return this;
         }
         /**
@@ -737,7 +737,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: security
          */
         default XmppEndpointProducerBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -761,7 +761,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointProducerBuilder createAccount(
                 boolean createAccount) {
-            setProperty("createAccount", createAccount);
+            doSetProperty("createAccount", createAccount);
             return this;
         }
         /**
@@ -774,7 +774,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointProducerBuilder createAccount(
                 String createAccount) {
-            setProperty("createAccount", createAccount);
+            doSetProperty("createAccount", createAccount);
             return this;
         }
         /**
@@ -785,7 +785,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedXmppEndpointProducerBuilder resource(String resource) {
-            setProperty("resource", resource);
+            doSetProperty("resource", resource);
             return this;
         }
         /**
@@ -798,7 +798,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -811,7 +811,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -826,7 +826,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointProducerBuilder connectionConfig(
                 Object connectionConfig) {
-            setProperty("connectionConfig", connectionConfig);
+            doSetProperty("connectionConfig", connectionConfig);
             return this;
         }
         /**
@@ -841,7 +841,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointProducerBuilder connectionConfig(
                 String connectionConfig) {
-            setProperty("connectionConfig", connectionConfig);
+            doSetProperty("connectionConfig", connectionConfig);
             return this;
         }
         /**
@@ -854,7 +854,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -867,7 +867,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -889,7 +889,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointBuilder login(boolean login) {
-            setProperty("login", login);
+            doSetProperty("login", login);
             return this;
         }
         /**
@@ -900,7 +900,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointBuilder login(String login) {
-            setProperty("login", login);
+            doSetProperty("login", login);
             return this;
         }
         /**
@@ -912,7 +912,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointBuilder nickname(String nickname) {
-            setProperty("nickname", nickname);
+            doSetProperty("nickname", nickname);
             return this;
         }
         /**
@@ -923,7 +923,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointBuilder pubsub(boolean pubsub) {
-            setProperty("pubsub", pubsub);
+            doSetProperty("pubsub", pubsub);
             return this;
         }
         /**
@@ -934,7 +934,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointBuilder pubsub(String pubsub) {
-            setProperty("pubsub", pubsub);
+            doSetProperty("pubsub", pubsub);
             return this;
         }
         /**
@@ -952,7 +952,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointBuilder room(String room) {
-            setProperty("room", room);
+            doSetProperty("room", room);
             return this;
         }
         /**
@@ -964,7 +964,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common
          */
         default XmppEndpointBuilder serviceName(String serviceName) {
-            setProperty("serviceName", serviceName);
+            doSetProperty("serviceName", serviceName);
             return this;
         }
         /**
@@ -982,7 +982,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -1000,7 +1000,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -1014,7 +1014,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1028,7 +1028,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default XmppEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1039,7 +1039,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: security
          */
         default XmppEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1050,7 +1050,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: security
          */
         default XmppEndpointBuilder roomPassword(String roomPassword) {
-            setProperty("roomPassword", roomPassword);
+            doSetProperty("roomPassword", roomPassword);
             return this;
         }
         /**
@@ -1062,7 +1062,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: security
          */
         default XmppEndpointBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -1085,7 +1085,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedXmppEndpointBuilder createAccount(boolean createAccount) {
-            setProperty("createAccount", createAccount);
+            doSetProperty("createAccount", createAccount);
             return this;
         }
         /**
@@ -1097,7 +1097,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedXmppEndpointBuilder createAccount(String createAccount) {
-            setProperty("createAccount", createAccount);
+            doSetProperty("createAccount", createAccount);
             return this;
         }
         /**
@@ -1108,7 +1108,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedXmppEndpointBuilder resource(String resource) {
-            setProperty("resource", resource);
+            doSetProperty("resource", resource);
             return this;
         }
         /**
@@ -1121,7 +1121,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1134,7 +1134,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1149,7 +1149,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointBuilder connectionConfig(
                 Object connectionConfig) {
-            setProperty("connectionConfig", connectionConfig);
+            doSetProperty("connectionConfig", connectionConfig);
             return this;
         }
         /**
@@ -1164,7 +1164,7 @@ public interface XmppEndpointBuilderFactory {
          */
         default AdvancedXmppEndpointBuilder connectionConfig(
                 String connectionConfig) {
-            setProperty("connectionConfig", connectionConfig);
+            doSetProperty("connectionConfig", connectionConfig);
             return this;
         }
         /**
@@ -1176,7 +1176,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXmppEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1188,7 +1188,7 @@ public interface XmppEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXmppEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

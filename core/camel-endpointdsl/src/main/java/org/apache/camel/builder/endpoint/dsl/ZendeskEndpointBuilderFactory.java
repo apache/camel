@@ -49,7 +49,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: common
          */
         default ZendeskEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: common
          */
         default ZendeskEndpointConsumerBuilder serverUrl(String serverUrl) {
-            setProperty("serverUrl", serverUrl);
+            doSetProperty("serverUrl", serverUrl);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default ZendeskEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default ZendeskEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointConsumerBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointConsumerBuilder token(String token) {
-            setProperty("token", token);
+            doSetProperty("token", token);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -167,7 +167,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -183,7 +183,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -208,7 +208,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -221,7 +221,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -234,7 +234,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -247,7 +247,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -260,7 +260,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -282,7 +282,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: common
          */
         default ZendeskEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -293,7 +293,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: common
          */
         default ZendeskEndpointProducerBuilder serverUrl(String serverUrl) {
-            setProperty("serverUrl", serverUrl);
+            doSetProperty("serverUrl", serverUrl);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default ZendeskEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -333,7 +333,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default ZendeskEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -344,7 +344,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointProducerBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -355,7 +355,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointProducerBuilder token(String token) {
-            setProperty("token", token);
+            doSetProperty("token", token);
             return this;
         }
         /**
@@ -377,7 +377,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -401,7 +401,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -414,7 +414,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -427,7 +427,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -440,7 +440,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -462,7 +462,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: common
          */
         default ZendeskEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -473,7 +473,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: common
          */
         default ZendeskEndpointBuilder serverUrl(String serverUrl) {
-            setProperty("serverUrl", serverUrl);
+            doSetProperty("serverUrl", serverUrl);
             return this;
         }
         /**
@@ -484,7 +484,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -506,7 +506,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointBuilder token(String token) {
-            setProperty("token", token);
+            doSetProperty("token", token);
             return this;
         }
         /**
@@ -517,7 +517,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: security
          */
         default ZendeskEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -541,7 +541,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -554,7 +554,7 @@ public interface ZendeskEndpointBuilderFactory {
          */
         default AdvancedZendeskEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -566,7 +566,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedZendeskEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -578,7 +578,7 @@ public interface ZendeskEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedZendeskEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

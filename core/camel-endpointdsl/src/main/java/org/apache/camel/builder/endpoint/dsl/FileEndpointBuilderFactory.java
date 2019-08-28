@@ -67,7 +67,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointConsumerBuilder charset(String charset) {
-            setProperty("charset", charset);
+            doSetProperty("charset", charset);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointConsumerBuilder doneFileName(String doneFileName) {
-            setProperty("doneFileName", doneFileName);
+            doSetProperty("doneFileName", doneFileName);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointConsumerBuilder fileName(Expression fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -141,7 +141,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointConsumerBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder delete(boolean delete) {
-            setProperty("delete", delete);
+            doSetProperty("delete", delete);
             return this;
         }
         /**
@@ -199,7 +199,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder delete(String delete) {
-            setProperty("delete", delete);
+            doSetProperty("delete", delete);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder moveFailed(Expression moveFailed) {
-            setProperty("moveFailed", moveFailed);
+            doSetProperty("moveFailed", moveFailed);
             return this;
         }
         /**
@@ -228,7 +228,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder moveFailed(String moveFailed) {
-            setProperty("moveFailed", moveFailed);
+            doSetProperty("moveFailed", moveFailed);
             return this;
         }
         /**
@@ -242,7 +242,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder noop(boolean noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder noop(String noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -269,7 +269,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder preMove(Expression preMove) {
-            setProperty("preMove", preMove);
+            doSetProperty("preMove", preMove);
             return this;
         }
         /**
@@ -283,7 +283,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder preMove(String preMove) {
-            setProperty("preMove", preMove);
+            doSetProperty("preMove", preMove);
             return this;
         }
         /**
@@ -299,7 +299,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder preSort(boolean preSort) {
-            setProperty("preSort", preSort);
+            doSetProperty("preSort", preSort);
             return this;
         }
         /**
@@ -315,7 +315,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder preSort(String preSort) {
-            setProperty("preSort", preSort);
+            doSetProperty("preSort", preSort);
             return this;
         }
         /**
@@ -327,7 +327,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder recursive(boolean recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -339,7 +339,7 @@ public interface FileEndpointBuilderFactory {
          * Group: consumer
          */
         default FileEndpointConsumerBuilder recursive(String recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -352,7 +352,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -365,7 +365,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -378,7 +378,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder antExclude(String antExclude) {
-            setProperty("antExclude", antExclude);
+            doSetProperty("antExclude", antExclude);
             return this;
         }
         /**
@@ -390,7 +390,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder antFilterCaseSensitive(
                 boolean antFilterCaseSensitive) {
-            setProperty("antFilterCaseSensitive", antFilterCaseSensitive);
+            doSetProperty("antFilterCaseSensitive", antFilterCaseSensitive);
             return this;
         }
         /**
@@ -402,7 +402,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder antFilterCaseSensitive(
                 String antFilterCaseSensitive) {
-            setProperty("antFilterCaseSensitive", antFilterCaseSensitive);
+            doSetProperty("antFilterCaseSensitive", antFilterCaseSensitive);
             return this;
         }
         /**
@@ -414,7 +414,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder antInclude(String antInclude) {
-            setProperty("antInclude", antInclude);
+            doSetProperty("antInclude", antInclude);
             return this;
         }
         /**
@@ -431,7 +431,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 boolean eagerMaxMessagesPerPoll) {
-            setProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
+            doSetProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
             return this;
         }
         /**
@@ -448,7 +448,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 String eagerMaxMessagesPerPoll) {
-            setProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
+            doSetProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
             return this;
         }
         /**
@@ -463,7 +463,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder exclude(String exclude) {
-            setProperty("exclude", exclude);
+            doSetProperty("exclude", exclude);
             return this;
         }
         /**
@@ -477,7 +477,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder filter(Object filter) {
-            setProperty("filter", filter);
+            doSetProperty("filter", filter);
             return this;
         }
         /**
@@ -491,7 +491,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder filter(String filter) {
-            setProperty("filter", filter);
+            doSetProperty("filter", filter);
             return this;
         }
         /**
@@ -505,7 +505,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder filterDirectory(
                 Predicate filterDirectory) {
-            setProperty("filterDirectory", filterDirectory);
+            doSetProperty("filterDirectory", filterDirectory);
             return this;
         }
         /**
@@ -520,7 +520,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder filterDirectory(
                 String filterDirectory) {
-            setProperty("filterDirectory", filterDirectory);
+            doSetProperty("filterDirectory", filterDirectory);
             return this;
         }
         /**
@@ -532,7 +532,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder filterFile(Predicate filterFile) {
-            setProperty("filterFile", filterFile);
+            doSetProperty("filterFile", filterFile);
             return this;
         }
         /**
@@ -545,7 +545,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder filterFile(String filterFile) {
-            setProperty("filterFile", filterFile);
+            doSetProperty("filterFile", filterFile);
             return this;
         }
         /**
@@ -559,7 +559,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder idempotent(Boolean idempotent) {
-            setProperty("idempotent", idempotent);
+            doSetProperty("idempotent", idempotent);
             return this;
         }
         /**
@@ -574,7 +574,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder idempotent(String idempotent) {
-            setProperty("idempotent", idempotent);
+            doSetProperty("idempotent", idempotent);
             return this;
         }
         /**
@@ -589,7 +589,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder idempotentKey(
                 Expression idempotentKey) {
-            setProperty("idempotentKey", idempotentKey);
+            doSetProperty("idempotentKey", idempotentKey);
             return this;
         }
         /**
@@ -604,7 +604,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder idempotentKey(String idempotentKey) {
-            setProperty("idempotentKey", idempotentKey);
+            doSetProperty("idempotentKey", idempotentKey);
             return this;
         }
         /**
@@ -619,7 +619,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder idempotentRepository(
                 IdempotentRepository idempotentRepository) {
-            setProperty("idempotentRepository", idempotentRepository);
+            doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
         /**
@@ -634,7 +634,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder idempotentRepository(
                 String idempotentRepository) {
-            setProperty("idempotentRepository", idempotentRepository);
+            doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
         /**
@@ -649,7 +649,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder include(String include) {
-            setProperty("include", include);
+            doSetProperty("include", include);
             return this;
         }
         /**
@@ -661,7 +661,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder maxDepth(int maxDepth) {
-            setProperty("maxDepth", maxDepth);
+            doSetProperty("maxDepth", maxDepth);
             return this;
         }
         /**
@@ -673,7 +673,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder maxDepth(String maxDepth) {
-            setProperty("maxDepth", maxDepth);
+            doSetProperty("maxDepth", maxDepth);
             return this;
         }
         /**
@@ -693,7 +693,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -713,7 +713,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -726,7 +726,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder minDepth(int minDepth) {
-            setProperty("minDepth", minDepth);
+            doSetProperty("minDepth", minDepth);
             return this;
         }
         /**
@@ -739,7 +739,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder minDepth(String minDepth) {
-            setProperty("minDepth", minDepth);
+            doSetProperty("minDepth", minDepth);
             return this;
         }
         /**
@@ -752,7 +752,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder move(Expression move) {
-            setProperty("move", move);
+            doSetProperty("move", move);
             return this;
         }
         /**
@@ -766,7 +766,7 @@ public interface FileEndpointBuilderFactory {
          * Group: filter
          */
         default FileEndpointConsumerBuilder move(String move) {
-            setProperty("move", move);
+            doSetProperty("move", move);
             return this;
         }
         /**
@@ -781,7 +781,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder exclusiveReadLockStrategy(
                 Object exclusiveReadLockStrategy) {
-            setProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
+            doSetProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
         }
         /**
@@ -796,7 +796,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder exclusiveReadLockStrategy(
                 String exclusiveReadLockStrategy) {
-            setProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
+            doSetProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
         }
         /**
@@ -844,7 +844,7 @@ public interface FileEndpointBuilderFactory {
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLock(String readLock) {
-            setProperty("readLock", readLock);
+            doSetProperty("readLock", readLock);
             return this;
         }
         /**
@@ -866,7 +866,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockCheckInterval(
                 long readLockCheckInterval) {
-            setProperty("readLockCheckInterval", readLockCheckInterval);
+            doSetProperty("readLockCheckInterval", readLockCheckInterval);
             return this;
         }
         /**
@@ -888,7 +888,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockCheckInterval(
                 String readLockCheckInterval) {
-            setProperty("readLockCheckInterval", readLockCheckInterval);
+            doSetProperty("readLockCheckInterval", readLockCheckInterval);
             return this;
         }
         /**
@@ -906,7 +906,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 boolean readLockDeleteOrphanLockFiles) {
-            setProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
+            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
             return this;
         }
         /**
@@ -924,7 +924,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 String readLockDeleteOrphanLockFiles) {
-            setProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
+            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
             return this;
         }
         /**
@@ -938,7 +938,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 boolean readLockIdempotentReleaseAsync) {
-            setProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
+            doSetProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
             return this;
         }
         /**
@@ -952,7 +952,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 String readLockIdempotentReleaseAsync) {
-            setProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
+            doSetProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
             return this;
         }
         /**
@@ -971,7 +971,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 int readLockIdempotentReleaseAsyncPoolSize) {
-            setProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
+            doSetProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
             return this;
         }
         /**
@@ -990,7 +990,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 String readLockIdempotentReleaseAsyncPoolSize) {
-            setProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
+            doSetProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
             return this;
         }
         /**
@@ -1009,7 +1009,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 int readLockIdempotentReleaseDelay) {
-            setProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
+            doSetProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
             return this;
         }
         /**
@@ -1028,7 +1028,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 String readLockIdempotentReleaseDelay) {
-            setProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
+            doSetProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
             return this;
         }
         /**
@@ -1042,7 +1042,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
-            setProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
+            doSetProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
             return this;
         }
         /**
@@ -1056,7 +1056,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 String readLockIdempotentReleaseExecutorService) {
-            setProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
+            doSetProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
             return this;
         }
         /**
@@ -1072,7 +1072,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockLoggingLevel(
                 LoggingLevel readLockLoggingLevel) {
-            setProperty("readLockLoggingLevel", readLockLoggingLevel);
+            doSetProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
         }
         /**
@@ -1089,7 +1089,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockLoggingLevel(
                 String readLockLoggingLevel) {
-            setProperty("readLockLoggingLevel", readLockLoggingLevel);
+            doSetProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
         }
         /**
@@ -1106,7 +1106,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockMarkerFile(
                 boolean readLockMarkerFile) {
-            setProperty("readLockMarkerFile", readLockMarkerFile);
+            doSetProperty("readLockMarkerFile", readLockMarkerFile);
             return this;
         }
         /**
@@ -1123,7 +1123,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockMarkerFile(
                 String readLockMarkerFile) {
-            setProperty("readLockMarkerFile", readLockMarkerFile);
+            doSetProperty("readLockMarkerFile", readLockMarkerFile);
             return this;
         }
         /**
@@ -1139,7 +1139,7 @@ public interface FileEndpointBuilderFactory {
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockMinAge(long readLockMinAge) {
-            setProperty("readLockMinAge", readLockMinAge);
+            doSetProperty("readLockMinAge", readLockMinAge);
             return this;
         }
         /**
@@ -1155,7 +1155,7 @@ public interface FileEndpointBuilderFactory {
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockMinAge(String readLockMinAge) {
-            setProperty("readLockMinAge", readLockMinAge);
+            doSetProperty("readLockMinAge", readLockMinAge);
             return this;
         }
         /**
@@ -1170,7 +1170,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockMinLength(
                 long readLockMinLength) {
-            setProperty("readLockMinLength", readLockMinLength);
+            doSetProperty("readLockMinLength", readLockMinLength);
             return this;
         }
         /**
@@ -1185,7 +1185,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockMinLength(
                 String readLockMinLength) {
-            setProperty("readLockMinLength", readLockMinLength);
+            doSetProperty("readLockMinLength", readLockMinLength);
             return this;
         }
         /**
@@ -1205,7 +1205,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockRemoveOnCommit(
                 boolean readLockRemoveOnCommit) {
-            setProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
+            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
             return this;
         }
         /**
@@ -1225,7 +1225,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockRemoveOnCommit(
                 String readLockRemoveOnCommit) {
-            setProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
+            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
             return this;
         }
         /**
@@ -1241,7 +1241,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockRemoveOnRollback(
                 boolean readLockRemoveOnRollback) {
-            setProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
+            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
         }
         /**
@@ -1257,7 +1257,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockRemoveOnRollback(
                 String readLockRemoveOnRollback) {
-            setProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
+            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
         }
         /**
@@ -1279,7 +1279,7 @@ public interface FileEndpointBuilderFactory {
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockTimeout(long readLockTimeout) {
-            setProperty("readLockTimeout", readLockTimeout);
+            doSetProperty("readLockTimeout", readLockTimeout);
             return this;
         }
         /**
@@ -1302,7 +1302,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder readLockTimeout(
                 String readLockTimeout) {
-            setProperty("readLockTimeout", readLockTimeout);
+            doSetProperty("readLockTimeout", readLockTimeout);
             return this;
         }
         /**
@@ -1315,7 +1315,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -1328,7 +1328,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -1341,7 +1341,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -1354,7 +1354,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -1371,7 +1371,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -1388,7 +1388,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -1401,7 +1401,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -1414,7 +1414,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -1426,7 +1426,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -1438,7 +1438,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -1451,7 +1451,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -1464,7 +1464,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -1477,7 +1477,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -1491,7 +1491,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -1506,7 +1506,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -1521,7 +1521,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -1533,7 +1533,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
@@ -1547,7 +1547,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -1562,7 +1562,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -1574,7 +1574,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -1585,7 +1585,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder startScheduler(String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -1596,7 +1596,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -1608,7 +1608,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -1620,7 +1620,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -1632,7 +1632,7 @@ public interface FileEndpointBuilderFactory {
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -1643,7 +1643,7 @@ public interface FileEndpointBuilderFactory {
          * Group: sort
          */
         default FileEndpointConsumerBuilder shuffle(boolean shuffle) {
-            setProperty("shuffle", shuffle);
+            doSetProperty("shuffle", shuffle);
             return this;
         }
         /**
@@ -1654,7 +1654,7 @@ public interface FileEndpointBuilderFactory {
          * Group: sort
          */
         default FileEndpointConsumerBuilder shuffle(String shuffle) {
-            setProperty("shuffle", shuffle);
+            doSetProperty("shuffle", shuffle);
             return this;
         }
         /**
@@ -1669,7 +1669,7 @@ public interface FileEndpointBuilderFactory {
          * Group: sort
          */
         default FileEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
-            setProperty("sortBy", sortBy);
+            doSetProperty("sortBy", sortBy);
             return this;
         }
         /**
@@ -1684,7 +1684,7 @@ public interface FileEndpointBuilderFactory {
          * Group: sort
          */
         default FileEndpointConsumerBuilder sortBy(String sortBy) {
-            setProperty("sortBy", sortBy);
+            doSetProperty("sortBy", sortBy);
             return this;
         }
         /**
@@ -1696,7 +1696,7 @@ public interface FileEndpointBuilderFactory {
          * Group: sort
          */
         default FileEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
-            setProperty("sorter", sorter);
+            doSetProperty("sorter", sorter);
             return this;
         }
         /**
@@ -1708,7 +1708,7 @@ public interface FileEndpointBuilderFactory {
          * Group: sort
          */
         default FileEndpointConsumerBuilder sorter(String sorter) {
-            setProperty("sorter", sorter);
+            doSetProperty("sorter", sorter);
             return this;
         }
     }
@@ -1732,7 +1732,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder directoryMustExist(
                 boolean directoryMustExist) {
-            setProperty("directoryMustExist", directoryMustExist);
+            doSetProperty("directoryMustExist", directoryMustExist);
             return this;
         }
         /**
@@ -1745,7 +1745,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder directoryMustExist(
                 String directoryMustExist) {
-            setProperty("directoryMustExist", directoryMustExist);
+            doSetProperty("directoryMustExist", directoryMustExist);
             return this;
         }
         /**
@@ -1761,7 +1761,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -1777,7 +1777,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -1789,7 +1789,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -1802,7 +1802,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -1816,7 +1816,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder extendedAttributes(
                 String extendedAttributes) {
-            setProperty("extendedAttributes", extendedAttributes);
+            doSetProperty("extendedAttributes", extendedAttributes);
             return this;
         }
         /**
@@ -1832,7 +1832,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder inProgressRepository(
                 IdempotentRepository inProgressRepository) {
-            setProperty("inProgressRepository", inProgressRepository);
+            doSetProperty("inProgressRepository", inProgressRepository);
             return this;
         }
         /**
@@ -1848,7 +1848,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder inProgressRepository(
                 String inProgressRepository) {
-            setProperty("inProgressRepository", inProgressRepository);
+            doSetProperty("inProgressRepository", inProgressRepository);
             return this;
         }
         /**
@@ -1863,7 +1863,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder localWorkDirectory(
                 String localWorkDirectory) {
-            setProperty("localWorkDirectory", localWorkDirectory);
+            doSetProperty("localWorkDirectory", localWorkDirectory);
             return this;
         }
         /**
@@ -1879,7 +1879,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder onCompletionExceptionHandler(
                 ExceptionHandler onCompletionExceptionHandler) {
-            setProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
+            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
         }
         /**
@@ -1895,7 +1895,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder onCompletionExceptionHandler(
                 String onCompletionExceptionHandler) {
-            setProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
+            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
         }
         /**
@@ -1911,7 +1911,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -1927,7 +1927,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -1942,7 +1942,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder probeContentType(
                 boolean probeContentType) {
-            setProperty("probeContentType", probeContentType);
+            doSetProperty("probeContentType", probeContentType);
             return this;
         }
         /**
@@ -1957,7 +1957,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder probeContentType(
                 String probeContentType) {
-            setProperty("probeContentType", probeContentType);
+            doSetProperty("probeContentType", probeContentType);
             return this;
         }
         /**
@@ -1975,7 +1975,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder processStrategy(
                 Object processStrategy) {
-            setProperty("processStrategy", processStrategy);
+            doSetProperty("processStrategy", processStrategy);
             return this;
         }
         /**
@@ -1993,7 +1993,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder processStrategy(
                 String processStrategy) {
-            setProperty("processStrategy", processStrategy);
+            doSetProperty("processStrategy", processStrategy);
             return this;
         }
         /**
@@ -2009,7 +2009,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder startingDirectoryMustExist(
                 boolean startingDirectoryMustExist) {
-            setProperty("startingDirectoryMustExist", startingDirectoryMustExist);
+            doSetProperty("startingDirectoryMustExist", startingDirectoryMustExist);
             return this;
         }
         /**
@@ -2025,7 +2025,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder startingDirectoryMustExist(
                 String startingDirectoryMustExist) {
-            setProperty("startingDirectoryMustExist", startingDirectoryMustExist);
+            doSetProperty("startingDirectoryMustExist", startingDirectoryMustExist);
             return this;
         }
         /**
@@ -2040,7 +2040,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder startingDirectoryMustHaveAccess(
                 boolean startingDirectoryMustHaveAccess) {
-            setProperty("startingDirectoryMustHaveAccess", startingDirectoryMustHaveAccess);
+            doSetProperty("startingDirectoryMustHaveAccess", startingDirectoryMustHaveAccess);
             return this;
         }
         /**
@@ -2055,7 +2055,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder startingDirectoryMustHaveAccess(
                 String startingDirectoryMustHaveAccess) {
-            setProperty("startingDirectoryMustHaveAccess", startingDirectoryMustHaveAccess);
+            doSetProperty("startingDirectoryMustHaveAccess", startingDirectoryMustHaveAccess);
             return this;
         }
         /**
@@ -2070,7 +2070,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder autoCreate(
                 boolean autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -2084,7 +2084,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointConsumerBuilder autoCreate(String autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -2097,7 +2097,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2110,7 +2110,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2121,7 +2121,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointConsumerBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -2132,7 +2132,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointConsumerBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -2146,7 +2146,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder copyAndDeleteOnRenameFail(
                 boolean copyAndDeleteOnRenameFail) {
-            setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
         }
         /**
@@ -2160,7 +2160,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder copyAndDeleteOnRenameFail(
                 String copyAndDeleteOnRenameFail) {
-            setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
         }
         /**
@@ -2177,7 +2177,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder renameUsingCopy(
                 boolean renameUsingCopy) {
-            setProperty("renameUsingCopy", renameUsingCopy);
+            doSetProperty("renameUsingCopy", renameUsingCopy);
             return this;
         }
         /**
@@ -2194,7 +2194,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder renameUsingCopy(
                 String renameUsingCopy) {
-            setProperty("renameUsingCopy", renameUsingCopy);
+            doSetProperty("renameUsingCopy", renameUsingCopy);
             return this;
         }
         /**
@@ -2207,7 +2207,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2220,7 +2220,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -2250,7 +2250,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointProducerBuilder charset(String charset) {
-            setProperty("charset", charset);
+            doSetProperty("charset", charset);
             return this;
         }
         /**
@@ -2271,7 +2271,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointProducerBuilder doneFileName(String doneFileName) {
-            setProperty("doneFileName", doneFileName);
+            doSetProperty("doneFileName", doneFileName);
             return this;
         }
         /**
@@ -2297,7 +2297,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointProducerBuilder fileName(Expression fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -2324,7 +2324,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointProducerBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -2339,7 +2339,7 @@ public interface FileEndpointBuilderFactory {
          * Group: producer
          */
         default FileEndpointProducerBuilder appendChars(String appendChars) {
-            setProperty("appendChars", appendChars);
+            doSetProperty("appendChars", appendChars);
             return this;
         }
         /**
@@ -2365,7 +2365,7 @@ public interface FileEndpointBuilderFactory {
          * Group: producer
          */
         default FileEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
-            setProperty("fileExist", fileExist);
+            doSetProperty("fileExist", fileExist);
             return this;
         }
         /**
@@ -2391,7 +2391,7 @@ public interface FileEndpointBuilderFactory {
          * Group: producer
          */
         default FileEndpointProducerBuilder fileExist(String fileExist) {
-            setProperty("fileExist", fileExist);
+            doSetProperty("fileExist", fileExist);
             return this;
         }
         /**
@@ -2407,7 +2407,7 @@ public interface FileEndpointBuilderFactory {
          * Group: producer
          */
         default FileEndpointProducerBuilder flatten(boolean flatten) {
-            setProperty("flatten", flatten);
+            doSetProperty("flatten", flatten);
             return this;
         }
         /**
@@ -2423,7 +2423,7 @@ public interface FileEndpointBuilderFactory {
          * Group: producer
          */
         default FileEndpointProducerBuilder flatten(String flatten) {
-            setProperty("flatten", flatten);
+            doSetProperty("flatten", flatten);
             return this;
         }
         /**
@@ -2440,7 +2440,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointProducerBuilder jailStartingDirectory(
                 boolean jailStartingDirectory) {
-            setProperty("jailStartingDirectory", jailStartingDirectory);
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -2457,7 +2457,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointProducerBuilder jailStartingDirectory(
                 String jailStartingDirectory) {
-            setProperty("jailStartingDirectory", jailStartingDirectory);
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -2477,7 +2477,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -2497,7 +2497,7 @@ public interface FileEndpointBuilderFactory {
          */
         default FileEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -2515,7 +2515,7 @@ public interface FileEndpointBuilderFactory {
          * Group: producer
          */
         default FileEndpointProducerBuilder moveExisting(Expression moveExisting) {
-            setProperty("moveExisting", moveExisting);
+            doSetProperty("moveExisting", moveExisting);
             return this;
         }
         /**
@@ -2534,7 +2534,7 @@ public interface FileEndpointBuilderFactory {
          * Group: producer
          */
         default FileEndpointProducerBuilder moveExisting(String moveExisting) {
-            setProperty("moveExisting", moveExisting);
+            doSetProperty("moveExisting", moveExisting);
             return this;
         }
         /**
@@ -2551,7 +2551,7 @@ public interface FileEndpointBuilderFactory {
          * Group: producer
          */
         default FileEndpointProducerBuilder tempFileName(Expression tempFileName) {
-            setProperty("tempFileName", tempFileName);
+            doSetProperty("tempFileName", tempFileName);
             return this;
         }
         /**
@@ -2569,7 +2569,7 @@ public interface FileEndpointBuilderFactory {
          * Group: producer
          */
         default FileEndpointProducerBuilder tempFileName(String tempFileName) {
-            setProperty("tempFileName", tempFileName);
+            doSetProperty("tempFileName", tempFileName);
             return this;
         }
         /**
@@ -2584,7 +2584,7 @@ public interface FileEndpointBuilderFactory {
          * Group: producer
          */
         default FileEndpointProducerBuilder tempPrefix(String tempPrefix) {
-            setProperty("tempPrefix", tempPrefix);
+            doSetProperty("tempPrefix", tempPrefix);
             return this;
         }
     }
@@ -2613,7 +2613,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -2631,7 +2631,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -2644,7 +2644,7 @@ public interface FileEndpointBuilderFactory {
          * Group: producer (advanced)
          */
         default AdvancedFileEndpointProducerBuilder chmod(String chmod) {
-            setProperty("chmod", chmod);
+            doSetProperty("chmod", chmod);
             return this;
         }
         /**
@@ -2658,7 +2658,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder chmodDirectory(
                 String chmodDirectory) {
-            setProperty("chmodDirectory", chmodDirectory);
+            doSetProperty("chmodDirectory", chmodDirectory);
             return this;
         }
         /**
@@ -2682,7 +2682,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder eagerDeleteTargetFile(
                 boolean eagerDeleteTargetFile) {
-            setProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
+            doSetProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
             return this;
         }
         /**
@@ -2706,7 +2706,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder eagerDeleteTargetFile(
                 String eagerDeleteTargetFile) {
-            setProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
+            doSetProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
             return this;
         }
         /**
@@ -2721,7 +2721,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder forceWrites(
                 boolean forceWrites) {
-            setProperty("forceWrites", forceWrites);
+            doSetProperty("forceWrites", forceWrites);
             return this;
         }
         /**
@@ -2736,7 +2736,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder forceWrites(
                 String forceWrites) {
-            setProperty("forceWrites", forceWrites);
+            doSetProperty("forceWrites", forceWrites);
             return this;
         }
         /**
@@ -2754,7 +2754,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder keepLastModified(
                 boolean keepLastModified) {
-            setProperty("keepLastModified", keepLastModified);
+            doSetProperty("keepLastModified", keepLastModified);
             return this;
         }
         /**
@@ -2772,7 +2772,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder keepLastModified(
                 String keepLastModified) {
-            setProperty("keepLastModified", keepLastModified);
+            doSetProperty("keepLastModified", keepLastModified);
             return this;
         }
         /**
@@ -2787,7 +2787,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder moveExistingFileStrategy(
                 Object moveExistingFileStrategy) {
-            setProperty("moveExistingFileStrategy", moveExistingFileStrategy);
+            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
         }
         /**
@@ -2802,7 +2802,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder moveExistingFileStrategy(
                 String moveExistingFileStrategy) {
-            setProperty("moveExistingFileStrategy", moveExistingFileStrategy);
+            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
         }
         /**
@@ -2817,7 +2817,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder autoCreate(
                 boolean autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -2831,7 +2831,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointProducerBuilder autoCreate(String autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -2844,7 +2844,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2857,7 +2857,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2868,7 +2868,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointProducerBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -2879,7 +2879,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointProducerBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -2893,7 +2893,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder copyAndDeleteOnRenameFail(
                 boolean copyAndDeleteOnRenameFail) {
-            setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
         }
         /**
@@ -2907,7 +2907,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder copyAndDeleteOnRenameFail(
                 String copyAndDeleteOnRenameFail) {
-            setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
         }
         /**
@@ -2924,7 +2924,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder renameUsingCopy(
                 boolean renameUsingCopy) {
-            setProperty("renameUsingCopy", renameUsingCopy);
+            doSetProperty("renameUsingCopy", renameUsingCopy);
             return this;
         }
         /**
@@ -2941,7 +2941,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder renameUsingCopy(
                 String renameUsingCopy) {
-            setProperty("renameUsingCopy", renameUsingCopy);
+            doSetProperty("renameUsingCopy", renameUsingCopy);
             return this;
         }
         /**
@@ -2954,7 +2954,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2967,7 +2967,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -2997,7 +2997,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointBuilder charset(String charset) {
-            setProperty("charset", charset);
+            doSetProperty("charset", charset);
             return this;
         }
         /**
@@ -3018,7 +3018,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointBuilder doneFileName(String doneFileName) {
-            setProperty("doneFileName", doneFileName);
+            doSetProperty("doneFileName", doneFileName);
             return this;
         }
         /**
@@ -3044,7 +3044,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointBuilder fileName(Expression fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -3071,7 +3071,7 @@ public interface FileEndpointBuilderFactory {
          * Group: common
          */
         default FileEndpointBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
     }
@@ -3096,7 +3096,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder autoCreate(boolean autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -3110,7 +3110,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder autoCreate(String autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -3123,7 +3123,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3136,7 +3136,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3147,7 +3147,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -3158,7 +3158,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -3172,7 +3172,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointBuilder copyAndDeleteOnRenameFail(
                 boolean copyAndDeleteOnRenameFail) {
-            setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
         }
         /**
@@ -3186,7 +3186,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointBuilder copyAndDeleteOnRenameFail(
                 String copyAndDeleteOnRenameFail) {
-            setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
         }
         /**
@@ -3203,7 +3203,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointBuilder renameUsingCopy(
                 boolean renameUsingCopy) {
-            setProperty("renameUsingCopy", renameUsingCopy);
+            doSetProperty("renameUsingCopy", renameUsingCopy);
             return this;
         }
         /**
@@ -3220,7 +3220,7 @@ public interface FileEndpointBuilderFactory {
          */
         default AdvancedFileEndpointBuilder renameUsingCopy(
                 String renameUsingCopy) {
-            setProperty("renameUsingCopy", renameUsingCopy);
+            doSetProperty("renameUsingCopy", renameUsingCopy);
             return this;
         }
         /**
@@ -3232,7 +3232,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3244,7 +3244,7 @@ public interface FileEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -58,7 +58,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -103,7 +103,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -144,7 +144,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -157,7 +157,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -183,7 +183,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -227,7 +227,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -247,7 +247,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default ConsulEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -271,7 +271,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -284,7 +284,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -297,7 +297,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -310,7 +310,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -345,7 +345,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -358,7 +358,7 @@ public interface ConsulEndpointBuilderFactory {
          */
         default AdvancedConsulEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -370,7 +370,7 @@ public interface ConsulEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedConsulEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -382,7 +382,7 @@ public interface ConsulEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedConsulEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

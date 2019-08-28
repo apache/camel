@@ -54,7 +54,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder cacheConnections(
                 boolean cacheConnections) {
-            setProperty("cacheConnections", cacheConnections);
+            doSetProperty("cacheConnections", cacheConnections);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder cacheConnections(
                 String cacheConnections) {
-            setProperty("cacheConnections", cacheConnections);
+            doSetProperty("cacheConnections", cacheConnections);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder contentSubType(String contentSubType) {
-            setProperty("contentSubType", contentSubType);
+            doSetProperty("contentSubType", contentSubType);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder eventHeaderName(
                 String eventHeaderName) {
-            setProperty("eventHeaderName", eventHeaderName);
+            doSetProperty("eventHeaderName", eventHeaderName);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder eventId(String eventId) {
-            setProperty("eventId", eventId);
+            doSetProperty("eventId", eventId);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder fromHost(String fromHost) {
-            setProperty("fromHost", fromHost);
+            doSetProperty("fromHost", fromHost);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder fromPort(int fromPort) {
-            setProperty("fromPort", fromPort);
+            doSetProperty("fromPort", fromPort);
             return this;
         }
         /**
@@ -150,7 +150,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder fromPort(String fromPort) {
-            setProperty("fromPort", fromPort);
+            doSetProperty("fromPort", fromPort);
             return this;
         }
         /**
@@ -162,7 +162,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder fromUser(String fromUser) {
-            setProperty("fromUser", fromUser);
+            doSetProperty("fromUser", fromUser);
             return this;
         }
         /**
@@ -174,7 +174,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder msgExpiration(int msgExpiration) {
-            setProperty("msgExpiration", msgExpiration);
+            doSetProperty("msgExpiration", msgExpiration);
             return this;
         }
         /**
@@ -186,7 +186,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder msgExpiration(String msgExpiration) {
-            setProperty("msgExpiration", msgExpiration);
+            doSetProperty("msgExpiration", msgExpiration);
             return this;
         }
         /**
@@ -199,7 +199,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder receiveTimeoutMillis(
                 long receiveTimeoutMillis) {
-            setProperty("receiveTimeoutMillis", receiveTimeoutMillis);
+            doSetProperty("receiveTimeoutMillis", receiveTimeoutMillis);
             return this;
         }
         /**
@@ -212,7 +212,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder receiveTimeoutMillis(
                 String receiveTimeoutMillis) {
-            setProperty("receiveTimeoutMillis", receiveTimeoutMillis);
+            doSetProperty("receiveTimeoutMillis", receiveTimeoutMillis);
             return this;
         }
         /**
@@ -223,7 +223,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder stackName(String stackName) {
-            setProperty("stackName", stackName);
+            doSetProperty("stackName", stackName);
             return this;
         }
         /**
@@ -235,7 +235,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder toHost(String toHost) {
-            setProperty("toHost", toHost);
+            doSetProperty("toHost", toHost);
             return this;
         }
         /**
@@ -247,7 +247,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder toPort(int toPort) {
-            setProperty("toPort", toPort);
+            doSetProperty("toPort", toPort);
             return this;
         }
         /**
@@ -259,7 +259,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder toPort(String toPort) {
-            setProperty("toPort", toPort);
+            doSetProperty("toPort", toPort);
             return this;
         }
         /**
@@ -271,7 +271,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder toUser(String toUser) {
-            setProperty("toUser", toUser);
+            doSetProperty("toUser", toUser);
             return this;
         }
         /**
@@ -283,7 +283,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointConsumerBuilder transport(String transport) {
-            setProperty("transport", transport);
+            doSetProperty("transport", transport);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -331,7 +331,7 @@ public interface SipEndpointBuilderFactory {
          * Group: consumer
          */
         default SipEndpointConsumerBuilder consumer(boolean consumer) {
-            setProperty("consumer", consumer);
+            doSetProperty("consumer", consumer);
             return this;
         }
         /**
@@ -343,7 +343,7 @@ public interface SipEndpointBuilderFactory {
          * Group: consumer
          */
         default SipEndpointConsumerBuilder consumer(String consumer) {
-            setProperty("consumer", consumer);
+            doSetProperty("consumer", consumer);
             return this;
         }
         /**
@@ -357,7 +357,7 @@ public interface SipEndpointBuilderFactory {
          * Group: consumer
          */
         default SipEndpointConsumerBuilder presenceAgent(boolean presenceAgent) {
-            setProperty("presenceAgent", presenceAgent);
+            doSetProperty("presenceAgent", presenceAgent);
             return this;
         }
         /**
@@ -371,7 +371,7 @@ public interface SipEndpointBuilderFactory {
          * Group: consumer
          */
         default SipEndpointConsumerBuilder presenceAgent(String presenceAgent) {
-            setProperty("presenceAgent", presenceAgent);
+            doSetProperty("presenceAgent", presenceAgent);
             return this;
         }
         /**
@@ -383,7 +383,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder implementationDebugLogFile(
                 String implementationDebugLogFile) {
-            setProperty("implementationDebugLogFile", implementationDebugLogFile);
+            doSetProperty("implementationDebugLogFile", implementationDebugLogFile);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder implementationServerLogFile(
                 String implementationServerLogFile) {
-            setProperty("implementationServerLogFile", implementationServerLogFile);
+            doSetProperty("implementationServerLogFile", implementationServerLogFile);
             return this;
         }
         /**
@@ -407,7 +407,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder implementationTraceLevel(
                 String implementationTraceLevel) {
-            setProperty("implementationTraceLevel", implementationTraceLevel);
+            doSetProperty("implementationTraceLevel", implementationTraceLevel);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface SipEndpointBuilderFactory {
          * Group: proxy
          */
         default SipEndpointConsumerBuilder maxForwards(int maxForwards) {
-            setProperty("maxForwards", maxForwards);
+            doSetProperty("maxForwards", maxForwards);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface SipEndpointBuilderFactory {
          * Group: proxy
          */
         default SipEndpointConsumerBuilder maxForwards(String maxForwards) {
-            setProperty("maxForwards", maxForwards);
+            doSetProperty("maxForwards", maxForwards);
             return this;
         }
         /**
@@ -442,7 +442,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder useRouterForAllUris(
                 boolean useRouterForAllUris) {
-            setProperty("useRouterForAllUris", useRouterForAllUris);
+            doSetProperty("useRouterForAllUris", useRouterForAllUris);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointConsumerBuilder useRouterForAllUris(
                 String useRouterForAllUris) {
-            setProperty("useRouterForAllUris", useRouterForAllUris);
+            doSetProperty("useRouterForAllUris", useRouterForAllUris);
             return this;
         }
     }
@@ -482,7 +482,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -498,7 +498,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -510,7 +510,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -523,7 +523,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -535,7 +535,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder addressFactory(
                 Object addressFactory) {
-            setProperty("addressFactory", addressFactory);
+            doSetProperty("addressFactory", addressFactory);
             return this;
         }
         /**
@@ -548,7 +548,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder addressFactory(
                 String addressFactory) {
-            setProperty("addressFactory", addressFactory);
+            doSetProperty("addressFactory", addressFactory);
             return this;
         }
         /**
@@ -561,7 +561,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -574,7 +574,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -587,7 +587,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder callIdHeader(
                 Object callIdHeader) {
-            setProperty("callIdHeader", callIdHeader);
+            doSetProperty("callIdHeader", callIdHeader);
             return this;
         }
         /**
@@ -601,7 +601,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder callIdHeader(
                 String callIdHeader) {
-            setProperty("callIdHeader", callIdHeader);
+            doSetProperty("callIdHeader", callIdHeader);
             return this;
         }
         /**
@@ -615,7 +615,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder contactHeader(
                 Object contactHeader) {
-            setProperty("contactHeader", contactHeader);
+            doSetProperty("contactHeader", contactHeader);
             return this;
         }
         /**
@@ -630,7 +630,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder contactHeader(
                 String contactHeader) {
-            setProperty("contactHeader", contactHeader);
+            doSetProperty("contactHeader", contactHeader);
             return this;
         }
         /**
@@ -644,7 +644,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder contentTypeHeader(
                 Object contentTypeHeader) {
-            setProperty("contentTypeHeader", contentTypeHeader);
+            doSetProperty("contentTypeHeader", contentTypeHeader);
             return this;
         }
         /**
@@ -658,7 +658,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder contentTypeHeader(
                 String contentTypeHeader) {
-            setProperty("contentTypeHeader", contentTypeHeader);
+            doSetProperty("contentTypeHeader", contentTypeHeader);
             return this;
         }
         /**
@@ -671,7 +671,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder eventHeader(
                 Object eventHeader) {
-            setProperty("eventHeader", eventHeader);
+            doSetProperty("eventHeader", eventHeader);
             return this;
         }
         /**
@@ -685,7 +685,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder eventHeader(
                 String eventHeader) {
-            setProperty("eventHeader", eventHeader);
+            doSetProperty("eventHeader", eventHeader);
             return this;
         }
         /**
@@ -698,7 +698,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder expiresHeader(
                 Object expiresHeader) {
-            setProperty("expiresHeader", expiresHeader);
+            doSetProperty("expiresHeader", expiresHeader);
             return this;
         }
         /**
@@ -712,7 +712,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder expiresHeader(
                 String expiresHeader) {
-            setProperty("expiresHeader", expiresHeader);
+            doSetProperty("expiresHeader", expiresHeader);
             return this;
         }
         /**
@@ -725,7 +725,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder extensionHeader(
                 Object extensionHeader) {
-            setProperty("extensionHeader", extensionHeader);
+            doSetProperty("extensionHeader", extensionHeader);
             return this;
         }
         /**
@@ -739,7 +739,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder extensionHeader(
                 String extensionHeader) {
-            setProperty("extensionHeader", extensionHeader);
+            doSetProperty("extensionHeader", extensionHeader);
             return this;
         }
         /**
@@ -751,7 +751,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder fromHeader(Object fromHeader) {
-            setProperty("fromHeader", fromHeader);
+            doSetProperty("fromHeader", fromHeader);
             return this;
         }
         /**
@@ -764,7 +764,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder fromHeader(String fromHeader) {
-            setProperty("fromHeader", fromHeader);
+            doSetProperty("fromHeader", fromHeader);
             return this;
         }
         /**
@@ -776,7 +776,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder headerFactory(
                 Object headerFactory) {
-            setProperty("headerFactory", headerFactory);
+            doSetProperty("headerFactory", headerFactory);
             return this;
         }
         /**
@@ -789,7 +789,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder headerFactory(
                 String headerFactory) {
-            setProperty("headerFactory", headerFactory);
+            doSetProperty("headerFactory", headerFactory);
             return this;
         }
         /**
@@ -801,7 +801,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder listeningPoint(
                 Object listeningPoint) {
-            setProperty("listeningPoint", listeningPoint);
+            doSetProperty("listeningPoint", listeningPoint);
             return this;
         }
         /**
@@ -814,7 +814,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder listeningPoint(
                 String listeningPoint) {
-            setProperty("listeningPoint", listeningPoint);
+            doSetProperty("listeningPoint", listeningPoint);
             return this;
         }
         /**
@@ -829,7 +829,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder maxForwardsHeader(
                 Object maxForwardsHeader) {
-            setProperty("maxForwardsHeader", maxForwardsHeader);
+            doSetProperty("maxForwardsHeader", maxForwardsHeader);
             return this;
         }
         /**
@@ -844,7 +844,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder maxForwardsHeader(
                 String maxForwardsHeader) {
-            setProperty("maxForwardsHeader", maxForwardsHeader);
+            doSetProperty("maxForwardsHeader", maxForwardsHeader);
             return this;
         }
         /**
@@ -856,7 +856,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder maxMessageSize(
                 int maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -868,7 +868,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder maxMessageSize(
                 String maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -880,7 +880,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder messageFactory(
                 Object messageFactory) {
-            setProperty("messageFactory", messageFactory);
+            doSetProperty("messageFactory", messageFactory);
             return this;
         }
         /**
@@ -893,7 +893,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder messageFactory(
                 String messageFactory) {
-            setProperty("messageFactory", messageFactory);
+            doSetProperty("messageFactory", messageFactory);
             return this;
         }
         /**
@@ -904,7 +904,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipFactory(Object sipFactory) {
-            setProperty("sipFactory", sipFactory);
+            doSetProperty("sipFactory", sipFactory);
             return this;
         }
         /**
@@ -916,7 +916,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipFactory(String sipFactory) {
-            setProperty("sipFactory", sipFactory);
+            doSetProperty("sipFactory", sipFactory);
             return this;
         }
         /**
@@ -927,7 +927,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipStack(Object sipStack) {
-            setProperty("sipStack", sipStack);
+            doSetProperty("sipStack", sipStack);
             return this;
         }
         /**
@@ -939,7 +939,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipStack(String sipStack) {
-            setProperty("sipStack", sipStack);
+            doSetProperty("sipStack", sipStack);
             return this;
         }
         /**
@@ -951,7 +951,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipUri(Object sipUri) {
-            setProperty("sipUri", sipUri);
+            doSetProperty("sipUri", sipUri);
             return this;
         }
         /**
@@ -964,7 +964,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder sipUri(String sipUri) {
-            setProperty("sipUri", sipUri);
+            doSetProperty("sipUri", sipUri);
             return this;
         }
         /**
@@ -977,7 +977,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -990,7 +990,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1002,7 +1002,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder toHeader(Object toHeader) {
-            setProperty("toHeader", toHeader);
+            doSetProperty("toHeader", toHeader);
             return this;
         }
         /**
@@ -1015,7 +1015,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder toHeader(String toHeader) {
-            setProperty("toHeader", toHeader);
+            doSetProperty("toHeader", toHeader);
             return this;
         }
         /**
@@ -1031,7 +1031,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointConsumerBuilder viaHeaders(
                 List<Object> viaHeaders) {
-            setProperty("viaHeaders", viaHeaders);
+            doSetProperty("viaHeaders", viaHeaders);
             return this;
         }
         /**
@@ -1046,7 +1046,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder viaHeaders(String viaHeaders) {
-            setProperty("viaHeaders", viaHeaders);
+            doSetProperty("viaHeaders", viaHeaders);
             return this;
         }
     }
@@ -1071,7 +1071,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder cacheConnections(
                 boolean cacheConnections) {
-            setProperty("cacheConnections", cacheConnections);
+            doSetProperty("cacheConnections", cacheConnections);
             return this;
         }
         /**
@@ -1085,7 +1085,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder cacheConnections(
                 String cacheConnections) {
-            setProperty("cacheConnections", cacheConnections);
+            doSetProperty("cacheConnections", cacheConnections);
             return this;
         }
         /**
@@ -1096,7 +1096,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder contentSubType(String contentSubType) {
-            setProperty("contentSubType", contentSubType);
+            doSetProperty("contentSubType", contentSubType);
             return this;
         }
         /**
@@ -1107,7 +1107,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -1119,7 +1119,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder eventHeaderName(
                 String eventHeaderName) {
-            setProperty("eventHeaderName", eventHeaderName);
+            doSetProperty("eventHeaderName", eventHeaderName);
             return this;
         }
         /**
@@ -1131,7 +1131,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder eventId(String eventId) {
-            setProperty("eventId", eventId);
+            doSetProperty("eventId", eventId);
             return this;
         }
         /**
@@ -1143,7 +1143,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder fromHost(String fromHost) {
-            setProperty("fromHost", fromHost);
+            doSetProperty("fromHost", fromHost);
             return this;
         }
         /**
@@ -1155,7 +1155,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder fromPort(int fromPort) {
-            setProperty("fromPort", fromPort);
+            doSetProperty("fromPort", fromPort);
             return this;
         }
         /**
@@ -1167,7 +1167,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder fromPort(String fromPort) {
-            setProperty("fromPort", fromPort);
+            doSetProperty("fromPort", fromPort);
             return this;
         }
         /**
@@ -1179,7 +1179,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder fromUser(String fromUser) {
-            setProperty("fromUser", fromUser);
+            doSetProperty("fromUser", fromUser);
             return this;
         }
         /**
@@ -1191,7 +1191,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder msgExpiration(int msgExpiration) {
-            setProperty("msgExpiration", msgExpiration);
+            doSetProperty("msgExpiration", msgExpiration);
             return this;
         }
         /**
@@ -1203,7 +1203,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder msgExpiration(String msgExpiration) {
-            setProperty("msgExpiration", msgExpiration);
+            doSetProperty("msgExpiration", msgExpiration);
             return this;
         }
         /**
@@ -1216,7 +1216,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder receiveTimeoutMillis(
                 long receiveTimeoutMillis) {
-            setProperty("receiveTimeoutMillis", receiveTimeoutMillis);
+            doSetProperty("receiveTimeoutMillis", receiveTimeoutMillis);
             return this;
         }
         /**
@@ -1229,7 +1229,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder receiveTimeoutMillis(
                 String receiveTimeoutMillis) {
-            setProperty("receiveTimeoutMillis", receiveTimeoutMillis);
+            doSetProperty("receiveTimeoutMillis", receiveTimeoutMillis);
             return this;
         }
         /**
@@ -1240,7 +1240,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder stackName(String stackName) {
-            setProperty("stackName", stackName);
+            doSetProperty("stackName", stackName);
             return this;
         }
         /**
@@ -1252,7 +1252,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder toHost(String toHost) {
-            setProperty("toHost", toHost);
+            doSetProperty("toHost", toHost);
             return this;
         }
         /**
@@ -1264,7 +1264,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder toPort(int toPort) {
-            setProperty("toPort", toPort);
+            doSetProperty("toPort", toPort);
             return this;
         }
         /**
@@ -1276,7 +1276,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder toPort(String toPort) {
-            setProperty("toPort", toPort);
+            doSetProperty("toPort", toPort);
             return this;
         }
         /**
@@ -1288,7 +1288,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder toUser(String toUser) {
-            setProperty("toUser", toUser);
+            doSetProperty("toUser", toUser);
             return this;
         }
         /**
@@ -1300,7 +1300,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointProducerBuilder transport(String transport) {
-            setProperty("transport", transport);
+            doSetProperty("transport", transport);
             return this;
         }
         /**
@@ -1320,7 +1320,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1340,7 +1340,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1352,7 +1352,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder implementationDebugLogFile(
                 String implementationDebugLogFile) {
-            setProperty("implementationDebugLogFile", implementationDebugLogFile);
+            doSetProperty("implementationDebugLogFile", implementationDebugLogFile);
             return this;
         }
         /**
@@ -1364,7 +1364,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder implementationServerLogFile(
                 String implementationServerLogFile) {
-            setProperty("implementationServerLogFile", implementationServerLogFile);
+            doSetProperty("implementationServerLogFile", implementationServerLogFile);
             return this;
         }
         /**
@@ -1376,7 +1376,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder implementationTraceLevel(
                 String implementationTraceLevel) {
-            setProperty("implementationTraceLevel", implementationTraceLevel);
+            doSetProperty("implementationTraceLevel", implementationTraceLevel);
             return this;
         }
         /**
@@ -1387,7 +1387,7 @@ public interface SipEndpointBuilderFactory {
          * Group: proxy
          */
         default SipEndpointProducerBuilder maxForwards(int maxForwards) {
-            setProperty("maxForwards", maxForwards);
+            doSetProperty("maxForwards", maxForwards);
             return this;
         }
         /**
@@ -1398,7 +1398,7 @@ public interface SipEndpointBuilderFactory {
          * Group: proxy
          */
         default SipEndpointProducerBuilder maxForwards(String maxForwards) {
-            setProperty("maxForwards", maxForwards);
+            doSetProperty("maxForwards", maxForwards);
             return this;
         }
         /**
@@ -1411,7 +1411,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder useRouterForAllUris(
                 boolean useRouterForAllUris) {
-            setProperty("useRouterForAllUris", useRouterForAllUris);
+            doSetProperty("useRouterForAllUris", useRouterForAllUris);
             return this;
         }
         /**
@@ -1424,7 +1424,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointProducerBuilder useRouterForAllUris(
                 String useRouterForAllUris) {
-            setProperty("useRouterForAllUris", useRouterForAllUris);
+            doSetProperty("useRouterForAllUris", useRouterForAllUris);
             return this;
         }
     }
@@ -1447,7 +1447,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder addressFactory(
                 Object addressFactory) {
-            setProperty("addressFactory", addressFactory);
+            doSetProperty("addressFactory", addressFactory);
             return this;
         }
         /**
@@ -1460,7 +1460,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder addressFactory(
                 String addressFactory) {
-            setProperty("addressFactory", addressFactory);
+            doSetProperty("addressFactory", addressFactory);
             return this;
         }
         /**
@@ -1473,7 +1473,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1486,7 +1486,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1499,7 +1499,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder callIdHeader(
                 Object callIdHeader) {
-            setProperty("callIdHeader", callIdHeader);
+            doSetProperty("callIdHeader", callIdHeader);
             return this;
         }
         /**
@@ -1513,7 +1513,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder callIdHeader(
                 String callIdHeader) {
-            setProperty("callIdHeader", callIdHeader);
+            doSetProperty("callIdHeader", callIdHeader);
             return this;
         }
         /**
@@ -1527,7 +1527,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder contactHeader(
                 Object contactHeader) {
-            setProperty("contactHeader", contactHeader);
+            doSetProperty("contactHeader", contactHeader);
             return this;
         }
         /**
@@ -1542,7 +1542,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder contactHeader(
                 String contactHeader) {
-            setProperty("contactHeader", contactHeader);
+            doSetProperty("contactHeader", contactHeader);
             return this;
         }
         /**
@@ -1556,7 +1556,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder contentTypeHeader(
                 Object contentTypeHeader) {
-            setProperty("contentTypeHeader", contentTypeHeader);
+            doSetProperty("contentTypeHeader", contentTypeHeader);
             return this;
         }
         /**
@@ -1570,7 +1570,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder contentTypeHeader(
                 String contentTypeHeader) {
-            setProperty("contentTypeHeader", contentTypeHeader);
+            doSetProperty("contentTypeHeader", contentTypeHeader);
             return this;
         }
         /**
@@ -1583,7 +1583,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder eventHeader(
                 Object eventHeader) {
-            setProperty("eventHeader", eventHeader);
+            doSetProperty("eventHeader", eventHeader);
             return this;
         }
         /**
@@ -1597,7 +1597,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder eventHeader(
                 String eventHeader) {
-            setProperty("eventHeader", eventHeader);
+            doSetProperty("eventHeader", eventHeader);
             return this;
         }
         /**
@@ -1610,7 +1610,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder expiresHeader(
                 Object expiresHeader) {
-            setProperty("expiresHeader", expiresHeader);
+            doSetProperty("expiresHeader", expiresHeader);
             return this;
         }
         /**
@@ -1624,7 +1624,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder expiresHeader(
                 String expiresHeader) {
-            setProperty("expiresHeader", expiresHeader);
+            doSetProperty("expiresHeader", expiresHeader);
             return this;
         }
         /**
@@ -1637,7 +1637,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder extensionHeader(
                 Object extensionHeader) {
-            setProperty("extensionHeader", extensionHeader);
+            doSetProperty("extensionHeader", extensionHeader);
             return this;
         }
         /**
@@ -1651,7 +1651,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder extensionHeader(
                 String extensionHeader) {
-            setProperty("extensionHeader", extensionHeader);
+            doSetProperty("extensionHeader", extensionHeader);
             return this;
         }
         /**
@@ -1663,7 +1663,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder fromHeader(Object fromHeader) {
-            setProperty("fromHeader", fromHeader);
+            doSetProperty("fromHeader", fromHeader);
             return this;
         }
         /**
@@ -1676,7 +1676,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder fromHeader(String fromHeader) {
-            setProperty("fromHeader", fromHeader);
+            doSetProperty("fromHeader", fromHeader);
             return this;
         }
         /**
@@ -1688,7 +1688,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder headerFactory(
                 Object headerFactory) {
-            setProperty("headerFactory", headerFactory);
+            doSetProperty("headerFactory", headerFactory);
             return this;
         }
         /**
@@ -1701,7 +1701,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder headerFactory(
                 String headerFactory) {
-            setProperty("headerFactory", headerFactory);
+            doSetProperty("headerFactory", headerFactory);
             return this;
         }
         /**
@@ -1713,7 +1713,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder listeningPoint(
                 Object listeningPoint) {
-            setProperty("listeningPoint", listeningPoint);
+            doSetProperty("listeningPoint", listeningPoint);
             return this;
         }
         /**
@@ -1726,7 +1726,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder listeningPoint(
                 String listeningPoint) {
-            setProperty("listeningPoint", listeningPoint);
+            doSetProperty("listeningPoint", listeningPoint);
             return this;
         }
         /**
@@ -1741,7 +1741,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder maxForwardsHeader(
                 Object maxForwardsHeader) {
-            setProperty("maxForwardsHeader", maxForwardsHeader);
+            doSetProperty("maxForwardsHeader", maxForwardsHeader);
             return this;
         }
         /**
@@ -1756,7 +1756,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder maxForwardsHeader(
                 String maxForwardsHeader) {
-            setProperty("maxForwardsHeader", maxForwardsHeader);
+            doSetProperty("maxForwardsHeader", maxForwardsHeader);
             return this;
         }
         /**
@@ -1768,7 +1768,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder maxMessageSize(
                 int maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -1780,7 +1780,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder maxMessageSize(
                 String maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -1792,7 +1792,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder messageFactory(
                 Object messageFactory) {
-            setProperty("messageFactory", messageFactory);
+            doSetProperty("messageFactory", messageFactory);
             return this;
         }
         /**
@@ -1805,7 +1805,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder messageFactory(
                 String messageFactory) {
-            setProperty("messageFactory", messageFactory);
+            doSetProperty("messageFactory", messageFactory);
             return this;
         }
         /**
@@ -1816,7 +1816,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipFactory(Object sipFactory) {
-            setProperty("sipFactory", sipFactory);
+            doSetProperty("sipFactory", sipFactory);
             return this;
         }
         /**
@@ -1828,7 +1828,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipFactory(String sipFactory) {
-            setProperty("sipFactory", sipFactory);
+            doSetProperty("sipFactory", sipFactory);
             return this;
         }
         /**
@@ -1839,7 +1839,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipStack(Object sipStack) {
-            setProperty("sipStack", sipStack);
+            doSetProperty("sipStack", sipStack);
             return this;
         }
         /**
@@ -1851,7 +1851,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipStack(String sipStack) {
-            setProperty("sipStack", sipStack);
+            doSetProperty("sipStack", sipStack);
             return this;
         }
         /**
@@ -1863,7 +1863,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipUri(Object sipUri) {
-            setProperty("sipUri", sipUri);
+            doSetProperty("sipUri", sipUri);
             return this;
         }
         /**
@@ -1876,7 +1876,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder sipUri(String sipUri) {
-            setProperty("sipUri", sipUri);
+            doSetProperty("sipUri", sipUri);
             return this;
         }
         /**
@@ -1889,7 +1889,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1902,7 +1902,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1914,7 +1914,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder toHeader(Object toHeader) {
-            setProperty("toHeader", toHeader);
+            doSetProperty("toHeader", toHeader);
             return this;
         }
         /**
@@ -1927,7 +1927,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder toHeader(String toHeader) {
-            setProperty("toHeader", toHeader);
+            doSetProperty("toHeader", toHeader);
             return this;
         }
         /**
@@ -1943,7 +1943,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointProducerBuilder viaHeaders(
                 List<Object> viaHeaders) {
-            setProperty("viaHeaders", viaHeaders);
+            doSetProperty("viaHeaders", viaHeaders);
             return this;
         }
         /**
@@ -1958,7 +1958,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder viaHeaders(String viaHeaders) {
-            setProperty("viaHeaders", viaHeaders);
+            doSetProperty("viaHeaders", viaHeaders);
             return this;
         }
     }
@@ -1982,7 +1982,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder cacheConnections(boolean cacheConnections) {
-            setProperty("cacheConnections", cacheConnections);
+            doSetProperty("cacheConnections", cacheConnections);
             return this;
         }
         /**
@@ -1995,7 +1995,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder cacheConnections(String cacheConnections) {
-            setProperty("cacheConnections", cacheConnections);
+            doSetProperty("cacheConnections", cacheConnections);
             return this;
         }
         /**
@@ -2006,7 +2006,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder contentSubType(String contentSubType) {
-            setProperty("contentSubType", contentSubType);
+            doSetProperty("contentSubType", contentSubType);
             return this;
         }
         /**
@@ -2017,7 +2017,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -2028,7 +2028,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder eventHeaderName(String eventHeaderName) {
-            setProperty("eventHeaderName", eventHeaderName);
+            doSetProperty("eventHeaderName", eventHeaderName);
             return this;
         }
         /**
@@ -2040,7 +2040,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder eventId(String eventId) {
-            setProperty("eventId", eventId);
+            doSetProperty("eventId", eventId);
             return this;
         }
         /**
@@ -2052,7 +2052,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder fromHost(String fromHost) {
-            setProperty("fromHost", fromHost);
+            doSetProperty("fromHost", fromHost);
             return this;
         }
         /**
@@ -2064,7 +2064,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder fromPort(int fromPort) {
-            setProperty("fromPort", fromPort);
+            doSetProperty("fromPort", fromPort);
             return this;
         }
         /**
@@ -2076,7 +2076,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder fromPort(String fromPort) {
-            setProperty("fromPort", fromPort);
+            doSetProperty("fromPort", fromPort);
             return this;
         }
         /**
@@ -2088,7 +2088,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder fromUser(String fromUser) {
-            setProperty("fromUser", fromUser);
+            doSetProperty("fromUser", fromUser);
             return this;
         }
         /**
@@ -2100,7 +2100,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder msgExpiration(int msgExpiration) {
-            setProperty("msgExpiration", msgExpiration);
+            doSetProperty("msgExpiration", msgExpiration);
             return this;
         }
         /**
@@ -2112,7 +2112,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder msgExpiration(String msgExpiration) {
-            setProperty("msgExpiration", msgExpiration);
+            doSetProperty("msgExpiration", msgExpiration);
             return this;
         }
         /**
@@ -2125,7 +2125,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointBuilder receiveTimeoutMillis(
                 long receiveTimeoutMillis) {
-            setProperty("receiveTimeoutMillis", receiveTimeoutMillis);
+            doSetProperty("receiveTimeoutMillis", receiveTimeoutMillis);
             return this;
         }
         /**
@@ -2138,7 +2138,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointBuilder receiveTimeoutMillis(
                 String receiveTimeoutMillis) {
-            setProperty("receiveTimeoutMillis", receiveTimeoutMillis);
+            doSetProperty("receiveTimeoutMillis", receiveTimeoutMillis);
             return this;
         }
         /**
@@ -2149,7 +2149,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder stackName(String stackName) {
-            setProperty("stackName", stackName);
+            doSetProperty("stackName", stackName);
             return this;
         }
         /**
@@ -2161,7 +2161,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder toHost(String toHost) {
-            setProperty("toHost", toHost);
+            doSetProperty("toHost", toHost);
             return this;
         }
         /**
@@ -2173,7 +2173,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder toPort(int toPort) {
-            setProperty("toPort", toPort);
+            doSetProperty("toPort", toPort);
             return this;
         }
         /**
@@ -2185,7 +2185,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder toPort(String toPort) {
-            setProperty("toPort", toPort);
+            doSetProperty("toPort", toPort);
             return this;
         }
         /**
@@ -2197,7 +2197,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder toUser(String toUser) {
-            setProperty("toUser", toUser);
+            doSetProperty("toUser", toUser);
             return this;
         }
         /**
@@ -2209,7 +2209,7 @@ public interface SipEndpointBuilderFactory {
          * Group: common
          */
         default SipEndpointBuilder transport(String transport) {
-            setProperty("transport", transport);
+            doSetProperty("transport", transport);
             return this;
         }
         /**
@@ -2221,7 +2221,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointBuilder implementationDebugLogFile(
                 String implementationDebugLogFile) {
-            setProperty("implementationDebugLogFile", implementationDebugLogFile);
+            doSetProperty("implementationDebugLogFile", implementationDebugLogFile);
             return this;
         }
         /**
@@ -2233,7 +2233,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointBuilder implementationServerLogFile(
                 String implementationServerLogFile) {
-            setProperty("implementationServerLogFile", implementationServerLogFile);
+            doSetProperty("implementationServerLogFile", implementationServerLogFile);
             return this;
         }
         /**
@@ -2245,7 +2245,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointBuilder implementationTraceLevel(
                 String implementationTraceLevel) {
-            setProperty("implementationTraceLevel", implementationTraceLevel);
+            doSetProperty("implementationTraceLevel", implementationTraceLevel);
             return this;
         }
         /**
@@ -2256,7 +2256,7 @@ public interface SipEndpointBuilderFactory {
          * Group: proxy
          */
         default SipEndpointBuilder maxForwards(int maxForwards) {
-            setProperty("maxForwards", maxForwards);
+            doSetProperty("maxForwards", maxForwards);
             return this;
         }
         /**
@@ -2267,7 +2267,7 @@ public interface SipEndpointBuilderFactory {
          * Group: proxy
          */
         default SipEndpointBuilder maxForwards(String maxForwards) {
-            setProperty("maxForwards", maxForwards);
+            doSetProperty("maxForwards", maxForwards);
             return this;
         }
         /**
@@ -2280,7 +2280,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointBuilder useRouterForAllUris(
                 boolean useRouterForAllUris) {
-            setProperty("useRouterForAllUris", useRouterForAllUris);
+            doSetProperty("useRouterForAllUris", useRouterForAllUris);
             return this;
         }
         /**
@@ -2293,7 +2293,7 @@ public interface SipEndpointBuilderFactory {
          */
         default SipEndpointBuilder useRouterForAllUris(
                 String useRouterForAllUris) {
-            setProperty("useRouterForAllUris", useRouterForAllUris);
+            doSetProperty("useRouterForAllUris", useRouterForAllUris);
             return this;
         }
     }
@@ -2315,7 +2315,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder addressFactory(Object addressFactory) {
-            setProperty("addressFactory", addressFactory);
+            doSetProperty("addressFactory", addressFactory);
             return this;
         }
         /**
@@ -2327,7 +2327,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder addressFactory(String addressFactory) {
-            setProperty("addressFactory", addressFactory);
+            doSetProperty("addressFactory", addressFactory);
             return this;
         }
         /**
@@ -2340,7 +2340,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2353,7 +2353,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2365,7 +2365,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder callIdHeader(Object callIdHeader) {
-            setProperty("callIdHeader", callIdHeader);
+            doSetProperty("callIdHeader", callIdHeader);
             return this;
         }
         /**
@@ -2378,7 +2378,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder callIdHeader(String callIdHeader) {
-            setProperty("callIdHeader", callIdHeader);
+            doSetProperty("callIdHeader", callIdHeader);
             return this;
         }
         /**
@@ -2391,7 +2391,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder contactHeader(Object contactHeader) {
-            setProperty("contactHeader", contactHeader);
+            doSetProperty("contactHeader", contactHeader);
             return this;
         }
         /**
@@ -2405,7 +2405,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder contactHeader(String contactHeader) {
-            setProperty("contactHeader", contactHeader);
+            doSetProperty("contactHeader", contactHeader);
             return this;
         }
         /**
@@ -2419,7 +2419,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointBuilder contentTypeHeader(
                 Object contentTypeHeader) {
-            setProperty("contentTypeHeader", contentTypeHeader);
+            doSetProperty("contentTypeHeader", contentTypeHeader);
             return this;
         }
         /**
@@ -2433,7 +2433,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointBuilder contentTypeHeader(
                 String contentTypeHeader) {
-            setProperty("contentTypeHeader", contentTypeHeader);
+            doSetProperty("contentTypeHeader", contentTypeHeader);
             return this;
         }
         /**
@@ -2445,7 +2445,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder eventHeader(Object eventHeader) {
-            setProperty("eventHeader", eventHeader);
+            doSetProperty("eventHeader", eventHeader);
             return this;
         }
         /**
@@ -2458,7 +2458,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder eventHeader(String eventHeader) {
-            setProperty("eventHeader", eventHeader);
+            doSetProperty("eventHeader", eventHeader);
             return this;
         }
         /**
@@ -2470,7 +2470,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder expiresHeader(Object expiresHeader) {
-            setProperty("expiresHeader", expiresHeader);
+            doSetProperty("expiresHeader", expiresHeader);
             return this;
         }
         /**
@@ -2483,7 +2483,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder expiresHeader(String expiresHeader) {
-            setProperty("expiresHeader", expiresHeader);
+            doSetProperty("expiresHeader", expiresHeader);
             return this;
         }
         /**
@@ -2496,7 +2496,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointBuilder extensionHeader(
                 Object extensionHeader) {
-            setProperty("extensionHeader", extensionHeader);
+            doSetProperty("extensionHeader", extensionHeader);
             return this;
         }
         /**
@@ -2510,7 +2510,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointBuilder extensionHeader(
                 String extensionHeader) {
-            setProperty("extensionHeader", extensionHeader);
+            doSetProperty("extensionHeader", extensionHeader);
             return this;
         }
         /**
@@ -2522,7 +2522,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder fromHeader(Object fromHeader) {
-            setProperty("fromHeader", fromHeader);
+            doSetProperty("fromHeader", fromHeader);
             return this;
         }
         /**
@@ -2535,7 +2535,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder fromHeader(String fromHeader) {
-            setProperty("fromHeader", fromHeader);
+            doSetProperty("fromHeader", fromHeader);
             return this;
         }
         /**
@@ -2546,7 +2546,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder headerFactory(Object headerFactory) {
-            setProperty("headerFactory", headerFactory);
+            doSetProperty("headerFactory", headerFactory);
             return this;
         }
         /**
@@ -2558,7 +2558,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder headerFactory(String headerFactory) {
-            setProperty("headerFactory", headerFactory);
+            doSetProperty("headerFactory", headerFactory);
             return this;
         }
         /**
@@ -2569,7 +2569,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder listeningPoint(Object listeningPoint) {
-            setProperty("listeningPoint", listeningPoint);
+            doSetProperty("listeningPoint", listeningPoint);
             return this;
         }
         /**
@@ -2581,7 +2581,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder listeningPoint(String listeningPoint) {
-            setProperty("listeningPoint", listeningPoint);
+            doSetProperty("listeningPoint", listeningPoint);
             return this;
         }
         /**
@@ -2596,7 +2596,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointBuilder maxForwardsHeader(
                 Object maxForwardsHeader) {
-            setProperty("maxForwardsHeader", maxForwardsHeader);
+            doSetProperty("maxForwardsHeader", maxForwardsHeader);
             return this;
         }
         /**
@@ -2611,7 +2611,7 @@ public interface SipEndpointBuilderFactory {
          */
         default AdvancedSipEndpointBuilder maxForwardsHeader(
                 String maxForwardsHeader) {
-            setProperty("maxForwardsHeader", maxForwardsHeader);
+            doSetProperty("maxForwardsHeader", maxForwardsHeader);
             return this;
         }
         /**
@@ -2622,7 +2622,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder maxMessageSize(int maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -2633,7 +2633,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder maxMessageSize(String maxMessageSize) {
-            setProperty("maxMessageSize", maxMessageSize);
+            doSetProperty("maxMessageSize", maxMessageSize);
             return this;
         }
         /**
@@ -2644,7 +2644,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder messageFactory(Object messageFactory) {
-            setProperty("messageFactory", messageFactory);
+            doSetProperty("messageFactory", messageFactory);
             return this;
         }
         /**
@@ -2656,7 +2656,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder messageFactory(String messageFactory) {
-            setProperty("messageFactory", messageFactory);
+            doSetProperty("messageFactory", messageFactory);
             return this;
         }
         /**
@@ -2667,7 +2667,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipFactory(Object sipFactory) {
-            setProperty("sipFactory", sipFactory);
+            doSetProperty("sipFactory", sipFactory);
             return this;
         }
         /**
@@ -2679,7 +2679,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipFactory(String sipFactory) {
-            setProperty("sipFactory", sipFactory);
+            doSetProperty("sipFactory", sipFactory);
             return this;
         }
         /**
@@ -2690,7 +2690,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipStack(Object sipStack) {
-            setProperty("sipStack", sipStack);
+            doSetProperty("sipStack", sipStack);
             return this;
         }
         /**
@@ -2702,7 +2702,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipStack(String sipStack) {
-            setProperty("sipStack", sipStack);
+            doSetProperty("sipStack", sipStack);
             return this;
         }
         /**
@@ -2714,7 +2714,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipUri(Object sipUri) {
-            setProperty("sipUri", sipUri);
+            doSetProperty("sipUri", sipUri);
             return this;
         }
         /**
@@ -2727,7 +2727,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder sipUri(String sipUri) {
-            setProperty("sipUri", sipUri);
+            doSetProperty("sipUri", sipUri);
             return this;
         }
         /**
@@ -2739,7 +2739,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2751,7 +2751,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2763,7 +2763,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder toHeader(Object toHeader) {
-            setProperty("toHeader", toHeader);
+            doSetProperty("toHeader", toHeader);
             return this;
         }
         /**
@@ -2776,7 +2776,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder toHeader(String toHeader) {
-            setProperty("toHeader", toHeader);
+            doSetProperty("toHeader", toHeader);
             return this;
         }
         /**
@@ -2791,7 +2791,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder viaHeaders(List<Object> viaHeaders) {
-            setProperty("viaHeaders", viaHeaders);
+            doSetProperty("viaHeaders", viaHeaders);
             return this;
         }
         /**
@@ -2806,7 +2806,7 @@ public interface SipEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder viaHeaders(String viaHeaders) {
-            setProperty("viaHeaders", viaHeaders);
+            doSetProperty("viaHeaders", viaHeaders);
             return this;
         }
     }

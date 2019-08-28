@@ -53,7 +53,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointConsumerBuilder azureQueueClient(
                 Object azureQueueClient) {
-            setProperty("azureQueueClient", azureQueueClient);
+            doSetProperty("azureQueueClient", azureQueueClient);
             return this;
         }
         /**
@@ -66,7 +66,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointConsumerBuilder azureQueueClient(
                 String azureQueueClient) {
-            setProperty("azureQueueClient", azureQueueClient);
+            doSetProperty("azureQueueClient", azureQueueClient);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointConsumerBuilder credentials(
                 Object credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointConsumerBuilder credentials(
                 String credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -156,7 +156,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -197,7 +197,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -210,7 +210,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -223,7 +223,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -236,7 +236,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -274,7 +274,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder azureQueueClient(
                 Object azureQueueClient) {
-            setProperty("azureQueueClient", azureQueueClient);
+            doSetProperty("azureQueueClient", azureQueueClient);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder azureQueueClient(
                 String azureQueueClient) {
-            setProperty("azureQueueClient", azureQueueClient);
+            doSetProperty("azureQueueClient", azureQueueClient);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder credentials(
                 Object credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder credentials(
                 String credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -333,7 +333,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -365,7 +365,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder messageTimeToLive(
                 int messageTimeToLive) {
-            setProperty("messageTimeToLive", messageTimeToLive);
+            doSetProperty("messageTimeToLive", messageTimeToLive);
             return this;
         }
         /**
@@ -377,7 +377,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder messageTimeToLive(
                 String messageTimeToLive) {
-            setProperty("messageTimeToLive", messageTimeToLive);
+            doSetProperty("messageTimeToLive", messageTimeToLive);
             return this;
         }
         /**
@@ -389,7 +389,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
                 int messageVisibilityDelay) {
-            setProperty("messageVisibilityDelay", messageVisibilityDelay);
+            doSetProperty("messageVisibilityDelay", messageVisibilityDelay);
             return this;
         }
         /**
@@ -401,7 +401,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
                 String messageVisibilityDelay) {
-            setProperty("messageVisibilityDelay", messageVisibilityDelay);
+            doSetProperty("messageVisibilityDelay", messageVisibilityDelay);
             return this;
         }
         /**
@@ -414,7 +414,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder operation(
                 QueueServiceOperations operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -426,7 +426,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * Group: producer
          */
         default QueueServiceEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -438,7 +438,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointProducerBuilder queuePrefix(
                 String queuePrefix) {
-            setProperty("queuePrefix", queuePrefix);
+            doSetProperty("queuePrefix", queuePrefix);
             return this;
         }
     }
@@ -463,7 +463,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -476,7 +476,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -489,7 +489,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -502,7 +502,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -526,7 +526,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointBuilder azureQueueClient(
                 Object azureQueueClient) {
-            setProperty("azureQueueClient", azureQueueClient);
+            doSetProperty("azureQueueClient", azureQueueClient);
             return this;
         }
         /**
@@ -539,7 +539,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default QueueServiceEndpointBuilder azureQueueClient(
                 String azureQueueClient) {
-            setProperty("azureQueueClient", azureQueueClient);
+            doSetProperty("azureQueueClient", azureQueueClient);
             return this;
         }
         /**
@@ -551,7 +551,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * Group: common
          */
         default QueueServiceEndpointBuilder credentials(Object credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
         /**
@@ -563,7 +563,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * Group: common
          */
         default QueueServiceEndpointBuilder credentials(String credentials) {
-            setProperty("credentials", credentials);
+            doSetProperty("credentials", credentials);
             return this;
         }
     }
@@ -588,7 +588,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -601,7 +601,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -614,7 +614,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -627,7 +627,7 @@ public interface QueueServiceEndpointBuilderFactory {
          */
         default AdvancedQueueServiceEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

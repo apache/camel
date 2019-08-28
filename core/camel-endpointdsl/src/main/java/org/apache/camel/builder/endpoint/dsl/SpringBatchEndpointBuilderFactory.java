@@ -49,7 +49,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobFromHeader(boolean jobFromHeader) {
-            setProperty("jobFromHeader", jobFromHeader);
+            doSetProperty("jobFromHeader", jobFromHeader);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobFromHeader(String jobFromHeader) {
-            setProperty("jobFromHeader", jobFromHeader);
+            doSetProperty("jobFromHeader", jobFromHeader);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobLauncher(Object jobLauncher) {
-            setProperty("jobLauncher", jobLauncher);
+            doSetProperty("jobLauncher", jobLauncher);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobLauncher(String jobLauncher) {
-            setProperty("jobLauncher", jobLauncher);
+            doSetProperty("jobLauncher", jobLauncher);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobRegistry(Object jobRegistry) {
-            setProperty("jobRegistry", jobRegistry);
+            doSetProperty("jobRegistry", jobRegistry);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobRegistry(String jobRegistry) {
-            setProperty("jobRegistry", jobRegistry);
+            doSetProperty("jobRegistry", jobRegistry);
             return this;
         }
     }
@@ -135,7 +135,7 @@ public interface SpringBatchEndpointBuilderFactory {
          */
         default AdvancedSpringBatchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface SpringBatchEndpointBuilderFactory {
          */
         default AdvancedSpringBatchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface SpringBatchEndpointBuilderFactory {
          */
         default AdvancedSpringBatchEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -174,7 +174,7 @@ public interface SpringBatchEndpointBuilderFactory {
          */
         default AdvancedSpringBatchEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

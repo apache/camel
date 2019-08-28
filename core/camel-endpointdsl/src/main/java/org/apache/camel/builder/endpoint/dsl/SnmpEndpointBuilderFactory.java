@@ -50,7 +50,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder oids(Object oids) {
-            setProperty("oids", oids);
+            doSetProperty("oids", oids);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder oids(String oids) {
-            setProperty("oids", oids);
+            doSetProperty("oids", oids);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
+            doSetProperty("protocol", protocol);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder retries(int retries) {
-            setProperty("retries", retries);
+            doSetProperty("retries", retries);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder retries(String retries) {
-            setProperty("retries", retries);
+            doSetProperty("retries", retries);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder snmpCommunity(String snmpCommunity) {
-            setProperty("snmpCommunity", snmpCommunity);
+            doSetProperty("snmpCommunity", snmpCommunity);
             return this;
         }
         /**
@@ -122,7 +122,7 @@ public interface SnmpEndpointBuilderFactory {
          */
         default SnmpEndpointBuilder snmpContextEngineId(
                 String snmpContextEngineId) {
-            setProperty("snmpContextEngineId", snmpContextEngineId);
+            doSetProperty("snmpContextEngineId", snmpContextEngineId);
             return this;
         }
         /**
@@ -133,7 +133,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder snmpContextName(String snmpContextName) {
-            setProperty("snmpContextName", snmpContextName);
+            doSetProperty("snmpContextName", snmpContextName);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder snmpVersion(int snmpVersion) {
-            setProperty("snmpVersion", snmpVersion);
+            doSetProperty("snmpVersion", snmpVersion);
             return this;
         }
         /**
@@ -157,7 +157,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder snmpVersion(String snmpVersion) {
-            setProperty("snmpVersion", snmpVersion);
+            doSetProperty("snmpVersion", snmpVersion);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder type(SnmpActionType type) {
-            setProperty("type", type);
+            doSetProperty("type", type);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: consumer
          */
         default SnmpEndpointBuilder type(String type) {
-            setProperty("type", type);
+            doSetProperty("type", type);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface SnmpEndpointBuilderFactory {
          */
         default SnmpEndpointBuilder authenticationPassphrase(
                 String authenticationPassphrase) {
-            setProperty("authenticationPassphrase", authenticationPassphrase);
+            doSetProperty("authenticationPassphrase", authenticationPassphrase);
             return this;
         }
         /**
@@ -231,7 +231,7 @@ public interface SnmpEndpointBuilderFactory {
          */
         default SnmpEndpointBuilder authenticationProtocol(
                 String authenticationProtocol) {
-            setProperty("authenticationProtocol", authenticationProtocol);
+            doSetProperty("authenticationProtocol", authenticationProtocol);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: security
          */
         default SnmpEndpointBuilder privacyPassphrase(String privacyPassphrase) {
-            setProperty("privacyPassphrase", privacyPassphrase);
+            doSetProperty("privacyPassphrase", privacyPassphrase);
             return this;
         }
         /**
@@ -257,7 +257,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: security
          */
         default SnmpEndpointBuilder privacyProtocol(String privacyProtocol) {
-            setProperty("privacyProtocol", privacyProtocol);
+            doSetProperty("privacyProtocol", privacyProtocol);
             return this;
         }
         /**
@@ -279,7 +279,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: security
          */
         default SnmpEndpointBuilder securityLevel(int securityLevel) {
-            setProperty("securityLevel", securityLevel);
+            doSetProperty("securityLevel", securityLevel);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: security
          */
         default SnmpEndpointBuilder securityLevel(String securityLevel) {
-            setProperty("securityLevel", securityLevel);
+            doSetProperty("securityLevel", securityLevel);
             return this;
         }
         /**
@@ -312,7 +312,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: security
          */
         default SnmpEndpointBuilder securityName(String securityName) {
-            setProperty("securityName", securityName);
+            doSetProperty("securityName", securityName);
             return this;
         }
     }
@@ -336,7 +336,7 @@ public interface SnmpEndpointBuilderFactory {
          */
         default AdvancedSnmpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -349,7 +349,7 @@ public interface SnmpEndpointBuilderFactory {
          */
         default AdvancedSnmpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -361,7 +361,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSnmpEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -373,7 +373,7 @@ public interface SnmpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSnmpEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

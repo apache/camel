@@ -48,7 +48,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          */
         default GoogleMailStreamEndpointBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -93,7 +93,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder labels(String labels) {
-            setProperty("labels", labels);
+            doSetProperty("labels", labels);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder markAsRead(boolean markAsRead) {
-            setProperty("markAsRead", markAsRead);
+            doSetProperty("markAsRead", markAsRead);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder markAsRead(String markAsRead) {
-            setProperty("markAsRead", markAsRead);
+            doSetProperty("markAsRead", markAsRead);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder maxResults(long maxResults) {
-            setProperty("maxResults", maxResults);
+            doSetProperty("maxResults", maxResults);
             return this;
         }
         /**
@@ -137,7 +137,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder maxResults(String maxResults) {
-            setProperty("maxResults", maxResults);
+            doSetProperty("maxResults", maxResults);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -161,7 +161,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder refreshToken(String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
     }
@@ -185,7 +185,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleMailStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -198,7 +198,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleMailStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -211,7 +211,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleMailStreamEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -224,7 +224,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          */
         default AdvancedGoogleMailStreamEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -47,7 +47,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder amazonCwClient(Object amazonCwClient) {
-            setProperty("amazonCwClient", amazonCwClient);
+            doSetProperty("amazonCwClient", amazonCwClient);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder amazonCwClient(String amazonCwClient) {
-            setProperty("amazonCwClient", amazonCwClient);
+            doSetProperty("amazonCwClient", amazonCwClient);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder name(String name) {
-            setProperty("name", name);
+            doSetProperty("name", name);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder timestamp(Date timestamp) {
-            setProperty("timestamp", timestamp);
+            doSetProperty("timestamp", timestamp);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder timestamp(String timestamp) {
-            setProperty("timestamp", timestamp);
+            doSetProperty("timestamp", timestamp);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder unit(String unit) {
-            setProperty("unit", unit);
+            doSetProperty("unit", unit);
             return this;
         }
         /**
@@ -162,7 +162,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder value(Double value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -173,7 +173,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder value(String value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface CwEndpointBuilderFactory {
          * Group: security
          */
         default CwEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface CwEndpointBuilderFactory {
          * Group: security
          */
         default CwEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -219,7 +219,7 @@ public interface CwEndpointBuilderFactory {
          */
         default AdvancedCwEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface CwEndpointBuilderFactory {
          */
         default AdvancedCwEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -244,7 +244,7 @@ public interface CwEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCwEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface CwEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCwEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

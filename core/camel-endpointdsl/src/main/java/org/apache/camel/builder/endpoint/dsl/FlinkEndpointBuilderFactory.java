@@ -45,7 +45,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder collect(boolean collect) {
-            setProperty("collect", collect);
+            doSetProperty("collect", collect);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder collect(String collect) {
-            setProperty("collect", collect);
+            doSetProperty("collect", collect);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataSet(Object dataSet) {
-            setProperty("dataSet", dataSet);
+            doSetProperty("dataSet", dataSet);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataSet(String dataSet) {
-            setProperty("dataSet", dataSet);
+            doSetProperty("dataSet", dataSet);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataSetCallback(Object dataSetCallback) {
-            setProperty("dataSetCallback", dataSetCallback);
+            doSetProperty("dataSetCallback", dataSetCallback);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataSetCallback(String dataSetCallback) {
-            setProperty("dataSetCallback", dataSetCallback);
+            doSetProperty("dataSetCallback", dataSetCallback);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataStream(Object dataStream) {
-            setProperty("dataStream", dataStream);
+            doSetProperty("dataStream", dataStream);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataStream(String dataStream) {
-            setProperty("dataStream", dataStream);
+            doSetProperty("dataStream", dataStream);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface FlinkEndpointBuilderFactory {
          */
         default FlinkEndpointBuilder dataStreamCallback(
                 Object dataStreamCallback) {
-            setProperty("dataStreamCallback", dataStreamCallback);
+            doSetProperty("dataStreamCallback", dataStreamCallback);
             return this;
         }
         /**
@@ -157,7 +157,7 @@ public interface FlinkEndpointBuilderFactory {
          */
         default FlinkEndpointBuilder dataStreamCallback(
                 String dataStreamCallback) {
-            setProperty("dataStreamCallback", dataStreamCallback);
+            doSetProperty("dataStreamCallback", dataStreamCallback);
             return this;
         }
     }
@@ -181,7 +181,7 @@ public interface FlinkEndpointBuilderFactory {
          */
         default AdvancedFlinkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface FlinkEndpointBuilderFactory {
          */
         default AdvancedFlinkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

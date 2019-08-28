@@ -52,7 +52,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointConsumerBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointConsumerBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointConsumerBuilder minaLogger(boolean minaLogger) {
-            setProperty("minaLogger", minaLogger);
+            doSetProperty("minaLogger", minaLogger);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointConsumerBuilder minaLogger(String minaLogger) {
-            setProperty("minaLogger", minaLogger);
+            doSetProperty("minaLogger", minaLogger);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointConsumerBuilder sync(boolean sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointConsumerBuilder sync(String sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -123,7 +123,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointConsumerBuilder timeout(long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointConsumerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointConsumerBuilder writeTimeout(long writeTimeout) {
-            setProperty("writeTimeout", writeTimeout);
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
         /**
@@ -160,7 +160,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointConsumerBuilder writeTimeout(String writeTimeout) {
-            setProperty("writeTimeout", writeTimeout);
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -208,7 +208,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: consumer
          */
         default MinaEndpointConsumerBuilder clientMode(boolean clientMode) {
-            setProperty("clientMode", clientMode);
+            doSetProperty("clientMode", clientMode);
             return this;
         }
         /**
@@ -220,7 +220,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: consumer
          */
         default MinaEndpointConsumerBuilder clientMode(String clientMode) {
-            setProperty("clientMode", clientMode);
+            doSetProperty("clientMode", clientMode);
             return this;
         }
         /**
@@ -237,7 +237,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder allowDefaultCodec(
                 boolean allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder allowDefaultCodec(
                 String allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -266,7 +266,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointConsumerBuilder codec(Object codec) {
-            setProperty("codec", codec);
+            doSetProperty("codec", codec);
             return this;
         }
         /**
@@ -278,7 +278,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointConsumerBuilder codec(String codec) {
-            setProperty("codec", codec);
+            doSetProperty("codec", codec);
             return this;
         }
         /**
@@ -291,7 +291,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -304,7 +304,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -317,7 +317,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder encoderMaxLineLength(
                 int encoderMaxLineLength) {
-            setProperty("encoderMaxLineLength", encoderMaxLineLength);
+            doSetProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder encoderMaxLineLength(
                 String encoderMaxLineLength) {
-            setProperty("encoderMaxLineLength", encoderMaxLineLength);
+            doSetProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
         }
         /**
@@ -343,7 +343,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointConsumerBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -355,7 +355,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointConsumerBuilder filters(List<Object> filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -367,7 +367,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointConsumerBuilder filters(String filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointConsumerBuilder textline(boolean textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -393,7 +393,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointConsumerBuilder textline(String textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -409,7 +409,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder textlineDelimiter(
                 MinaTextLineDelimiter textlineDelimiter) {
-            setProperty("textlineDelimiter", textlineDelimiter);
+            doSetProperty("textlineDelimiter", textlineDelimiter);
             return this;
         }
         /**
@@ -425,7 +425,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder textlineDelimiter(
                 String textlineDelimiter) {
-            setProperty("textlineDelimiter", textlineDelimiter);
+            doSetProperty("textlineDelimiter", textlineDelimiter);
             return this;
         }
         /**
@@ -436,7 +436,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: security
          */
         default MinaEndpointConsumerBuilder autoStartTls(boolean autoStartTls) {
-            setProperty("autoStartTls", autoStartTls);
+            doSetProperty("autoStartTls", autoStartTls);
             return this;
         }
         /**
@@ -447,7 +447,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: security
          */
         default MinaEndpointConsumerBuilder autoStartTls(String autoStartTls) {
-            setProperty("autoStartTls", autoStartTls);
+            doSetProperty("autoStartTls", autoStartTls);
             return this;
         }
         /**
@@ -460,7 +460,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -473,7 +473,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -497,7 +497,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder disconnectOnNoReply(
                 boolean disconnectOnNoReply) {
-            setProperty("disconnectOnNoReply", disconnectOnNoReply);
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
         }
         /**
@@ -510,7 +510,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder disconnectOnNoReply(
                 String disconnectOnNoReply) {
-            setProperty("disconnectOnNoReply", disconnectOnNoReply);
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
         }
         /**
@@ -526,7 +526,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -542,7 +542,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -554,7 +554,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -567,7 +567,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -580,7 +580,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(
                 LoggingLevel noReplyLogLevel) {
-            setProperty("noReplyLogLevel", noReplyLogLevel);
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
         /**
@@ -594,7 +594,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(
                 String noReplyLogLevel) {
-            setProperty("noReplyLogLevel", noReplyLogLevel);
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
         /**
@@ -607,7 +607,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -620,7 +620,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -632,7 +632,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder maximumPoolSize(
                 int maximumPoolSize) {
-            setProperty("maximumPoolSize", maximumPoolSize);
+            doSetProperty("maximumPoolSize", maximumPoolSize);
             return this;
         }
         /**
@@ -644,7 +644,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder maximumPoolSize(
                 String maximumPoolSize) {
-            setProperty("maximumPoolSize", maximumPoolSize);
+            doSetProperty("maximumPoolSize", maximumPoolSize);
             return this;
         }
         /**
@@ -657,7 +657,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder orderedThreadPoolExecutor(
                 boolean orderedThreadPoolExecutor) {
-            setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
+            doSetProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
         }
         /**
@@ -670,7 +670,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder orderedThreadPoolExecutor(
                 String orderedThreadPoolExecutor) {
-            setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
+            doSetProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
         }
         /**
@@ -683,7 +683,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -696,7 +696,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -713,7 +713,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -730,7 +730,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
     }
@@ -753,7 +753,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointProducerBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -765,7 +765,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointProducerBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -777,7 +777,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointProducerBuilder minaLogger(boolean minaLogger) {
-            setProperty("minaLogger", minaLogger);
+            doSetProperty("minaLogger", minaLogger);
             return this;
         }
         /**
@@ -789,7 +789,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointProducerBuilder minaLogger(String minaLogger) {
-            setProperty("minaLogger", minaLogger);
+            doSetProperty("minaLogger", minaLogger);
             return this;
         }
         /**
@@ -800,7 +800,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointProducerBuilder sync(boolean sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -811,7 +811,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointProducerBuilder sync(String sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -824,7 +824,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointProducerBuilder timeout(long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -837,7 +837,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -849,7 +849,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointProducerBuilder writeTimeout(long writeTimeout) {
-            setProperty("writeTimeout", writeTimeout);
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
         /**
@@ -861,7 +861,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointProducerBuilder writeTimeout(String writeTimeout) {
-            setProperty("writeTimeout", writeTimeout);
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
         /**
@@ -881,7 +881,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -901,7 +901,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -918,7 +918,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder allowDefaultCodec(
                 boolean allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -935,7 +935,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder allowDefaultCodec(
                 String allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -947,7 +947,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointProducerBuilder codec(Object codec) {
-            setProperty("codec", codec);
+            doSetProperty("codec", codec);
             return this;
         }
         /**
@@ -959,7 +959,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointProducerBuilder codec(String codec) {
-            setProperty("codec", codec);
+            doSetProperty("codec", codec);
             return this;
         }
         /**
@@ -972,7 +972,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -985,7 +985,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -998,7 +998,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder encoderMaxLineLength(
                 int encoderMaxLineLength) {
-            setProperty("encoderMaxLineLength", encoderMaxLineLength);
+            doSetProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
         }
         /**
@@ -1011,7 +1011,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder encoderMaxLineLength(
                 String encoderMaxLineLength) {
-            setProperty("encoderMaxLineLength", encoderMaxLineLength);
+            doSetProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
         }
         /**
@@ -1024,7 +1024,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointProducerBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -1036,7 +1036,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointProducerBuilder filters(List<Object> filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -1048,7 +1048,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointProducerBuilder filters(String filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -1061,7 +1061,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointProducerBuilder textline(boolean textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -1074,7 +1074,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointProducerBuilder textline(String textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -1090,7 +1090,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder textlineDelimiter(
                 MinaTextLineDelimiter textlineDelimiter) {
-            setProperty("textlineDelimiter", textlineDelimiter);
+            doSetProperty("textlineDelimiter", textlineDelimiter);
             return this;
         }
         /**
@@ -1106,7 +1106,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder textlineDelimiter(
                 String textlineDelimiter) {
-            setProperty("textlineDelimiter", textlineDelimiter);
+            doSetProperty("textlineDelimiter", textlineDelimiter);
             return this;
         }
         /**
@@ -1117,7 +1117,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: security
          */
         default MinaEndpointProducerBuilder autoStartTls(boolean autoStartTls) {
-            setProperty("autoStartTls", autoStartTls);
+            doSetProperty("autoStartTls", autoStartTls);
             return this;
         }
         /**
@@ -1128,7 +1128,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: security
          */
         default MinaEndpointProducerBuilder autoStartTls(String autoStartTls) {
-            setProperty("autoStartTls", autoStartTls);
+            doSetProperty("autoStartTls", autoStartTls);
             return this;
         }
         /**
@@ -1141,7 +1141,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1154,7 +1154,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -1178,7 +1178,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder cachedAddress(
                 boolean cachedAddress) {
-            setProperty("cachedAddress", cachedAddress);
+            doSetProperty("cachedAddress", cachedAddress);
             return this;
         }
         /**
@@ -1191,7 +1191,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder cachedAddress(
                 String cachedAddress) {
-            setProperty("cachedAddress", cachedAddress);
+            doSetProperty("cachedAddress", cachedAddress);
             return this;
         }
         /**
@@ -1204,7 +1204,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder lazySessionCreation(
                 boolean lazySessionCreation) {
-            setProperty("lazySessionCreation", lazySessionCreation);
+            doSetProperty("lazySessionCreation", lazySessionCreation);
             return this;
         }
         /**
@@ -1217,7 +1217,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder lazySessionCreation(
                 String lazySessionCreation) {
-            setProperty("lazySessionCreation", lazySessionCreation);
+            doSetProperty("lazySessionCreation", lazySessionCreation);
             return this;
         }
         /**
@@ -1230,7 +1230,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1243,7 +1243,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1255,7 +1255,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder maximumPoolSize(
                 int maximumPoolSize) {
-            setProperty("maximumPoolSize", maximumPoolSize);
+            doSetProperty("maximumPoolSize", maximumPoolSize);
             return this;
         }
         /**
@@ -1267,7 +1267,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder maximumPoolSize(
                 String maximumPoolSize) {
-            setProperty("maximumPoolSize", maximumPoolSize);
+            doSetProperty("maximumPoolSize", maximumPoolSize);
             return this;
         }
         /**
@@ -1280,7 +1280,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder orderedThreadPoolExecutor(
                 boolean orderedThreadPoolExecutor) {
-            setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
+            doSetProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
         }
         /**
@@ -1293,7 +1293,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder orderedThreadPoolExecutor(
                 String orderedThreadPoolExecutor) {
-            setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
+            doSetProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
         }
         /**
@@ -1306,7 +1306,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1319,7 +1319,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1336,7 +1336,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -1353,7 +1353,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointProducerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
     }
@@ -1376,7 +1376,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -1388,7 +1388,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -1400,7 +1400,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointBuilder minaLogger(boolean minaLogger) {
-            setProperty("minaLogger", minaLogger);
+            doSetProperty("minaLogger", minaLogger);
             return this;
         }
         /**
@@ -1412,7 +1412,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointBuilder minaLogger(String minaLogger) {
-            setProperty("minaLogger", minaLogger);
+            doSetProperty("minaLogger", minaLogger);
             return this;
         }
         /**
@@ -1423,7 +1423,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointBuilder sync(boolean sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -1434,7 +1434,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointBuilder sync(String sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -1447,7 +1447,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointBuilder timeout(long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -1460,7 +1460,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -1472,7 +1472,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointBuilder writeTimeout(long writeTimeout) {
-            setProperty("writeTimeout", writeTimeout);
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
         /**
@@ -1484,7 +1484,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: common
          */
         default MinaEndpointBuilder writeTimeout(String writeTimeout) {
-            setProperty("writeTimeout", writeTimeout);
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
         /**
@@ -1500,7 +1500,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointBuilder allowDefaultCodec(boolean allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -1516,7 +1516,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointBuilder allowDefaultCodec(String allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -1528,7 +1528,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointBuilder codec(Object codec) {
-            setProperty("codec", codec);
+            doSetProperty("codec", codec);
             return this;
         }
         /**
@@ -1540,7 +1540,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointBuilder codec(String codec) {
-            setProperty("codec", codec);
+            doSetProperty("codec", codec);
             return this;
         }
         /**
@@ -1553,7 +1553,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -1566,7 +1566,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -1579,7 +1579,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointBuilder encoderMaxLineLength(
                 int encoderMaxLineLength) {
-            setProperty("encoderMaxLineLength", encoderMaxLineLength);
+            doSetProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
         }
         /**
@@ -1592,7 +1592,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointBuilder encoderMaxLineLength(
                 String encoderMaxLineLength) {
-            setProperty("encoderMaxLineLength", encoderMaxLineLength);
+            doSetProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
         }
         /**
@@ -1605,7 +1605,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -1617,7 +1617,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointBuilder filters(List<Object> filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -1629,7 +1629,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointBuilder filters(String filters) {
-            setProperty("filters", filters);
+            doSetProperty("filters", filters);
             return this;
         }
         /**
@@ -1642,7 +1642,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointBuilder textline(boolean textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -1655,7 +1655,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointBuilder textline(String textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -1671,7 +1671,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointBuilder textlineDelimiter(
                 MinaTextLineDelimiter textlineDelimiter) {
-            setProperty("textlineDelimiter", textlineDelimiter);
+            doSetProperty("textlineDelimiter", textlineDelimiter);
             return this;
         }
         /**
@@ -1686,7 +1686,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: codec
          */
         default MinaEndpointBuilder textlineDelimiter(String textlineDelimiter) {
-            setProperty("textlineDelimiter", textlineDelimiter);
+            doSetProperty("textlineDelimiter", textlineDelimiter);
             return this;
         }
         /**
@@ -1697,7 +1697,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: security
          */
         default MinaEndpointBuilder autoStartTls(boolean autoStartTls) {
-            setProperty("autoStartTls", autoStartTls);
+            doSetProperty("autoStartTls", autoStartTls);
             return this;
         }
         /**
@@ -1708,7 +1708,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: security
          */
         default MinaEndpointBuilder autoStartTls(String autoStartTls) {
-            setProperty("autoStartTls", autoStartTls);
+            doSetProperty("autoStartTls", autoStartTls);
             return this;
         }
         /**
@@ -1721,7 +1721,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1734,7 +1734,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -1758,7 +1758,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1771,7 +1771,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1782,7 +1782,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMinaEndpointBuilder maximumPoolSize(int maximumPoolSize) {
-            setProperty("maximumPoolSize", maximumPoolSize);
+            doSetProperty("maximumPoolSize", maximumPoolSize);
             return this;
         }
         /**
@@ -1794,7 +1794,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointBuilder maximumPoolSize(
                 String maximumPoolSize) {
-            setProperty("maximumPoolSize", maximumPoolSize);
+            doSetProperty("maximumPoolSize", maximumPoolSize);
             return this;
         }
         /**
@@ -1807,7 +1807,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointBuilder orderedThreadPoolExecutor(
                 boolean orderedThreadPoolExecutor) {
-            setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
+            doSetProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
         }
         /**
@@ -1820,7 +1820,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointBuilder orderedThreadPoolExecutor(
                 String orderedThreadPoolExecutor) {
-            setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
+            doSetProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
         }
         /**
@@ -1832,7 +1832,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMinaEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1844,7 +1844,7 @@ public interface MinaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMinaEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1861,7 +1861,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -1878,7 +1878,7 @@ public interface MinaEndpointBuilderFactory {
          */
         default AdvancedMinaEndpointBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
     }

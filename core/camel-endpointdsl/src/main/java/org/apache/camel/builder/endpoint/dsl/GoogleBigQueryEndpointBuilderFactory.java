@@ -50,7 +50,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          */
         default GoogleBigQueryEndpointBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          */
         default GoogleBigQueryEndpointBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * Group: producer
          */
         default GoogleBigQueryEndpointBuilder useAsInsertId(String useAsInsertId) {
-            setProperty("useAsInsertId", useAsInsertId);
+            doSetProperty("useAsInsertId", useAsInsertId);
             return this;
         }
     }
@@ -99,7 +99,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQueryEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -112,7 +112,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQueryEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -125,7 +125,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQueryEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQueryEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

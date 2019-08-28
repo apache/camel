@@ -46,7 +46,7 @@ public interface CinderEndpointBuilderFactory {
          * Group: producer
          */
         default CinderEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface CinderEndpointBuilderFactory {
          * Group: producer
          */
         default CinderEndpointBuilder config(Object config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface CinderEndpointBuilderFactory {
          * Group: producer
          */
         default CinderEndpointBuilder config(String config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface CinderEndpointBuilderFactory {
          * Group: producer
          */
         default CinderEndpointBuilder domain(String domain) {
-            setProperty("domain", domain);
+            doSetProperty("domain", domain);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface CinderEndpointBuilderFactory {
          * Group: producer
          */
         default CinderEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -104,7 +104,7 @@ public interface CinderEndpointBuilderFactory {
          * Group: producer
          */
         default CinderEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface CinderEndpointBuilderFactory {
          * Group: producer
          */
         default CinderEndpointBuilder project(String project) {
-            setProperty("project", project);
+            doSetProperty("project", project);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface CinderEndpointBuilderFactory {
          * Group: producer
          */
         default CinderEndpointBuilder subsystem(String subsystem) {
-            setProperty("subsystem", subsystem);
+            doSetProperty("subsystem", subsystem);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface CinderEndpointBuilderFactory {
          * Group: producer
          */
         default CinderEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -164,7 +164,7 @@ public interface CinderEndpointBuilderFactory {
          */
         default AdvancedCinderEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface CinderEndpointBuilderFactory {
          */
         default AdvancedCinderEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface CinderEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCinderEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface CinderEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCinderEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

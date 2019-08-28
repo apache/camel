@@ -51,7 +51,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder dnsDomain(
                 String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesNodesEndpointConsumerBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -112,7 +112,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -130,7 +130,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: consumer
          */
         default KubernetesNodesEndpointConsumerBuilder labelKey(String labelKey) {
-            setProperty("labelKey", labelKey);
+            doSetProperty("labelKey", labelKey);
             return this;
         }
         /**
@@ -171,7 +171,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder labelValue(
                 String labelValue) {
-            setProperty("labelValue", labelValue);
+            doSetProperty("labelValue", labelValue);
             return this;
         }
         /**
@@ -183,7 +183,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder namespace(
                 String namespace) {
-            setProperty("namespace", namespace);
+            doSetProperty("namespace", namespace);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: consumer
          */
         default KubernetesNodesEndpointConsumerBuilder poolSize(int poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
@@ -205,7 +205,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: consumer
          */
         default KubernetesNodesEndpointConsumerBuilder poolSize(String poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
@@ -217,7 +217,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder resourceName(
                 String resourceName) {
-            setProperty("resourceName", resourceName);
+            doSetProperty("resourceName", resourceName);
             return this;
         }
         /**
@@ -229,7 +229,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder caCertData(
                 String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -253,7 +253,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -277,7 +277,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -289,7 +289,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -325,7 +325,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -336,7 +336,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -361,7 +361,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -372,7 +372,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesNodesEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -400,7 +400,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -416,7 +416,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -428,7 +428,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -441,7 +441,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -454,7 +454,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -467,7 +467,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -480,7 +480,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -494,7 +494,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -507,7 +507,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -520,7 +520,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -543,7 +543,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder apiVersion(
                 String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -555,7 +555,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder dnsDomain(
                 String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -568,7 +568,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -581,7 +581,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -592,7 +592,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesNodesEndpointProducerBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -604,7 +604,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder portProtocol(
                 String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -624,7 +624,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -644,7 +644,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -656,7 +656,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder operation(
                 String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -668,7 +668,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder caCertData(
                 String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -680,7 +680,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder caCertFile(
                 String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -692,7 +692,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -704,7 +704,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -716,7 +716,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -728,7 +728,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -740,7 +740,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -752,7 +752,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -764,7 +764,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder oauthToken(
                 String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -775,7 +775,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -787,7 +787,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -800,7 +800,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointProducerBuilder trustCerts(
                 String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -811,7 +811,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesNodesEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -836,7 +836,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -849,7 +849,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -862,7 +862,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -876,7 +876,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -889,7 +889,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -902,7 +902,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -924,7 +924,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesNodesEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -935,7 +935,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesNodesEndpointBuilder dnsDomain(String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -948,7 +948,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -961,7 +961,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -972,7 +972,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesNodesEndpointBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -983,7 +983,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: common
          */
         default KubernetesNodesEndpointBuilder portProtocol(String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -994,7 +994,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesNodesEndpointBuilder caCertData(String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -1005,7 +1005,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesNodesEndpointBuilder caCertFile(String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -1017,7 +1017,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -1029,7 +1029,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -1041,7 +1041,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -1053,7 +1053,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointBuilder clientKeyData(
                 String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -1065,7 +1065,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -1077,7 +1077,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default KubernetesNodesEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -1088,7 +1088,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesNodesEndpointBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -1099,7 +1099,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesNodesEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1110,7 +1110,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesNodesEndpointBuilder trustCerts(Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -1122,7 +1122,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesNodesEndpointBuilder trustCerts(String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -1133,7 +1133,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesNodesEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1157,7 +1157,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1170,7 +1170,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1183,7 +1183,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1197,7 +1197,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1210,7 +1210,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1223,7 +1223,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          */
         default AdvancedKubernetesNodesEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -54,7 +54,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -66,7 +66,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder keepAlive(boolean keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder keepAlive(String keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder reuseAddress(boolean reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder reuseAddress(String reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder reuseChannel(boolean reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -148,7 +148,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder reuseChannel(String reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder sync(boolean sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder sync(String sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder tcpNoDelay(boolean tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointConsumerBuilder tcpNoDelay(String tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -210,7 +210,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -228,7 +228,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -239,7 +239,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer
          */
         default NettyEndpointConsumerBuilder broadcast(boolean broadcast) {
-            setProperty("broadcast", broadcast);
+            doSetProperty("broadcast", broadcast);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer
          */
         default NettyEndpointConsumerBuilder broadcast(String broadcast) {
-            setProperty("broadcast", broadcast);
+            doSetProperty("broadcast", broadcast);
             return this;
         }
         /**
@@ -262,7 +262,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer
          */
         default NettyEndpointConsumerBuilder clientMode(boolean clientMode) {
-            setProperty("clientMode", clientMode);
+            doSetProperty("clientMode", clientMode);
             return this;
         }
         /**
@@ -274,7 +274,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer
          */
         default NettyEndpointConsumerBuilder clientMode(String clientMode) {
-            setProperty("clientMode", clientMode);
+            doSetProperty("clientMode", clientMode);
             return this;
         }
         /**
@@ -286,7 +286,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer
          */
         default NettyEndpointConsumerBuilder reconnect(boolean reconnect) {
-            setProperty("reconnect", reconnect);
+            doSetProperty("reconnect", reconnect);
             return this;
         }
         /**
@@ -298,7 +298,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer
          */
         default NettyEndpointConsumerBuilder reconnect(String reconnect) {
-            setProperty("reconnect", reconnect);
+            doSetProperty("reconnect", reconnect);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder reconnectInterval(
                 int reconnectInterval) {
-            setProperty("reconnectInterval", reconnectInterval);
+            doSetProperty("reconnectInterval", reconnectInterval);
             return this;
         }
         /**
@@ -324,7 +324,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder reconnectInterval(
                 String reconnectInterval) {
-            setProperty("reconnectInterval", reconnectInterval);
+            doSetProperty("reconnectInterval", reconnectInterval);
             return this;
         }
         /**
@@ -339,7 +339,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder allowDefaultCodec(
                 boolean allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -354,7 +354,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder allowDefaultCodec(
                 String allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -367,7 +367,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder autoAppendDelimiter(
                 boolean autoAppendDelimiter) {
-            setProperty("autoAppendDelimiter", autoAppendDelimiter);
+            doSetProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
         }
         /**
@@ -380,7 +380,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder autoAppendDelimiter(
                 String autoAppendDelimiter) {
-            setProperty("autoAppendDelimiter", autoAppendDelimiter);
+            doSetProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -404,7 +404,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -420,7 +420,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointConsumerBuilder decoders(List<Object> decoders) {
-            setProperty("decoders", decoders);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -436,7 +436,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointConsumerBuilder decoders(String decoders) {
-            setProperty("decoders", decoders);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -450,7 +450,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder delimiter(
                 TextLineDelimiter delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -463,7 +463,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointConsumerBuilder delimiter(String delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -479,7 +479,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointConsumerBuilder encoders(List<Object> encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointConsumerBuilder encoders(String encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -507,7 +507,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointConsumerBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -520,7 +520,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointConsumerBuilder textline(boolean textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -533,7 +533,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointConsumerBuilder textline(String textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -545,7 +545,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder enabledProtocols(
                 String enabledProtocols) {
-            setProperty("enabledProtocols", enabledProtocols);
+            doSetProperty("enabledProtocols", enabledProtocols);
             return this;
         }
         /**
@@ -556,7 +556,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointConsumerBuilder keyStoreFile(File keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -567,7 +567,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointConsumerBuilder keyStoreFile(String keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -580,7 +580,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder keyStoreFormat(
                 String keyStoreFormat) {
-            setProperty("keyStoreFormat", keyStoreFormat);
+            doSetProperty("keyStoreFormat", keyStoreFormat);
             return this;
         }
         /**
@@ -594,7 +594,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder keyStoreResource(
                 String keyStoreResource) {
-            setProperty("keyStoreResource", keyStoreResource);
+            doSetProperty("keyStoreResource", keyStoreResource);
             return this;
         }
         /**
@@ -607,7 +607,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder needClientAuth(
                 boolean needClientAuth) {
-            setProperty("needClientAuth", needClientAuth);
+            doSetProperty("needClientAuth", needClientAuth);
             return this;
         }
         /**
@@ -620,7 +620,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder needClientAuth(
                 String needClientAuth) {
-            setProperty("needClientAuth", needClientAuth);
+            doSetProperty("needClientAuth", needClientAuth);
             return this;
         }
         /**
@@ -632,7 +632,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointConsumerBuilder passphrase(String passphrase) {
-            setProperty("passphrase", passphrase);
+            doSetProperty("passphrase", passphrase);
             return this;
         }
         /**
@@ -645,7 +645,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder securityProvider(
                 String securityProvider) {
-            setProperty("securityProvider", securityProvider);
+            doSetProperty("securityProvider", securityProvider);
             return this;
         }
         /**
@@ -657,7 +657,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointConsumerBuilder ssl(boolean ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -669,7 +669,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointConsumerBuilder ssl(String ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -684,7 +684,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -699,7 +699,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -712,7 +712,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -725,7 +725,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -736,7 +736,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointConsumerBuilder sslHandler(Object sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -748,7 +748,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointConsumerBuilder sslHandler(String sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -759,7 +759,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointConsumerBuilder trustStoreFile(File trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -771,7 +771,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder trustStoreFile(
                 String trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -785,7 +785,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointConsumerBuilder trustStoreResource(
                 String trustStoreResource) {
-            setProperty("trustStoreResource", trustStoreResource);
+            doSetProperty("trustStoreResource", trustStoreResource);
             return this;
         }
     }
@@ -811,7 +811,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder backlog(int backlog) {
-            setProperty("backlog", backlog);
+            doSetProperty("backlog", backlog);
             return this;
         }
         /**
@@ -826,7 +826,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder backlog(String backlog) {
-            setProperty("backlog", backlog);
+            doSetProperty("backlog", backlog);
             return this;
         }
         /**
@@ -839,7 +839,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder bossCount(int bossCount) {
-            setProperty("bossCount", bossCount);
+            doSetProperty("bossCount", bossCount);
             return this;
         }
         /**
@@ -852,7 +852,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder bossCount(String bossCount) {
-            setProperty("bossCount", bossCount);
+            doSetProperty("bossCount", bossCount);
             return this;
         }
         /**
@@ -864,7 +864,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder bossGroup(Object bossGroup) {
-            setProperty("bossGroup", bossGroup);
+            doSetProperty("bossGroup", bossGroup);
             return this;
         }
         /**
@@ -877,7 +877,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder bossGroup(String bossGroup) {
-            setProperty("bossGroup", bossGroup);
+            doSetProperty("bossGroup", bossGroup);
             return this;
         }
         /**
@@ -890,7 +890,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder disconnectOnNoReply(
                 boolean disconnectOnNoReply) {
-            setProperty("disconnectOnNoReply", disconnectOnNoReply);
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
         }
         /**
@@ -903,7 +903,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder disconnectOnNoReply(
                 String disconnectOnNoReply) {
-            setProperty("disconnectOnNoReply", disconnectOnNoReply);
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
         }
         /**
@@ -919,7 +919,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -935,7 +935,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -947,7 +947,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -960,7 +960,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -973,7 +973,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder nettyServerBootstrapFactory(
                 Object nettyServerBootstrapFactory) {
-            setProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
+            doSetProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
             return this;
         }
         /**
@@ -986,7 +986,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder nettyServerBootstrapFactory(
                 String nettyServerBootstrapFactory) {
-            setProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
+            doSetProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
             return this;
         }
         /**
@@ -999,7 +999,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder networkInterface(
                 String networkInterface) {
-            setProperty("networkInterface", networkInterface);
+            doSetProperty("networkInterface", networkInterface);
             return this;
         }
         /**
@@ -1012,7 +1012,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(
                 LoggingLevel noReplyLogLevel) {
-            setProperty("noReplyLogLevel", noReplyLogLevel);
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
         /**
@@ -1026,7 +1026,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(
                 String noReplyLogLevel) {
-            setProperty("noReplyLogLevel", noReplyLogLevel);
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
         /**
@@ -1042,7 +1042,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
                 LoggingLevel serverClosedChannelExceptionCaughtLogLevel) {
-            setProperty("serverClosedChannelExceptionCaughtLogLevel", serverClosedChannelExceptionCaughtLogLevel);
+            doSetProperty("serverClosedChannelExceptionCaughtLogLevel", serverClosedChannelExceptionCaughtLogLevel);
             return this;
         }
         /**
@@ -1059,7 +1059,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
                 String serverClosedChannelExceptionCaughtLogLevel) {
-            setProperty("serverClosedChannelExceptionCaughtLogLevel", serverClosedChannelExceptionCaughtLogLevel);
+            doSetProperty("serverClosedChannelExceptionCaughtLogLevel", serverClosedChannelExceptionCaughtLogLevel);
             return this;
         }
         /**
@@ -1072,7 +1072,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder serverExceptionCaughtLogLevel(
                 LoggingLevel serverExceptionCaughtLogLevel) {
-            setProperty("serverExceptionCaughtLogLevel", serverExceptionCaughtLogLevel);
+            doSetProperty("serverExceptionCaughtLogLevel", serverExceptionCaughtLogLevel);
             return this;
         }
         /**
@@ -1086,7 +1086,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder serverExceptionCaughtLogLevel(
                 String serverExceptionCaughtLogLevel) {
-            setProperty("serverExceptionCaughtLogLevel", serverExceptionCaughtLogLevel);
+            doSetProperty("serverExceptionCaughtLogLevel", serverExceptionCaughtLogLevel);
             return this;
         }
         /**
@@ -1099,7 +1099,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder serverInitializerFactory(
                 Object serverInitializerFactory) {
-            setProperty("serverInitializerFactory", serverInitializerFactory);
+            doSetProperty("serverInitializerFactory", serverInitializerFactory);
             return this;
         }
         /**
@@ -1112,7 +1112,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder serverInitializerFactory(
                 String serverInitializerFactory) {
-            setProperty("serverInitializerFactory", serverInitializerFactory);
+            doSetProperty("serverInitializerFactory", serverInitializerFactory);
             return this;
         }
         /**
@@ -1125,7 +1125,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder usingExecutorService(
                 boolean usingExecutorService) {
-            setProperty("usingExecutorService", usingExecutorService);
+            doSetProperty("usingExecutorService", usingExecutorService);
             return this;
         }
         /**
@@ -1138,7 +1138,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder usingExecutorService(
                 String usingExecutorService) {
-            setProperty("usingExecutorService", usingExecutorService);
+            doSetProperty("usingExecutorService", usingExecutorService);
             return this;
         }
         /**
@@ -1153,7 +1153,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -1168,7 +1168,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -1181,7 +1181,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1194,7 +1194,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1207,7 +1207,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder channelGroup(
                 Object channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -1220,7 +1220,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder channelGroup(
                 String channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -1236,7 +1236,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder nativeTransport(
                 boolean nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
@@ -1252,7 +1252,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder nativeTransport(
                 String nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
@@ -1268,7 +1268,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder options(
                 Map<String, Object> options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -1284,7 +1284,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointConsumerBuilder options(String options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -1297,7 +1297,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder receiveBufferSize(
                 int receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1310,7 +1310,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder receiveBufferSize(
                 String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1323,7 +1323,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -1336,7 +1336,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -1349,7 +1349,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder sendBufferSize(
                 int sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1362,7 +1362,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder sendBufferSize(
                 String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1375,7 +1375,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1388,7 +1388,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1405,7 +1405,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -1422,7 +1422,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -1435,7 +1435,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder udpByteArrayCodec(
                 boolean udpByteArrayCodec) {
-            setProperty("udpByteArrayCodec", udpByteArrayCodec);
+            doSetProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
         }
         /**
@@ -1448,7 +1448,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder udpByteArrayCodec(
                 String udpByteArrayCodec) {
-            setProperty("udpByteArrayCodec", udpByteArrayCodec);
+            doSetProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
         }
         /**
@@ -1461,7 +1461,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointConsumerBuilder workerCount(int workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
@@ -1475,7 +1475,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder workerCount(
                 String workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
@@ -1490,7 +1490,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder workerGroup(
                 Object workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
         /**
@@ -1506,7 +1506,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointConsumerBuilder workerGroup(
                 String workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
     }
@@ -1529,7 +1529,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -1541,7 +1541,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -1552,7 +1552,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder keepAlive(boolean keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -1563,7 +1563,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder keepAlive(String keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -1574,7 +1574,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder reuseAddress(boolean reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -1585,7 +1585,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder reuseAddress(String reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -1604,7 +1604,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder reuseChannel(boolean reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -1623,7 +1623,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder reuseChannel(String reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -1634,7 +1634,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder sync(boolean sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -1645,7 +1645,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder sync(String sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -1656,7 +1656,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder tcpNoDelay(boolean tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -1667,7 +1667,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -1679,7 +1679,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: producer
          */
         default NettyEndpointProducerBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -1692,7 +1692,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -1712,7 +1712,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1732,7 +1732,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1746,7 +1746,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: producer
          */
         default NettyEndpointProducerBuilder requestTimeout(long requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -1761,7 +1761,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder requestTimeout(
                 String requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -1776,7 +1776,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder allowDefaultCodec(
                 boolean allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -1791,7 +1791,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder allowDefaultCodec(
                 String allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -1804,7 +1804,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder autoAppendDelimiter(
                 boolean autoAppendDelimiter) {
-            setProperty("autoAppendDelimiter", autoAppendDelimiter);
+            doSetProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
         }
         /**
@@ -1817,7 +1817,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder autoAppendDelimiter(
                 String autoAppendDelimiter) {
-            setProperty("autoAppendDelimiter", autoAppendDelimiter);
+            doSetProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
         }
         /**
@@ -1829,7 +1829,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -1841,7 +1841,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -1857,7 +1857,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointProducerBuilder decoders(List<Object> decoders) {
-            setProperty("decoders", decoders);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -1873,7 +1873,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointProducerBuilder decoders(String decoders) {
-            setProperty("decoders", decoders);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -1887,7 +1887,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder delimiter(
                 TextLineDelimiter delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -1900,7 +1900,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointProducerBuilder delimiter(String delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -1916,7 +1916,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointProducerBuilder encoders(List<Object> encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -1932,7 +1932,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointProducerBuilder encoders(String encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -1944,7 +1944,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointProducerBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -1957,7 +1957,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointProducerBuilder textline(boolean textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -1970,7 +1970,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointProducerBuilder textline(String textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -1982,7 +1982,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder enabledProtocols(
                 String enabledProtocols) {
-            setProperty("enabledProtocols", enabledProtocols);
+            doSetProperty("enabledProtocols", enabledProtocols);
             return this;
         }
         /**
@@ -1993,7 +1993,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointProducerBuilder keyStoreFile(File keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -2004,7 +2004,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointProducerBuilder keyStoreFile(String keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -2017,7 +2017,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder keyStoreFormat(
                 String keyStoreFormat) {
-            setProperty("keyStoreFormat", keyStoreFormat);
+            doSetProperty("keyStoreFormat", keyStoreFormat);
             return this;
         }
         /**
@@ -2031,7 +2031,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder keyStoreResource(
                 String keyStoreResource) {
-            setProperty("keyStoreResource", keyStoreResource);
+            doSetProperty("keyStoreResource", keyStoreResource);
             return this;
         }
         /**
@@ -2043,7 +2043,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointProducerBuilder passphrase(String passphrase) {
-            setProperty("passphrase", passphrase);
+            doSetProperty("passphrase", passphrase);
             return this;
         }
         /**
@@ -2056,7 +2056,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder securityProvider(
                 String securityProvider) {
-            setProperty("securityProvider", securityProvider);
+            doSetProperty("securityProvider", securityProvider);
             return this;
         }
         /**
@@ -2068,7 +2068,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointProducerBuilder ssl(boolean ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -2080,7 +2080,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointProducerBuilder ssl(String ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -2095,7 +2095,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -2110,7 +2110,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -2123,7 +2123,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -2136,7 +2136,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -2147,7 +2147,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointProducerBuilder sslHandler(Object sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -2159,7 +2159,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointProducerBuilder sslHandler(String sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -2170,7 +2170,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointProducerBuilder trustStoreFile(File trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -2182,7 +2182,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder trustStoreFile(
                 String trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -2196,7 +2196,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointProducerBuilder trustStoreResource(
                 String trustStoreResource) {
-            setProperty("trustStoreResource", trustStoreResource);
+            doSetProperty("trustStoreResource", trustStoreResource);
             return this;
         }
     }
@@ -2220,7 +2220,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder clientInitializerFactory(
                 Object clientInitializerFactory) {
-            setProperty("clientInitializerFactory", clientInitializerFactory);
+            doSetProperty("clientInitializerFactory", clientInitializerFactory);
             return this;
         }
         /**
@@ -2233,7 +2233,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder clientInitializerFactory(
                 String clientInitializerFactory) {
-            setProperty("clientInitializerFactory", clientInitializerFactory);
+            doSetProperty("clientInitializerFactory", clientInitializerFactory);
             return this;
         }
         /**
@@ -2258,7 +2258,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder correlationManager(
                 Object correlationManager) {
-            setProperty("correlationManager", correlationManager);
+            doSetProperty("correlationManager", correlationManager);
             return this;
         }
         /**
@@ -2283,7 +2283,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder correlationManager(
                 String correlationManager) {
-            setProperty("correlationManager", correlationManager);
+            doSetProperty("correlationManager", correlationManager);
             return this;
         }
         /**
@@ -2296,7 +2296,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder lazyChannelCreation(
                 boolean lazyChannelCreation) {
-            setProperty("lazyChannelCreation", lazyChannelCreation);
+            doSetProperty("lazyChannelCreation", lazyChannelCreation);
             return this;
         }
         /**
@@ -2309,7 +2309,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder lazyChannelCreation(
                 String lazyChannelCreation) {
-            setProperty("lazyChannelCreation", lazyChannelCreation);
+            doSetProperty("lazyChannelCreation", lazyChannelCreation);
             return this;
         }
         /**
@@ -2331,7 +2331,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolEnabled(
                 boolean producerPoolEnabled) {
-            setProperty("producerPoolEnabled", producerPoolEnabled);
+            doSetProperty("producerPoolEnabled", producerPoolEnabled);
             return this;
         }
         /**
@@ -2353,7 +2353,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolEnabled(
                 String producerPoolEnabled) {
-            setProperty("producerPoolEnabled", producerPoolEnabled);
+            doSetProperty("producerPoolEnabled", producerPoolEnabled);
             return this;
         }
         /**
@@ -2367,7 +2367,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolMaxActive(
                 int producerPoolMaxActive) {
-            setProperty("producerPoolMaxActive", producerPoolMaxActive);
+            doSetProperty("producerPoolMaxActive", producerPoolMaxActive);
             return this;
         }
         /**
@@ -2381,7 +2381,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolMaxActive(
                 String producerPoolMaxActive) {
-            setProperty("producerPoolMaxActive", producerPoolMaxActive);
+            doSetProperty("producerPoolMaxActive", producerPoolMaxActive);
             return this;
         }
         /**
@@ -2393,7 +2393,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolMaxIdle(
                 int producerPoolMaxIdle) {
-            setProperty("producerPoolMaxIdle", producerPoolMaxIdle);
+            doSetProperty("producerPoolMaxIdle", producerPoolMaxIdle);
             return this;
         }
         /**
@@ -2405,7 +2405,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolMaxIdle(
                 String producerPoolMaxIdle) {
-            setProperty("producerPoolMaxIdle", producerPoolMaxIdle);
+            doSetProperty("producerPoolMaxIdle", producerPoolMaxIdle);
             return this;
         }
         /**
@@ -2419,7 +2419,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolMinEvictableIdle(
                 long producerPoolMinEvictableIdle) {
-            setProperty("producerPoolMinEvictableIdle", producerPoolMinEvictableIdle);
+            doSetProperty("producerPoolMinEvictableIdle", producerPoolMinEvictableIdle);
             return this;
         }
         /**
@@ -2433,7 +2433,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolMinEvictableIdle(
                 String producerPoolMinEvictableIdle) {
-            setProperty("producerPoolMinEvictableIdle", producerPoolMinEvictableIdle);
+            doSetProperty("producerPoolMinEvictableIdle", producerPoolMinEvictableIdle);
             return this;
         }
         /**
@@ -2446,7 +2446,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolMinIdle(
                 int producerPoolMinIdle) {
-            setProperty("producerPoolMinIdle", producerPoolMinIdle);
+            doSetProperty("producerPoolMinIdle", producerPoolMinIdle);
             return this;
         }
         /**
@@ -2459,7 +2459,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolMinIdle(
                 String producerPoolMinIdle) {
-            setProperty("producerPoolMinIdle", producerPoolMinIdle);
+            doSetProperty("producerPoolMinIdle", producerPoolMinIdle);
             return this;
         }
         /**
@@ -2473,7 +2473,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder udpConnectionlessSending(
                 boolean udpConnectionlessSending) {
-            setProperty("udpConnectionlessSending", udpConnectionlessSending);
+            doSetProperty("udpConnectionlessSending", udpConnectionlessSending);
             return this;
         }
         /**
@@ -2487,7 +2487,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder udpConnectionlessSending(
                 String udpConnectionlessSending) {
-            setProperty("udpConnectionlessSending", udpConnectionlessSending);
+            doSetProperty("udpConnectionlessSending", udpConnectionlessSending);
             return this;
         }
         /**
@@ -2500,7 +2500,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder useByteBuf(
                 boolean useByteBuf) {
-            setProperty("useByteBuf", useByteBuf);
+            doSetProperty("useByteBuf", useByteBuf);
             return this;
         }
         /**
@@ -2513,7 +2513,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder useByteBuf(
                 String useByteBuf) {
-            setProperty("useByteBuf", useByteBuf);
+            doSetProperty("useByteBuf", useByteBuf);
             return this;
         }
         /**
@@ -2528,7 +2528,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -2543,7 +2543,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -2556,7 +2556,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2569,7 +2569,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2582,7 +2582,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder channelGroup(
                 Object channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -2595,7 +2595,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder channelGroup(
                 String channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -2611,7 +2611,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder nativeTransport(
                 boolean nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
@@ -2627,7 +2627,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder nativeTransport(
                 String nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
@@ -2643,7 +2643,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder options(
                 Map<String, Object> options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -2659,7 +2659,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointProducerBuilder options(String options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -2672,7 +2672,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder receiveBufferSize(
                 int receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -2685,7 +2685,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder receiveBufferSize(
                 String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -2698,7 +2698,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -2711,7 +2711,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -2724,7 +2724,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder sendBufferSize(
                 int sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -2737,7 +2737,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder sendBufferSize(
                 String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -2750,7 +2750,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2763,7 +2763,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2780,7 +2780,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -2797,7 +2797,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -2810,7 +2810,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder udpByteArrayCodec(
                 boolean udpByteArrayCodec) {
-            setProperty("udpByteArrayCodec", udpByteArrayCodec);
+            doSetProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
         }
         /**
@@ -2823,7 +2823,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder udpByteArrayCodec(
                 String udpByteArrayCodec) {
-            setProperty("udpByteArrayCodec", udpByteArrayCodec);
+            doSetProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
         }
         /**
@@ -2836,7 +2836,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointProducerBuilder workerCount(int workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
@@ -2850,7 +2850,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder workerCount(
                 String workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
@@ -2865,7 +2865,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder workerGroup(
                 Object workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
         /**
@@ -2881,7 +2881,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointProducerBuilder workerGroup(
                 String workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
     }
@@ -2904,7 +2904,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -2916,7 +2916,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -2927,7 +2927,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder keepAlive(boolean keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -2938,7 +2938,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder keepAlive(String keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -2949,7 +2949,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder reuseAddress(boolean reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -2960,7 +2960,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder reuseAddress(String reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -2979,7 +2979,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder reuseChannel(boolean reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -2998,7 +2998,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder reuseChannel(String reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -3009,7 +3009,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder sync(boolean sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -3020,7 +3020,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder sync(String sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -3031,7 +3031,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder tcpNoDelay(boolean tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -3042,7 +3042,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: common
          */
         default NettyEndpointBuilder tcpNoDelay(String tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -3056,7 +3056,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointBuilder allowDefaultCodec(boolean allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -3070,7 +3070,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointBuilder allowDefaultCodec(String allowDefaultCodec) {
-            setProperty("allowDefaultCodec", allowDefaultCodec);
+            doSetProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
         /**
@@ -3083,7 +3083,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointBuilder autoAppendDelimiter(
                 boolean autoAppendDelimiter) {
-            setProperty("autoAppendDelimiter", autoAppendDelimiter);
+            doSetProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
         }
         /**
@@ -3096,7 +3096,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointBuilder autoAppendDelimiter(
                 String autoAppendDelimiter) {
-            setProperty("autoAppendDelimiter", autoAppendDelimiter);
+            doSetProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
         }
         /**
@@ -3108,7 +3108,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -3120,7 +3120,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
-            setProperty("decoderMaxLineLength", decoderMaxLineLength);
+            doSetProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
         }
         /**
@@ -3136,7 +3136,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointBuilder decoders(List<Object> decoders) {
-            setProperty("decoders", decoders);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -3152,7 +3152,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointBuilder decoders(String decoders) {
-            setProperty("decoders", decoders);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -3165,7 +3165,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointBuilder delimiter(TextLineDelimiter delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -3178,7 +3178,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointBuilder delimiter(String delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -3194,7 +3194,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointBuilder encoders(List<Object> encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -3210,7 +3210,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointBuilder encoders(String encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -3222,7 +3222,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -3235,7 +3235,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointBuilder textline(boolean textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -3248,7 +3248,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: codec
          */
         default NettyEndpointBuilder textline(String textline) {
-            setProperty("textline", textline);
+            doSetProperty("textline", textline);
             return this;
         }
         /**
@@ -3259,7 +3259,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder enabledProtocols(String enabledProtocols) {
-            setProperty("enabledProtocols", enabledProtocols);
+            doSetProperty("enabledProtocols", enabledProtocols);
             return this;
         }
         /**
@@ -3270,7 +3270,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder keyStoreFile(File keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -3281,7 +3281,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder keyStoreFile(String keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -3293,7 +3293,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder keyStoreFormat(String keyStoreFormat) {
-            setProperty("keyStoreFormat", keyStoreFormat);
+            doSetProperty("keyStoreFormat", keyStoreFormat);
             return this;
         }
         /**
@@ -3306,7 +3306,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder keyStoreResource(String keyStoreResource) {
-            setProperty("keyStoreResource", keyStoreResource);
+            doSetProperty("keyStoreResource", keyStoreResource);
             return this;
         }
         /**
@@ -3318,7 +3318,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder passphrase(String passphrase) {
-            setProperty("passphrase", passphrase);
+            doSetProperty("passphrase", passphrase);
             return this;
         }
         /**
@@ -3330,7 +3330,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder securityProvider(String securityProvider) {
-            setProperty("securityProvider", securityProvider);
+            doSetProperty("securityProvider", securityProvider);
             return this;
         }
         /**
@@ -3342,7 +3342,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder ssl(boolean ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -3354,7 +3354,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder ssl(String ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -3369,7 +3369,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -3384,7 +3384,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -3397,7 +3397,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -3410,7 +3410,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -3421,7 +3421,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder sslHandler(Object sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -3433,7 +3433,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder sslHandler(String sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -3444,7 +3444,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder trustStoreFile(File trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -3455,7 +3455,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: security
          */
         default NettyEndpointBuilder trustStoreFile(String trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -3469,7 +3469,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default NettyEndpointBuilder trustStoreResource(
                 String trustStoreResource) {
-            setProperty("trustStoreResource", trustStoreResource);
+            doSetProperty("trustStoreResource", trustStoreResource);
             return this;
         }
     }
@@ -3495,7 +3495,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -3510,7 +3510,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -3523,7 +3523,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3536,7 +3536,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3548,7 +3548,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder channelGroup(Object channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -3560,7 +3560,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder channelGroup(String channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -3576,7 +3576,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder nativeTransport(
                 boolean nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
@@ -3592,7 +3592,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder nativeTransport(
                 String nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
@@ -3607,7 +3607,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder options(Map<String, Object> options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -3623,7 +3623,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder options(String options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -3636,7 +3636,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder receiveBufferSize(
                 int receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -3649,7 +3649,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder receiveBufferSize(
                 String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -3662,7 +3662,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -3675,7 +3675,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -3687,7 +3687,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder sendBufferSize(int sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -3700,7 +3700,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder sendBufferSize(
                 String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -3712,7 +3712,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3724,7 +3724,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3741,7 +3741,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -3758,7 +3758,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -3771,7 +3771,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder udpByteArrayCodec(
                 boolean udpByteArrayCodec) {
-            setProperty("udpByteArrayCodec", udpByteArrayCodec);
+            doSetProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
         }
         /**
@@ -3784,7 +3784,7 @@ public interface NettyEndpointBuilderFactory {
          */
         default AdvancedNettyEndpointBuilder udpByteArrayCodec(
                 String udpByteArrayCodec) {
-            setProperty("udpByteArrayCodec", udpByteArrayCodec);
+            doSetProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
         }
         /**
@@ -3797,7 +3797,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder workerCount(int workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
@@ -3810,7 +3810,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder workerCount(String workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
@@ -3824,7 +3824,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder workerGroup(Object workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
         /**
@@ -3839,7 +3839,7 @@ public interface NettyEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder workerGroup(String workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
     }

@@ -46,7 +46,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder feedHeader(boolean feedHeader) {
-            setProperty("feedHeader", feedHeader);
+            doSetProperty("feedHeader", feedHeader);
             return this;
         }
         /**
@@ -57,7 +57,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder feedHeader(String feedHeader) {
-            setProperty("feedHeader", feedHeader);
+            doSetProperty("feedHeader", feedHeader);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder filter(boolean filter) {
-            setProperty("filter", filter);
+            doSetProperty("filter", filter);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder filter(String filter) {
-            setProperty("filter", filter);
+            doSetProperty("filter", filter);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder lastUpdate(Date lastUpdate) {
-            setProperty("lastUpdate", lastUpdate);
+            doSetProperty("lastUpdate", lastUpdate);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder lastUpdate(String lastUpdate) {
-            setProperty("lastUpdate", lastUpdate);
+            doSetProperty("lastUpdate", lastUpdate);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder sortEntries(boolean sortEntries) {
-            setProperty("sortEntries", sortEntries);
+            doSetProperty("sortEntries", sortEntries);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder sortEntries(String sortEntries) {
-            setProperty("sortEntries", sortEntries);
+            doSetProperty("sortEntries", sortEntries);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder splitEntries(boolean splitEntries) {
-            setProperty("splitEntries", splitEntries);
+            doSetProperty("splitEntries", splitEntries);
             return this;
         }
         /**
@@ -163,7 +163,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder splitEntries(String splitEntries) {
-            setProperty("splitEntries", splitEntries);
+            doSetProperty("splitEntries", splitEntries);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder throttleEntries(boolean throttleEntries) {
-            setProperty("throttleEntries", throttleEntries);
+            doSetProperty("throttleEntries", throttleEntries);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder throttleEntries(String throttleEntries) {
-            setProperty("throttleEntries", throttleEntries);
+            doSetProperty("throttleEntries", throttleEntries);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface RssEndpointBuilderFactory {
          * Group: consumer
          */
         default RssEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -225,7 +225,7 @@ public interface RssEndpointBuilderFactory {
          */
         default AdvancedRssEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface RssEndpointBuilderFactory {
          */
         default AdvancedRssEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -250,7 +250,7 @@ public interface RssEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRssEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -262,7 +262,7 @@ public interface RssEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedRssEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

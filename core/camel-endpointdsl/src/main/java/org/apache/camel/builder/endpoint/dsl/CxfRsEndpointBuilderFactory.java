@@ -53,7 +53,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder features(List<Object> features) {
-            setProperty("features", features);
+            doSetProperty("features", features);
             return this;
         }
         /**
@@ -66,7 +66,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder features(String features) {
-            setProperty("features", features);
+            doSetProperty("features", features);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder loggingSizeLimit(
                 int loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -118,7 +118,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder loggingSizeLimit(
                 String loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder modelRef(String modelRef) {
-            setProperty("modelRef", modelRef);
+            doSetProperty("modelRef", modelRef);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder providers(List<Object> providers) {
-            setProperty("providers", providers);
+            doSetProperty("providers", providers);
             return this;
         }
         /**
@@ -159,7 +159,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder providers(String providers) {
-            setProperty("providers", providers);
+            doSetProperty("providers", providers);
             return this;
         }
         /**
@@ -173,7 +173,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder resourceClasses(
                 List<Class<Object>> resourceClasses) {
-            setProperty("resourceClasses", resourceClasses);
+            doSetProperty("resourceClasses", resourceClasses);
             return this;
         }
         /**
@@ -187,7 +187,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder resourceClasses(
                 String resourceClasses) {
-            setProperty("resourceClasses", resourceClasses);
+            doSetProperty("resourceClasses", resourceClasses);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder schemaLocations(
                 List<String> schemaLocations) {
-            setProperty("schemaLocations", schemaLocations);
+            doSetProperty("schemaLocations", schemaLocations);
             return this;
         }
         /**
@@ -215,7 +215,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder schemaLocations(
                 String schemaLocations) {
-            setProperty("schemaLocations", schemaLocations);
+            doSetProperty("schemaLocations", schemaLocations);
             return this;
         }
         /**
@@ -228,7 +228,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder skipFaultLogging(
                 boolean skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder skipFaultLogging(
                 String skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
         /**
@@ -268,7 +268,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder bindingStyle(
                 BindingStyle bindingStyle) {
-            setProperty("bindingStyle", bindingStyle);
+            doSetProperty("bindingStyle", bindingStyle);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: consumer
          */
         default CxfRsEndpointConsumerBuilder bindingStyle(String bindingStyle) {
-            setProperty("bindingStyle", bindingStyle);
+            doSetProperty("bindingStyle", bindingStyle);
             return this;
         }
         /**
@@ -312,7 +312,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -343,7 +343,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointConsumerBuilder publishedEndpointUrl(
                 String publishedEndpointUrl) {
-            setProperty("publishedEndpointUrl", publishedEndpointUrl);
+            doSetProperty("publishedEndpointUrl", publishedEndpointUrl);
             return this;
         }
     }
@@ -370,7 +370,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -386,7 +386,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -398,7 +398,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -411,7 +411,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -425,7 +425,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder serviceBeans(
                 String serviceBeans) {
-            setProperty("serviceBeans", serviceBeans);
+            doSetProperty("serviceBeans", serviceBeans);
             return this;
         }
         /**
@@ -438,7 +438,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -451,7 +451,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -464,7 +464,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -477,7 +477,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -488,7 +488,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder bus(Object bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -500,7 +500,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder bus(String bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -514,7 +514,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder continuationTimeout(
                 long continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -528,7 +528,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder continuationTimeout(
                 String continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -546,7 +546,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder cxfRsConfigurer(
                 Object cxfRsConfigurer) {
-            setProperty("cxfRsConfigurer", cxfRsConfigurer);
+            doSetProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder cxfRsConfigurer(
                 String cxfRsConfigurer) {
-            setProperty("cxfRsConfigurer", cxfRsConfigurer);
+            doSetProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**
@@ -576,7 +576,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder defaultBus(
                 boolean defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -588,7 +588,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder defaultBus(
                 String defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -602,7 +602,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -616,7 +616,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -630,7 +630,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder performInvocation(
                 boolean performInvocation) {
-            setProperty("performInvocation", performInvocation);
+            doSetProperty("performInvocation", performInvocation);
             return this;
         }
         /**
@@ -644,7 +644,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder performInvocation(
                 String performInvocation) {
-            setProperty("performInvocation", performInvocation);
+            doSetProperty("performInvocation", performInvocation);
             return this;
         }
         /**
@@ -659,7 +659,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder propagateContexts(
                 boolean propagateContexts) {
-            setProperty("propagateContexts", propagateContexts);
+            doSetProperty("propagateContexts", propagateContexts);
             return this;
         }
         /**
@@ -674,7 +674,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder propagateContexts(
                 String propagateContexts) {
-            setProperty("propagateContexts", propagateContexts);
+            doSetProperty("propagateContexts", propagateContexts);
             return this;
         }
         /**
@@ -687,7 +687,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -700,7 +700,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -724,7 +724,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointProducerBuilder features(List<Object> features) {
-            setProperty("features", features);
+            doSetProperty("features", features);
             return this;
         }
         /**
@@ -737,7 +737,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointProducerBuilder features(String features) {
-            setProperty("features", features);
+            doSetProperty("features", features);
             return this;
         }
         /**
@@ -750,7 +750,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -763,7 +763,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -776,7 +776,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder loggingSizeLimit(
                 int loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -789,7 +789,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder loggingSizeLimit(
                 String loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -802,7 +802,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointProducerBuilder modelRef(String modelRef) {
-            setProperty("modelRef", modelRef);
+            doSetProperty("modelRef", modelRef);
             return this;
         }
         /**
@@ -816,7 +816,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointProducerBuilder providers(List<Object> providers) {
-            setProperty("providers", providers);
+            doSetProperty("providers", providers);
             return this;
         }
         /**
@@ -830,7 +830,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointProducerBuilder providers(String providers) {
-            setProperty("providers", providers);
+            doSetProperty("providers", providers);
             return this;
         }
         /**
@@ -844,7 +844,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder resourceClasses(
                 List<Class<Object>> resourceClasses) {
-            setProperty("resourceClasses", resourceClasses);
+            doSetProperty("resourceClasses", resourceClasses);
             return this;
         }
         /**
@@ -858,7 +858,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder resourceClasses(
                 String resourceClasses) {
-            setProperty("resourceClasses", resourceClasses);
+            doSetProperty("resourceClasses", resourceClasses);
             return this;
         }
         /**
@@ -872,7 +872,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder schemaLocations(
                 List<String> schemaLocations) {
-            setProperty("schemaLocations", schemaLocations);
+            doSetProperty("schemaLocations", schemaLocations);
             return this;
         }
         /**
@@ -886,7 +886,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder schemaLocations(
                 String schemaLocations) {
-            setProperty("schemaLocations", schemaLocations);
+            doSetProperty("schemaLocations", schemaLocations);
             return this;
         }
         /**
@@ -899,7 +899,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder skipFaultLogging(
                 boolean skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
         /**
@@ -912,7 +912,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder skipFaultLogging(
                 String skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
         /**
@@ -924,7 +924,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: producer
          */
         default CxfRsEndpointProducerBuilder cookieHandler(Object cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -936,7 +936,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: producer
          */
         default CxfRsEndpointProducerBuilder cookieHandler(String cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -949,7 +949,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder hostnameVerifier(
                 Object hostnameVerifier) {
-            setProperty("hostnameVerifier", hostnameVerifier);
+            doSetProperty("hostnameVerifier", hostnameVerifier);
             return this;
         }
         /**
@@ -963,7 +963,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder hostnameVerifier(
                 String hostnameVerifier) {
-            setProperty("hostnameVerifier", hostnameVerifier);
+            doSetProperty("hostnameVerifier", hostnameVerifier);
             return this;
         }
         /**
@@ -983,7 +983,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1003,7 +1003,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1017,7 +1017,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1031,7 +1031,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1044,7 +1044,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -1057,7 +1057,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
     }
@@ -1082,7 +1082,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder httpClientAPI(
                 boolean httpClientAPI) {
-            setProperty("httpClientAPI", httpClientAPI);
+            doSetProperty("httpClientAPI", httpClientAPI);
             return this;
         }
         /**
@@ -1096,7 +1096,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder httpClientAPI(
                 String httpClientAPI) {
-            setProperty("httpClientAPI", httpClientAPI);
+            doSetProperty("httpClientAPI", httpClientAPI);
             return this;
         }
         /**
@@ -1109,7 +1109,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder ignoreDeleteMethodMessageBody(
                 boolean ignoreDeleteMethodMessageBody) {
-            setProperty("ignoreDeleteMethodMessageBody", ignoreDeleteMethodMessageBody);
+            doSetProperty("ignoreDeleteMethodMessageBody", ignoreDeleteMethodMessageBody);
             return this;
         }
         /**
@@ -1122,7 +1122,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder ignoreDeleteMethodMessageBody(
                 String ignoreDeleteMethodMessageBody) {
-            setProperty("ignoreDeleteMethodMessageBody", ignoreDeleteMethodMessageBody);
+            doSetProperty("ignoreDeleteMethodMessageBody", ignoreDeleteMethodMessageBody);
             return this;
         }
         /**
@@ -1136,7 +1136,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder maxClientCacheSize(
                 int maxClientCacheSize) {
-            setProperty("maxClientCacheSize", maxClientCacheSize);
+            doSetProperty("maxClientCacheSize", maxClientCacheSize);
             return this;
         }
         /**
@@ -1150,7 +1150,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder maxClientCacheSize(
                 String maxClientCacheSize) {
-            setProperty("maxClientCacheSize", maxClientCacheSize);
+            doSetProperty("maxClientCacheSize", maxClientCacheSize);
             return this;
         }
         /**
@@ -1163,7 +1163,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1176,7 +1176,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1189,7 +1189,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -1202,7 +1202,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -1213,7 +1213,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder bus(Object bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -1225,7 +1225,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder bus(String bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -1239,7 +1239,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder continuationTimeout(
                 long continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -1253,7 +1253,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder continuationTimeout(
                 String continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -1271,7 +1271,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder cxfRsConfigurer(
                 Object cxfRsConfigurer) {
-            setProperty("cxfRsConfigurer", cxfRsConfigurer);
+            doSetProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**
@@ -1289,7 +1289,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder cxfRsConfigurer(
                 String cxfRsConfigurer) {
-            setProperty("cxfRsConfigurer", cxfRsConfigurer);
+            doSetProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**
@@ -1301,7 +1301,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder defaultBus(
                 boolean defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -1313,7 +1313,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder defaultBus(
                 String defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -1327,7 +1327,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1341,7 +1341,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1355,7 +1355,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder performInvocation(
                 boolean performInvocation) {
-            setProperty("performInvocation", performInvocation);
+            doSetProperty("performInvocation", performInvocation);
             return this;
         }
         /**
@@ -1369,7 +1369,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder performInvocation(
                 String performInvocation) {
-            setProperty("performInvocation", performInvocation);
+            doSetProperty("performInvocation", performInvocation);
             return this;
         }
         /**
@@ -1384,7 +1384,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder propagateContexts(
                 boolean propagateContexts) {
-            setProperty("propagateContexts", propagateContexts);
+            doSetProperty("propagateContexts", propagateContexts);
             return this;
         }
         /**
@@ -1399,7 +1399,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder propagateContexts(
                 String propagateContexts) {
-            setProperty("propagateContexts", propagateContexts);
+            doSetProperty("propagateContexts", propagateContexts);
             return this;
         }
         /**
@@ -1412,7 +1412,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1425,7 +1425,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1449,7 +1449,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointBuilder features(List<Object> features) {
-            setProperty("features", features);
+            doSetProperty("features", features);
             return this;
         }
         /**
@@ -1462,7 +1462,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointBuilder features(String features) {
-            setProperty("features", features);
+            doSetProperty("features", features);
             return this;
         }
         /**
@@ -1475,7 +1475,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -1488,7 +1488,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -1500,7 +1500,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointBuilder loggingSizeLimit(int loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -1512,7 +1512,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointBuilder loggingSizeLimit(String loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -1525,7 +1525,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointBuilder modelRef(String modelRef) {
-            setProperty("modelRef", modelRef);
+            doSetProperty("modelRef", modelRef);
             return this;
         }
         /**
@@ -1539,7 +1539,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointBuilder providers(List<Object> providers) {
-            setProperty("providers", providers);
+            doSetProperty("providers", providers);
             return this;
         }
         /**
@@ -1553,7 +1553,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointBuilder providers(String providers) {
-            setProperty("providers", providers);
+            doSetProperty("providers", providers);
             return this;
         }
         /**
@@ -1567,7 +1567,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointBuilder resourceClasses(
                 List<Class<Object>> resourceClasses) {
-            setProperty("resourceClasses", resourceClasses);
+            doSetProperty("resourceClasses", resourceClasses);
             return this;
         }
         /**
@@ -1580,7 +1580,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointBuilder resourceClasses(String resourceClasses) {
-            setProperty("resourceClasses", resourceClasses);
+            doSetProperty("resourceClasses", resourceClasses);
             return this;
         }
         /**
@@ -1594,7 +1594,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default CxfRsEndpointBuilder schemaLocations(
                 List<String> schemaLocations) {
-            setProperty("schemaLocations", schemaLocations);
+            doSetProperty("schemaLocations", schemaLocations);
             return this;
         }
         /**
@@ -1607,7 +1607,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointBuilder schemaLocations(String schemaLocations) {
-            setProperty("schemaLocations", schemaLocations);
+            doSetProperty("schemaLocations", schemaLocations);
             return this;
         }
         /**
@@ -1619,7 +1619,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointBuilder skipFaultLogging(boolean skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
         /**
@@ -1631,7 +1631,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: common
          */
         default CxfRsEndpointBuilder skipFaultLogging(String skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
     }
@@ -1655,7 +1655,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1668,7 +1668,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1681,7 +1681,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -1694,7 +1694,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -1705,7 +1705,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder bus(Object bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -1717,7 +1717,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder bus(String bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -1731,7 +1731,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder continuationTimeout(
                 long continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -1745,7 +1745,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder continuationTimeout(
                 String continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -1763,7 +1763,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder cxfRsConfigurer(
                 Object cxfRsConfigurer) {
-            setProperty("cxfRsConfigurer", cxfRsConfigurer);
+            doSetProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**
@@ -1781,7 +1781,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder cxfRsConfigurer(
                 String cxfRsConfigurer) {
-            setProperty("cxfRsConfigurer", cxfRsConfigurer);
+            doSetProperty("cxfRsConfigurer", cxfRsConfigurer);
             return this;
         }
         /**
@@ -1792,7 +1792,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder defaultBus(boolean defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -1803,7 +1803,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder defaultBus(String defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -1817,7 +1817,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1831,7 +1831,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1845,7 +1845,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder performInvocation(
                 boolean performInvocation) {
-            setProperty("performInvocation", performInvocation);
+            doSetProperty("performInvocation", performInvocation);
             return this;
         }
         /**
@@ -1859,7 +1859,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder performInvocation(
                 String performInvocation) {
-            setProperty("performInvocation", performInvocation);
+            doSetProperty("performInvocation", performInvocation);
             return this;
         }
         /**
@@ -1874,7 +1874,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder propagateContexts(
                 boolean propagateContexts) {
-            setProperty("propagateContexts", propagateContexts);
+            doSetProperty("propagateContexts", propagateContexts);
             return this;
         }
         /**
@@ -1889,7 +1889,7 @@ public interface CxfRsEndpointBuilderFactory {
          */
         default AdvancedCxfRsEndpointBuilder propagateContexts(
                 String propagateContexts) {
-            setProperty("propagateContexts", propagateContexts);
+            doSetProperty("propagateContexts", propagateContexts);
             return this;
         }
         /**
@@ -1901,7 +1901,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1913,7 +1913,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

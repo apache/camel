@@ -50,7 +50,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: common
          */
         default GoraEndpointConsumerBuilder dataStoreClass(String dataStoreClass) {
-            setProperty("dataStoreClass", dataStoreClass);
+            doSetProperty("dataStoreClass", dataStoreClass);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: common
          */
         default GoraEndpointConsumerBuilder keyClass(String keyClass) {
-            setProperty("keyClass", keyClass);
+            doSetProperty("keyClass", keyClass);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: common
          */
         default GoraEndpointConsumerBuilder valueClass(String valueClass) {
-            setProperty("valueClass", valueClass);
+            doSetProperty("valueClass", valueClass);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default GoraEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -108,7 +108,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default GoraEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -120,7 +120,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default GoraEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default GoraEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder endKey(Object endKey) {
-            setProperty("endKey", endKey);
+            doSetProperty("endKey", endKey);
             return this;
         }
         /**
@@ -154,7 +154,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder endKey(String endKey) {
-            setProperty("endKey", endKey);
+            doSetProperty("endKey", endKey);
             return this;
         }
         /**
@@ -165,7 +165,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder endTime(long endTime) {
-            setProperty("endTime", endTime);
+            doSetProperty("endTime", endTime);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder endTime(String endTime) {
-            setProperty("endTime", endTime);
+            doSetProperty("endTime", endTime);
             return this;
         }
         /**
@@ -187,7 +187,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder fields(Object fields) {
-            setProperty("fields", fields);
+            doSetProperty("fields", fields);
             return this;
         }
         /**
@@ -199,7 +199,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder fields(String fields) {
-            setProperty("fields", fields);
+            doSetProperty("fields", fields);
             return this;
         }
         /**
@@ -210,7 +210,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder keyRangeFrom(Object keyRangeFrom) {
-            setProperty("keyRangeFrom", keyRangeFrom);
+            doSetProperty("keyRangeFrom", keyRangeFrom);
             return this;
         }
         /**
@@ -221,7 +221,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder keyRangeFrom(String keyRangeFrom) {
-            setProperty("keyRangeFrom", keyRangeFrom);
+            doSetProperty("keyRangeFrom", keyRangeFrom);
             return this;
         }
         /**
@@ -232,7 +232,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder keyRangeTo(Object keyRangeTo) {
-            setProperty("keyRangeTo", keyRangeTo);
+            doSetProperty("keyRangeTo", keyRangeTo);
             return this;
         }
         /**
@@ -243,7 +243,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder keyRangeTo(String keyRangeTo) {
-            setProperty("keyRangeTo", keyRangeTo);
+            doSetProperty("keyRangeTo", keyRangeTo);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder limit(long limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder limit(String limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -276,7 +276,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder startKey(Object startKey) {
-            setProperty("startKey", startKey);
+            doSetProperty("startKey", startKey);
             return this;
         }
         /**
@@ -287,7 +287,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder startKey(String startKey) {
-            setProperty("startKey", startKey);
+            doSetProperty("startKey", startKey);
             return this;
         }
         /**
@@ -298,7 +298,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder startTime(long startTime) {
-            setProperty("startTime", startTime);
+            doSetProperty("startTime", startTime);
             return this;
         }
         /**
@@ -309,7 +309,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder startTime(String startTime) {
-            setProperty("startTime", startTime);
+            doSetProperty("startTime", startTime);
             return this;
         }
         /**
@@ -320,7 +320,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timeRangeFrom(long timeRangeFrom) {
-            setProperty("timeRangeFrom", timeRangeFrom);
+            doSetProperty("timeRangeFrom", timeRangeFrom);
             return this;
         }
         /**
@@ -331,7 +331,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timeRangeFrom(String timeRangeFrom) {
-            setProperty("timeRangeFrom", timeRangeFrom);
+            doSetProperty("timeRangeFrom", timeRangeFrom);
             return this;
         }
         /**
@@ -342,7 +342,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timeRangeTo(long timeRangeTo) {
-            setProperty("timeRangeTo", timeRangeTo);
+            doSetProperty("timeRangeTo", timeRangeTo);
             return this;
         }
         /**
@@ -353,7 +353,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timeRangeTo(String timeRangeTo) {
-            setProperty("timeRangeTo", timeRangeTo);
+            doSetProperty("timeRangeTo", timeRangeTo);
             return this;
         }
         /**
@@ -364,7 +364,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timestamp(long timestamp) {
-            setProperty("timestamp", timestamp);
+            doSetProperty("timestamp", timestamp);
             return this;
         }
         /**
@@ -375,7 +375,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder timestamp(String timestamp) {
-            setProperty("timestamp", timestamp);
+            doSetProperty("timestamp", timestamp);
             return this;
         }
     }
@@ -402,7 +402,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -430,7 +430,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -443,7 +443,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -456,7 +456,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -469,7 +469,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -482,7 +482,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointConsumerBuilder hadoopConfiguration(
                 Object hadoopConfiguration) {
-            setProperty("hadoopConfiguration", hadoopConfiguration);
+            doSetProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointConsumerBuilder hadoopConfiguration(
                 String hadoopConfiguration) {
-            setProperty("hadoopConfiguration", hadoopConfiguration);
+            doSetProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
         }
         /**
@@ -508,7 +508,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -521,7 +521,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -543,7 +543,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: common
          */
         default GoraEndpointProducerBuilder dataStoreClass(String dataStoreClass) {
-            setProperty("dataStoreClass", dataStoreClass);
+            doSetProperty("dataStoreClass", dataStoreClass);
             return this;
         }
         /**
@@ -554,7 +554,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: common
          */
         default GoraEndpointProducerBuilder keyClass(String keyClass) {
-            setProperty("keyClass", keyClass);
+            doSetProperty("keyClass", keyClass);
             return this;
         }
         /**
@@ -565,7 +565,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: common
          */
         default GoraEndpointProducerBuilder valueClass(String valueClass) {
-            setProperty("valueClass", valueClass);
+            doSetProperty("valueClass", valueClass);
             return this;
         }
         /**
@@ -577,7 +577,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default GoraEndpointProducerBuilder flushOnEveryOperation(
                 boolean flushOnEveryOperation) {
-            setProperty("flushOnEveryOperation", flushOnEveryOperation);
+            doSetProperty("flushOnEveryOperation", flushOnEveryOperation);
             return this;
         }
         /**
@@ -589,7 +589,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default GoraEndpointProducerBuilder flushOnEveryOperation(
                 String flushOnEveryOperation) {
-            setProperty("flushOnEveryOperation", flushOnEveryOperation);
+            doSetProperty("flushOnEveryOperation", flushOnEveryOperation);
             return this;
         }
         /**
@@ -609,7 +609,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default GoraEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -629,7 +629,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default GoraEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -653,7 +653,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -666,7 +666,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -679,7 +679,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointProducerBuilder hadoopConfiguration(
                 Object hadoopConfiguration) {
-            setProperty("hadoopConfiguration", hadoopConfiguration);
+            doSetProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
         }
         /**
@@ -692,7 +692,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointProducerBuilder hadoopConfiguration(
                 String hadoopConfiguration) {
-            setProperty("hadoopConfiguration", hadoopConfiguration);
+            doSetProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
         }
         /**
@@ -705,7 +705,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -718,7 +718,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -740,7 +740,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: common
          */
         default GoraEndpointBuilder dataStoreClass(String dataStoreClass) {
-            setProperty("dataStoreClass", dataStoreClass);
+            doSetProperty("dataStoreClass", dataStoreClass);
             return this;
         }
         /**
@@ -751,7 +751,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: common
          */
         default GoraEndpointBuilder keyClass(String keyClass) {
-            setProperty("keyClass", keyClass);
+            doSetProperty("keyClass", keyClass);
             return this;
         }
         /**
@@ -762,7 +762,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: common
          */
         default GoraEndpointBuilder valueClass(String valueClass) {
-            setProperty("valueClass", valueClass);
+            doSetProperty("valueClass", valueClass);
             return this;
         }
     }
@@ -786,7 +786,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -799,7 +799,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -812,7 +812,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointBuilder hadoopConfiguration(
                 Object hadoopConfiguration) {
-            setProperty("hadoopConfiguration", hadoopConfiguration);
+            doSetProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
         }
         /**
@@ -825,7 +825,7 @@ public interface GoraEndpointBuilderFactory {
          */
         default AdvancedGoraEndpointBuilder hadoopConfiguration(
                 String hadoopConfiguration) {
-            setProperty("hadoopConfiguration", hadoopConfiguration);
+            doSetProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
         }
         /**
@@ -837,7 +837,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGoraEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -849,7 +849,7 @@ public interface GoraEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGoraEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

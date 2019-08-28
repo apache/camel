@@ -351,7 +351,7 @@ public class EndpointDslMojo extends AbstractMojo {
                 }
                 Method fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                     .addParameter(isPrimitive(ogtype.toString()) ? ogtype : gtype, option.getName())
-                    .setBody("setProperty(\"" + option.getName() + "\", " + option.getName() + ");\n" + "return this;\n");
+                    .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");\n" + "return this;\n");
                 if ("true".equals(option.getDeprecated())) {
                     fluent.addAnnotation(Deprecated.class);
                 }
@@ -375,7 +375,7 @@ public class EndpointDslMojo extends AbstractMojo {
                 if (ogtype.getRawClass() != String.class) {
                     fluent = target.addMethod().setDefault().setName(option.getName()).setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                         .addParameter(new GenericType(String.class), option.getName())
-                        .setBody("setProperty(\"" + option.getName() + "\", " + option.getName() + ");\n" + "return this;\n");
+                        .setBody("doSetProperty(\"" + option.getName() + "\", " + option.getName() + ");\n" + "return this;\n");
                     if ("true".equals(option.getDeprecated())) {
                         fluent.addAnnotation(Deprecated.class);
                     }

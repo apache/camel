@@ -53,7 +53,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointConsumerBuilder compressionType(
                 ThriftCompressionType compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointConsumerBuilder compressionType(
                 String compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -81,7 +81,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointConsumerBuilder exchangeProtocol(
                 ThriftExchangeProtocol exchangeProtocol) {
-            setProperty("exchangeProtocol", exchangeProtocol);
+            doSetProperty("exchangeProtocol", exchangeProtocol);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointConsumerBuilder exchangeProtocol(
                 String exchangeProtocol) {
-            setProperty("exchangeProtocol", exchangeProtocol);
+            doSetProperty("exchangeProtocol", exchangeProtocol);
             return this;
         }
         /**
@@ -113,7 +113,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: consumer
          */
         default ThriftEndpointConsumerBuilder clientTimeout(int clientTimeout) {
-            setProperty("clientTimeout", clientTimeout);
+            doSetProperty("clientTimeout", clientTimeout);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: consumer
          */
         default ThriftEndpointConsumerBuilder clientTimeout(String clientTimeout) {
-            setProperty("clientTimeout", clientTimeout);
+            doSetProperty("clientTimeout", clientTimeout);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: consumer
          */
         default ThriftEndpointConsumerBuilder maxPoolSize(int maxPoolSize) {
-            setProperty("maxPoolSize", maxPoolSize);
+            doSetProperty("maxPoolSize", maxPoolSize);
             return this;
         }
         /**
@@ -175,7 +175,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: consumer
          */
         default ThriftEndpointConsumerBuilder maxPoolSize(String maxPoolSize) {
-            setProperty("maxPoolSize", maxPoolSize);
+            doSetProperty("maxPoolSize", maxPoolSize);
             return this;
         }
         /**
@@ -186,7 +186,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: consumer
          */
         default ThriftEndpointConsumerBuilder poolSize(int poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
@@ -197,7 +197,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: consumer
          */
         default ThriftEndpointConsumerBuilder poolSize(String poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
@@ -211,7 +211,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointConsumerBuilder negotiationType(
                 ThriftNegotiationType negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointConsumerBuilder negotiationType(
                 String negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -237,7 +237,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: security
          */
         default ThriftEndpointConsumerBuilder sslParameters(Object sslParameters) {
-            setProperty("sslParameters", sslParameters);
+            doSetProperty("sslParameters", sslParameters);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: security
          */
         default ThriftEndpointConsumerBuilder sslParameters(String sslParameters) {
-            setProperty("sslParameters", sslParameters);
+            doSetProperty("sslParameters", sslParameters);
             return this;
         }
     }
@@ -276,7 +276,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -292,7 +292,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -304,7 +304,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -317,7 +317,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -330,7 +330,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -343,7 +343,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -356,7 +356,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -369,7 +369,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -394,7 +394,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointProducerBuilder compressionType(
                 ThriftCompressionType compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -408,7 +408,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointProducerBuilder compressionType(
                 String compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -422,7 +422,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointProducerBuilder exchangeProtocol(
                 ThriftExchangeProtocol exchangeProtocol) {
-            setProperty("exchangeProtocol", exchangeProtocol);
+            doSetProperty("exchangeProtocol", exchangeProtocol);
             return this;
         }
         /**
@@ -436,7 +436,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointProducerBuilder exchangeProtocol(
                 String exchangeProtocol) {
-            setProperty("exchangeProtocol", exchangeProtocol);
+            doSetProperty("exchangeProtocol", exchangeProtocol);
             return this;
         }
         /**
@@ -456,7 +456,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -476,7 +476,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -487,7 +487,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: producer
          */
         default ThriftEndpointProducerBuilder method(String method) {
-            setProperty("method", method);
+            doSetProperty("method", method);
             return this;
         }
         /**
@@ -501,7 +501,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointProducerBuilder negotiationType(
                 ThriftNegotiationType negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -515,7 +515,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointProducerBuilder negotiationType(
                 String negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -527,7 +527,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: security
          */
         default ThriftEndpointProducerBuilder sslParameters(Object sslParameters) {
-            setProperty("sslParameters", sslParameters);
+            doSetProperty("sslParameters", sslParameters);
             return this;
         }
         /**
@@ -539,7 +539,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: security
          */
         default ThriftEndpointProducerBuilder sslParameters(String sslParameters) {
-            setProperty("sslParameters", sslParameters);
+            doSetProperty("sslParameters", sslParameters);
             return this;
         }
     }
@@ -563,7 +563,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -576,7 +576,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -589,7 +589,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -602,7 +602,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -627,7 +627,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointBuilder compressionType(
                 ThriftCompressionType compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -640,7 +640,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: common
          */
         default ThriftEndpointBuilder compressionType(String compressionType) {
-            setProperty("compressionType", compressionType);
+            doSetProperty("compressionType", compressionType);
             return this;
         }
         /**
@@ -654,7 +654,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointBuilder exchangeProtocol(
                 ThriftExchangeProtocol exchangeProtocol) {
-            setProperty("exchangeProtocol", exchangeProtocol);
+            doSetProperty("exchangeProtocol", exchangeProtocol);
             return this;
         }
         /**
@@ -667,7 +667,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: common
          */
         default ThriftEndpointBuilder exchangeProtocol(String exchangeProtocol) {
-            setProperty("exchangeProtocol", exchangeProtocol);
+            doSetProperty("exchangeProtocol", exchangeProtocol);
             return this;
         }
         /**
@@ -681,7 +681,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default ThriftEndpointBuilder negotiationType(
                 ThriftNegotiationType negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -694,7 +694,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: security
          */
         default ThriftEndpointBuilder negotiationType(String negotiationType) {
-            setProperty("negotiationType", negotiationType);
+            doSetProperty("negotiationType", negotiationType);
             return this;
         }
         /**
@@ -706,7 +706,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: security
          */
         default ThriftEndpointBuilder sslParameters(Object sslParameters) {
-            setProperty("sslParameters", sslParameters);
+            doSetProperty("sslParameters", sslParameters);
             return this;
         }
         /**
@@ -718,7 +718,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: security
          */
         default ThriftEndpointBuilder sslParameters(String sslParameters) {
-            setProperty("sslParameters", sslParameters);
+            doSetProperty("sslParameters", sslParameters);
             return this;
         }
     }
@@ -742,7 +742,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -755,7 +755,7 @@ public interface ThriftEndpointBuilderFactory {
          */
         default AdvancedThriftEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -767,7 +767,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedThriftEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -779,7 +779,7 @@ public interface ThriftEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedThriftEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

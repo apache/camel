@@ -47,7 +47,7 @@ public interface FopEndpointBuilderFactory {
          * Group: producer
          */
         default FopEndpointBuilder fopFactory(Object fopFactory) {
-            setProperty("fopFactory", fopFactory);
+            doSetProperty("fopFactory", fopFactory);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface FopEndpointBuilderFactory {
          * Group: producer
          */
         default FopEndpointBuilder fopFactory(String fopFactory) {
-            setProperty("fopFactory", fopFactory);
+            doSetProperty("fopFactory", fopFactory);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface FopEndpointBuilderFactory {
          * Group: producer
          */
         default FopEndpointBuilder userConfigURL(String userConfigURL) {
-            setProperty("userConfigURL", userConfigURL);
+            doSetProperty("userConfigURL", userConfigURL);
             return this;
         }
     }
@@ -96,7 +96,7 @@ public interface FopEndpointBuilderFactory {
          */
         default AdvancedFopEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface FopEndpointBuilderFactory {
          */
         default AdvancedFopEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface FopEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFopEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -133,7 +133,7 @@ public interface FopEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFopEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

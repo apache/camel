@@ -51,7 +51,7 @@ public interface VertxEndpointBuilderFactory {
          * Group: common
          */
         default VertxEndpointConsumerBuilder pubSub(Boolean pubSub) {
-            setProperty("pubSub", pubSub);
+            doSetProperty("pubSub", pubSub);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface VertxEndpointBuilderFactory {
          * Group: common
          */
         default VertxEndpointConsumerBuilder pubSub(String pubSub) {
-            setProperty("pubSub", pubSub);
+            doSetProperty("pubSub", pubSub);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default VertxEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -100,7 +100,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default VertxEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -127,7 +127,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -194,7 +194,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -220,7 +220,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -243,7 +243,7 @@ public interface VertxEndpointBuilderFactory {
          * Group: common
          */
         default VertxEndpointProducerBuilder pubSub(Boolean pubSub) {
-            setProperty("pubSub", pubSub);
+            doSetProperty("pubSub", pubSub);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface VertxEndpointBuilderFactory {
          * Group: common
          */
         default VertxEndpointProducerBuilder pubSub(String pubSub) {
-            setProperty("pubSub", pubSub);
+            doSetProperty("pubSub", pubSub);
             return this;
         }
         /**
@@ -276,7 +276,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default VertxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -296,7 +296,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default VertxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -320,7 +320,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -333,7 +333,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -346,7 +346,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -382,7 +382,7 @@ public interface VertxEndpointBuilderFactory {
          * Group: common
          */
         default VertxEndpointBuilder pubSub(Boolean pubSub) {
-            setProperty("pubSub", pubSub);
+            doSetProperty("pubSub", pubSub);
             return this;
         }
         /**
@@ -395,7 +395,7 @@ public interface VertxEndpointBuilderFactory {
          * Group: common
          */
         default VertxEndpointBuilder pubSub(String pubSub) {
-            setProperty("pubSub", pubSub);
+            doSetProperty("pubSub", pubSub);
             return this;
         }
     }
@@ -419,7 +419,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -432,7 +432,7 @@ public interface VertxEndpointBuilderFactory {
          */
         default AdvancedVertxEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -444,7 +444,7 @@ public interface VertxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVertxEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -456,7 +456,7 @@ public interface VertxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVertxEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

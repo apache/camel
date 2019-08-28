@@ -54,7 +54,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder dataModuleOptions(
                 Object dataModuleOptions) {
-            setProperty("dataModuleOptions", dataModuleOptions);
+            doSetProperty("dataModuleOptions", dataModuleOptions);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder dataModuleOptions(
                 String dataModuleOptions) {
-            setProperty("dataModuleOptions", dataModuleOptions);
+            doSetProperty("dataModuleOptions", dataModuleOptions);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder filterNonExecute(
                 boolean filterNonExecute) {
-            setProperty("filterNonExecute", filterNonExecute);
+            doSetProperty("filterNonExecute", filterNonExecute);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder filterNonExecute(
                 String filterNonExecute) {
-            setProperty("filterNonExecute", filterNonExecute);
+            doSetProperty("filterNonExecute", filterNonExecute);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder protocolOptions(
                 Object protocolOptions) {
-            setProperty("protocolOptions", protocolOptions);
+            doSetProperty("protocolOptions", protocolOptions);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder protocolOptions(
                 String protocolOptions) {
-            setProperty("protocolOptions", protocolOptions);
+            doSetProperty("protocolOptions", protocolOptions);
             return this;
         }
         /**
@@ -137,7 +137,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -167,7 +167,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder acknowledgeWindow(
                 short acknowledgeWindow) {
-            setProperty("acknowledgeWindow", acknowledgeWindow);
+            doSetProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder acknowledgeWindow(
                 String acknowledgeWindow) {
-            setProperty("acknowledgeWindow", acknowledgeWindow);
+            doSetProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
         }
         /**
@@ -193,7 +193,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
-            setProperty("adsuAddressType", adsuAddressType);
+            doSetProperty("adsuAddressType", adsuAddressType);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder adsuAddressType(
                 String adsuAddressType) {
-            setProperty("adsuAddressType", adsuAddressType);
+            doSetProperty("adsuAddressType", adsuAddressType);
             return this;
         }
         /**
@@ -220,7 +220,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
-            setProperty("causeOfTransmissionType", causeOfTransmissionType);
+            doSetProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
         }
         /**
@@ -233,7 +233,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
-            setProperty("causeOfTransmissionType", causeOfTransmissionType);
+            doSetProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
         }
         /**
@@ -246,7 +246,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
-            setProperty("informationObjectAddressType", informationObjectAddressType);
+            doSetProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
         }
         /**
@@ -259,7 +259,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
-            setProperty("informationObjectAddressType", informationObjectAddressType);
+            doSetProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
         }
         /**
@@ -271,7 +271,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder maxUnacknowledged(
                 short maxUnacknowledged) {
-            setProperty("maxUnacknowledged", maxUnacknowledged);
+            doSetProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
         }
         /**
@@ -283,7 +283,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder maxUnacknowledged(
                 String maxUnacknowledged) {
-            setProperty("maxUnacknowledged", maxUnacknowledged);
+            doSetProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout1(int timeout1) {
-            setProperty("timeout1", timeout1);
+            doSetProperty("timeout1", timeout1);
             return this;
         }
         /**
@@ -305,7 +305,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout1(String timeout1) {
-            setProperty("timeout1", timeout1);
+            doSetProperty("timeout1", timeout1);
             return this;
         }
         /**
@@ -316,7 +316,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout2(int timeout2) {
-            setProperty("timeout2", timeout2);
+            doSetProperty("timeout2", timeout2);
             return this;
         }
         /**
@@ -327,7 +327,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout2(String timeout2) {
-            setProperty("timeout2", timeout2);
+            doSetProperty("timeout2", timeout2);
             return this;
         }
         /**
@@ -338,7 +338,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout3(int timeout3) {
-            setProperty("timeout3", timeout3);
+            doSetProperty("timeout3", timeout3);
             return this;
         }
         /**
@@ -349,7 +349,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout3(String timeout3) {
-            setProperty("timeout3", timeout3);
+            doSetProperty("timeout3", timeout3);
             return this;
         }
         /**
@@ -361,7 +361,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder causeSourceAddress(
                 byte causeSourceAddress) {
-            setProperty("causeSourceAddress", causeSourceAddress);
+            doSetProperty("causeSourceAddress", causeSourceAddress);
             return this;
         }
         /**
@@ -373,7 +373,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder causeSourceAddress(
                 String causeSourceAddress) {
-            setProperty("causeSourceAddress", causeSourceAddress);
+            doSetProperty("causeSourceAddress", causeSourceAddress);
             return this;
         }
         /**
@@ -385,7 +385,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
-            setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
+            doSetProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
         }
         /**
@@ -397,7 +397,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
-            setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
+            doSetProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
         }
         /**
@@ -409,7 +409,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
-            setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
+            doSetProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
         }
         /**
@@ -421,7 +421,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointConsumerBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
-            setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
+            doSetProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
         }
         /**
@@ -432,7 +432,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: data
          */
         default ServerEndpointConsumerBuilder timeZone(TimeZone timeZone) {
-            setProperty("timeZone", timeZone);
+            doSetProperty("timeZone", timeZone);
             return this;
         }
         /**
@@ -444,7 +444,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: data
          */
         default ServerEndpointConsumerBuilder timeZone(String timeZone) {
-            setProperty("timeZone", timeZone);
+            doSetProperty("timeZone", timeZone);
             return this;
         }
         /**
@@ -455,7 +455,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: id
          */
         default ServerEndpointConsumerBuilder connectionId(String connectionId) {
-            setProperty("connectionId", connectionId);
+            doSetProperty("connectionId", connectionId);
             return this;
         }
     }
@@ -483,7 +483,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -499,7 +499,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -511,7 +511,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -524,7 +524,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -537,7 +537,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -550,7 +550,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -563,7 +563,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -576,7 +576,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -600,7 +600,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder dataModuleOptions(
                 Object dataModuleOptions) {
-            setProperty("dataModuleOptions", dataModuleOptions);
+            doSetProperty("dataModuleOptions", dataModuleOptions);
             return this;
         }
         /**
@@ -613,7 +613,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder dataModuleOptions(
                 String dataModuleOptions) {
-            setProperty("dataModuleOptions", dataModuleOptions);
+            doSetProperty("dataModuleOptions", dataModuleOptions);
             return this;
         }
         /**
@@ -625,7 +625,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder filterNonExecute(
                 boolean filterNonExecute) {
-            setProperty("filterNonExecute", filterNonExecute);
+            doSetProperty("filterNonExecute", filterNonExecute);
             return this;
         }
         /**
@@ -637,7 +637,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder filterNonExecute(
                 String filterNonExecute) {
-            setProperty("filterNonExecute", filterNonExecute);
+            doSetProperty("filterNonExecute", filterNonExecute);
             return this;
         }
         /**
@@ -651,7 +651,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder protocolOptions(
                 Object protocolOptions) {
-            setProperty("protocolOptions", protocolOptions);
+            doSetProperty("protocolOptions", protocolOptions);
             return this;
         }
         /**
@@ -665,7 +665,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder protocolOptions(
                 String protocolOptions) {
-            setProperty("protocolOptions", protocolOptions);
+            doSetProperty("protocolOptions", protocolOptions);
             return this;
         }
         /**
@@ -685,7 +685,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -705,7 +705,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -717,7 +717,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder acknowledgeWindow(
                 short acknowledgeWindow) {
-            setProperty("acknowledgeWindow", acknowledgeWindow);
+            doSetProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
         }
         /**
@@ -729,7 +729,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder acknowledgeWindow(
                 String acknowledgeWindow) {
-            setProperty("acknowledgeWindow", acknowledgeWindow);
+            doSetProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
         }
         /**
@@ -743,7 +743,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
-            setProperty("adsuAddressType", adsuAddressType);
+            doSetProperty("adsuAddressType", adsuAddressType);
             return this;
         }
         /**
@@ -757,7 +757,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder adsuAddressType(
                 String adsuAddressType) {
-            setProperty("adsuAddressType", adsuAddressType);
+            doSetProperty("adsuAddressType", adsuAddressType);
             return this;
         }
         /**
@@ -770,7 +770,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
-            setProperty("causeOfTransmissionType", causeOfTransmissionType);
+            doSetProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
         }
         /**
@@ -783,7 +783,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
-            setProperty("causeOfTransmissionType", causeOfTransmissionType);
+            doSetProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
         }
         /**
@@ -796,7 +796,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
-            setProperty("informationObjectAddressType", informationObjectAddressType);
+            doSetProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
         }
         /**
@@ -809,7 +809,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
-            setProperty("informationObjectAddressType", informationObjectAddressType);
+            doSetProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
         }
         /**
@@ -821,7 +821,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder maxUnacknowledged(
                 short maxUnacknowledged) {
-            setProperty("maxUnacknowledged", maxUnacknowledged);
+            doSetProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
         }
         /**
@@ -833,7 +833,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder maxUnacknowledged(
                 String maxUnacknowledged) {
-            setProperty("maxUnacknowledged", maxUnacknowledged);
+            doSetProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
         }
         /**
@@ -844,7 +844,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointProducerBuilder timeout1(int timeout1) {
-            setProperty("timeout1", timeout1);
+            doSetProperty("timeout1", timeout1);
             return this;
         }
         /**
@@ -855,7 +855,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointProducerBuilder timeout1(String timeout1) {
-            setProperty("timeout1", timeout1);
+            doSetProperty("timeout1", timeout1);
             return this;
         }
         /**
@@ -866,7 +866,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointProducerBuilder timeout2(int timeout2) {
-            setProperty("timeout2", timeout2);
+            doSetProperty("timeout2", timeout2);
             return this;
         }
         /**
@@ -877,7 +877,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointProducerBuilder timeout2(String timeout2) {
-            setProperty("timeout2", timeout2);
+            doSetProperty("timeout2", timeout2);
             return this;
         }
         /**
@@ -888,7 +888,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointProducerBuilder timeout3(int timeout3) {
-            setProperty("timeout3", timeout3);
+            doSetProperty("timeout3", timeout3);
             return this;
         }
         /**
@@ -899,7 +899,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointProducerBuilder timeout3(String timeout3) {
-            setProperty("timeout3", timeout3);
+            doSetProperty("timeout3", timeout3);
             return this;
         }
         /**
@@ -911,7 +911,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder causeSourceAddress(
                 byte causeSourceAddress) {
-            setProperty("causeSourceAddress", causeSourceAddress);
+            doSetProperty("causeSourceAddress", causeSourceAddress);
             return this;
         }
         /**
@@ -923,7 +923,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder causeSourceAddress(
                 String causeSourceAddress) {
-            setProperty("causeSourceAddress", causeSourceAddress);
+            doSetProperty("causeSourceAddress", causeSourceAddress);
             return this;
         }
         /**
@@ -935,7 +935,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
-            setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
+            doSetProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
         }
         /**
@@ -947,7 +947,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
-            setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
+            doSetProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
         }
         /**
@@ -959,7 +959,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
-            setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
+            doSetProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
         }
         /**
@@ -971,7 +971,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointProducerBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
-            setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
+            doSetProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
         }
         /**
@@ -982,7 +982,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: data
          */
         default ServerEndpointProducerBuilder timeZone(TimeZone timeZone) {
-            setProperty("timeZone", timeZone);
+            doSetProperty("timeZone", timeZone);
             return this;
         }
         /**
@@ -994,7 +994,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: data
          */
         default ServerEndpointProducerBuilder timeZone(String timeZone) {
-            setProperty("timeZone", timeZone);
+            doSetProperty("timeZone", timeZone);
             return this;
         }
         /**
@@ -1005,7 +1005,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: id
          */
         default ServerEndpointProducerBuilder connectionId(String connectionId) {
-            setProperty("connectionId", connectionId);
+            doSetProperty("connectionId", connectionId);
             return this;
         }
     }
@@ -1030,7 +1030,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1043,7 +1043,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1056,7 +1056,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1069,7 +1069,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1092,7 +1092,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: common
          */
         default ServerEndpointBuilder dataModuleOptions(Object dataModuleOptions) {
-            setProperty("dataModuleOptions", dataModuleOptions);
+            doSetProperty("dataModuleOptions", dataModuleOptions);
             return this;
         }
         /**
@@ -1104,7 +1104,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: common
          */
         default ServerEndpointBuilder dataModuleOptions(String dataModuleOptions) {
-            setProperty("dataModuleOptions", dataModuleOptions);
+            doSetProperty("dataModuleOptions", dataModuleOptions);
             return this;
         }
         /**
@@ -1115,7 +1115,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: common
          */
         default ServerEndpointBuilder filterNonExecute(boolean filterNonExecute) {
-            setProperty("filterNonExecute", filterNonExecute);
+            doSetProperty("filterNonExecute", filterNonExecute);
             return this;
         }
         /**
@@ -1126,7 +1126,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: common
          */
         default ServerEndpointBuilder filterNonExecute(String filterNonExecute) {
-            setProperty("filterNonExecute", filterNonExecute);
+            doSetProperty("filterNonExecute", filterNonExecute);
             return this;
         }
         /**
@@ -1139,7 +1139,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: common
          */
         default ServerEndpointBuilder protocolOptions(Object protocolOptions) {
-            setProperty("protocolOptions", protocolOptions);
+            doSetProperty("protocolOptions", protocolOptions);
             return this;
         }
         /**
@@ -1152,7 +1152,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: common
          */
         default ServerEndpointBuilder protocolOptions(String protocolOptions) {
-            setProperty("protocolOptions", protocolOptions);
+            doSetProperty("protocolOptions", protocolOptions);
             return this;
         }
         /**
@@ -1163,7 +1163,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointBuilder acknowledgeWindow(short acknowledgeWindow) {
-            setProperty("acknowledgeWindow", acknowledgeWindow);
+            doSetProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
         }
         /**
@@ -1174,7 +1174,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointBuilder acknowledgeWindow(String acknowledgeWindow) {
-            setProperty("acknowledgeWindow", acknowledgeWindow);
+            doSetProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
         }
         /**
@@ -1188,7 +1188,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
-            setProperty("adsuAddressType", adsuAddressType);
+            doSetProperty("adsuAddressType", adsuAddressType);
             return this;
         }
         /**
@@ -1201,7 +1201,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointBuilder adsuAddressType(String adsuAddressType) {
-            setProperty("adsuAddressType", adsuAddressType);
+            doSetProperty("adsuAddressType", adsuAddressType);
             return this;
         }
         /**
@@ -1214,7 +1214,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
-            setProperty("causeOfTransmissionType", causeOfTransmissionType);
+            doSetProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
         }
         /**
@@ -1227,7 +1227,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
-            setProperty("causeOfTransmissionType", causeOfTransmissionType);
+            doSetProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
         }
         /**
@@ -1240,7 +1240,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
-            setProperty("informationObjectAddressType", informationObjectAddressType);
+            doSetProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
         }
         /**
@@ -1253,7 +1253,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
-            setProperty("informationObjectAddressType", informationObjectAddressType);
+            doSetProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
         }
         /**
@@ -1264,7 +1264,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointBuilder maxUnacknowledged(short maxUnacknowledged) {
-            setProperty("maxUnacknowledged", maxUnacknowledged);
+            doSetProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
         }
         /**
@@ -1275,7 +1275,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointBuilder maxUnacknowledged(String maxUnacknowledged) {
-            setProperty("maxUnacknowledged", maxUnacknowledged);
+            doSetProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
         }
         /**
@@ -1286,7 +1286,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointBuilder timeout1(int timeout1) {
-            setProperty("timeout1", timeout1);
+            doSetProperty("timeout1", timeout1);
             return this;
         }
         /**
@@ -1297,7 +1297,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointBuilder timeout1(String timeout1) {
-            setProperty("timeout1", timeout1);
+            doSetProperty("timeout1", timeout1);
             return this;
         }
         /**
@@ -1308,7 +1308,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointBuilder timeout2(int timeout2) {
-            setProperty("timeout2", timeout2);
+            doSetProperty("timeout2", timeout2);
             return this;
         }
         /**
@@ -1319,7 +1319,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointBuilder timeout2(String timeout2) {
-            setProperty("timeout2", timeout2);
+            doSetProperty("timeout2", timeout2);
             return this;
         }
         /**
@@ -1330,7 +1330,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointBuilder timeout3(int timeout3) {
-            setProperty("timeout3", timeout3);
+            doSetProperty("timeout3", timeout3);
             return this;
         }
         /**
@@ -1341,7 +1341,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: connection
          */
         default ServerEndpointBuilder timeout3(String timeout3) {
-            setProperty("timeout3", timeout3);
+            doSetProperty("timeout3", timeout3);
             return this;
         }
         /**
@@ -1352,7 +1352,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: data
          */
         default ServerEndpointBuilder causeSourceAddress(byte causeSourceAddress) {
-            setProperty("causeSourceAddress", causeSourceAddress);
+            doSetProperty("causeSourceAddress", causeSourceAddress);
             return this;
         }
         /**
@@ -1364,7 +1364,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointBuilder causeSourceAddress(
                 String causeSourceAddress) {
-            setProperty("causeSourceAddress", causeSourceAddress);
+            doSetProperty("causeSourceAddress", causeSourceAddress);
             return this;
         }
         /**
@@ -1376,7 +1376,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
-            setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
+            doSetProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
         }
         /**
@@ -1388,7 +1388,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
-            setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
+            doSetProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
         }
         /**
@@ -1400,7 +1400,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
-            setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
+            doSetProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
         }
         /**
@@ -1412,7 +1412,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default ServerEndpointBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
-            setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
+            doSetProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
         }
         /**
@@ -1423,7 +1423,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: data
          */
         default ServerEndpointBuilder timeZone(TimeZone timeZone) {
-            setProperty("timeZone", timeZone);
+            doSetProperty("timeZone", timeZone);
             return this;
         }
         /**
@@ -1435,7 +1435,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: data
          */
         default ServerEndpointBuilder timeZone(String timeZone) {
-            setProperty("timeZone", timeZone);
+            doSetProperty("timeZone", timeZone);
             return this;
         }
         /**
@@ -1446,7 +1446,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: id
          */
         default ServerEndpointBuilder connectionId(String connectionId) {
-            setProperty("connectionId", connectionId);
+            doSetProperty("connectionId", connectionId);
             return this;
         }
     }
@@ -1470,7 +1470,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1483,7 +1483,7 @@ public interface ServerEndpointBuilderFactory {
          */
         default AdvancedServerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1495,7 +1495,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedServerEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1507,7 +1507,7 @@ public interface ServerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedServerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

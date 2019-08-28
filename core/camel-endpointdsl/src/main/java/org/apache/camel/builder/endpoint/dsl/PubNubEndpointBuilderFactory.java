@@ -51,7 +51,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: common
          */
         default PubNubEndpointConsumerBuilder uuid(String uuid) {
-            setProperty("uuid", uuid);
+            doSetProperty("uuid", uuid);
             return this;
         }
         /**
@@ -69,7 +69,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default PubNubEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default PubNubEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: consumer
          */
         default PubNubEndpointConsumerBuilder withPresence(boolean withPresence) {
-            setProperty("withPresence", withPresence);
+            doSetProperty("withPresence", withPresence);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: consumer
          */
         default PubNubEndpointConsumerBuilder withPresence(String withPresence) {
-            setProperty("withPresence", withPresence);
+            doSetProperty("withPresence", withPresence);
             return this;
         }
         /**
@@ -121,7 +121,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointConsumerBuilder authKey(String authKey) {
-            setProperty("authKey", authKey);
+            doSetProperty("authKey", authKey);
             return this;
         }
         /**
@@ -133,7 +133,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointConsumerBuilder cipherKey(String cipherKey) {
-            setProperty("cipherKey", cipherKey);
+            doSetProperty("cipherKey", cipherKey);
             return this;
         }
         /**
@@ -145,7 +145,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointConsumerBuilder publishKey(String publishKey) {
-            setProperty("publishKey", publishKey);
+            doSetProperty("publishKey", publishKey);
             return this;
         }
         /**
@@ -156,7 +156,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointConsumerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -167,7 +167,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointConsumerBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointConsumerBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointConsumerBuilder subscribeKey(String subscribeKey) {
-            setProperty("subscribeKey", subscribeKey);
+            doSetProperty("subscribeKey", subscribeKey);
             return this;
         }
     }
@@ -217,7 +217,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -233,7 +233,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -245,7 +245,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -258,7 +258,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -271,7 +271,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -284,7 +284,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -295,7 +295,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPubNubEndpointConsumerBuilder pubnub(Object pubnub) {
-            setProperty("pubnub", pubnub);
+            doSetProperty("pubnub", pubnub);
             return this;
         }
         /**
@@ -307,7 +307,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPubNubEndpointConsumerBuilder pubnub(String pubnub) {
-            setProperty("pubnub", pubnub);
+            doSetProperty("pubnub", pubnub);
             return this;
         }
         /**
@@ -320,7 +320,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -333,7 +333,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -356,7 +356,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: common
          */
         default PubNubEndpointProducerBuilder uuid(String uuid) {
-            setProperty("uuid", uuid);
+            doSetProperty("uuid", uuid);
             return this;
         }
         /**
@@ -376,7 +376,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default PubNubEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -396,7 +396,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default PubNubEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -418,7 +418,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: producer
          */
         default PubNubEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -430,7 +430,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointProducerBuilder authKey(String authKey) {
-            setProperty("authKey", authKey);
+            doSetProperty("authKey", authKey);
             return this;
         }
         /**
@@ -442,7 +442,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointProducerBuilder cipherKey(String cipherKey) {
-            setProperty("cipherKey", cipherKey);
+            doSetProperty("cipherKey", cipherKey);
             return this;
         }
         /**
@@ -454,7 +454,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointProducerBuilder publishKey(String publishKey) {
-            setProperty("publishKey", publishKey);
+            doSetProperty("publishKey", publishKey);
             return this;
         }
         /**
@@ -465,7 +465,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointProducerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -476,7 +476,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointProducerBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -487,7 +487,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointProducerBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -499,7 +499,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointProducerBuilder subscribeKey(String subscribeKey) {
-            setProperty("subscribeKey", subscribeKey);
+            doSetProperty("subscribeKey", subscribeKey);
             return this;
         }
     }
@@ -523,7 +523,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -536,7 +536,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -547,7 +547,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPubNubEndpointProducerBuilder pubnub(Object pubnub) {
-            setProperty("pubnub", pubnub);
+            doSetProperty("pubnub", pubnub);
             return this;
         }
         /**
@@ -559,7 +559,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPubNubEndpointProducerBuilder pubnub(String pubnub) {
-            setProperty("pubnub", pubnub);
+            doSetProperty("pubnub", pubnub);
             return this;
         }
         /**
@@ -572,7 +572,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -585,7 +585,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -608,7 +608,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: common
          */
         default PubNubEndpointBuilder uuid(String uuid) {
-            setProperty("uuid", uuid);
+            doSetProperty("uuid", uuid);
             return this;
         }
         /**
@@ -620,7 +620,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointBuilder authKey(String authKey) {
-            setProperty("authKey", authKey);
+            doSetProperty("authKey", authKey);
             return this;
         }
         /**
@@ -632,7 +632,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointBuilder cipherKey(String cipherKey) {
-            setProperty("cipherKey", cipherKey);
+            doSetProperty("cipherKey", cipherKey);
             return this;
         }
         /**
@@ -644,7 +644,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointBuilder publishKey(String publishKey) {
-            setProperty("publishKey", publishKey);
+            doSetProperty("publishKey", publishKey);
             return this;
         }
         /**
@@ -655,7 +655,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
         /**
@@ -666,7 +666,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -677,7 +677,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -689,7 +689,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: security
          */
         default PubNubEndpointBuilder subscribeKey(String subscribeKey) {
-            setProperty("subscribeKey", subscribeKey);
+            doSetProperty("subscribeKey", subscribeKey);
             return this;
         }
     }
@@ -713,7 +713,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -726,7 +726,7 @@ public interface PubNubEndpointBuilderFactory {
          */
         default AdvancedPubNubEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -737,7 +737,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPubNubEndpointBuilder pubnub(Object pubnub) {
-            setProperty("pubnub", pubnub);
+            doSetProperty("pubnub", pubnub);
             return this;
         }
         /**
@@ -749,7 +749,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPubNubEndpointBuilder pubnub(String pubnub) {
-            setProperty("pubnub", pubnub);
+            doSetProperty("pubnub", pubnub);
             return this;
         }
         /**
@@ -761,7 +761,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPubNubEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -773,7 +773,7 @@ public interface PubNubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPubNubEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

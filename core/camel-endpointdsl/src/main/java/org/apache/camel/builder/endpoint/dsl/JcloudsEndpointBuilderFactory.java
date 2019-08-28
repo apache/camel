@@ -56,7 +56,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default JcloudsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -74,7 +74,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default JcloudsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: blobstore
          */
         default JcloudsEndpointConsumerBuilder container(String container) {
-            setProperty("container", container);
+            doSetProperty("container", container);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: blobstore
          */
         default JcloudsEndpointConsumerBuilder directory(String directory) {
-            setProperty("directory", directory);
+            doSetProperty("directory", directory);
             return this;
         }
     }
@@ -123,7 +123,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -177,7 +177,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -190,7 +190,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -203,7 +203,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -216,7 +216,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -247,7 +247,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default JcloudsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default JcloudsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -278,7 +278,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: blobstore
          */
         default JcloudsEndpointProducerBuilder blobName(String blobName) {
-            setProperty("blobName", blobName);
+            doSetProperty("blobName", blobName);
             return this;
         }
         /**
@@ -289,7 +289,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: blobstore
          */
         default JcloudsEndpointProducerBuilder container(String container) {
-            setProperty("container", container);
+            doSetProperty("container", container);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder group(String group) {
-            setProperty("group", group);
+            doSetProperty("group", group);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder hardwareId(String hardwareId) {
-            setProperty("hardwareId", hardwareId);
+            doSetProperty("hardwareId", hardwareId);
             return this;
         }
         /**
@@ -325,7 +325,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder imageId(String imageId) {
-            setProperty("imageId", imageId);
+            doSetProperty("imageId", imageId);
             return this;
         }
         /**
@@ -337,7 +337,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder locationId(String locationId) {
-            setProperty("locationId", locationId);
+            doSetProperty("locationId", locationId);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder nodeId(String nodeId) {
-            setProperty("nodeId", nodeId);
+            doSetProperty("nodeId", nodeId);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder nodeState(String nodeState) {
-            setProperty("nodeState", nodeState);
+            doSetProperty("nodeState", nodeState);
             return this;
         }
         /**
@@ -371,7 +371,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -382,7 +382,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: compute
          */
         default JcloudsEndpointProducerBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -406,7 +406,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -419,7 +419,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -432,7 +432,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -467,7 +467,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: blobstore
          */
         default JcloudsEndpointBuilder container(String container) {
-            setProperty("container", container);
+            doSetProperty("container", container);
             return this;
         }
     }
@@ -491,7 +491,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -504,7 +504,7 @@ public interface JcloudsEndpointBuilderFactory {
          */
         default AdvancedJcloudsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -516,7 +516,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJcloudsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -528,7 +528,7 @@ public interface JcloudsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJcloudsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

@@ -46,7 +46,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder batch(boolean batch) {
-            setProperty("batch", batch);
+            doSetProperty("batch", batch);
             return this;
         }
         /**
@@ -57,7 +57,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder batch(String batch) {
-            setProperty("batch", batch);
+            doSetProperty("batch", batch);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder databaseName(String databaseName) {
-            setProperty("databaseName", databaseName);
+            doSetProperty("databaseName", databaseName);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder retentionPolicy(String retentionPolicy) {
-            setProperty("retentionPolicy", retentionPolicy);
+            doSetProperty("retentionPolicy", retentionPolicy);
             return this;
         }
     }
@@ -126,7 +126,7 @@ public interface InfluxDbEndpointBuilderFactory {
          */
         default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface InfluxDbEndpointBuilderFactory {
          */
         default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -163,7 +163,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

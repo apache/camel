@@ -47,7 +47,7 @@ public interface SparkEndpointBuilderFactory {
          * Group: consumer
          */
         default SparkEndpointBuilder accept(String accept) {
-            setProperty("accept", accept);
+            doSetProperty("accept", accept);
             return this;
         }
         /**
@@ -69,7 +69,7 @@ public interface SparkEndpointBuilderFactory {
          */
         default SparkEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface SparkEndpointBuilderFactory {
          */
         default SparkEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -107,7 +107,7 @@ public interface SparkEndpointBuilderFactory {
          * Group: consumer
          */
         default SparkEndpointBuilder mapHeaders(boolean mapHeaders) {
-            setProperty("mapHeaders", mapHeaders);
+            doSetProperty("mapHeaders", mapHeaders);
             return this;
         }
         /**
@@ -123,7 +123,7 @@ public interface SparkEndpointBuilderFactory {
          * Group: consumer
          */
         default SparkEndpointBuilder mapHeaders(String mapHeaders) {
-            setProperty("mapHeaders", mapHeaders);
+            doSetProperty("mapHeaders", mapHeaders);
             return this;
         }
         /**
@@ -139,7 +139,7 @@ public interface SparkEndpointBuilderFactory {
          * Group: consumer
          */
         default SparkEndpointBuilder transferException(boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface SparkEndpointBuilderFactory {
          * Group: consumer
          */
         default SparkEndpointBuilder transferException(String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -168,7 +168,7 @@ public interface SparkEndpointBuilderFactory {
          * Group: consumer
          */
         default SparkEndpointBuilder urlDecodeHeaders(boolean urlDecodeHeaders) {
-            setProperty("urlDecodeHeaders", urlDecodeHeaders);
+            doSetProperty("urlDecodeHeaders", urlDecodeHeaders);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface SparkEndpointBuilderFactory {
          * Group: consumer
          */
         default SparkEndpointBuilder urlDecodeHeaders(String urlDecodeHeaders) {
-            setProperty("urlDecodeHeaders", urlDecodeHeaders);
+            doSetProperty("urlDecodeHeaders", urlDecodeHeaders);
             return this;
         }
     }
@@ -205,7 +205,7 @@ public interface SparkEndpointBuilderFactory {
          */
         default AdvancedSparkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface SparkEndpointBuilderFactory {
          */
         default AdvancedSparkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -231,7 +231,7 @@ public interface SparkEndpointBuilderFactory {
          */
         default AdvancedSparkEndpointBuilder matchOnUriPrefix(
                 boolean matchOnUriPrefix) {
-            setProperty("matchOnUriPrefix", matchOnUriPrefix);
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
         }
         /**
@@ -244,7 +244,7 @@ public interface SparkEndpointBuilderFactory {
          */
         default AdvancedSparkEndpointBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
-            setProperty("matchOnUriPrefix", matchOnUriPrefix);
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
         }
         /**
@@ -256,7 +256,7 @@ public interface SparkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSparkEndpointBuilder sparkBinding(Object sparkBinding) {
-            setProperty("sparkBinding", sparkBinding);
+            doSetProperty("sparkBinding", sparkBinding);
             return this;
         }
         /**
@@ -268,7 +268,7 @@ public interface SparkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSparkEndpointBuilder sparkBinding(String sparkBinding) {
-            setProperty("sparkBinding", sparkBinding);
+            doSetProperty("sparkBinding", sparkBinding);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface SparkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSparkEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -292,7 +292,7 @@ public interface SparkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSparkEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

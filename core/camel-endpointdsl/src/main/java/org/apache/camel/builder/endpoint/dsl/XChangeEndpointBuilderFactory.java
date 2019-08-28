@@ -47,7 +47,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder currency(Object currency) {
-            setProperty("currency", currency);
+            doSetProperty("currency", currency);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder currency(String currency) {
-            setProperty("currency", currency);
+            doSetProperty("currency", currency);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder currencyPair(Object currencyPair) {
-            setProperty("currencyPair", currencyPair);
+            doSetProperty("currencyPair", currencyPair);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder currencyPair(String currencyPair) {
-            setProperty("currencyPair", currencyPair);
+            doSetProperty("currencyPair", currencyPair);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder method(XChangeMethod method) {
-            setProperty("method", method);
+            doSetProperty("method", method);
             return this;
         }
         /**
@@ -109,7 +109,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder method(String method) {
-            setProperty("method", method);
+            doSetProperty("method", method);
             return this;
         }
         /**
@@ -122,7 +122,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder service(XChangeService service) {
-            setProperty("service", service);
+            doSetProperty("service", service);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder service(String service) {
-            setProperty("service", service);
+            doSetProperty("service", service);
             return this;
         }
     }
@@ -159,7 +159,7 @@ public interface XChangeEndpointBuilderFactory {
          */
         default AdvancedXChangeEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface XChangeEndpointBuilderFactory {
          */
         default AdvancedXChangeEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -184,7 +184,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXChangeEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXChangeEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

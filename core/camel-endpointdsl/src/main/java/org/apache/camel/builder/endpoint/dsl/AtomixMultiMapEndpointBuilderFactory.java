@@ -51,7 +51,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder atomix(Object atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder atomix(String atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AtomixMultiMapEndpointBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder defaultAction(Action defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder defaultAction(String defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder key(Object key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -123,7 +123,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder key(String key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -135,7 +135,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder nodes(List<Object> nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder nodes(String nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -158,7 +158,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder resultHeader(String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AtomixMultiMapEndpointBuilder transportClassName(
                 String transportClassName) {
-            setProperty("transportClassName", transportClassName);
+            doSetProperty("transportClassName", transportClassName);
             return this;
         }
         /**
@@ -181,7 +181,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder ttl(long ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder ttl(String ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
     }
@@ -216,7 +216,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -229,7 +229,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -266,7 +266,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -279,7 +279,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -293,7 +293,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder ephemeral(
                 boolean ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -306,7 +306,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder ephemeral(String ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder readConsistency(
                 ReadConsistency readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -332,7 +332,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder readConsistency(
                 String readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -345,7 +345,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -359,7 +359,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceConfigs(
                 String resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -372,7 +372,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -386,7 +386,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceOptions(
                 String resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -399,7 +399,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -412,7 +412,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          */
         default AdvancedAtomixMultiMapEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

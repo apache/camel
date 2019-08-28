@@ -49,7 +49,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * Group: common
          */
         default OptaPlannerEndpointConsumerBuilder solverId(String solverId) {
-            setProperty("solverId", solverId);
+            doSetProperty("solverId", solverId);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default OptaPlannerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default OptaPlannerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -112,7 +112,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -140,7 +140,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -166,7 +166,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -179,7 +179,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -205,7 +205,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -227,7 +227,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * Group: common
          */
         default OptaPlannerEndpointProducerBuilder solverId(String solverId) {
-            setProperty("solverId", solverId);
+            doSetProperty("solverId", solverId);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * Group: producer
          */
         default OptaPlannerEndpointProducerBuilder async(boolean async) {
-            setProperty("async", async);
+            doSetProperty("async", async);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * Group: producer
          */
         default OptaPlannerEndpointProducerBuilder async(String async) {
-            setProperty("async", async);
+            doSetProperty("async", async);
             return this;
         }
         /**
@@ -269,7 +269,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default OptaPlannerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -289,7 +289,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default OptaPlannerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -301,7 +301,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default OptaPlannerEndpointProducerBuilder threadPoolSize(
                 int threadPoolSize) {
-            setProperty("threadPoolSize", threadPoolSize);
+            doSetProperty("threadPoolSize", threadPoolSize);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default OptaPlannerEndpointProducerBuilder threadPoolSize(
                 String threadPoolSize) {
-            setProperty("threadPoolSize", threadPoolSize);
+            doSetProperty("threadPoolSize", threadPoolSize);
             return this;
         }
     }
@@ -337,7 +337,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -350,7 +350,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -363,7 +363,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -376,7 +376,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -398,7 +398,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * Group: common
          */
         default OptaPlannerEndpointBuilder solverId(String solverId) {
-            setProperty("solverId", solverId);
+            doSetProperty("solverId", solverId);
             return this;
         }
     }
@@ -422,7 +422,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -435,7 +435,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -448,7 +448,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -461,7 +461,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default AdvancedOptaPlannerEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }

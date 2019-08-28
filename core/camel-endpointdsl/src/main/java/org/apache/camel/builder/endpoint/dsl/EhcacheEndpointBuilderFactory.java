@@ -53,7 +53,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManager(Object cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManager(String cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -90,7 +90,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -146,7 +146,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -176,7 +176,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder eventFiring(
                 EventFiring eventFiring) {
-            setProperty("eventFiring", eventFiring);
+            doSetProperty("eventFiring", eventFiring);
             return this;
         }
         /**
@@ -188,7 +188,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventFiring(String eventFiring) {
-            setProperty("eventFiring", eventFiring);
+            doSetProperty("eventFiring", eventFiring);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(
                 EventOrdering eventOrdering) {
-            setProperty("eventOrdering", eventOrdering);
+            doSetProperty("eventOrdering", eventOrdering);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(
                 String eventOrdering) {
-            setProperty("eventOrdering", eventOrdering);
+            doSetProperty("eventOrdering", eventOrdering);
             return this;
         }
         /**
@@ -226,7 +226,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder eventTypes(
                 Set<EventType> eventTypes) {
-            setProperty("eventTypes", eventTypes);
+            doSetProperty("eventTypes", eventTypes);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventTypes(String eventTypes) {
-            setProperty("eventTypes", eventTypes);
+            doSetProperty("eventTypes", eventTypes);
             return this;
         }
     }
@@ -265,7 +265,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -281,7 +281,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -293,7 +293,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -306,7 +306,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -332,7 +332,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -346,7 +346,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder configuration(
                 Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -360,7 +360,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder configuration(
                 String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -373,7 +373,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder configurations(
                 Map<String, Object> configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
@@ -387,7 +387,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder configurations(
                 String configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
@@ -398,7 +398,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder keyType(String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -411,7 +411,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -424,7 +424,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -436,7 +436,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder valueType(
                 String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
     }
@@ -459,7 +459,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManager(Object cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -471,7 +471,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManager(String cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -483,7 +483,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -496,7 +496,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -508,7 +508,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -521,7 +521,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -534,7 +534,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -546,7 +546,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: producer
          */
         default EhcacheEndpointProducerBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -558,7 +558,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: producer
          */
         default EhcacheEndpointProducerBuilder key(Object key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -570,7 +570,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: producer
          */
         default EhcacheEndpointProducerBuilder key(String key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -590,7 +590,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -610,7 +610,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -634,7 +634,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -647,7 +647,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -661,7 +661,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder configuration(
                 Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -675,7 +675,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder configuration(
                 String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -688,7 +688,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder configurations(
                 Map<String, Object> configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
@@ -702,7 +702,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder configurations(
                 String configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
@@ -713,7 +713,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder keyType(String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -726,7 +726,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -739,7 +739,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -751,7 +751,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder valueType(
                 String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
     }
@@ -774,7 +774,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointBuilder cacheManager(Object cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -786,7 +786,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointBuilder cacheManager(String cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -798,7 +798,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -811,7 +811,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -822,7 +822,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointBuilder configurationUri(String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -835,7 +835,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -848,7 +848,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
     }
@@ -872,7 +872,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -885,7 +885,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -899,7 +899,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointBuilder configuration(
                 Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -913,7 +913,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointBuilder configuration(
                 String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -926,7 +926,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointBuilder configurations(
                 Map<String, Object> configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
@@ -940,7 +940,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointBuilder configurations(
                 String configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
@@ -951,7 +951,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder keyType(String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -963,7 +963,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -975,7 +975,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -986,7 +986,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder valueType(String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
     }
