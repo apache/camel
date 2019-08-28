@@ -315,7 +315,7 @@ public interface SparkEndpointBuilderFactory {
      * Path parameter: path (required)
      * The content path which support Spark syntax.
      */
-    default SparkEndpointBuilder spark(String path) {
+    default SparkEndpointBuilder sparkRest(String path) {
         class SparkEndpointBuilderImpl extends AbstractEndpointBuilder implements SparkEndpointBuilder, AdvancedSparkEndpointBuilder {
             public SparkEndpointBuilderImpl(String path) {
                 super("spark-rest", path);

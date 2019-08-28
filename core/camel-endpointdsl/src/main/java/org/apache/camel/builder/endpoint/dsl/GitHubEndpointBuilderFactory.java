@@ -607,7 +607,7 @@ public interface GitHubEndpointBuilderFactory {
      * Path parameter: branchName
      * Name of branch
      */
-    default GitHubEndpointBuilder gitHub(String path) {
+    default GitHubEndpointBuilder github(String path) {
         class GitHubEndpointBuilderImpl extends AbstractEndpointBuilder implements GitHubEndpointBuilder, AdvancedGitHubEndpointBuilder {
             public GitHubEndpointBuilderImpl(String path) {
                 super("github", path);

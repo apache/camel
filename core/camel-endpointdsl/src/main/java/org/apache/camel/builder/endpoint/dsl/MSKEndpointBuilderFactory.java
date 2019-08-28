@@ -137,7 +137,7 @@ public interface MSKEndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default MSKEndpointBuilder mSK(String path) {
+    default MSKEndpointBuilder awsMsk(String path) {
         class MSKEndpointBuilderImpl extends AbstractEndpointBuilder implements MSKEndpointBuilder, AdvancedMSKEndpointBuilder {
             public MSKEndpointBuilderImpl(String path) {
                 super("aws-msk", path);

@@ -398,7 +398,7 @@ public interface EventEndpointBuilderFactory {
      * Path parameter: name
      * Name of endpoint
      */
-    default EventEndpointBuilder event(String path) {
+    default EventEndpointBuilder springEvent(String path) {
         class EventEndpointBuilderImpl extends AbstractEndpointBuilder implements EventEndpointBuilder, AdvancedEventEndpointBuilder {
             public EventEndpointBuilderImpl(String path) {
                 super("spring-event", path);

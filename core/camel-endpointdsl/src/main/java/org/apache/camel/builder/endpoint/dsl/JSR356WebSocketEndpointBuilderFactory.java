@@ -478,7 +478,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
      * If a path (/foo) it will deploy locally the endpoint, if an uri it will
      * connect to the corresponding server
      */
-    default JSR356WebSocketEndpointBuilder jSR356WebSocket(String path) {
+    default JSR356WebSocketEndpointBuilder websocketJsr356(String path) {
         class JSR356WebSocketEndpointBuilderImpl extends AbstractEndpointBuilder implements JSR356WebSocketEndpointBuilder, AdvancedJSR356WebSocketEndpointBuilder {
             public JSR356WebSocketEndpointBuilderImpl(String path) {
                 super("websocket-jsr356", path);

@@ -726,7 +726,7 @@ public interface IOTAEndpointBuilderFactory {
      * Path parameter: name (required)
      * Component name
      */
-    default IOTAEndpointBuilder iOTA(String path) {
+    default IOTAEndpointBuilder iota(String path) {
         class IOTAEndpointBuilderImpl extends AbstractEndpointBuilder implements IOTAEndpointBuilder, AdvancedIOTAEndpointBuilder {
             public IOTAEndpointBuilderImpl(String path) {
                 super("iota", path);

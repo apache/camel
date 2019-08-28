@@ -478,7 +478,7 @@ public interface OptaPlannerEndpointBuilderFactory {
      * Path parameter: configFile (required)
      * Specifies the location to the solver file
      */
-    default OptaPlannerEndpointBuilder optaPlanner(String path) {
+    default OptaPlannerEndpointBuilder optaplanner(String path) {
         class OptaPlannerEndpointBuilderImpl extends AbstractEndpointBuilder implements OptaPlannerEndpointBuilder, AdvancedOptaPlannerEndpointBuilder {
             public OptaPlannerEndpointBuilderImpl(String path) {
                 super("optaplanner", path);

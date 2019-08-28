@@ -636,7 +636,7 @@ public interface CouchDbEndpointBuilderFactory {
      * Path parameter: database (required)
      * Name of the database to use
      */
-    default CouchDbEndpointBuilder couchDb(String path) {
+    default CouchDbEndpointBuilder couchdb(String path) {
         class CouchDbEndpointBuilderImpl extends AbstractEndpointBuilder implements CouchDbEndpointBuilder, AdvancedCouchDbEndpointBuilder {
             public CouchDbEndpointBuilderImpl(String path) {
                 super("couchdb", path);

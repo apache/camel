@@ -118,7 +118,7 @@ public interface PaxLoggingEndpointBuilderFactory {
      * Appender is the name of the pax appender that need to be configured in
      * the PaxLogging service configuration.
      */
-    default PaxLoggingEndpointBuilder paxLogging(String path) {
+    default PaxLoggingEndpointBuilder paxlogging(String path) {
         class PaxLoggingEndpointBuilderImpl extends AbstractEndpointBuilder implements PaxLoggingEndpointBuilder, AdvancedPaxLoggingEndpointBuilder {
             public PaxLoggingEndpointBuilderImpl(String path) {
                 super("paxlogging", path);

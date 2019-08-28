@@ -285,7 +285,7 @@ public interface SesEndpointBuilderFactory {
      * Path parameter: from (required)
      * The sender's email address.
      */
-    default SesEndpointBuilder ses(String path) {
+    default SesEndpointBuilder awsSes(String path) {
         class SesEndpointBuilderImpl extends AbstractEndpointBuilder implements SesEndpointBuilder, AdvancedSesEndpointBuilder {
             public SesEndpointBuilderImpl(String path) {
                 super("aws-ses", path);

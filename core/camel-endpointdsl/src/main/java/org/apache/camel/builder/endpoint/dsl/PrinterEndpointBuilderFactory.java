@@ -271,7 +271,7 @@ public interface PrinterEndpointBuilderFactory {
      * Path parameter: printername
      * Name of the printer
      */
-    default PrinterEndpointBuilder printer(String path) {
+    default PrinterEndpointBuilder lpr(String path) {
         class PrinterEndpointBuilderImpl extends AbstractEndpointBuilder implements PrinterEndpointBuilder, AdvancedPrinterEndpointBuilder {
             public PrinterEndpointBuilderImpl(String path) {
                 super("lpr", path);

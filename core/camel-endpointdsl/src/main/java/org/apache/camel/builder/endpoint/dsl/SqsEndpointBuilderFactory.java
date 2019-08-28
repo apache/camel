@@ -2175,7 +2175,7 @@ public interface SqsEndpointBuilderFactory {
      * Path parameter: queueNameOrArn (required)
      * Queue name or ARN
      */
-    default SqsEndpointBuilder sqs(String path) {
+    default SqsEndpointBuilder awsSqs(String path) {
         class SqsEndpointBuilderImpl extends AbstractEndpointBuilder implements SqsEndpointBuilder, AdvancedSqsEndpointBuilder {
             public SqsEndpointBuilderImpl(String path) {
                 super("aws-sqs", path);

@@ -2629,7 +2629,7 @@ public interface MQTTEndpointBuilderFactory {
      * Path parameter: name (required)
      * A logical name to use which is not the topic name.
      */
-    default MQTTEndpointBuilder mQTT(String path) {
+    default MQTTEndpointBuilder mqtt(String path) {
         class MQTTEndpointBuilderImpl extends AbstractEndpointBuilder implements MQTTEndpointBuilder, AdvancedMQTTEndpointBuilder {
             public MQTTEndpointBuilderImpl(String path) {
                 super("mqtt", path);

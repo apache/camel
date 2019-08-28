@@ -216,7 +216,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
      * Path parameter: streamName (required)
      * Name of the stream
      */
-    default KinesisFirehoseEndpointBuilder kinesisFirehose(String path) {
+    default KinesisFirehoseEndpointBuilder awsKinesisFirehose(String path) {
         class KinesisFirehoseEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehoseEndpointBuilder, AdvancedKinesisFirehoseEndpointBuilder {
             public KinesisFirehoseEndpointBuilderImpl(String path) {
                 super("aws-kinesis-firehose", path);

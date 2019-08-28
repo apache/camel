@@ -429,7 +429,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
      * Path parameter: clusterName (required)
      * The name of the JGroupsraft cluster the component should connect to.
      */
-    default JGroupsRaftEndpointBuilder jGroupsRaft(String path) {
+    default JGroupsRaftEndpointBuilder jgroupsRaft(String path) {
         class JGroupsRaftEndpointBuilderImpl extends AbstractEndpointBuilder implements JGroupsRaftEndpointBuilder, AdvancedJGroupsRaftEndpointBuilder {
             public JGroupsRaftEndpointBuilderImpl(String path) {
                 super("jgroups-raft", path);

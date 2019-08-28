@@ -791,7 +791,7 @@ public interface PubNubEndpointBuilderFactory {
      * Path parameter: channel (required)
      * The channel used for subscribing/publishing events
      */
-    default PubNubEndpointBuilder pubNub(String path) {
+    default PubNubEndpointBuilder pubnub(String path) {
         class PubNubEndpointBuilderImpl extends AbstractEndpointBuilder implements PubNubEndpointBuilder, AdvancedPubNubEndpointBuilder {
             public PubNubEndpointBuilderImpl(String path) {
                 super("pubnub", path);

@@ -905,7 +905,7 @@ public interface RedisEndpointBuilderFactory {
      * Path parameter: port (required)
      * Redis server port number
      */
-    default RedisEndpointBuilder redis(String path) {
+    default RedisEndpointBuilder springRedis(String path) {
         class RedisEndpointBuilderImpl extends AbstractEndpointBuilder implements RedisEndpointBuilder, AdvancedRedisEndpointBuilder {
             public RedisEndpointBuilderImpl(String path) {
                 super("spring-redis", path);

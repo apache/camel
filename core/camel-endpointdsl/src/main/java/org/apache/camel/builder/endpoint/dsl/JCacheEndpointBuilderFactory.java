@@ -1412,7 +1412,7 @@ public interface JCacheEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    default JCacheEndpointBuilder jCache(String path) {
+    default JCacheEndpointBuilder jcache(String path) {
         class JCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements JCacheEndpointBuilder, AdvancedJCacheEndpointBuilder {
             public JCacheEndpointBuilderImpl(String path) {
                 super("jcache", path);

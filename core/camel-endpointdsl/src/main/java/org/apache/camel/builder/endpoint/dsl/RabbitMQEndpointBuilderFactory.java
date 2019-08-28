@@ -3093,7 +3093,7 @@ public interface RabbitMQEndpointBuilderFactory {
      * to. In the case of consumers, the exchange name determines which exchange
      * the queue will bind to.
      */
-    default RabbitMQEndpointBuilder rabbitMQ(String path) {
+    default RabbitMQEndpointBuilder rabbitmq(String path) {
         class RabbitMQEndpointBuilderImpl extends AbstractEndpointBuilder implements RabbitMQEndpointBuilder, AdvancedRabbitMQEndpointBuilder {
             public RabbitMQEndpointBuilderImpl(String path) {
                 super("rabbitmq", path);

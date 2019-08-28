@@ -1678,7 +1678,7 @@ public interface XQueryEndpointBuilderFactory {
      * Path parameter: resourceUri (required)
      * The name of the template to load from classpath or file system
      */
-    default XQueryEndpointBuilder xQuery(String path) {
+    default XQueryEndpointBuilder xquery(String path) {
         class XQueryEndpointBuilderImpl extends AbstractEndpointBuilder implements XQueryEndpointBuilder, AdvancedXQueryEndpointBuilder {
             public XQueryEndpointBuilderImpl(String path) {
                 super("xquery", path);

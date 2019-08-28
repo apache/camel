@@ -276,7 +276,7 @@ public interface GeoCoderEndpointBuilderFactory {
      * Path parameter: latlng
      * The geo latitude and longitude which should be prefixed with latlng:
      */
-    default GeoCoderEndpointBuilder geoCoder(String path) {
+    default GeoCoderEndpointBuilder geocoder(String path) {
         class GeoCoderEndpointBuilderImpl extends AbstractEndpointBuilder implements GeoCoderEndpointBuilder, AdvancedGeoCoderEndpointBuilder {
             public GeoCoderEndpointBuilderImpl(String path) {
                 super("geocoder", path);

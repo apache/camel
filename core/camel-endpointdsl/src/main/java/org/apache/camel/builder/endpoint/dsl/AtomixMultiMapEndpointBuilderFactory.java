@@ -455,7 +455,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
      * Path parameter: resourceName (required)
      * The distributed resource name
      */
-    default AtomixMultiMapEndpointBuilder atomixMultiMap(String path) {
+    default AtomixMultiMapEndpointBuilder atomixMultimap(String path) {
         class AtomixMultiMapEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMultiMapEndpointBuilder, AdvancedAtomixMultiMapEndpointBuilder {
             public AtomixMultiMapEndpointBuilderImpl(String path) {
                 super("atomix-multimap", path);

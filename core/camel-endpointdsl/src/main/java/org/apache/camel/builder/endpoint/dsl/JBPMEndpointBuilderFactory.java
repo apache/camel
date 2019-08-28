@@ -1877,7 +1877,7 @@ public interface JBPMEndpointBuilderFactory {
      * Path parameter: eventListenerType
      * Sets the event listener type to attach to
      */
-    default JBPMEndpointBuilder jBPM(String path) {
+    default JBPMEndpointBuilder jbpm(String path) {
         class JBPMEndpointBuilderImpl extends AbstractEndpointBuilder implements JBPMEndpointBuilder, AdvancedJBPMEndpointBuilder {
             public JBPMEndpointBuilderImpl(String path) {
                 super("jbpm", path);

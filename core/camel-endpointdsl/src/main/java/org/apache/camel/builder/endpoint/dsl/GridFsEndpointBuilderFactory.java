@@ -803,7 +803,7 @@ public interface GridFsEndpointBuilderFactory {
      * Path parameter: connectionBean (required)
      * Name of com.mongodb.Mongo to use.
      */
-    default GridFsEndpointBuilder gridFs(String path) {
+    default GridFsEndpointBuilder mongodbGridfs(String path) {
         class GridFsEndpointBuilderImpl extends AbstractEndpointBuilder implements GridFsEndpointBuilder, AdvancedGridFsEndpointBuilder {
             public GridFsEndpointBuilderImpl(String path) {
                 super("mongodb-gridfs", path);

@@ -346,7 +346,7 @@ public interface DdbEndpointBuilderFactory {
      * Path parameter: tableName (required)
      * The name of the table currently worked with.
      */
-    default DdbEndpointBuilder ddb(String path) {
+    default DdbEndpointBuilder awsDdb(String path) {
         class DdbEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbEndpointBuilder, AdvancedDdbEndpointBuilder {
             public DdbEndpointBuilderImpl(String path) {
                 super("aws-ddb", path);

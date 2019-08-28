@@ -139,7 +139,7 @@ public interface KMSEndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default KMSEndpointBuilder kMS(String path) {
+    default KMSEndpointBuilder awsKms(String path) {
         class KMSEndpointBuilderImpl extends AbstractEndpointBuilder implements KMSEndpointBuilder, AdvancedKMSEndpointBuilder {
             public KMSEndpointBuilderImpl(String path) {
                 super("aws-kms", path);

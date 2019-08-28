@@ -121,7 +121,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
      * Path parameter: consumerEndpointUri (required)
      * The consumer endpoint to use in master/slave mode
      */
-    default ZooKeeperMasterEndpointBuilder zooKeeperMaster(String path) {
+    default ZooKeeperMasterEndpointBuilder zookeeperMaster(String path) {
         class ZooKeeperMasterEndpointBuilderImpl extends AbstractEndpointBuilder implements ZooKeeperMasterEndpointBuilder, AdvancedZooKeeperMasterEndpointBuilder {
             public ZooKeeperMasterEndpointBuilderImpl(String path) {
                 super("zookeeper-master", path);

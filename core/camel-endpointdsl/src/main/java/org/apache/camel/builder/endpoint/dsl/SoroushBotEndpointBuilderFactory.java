@@ -1263,7 +1263,7 @@ public interface SoroushBotEndpointBuilderFactory {
      * The value can be one of: sendMessage, getMessage, uploadFile,
      * downloadFile
      */
-    default SoroushBotEndpointBuilder soroushBot(String path) {
+    default SoroushBotEndpointBuilder soroush(String path) {
         class SoroushBotEndpointBuilderImpl extends AbstractEndpointBuilder implements SoroushBotEndpointBuilder, AdvancedSoroushBotEndpointBuilder {
             public SoroushBotEndpointBuilderImpl(String path) {
                 super("soroush", path);

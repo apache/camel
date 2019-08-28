@@ -1091,11 +1091,47 @@ public interface CometdEndpointBuilderFactory {
      * endpoints.
      */
     default CometdEndpointBuilder cometd(String path) {
+        return cometd("cometd", path);
+    }
+    /**
+     * CometD (Secure) (camel-cometd)
+     * The cometd component is a transport for working with the Jetty
+     * implementation of the cometd/bayeux protocol.
+     * 
+     * Category: websocket
+     * Available as of version: 2.0
+     * Maven coordinates: org.apache.camel:camel-cometd
+     * 
+     * Syntax: <code>cometds:host:port/channelName</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname
+     * 
+     * Path parameter: port (required)
+     * Host port number
+     * 
+     * Path parameter: channelName (required)
+     * The channelName represents a topic that can be subscribed to by the Camel
+     * endpoints.
+     */
+    default CometdEndpointBuilder cometds(String path) {
+        return cometd("cometds", path);
+    }
+    /**
+     * CometD (camel-cometd)
+     * The cometd component is a transport for working with the Jetty
+     * implementation of the cometd/bayeux protocol.
+     * 
+     * Category: websocket
+     * Available as of version: 2.0
+     * Maven coordinates: org.apache.camel:camel-cometd
+     */
+    default CometdEndpointBuilder cometd(String scheme, String path) {
         class CometdEndpointBuilderImpl extends AbstractEndpointBuilder implements CometdEndpointBuilder, AdvancedCometdEndpointBuilder {
-            public CometdEndpointBuilderImpl(String path) {
-                super("cometd", path);
+            public CometdEndpointBuilderImpl(String scheme, String path) {
+                super(scheme, path);
             }
         }
-        return new CometdEndpointBuilderImpl(path);
+        return new CometdEndpointBuilderImpl(scheme, path);
     }
 }
