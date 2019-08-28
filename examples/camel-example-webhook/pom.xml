@@ -32,6 +32,10 @@
     <description>Example on how to use the Camel Webhook component</description>
     <packaging>jar</packaging>
 
+    <properties>
+        <category>Advanced</category>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
