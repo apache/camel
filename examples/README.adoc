@@ -17,19 +17,15 @@ Number of Examples: 115 (0 deprecated)
 |===
 | Example | Category | Description
 
-| link:camel-example-any23/README.adoc[Any23] (camel-example-any23) |  | An example that uses the Any23 dataformat
-
-| link:camel-example-as2/README.md[As2] (camel-example-as2) |  | An example which demonstrates the use of the Camel AS2 component
-
-| link:camel-example-bigxml-split/README.md[Bigxml Split] (camel-example-bigxml-split) |  | How to deal with big XML files in Camel
-
 | link:camel-example-jira/README.adoc[Jira] (camel-example-jira) |  | An example that uses Jira Camel API
 
-| link:camel-example-telegram/README.adoc[Telegram] (camel-example-telegram) |  | An example that uses Telegram API
-
-| link:camel-example-webhook/readme.adoc[Webhook] (camel-example-webhook) |  | Example on how to use the Camel Webhook component
-
 | link:camel-example-micrometer/README.md[Micrometer] (camel-example-micrometer) | Advanced | An example showing how to work with Camel, Spring Java Config and Micrometer monitoring
+
+| link:camel-example-webhook/readme.adoc[Webhook] (camel-example-webhook) | Advanced | Example on how to use the Camel Webhook component
+
+| link:camel-example-any23/README.adoc[Any23 example] (camel-example-any23) | Beginner | An example that uses the Any23 dataformat
+
+| link:camel-example-as2/README.md[AS2 Example] (camel-example-as2) | Beginner | An example which demonstrates the use of the Camel AS2 component
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
 
@@ -107,6 +103,8 @@ Number of Examples: 115 (0 deprecated)
 | link:camel-example-aggregate/README.md[Aggregate] (camel-example-aggregate) | EIP | Demonstrates the persistent support for the Camel aggregator
 
 | link:camel-example-artemis/README.md[Widget Gadget using Apache Artemis] (camel-example-artemis) | EIP | The widget and gadget example from the EIP book using Apache Artemis
+
+| link:camel-example-bigxml-split/README.md[Bigxml Split] (camel-example-bigxml-split) | EIP | How to deal with big XML files in Camel
 
 | link:camel-example-billboard-aggr/README.md[Billboard Aggr] (camel-example-billboard-aggr) | EIP | Billboard aggregation example
 
@@ -247,6 +245,8 @@ Number of Examples: 115 (0 deprecated)
 | link:camel-example-swagger-cdi/README.md[Swagger CDI] (camel-example-swagger-cdi) | Rest | An example using REST DSL and Swagger Java with CDI
 
 | link:camel-example-spring-security/README.md[Spring Security] (camel-example-spring-security) | Security | An example showing how to work with Camel and Spring Security
+
+| link:camel-example-telegram/README.adoc[Telegram] (camel-example-telegram) | Social | An example that uses Telegram API
 
 | link:camel-example-twitter-salesforce/README.md[Twitter Salesforce] (camel-example-twitter-salesforce) | Social | Twitter mentions is created as contacts in Salesforce
 
