@@ -136,7 +136,7 @@
     <commons-beanutils-version>1.9.4</commons-beanutils-version>
     <commons-codec-version>1.11</commons-codec-version>
     <commons-collections-version>3.2.2</commons-collections-version>
-    <commons-compress-version>1.18</commons-compress-version>
+    <commons-compress-version>1.19</commons-compress-version>
     <commons-configuration-version>1.9</commons-configuration-version>
     <commons-configuration-bundle-version>1.9_1</commons-configuration-bundle-version>
     <commons-configuration2-version>2.4</commons-configuration2-version>
