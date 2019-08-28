@@ -206,7 +206,7 @@
         <fop-bundle-version>2.3_1</fop-bundle-version>
         <fop-version>2.3</fop-version>
         <ftpserver-version>1.1.1</ftpserver-version>
-        <freemarker-version>2.3.28</freemarker-version>
+        <freemarker-version>2.3.29</freemarker-version>
         <generex-bundle-version>1.0.2_1</generex-bundle-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
         <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
