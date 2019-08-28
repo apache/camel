@@ -29,6 +29,11 @@
   <name>Camel :: Example :: Any23</name>
   <description>An example that uses the Any23 dataformat</description>
   <packaging>jar</packaging>
+
+  <properties>
+     <category>Beginner</category>
+     <title>Any23 example</title>
+  </properties>
     
     
   <dependencies>
