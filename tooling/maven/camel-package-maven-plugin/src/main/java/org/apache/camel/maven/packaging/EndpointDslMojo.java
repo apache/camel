@@ -467,6 +467,9 @@ public class EndpointDslMojo extends AbstractMojo {
                 case "package":
                     s = "packag";
                     break;
+                case "rest":
+                    s = "restEndpoint";
+                    break;
             }
         }
         return s;
