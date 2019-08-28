@@ -1283,12 +1283,39 @@ public interface WsEndpointBuilderFactory {
      * Path parameter: httpUri (required)
      * The URI to use such as http://hostname:port/path
      */
-    default WsEndpointBuilder ws(String path) {
+    default WsEndpointBuilder ahcWs(String path) {
+        return ahcWs("ahc-ws", path);
+    }
+    /**
+     * AHC Secure Websocket (Secure) (camel-ahc-ws)
+     * To exchange data with external Websocket servers using Async Http Client.
+     * 
+     * Category: websocket
+     * Available as of version: 2.14
+     * Maven coordinates: org.apache.camel:camel-ahc-ws
+     * 
+     * Syntax: <code>ahc-wss:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The URI to use such as http://hostname:port/path
+     */
+    default WsEndpointBuilder ahcWss(String path) {
+        return ahcWs("ahc-wss", path);
+    }
+    /**
+     * AHC Websocket (camel-ahc-ws)
+     * To exchange data with external Websocket servers using Async Http Client.
+     * 
+     * Category: websocket
+     * Available as of version: 2.14
+     * Maven coordinates: org.apache.camel:camel-ahc-ws
+     */
+    default WsEndpointBuilder ahcWs(String scheme, String path) {
         class WsEndpointBuilderImpl extends AbstractEndpointBuilder implements WsEndpointBuilder, AdvancedWsEndpointBuilder {
-            public WsEndpointBuilderImpl(String path) {
-                super("ahc-ws", path);
+            public WsEndpointBuilderImpl(String scheme, String path) {
+                super(scheme, path);
             }
         }
-        return new WsEndpointBuilderImpl(path);
+        return new WsEndpointBuilderImpl(scheme, path);
     }
 }

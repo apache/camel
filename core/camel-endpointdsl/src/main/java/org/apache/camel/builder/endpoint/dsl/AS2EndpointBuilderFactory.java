@@ -1978,7 +1978,7 @@ public interface AS2EndpointBuilderFactory {
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      */
-    default AS2EndpointBuilder aS2(String path) {
+    default AS2EndpointBuilder as2(String path) {
         class AS2EndpointBuilderImpl extends AbstractEndpointBuilder implements AS2EndpointBuilder, AdvancedAS2EndpointBuilder {
             public AS2EndpointBuilderImpl(String path) {
                 super("as2", path);

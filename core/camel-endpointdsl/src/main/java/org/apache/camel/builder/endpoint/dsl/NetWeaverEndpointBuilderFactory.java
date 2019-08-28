@@ -208,7 +208,7 @@ public interface NetWeaverEndpointBuilderFactory {
      * Path parameter: url (required)
      * Url to the SAP net-weaver gateway server.
      */
-    default NetWeaverEndpointBuilder netWeaver(String path) {
+    default NetWeaverEndpointBuilder sapNetweaver(String path) {
         class NetWeaverEndpointBuilderImpl extends AbstractEndpointBuilder implements NetWeaverEndpointBuilder, AdvancedNetWeaverEndpointBuilder {
             public NetWeaverEndpointBuilderImpl(String path) {
                 super("sap-netweaver", path);

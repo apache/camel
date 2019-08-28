@@ -1024,7 +1024,7 @@ public interface XmlSignatureEndpointBuilderFactory {
      * The name part in the URI can be chosen by the user to distinguish between
      * different signer/verifier endpoints within the camel context.
      */
-    default XmlSignatureEndpointBuilder xmlSignature(String path) {
+    default XmlSignatureEndpointBuilder xmlsecurity(String path) {
         class XmlSignatureEndpointBuilderImpl extends AbstractEndpointBuilder implements XmlSignatureEndpointBuilder, AdvancedXmlSignatureEndpointBuilder {
             public XmlSignatureEndpointBuilderImpl(String path) {
                 super("xmlsecurity", path);

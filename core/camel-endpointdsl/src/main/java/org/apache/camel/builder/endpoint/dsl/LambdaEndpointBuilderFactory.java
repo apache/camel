@@ -247,7 +247,7 @@ public interface LambdaEndpointBuilderFactory {
      * Path parameter: function (required)
      * Name of the Lambda function.
      */
-    default LambdaEndpointBuilder lambda(String path) {
+    default LambdaEndpointBuilder awsLambda(String path) {
         class LambdaEndpointBuilderImpl extends AbstractEndpointBuilder implements LambdaEndpointBuilder, AdvancedLambdaEndpointBuilder {
             public LambdaEndpointBuilderImpl(String path) {
                 super("aws-lambda", path);

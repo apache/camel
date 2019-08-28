@@ -183,7 +183,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
      * Path parameter: name (required)
      * The sequence name.
      */
-    default IgniteIdGenEndpointBuilder igniteIdGen(String path) {
+    default IgniteIdGenEndpointBuilder igniteIdgen(String path) {
         class IgniteIdGenEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteIdGenEndpointBuilder, AdvancedIgniteIdGenEndpointBuilder {
             public IgniteIdGenEndpointBuilderImpl(String path) {
                 super("ignite-idgen", path);

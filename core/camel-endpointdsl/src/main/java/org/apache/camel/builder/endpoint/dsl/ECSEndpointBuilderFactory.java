@@ -137,7 +137,7 @@ public interface ECSEndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default ECSEndpointBuilder eCS(String path) {
+    default ECSEndpointBuilder awsEcs(String path) {
         class ECSEndpointBuilderImpl extends AbstractEndpointBuilder implements ECSEndpointBuilder, AdvancedECSEndpointBuilder {
             public ECSEndpointBuilderImpl(String path) {
                 super("aws-ecs", path);

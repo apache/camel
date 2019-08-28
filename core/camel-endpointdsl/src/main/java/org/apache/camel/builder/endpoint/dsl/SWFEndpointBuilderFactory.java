@@ -1273,7 +1273,7 @@ public interface SWFEndpointBuilderFactory {
      * Activity or workflow
      * The value can be one of: activity, workflow
      */
-    default SWFEndpointBuilder sWF(String path) {
+    default SWFEndpointBuilder awsSwf(String path) {
         class SWFEndpointBuilderImpl extends AbstractEndpointBuilder implements SWFEndpointBuilder, AdvancedSWFEndpointBuilder {
             public SWFEndpointBuilderImpl(String path) {
                 super("aws-swf", path);

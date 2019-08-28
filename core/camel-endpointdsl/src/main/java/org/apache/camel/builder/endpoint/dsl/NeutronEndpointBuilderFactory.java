@@ -219,7 +219,7 @@ public interface NeutronEndpointBuilderFactory {
      * Path parameter: host (required)
      * OpenStack host url
      */
-    default NeutronEndpointBuilder neutron(String path) {
+    default NeutronEndpointBuilder openstackNeutron(String path) {
         class NeutronEndpointBuilderImpl extends AbstractEndpointBuilder implements NeutronEndpointBuilder, AdvancedNeutronEndpointBuilder {
             public NeutronEndpointBuilderImpl(String path) {
                 super("openstack-neutron", path);

@@ -156,7 +156,7 @@ public interface ChatScriptEndpointBuilderFactory {
      * Path parameter: botName (required)
      * Name of the Bot in CS to converse with
      */
-    default ChatScriptEndpointBuilder chatScript(String path) {
+    default ChatScriptEndpointBuilder chatscript(String path) {
         class ChatScriptEndpointBuilderImpl extends AbstractEndpointBuilder implements ChatScriptEndpointBuilder, AdvancedChatScriptEndpointBuilder {
             public ChatScriptEndpointBuilderImpl(String path) {
                 super("chatscript", path);

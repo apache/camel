@@ -231,7 +231,7 @@ public interface ControlBusEndpointBuilderFactory {
      * groovy, header, jsonpath, mvel, ognl, ref, simple, spel, sql, terser,
      * tokenize, xpath, xquery, xtokenize
      */
-    default ControlBusEndpointBuilder controlBus(String path) {
+    default ControlBusEndpointBuilder controlbus(String path) {
         class ControlBusEndpointBuilderImpl extends AbstractEndpointBuilder implements ControlBusEndpointBuilder, AdvancedControlBusEndpointBuilder {
             public ControlBusEndpointBuilderImpl(String path) {
                 super("controlbus", path);

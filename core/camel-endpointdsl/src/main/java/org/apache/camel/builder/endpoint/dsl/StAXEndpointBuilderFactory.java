@@ -114,7 +114,7 @@ public interface StAXEndpointBuilderFactory {
      * Path parameter: contentHandlerClass (required)
      * The FQN class name for the ContentHandler implementation to use.
      */
-    default StAXEndpointBuilder stAX(String path) {
+    default StAXEndpointBuilder stax(String path) {
         class StAXEndpointBuilderImpl extends AbstractEndpointBuilder implements StAXEndpointBuilder, AdvancedStAXEndpointBuilder {
             public StAXEndpointBuilderImpl(String path) {
                 super("stax", path);

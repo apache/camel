@@ -144,7 +144,7 @@ public interface EC2EndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default EC2EndpointBuilder eC2(String path) {
+    default EC2EndpointBuilder awsEc2(String path) {
         class EC2EndpointBuilderImpl extends AbstractEndpointBuilder implements EC2EndpointBuilder, AdvancedEC2EndpointBuilder {
             public EC2EndpointBuilderImpl(String path) {
                 super("aws-ec2", path);

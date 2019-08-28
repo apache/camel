@@ -937,12 +937,75 @@ public interface CoAPEndpointBuilderFactory {
      * Path parameter: uri
      * The URI for the CoAP endpoint
      */
-    default CoAPEndpointBuilder coAP(String path) {
+    default CoAPEndpointBuilder coap(String path) {
+        return coap("coap", path);
+    }
+    /**
+     * CoAP (camel-coap)
+     * The coap component is used for sending and receiving messages from COAP
+     * capable devices.
+     * 
+     * Category: iot
+     * Available as of version: 2.16
+     * Maven coordinates: org.apache.camel:camel-coap
+     * 
+     * Syntax: <code>coap+tcp:uri</code>
+     * 
+     * Path parameter: uri
+     * The URI for the CoAP endpoint
+     */
+    default CoAPEndpointBuilder coapTcp(String path) {
+        return coap("coap+tcp", path);
+    }
+    /**
+     * CoAP (Secure) (camel-coap)
+     * The coap component is used for sending and receiving messages from COAP
+     * capable devices.
+     * 
+     * Category: iot
+     * Available as of version: 2.16
+     * Maven coordinates: org.apache.camel:camel-coap
+     * 
+     * Syntax: <code>coaps:uri</code>
+     * 
+     * Path parameter: uri
+     * The URI for the CoAP endpoint
+     */
+    default CoAPEndpointBuilder coaps(String path) {
+        return coap("coaps", path);
+    }
+    /**
+     * CoAP (camel-coap)
+     * The coap component is used for sending and receiving messages from COAP
+     * capable devices.
+     * 
+     * Category: iot
+     * Available as of version: 2.16
+     * Maven coordinates: org.apache.camel:camel-coap
+     * 
+     * Syntax: <code>coaps+tcp:uri</code>
+     * 
+     * Path parameter: uri
+     * The URI for the CoAP endpoint
+     */
+    default CoAPEndpointBuilder coapsTcp(String path) {
+        return coap("coaps+tcp", path);
+    }
+    /**
+     * CoAP (camel-coap)
+     * The coap component is used for sending and receiving messages from COAP
+     * capable devices.
+     * 
+     * Category: iot
+     * Available as of version: 2.16
+     * Maven coordinates: org.apache.camel:camel-coap
+     */
+    default CoAPEndpointBuilder coap(String scheme, String path) {
         class CoAPEndpointBuilderImpl extends AbstractEndpointBuilder implements CoAPEndpointBuilder, AdvancedCoAPEndpointBuilder {
-            public CoAPEndpointBuilderImpl(String path) {
-                super("coap", path);
+            public CoAPEndpointBuilderImpl(String scheme, String path) {
+                super(scheme, path);
             }
         }
-        return new CoAPEndpointBuilderImpl(path);
+        return new CoAPEndpointBuilderImpl(scheme, path);
     }
 }

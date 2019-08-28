@@ -2826,11 +2826,41 @@ public interface SipEndpointBuilderFactory {
      * included such as: john:secretmyserver:9999)
      */
     default SipEndpointBuilder sip(String path) {
+        return sip("sip", path);
+    }
+    /**
+     * SIP (Secure) (camel-sip)
+     * To send and receive messages using the SIP protocol (used in telco and
+     * mobile).
+     * 
+     * Category: mobile
+     * Available as of version: 2.5
+     * Maven coordinates: org.apache.camel:camel-sip
+     * 
+     * Syntax: <code>sips:uri</code>
+     * 
+     * Path parameter: uri (required)
+     * URI of the SIP server to connect to (the username and password can be
+     * included such as: john:secretmyserver:9999)
+     */
+    default SipEndpointBuilder sips(String path) {
+        return sip("sips", path);
+    }
+    /**
+     * SIP (camel-sip)
+     * To send and receive messages using the SIP protocol (used in telco and
+     * mobile).
+     * 
+     * Category: mobile
+     * Available as of version: 2.5
+     * Maven coordinates: org.apache.camel:camel-sip
+     */
+    default SipEndpointBuilder sip(String scheme, String path) {
         class SipEndpointBuilderImpl extends AbstractEndpointBuilder implements SipEndpointBuilder, AdvancedSipEndpointBuilder {
-            public SipEndpointBuilderImpl(String path) {
-                super("sip", path);
+            public SipEndpointBuilderImpl(String scheme, String path) {
+                super(scheme, path);
             }
         }
-        return new SipEndpointBuilderImpl(path);
+        return new SipEndpointBuilderImpl(scheme, path);
     }
 }

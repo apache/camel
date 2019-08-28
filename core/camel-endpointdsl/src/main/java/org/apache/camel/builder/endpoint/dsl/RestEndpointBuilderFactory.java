@@ -704,7 +704,7 @@ public interface RestEndpointBuilderFactory {
      * Path parameter: uriTemplate
      * The uri template
      */
-    default RestEndpointBuilder restEndpoint(String path) {
+    default RestEndpointBuilder rest(String path) {
         class RestEndpointBuilderImpl extends AbstractEndpointBuilder implements RestEndpointBuilder, AdvancedRestEndpointBuilder {
             public RestEndpointBuilderImpl(String path) {
                 super("rest", path);

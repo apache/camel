@@ -639,7 +639,7 @@ public interface ZooKeeperEndpointBuilderFactory {
      * Path parameter: path (required)
      * The node in the ZooKeeper server (aka znode)
      */
-    default ZooKeeperEndpointBuilder zooKeeper(String path) {
+    default ZooKeeperEndpointBuilder zookeeper(String path) {
         class ZooKeeperEndpointBuilderImpl extends AbstractEndpointBuilder implements ZooKeeperEndpointBuilder, AdvancedZooKeeperEndpointBuilder {
             public ZooKeeperEndpointBuilderImpl(String path) {
                 super("zookeeper", path);

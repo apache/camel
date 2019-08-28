@@ -5239,7 +5239,7 @@ public interface ActiveMQEndpointBuilderFactory {
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
      */
-    default ActiveMQEndpointBuilder activeMQ(String path) {
+    default ActiveMQEndpointBuilder activemq(String path) {
         class ActiveMQEndpointBuilderImpl extends AbstractEndpointBuilder implements ActiveMQEndpointBuilder, AdvancedActiveMQEndpointBuilder {
             public ActiveMQEndpointBuilderImpl(String path) {
                 super("activemq", path);

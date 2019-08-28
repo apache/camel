@@ -851,7 +851,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * the cache name
      */
-    default CaffeineLoadCacheEndpointBuilder caffeineLoadCache(String path) {
+    default CaffeineLoadCacheEndpointBuilder caffeineLoadcache(String path) {
         class CaffeineLoadCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements CaffeineLoadCacheEndpointBuilder, AdvancedCaffeineLoadCacheEndpointBuilder {
             public CaffeineLoadCacheEndpointBuilderImpl(String path) {
                 super("caffeine-loadcache", path);

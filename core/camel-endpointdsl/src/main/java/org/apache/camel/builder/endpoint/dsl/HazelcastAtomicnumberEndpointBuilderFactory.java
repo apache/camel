@@ -235,7 +235,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    default HazelcastAtomicnumberEndpointBuilder hazelcastAtomicnumber(
+    default HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
             String path) {
         class HazelcastAtomicnumberEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastAtomicnumberEndpointBuilder, AdvancedHazelcastAtomicnumberEndpointBuilder {
             public HazelcastAtomicnumberEndpointBuilderImpl(String path) {

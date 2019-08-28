@@ -553,7 +553,7 @@ public interface PgEventEndpointBuilderFactory {
      * Path parameter: channel (required)
      * The channel name
      */
-    default PgEventEndpointBuilder pgEvent(String path) {
+    default PgEventEndpointBuilder pgevent(String path) {
         class PgEventEndpointBuilderImpl extends AbstractEndpointBuilder implements PgEventEndpointBuilder, AdvancedPgEventEndpointBuilder {
             public PgEventEndpointBuilderImpl(String path) {
                 super("pgevent", path);

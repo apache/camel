@@ -1153,7 +1153,7 @@ public interface LinkedInEndpointBuilderFactory {
      * removeJobBookmark, removePost, searchCompanies, searchJobs, searchPeople,
      * share, stopFollowingCompany, updateGroupMembership
      */
-    default LinkedInEndpointBuilder linkedIn(String path) {
+    default LinkedInEndpointBuilder linkedin(String path) {
         class LinkedInEndpointBuilderImpl extends AbstractEndpointBuilder implements LinkedInEndpointBuilder, AdvancedLinkedInEndpointBuilder {
             public LinkedInEndpointBuilderImpl(String path) {
                 super("linkedin", path);

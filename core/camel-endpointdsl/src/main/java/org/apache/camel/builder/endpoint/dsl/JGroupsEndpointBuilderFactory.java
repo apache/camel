@@ -466,7 +466,7 @@ public interface JGroupsEndpointBuilderFactory {
      * Path parameter: clusterName (required)
      * The name of the JGroups cluster the component should connect to.
      */
-    default JGroupsEndpointBuilder jGroups(String path) {
+    default JGroupsEndpointBuilder jgroups(String path) {
         class JGroupsEndpointBuilderImpl extends AbstractEndpointBuilder implements JGroupsEndpointBuilder, AdvancedJGroupsEndpointBuilder {
             public JGroupsEndpointBuilderImpl(String path) {
                 super("jgroups", path);

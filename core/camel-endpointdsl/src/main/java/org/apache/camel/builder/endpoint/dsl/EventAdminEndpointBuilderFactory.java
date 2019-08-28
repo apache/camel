@@ -474,7 +474,7 @@ public interface EventAdminEndpointBuilderFactory {
      * Path parameter: topic
      * Name of topic to listen or send to
      */
-    default EventAdminEndpointBuilder eventAdmin(String path) {
+    default EventAdminEndpointBuilder eventadmin(String path) {
         class EventAdminEndpointBuilderImpl extends AbstractEndpointBuilder implements EventAdminEndpointBuilder, AdvancedEventAdminEndpointBuilder {
             public EventAdminEndpointBuilderImpl(String path) {
                 super("eventadmin", path);

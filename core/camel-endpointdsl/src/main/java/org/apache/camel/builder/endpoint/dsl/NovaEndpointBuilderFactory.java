@@ -219,7 +219,7 @@ public interface NovaEndpointBuilderFactory {
      * Path parameter: host (required)
      * OpenStack host url
      */
-    default NovaEndpointBuilder nova(String path) {
+    default NovaEndpointBuilder openstackNova(String path) {
         class NovaEndpointBuilderImpl extends AbstractEndpointBuilder implements NovaEndpointBuilder, AdvancedNovaEndpointBuilder {
             public NovaEndpointBuilderImpl(String path) {
                 super("openstack-nova", path);

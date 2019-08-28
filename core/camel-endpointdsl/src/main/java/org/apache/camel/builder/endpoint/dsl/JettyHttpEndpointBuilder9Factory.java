@@ -428,7 +428,7 @@ public interface JettyHttpEndpointBuilder9Factory {
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      */
-    default JettyHttpEndpointBuilder9 jettyHttp9(String path) {
+    default JettyHttpEndpointBuilder9 jetty(String path) {
         class JettyHttpEndpointBuilder9Impl extends AbstractEndpointBuilder implements JettyHttpEndpointBuilder9, AdvancedJettyHttpEndpointBuilder9 {
             public JettyHttpEndpointBuilder9Impl(String path) {
                 super("jetty", path);

@@ -1944,7 +1944,7 @@ public interface CxfRsEndpointBuilderFactory {
      * Path parameter: address
      * The service publish address.
      */
-    default CxfRsEndpointBuilder cxfRs(String path) {
+    default CxfRsEndpointBuilder cxfrs(String path) {
         class CxfRsEndpointBuilderImpl extends AbstractEndpointBuilder implements CxfRsEndpointBuilder, AdvancedCxfRsEndpointBuilder {
             public CxfRsEndpointBuilderImpl(String path) {
                 super("cxfrs", path);

@@ -609,7 +609,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
      * Path parameter: eventBusRef
      * To lookup the Guava EventBus from the registry with the given name
      */
-    default GuavaEventBusEndpointBuilder guavaEventBus(String path) {
+    default GuavaEventBusEndpointBuilder guavaEventbus(String path) {
         class GuavaEventBusEndpointBuilderImpl extends AbstractEndpointBuilder implements GuavaEventBusEndpointBuilder, AdvancedGuavaEventBusEndpointBuilder {
             public GuavaEventBusEndpointBuilderImpl(String path) {
                 super("guava-eventbus", path);

@@ -219,7 +219,7 @@ public interface CinderEndpointBuilderFactory {
      * Path parameter: host (required)
      * OpenStack host url
      */
-    default CinderEndpointBuilder cinder(String path) {
+    default CinderEndpointBuilder openstackCinder(String path) {
         class CinderEndpointBuilderImpl extends AbstractEndpointBuilder implements CinderEndpointBuilder, AdvancedCinderEndpointBuilder {
             public CinderEndpointBuilderImpl(String path) {
                 super("openstack-cinder", path);

@@ -1030,7 +1030,7 @@ public interface HBaseEndpointBuilderFactory {
      * Path parameter: tableName (required)
      * The name of the table
      */
-    default HBaseEndpointBuilder hBase(String path) {
+    default HBaseEndpointBuilder hbase(String path) {
         class HBaseEndpointBuilderImpl extends AbstractEndpointBuilder implements HBaseEndpointBuilder, AdvancedHBaseEndpointBuilder {
             public HBaseEndpointBuilderImpl(String path) {
                 super("hbase", path);
