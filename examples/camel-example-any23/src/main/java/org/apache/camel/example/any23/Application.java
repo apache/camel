@@ -19,13 +19,16 @@ package org.apache.camel.example.any23;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class Application {
+public final class Application {
+    
+    private Application() {
+    }
 
-  public static void main(String[] args) throws Exception {
-    CamelContext context = new DefaultCamelContext();
-    context.addRoutes(new Any23RouteBuilder());
-    context.start();
-    context.addStartupListener(new Any23StartupMessage());
-  }
+    public static void main(String[] args) throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new Any23RouteBuilder());
+        context.start();
+        context.addStartupListener(new Any23StartupMessage());
+    }
 
 }
