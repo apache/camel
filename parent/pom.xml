@@ -49,7 +49,6 @@
         <ant-bundle-version>1.7.0_6</ant-bundle-version>
         <antlr-bundle-version>3.5.2_1</antlr-bundle-version>
         <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
-        <any23-bundle-version>2.3_1-SNAPSHOT</any23-bundle-version>
         <apacheds-version>2.0.0-M24</apacheds-version>
         <apache-any23-version>2.3</apache-any23-version>
         <apache-drill-version>1.16.0</apache-drill-version>
