@@ -461,15 +461,15 @@ public class EndpointDslMojo extends AbstractMojo {
         if (s != null) {
             s = s.substring(0, 1).toLowerCase() + s.substring(1);
             switch (s) {
-                case "class":
-                    s = "clas";
-                    break;
-                case "package":
-                    s = "packag";
-                    break;
-                case "rest":
-                    s = "restEndpoint";
-                    break;
+            case "class":
+                s = "clas";
+                break;
+            case "package":
+                s = "packag";
+                break;
+            case "rest":
+                s = "restEndpoint";
+                break;
             }
         }
         return s;
