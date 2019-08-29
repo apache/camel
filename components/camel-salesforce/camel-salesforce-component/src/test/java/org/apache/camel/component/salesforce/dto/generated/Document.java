@@ -37,9 +37,7 @@ import java.util.List;
 public class Document extends AbstractDescribedSObjectBase {
 
     public Document() {
-        Attributes attributes = new Attributes();
-        attributes.setType("Document");
-        setAttributes(attributes);
+        getAttributes().setType("Document");
     }
 
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();

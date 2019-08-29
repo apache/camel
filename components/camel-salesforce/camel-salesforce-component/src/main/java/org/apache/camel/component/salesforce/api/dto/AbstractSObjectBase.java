@@ -17,11 +17,16 @@
 package org.apache.camel.component.salesforce.api.dto;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 //CHECKSTYLE:OFF
+@JsonFilter("fieldsToNull")
 public abstract class AbstractSObjectBase extends AbstractDTOBase {
 
     // WARNING: these fields have case sensitive names,
@@ -42,6 +47,9 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     private ZonedDateTime LastViewedDate;
     private ZonedDateTime LastReferencedDate;
 
+    @XStreamOmitField
+    private Set<String> fieldsToNull = new HashSet<>();
+
     public AbstractSObjectBase() {
         attributes = new Attributes();
     }
@@ -57,6 +65,7 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
      * </p>
      */
     public final void clearBaseFields() {
+//
         attributes = null;
         Id = null;
         IsDeleted = null;
@@ -197,5 +206,16 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
     public void setLastReferencedDate(ZonedDateTime lastReferencedDate) {
         LastReferencedDate = lastReferencedDate;
     }
+
+    @JsonIgnore
+    public Set<String> getFieldsToNull() {
+        return fieldsToNull;
+    }
+
+    @JsonIgnore
+    public void setFieldsToNull(Set<String> fieldsToNull) {
+        this.fieldsToNull = fieldsToNull;
+    }
+
 }
 //CHECKSTYLE:ON

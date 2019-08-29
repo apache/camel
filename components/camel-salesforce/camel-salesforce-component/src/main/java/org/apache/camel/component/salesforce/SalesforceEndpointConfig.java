@@ -96,8 +96,6 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public static final String NOT_FOUND_BEHAVIOUR = "notFoundBehaviour";
 
-    public static final String SERIALIZE_NULLS = "serializeNulls";
-
     // general properties
     @UriParam
     private String apiVersion = DEFAULT_VERSION;
@@ -125,8 +123,6 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String sObjectQuery;
     @UriParam(displayName = "SObject Search")
     private String sObjectSearch;
-    @UriParam(displayName = "Serialize NULL values")
-    private boolean serializeNulls;
     @UriParam
     private String apexMethod;
     @UriParam
@@ -346,18 +342,6 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setSObjectSearch(String sObjectSearch) {
         this.sObjectSearch = sObjectSearch;
-    }
-
-    /**
-     * Should the NULL values of given DTO be serialized with empty (NULL)
-     * values. This affects only JSON data format.
-     */
-    public void setSerializeNulls(boolean serializeNulls) {
-        this.serializeNulls = serializeNulls;
-    }
-
-    public boolean isSerializeNulls() {
-        return serializeNulls;
     }
 
     public String getApexMethod() {
@@ -637,7 +621,6 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(SOBJECT_CLASS, sObjectClass);
         valueMap.put(SOBJECT_QUERY, sObjectQuery);
         valueMap.put(SOBJECT_SEARCH, sObjectSearch);
-        valueMap.put(SERIALIZE_NULLS, serializeNulls);
         valueMap.put(APEX_METHOD, apexMethod);
         valueMap.put(APEX_URL, apexUrl);
         valueMap.put(LIMIT, limit);
@@ -832,7 +815,7 @@ public class SalesforceEndpointConfig implements Cloneable {
      * If the process requires specification of the next approval, the ID of the
      * user to be assigned the next request.
      *
-     * @param nextApproverIds
+     * @param nextApproverId
      */
     public void setApprovalNextApproverIds(String nextApproverId) {
         if (approval == null) {

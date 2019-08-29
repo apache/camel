@@ -57,11 +57,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         if (endpoint.getConfiguration().getObjectMapper() != null) {
             this.objectMapper = endpoint.getConfiguration().getObjectMapper();
         } else {
-            if (endpoint.getConfiguration().isSerializeNulls()) {
-                this.objectMapper = JsonUtils.withNullSerialization(JsonUtils.createObjectMapper());
-            } else {
-                this.objectMapper = JsonUtils.createObjectMapper();
-            }
+            this.objectMapper = JsonUtils.createObjectMapper();
         }
     }
 
@@ -163,7 +159,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
     protected InputStream getRequestStream(final Message in, final Object object) throws SalesforceException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            prepareMapper(in).writeValue(out, object);
+            objectMapper.writeValue(out, object);
         } catch (IOException e) {
             final String msg = "Error marshaling request: " + e.getMessage();
             throw new SalesforceException(msg, e);
@@ -192,11 +188,11 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                 final Object response;
                 Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
                 if (!rawPayload && responseClass != null) {
-                    response = prepareMapper(in).readValue(responseEntity, responseClass);
+                    response = objectMapper.readValue(responseEntity, responseClass);
                 } else {
                     TypeReference<?> responseType = exchange.getProperty(RESPONSE_TYPE, TypeReference.class);
                     if (!rawPayload && responseType != null) {
-                        response = prepareMapper(in).readValue(responseEntity, responseType);
+                        response = objectMapper.readValue(responseEntity, responseType);
                     } else {
                         // return the response as a stream, for getBlobField
                         response = responseEntity;
@@ -225,14 +221,4 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         }
 
     }
-
-    private ObjectMapper prepareMapper(final Message in) {
-        final Object serializeNulls = in.getHeader(SalesforceEndpointConfig.SERIALIZE_NULLS);
-        if (Boolean.TRUE.equals(serializeNulls)) {
-            return JsonUtils.withNullSerialization(objectMapper);
-        }
-
-        return objectMapper;
-    }
-
 }

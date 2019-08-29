@@ -35,7 +35,6 @@ import java.util.List;
 public class Contact extends AbstractDescribedSObjectBase {
 
     public Contact() {
-        super();
         getAttributes().setType("Contact");
     }
 
