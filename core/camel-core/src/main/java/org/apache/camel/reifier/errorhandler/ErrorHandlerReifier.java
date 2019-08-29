@@ -163,16 +163,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         // so we should use that one
         if (!isErrorHandlerFactoryConfigured(ref)) {
             // see if there has been configured a route builder on the route
-            RouteDefinition route = (RouteDefinition)routeContext.getRoute();
-            answer = route.getErrorHandlerFactory();
-            if (answer == null && route.getErrorHandlerRef() != null) {
-                answer = routeContext.lookup(route.getErrorHandlerRef(), ErrorHandlerBuilder.class);
-            }
-            if (answer == null) {
-                // fallback to the default error handler if none configured on
-                // the route
-                answer = new DefaultErrorHandlerBuilder();
-            }
+            answer = routeContext.getErrorHandlerFactory();
             // check if its also a ref with no error handler configuration like
             // me
             if (answer instanceof ErrorHandlerBuilderRef) {
