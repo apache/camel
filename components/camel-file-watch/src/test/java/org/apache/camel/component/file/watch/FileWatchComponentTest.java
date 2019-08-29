@@ -52,11 +52,11 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         watchDeleteOrCreate.setAssertPeriod(1000);
         watchDeleteOrCreate.assertIsSatisfied();
 
-        watchModify.expectedMessageCount(0);
+        watchModify.expectedMessageCount(1);
         watchModify.setAssertPeriod(1000);
         watchModify.assertIsSatisfied();
 
-        watchDelete.expectedMessageCount(0);
+        watchDelete.expectedMessageCount(1);
         watchDelete.setAssertPeriod(1000);
         watchDelete.assertIsSatisfied();
 
