@@ -50,7 +50,6 @@ public class StringMSPTest extends AbstractSObjectBase {
 
     @JsonProperty("MspField")
     @JsonSerialize(using = StringMultiSelectPicklistSerializer.class)
-    @JsonInclude(value = Include.ALWAYS)
     public java.lang.String[] getMspField() {
         return MspField;
     }

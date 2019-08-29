@@ -238,7 +238,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         contact.setAccount(accountRef);
         contact.setLastName("RelationshipTest");
         final CreateSObjectResult contactResult = template().requestBody("direct:createSObject", contact, CreateSObjectResult.class);
-        assertNotNull(accountResult);
+        assertNotNull(contactResult);
         assertTrue("Create success", contactResult.getSuccess());
 
         // delete the Contact
@@ -246,7 +246,66 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
         // delete the Account
         template().requestBodyAndHeader("direct:deleteSObject", accountResult.getId(), "sObjectName", "Account");
+    }
 
+    @Test
+    public void testFieldsToNull() throws Exception {
+        final Account account = new Account();
+        account.setName("Account 1");
+        account.setSite("test site");
+        final CreateSObjectResult accountResult = template().requestBody("direct:createSObject",
+                account, CreateSObjectResult.class);
+        assertNotNull(accountResult);
+        assertTrue("Create success", accountResult.getSuccess());
+
+        account.setId(accountResult.getId());
+        account.setSite(null);
+        account.getFieldsToNull().add("Site");
+
+        final Object updateAccountResult = template().requestBodyAndHeader("salesforce:updateSObject", account,
+                SalesforceEndpointConfig.SOBJECT_ID, account.getId());
+        assertNull(updateAccountResult);
+
+        Account updatedAccount = (Account) template().requestBodyAndHeader(
+                "salesforce:getSObject?sObjectFields=Id,Name,Site", account.getId(),
+                "sObjectName", "Account");
+        assertNull(updatedAccount.getSite());
+
+        // delete the Account
+        template().requestBodyAndHeader("direct:deleteSObject", accountResult.getId(), "sObjectName", "Account");
+    }
+
+    @Test
+    public void testRelationshipUpdate() throws Exception {
+        final Contact contact = new Contact();
+        contact.setLastName("RelationshipTest");
+        final CreateSObjectResult contactResult = template().requestBody("direct:createSObject", contact, CreateSObjectResult.class);
+        assertNotNull(contactResult);
+        assertTrue("Create success", contactResult.getSuccess());
+
+        final Account account = new Account();
+        account.setName("Account 1");
+        String accountExternalId = UUID.randomUUID().toString();
+        account.setExternal_Id__c(accountExternalId);
+        final CreateSObjectResult accountResult = template().requestBody("direct:createSObject", account, CreateSObjectResult.class);
+        assertNotNull(accountResult);
+        assertTrue("Create success", accountResult.getSuccess());
+
+        final Account accountRef = new Account();
+        accountRef.setExternal_Id__c(accountExternalId);
+        contact.setAccount(accountRef);
+        contact.setId(contactResult.getId());
+
+        final Object updateContactResult = template().requestBodyAndHeader("salesforce:updateSObject", contact,
+                SalesforceEndpointConfig.SOBJECT_ID, contact.getId());
+        assertNull(updateContactResult);
+
+
+        // delete the Contact
+        template().requestBodyAndHeader("direct:deleteSObject", contactResult.getId(), "sObjectName", "Contact");
+
+        // delete the Account
+        template().requestBodyAndHeader("direct:deleteSObject", accountResult.getId(), "sObjectName", "Account");
     }
 
     @Test

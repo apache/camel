@@ -21,7 +21,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class Attributes extends AbstractDTOBase {
     
     @XStreamAsAttribute
-    String referenceId;
+    private String referenceId;
     
     @XStreamAsAttribute
     private String type;

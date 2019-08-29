@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import static java.util.stream.Collectors.joining;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -52,6 +53,7 @@ import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.SimpleTypeSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 
+import org.apache.camel.component.salesforce.api.FieldsToNullPropertyFilter;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.Address;
@@ -77,9 +79,13 @@ public abstract class JsonUtils {
     public static ObjectMapper createObjectMapper() {
         // enable date time support including Java 1.8 ZonedDateTime
         ObjectMapper objectMapper = new ObjectMapper();
+        SimpleFilterProvider filterProvider = new SimpleFilterProvider()
+                .addFilter("fieldsToNull", new FieldsToNullPropertyFilter());
+        objectMapper.setFilterProvider(filterProvider);
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
         objectMapper.registerModule(new TimeModule());
+        
         return objectMapper;
     }
 

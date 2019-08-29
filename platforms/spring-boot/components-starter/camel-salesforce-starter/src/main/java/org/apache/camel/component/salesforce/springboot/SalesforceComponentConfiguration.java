@@ -659,11 +659,6 @@ public class SalesforceComponentConfiguration
          */
         private String sObjectSearch;
         /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         */
-        private Boolean serializeNulls = false;
-        /**
          * APEX method name
          */
         private String apexMethod;
@@ -911,14 +906,6 @@ public class SalesforceComponentConfiguration
 
         public void setSObjectSearch(String sObjectSearch) {
             this.sObjectSearch = sObjectSearch;
-        }
-
-        public Boolean getSerializeNulls() {
-            return serializeNulls;
-        }
-
-        public void setSerializeNulls(Boolean serializeNulls) {
-            this.serializeNulls = serializeNulls;
         }
 
         public String getApexMethod() {

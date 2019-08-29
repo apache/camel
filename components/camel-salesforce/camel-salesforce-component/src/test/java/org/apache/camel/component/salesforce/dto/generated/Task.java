@@ -30,6 +30,11 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 @XStreamAlias("Task")
 public class Task extends AbstractSObjectBase {
 
+    public Task() {
+        getAttributes().setType("Task");
+    }
+
+
     private ZonedDateTime ActivityDate;
 
     private String Description;
@@ -52,6 +57,19 @@ public class Task extends AbstractSObjectBase {
     @JsonProperty("Description")
     public void setDescription(final String description) {
         Description = description;
+    }
+
+    @XStreamAlias("What")
+    private AbstractSObjectBase What;
+
+    @JsonProperty("What")
+    public AbstractSObjectBase getWhat() {
+        return this.What;
+    }
+
+    @JsonProperty("What")
+    public void setWhat(AbstractSObjectBase What) {
+        this.What = What;
     }
 }
 //CHECKSTYLE:ON

@@ -29,8 +29,9 @@ import static org.junit.Assert.assertNull;
 
 public class MultiSelectPicklistJsonTest {
 
-    private static final String TEST_JSON = "{\"attributes\":{\"type\":\"MSPTest\"},\"MspField\":\"Value1;Value2;Value3\"}";
-    private static final String TEST_NULL_JSON = "{\"attributes\":{\"type\":\"MSPTest\"},\"MspField\":null}";
+    private static final String TEST_JSON = "{\"attributes\":{\"referenceId\":null,\"type\":\"MSPTest\",\"url\":null},\"MspField\":\"Value1;Value2;Value3\"}";
+    private static final String TEST_NO_NULL_JSON = "{\"attributes\":{\"referenceId\":null,\"type\":\"MSPTest\",\"url\":null}}";
+    private static final String TEST_NULL_JSON = "{\"attributes\":{\"referenceId\":null,\"type\":\"MSPTest\",\"url\":null},\"MspField\":null}";
 
     private static ObjectMapper objectMapper = JsonUtils.createObjectMapper();
 
@@ -44,9 +45,21 @@ public class MultiSelectPicklistJsonTest {
 
         // test null
         mspTest.setMspField(null);
+        mspTest.getFieldsToNull().add("MspField");
 
         json = objectMapper.writeValueAsString(mspTest);
         assertEquals(TEST_NULL_JSON, json);
+    }
+
+    @Test
+    public void testMarshalDoesntSerializeNulls() throws Exception {
+        final MSPTest mspTest = new MSPTest();
+        mspTest.setMspField(MSPTest.MSPEnum.values());
+        // setting no null, but not including in fieldsToNull
+        mspTest.setMspField(null);
+
+        String json = objectMapper.writeValueAsString(mspTest);
+        assertEquals(TEST_NO_NULL_JSON, json);
     }
 
     @Test
@@ -70,6 +83,7 @@ public class MultiSelectPicklistJsonTest {
 
         // test null
         mspTest.setMspField(null);
+        mspTest.getFieldsToNull().add("MspField");
 
         json = objectMapper.writeValueAsString(mspTest);
         assertEquals(TEST_NULL_JSON, json);
