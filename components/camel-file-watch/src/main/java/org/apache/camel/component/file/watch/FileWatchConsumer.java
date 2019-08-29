@@ -160,11 +160,11 @@ public class FileWatchConsumer extends DefaultConsumer {
     }
 
     private boolean matchFilters(FileEvent fileEvent) {
-    	if (ObjectHelper.isNotEmpty(getEndpoint().getEvents())) {
+        if (ObjectHelper.isNotEmpty(getEndpoint().getEvents())) {
             if (!getEndpoint().getEvents().contains(fileEvent.getEventType())) {
                 return false;
             }
-    	}
+        }
 
         if (!getEndpoint().isRecursive()) {
             // On some platforms (eg macOS) is WatchService always recursive,
