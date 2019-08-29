@@ -37,6 +37,7 @@ import org.apache.camel.component.file.watch.constants.FileEvent;
 import org.apache.camel.component.file.watch.utils.PathUtils;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.AntPathMatcher;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The file-watch consumer.
@@ -159,9 +160,11 @@ public class FileWatchConsumer extends DefaultConsumer {
     }
 
     private boolean matchFilters(FileEvent fileEvent) {
-        if (!getEndpoint().getEvents().contains(fileEvent.getEventType())) {
-            return false;
-        }
+    	if (ObjectHelper.isNotEmpty(getEndpoint().getEvents())) {
+            if (!getEndpoint().getEvents().contains(fileEvent.getEventType())) {
+                return false;
+            }
+    	}
 
         if (!getEndpoint().isRecursive()) {
             // On some platforms (eg macOS) is WatchService always recursive,
