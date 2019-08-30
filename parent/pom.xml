@@ -350,7 +350,7 @@
         <jettison-version>1.4.0</jettison-version>
         <jgit-version>5.4.2.201908231537-r</jgit-version>
         <jgroups-version>4.1.4.Final</jgroups-version>
-        <jgroups-raft-version>0.4.2.Final</jgroups-raft-version>
+        <jgroups-raft-version>0.4.3.Final</jgroups-raft-version>
         <jgroups-raft-jgroups-version>4.0.15.Final</jgroups-raft-jgroups-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
