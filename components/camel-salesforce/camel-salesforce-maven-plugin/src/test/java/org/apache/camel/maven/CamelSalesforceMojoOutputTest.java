@@ -104,21 +104,16 @@ public class CamelSalesforceMojoOutputTest {
 
     @Parameters(name = "json = {0}, source = {2}")
     public static Iterable<Object[]> parameters() throws IOException {
-        return Arrays.asList(testCase(TEST_CASE_FILE, "Case.java"),
-                testCase(TEST_CASE_FILE, "Case_PickListAccentMarkEnum.java"),
-                testCase(TEST_CASE_FILE, "Case_PickListQuotationMarkEnum.java"),
-                testCase(TEST_CASE_FILE, "Case_PickListSlashEnum.java"), //
-                testCase(TEST_CASE_FILE, "QueryRecordsCase.java"),
-                testCase(TEST_CALCULATED_FORMULA_FILE, "ComplexCalculatedFormula.java"),
-                testCase(TEST_CALCULATED_FORMULA_FILE, "QueryRecordsComplexCalculatedFormula.java"),
-                testCase("asset.json", "Asset.java"), //
-                testCase("asset.json", mojo -> {
-                 mojo.customTypes = new HashMap<>();
-                 mojo.customTypes.put("date", "java.time.LocalDateTime");
+        return Arrays.asList(testCase(TEST_CASE_FILE, "Case.java"), testCase(TEST_CASE_FILE, "Case_PickListAccentMarkEnum.java"),
+                             testCase(TEST_CASE_FILE, "Case_PickListQuotationMarkEnum.java"), testCase(TEST_CASE_FILE, "Case_PickListSlashEnum.java"), //
+                             testCase(TEST_CASE_FILE, "QueryRecordsCase.java"), testCase(TEST_CALCULATED_FORMULA_FILE, "ComplexCalculatedFormula.java"),
+                             testCase(TEST_CALCULATED_FORMULA_FILE, "QueryRecordsComplexCalculatedFormula.java"), testCase("asset.json", "Asset.java"), //
+                             testCase("asset.json", mojo -> {
+                                 mojo.customTypes = new HashMap<>();
+                                 mojo.customTypes.put("date", "java.time.LocalDateTime");
 
-                 mojo.setup();
-                }, s -> "Asset_LocalDateTime.java", "Asset.java"),
-                testCase("with_reference.json", "With_Reference__c.java"));
+                                 mojo.setup();
+                             }, s -> "Asset_LocalDateTime.java", "Asset.java"), testCase("with_reference.json", "With_Reference__c.java"));
     }
 
     static GenerateMojo createMojo() {

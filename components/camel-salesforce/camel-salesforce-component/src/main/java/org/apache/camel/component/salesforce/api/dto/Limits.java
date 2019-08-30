@@ -61,13 +61,12 @@ public final class Limits implements Serializable {
     }
 
     public enum Operation {
-        ConcurrentAsyncGetReportInstances, ConcurrentSyncReportRuns, DailyApiRequests, 
-        DailyAsyncApexExecutions, DailyBulkApiRequests, DailyDurableGenericStreamingApiEvents, 
-        DailyDurableStreamingApiEvents, DailyGenericStreamingApiEvents, DailyStreamingApiEvents, 
-        DailyWorkflowEmails, DataStorageMB, DurableStreamingApiConcurrentClients, FileStorageMB, 
-        HourlyAsyncReportRuns, HourlyDashboardRefreshes, HourlyDashboardResults, HourlyDashboardStatuses, 
-        HourlyODataCallout, HourlySyncReportRuns, HourlyTimeBasedWorkflow, MassEmail, PermissionSets, 
-        SingleEmail, StreamingApiConcurrentClients
+        ConcurrentAsyncGetReportInstances, ConcurrentSyncReportRuns, DailyApiRequests, DailyAsyncApexExecutions, 
+        DailyBulkApiRequests, DailyDurableGenericStreamingApiEvents, DailyDurableStreamingApiEvents, 
+        DailyGenericStreamingApiEvents, DailyStreamingApiEvents, DailyWorkflowEmails, DataStorageMB, 
+        DurableStreamingApiConcurrentClients, FileStorageMB, HourlyAsyncReportRuns, HourlyDashboardRefreshes, 
+        HourlyDashboardResults, HourlyDashboardStatuses, HourlyODataCallout, HourlySyncReportRuns, 
+        HourlyTimeBasedWorkflow, MassEmail, PermissionSets, SingleEmail, StreamingApiConcurrentClients
     }
 
     /**

@@ -34,7 +34,6 @@ public class Task extends AbstractSObjectBase {
         getAttributes().setType("Task");
     }
 
-
     private ZonedDateTime ActivityDate;
 
     private String Description;

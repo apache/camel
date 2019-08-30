@@ -253,8 +253,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         final Account account = new Account();
         account.setName("Account 1");
         account.setSite("test site");
-        final CreateSObjectResult accountResult = template().requestBody("direct:createSObject",
-                account, CreateSObjectResult.class);
+        final CreateSObjectResult accountResult = template().requestBody("direct:createSObject", account, CreateSObjectResult.class);
         assertNotNull(accountResult);
         assertTrue("Create success", accountResult.getSuccess());
 
@@ -262,13 +261,10 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         account.setSite(null);
         account.getFieldsToNull().add("Site");
 
-        final Object updateAccountResult = template().requestBodyAndHeader("salesforce:updateSObject", account,
-                SalesforceEndpointConfig.SOBJECT_ID, account.getId());
+        final Object updateAccountResult = template().requestBodyAndHeader("salesforce:updateSObject", account, SalesforceEndpointConfig.SOBJECT_ID, account.getId());
         assertNull(updateAccountResult);
 
-        Account updatedAccount = (Account) template().requestBodyAndHeader(
-                "salesforce:getSObject?sObjectFields=Id,Name,Site", account.getId(),
-                "sObjectName", "Account");
+        Account updatedAccount = (Account)template().requestBodyAndHeader("salesforce:getSObject?sObjectFields=Id,Name,Site", account.getId(), "sObjectName", "Account");
         assertNull(updatedAccount.getSite());
 
         // delete the Account
@@ -296,10 +292,8 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         contact.setAccount(accountRef);
         contact.setId(contactResult.getId());
 
-        final Object updateContactResult = template().requestBodyAndHeader("salesforce:updateSObject", contact,
-                SalesforceEndpointConfig.SOBJECT_ID, contact.getId());
+        final Object updateContactResult = template().requestBodyAndHeader("salesforce:updateSObject", contact, SalesforceEndpointConfig.SOBJECT_ID, contact.getId());
         assertNull(updateContactResult);
-
 
         // delete the Contact
         template().requestBodyAndHeader("direct:deleteSObject", contactResult.getId(), "sObjectName", "Contact");

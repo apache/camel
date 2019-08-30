@@ -26,16 +26,14 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 public class FieldsToNullPropertyFilter extends SimpleBeanPropertyFilter {
 
     @Override
-    public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider,
-            PropertyWriter writer) throws Exception {
+    public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer) throws Exception {
 
-        AbstractSObjectBase sob = (AbstractSObjectBase) pojo;
+        AbstractSObjectBase sob = (AbstractSObjectBase)pojo;
         String fieldName = writer.getName();
         Object fieldValue = FieldUtils.readField(pojo, fieldName, true);
         if (sob.getFieldsToNull().contains(writer.getName()) || fieldValue != null) {
             writer.serializeAsField(pojo, jgen, provider);
-        }
-        else {
+        } else {
             writer.serializeAsOmittedField(pojo, jgen, provider);
         }
     }
