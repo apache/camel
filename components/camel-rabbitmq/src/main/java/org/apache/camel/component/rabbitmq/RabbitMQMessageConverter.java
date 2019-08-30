@@ -167,12 +167,15 @@ public class RabbitMQMessageConverter {
         for (Map.Entry<String, Object> header : headers.entrySet()) {
             // filter header values.
             Object value = getValidRabbitMQHeaderValue(header.getValue());
-            
-            if (value != null || isAllowNullHeaders()) {
+
+            // additionaly filter out the OVERRIDE header so it does not propagate
+            if ((value != null || isAllowNullHeaders()) && !header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME)) {
                 filteredHeaders.put(header.getKey(), header.getValue());
             } else if (LOG.isDebugEnabled()) {
                 if (header.getValue() == null) {
                     LOG.debug("Ignoring header: {} with null value", header.getKey());
+                } else if (header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME)) {
+                    LOG.debug("Preventing header propagation: {} with value {}:", header.getKey(), header.getValue());
                 } else {
                     LOG.debug("Ignoring header: {} of class: {} with value: {}",
                               header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue());
