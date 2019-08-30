@@ -17,8 +17,6 @@
 package org.apache.camel.component.file.watch.constants;
 
 import java.nio.file.Path;
-import java.util.Date;
-
 import io.methvin.watcher.DirectoryChangeEvent;
 
 public class FileEvent {
