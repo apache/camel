@@ -52,7 +52,7 @@ public final class Any23Utils {
             handler = new JSONLDWriter(outputStream);
             break;
         case RDFJSON:
-            handler = new JSONWriter(outputStream);
+            handler = new JSONLDWriter(outputStream);
             break;
         case RDF4JMODEL:
             handler = new RDF4JModelWriter(new LinkedHashModel());
