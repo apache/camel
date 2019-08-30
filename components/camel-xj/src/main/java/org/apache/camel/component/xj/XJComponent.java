@@ -21,7 +21,7 @@ import org.apache.camel.component.xslt.XsltEndpoint;
 import org.apache.camel.spi.annotations.Component;
 
 /**
- * The <a href="http://camel.apache.org/xj.html">XJ Component</a> is for performing xml to json and back transformations of messages
+ * The <a href="https://camel.apache.org/components/latest/xj-component.html">XJ Component</a> is for performing xml to json and back transformations of messages
  */
 @Component("xj")
 public class XJComponent extends XsltComponent {
