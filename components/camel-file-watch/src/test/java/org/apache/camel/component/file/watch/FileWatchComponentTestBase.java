@@ -27,7 +27,6 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.watch.constants.FileEventEnum;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Rule;
