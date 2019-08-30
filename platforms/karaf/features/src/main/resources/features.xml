@@ -2164,6 +2164,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jsonSchema/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.datatype/jackson-datatype-jsr310/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-1-api-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream-java8/${xstream-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
