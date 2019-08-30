@@ -75,7 +75,7 @@ public class MultiSelectPicklistJsonTest {
     @Test
     public void testMarshalString() throws Exception {
         final StringMSPTest mspTest = new StringMSPTest();
-        String[] stringList = new String[] {"Value1", "Value2", "Value3" };
+        String[] stringList = new String[] {"Value1", "Value2", "Value3"};
         mspTest.setMspField(stringList);
 
         String json = objectMapper.writeValueAsString(mspTest);
@@ -92,7 +92,7 @@ public class MultiSelectPicklistJsonTest {
     @Test
     public void testUnmarshalString() throws Exception {
         StringMSPTest mspTest = objectMapper.readValue(TEST_JSON, StringMSPTest.class);
-        String[] stringList = new String[] {"Value1", "Value2", "Value3" };
+        String[] stringList = new String[] {"Value1", "Value2", "Value3"};
         assertArrayEquals(stringList, mspTest.getMspField());
 
         // test null

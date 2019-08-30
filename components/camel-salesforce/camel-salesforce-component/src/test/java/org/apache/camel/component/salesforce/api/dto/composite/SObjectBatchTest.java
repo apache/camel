@@ -77,96 +77,21 @@ public class SObjectBatchTest {
 
     @Test
     public void shouldSerializeToJson() throws JsonProcessingException {
-        final String json = "{" +
-                "\"batchRequests\":[" +
-                "{" +
-                "\"method\":\"POST\"," +
-                "\"url\":\"v37.0/sobjects/Account/\"," +
-                "\"richInput\":{" +
-                "\"attributes\":{" +
-                "\"referenceId\":null," +
-                "\"type\":\"Account\"," +
-                "\"url\":null" +
-                "}," +
-                "\"Industry\":\"Environmental\"," +
-                "\"Name\":\"NewAccountName\"" +
-                "}" +
-                "}," +
-                "{" +
-                "\"method\":\"DELETE\"," +
-                "\"url\":\"v37.0/sobjects/Account/001D000000K0fXOIAZ\"" +
-                "}," +
-                "{" +
-                "\"method\":\"GET\"," +
-                "\"url\":\"v37.0/sobjects/Account/001D000000K0fXOIAZ?fields=Name,BillingPostalCode\"" +
-                "}," +
-                "{" +
-                "\"method\":\"GET\"," +
-                "\"url\":\"v37.0/sobjects/Account/EPK/12345\"" +
-                "}," +
-                "{" +
-                "\"method\":\"GET\"," +
-                "\"url\":\"v37.0/sobjects/Account/001D000000K0fXOIAZ/CreatedBy?fields=Name\"" +
-                "}," +
-                "{" +
-                "\"method\":\"GET\"," +
-                "\"url\":\"v37.0/limits/\"" +
-                "}," +
-                "{" +
-                "\"method\":\"PATCH\"," +
-                "\"url\":\"v37.0/sobjects/Account/001D000000K0fXOIAZ\"," +
-                "\"richInput\":{" +
-                "\"attributes\":{" +
-                "\"referenceId\":null," +
-                "\"type\":\"Account\"," +
-                "\"url\":null" +
-                "}," +
-                "\"AccountNumber\":\"AC12345\"," +
-                "\"Name\":\"NewName\"" +
-                "}" +
-                "}," +
-                "{" +
-                "\"method\":\"PATCH\"," +
-                "\"url\":\"v37.0/sobjects/Account/EPK/12345\"," +
-                "\"richInput\":{" +
-                "\"attributes\":{" +
-                "\"referenceId\":null," +
-                "\"type\":\"Account\"," +
-                "\"url\":null" +
-                "}," +
-                "\"Name\":\"NewName\"" +
-                "}" +
-                "}," +
-                "{" +
-                "\"method\":\"PATCH\"," +
-                "\"url\":\"v37.0/sobjects/Account/EPK/12345\"," +
-                "\"richInput\":{" +
-                "\"attributes\":{" +
-                "\"referenceId\":null," +
-                "\"type\":\"Account\"," +
-                "\"url\":null" +
-                "}," +
-                "\"Name\":\"NewName\"" +
-                "}" +
-                "}," +
-                "{" +
-                "\"method\":\"PATCH\"," +
-                "\"url\":\"v37.0/some/url\"" +
-                "}," +
-                "{" +
-                "\"method\":\"GET\"," +
-                "\"url\":\"v37.0/query/?q=SELECT Name FROM Account\"" +
-                "}," +
-                "{" +
-                "\"method\":\"GET\"," +
-                "\"url\":\"v37.0/queryAll/?q=SELECT Name FROM Account\"" +
-                "}," +
-                "{" +
-                "\"method\":\"GET\"," +
-                "\"url\":\"v37.0/search/?q=FIND {joe}\"" +
-                "}" +
-                "]" +
-                "}";
+        final String json = "{" + "\"batchRequests\":[" + "{" + "\"method\":\"POST\"," + "\"url\":\"v37.0/sobjects/Account/\"," + "\"richInput\":{" + "\"attributes\":{"
+                            + "\"referenceId\":null," + "\"type\":\"Account\"," + "\"url\":null" + "}," + "\"Industry\":\"Environmental\"," + "\"Name\":\"NewAccountName\"" + "}"
+                            + "}," + "{" + "\"method\":\"DELETE\"," + "\"url\":\"v37.0/sobjects/Account/001D000000K0fXOIAZ\"" + "}," + "{" + "\"method\":\"GET\","
+                            + "\"url\":\"v37.0/sobjects/Account/001D000000K0fXOIAZ?fields=Name,BillingPostalCode\"" + "}," + "{" + "\"method\":\"GET\","
+                            + "\"url\":\"v37.0/sobjects/Account/EPK/12345\"" + "}," + "{" + "\"method\":\"GET\","
+                            + "\"url\":\"v37.0/sobjects/Account/001D000000K0fXOIAZ/CreatedBy?fields=Name\"" + "}," + "{" + "\"method\":\"GET\"," + "\"url\":\"v37.0/limits/\""
+                            + "}," + "{" + "\"method\":\"PATCH\"," + "\"url\":\"v37.0/sobjects/Account/001D000000K0fXOIAZ\"," + "\"richInput\":{" + "\"attributes\":{"
+                            + "\"referenceId\":null," + "\"type\":\"Account\"," + "\"url\":null" + "}," + "\"AccountNumber\":\"AC12345\"," + "\"Name\":\"NewName\"" + "}" + "},"
+                            + "{" + "\"method\":\"PATCH\"," + "\"url\":\"v37.0/sobjects/Account/EPK/12345\"," + "\"richInput\":{" + "\"attributes\":{" + "\"referenceId\":null,"
+                            + "\"type\":\"Account\"," + "\"url\":null" + "}," + "\"Name\":\"NewName\"" + "}" + "}," + "{" + "\"method\":\"PATCH\","
+                            + "\"url\":\"v37.0/sobjects/Account/EPK/12345\"," + "\"richInput\":{" + "\"attributes\":{" + "\"referenceId\":null," + "\"type\":\"Account\","
+                            + "\"url\":null" + "}," + "\"Name\":\"NewName\"" + "}" + "}," + "{" + "\"method\":\"PATCH\"," + "\"url\":\"v37.0/some/url\"" + "}," + "{"
+                            + "\"method\":\"GET\"," + "\"url\":\"v37.0/query/?q=SELECT Name FROM Account\"" + "}," + "{" + "\"method\":\"GET\","
+                            + "\"url\":\"v37.0/queryAll/?q=SELECT Name FROM Account\"" + "}," + "{" + "\"method\":\"GET\"," + "\"url\":\"v37.0/search/?q=FIND {joe}\"" + "}" + "]"
+                            + "}";
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
         final String serialized = mapper.writerFor(SObjectBatch.class).writeValueAsString(batch);
         assertEquals("Should serialize as expected by Salesforce", json, serialized);
