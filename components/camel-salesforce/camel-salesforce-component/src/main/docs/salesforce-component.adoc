@@ -768,7 +768,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 87 options, which are listed below.
+The component supports 86 options, which are listed below.
 
 
 
@@ -824,7 +824,6 @@ The component supports 87 options, which are listed below.
 | *camel.component.salesforce.config.s-object-name* | SObject name if required or supported by API |  | String
 | *camel.component.salesforce.config.s-object-query* | Salesforce SOQL query string |  | String
 | *camel.component.salesforce.config.s-object-search* | Salesforce SOSL search string |  | String
-| *camel.component.salesforce.config.serialize-nulls* | Should the NULL values of given DTO be serialized with empty (NULL) values. This affects only JSON data format. | false | Boolean
 | *camel.component.salesforce.config.update-topic* | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | Boolean
 | *camel.component.salesforce.enabled* | Enable salesforce component | true | Boolean
 | *camel.component.salesforce.http-client-connection-timeout* | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | Long

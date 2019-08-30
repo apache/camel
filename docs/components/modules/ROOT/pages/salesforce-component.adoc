@@ -575,6 +575,16 @@ final Map<String, ?> accountUpdateBody = accountUpdateResult.getBody();
 final SObjectCompositeResult contactCreationResult = results.stream().filter(r -> "JunctionRecord".equals(r.getReferenceId())).findFirst().get()
 ----
 
+==  Sending null values to salesforce
+
+By default, SObject fields with null values are not sent to salesforce. In order to
+send null values to salesforce, use the `fieldsToNull` property, as follows:
+
+[source,java]
+----
+accountSObject.getFieldsToNull().add("Site");
+----
+
 == Generating SOQL query strings
 
 `org.apache.camel.component.salesforce.api.utils.QueryHelper` contains helper
@@ -689,7 +699,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (46 parameters):
+=== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -723,7 +733,6 @@ with the following path and query parameters:
 | *reportId* (common) | Salesforce1 Analytics report Id |  | String
 | *reportMetadata* (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
 | *resultId* (common) | Bulk API Result ID |  | String
-| *serializeNulls* (common) | Should the NULL values of given DTO be serialized with empty (NULL) values. This affects only JSON data format. | false | boolean
 | *sObjectBlobFieldName* (common) | SObject blob field name |  | String
 | *sObjectClass* (common) | Fully qualified SObject class name, usually generated using camel-salesforce-maven-plugin |  | String
 | *sObjectFields* (common) | SObject fields to retrieve |  | String
@@ -759,7 +768,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 87 options, which are listed below.
+The component supports 86 options, which are listed below.
 
 
 
@@ -815,7 +824,6 @@ The component supports 87 options, which are listed below.
 | *camel.component.salesforce.config.s-object-name* | SObject name if required or supported by API |  | String
 | *camel.component.salesforce.config.s-object-query* | Salesforce SOQL query string |  | String
 | *camel.component.salesforce.config.s-object-search* | Salesforce SOSL search string |  | String
-| *camel.component.salesforce.config.serialize-nulls* | Should the NULL values of given DTO be serialized with empty (NULL) values. This affects only JSON data format. | false | Boolean
 | *camel.component.salesforce.config.update-topic* | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | Boolean
 | *camel.component.salesforce.enabled* | Enable salesforce component | true | Boolean
 | *camel.component.salesforce.http-client-connection-timeout* | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | Long
