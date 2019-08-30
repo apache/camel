@@ -57,7 +57,7 @@ public class Any23DataFormatConfigurationsTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                Map<String, String> conf = new HashMap();
+                Map<String, String> conf = new HashMap<String, String>();
                 conf.put("any23.extraction.metadata.nesting", "off");
                 from("direct:start").unmarshal().any23(baseURI, Any23Type.TURTLE, conf).to("mock:result");
             }
