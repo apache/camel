@@ -3,14 +3,14 @@
 
 *Available as of Camel version 2.21*
 
-The EC2 component supports create, run, start, stop and terminate
-https://aws.amazon.com/mq/[AWS MQ] instances.
+The MQ component supports create, run, start, stop and terminate
+https://aws.amazon.com/amazon-mq/[AWS MQ] instances.
 
 Prerequisites
 
 You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon MQ. More information is available at
-https://aws.amazon.com/mq/[Amazon MQ].
+https://aws.amazon.com/amazon-mq/[Amazon MQ].
 
 == URI Format
 
@@ -126,7 +126,7 @@ Required MQ component options
 
 You have to provide the amazonMqClient in the
 Registry or your accessKey and secretKey to access
-the https://aws.amazon.com/mq/[Amazon MQ] service.
+the https://aws.amazon.com/amazon-mq/[Amazon MQ] service.
 
 == Usage
 
@@ -146,7 +146,7 @@ the https://aws.amazon.com/mq/[Amazon MQ] service.
 
 |`CamelAwsMQBrokerDeploymentMode` |`String` |The deployment mode for the broker in the createBroker operation
 
-|`CamelAwsMQBrokerInstanceType` |`String` |The instance type for the EC2 machine in the createBroker operation
+|`CamelAwsMQBrokerInstanceType` |`String` |The instance type for the MQ machine in the createBroker operation
 
 |`CamelAwsMQBrokerEngine` |`String` |The Broker Engine for MQ. Default is ACTIVEMQ
 
