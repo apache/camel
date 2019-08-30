@@ -69,7 +69,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
 
         template.sendBodyAndHeader("file:target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         File delete = new File("target/inbox/hello.txt");
         assertTrue("File should be deleted " + delete, !delete.exists());
@@ -89,7 +89,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
         template.sendBodyAndHeader("file:target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file:target/inbox", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         File delete = new File("target/inbox/hello.txt");
         assertTrue("File should be deleted " + delete, !delete.exists());
