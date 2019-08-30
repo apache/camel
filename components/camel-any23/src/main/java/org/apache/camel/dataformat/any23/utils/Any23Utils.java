@@ -18,7 +18,6 @@ package org.apache.camel.dataformat.any23.utils;
 
 import java.io.OutputStream;
 import org.apache.any23.writer.JSONLDWriter;
-import org.apache.any23.writer.JSONWriter;
 import org.apache.any23.writer.NQuadsWriter;
 import org.apache.any23.writer.NTriplesWriter;
 import org.apache.any23.writer.RDFXMLWriter;
