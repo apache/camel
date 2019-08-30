@@ -1,7 +1,7 @@
 = Components
 
 // components: START
-Number of Components: 268 in 207 JAR artifacts (0 deprecated)
+Number of Components: 297 in 235 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -22,6 +22,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 | link:camel-flink/src/main/docs/flink-component.adoc[Apache Flink] (camel-flink) +
 `flink:endpointType` | 2.18 | The flink component can be used to send DataSet jobs to Apache Flink cluster.
 
+| link:camel-pulsar/src/main/docs/pulsar-component.adoc[Apache Pulsar] (camel-pulsar) +
+`pulsar:persistence://tenant/namespace/topic` | 2.24 | Camel Apache Pulsar Component
+
 | link:camel-spark/src/main/docs/spark-component.adoc[Apache Spark] (camel-spark) +
 `spark:endpointType` | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
 
@@ -36,6 +39,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 
 | link:camel-atmos/src/main/docs/atmos-component.adoc[Atmos] (camel-atmos) +
 `atmos:name/operation` | 2.15 | The atmos component is used for integrating with EMC's Atomos Storage.
+
+| link:camel-atmosphere-websocket/src/main/docs/atmosphere-websocket-component.adoc[Atmosphere Websocket] (camel-atmosphere-websocket) +
+`atmosphere-websocket:servicePath` | 2.14 | To exchange data with external Websocket clients using Atmosphere.
 
 | link:camel-atom/src/main/docs/atom-component.adoc[Atom] (camel-atom) +
 `atom:feedUri` | 1.2 | The atom component is used for consuming Atom RSS feeds.
@@ -60,6 +66,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 
 | link:camel-avro/src/main/docs/avro-component.adoc[Avro] (camel-avro) +
 `avro:transport:host:port/messageName` | 2.10 | Working with Apache Avro for data serialization.
+
+| link:camel-aws-cw/src/main/docs/aws-cw-component.adoc[AWS CloudWatch] (camel-aws-cw) +
+`aws-cw:namespace` | 2.11 | The aws-cw component is used for sending metrics to an Amazon CloudWatch.
 
 | link:camel-aws-ddb/src/main/docs/aws-ddb-component.adoc[AWS DynamoDB] (camel-aws-ddb) +
 `aws-ddb:tableName` | 2.10 | The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
@@ -102,6 +111,12 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 
 | link:camel-aws-ses/src/main/docs/aws-ses-component.adoc[AWS Simple Email Service] (camel-aws-ses) +
 `aws-ses:from` | 2.9 | The aws-ses component is used for sending emails with Amazon's SES service.
+
+| link:camel-aws-sns/src/main/docs/aws-sns-component.adoc[AWS Simple Notification System] (camel-aws-sns) +
+`aws-sns:topicNameOrArn` | 2.8 | The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
+
+| link:camel-aws-sqs/src/main/docs/aws-sqs-component.adoc[AWS Simple Queue Service] (camel-aws-sqs) +
+`aws-sqs:queueNameOrArn` | 2.6 | The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
 
 | link:camel-aws-swf/src/main/docs/aws-swf-component.adoc[AWS Simple Workflow] (camel-aws-swf) +
 `aws-swf:type` | 2.13 | The aws-swf component is used for managing workflows from Amazon Simple Workflow.
@@ -165,6 +180,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 
 | link:camel-cometd/src/main/docs/cometd-component.adoc[CometD] (camel-cometd) +
 `cometd:host:port/channelName` | 2.0 | The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.
+
+| link:camel-consul/src/main/docs/consul-component.adoc[Consul] (camel-consul) +
+`consul:apiEndpoint` | 2.18 | The camel consul component allows you to work with Consul, a distributed, highly available, datacenter-aware, service discovery and configuration system.
 
 | link:camel-controlbus/src/main/docs/controlbus-component.adoc[Control Bus] (camel-controlbus) +
 `controlbus:command:language` | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
@@ -250,6 +268,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 | link:camel-file/src/main/docs/file-component.adoc[File] (camel-file) +
 `file:directoryName` | 1.0 | The file component is used for reading or writing files.
 
+| link:camel-file-watch/src/main/docs/file-watch-component.adoc[file-watch] (camel-file-watch) +
+`file-watch:path` | 3.0 | The file-watch is used to monitor file events in directory using java.nio.file.WatchService
+
 | link:camel-flatpack/src/main/docs/flatpack-component.adoc[Flatpack] (camel-flatpack) +
 `flatpack:type:resourceUri` | 1.4 | The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
 
@@ -264,6 +285,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 
 | link:camel-ftp/src/main/docs/ftps-component.adoc[FTPS] (camel-ftp) +
 `ftps:host:port/directoryName` | 2.2 | The \ftps (FTP secure SSL/TLS) component is used for uploading or downloading files from FTP servers.
+
+| link:camel-ganglia/src/main/docs/ganglia-component.adoc[Ganglia] (camel-ganglia) +
+`ganglia:host:port` | 2.15 | The ganglia component is used for sending metrics to the Ganglia monitoring system.
 
 | link:camel-geocoder/src/main/docs/geocoder-component.adoc[Geocoder] (camel-geocoder) +
 `geocoder:address:latlng` | 2.12 | The geocoder component is used for looking up geocodes (latitude and longitude) for a given address, or reverse lookup.
@@ -352,8 +376,14 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 | link:camel-hbase/src/main/docs/hbase-component.adoc[HBase] (camel-hbase) +
 `hbase:tableName` | 2.10 | For reading/writing from/to an HBase store (Hadoop database).
 
+| link:camel-hdfs/src/main/docs/hdfs-component.adoc[HDFS] (camel-hdfs) +
+`hdfs:hostName:port/path` | 2.14 | For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
+
 | link:camel-hipchat/src/main/docs/hipchat-component.adoc[Hipchat] (camel-hipchat) +
 `hipchat:protocol:host:port` | 2.15 | The hipchat component supports producing and consuming messages from/to Hipchat service.
+
+| link:camel-http/src/main/docs/http-component.adoc[HTTP] (camel-http) +
+`http:httpUri` | 2.3 | For calling out to external HTTP servers using Apache HTTP Client 4.x.
 
 | link:camel-iec60870/src/main/docs/iec60870-client-component.adoc[IEC 60870 Client] (camel-iec60870) +
 `iec60870-client:uriPath` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
@@ -418,6 +448,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 | link:camel-jdbc/src/main/docs/jdbc-component.adoc[JDBC] (camel-jdbc) +
 `jdbc:dataSourceName` | 1.2 | The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
 
+| link:camel-jetty/src/main/docs/jetty-component.adoc[Jetty] (camel-jetty) +
+`jetty:httpUri` | 1.2 | The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
+
 | link:camel-websocket/src/main/docs/websocket-component.adoc[Jetty Websocket] (camel-websocket) +
 `websocket:host:port/resourceUri` | 2.10 | The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.
 
@@ -453,6 +486,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 
 | link:camel-jt400/src/main/docs/jt400-component.adoc[JT400] (camel-jt400) +
 `jt400:userID:password/systemName/objectPath.type` | 1.5 | The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
+
+| link:camel-kafka/src/main/docs/kafka-component.adoc[Kafka] (camel-kafka) +
+`kafka:topic` | 2.13 | The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
 
 | link:camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc[Kubernetes ConfigMap] (camel-kubernetes) +
 `kubernetes-config-maps:masterUrl` | 2.17 | The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
@@ -532,11 +568,17 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 | link:camel-microprofile-metrics/src/main/docs/microprofile-metrics-component.adoc[MicroProfile Metrics] (camel-microprofile-metrics) +
 `microprofile-metrics:metricType:metricName` | 3.0 | Camel metrics exposed with Eclipse MicroProfile Metrics
 
+| link:camel-mina/src/main/docs/mina-component.adoc[Mina] (camel-mina) +
+`mina:protocol:host:port` | 2.10 | Socket level networking using TCP or UDP with the Apache Mina 2.x library.
+
 | link:camel-mllp/src/main/docs/mllp-component.adoc[MLLP] (camel-mllp) +
 `mllp:hostname:port` | 2.17 | Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
 
 | link:camel-mock/src/main/docs/mock-component.adoc[Mock] (camel-mock) +
 `mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
+
+| link:camel-mongodb/src/main/docs/mongodb-component.adoc[MongoDB] (camel-mongodb) +
+`mongodb:connectionBean` | 2.19 | Component for working with documents stored in MongoDB database.
 
 | link:camel-mongodb-gridfs/src/main/docs/mongodb-gridfs-component.adoc[MongoDB GridFS] (camel-mongodb-gridfs) +
 `mongodb-gridfs:connectionBean` | 2.18 | Component for working with MongoDB GridFS.
@@ -562,8 +604,23 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 | link:camel-nagios/src/main/docs/nagios-component.adoc[Nagios] (camel-nagios) +
 `nagios:host:port` | 2.3 | To send passive checks to Nagios using JSendNSCA.
 
+| link:camel-nats/src/main/docs/nats-component.adoc[Nats] (camel-nats) +
+`nats:servers` | 2.17 | The nats component allows you produce and consume messages from NATS.
+
+| link:camel-netty/src/main/docs/netty-component.adoc[Netty] (camel-netty) +
+`netty:protocol:host:port` | 2.14 | Socket level networking using TCP or UDP with the Netty 4.x library.
+
+| link:camel-netty-http/src/main/docs/netty-http-component.adoc[Netty HTTP] (camel-netty-http) +
+`netty-http:protocol:host:port/path` | 2.14 | Netty HTTP server and client using the Netty 4.x library.
+
 | link:camel-nsq/src/main/docs/nsq-component.adoc[NSQ] (camel-nsq) +
 `nsq:servers` | 2.23 | Represents a nsq endpoint.
+
+| link:camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc[Olingo2] (camel-olingo2) +
+`olingo2:apiName/methodName` | 2.14 | Communicates with OData 2.0 services using Apache Olingo.
+
+| link:camel-olingo4/camel-olingo4-component/src/main/docs/olingo4-component.adoc[Olingo4] (camel-olingo4) +
+`olingo4:apiName/methodName` | 2.19 | Communicates with OData 4.0 services using Apache Olingo OData API.
 
 | link:camel-milo/src/main/docs/milo-client-component.adoc[OPC UA Client] (camel-milo) +
 `milo-client:endpointUri` | 2.19 | Connect to OPC UA servers using the binary protocol for acquiring telemetry data
@@ -625,6 +682,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 | link:camel-pubnub/src/main/docs/pubnub-component.adoc[PubNub] (camel-pubnub) +
 `pubnub:channel` | 2.19 | To send and receive messages to PubNub data stream network for connected devices.
 
+| link:camel-quartz/src/main/docs/quartz-component.adoc[Quartz] (camel-quartz) +
+`quartz:groupName/triggerName` | 2.12 | Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
+
 | link:camel-quickfix/src/main/docs/quickfix-component.adoc[QuickFix] (camel-quickfix) +
 `quickfix:configurationName` | 2.1 | The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
 
@@ -642,6 +702,12 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 
 | link:camel-rest/src/main/docs/rest-api-component.adoc[REST API] (camel-rest) +
 `rest-api:path/contextIdPattern` | 2.16 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
+
+| link:camel-rest-swagger/src/main/docs/rest-swagger-component.adoc[REST Swagger] (camel-rest-swagger) +
+`rest-swagger:specificationUri#operationId` | 2.19 | An awesome REST endpoint backed by Swagger specifications.
+
+| link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
+`restlet:protocol:host:port/uriPattern` | 2.0 | Component for consuming and producing Restful resources using Restlet.
 
 | link:camel-rss/src/main/docs/rss-component.adoc[RSS] (camel-rss) +
 `rss:feedUri` | 2.0 | The rss component is used for consuming RSS feeds.
@@ -672,6 +738,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 
 | link:camel-servicenow/camel-servicenow-component/src/main/docs/servicenow-component.adoc[ServiceNow] (camel-servicenow) +
 `servicenow:instanceName` | 2.18 | The servicenow component is used to integrate Camel with ServiceNow cloud services.
+
+| link:camel-servlet/src/main/docs/servlet-component.adoc[Servlet] (camel-servlet) +
+`servlet:contextPath` | 2.0 | To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
 
 | link:camel-ftp/src/main/docs/sftp-component.adoc[SFTP] (camel-ftp) +
 `sftp:host:port/directoryName` | 1.1 | The \sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
@@ -712,6 +781,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 | link:camel-spring-batch/src/main/docs/spring-batch-component.adoc[Spring Batch] (camel-spring-batch) +
 `spring-batch:jobName` | 2.10 | The spring-batch component allows to send messages to Spring Batch for further processing.
 
+| link:camel-spring/src/main/docs/spring-event-component.adoc[Spring Event] (camel-spring) +
+`spring-event:name` | 1.4 | The spring-event component allows to listen for Spring Application Events.
+
 | link:camel-spring-integration/src/main/docs/spring-integration-component.adoc[Spring Integration] (camel-spring-integration) +
 `spring-integration:defaultChannel` | 1.4 | Bridges Camel with Spring Integration.
 
@@ -724,6 +796,12 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 | link:camel-spring-ws/src/main/docs/spring-ws-component.adoc[Spring WebService] (camel-spring-ws) +
 `spring-ws:type:lookupKey:webServiceEndpointUri` | 2.6 | The spring-ws component is used for SOAP WebServices using Spring WebServices.
 
+| link:camel-sql/src/main/docs/sql-component.adoc[SQL] (camel-sql) +
+`sql:query` | 1.4 | The sql component allows you to work with databases using JDBC SQL queries.
+
+| link:camel-sql/src/main/docs/sql-stored-component.adoc[SQL Stored Procedure] (camel-sql) +
+`sql-stored:template` | 2.17 | The sql component allows you to work with databases using JDBC Stored Procedure queries.
+
 | link:camel-ssh/src/main/docs/ssh-component.adoc[SSH] (camel-ssh) +
 `ssh:host:port` | 2.10 | The ssh component enables access to SSH servers such that you can send an SSH command, and process the response.
 
@@ -732,6 +810,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 
 | link:camel-stomp/src/main/docs/stomp-component.adoc[Stomp] (camel-stomp) +
 `stomp:destination` | 2.12 | The stomp component is used for communicating with Stomp compliant message brokers.
+
+| link:camel-stream/src/main/docs/stream-component.adoc[Stream] (camel-stream) +
+`stream:kind` | 1.3 | The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file and URL.
 
 | link:camel-stringtemplate/src/main/docs/string-template-component.adoc[String Template] (camel-stringtemplate) +
 `string-template:resourceUri` | 1.2 | Transforms the message using a String template.
@@ -762,6 +843,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 
 | link:camel-twitter/src/main/docs/twitter-timeline-component.adoc[Twitter Timeline] (camel-twitter) +
 `twitter-timeline:timelineType` | 2.10 | The Twitter Timeline component consumes twitter timeline or update the status of specific user.
+
+| link:camel-undertow/src/main/docs/undertow-component.adoc[Undertow] (camel-undertow) +
+`undertow:httpURI` | 2.16 | The undertow component provides HTTP and WebSocket based endpoints for consuming and producing HTTP/WebSocket requests.
 
 | link:camel-validator/src/main/docs/validator-component.adoc[Validator] (camel-validator) +
 `validator:resourceUri` | 1.1 | Validates the payload of a message using XML Schema and JAXP Validation.
@@ -796,6 +880,9 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 | link:camel-xmpp/src/main/docs/xmpp-component.adoc[XMPP] (camel-xmpp) +
 `xmpp:host:port/participant` | 1.0 | To send and receive messages from a XMPP (chat) server.
 
+| link:camel-saxon/src/main/docs/xquery-component.adoc[XQuery] (camel-saxon) +
+`xquery:resourceUri` | 1.0 | Transforms the message using a XQuery template using Saxon.
+
 | link:camel-xslt/src/main/docs/xslt-component.adoc[XSLT] (camel-xslt) +
 `xslt:resourceUri` | 1.3 | Transforms the message using a XSLT template.
 
@@ -818,11 +905,13 @@ Number of Components: 268 in 207 JAR artifacts (0 deprecated)
 == Data Formats
 
 // dataformats: START
-Number of Data Formats: 43 in 35 JAR artifacts (0 deprecated)
+Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Data Format | Available From | Description
+
+| link:camel-any23/src/main/docs/any23-dataformat.adoc[Any23] (camel-any23) | 3.0 | Any23 data format is used for parsing data to RDF.
 
 | link:camel-asn1/src/main/docs/asn1-dataformat.adoc[ASN.1 File] (camel-asn1) | 2.20 | The ASN.1 data format is used for file transfer with telecommunications protocols.
 
@@ -855,6 +944,8 @@ Number of Data Formats: 43 in 35 JAR artifacts (0 deprecated)
 | link:camel-grok/src/main/docs/grok-dataformat.adoc[Grok] (camel-grok) | 3.0 | The Grok data format is used for unmarshalling unstructured data to objects using Logstash based Grok patterns.
 
 | link:camel-zip-deflater/src/main/docs/gzipdeflater-dataformat.adoc[GZip Deflater] (camel-zip-deflater) | 2.0 | The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
+
+| link:camel-hl7/src/main/docs/hl7-dataformat.adoc[HL7] (camel-hl7) | 2.0 | The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.
 
 | link:camel-ical/src/main/docs/ical-dataformat.adoc[iCal] (camel-ical) | 2.12 | The iCal dataformat is used for working with iCalendar messages.
 
@@ -916,7 +1007,7 @@ Number of Data Formats: 43 in 35 JAR artifacts (0 deprecated)
 == Expression Languages
 
 // languages: START
-Number of Languages: 14 in 8 JAR artifacts (0 deprecated)
+Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -934,6 +1025,8 @@ Number of Languages: 14 in 8 JAR artifacts (0 deprecated)
 
 | link:camel-base/src/main/docs/header-language.adoc[Header] (camel-base) | 1.5 | To use a Camel Message header in expressions or predicates.
 
+| link:camel-hl7/src/main/docs/hl7terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
+
 | link:camel-jsonpath/src/main/docs/jsonpath-language.adoc[JsonPath] (camel-jsonpath) | 2.13 | To use JsonPath in Camel expressions or predicates.
 
 | link:camel-mvel/src/main/docs/mvel-language.adoc[MVEL] (camel-mvel) | 2.0 | To use MVEL scripts in Camel expressions or predicates.
@@ -944,11 +1037,15 @@ Number of Languages: 14 in 8 JAR artifacts (0 deprecated)
 
 | link:camel-base/src/main/docs/simple-language.adoc[Simple] (camel-base) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
 
+| link:camel-spring/src/main/docs/spel-language.adoc[SpEL] (camel-spring) | 2.7 | To use Spring Expression Language (SpEL) in Camel expressions or predicates.
+
 | link:camel-base/src/main/docs/tokenize-language.adoc[Tokenize] (camel-base) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
 
 | link:camel-jaxp/src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-jaxp) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
 
 | link:camel-xpath/src/main/docs/xpath-language.adoc[XPath] (camel-xpath) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
+
+| link:camel-saxon/src/main/docs/xquery-language.adoc[XQuery] (camel-saxon) | 1.0 | To use XQuery (XML) in Camel expressions or predicates.
 |===
 // languages: END
 
