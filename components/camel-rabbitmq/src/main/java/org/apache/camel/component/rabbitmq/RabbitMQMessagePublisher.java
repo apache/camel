@@ -104,8 +104,7 @@ public class RabbitMQMessagePublisher {
     }
 
     private void publishToRabbitMQ(final AMQP.BasicProperties properties, final byte[] body) throws IOException {
-        // remove the OVERRIDE header so it does not propagate
-        String exchangeName = (String) message.removeHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        String exchangeName = (String) message.getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
         // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_OVERRIDE_NAME
         if (exchangeName == null || endpoint.isBridgeEndpoint()) {
             exchangeName = endpoint.getExchangeName();
