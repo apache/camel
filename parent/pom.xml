@@ -83,7 +83,7 @@
         <avro-ipc-netty-version>1.9.0</avro-ipc-netty-version>
         <!-- these two avro bundles relates to camel-hdfs karaf feature -->
         <avro-bundle-version>1.8.2_1</avro-bundle-version>
-        <awaitility-version>3.1.6</awaitility-version>
+        <awaitility-version>4.0.0</awaitility-version>
         <aws-java-sdk-bundle-version>1.11.595_1</aws-java-sdk-bundle-version>
         <aws-java-sdk-version>1.11.595</aws-java-sdk-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
