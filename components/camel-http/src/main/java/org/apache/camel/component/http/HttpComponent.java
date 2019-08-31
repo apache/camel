@@ -23,11 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.SSLContextParametersAware;
@@ -37,18 +37,19 @@ import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.http.common.UrlRewrite;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -279,7 +280,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // configure the endpoint with the common configuration from the component
         if (getHttpConfiguration() != null) {
             Map<String, Object> properties = new HashMap<>();
-            IntrospectionSupport.getProperties(getHttpConfiguration(), properties, null);
+            BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            beanIntrospection.getProperties(getHttpConfiguration(), properties, null);
             setProperties(endpoint, properties);
         }
 
@@ -353,7 +355,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // http client can be configured from URI options
         HttpClientBuilder clientBuilder = HttpClientBuilder.create();
         // allow the builder pattern
-        httpClientOptions.putAll(IntrospectionSupport.extractProperties(parameters, "httpClient."));
+        httpClientOptions.putAll(PropertiesHelper.extractProperties(parameters, "httpClient."));
         PropertyBindingSupport.bindProperties(getCamelContext(), clientBuilder, httpClientOptions);
         // set the Request configure this way and allow the builder pattern
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();

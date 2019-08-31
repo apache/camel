@@ -21,8 +21,8 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.util.PropertiesHelper;
 
 /**
  * Component for connecting JMX Notification events to a camel route.
@@ -44,8 +44,8 @@ public class JMXComponent extends DefaultComponent {
 
         endpoint.setServerURL(remaining);
 
-        Map objectProperties = IntrospectionSupport.extractProperties(parameters, "key.");
-        if (objectProperties != null && !objectProperties.isEmpty()) {
+        Map objectProperties = PropertiesHelper.extractProperties(parameters, "key.");
+        if (!objectProperties.isEmpty()) {
             endpoint.setObjectProperties(objectProperties);
         }
 
