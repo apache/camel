@@ -664,7 +664,7 @@
         <xmlgraphics-batik-version>1.11</xmlgraphics-batik-version>
         <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>
         <xmlsec-version>2.1.4</xmlsec-version>
-        <xmlunit-version>2.6.2</xmlunit-version>
+        <xmlunit-version>2.6.3</xmlunit-version>
         <xpp3-bundle-version>1.1.4c_7</xpp3-bundle-version>
         <xpp3-version>1.1.4c</xpp3-version>
         <xstream-bundle-version>1.4.11_1</xstream-bundle-version>
