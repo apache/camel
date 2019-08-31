@@ -34,10 +34,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
@@ -173,8 +173,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     @Override
     public void configureProperties(Map<String, Object> options) {
         super.configureProperties(options);
-        Map<String, Object> emProperties = IntrospectionSupport.extractProperties(options, "emf.");
-        if (emProperties != null) {
+        Map<String, Object> emProperties = PropertiesHelper.extractProperties(options, "emf.");
+        if (!emProperties.isEmpty()) {
             setEntityManagerProperties(emProperties);
         }
     }

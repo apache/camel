@@ -26,7 +26,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.strategy.FtpProcessStrategyFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
@@ -77,8 +77,8 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
      * them when creating a client.
      */
     protected void extractAndSetFtpClientKeyStoreParameters(Map<String, Object> parameters, FtpsEndpoint endpoint) {
-        if (IntrospectionSupport.hasProperties(parameters, "ftpClient.keyStore.")) {
-            Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClient.keyStore.");
+        if (PropertiesHelper.hasProperties(parameters, "ftpClient.keyStore.")) {
+            Map<String, Object> param = PropertiesHelper.extractProperties(parameters, "ftpClient.keyStore.");
             endpoint.setFtpClientKeyStoreParameters(param);
         }
     }
@@ -89,8 +89,8 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
      * them when creating a client.
      */
     protected void extractAndSetFtpClientTrustStoreParameters(Map<String, Object> parameters, FtpsEndpoint endpoint) {
-        if (IntrospectionSupport.hasProperties(parameters, "ftpClient.trustStore.")) {
-            Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClient.trustStore.");
+        if (PropertiesHelper.hasProperties(parameters, "ftpClient.trustStore.")) {
+            Map<String, Object> param = PropertiesHelper.extractProperties(parameters, "ftpClient.trustStore.");
             endpoint.setFtpClientTrustStoreParameters(param);
         }
     }

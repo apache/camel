@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsPropertiesHelper;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.component.AbstractApiProducer;
 import org.apache.camel.support.component.ApiMethod;
 
@@ -41,9 +41,9 @@ public class GoogleSheetsProducer extends AbstractApiProducer<GoogleSheetsApiNam
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest<?> request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
-            TypeConverter typeConverter = getEndpoint().getCamelContext().getTypeConverter();
+            BeanIntrospection beanIntrospection = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
             for (Entry<String, Object> p : properties.entrySet()) {
-                IntrospectionSupport.setProperty(typeConverter, request, p.getKey(), p.getValue());
+                beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }
             return request.execute();
         } catch (Exception e) {
