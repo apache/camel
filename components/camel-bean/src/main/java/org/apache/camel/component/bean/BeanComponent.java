@@ -21,9 +21,9 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.util.PropertiesHelper;
 
 /**
  * The <a href="http://camel.apache.org/bean.html">Bean Component</a> is for invoking Java beans from Camel.
@@ -53,7 +53,7 @@ public class BeanComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
 
         // the bean.xxx options is for the bean
-        Map<String, Object> options = IntrospectionSupport.extractProperties(parameters, "bean.");
+        Map<String, Object> options = PropertiesHelper.extractProperties(parameters, "bean.");
         endpoint.setParameters(options);
         return endpoint;
     }

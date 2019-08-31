@@ -30,8 +30,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ import org.springframework.jms.core.JmsTemplate;
 @Component("activemq")
 public class ActiveMQComponent extends JmsComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(ActiveMQComponent.class);
-    DestinationSource source;
+    private DestinationSource source;
     private boolean exposeAllQueues;
     private CamelEndpointLoader endpointLoader;
     private EnhancedConnection connection;
@@ -169,7 +169,7 @@ public class ActiveMQComponent extends JmsComponent {
     protected String convertPathToActualDestination(String path, Map<String, Object> parameters) {
         // support ActiveMQ destination options using the destination. prefix
         // http://activemq.apache.org/destination-options.html
-        Map options = IntrospectionSupport.extractProperties(parameters, "destination.");
+        Map options = PropertiesHelper.extractProperties(parameters, "destination.");
 
         String query;
         try {

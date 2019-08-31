@@ -25,7 +25,7 @@ import io.atomix.catalyst.transport.Address;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.PropertiesHelper;
 
 public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfiguration> extends DefaultComponent {
     protected AbstractAtomixClientComponent() {
@@ -83,7 +83,7 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
 
     protected C setConfigurationProperties(C configuration, Map<String, Object> parameters) throws Exception {
         // Resolve config for named maps
-        Map<String, Object> configs = IntrospectionSupport.extractProperties(parameters, "resource.config.");
+        Map<String, Object> configs = PropertiesHelper.extractProperties(parameters, "resource.config.");
         for (Map.Entry<String, Object> entry : configs.entrySet()) {
             String ref = (String)entry.getValue();
             if (!EndpointHelper.isReferenceParameter(ref)) {
@@ -96,7 +96,7 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
         }
 
         // Resolve options for named maps
-        Map<String, Object> options = IntrospectionSupport.extractProperties(parameters, "resource.options.");
+        Map<String, Object> options = PropertiesHelper.extractProperties(parameters, "resource.options.");
         for (Map.Entry<String, Object> entry : options.entrySet()) {
             String ref = (String)entry.getValue();
             if (!EndpointHelper.isReferenceParameter(ref)) {
