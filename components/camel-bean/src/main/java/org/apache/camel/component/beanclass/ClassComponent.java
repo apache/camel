@@ -23,7 +23,7 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.PropertiesHelper;
 
 /**
  * The <a href="http://camel.apache.org/class.html">Class Component</a> is for binding JavaBeans to Camel message exchanges based on class name.
@@ -46,7 +46,7 @@ public class ClassComponent extends BeanComponent {
         Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(name);
 
         // the bean.xxx options is for the bean
-        Map<String, Object> options = IntrospectionSupport.extractProperties(parameters, "bean.");
+        Map<String, Object> options = PropertiesHelper.extractProperties(parameters, "bean.");
         endpoint.setParameters(options);
 
         BeanHolder holder;

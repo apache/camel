@@ -26,8 +26,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 
 @Component("aws-swf")
 public class SWFComponent extends DefaultComponent {
@@ -54,9 +54,9 @@ public class SWFComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Map<String, Object> clientConfigurationParameters = IntrospectionSupport.extractProperties(parameters, "clientConfiguration.");
-        Map<String, Object> sWClientParameters = IntrospectionSupport.extractProperties(parameters, "sWClient.");
-        Map<String, Object> startWorkflowOptionsParameters = IntrospectionSupport.extractProperties(parameters, "startWorkflowOptions.");
+        Map<String, Object> clientConfigurationParameters = PropertiesHelper.extractProperties(parameters, "clientConfiguration.");
+        Map<String, Object> sWClientParameters = PropertiesHelper.extractProperties(parameters, "sWClient.");
+        Map<String, Object> startWorkflowOptionsParameters = PropertiesHelper.extractProperties(parameters, "startWorkflowOptions.");
 
         SWFConfiguration configuration = this.configuration.copy();
         configuration.setType(remaining);
