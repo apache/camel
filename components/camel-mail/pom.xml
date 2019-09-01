@@ -49,13 +49,13 @@
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <version>${javax-mail-version}</version>
+            <artifactId>jakarta.mail</artifactId>
+            <version>${jakarta-mail-version}</version>
             <exclusions>
                 <!-- javax activation is part of the JDK now -->
                 <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -142,12 +142,12 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.sun.mail:javax.mail</include>
+                                    <include>com.sun.mail:jakarta.mail</include>
                                 </includes>
                             </artifactSet>
                             <filters>
                                 <filter>
-                                    <artifact>com.sun.mail:javax.mail</artifact>
+                                    <artifact>com.sun.mail:jakarta.mail</artifact>
                                     <includes>
                                         <include>META-INF/javamail.default.address.map</include>
                                         <include>META-INF/javamail.default.providers</include>

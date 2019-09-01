@@ -70,8 +70,8 @@
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <version>${javax-mail-version}</version>
+            <artifactId>jakarta.mail</artifactId>
+            <version>${jakarta-mail-version}</version>
         </dependency>
     </dependencies>
 
