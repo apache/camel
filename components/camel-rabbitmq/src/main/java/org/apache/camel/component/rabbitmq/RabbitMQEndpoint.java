@@ -22,7 +22,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
-
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.AMQP;
@@ -41,7 +40,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.rabbitmq.RabbitMQComponent.BINDING_ARG_PREFIX;
@@ -790,15 +789,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     public Map<String, Object> getExchangeArgs() {
-        return IntrospectionSupport.extractProperties(args, EXCHANGE_ARG_PREFIX);
+        return PropertiesHelper.extractProperties(args, EXCHANGE_ARG_PREFIX);
     }
 
     public Map<String, Object> getQueueArgs() {
-        return IntrospectionSupport.extractProperties(args, QUEUE_ARG_PREFIX);
+        return PropertiesHelper.extractProperties(args, QUEUE_ARG_PREFIX);
     }
 
     public Map<String, Object> getBindingArgs() {
-        return IntrospectionSupport.extractProperties(args, BINDING_ARG_PREFIX);
+        return PropertiesHelper.extractProperties(args, BINDING_ARG_PREFIX);
     }
 
      /**
