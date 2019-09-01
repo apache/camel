@@ -36,9 +36,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -198,8 +198,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         PropertyBindingSupport.bindProperties(component.getCamelContext(), this, parameters);
 
         // additional netty options, we don't want to store an empty map, so set it as null if empty
-        options = IntrospectionSupport.extractProperties(parameters, "option.");
-        if (options != null && options.isEmpty()) {
+        options = PropertiesHelper.extractProperties(parameters, "option.");
+        if (options.isEmpty()) {
             options = null;
         }
 
