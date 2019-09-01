@@ -26,8 +26,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 
 /**
  * Represents the component that manages {@link ServiceNowEndpoint}.
@@ -230,21 +230,21 @@ public class ServiceNowComponent extends DefaultComponent implements SSLContextP
         final CamelContext context = getCamelContext();
         final ServiceNowConfiguration configuration = this.configuration.copy();
 
-        Map<String, Object> models = IntrospectionSupport.extractProperties(parameters, "model.");
+        Map<String, Object> models = PropertiesHelper.extractProperties(parameters, "model.");
         for (Map.Entry<String, Object> entry : models.entrySet()) {
             configuration.addModel(
                 entry.getKey(),
                 EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
         }
 
-        Map<String, Object> requestModels = IntrospectionSupport.extractProperties(parameters, "requestModel.");
+        Map<String, Object> requestModels = PropertiesHelper.extractProperties(parameters, "requestModel.");
         for (Map.Entry<String, Object> entry : requestModels.entrySet()) {
             configuration.addRequestModel(
                 entry.getKey(),
                 EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
         }
 
-        Map<String, Object> responseModels = IntrospectionSupport.extractProperties(parameters, "responseModel.");
+        Map<String, Object> responseModels = PropertiesHelper.extractProperties(parameters, "responseModel.");
         for (Map.Entry<String, Object> entry : responseModels.entrySet()) {
             configuration.addResponseModel(
                 entry.getKey(),

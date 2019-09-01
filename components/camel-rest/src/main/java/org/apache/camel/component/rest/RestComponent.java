@@ -17,7 +17,6 @@
 package org.apache.camel.component.rest;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -25,12 +24,13 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
@@ -72,9 +72,9 @@ public class RestComponent extends DefaultComponent {
         answer.setApiDoc(apiDoc);
 
         RestConfiguration config = new RestConfiguration();
-        mergeConfigurations(config, findGlobalRestConfiguration());
-        mergeConfigurations(config, getCamelContext().getRestConfiguration(cname, false));
-        mergeConfigurations(config, getCamelContext().getRestConfiguration(pname, false));
+        mergeConfigurations(getCamelContext(), config, findGlobalRestConfiguration());
+        mergeConfigurations(getCamelContext(), config, getCamelContext().getRestConfiguration(cname, false));
+        mergeConfigurations(getCamelContext(), config, getCamelContext().getRestConfiguration(pname, false));
 
         // if no explicit host was given, then fallback and use default configured host
         String h = getAndRemoveOrResolveReferenceParameter(parameters, "host", String.class, host);
@@ -232,21 +232,17 @@ public class RestComponent extends DefaultComponent {
         return conf;
     }
 
-    private RestConfiguration mergeConfigurations(RestConfiguration conf, RestConfiguration from) throws Exception {
+    private RestConfiguration mergeConfigurations(CamelContext camelContext, RestConfiguration conf, RestConfiguration from) throws Exception {
         if (conf == from) {
             return conf;
         }
         if (from != null) {
-            Map<String, Object> map = IntrospectionSupport.getNonNullProperties(from);
+            BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            Map<String, Object> map = new HashMap<>();
+            beanIntrospection.getProperties(from, map, null, false);
 
             // Remove properties as they need to be manually managed
-            Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, Object> entry = it.next();
-                if (entry.getValue() instanceof Map) {
-                    it.remove();
-                }
-            }
+            map.entrySet().removeIf(entry -> entry.getValue() instanceof Map);
 
             // Copy common options, will override those in conf
             PropertyBindingSupport.bindProperties(getCamelContext(), conf, map);
