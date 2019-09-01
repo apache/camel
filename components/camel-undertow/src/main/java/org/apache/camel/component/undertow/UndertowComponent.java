@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpHandler;
@@ -42,13 +41,13 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -87,7 +86,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, parameters);
 
         // any additional channel options
-        Map<String, Object> options = IntrospectionSupport.extractProperties(parameters, "option.");
+        Map<String, Object> options = PropertiesHelper.extractProperties(parameters, "option.");
 
         // determine sslContextParameters
         SSLContextParameters sslParams = this.sslContextParameters;
