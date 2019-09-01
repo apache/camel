@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Body;
@@ -43,7 +44,6 @@ import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.AnnotationExpressionFactory;
@@ -1005,10 +1005,10 @@ public class BeanInfo {
         Iterator<MethodInfo> it = methods.iterator();
         while (it.hasNext()) {
             MethodInfo info = it.next();
-            if (IntrospectionSupport.isGetter(info.getMethod())) {
+            if (isGetter(info.getMethod())) {
                 // skip getters
                 it.remove();
-            } else if (IntrospectionSupport.isSetter(info.getMethod())) {
+            } else if (isSetter(info.getMethod())) {
                 // skip setters
                 it.remove();
             }
@@ -1218,8 +1218,8 @@ public class BeanInfo {
 
         // now try all getters to see if any of those matched the methodName
         for (Method method : methodMap.keySet()) {
-            if (IntrospectionSupport.isGetter(method)) {
-                String shorthandMethodName = IntrospectionSupport.getGetterShorthandName(method);
+            if (isGetter(method)) {
+                String shorthandMethodName = getGetterShorthandName(method);
                 // if the two names matches then see if we can find it using that name
                 if (methodName != null && methodName.equals(shorthandMethodName)) {
                     return operations.get(method.getName());
@@ -1228,6 +1228,56 @@ public class BeanInfo {
         }
 
         return null;
+    }
+
+    public static boolean isGetter(Method method) {
+        String name = method.getName();
+        Class<?> type = method.getReturnType();
+        int parameterCount = method.getParameterCount();
+
+        // is it a getXXX method
+        if (name.startsWith("get") && name.length() >= 4 && Character.isUpperCase(name.charAt(3))) {
+            return parameterCount == 0 && !type.equals(Void.TYPE);
+        }
+
+        // special for isXXX boolean
+        if (name.startsWith("is") && name.length() >= 3 && Character.isUpperCase(name.charAt(2))) {
+            return parameterCount == 0 && type.getSimpleName().equalsIgnoreCase("boolean");
+        }
+
+        return false;
+    }
+
+    public static boolean isSetter(Method method) {
+        String name = method.getName();
+        Class<?> type = method.getReturnType();
+        int parameterCount = method.getParameterCount();
+
+        // is it a setXXX method
+        boolean validName = name.startsWith("set") && name.length() >= 4 && Character.isUpperCase(name.charAt(3));
+        if (validName && parameterCount == 1) {
+            // a setXXX can also be a builder pattern so check for its return type is itself
+            return type.equals(Void.TYPE);
+        }
+
+        return false;
+    }
+
+    public static String getGetterShorthandName(Method method) {
+        if (!isGetter(method)) {
+            return method.getName();
+        }
+
+        String name = method.getName();
+        if (name.startsWith("get")) {
+            name = name.substring(3);
+            name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
+        } else if (name.startsWith("is")) {
+            name = name.substring(2);
+            name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
+        }
+
+        return name;
     }
 
 }

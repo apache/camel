@@ -67,7 +67,7 @@ public class FacebookProducer extends DefaultAsyncProducer {
 
         getExchangeProperties(exchange, properties);
         FacebookPropertiesHelper.configureReadingProperties(endpoint.getConfiguration(), properties);
-        getEndpointProperties(endpoint.getConfiguration(), properties);
+        getEndpointProperties(endpoint.getCamelContext(), endpoint.getConfiguration(), properties);
 
         // decide which method to invoke
         final FacebookMethodsType method = findMethod(exchange, properties);

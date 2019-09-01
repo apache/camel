@@ -118,7 +118,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
     private void initState() {
         // get endpoint property names
         final Set<String> arguments = new HashSet<>();
-        arguments.addAll(getEndpointPropertyNames(configuration));
+        arguments.addAll(getEndpointPropertyNames(getCamelContext(), configuration));
         // add inBody argument for producers
         if (inBody != null) {
             arguments.add(inBody);
