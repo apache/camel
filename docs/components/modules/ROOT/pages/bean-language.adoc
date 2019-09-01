@@ -35,6 +35,36 @@ The Bean method language supports 4 options, which are listed below.
 |===
 // language options: END
 
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-bean-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.bean.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.bean.cache* | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
+| *camel.component.bean.enabled* | Whether to enable auto configuration of the bean component. This is enabled by default. |  | Boolean
+| *camel.language.bean.enabled* | Whether to enable auto configuration of the bean language. This is enabled by default. |  | Boolean
+| *camel.language.bean.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 [[BeanLanguage-UsingBeanExpressionsinJava]]
 == Using Bean Expressions in Java
