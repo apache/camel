@@ -23,7 +23,7 @@ public class FromFtpPreMoveFilePrefixNotStepwiseTest extends FromFtpPreMoveFileP
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false&consumer.delay=5000"
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false&delay=5000"
                 + "&preMove=done/${file:name}&stepwise=false";
     }
 

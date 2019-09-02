@@ -33,7 +33,7 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false"
-                + "&move=done/sub2/${file:name}.old&consumer.delay=5000";
+                + "&move=done/sub2/${file:name}.old&delay=5000";
     }
 
     @Override

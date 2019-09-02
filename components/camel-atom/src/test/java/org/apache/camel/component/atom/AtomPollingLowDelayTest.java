@@ -38,7 +38,7 @@ public class AtomPollingLowDelayTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&consumer.delay=100&consumer.initialDelay=0").to("mock:result");
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=100&initialDelay=0").to("mock:result");
             }
         };
     }

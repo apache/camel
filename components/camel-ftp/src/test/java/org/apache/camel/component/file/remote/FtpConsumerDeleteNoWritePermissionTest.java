@@ -29,7 +29,7 @@ public class FtpConsumerDeleteNoWritePermissionTest extends FtpServerTestSupport
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/deletenoperm?password=foo"
-                + "&delete=true&consumer.delay=5000";
+                + "&delete=true&delay=5000";
     }
 
     @Override

@@ -64,7 +64,7 @@ public class AtomRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("atom:file:src/test/data/feed.atom?consumer.delay=500").to("mock:results");
+                from("atom:file:src/test/data/feed.atom?delay=500").to("mock:results");
             }
         };
     }

@@ -31,7 +31,7 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
-      <from uri="file:src/test/resources/org/apache/camel/dataformat/zipfile/data?consumer.delay=1000&amp;noop=true"/>
+      <from uri="file:src/test/resources/org/apache/camel/dataformat/zipfile/data?delay=1000&amp;noop=true"/>
       <split streaming="true">
         <!-- refer to our custom expression, using ref tag -->
         <ref>zipSplitter</ref>

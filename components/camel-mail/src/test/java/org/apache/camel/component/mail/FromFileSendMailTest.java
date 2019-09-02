@@ -51,11 +51,11 @@ public class FromFileSendMailTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/mailtext?consumer.initialDelay=100&consumer.delay=100")
+                from("file://target/mailtext?initialDelay=100&delay=100")
                     .setHeader("Subject", constant("Hello World"))
                     .setHeader("To", constant("james@localhost"))
                     .setHeader("From", constant("claus@localhost"))
-                    .to("smtp://localhost?password=secret&username=claus&consumer.initialDelay=100&consumer.delay=100", "mock:result");
+                    .to("smtp://localhost?password=secret&username=claus&initialDelay=100&delay=100", "mock:result");
             }
         };
     }

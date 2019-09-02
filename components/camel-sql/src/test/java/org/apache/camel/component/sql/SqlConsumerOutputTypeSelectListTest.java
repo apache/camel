@@ -85,7 +85,7 @@ public class SqlConsumerOutputTypeSelectListTest extends CamelTestSupport {
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects order by id?outputType=SelectList&consumer.initialDelay=0&consumer.delay=50")
+                from("sql:select * from projects order by id?outputType=SelectList&initialDelay=0&delay=50")
                         .to("mock:result");
             }
         };

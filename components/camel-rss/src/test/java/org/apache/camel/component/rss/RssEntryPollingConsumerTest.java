@@ -34,7 +34,7 @@ public class RssEntryPollingConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=100").to("mock:result");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&delay=100").to("mock:result");
             }
         };
     }

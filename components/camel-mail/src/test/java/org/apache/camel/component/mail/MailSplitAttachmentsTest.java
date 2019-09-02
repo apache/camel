@@ -93,7 +93,7 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("pop3://james@mymailserver.com?password=secret&consumer.initialDelay=100&consumer.delay=100")
+                from("pop3://james@mymailserver.com?password=secret&initialDelay=100&delay=100")
                     .to("log:email")
                     // use the SplitAttachmentsExpression which will split the message per attachment
                     .split(splitAttachmentsExpression)

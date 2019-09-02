@@ -71,7 +71,7 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // Unzip file and Split it according to FileEntry
-                from("file:src/test/resources/org/apache/camel/aggregate/zipfile/data?consumer.delay=1000&noop=true")
+                from("file:src/test/resources/org/apache/camel/aggregate/zipfile/data?delay=1000&noop=true")
                     .setHeader("foo", constant("bar"))
                     .aggregate(new ZipAggregationStrategy())
                         .constant(true)
