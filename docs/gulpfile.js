@@ -20,6 +20,7 @@ const inject = require('gulp-inject');
 const map = require('map-stream')
 const path = require('path');
 const rename = require('gulp-rename');
+const replace = require('gulp-replace');
 const sort = require('gulp-sort');
 const through2 = require('through2');
 const File = require('vinyl')
@@ -50,6 +51,7 @@ function createComponentSymlinks() {
         // }));
         // uncomment above .pipe() and remove the .pipe() below
         // when antora#188 is resolved
+        .pipe(insertSourceAttribute())
         .pipe(dest('components/modules/ROOT/pages/'));
 }
 
@@ -90,6 +92,12 @@ function insertGeneratedNotice() {
                    return file.contents.toString('utf8');
                }
            });
+}
+
+function insertSourceAttribute() {
+    return replace(/^= .+/m, function(match) {
+        return `${match}\n:page-source: ${path.relative('..', this.file.path)}`;
+    });
 }
 
 function createComponentNav() {
