@@ -30,7 +30,7 @@ import org.apache.camel.support.ExchangeHelper;
 /**
  * ICal related converter.
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class ICalConverter {
     private ICalConverter() {
         // Helper class

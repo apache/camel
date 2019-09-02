@@ -42,7 +42,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
  * default the converter only attempts to convert to primitive types such as String and numbers. To convert to any kind, then
  * enable this by setting {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} to <tt>true</tt> on {@link CamelContext#getGlobalOptions()}.
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class JacksonTypeConverters {
 
     private final ObjectMapper defaultMapper;

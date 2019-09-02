@@ -28,7 +28,7 @@ import twitter4j.UserList;
 /**
  * Utility for converting between Twitter4J and camel-twitter data layers.
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class TwitterConverter {
 
     private TwitterConverter() {

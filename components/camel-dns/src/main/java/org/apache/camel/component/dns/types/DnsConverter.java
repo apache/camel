@@ -29,7 +29,7 @@ import org.xbill.DNS.Record;
 /**
  * A converter for all the DNS objects used by the DNS component.
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class DnsConverter {
 
     private DnsConverter() {

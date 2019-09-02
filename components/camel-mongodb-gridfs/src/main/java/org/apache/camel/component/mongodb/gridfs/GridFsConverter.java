@@ -21,7 +21,7 @@ import com.mongodb.WriteConcern;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class GridFsConverter {
 
     private GridFsConverter() {

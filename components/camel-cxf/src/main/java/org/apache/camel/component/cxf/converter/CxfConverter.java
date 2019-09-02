@@ -41,7 +41,7 @@ import static org.apache.camel.TypeConverter.MISS_VALUE;
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  * for CXF related types' converting .
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class CxfConverter {
 
     private CxfConverter() {

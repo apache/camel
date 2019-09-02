@@ -46,7 +46,7 @@ import org.apache.cxf.staxutils.StaxUtils;
 
 import static org.apache.camel.TypeConverter.MISS_VALUE;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class CxfPayloadConverter {
 
     private CxfPayloadConverter() {

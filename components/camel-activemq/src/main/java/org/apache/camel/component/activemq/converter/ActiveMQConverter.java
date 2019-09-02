@@ -22,7 +22,7 @@ import org.apache.camel.Converter;
 /**
  * 
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public class ActiveMQConverter {
     /**
      * Converts a URL in ActiveMQ syntax to a destination such as to support
