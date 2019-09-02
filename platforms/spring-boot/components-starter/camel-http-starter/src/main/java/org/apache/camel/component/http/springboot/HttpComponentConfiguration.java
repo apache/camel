@@ -117,6 +117,14 @@ public class HttpComponentConfiguration
      */
     private Integer socketTimeout = -1;
     /**
+     * Whether to allow java serialization when a request uses
+     * context-type=application/x-java-serialized-object. This is by default
+     * turned off. If you enable this then be aware that Java will deserialize
+     * the incoming data from the request to Java and that can be a potential
+     * security risk.
+     */
+    private Boolean allowJavaSerializedObject = false;
+    /**
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient. The option is a org.apache.camel.http.common.HttpBinding
      * type.
@@ -127,14 +135,6 @@ public class HttpComponentConfiguration
      * a org.apache.camel.http.common.HttpConfiguration type.
      */
     private String httpConfiguration;
-    /**
-     * Whether to allow java serialization when a request uses
-     * context-type=application/x-java-serialized-object. This is by default
-     * turned off. If you enable this then be aware that Java will deserialize
-     * the incoming data from the request to Java and that can be a potential
-     * security risk.
-     */
-    private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message. The option is a
@@ -252,6 +252,14 @@ public class HttpComponentConfiguration
         this.socketTimeout = socketTimeout;
     }
 
+    public Boolean getAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
+    }
+
+    public void setAllowJavaSerializedObject(Boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
     public String getHttpBinding() {
         return httpBinding;
     }
@@ -266,14 +274,6 @@ public class HttpComponentConfiguration
 
     public void setHttpConfiguration(String httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
-    }
-
-    public Boolean getAllowJavaSerializedObject() {
-        return allowJavaSerializedObject;
-    }
-
-    public void setAllowJavaSerializedObject(Boolean allowJavaSerializedObject) {
-        this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
     public String getHeaderFilterStrategy() {

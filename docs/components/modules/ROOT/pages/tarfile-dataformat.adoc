@@ -121,7 +121,7 @@ work.
 ----------------------------------------------------------------------------------------------------
   TarFileDataFormat tarFile = new TarFileDataFormat();
   tarFile.setUsingIterator(true);
-  from("file:src/test/resources/org/apache/camel/dataformat/tarfile/?consumer.delay=1000&noop=true")
+  from("file:src/test/resources/org/apache/camel/dataformat/tarfile/?delay=1000&noop=true")
     .unmarshal(tarFile)
     .split(body(Iterator.class))
         .streaming()
@@ -134,7 +134,7 @@ like this
 
 [source,java]
 ----------------------------------------------------------------------------------------------------
-   from("file:src/test/resources/org/apache/camel/dataformat/tarfile?consumer.delay=1000&noop=true")
+   from("file:src/test/resources/org/apache/camel/dataformat/tarfile?delay=1000&noop=true")
      .split(new TarSplitter())
         .streaming()
         .process(new UnTarpedMessageProcessor())

@@ -1129,13 +1129,11 @@ directories, to avoid traversing down unwanted directories.
 For example to skip any directories which starts with `"skip"` in the
 name, can be implemented as follows:
 
-== Using consumer.bridgeErrorHandler
-
-*Available as of Camel 2.10*
+== Using bridgeErrorHandler
 
 If you want to use the Camel Error Handler to
 deal with any exception occurring in the file consumer, then you can
-enable the `consumer.bridgeErrorHandler` option as shown below:
+enable the `bridgeErrorHandler` option as shown below:
 
 [source,java]
 ----
@@ -1148,7 +1146,7 @@ onException(IOException.class)
 
 // this is the file route that pickup files, notice how we bridge the consumer to use the Camel routing error handler
 // the exclusiveReadLockStrategy is only configured because this is from an unit test, so we use that to simulate exceptions
-from("file:target/nospace?consumer.bridgeErrorHandler=true")
+from("file:target/nospace?bridgeErrorHandler=true")
     .convertBodyTo(String.class)
     .to("mock:result");
 ----
@@ -1156,8 +1154,8 @@ from("file:target/nospace?consumer.bridgeErrorHandler=true")
 So all you have to do is to enable this option, and the error handler in
 the route will take it from there.
 
-IMPORTANT: *Important when using consumer.bridgeErrorHandler*
-When using consumer.bridgeErrorHandler, then
+IMPORTANT: *Important when using bridgeErrorHandler*
+When using bridgeErrorHandler, then
 interceptors, OnCompletions
 does *not* apply. The Exchange is processed directly
 by the Camel Error Handler, and does not allow

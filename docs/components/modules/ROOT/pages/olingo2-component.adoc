@@ -83,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (17 parameters):
+=== Query Parameters (33 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -101,11 +101,27 @@ with the following path and query parameters:
 | *socketTimeout* (common) | HTTP request timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | int
 | *sslContextParameters* (common) | To configure security using SSLContextParameters |  | SSLContextParameters
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *splitResult* (consumer) | For endpoints that return an array or collection, a consumer endpoint will map every element to distinct messages, unless splitResult is set to false. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
@@ -124,7 +140,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 15 options, which are listed below.
+The component supports 16 options, which are listed below.
 
 
 
@@ -143,6 +159,7 @@ The component supports 15 options, which are listed below.
 | *camel.component.olingo2.configuration.proxy* | HTTP proxy server configuration |  | HttpHost
 | *camel.component.olingo2.configuration.service-uri* | Target OData service base URI, e.g. \http://services.odata.org/OData/OData.svc |  | String
 | *camel.component.olingo2.configuration.socket-timeout* | HTTP request timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | Integer
+| *camel.component.olingo2.configuration.split-result* | For endpoints that return an array or collection, a consumer endpoint will map every element to distinct messages, unless splitResult is set to false. | true | Boolean
 | *camel.component.olingo2.configuration.ssl-context-parameters* | To configure security using SSLContextParameters |  | SSLContextParameters
 | *camel.component.olingo2.enabled* | Enable olingo2 component | true | Boolean
 | *camel.component.olingo2.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
@@ -255,11 +272,11 @@ java.util.List<java.util.Map<String, Object>> containing list of key property na
 Only the *read* endpoint can be used as a consumer endpoint. Consumer
 endpoints can
 use http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
-Poll Consumer Options] with a *`consumer.`* prefix to schedule endpoint
+Poll Consumer Options] to schedule endpoint
 invocation. By default consumer endpoints that return an array or
 collection will generate one exchange per element, and their routes will
 be executed once for each exchange. This behavior can be disabled by
-setting the endpoint property *consumer.splitResult=false*. 
+setting the endpoint property *splitResult=false*.
 
 == Message Headers
 
@@ -274,7 +291,7 @@ API] used by the Olingo2Component. Producer endpoints can specify the
 option name for incoming message body in the *`inBody`* endpoint URI
 parameter. For endpoints that return an array or collection, a consumer
 endpoint will map every element to distinct messages, unless
-*consumer.splitResult* is set to *false*.
+*splitResult* is set to *false*.
 
 == Use cases
 
@@ -331,6 +348,6 @@ consumer endpoint will produce an *ODataFeed* value the first time, and
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------
-from("olingo2://read/Manufacturers?queryParams=#paramsBean&consumer.timeUnit=SECONDS&consumer.delay=30")
+from("olingo2://read/Manufacturers?queryParams=#paramsBean&timeUnit=SECONDS&delay=30")
     .to("bean:blah");
 ---------------------------------------------------------------------------------------------------------

@@ -128,7 +128,7 @@ work.
 ZipFileDataFormat zipFile = new ZipFileDataFormat();
 zipFile.setUsingIterator(true);
 
-from("file:src/test/resources/org/apache/camel/dataformat/zipfile/?consumer.delay=1000&noop=true")
+from("file:src/test/resources/org/apache/camel/dataformat/zipfile/?delay=1000&noop=true")
     .unmarshal(zipFile)
     .split(body(Iterator.class)).streaming()
         .process(new UnZippedMessageProcessor())
@@ -140,7 +140,7 @@ like this
 
 [source,java]
 ----
-from("file:src/test/resources/org/apache/camel/dataformat/zipfile?consumer.delay=1000&noop=true")
+from("file:src/test/resources/org/apache/camel/dataformat/zipfile?delay=1000&noop=true")
     .split(new ZipSplitter()).streaming()
         .process(new UnZippedMessageProcessor())
     .end();
