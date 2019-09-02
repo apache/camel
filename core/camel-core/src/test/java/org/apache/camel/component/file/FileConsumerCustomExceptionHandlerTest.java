@@ -83,7 +83,7 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
                 // our custom exception handler on the consumer
                 // the exclusiveReadLockStrategy is only configured because this
                 // is from an unit test, so we use that to simulate exceptions
-                from("file:target/data/nospace?exclusiveReadLockStrategy=#myReadLockStrategy&consumer.exceptionHandler=#myExceptionHandler&initialDelay=0&delay=10")
+                from("file:target/data/nospace?exclusiveReadLockStrategy=#myReadLockStrategy&exceptionHandler=#myExceptionHandler&initialDelay=0&delay=10")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };

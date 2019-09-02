@@ -53,19 +53,19 @@ public class FileConfigureTest extends ContextTestSupport {
 
     @Test
     public void testUriWithParameters() throws Exception {
-        FileEndpoint endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&consumer.bridgeErrorHandler=true"
+        FileEndpoint endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&bridgeErrorHandler=true"
                                                          + "&autoCreate=false&startingDirectoryMustExist=true&directoryMustExist=true&readLock=changed", FileEndpoint.class);
         assertNotNull("Could not find file endpoint", endpoint);
         assertEquals("Get a wrong option of StartingDirectoryMustExist", true, endpoint.isStartingDirectoryMustExist());
 
         endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&startingDirectoryMustExist=true"
-                                            + "&consumer.bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
+                                            + "&bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
 
         assertNotNull("Could not find file endpoint", endpoint);
         assertEquals("Get a wrong option of StartingDirectoryMustExist", true, endpoint.isStartingDirectoryMustExist());
 
         endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&startingDirectoryMustExist=true&useFixedDelay=true&initialDelay=10"
-                                            + "&consumer.bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
+                                            + "&bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
 
         assertNotNull("Could not find file endpoint", endpoint);
         assertEquals("Get a wrong option of StartingDirectoryMustExist", true, endpoint.isStartingDirectoryMustExist());

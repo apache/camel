@@ -42,7 +42,7 @@ public class SchedulerNoPolledMessagesTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("scheduler://foo?delay=100&backoffMultiplier=10&backoffIdleThreshold=2").log("Fired scheduler").process(new Processor() {
+                from("scheduler://foo?delay=100&backoffMultiplier=10&backoffIdleThreshold=2&scheduler.concurrentTasks=2").log("Fired scheduler").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         // force no messages to be polled which should affect
