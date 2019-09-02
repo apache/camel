@@ -57,36 +57,36 @@ The Jetty component supports 33 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *sslKeyPassword* (security) | The key password, which is used to access the certificate's key entry in the keystore (this is the same password that is supplied to the keystore command's -keypass option). |  | String
-| *sslPassword* (security) | The ssl password, which is required to access the keystore file (this is the same password that is supplied to the keystore command's -storepass option). |  | String
-| *keystore* (security) | Specifies the location of the Java keystore file, which contains the Jetty server's own X.509 certificate in a key entry. |  | String
-| *errorHandler* (advanced) | This option is used to set the ErrorHandler that Jetty server uses. |  | ErrorHandler
-| *sslSocketConnectors* (security) | A map which contains per port number specific SSL connectors. |  | Map
-| *socketConnectors* (security) | A map which contains per port number specific HTTP connectors. Uses the same principle as sslSocketConnectors. |  | Map
-| *httpClientMinThreads* (producer) | To set a value for minimum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
-| *httpClientMaxThreads* (producer) | To set a value for maximum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
-| *minThreads* (consumer) | To set a value for minimum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
-| *maxThreads* (consumer) | To set a value for maximum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
-| *threadPool* (consumer) | To use a custom thread pool for the server. This option should only be used in special circumstances. |  | ThreadPool
-| *enableJmx* (consumer) | If this option is true, Jetty JMX support will be enabled for this endpoint. | false | boolean
-| *jettyHttpBinding* (advanced) | To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which are used to customize how a response should be written for the producer. |  | JettyHttpBinding
-| *httpBinding* (advanced) | Not to be used - use JettyHttpBinding instead. |  | HttpBinding
-| *httpConfiguration* (advanced) | Jetty component does not use HttpConfiguration. |  | HttpConfiguration
-| *mbContainer* (advanced) | To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if JMX is enabled that Jetty uses for registering mbeans. |  | MBeanContainer
-| *sslSocketConnector Properties* (security) | A map which contains general SSL connector properties. |  | Map
-| *socketConnector Properties* (security) | A map which contains general HTTP connector properties. Uses the same principle as sslSocketConnectorProperties. |  | Map
 | *continuationTimeout* (consumer) | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine. | 30000 | Long
-| *useContinuation* (consumer) | Whether or not to use Jetty continuations for the Jetty Server. | true | boolean
-| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters | false | boolean
-| *responseBufferSize* (consumer) | Allows to configure a custom value of the response buffer size on the Jetty connectors. |  | Integer
-| *requestBufferSize* (consumer) | Allows to configure a custom value of the request buffer size on the Jetty connectors. |  | Integer
-| *requestHeaderSize* (consumer) | Allows to configure a custom value of the request header size on the Jetty connectors. |  | Integer
-| *responseHeaderSize* (consumer) | Allows to configure a custom value of the response header size on the Jetty connectors. |  | Integer
+| *enableJmx* (consumer) | If this option is true, Jetty JMX support will be enabled for this endpoint. | false | boolean
+| *errorHandler* (advanced) | This option is used to set the ErrorHandler that Jetty server uses. |  | ErrorHandler
+| *httpBinding* (advanced) | Not to be used - use JettyHttpBinding instead. |  | HttpBinding
+| *httpClientMaxThreads* (producer) | To set a value for maximum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
+| *httpClientMinThreads* (producer) | To set a value for minimum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
+| *httpConfiguration* (advanced) | Jetty component does not use HttpConfiguration. |  | HttpConfiguration
+| *jettyHttpBinding* (advanced) | To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which are used to customize how a response should be written for the producer. |  | JettyHttpBinding
+| *keystore* (security) | Specifies the location of the Java keystore file, which contains the Jetty server's own X.509 certificate in a key entry. |  | String
+| *maxThreads* (consumer) | To set a value for maximum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
+| *mbContainer* (advanced) | To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if JMX is enabled that Jetty uses for registering mbeans. |  | MBeanContainer
+| *minThreads* (consumer) | To set a value for minimum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
 | *proxyHost* (proxy) | To use a http proxy to configure the hostname. |  | String
 | *proxyPort* (proxy) | To use a http proxy to configure the port number. |  | Integer
-| *useXForwardedFor Header* (consumer) | To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr. | false | boolean
+| *requestBufferSize* (consumer) | Allows to configure a custom value of the request buffer size on the Jetty connectors. |  | Integer
+| *requestHeaderSize* (consumer) | Allows to configure a custom value of the request header size on the Jetty connectors. |  | Integer
+| *responseBufferSize* (consumer) | Allows to configure a custom value of the response buffer size on the Jetty connectors. |  | Integer
+| *responseHeaderSize* (consumer) | Allows to configure a custom value of the response header size on the Jetty connectors. |  | Integer
 | *sendServerVersion* (consumer) | If the option is true, jetty will send the server header with the jetty version information to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected. | true | boolean
+| *socketConnector Properties* (security) | A map which contains general HTTP connector properties. Uses the same principle as sslSocketConnectorProperties. |  | Map
+| *socketConnectors* (security) | A map which contains per port number specific HTTP connectors. Uses the same principle as sslSocketConnectors. |  | Map
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| *sslKeyPassword* (security) | The key password, which is used to access the certificate's key entry in the keystore (this is the same password that is supplied to the keystore command's -keypass option). |  | String
+| *sslPassword* (security) | The ssl password, which is required to access the keystore file (this is the same password that is supplied to the keystore command's -storepass option). |  | String
+| *sslSocketConnector Properties* (security) | A map which contains general SSL connector properties. |  | Map
+| *sslSocketConnectors* (security) | A map which contains per port number specific SSL connectors. |  | Map
+| *threadPool* (consumer) | To use a custom thread pool for the server. This option should only be used in special circumstances. |  | ThreadPool
+| *useContinuation* (consumer) | Whether or not to use Jetty continuations for the Jetty Server. | true | boolean
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters | false | boolean
+| *useXForwardedFor Header* (consumer) | To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr. | false | boolean
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

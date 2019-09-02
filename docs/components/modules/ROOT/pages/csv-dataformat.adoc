@@ -220,7 +220,7 @@ public void doHandleCsvData(List<List<String>> csvData)
 ------------------------------------------------------------------------------------------------
 <route>
         <!-- poll every 10 seconds -->
-        <from uri="file:///some/path/to/pickup/csvfiles?delete=true&amp;consumer.delay=10000" />
+        <from uri="file:///some/path/to/pickup/csvfiles?delete=true&amp;delay=10000" />
         <unmarshal><csv /></unmarshal>
         <to uri="bean:myCsvHandler?method=doHandleCsvData" />
 </route>

@@ -715,7 +715,7 @@ The following route polls user's connections every 30 seconds:
 
 [source,java]
 -------------------------------------------------------------------------------------
-    from("linkedin://people/connections?consumer.timeUnit=SECONDS&consumer.delay=30")
+    from("linkedin://people/connections?consumer.timeUnit=SECONDS&delay=30")
         .to("bean:foo");
 -------------------------------------------------------------------------------------
 
