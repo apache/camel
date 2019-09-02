@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.rss;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
 
 public class RssEndpointTest extends RssPollingConsumerTest {
@@ -31,10 +28,7 @@ public class RssEndpointTest extends RssPollingConsumerTest {
                 rss.setCamelContext(context);
                 rss.setFeedUri("file:src/test/data/rss20.xml");
                 rss.setSplitEntries(false);
-
-                Map<String, Object> map = new HashMap<>();
-                map.put("delay", 100);
-                rss.setConsumerProperties(map);
+                rss.setDelay(100);
 
                 context.addEndpoint("myrss", rss);
 
