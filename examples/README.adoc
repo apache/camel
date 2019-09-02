@@ -17,8 +17,6 @@ Number of Examples: 115 (0 deprecated)
 |===
 | Example | Category | Description
 
-| link:camel-example-jira/README.adoc[Jira] (camel-example-jira) |  | An example that uses Jira Camel API
-
 | link:camel-example-micrometer/README.md[Micrometer] (camel-example-micrometer) | Advanced | An example showing how to work with Camel, Spring Java Config and Micrometer monitoring
 
 | link:camel-example-webhook/readme.adoc[Webhook] (camel-example-webhook) | Advanced | Example on how to use the Camel Webhook component
@@ -38,6 +36,8 @@ Number of Examples: 115 (0 deprecated)
 | link:camel-example-ftp/README.md[FTP] (camel-example-ftp) | Beginner | An example for showing Camel FTP integration
 
 | link:camel-example-java8/readme.adoc[Java8] (camel-example-java8) | Beginner | An example for showing Camel DSL for Java 8
+
+| link:camel-example-jira/README.adoc[Jira] (camel-example-jira) | Beginner | An example that uses Jira Camel API
 
 | link:camel-example-main/readme.adoc[Main] (camel-example-main) | Beginner | An example for showing standalone Camel
 
