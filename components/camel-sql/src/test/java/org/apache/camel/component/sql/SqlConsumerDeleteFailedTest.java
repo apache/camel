@@ -89,7 +89,7 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("sql:select * from projects where license <> 'BAD' order by id"
-                        + "?consumer.initialDelay=0&consumer.delay=50"
+                        + "?initialDelay=0&delay=50"
                         + "&consumer.onConsume=delete from projects where id = :#id"
                         + "&consumer.onConsumeFailed=update projects set license = 'BAD' where id = :#id")
                     .process(new Processor() {

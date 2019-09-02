@@ -80,7 +80,7 @@ public class MailUsingCustomSessionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("pop3://james@localhost?session=#myCustomMailSession&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
+                from("pop3://james@localhost?session=#myCustomMailSession&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

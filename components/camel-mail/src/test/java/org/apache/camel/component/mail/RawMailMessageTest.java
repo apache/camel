@@ -156,16 +156,16 @@ public class RawMailMessageTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("pop3://davsclaus@apache.org").to("mock:mail");
 
-                from("pop3://jonesRawPop3@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&delete=true&mapMailMessage=false")
+                from("pop3://jonesRawPop3@localhost?password=secret&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
                     .to("mock://rawMessagePop3");
 
-                from("imap://jonesRawImap@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&delete=true&mapMailMessage=false")
+                from("imap://jonesRawImap@localhost?password=secret&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
                     .to("mock://rawMessageImap");
 
-                from("pop3://jonesPop3@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&delete=true")
+                from("pop3://jonesPop3@localhost?password=secret&initialDelay=100&delay=100&delete=true")
                     .to("mock://normalMessagePop3");
 
-                from("imap://jonesImap@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&delete=true")
+                from("imap://jonesImap@localhost?password=secret&initialDelay=100&delay=100&delete=true")
                     .to("mock://normalMessageImap");
             }
         };

@@ -92,7 +92,7 @@ public class SqlProducerAlwaysPopulateStatementTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                    .to("sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=true&prepareStatementStrategy=#myStrategy&consumer.initialDelay=0&consumer.delay=50")
+                    .to("sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=true&prepareStatementStrategy=#myStrategy&initialDelay=0&delay=50")
                     .to("mock:result");
             }
         };

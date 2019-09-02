@@ -88,7 +88,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&" + "consumer.splitResult=false")
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "delay=2&consumer.sendEmptyMessageWhenIdle=true&" + "consumer.splitResult=false")
                     .to("mock:consumer-alreadyseen");
             };
         };
@@ -138,7 +138,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&" + "consumer.splitResult=false")
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "delay=2&consumer.sendEmptyMessageWhenIdle=false&" + "consumer.splitResult=false")
                     .to("mock:consumer-alreadyseen");
             };
         };
@@ -176,7 +176,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&" + "consumer.splitResult=true")
+                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "delay=2&consumer.sendEmptyMessageWhenIdle=true&" + "consumer.splitResult=true")
                     .to("mock:consumer-splitresult-kp-manufacturer");
             };
         };
@@ -226,7 +226,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&" + "consumer.splitResult=true")
+                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "delay=2&consumer.sendEmptyMessageWhenIdle=false&" + "consumer.splitResult=true")
                     .to("mock:consumer-splitresult-kp-manufacturer");
             };
         };

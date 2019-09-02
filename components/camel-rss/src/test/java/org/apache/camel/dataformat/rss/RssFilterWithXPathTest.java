@@ -27,7 +27,7 @@ public class RssFilterWithXPathTest extends RssFilterTest {
             public void configure() throws Exception {
                 // START SNIPPET: ex
                 // only entries with Camel in the title will get through the filter
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100")
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100")
                     .marshal().rss().filter().xpath("//item/title[contains(.,'Camel')]").to("mock:result");
                 // END SNIPPET: ex
             }

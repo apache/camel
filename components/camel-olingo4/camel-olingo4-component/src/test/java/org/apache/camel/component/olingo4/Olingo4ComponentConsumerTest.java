@@ -97,7 +97,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + PEOPLE + "?consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false&filterAlreadySeen=true")
+                from("olingo4://read/" + PEOPLE + "?delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false&filterAlreadySeen=true")
                     .to("mock:consumer-alreadyseen");
             };
         };
@@ -148,7 +148,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + PEOPLE + "?consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&consumer.splitResult=false&filterAlreadySeen=true")
+                from("olingo4://read/" + PEOPLE + "?delay=2&consumer.sendEmptyMessageWhenIdle=false&consumer.splitResult=false&filterAlreadySeen=true")
                     .to("mock:consumer-alreadyseen");
             };
         };
@@ -186,7 +186,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&"
+                from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "delay=2&consumer.sendEmptyMessageWhenIdle=true&"
                      + "consumer.splitResult=true").to("mock:consumer-splitresult-kp-airport");
             };
         };
@@ -236,7 +236,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&"
+                from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "delay=2&consumer.sendEmptyMessageWhenIdle=false&"
                      + "consumer.splitResult=true").to("mock:consumer-splitresult-kp-airport");
             };
         };

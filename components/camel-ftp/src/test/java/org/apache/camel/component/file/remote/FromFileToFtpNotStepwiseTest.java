@@ -20,7 +20,7 @@ public class FromFileToFtpNotStepwiseTest extends FromFileToFtpTest {
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=3000&stepwise=false";
+        return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&initialDelay=3000&stepwise=false";
     }
 
 }

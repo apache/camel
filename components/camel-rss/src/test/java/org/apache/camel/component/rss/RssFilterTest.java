@@ -48,7 +48,7 @@ public class RssFilterTest extends CamelTestSupport {
 
                 // START SNIPPET: ex1
                 // only entries with Camel in the title will get through the filter
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100").
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100").
                         filter().method("myFilterBean", "titleContainsCamel").to("mock:result");
                 // END SNIPPET: ex1
             }

@@ -37,7 +37,7 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin"
-                + "&readLock=none&consumer.delay=500";
+                + "&readLock=none&delay=500";
     }
 
     @Test

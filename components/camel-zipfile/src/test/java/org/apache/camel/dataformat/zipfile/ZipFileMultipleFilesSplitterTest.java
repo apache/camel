@@ -45,7 +45,7 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
                 // Unzip file and Split it according to FileEntry
                 ZipFileDataFormat zipFile = new ZipFileDataFormat();
                 zipFile.setUsingIterator(true);
-                from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data/?consumer.delay=1000&noop=true")
+                from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data/?delay=1000&noop=true")
                         .unmarshal(zipFile)
                         .split(bodyAs(Iterator.class))
                         .streaming()
