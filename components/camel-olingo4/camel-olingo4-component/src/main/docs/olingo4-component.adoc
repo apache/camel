@@ -237,11 +237,11 @@ java.util.Map<String, Object> for In body (request)
 Only the *read* endpoint can be used as a consumer endpoint. Consumer
 endpoints can
 use http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
-Poll Consumer Options] with a *`consumer.`* prefix to schedule endpoint
+Poll Consumer Options] to schedule endpoint
 invocation. By default consumer endpoints that return an array or
 collection will generate one exchange per element, and their routes will
 be executed once for each exchange. This behavior can be disabled by
-setting the endpoint property *consumer.splitResult=false*. 
+setting the endpoint property *splitResult=false*.
 
 == Message Headers
 
@@ -256,7 +256,7 @@ API] used by the Olingo4Component. Producer endpoints can specify the
 option name for incoming message body in the *`inBody`* endpoint URI
 parameter. For endpoints that return an array or collection, a consumer
 endpoint will map every element to distinct messages, unless
-*consumer.splitResult* is set to *false*.
+*splitResult* is set to *false*.
 
 == Use cases
 
