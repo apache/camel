@@ -55,7 +55,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
             public void configure() {
 
                 from("imaps://" + imapHost + "?username=" + username + "&password=" + password
-                     + "&delete=false&unseen=true&fetchSize=1&consumer.useFixedDelay=true&initialDelay=100&delay=100").to("mock:in");
+                     + "&delete=false&unseen=true&fetchSize=1&useFixedDelay=true&initialDelay=100&delay=100").to("mock:in");
 
                 from("direct:in").to("smtps://" + smtpHost + "?username=" + username + "&password=" + password);
             }

@@ -29,7 +29,7 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
 
     public static final long DEFAULT_CONSUMER_DELAY = 30 * 1000L;
 
-    @UriParam(optionalPrefix = "consumer.", defaultValue = "" + DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
+    @UriParam(defaultValue = "" + DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
         description = "Milliseconds before the next poll.")
     private long delay = DEFAULT_CONSUMER_DELAY;
 

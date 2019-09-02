@@ -22,10 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.PollingConsumer;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spi.UriParam;
