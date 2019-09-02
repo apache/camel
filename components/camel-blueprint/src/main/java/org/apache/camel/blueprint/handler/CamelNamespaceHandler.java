@@ -1216,9 +1216,6 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                     URI u = new URI(uri);
                     Map<String, Object> parameters = URISupport.parseParameters(u);
                     Object value = parameters.get("scheduler");
-                    if (value == null) {
-                        value = parameters.get("consumer.scheduler");
-                    }
                     if (value != null) {
                         // the scheduler can be quartz or spring based, so add reference to camel component
                         // from these components os blueprint knows about the requirement
