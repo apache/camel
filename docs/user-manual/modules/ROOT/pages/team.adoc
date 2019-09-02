@@ -17,7 +17,7 @@ sort it in alphabetical order.
 |Bruce Snyder |bsnyder | 
 |Charles Moulliard |cmoulliard |Red Hat
 |Christian Mueller |cmueller |Amazon Web Services
-|Christian Posta |ceposta |Red Hat
+|Christian Posta |ceposta |Solo
 |Christian Schneider |cschneider | 
 |Claus Ibsen |davsclaus |Red Hat
 |Colm O hEigeartaigh |coheigea |Talend
