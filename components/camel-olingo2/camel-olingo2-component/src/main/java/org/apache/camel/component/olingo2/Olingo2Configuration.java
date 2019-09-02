@@ -65,6 +65,8 @@ public class Olingo2Configuration {
     private HttpClientBuilder httpClientBuilder;
     @UriParam
     private boolean filterAlreadySeen;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean splitResult = true;
 
     public Olingo2ApiName getApiName() {
         return apiName;
@@ -212,6 +214,18 @@ public class Olingo2Configuration {
      */
     public void setFilterAlreadySeen(boolean filterAlreadySeen) {
         this.filterAlreadySeen = filterAlreadySeen;
+    }
+
+    public boolean isSplitResult() {
+        return splitResult;
+    }
+
+    /**
+     * For endpoints that return an array or collection, a consumer endpoint will map every element to distinct messages, unless
+     * splitResult is set to false.
+     */
+    public void setSplitResult(boolean splitResult) {
+        this.splitResult = splitResult;
     }
 
     @Override

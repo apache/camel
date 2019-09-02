@@ -41,11 +41,11 @@ public class MyBatisEndpoint extends BaseMyBatisEndpoint {
     private boolean transacted;
     @UriParam(label = "consumer", defaultValue = "0")
     private int maxMessagesPerPoll;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(label = "consumer")
     private String onConsume;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.", defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean useIterator = true;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(label = "consumer")
     private boolean routeEmptyResultSet;
     @UriParam(label = "consumer,advanced")
     private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
