@@ -504,7 +504,7 @@ When using the option `groupedExchange` on the aggregator EIP then the output of
 
 ### Fallback type converters
 
-The `@FallbackConverter` annotation has been removed, and you should use `@Converter(fallback = true)` instead. Also you can set `@Converter(loader = true)` on the converter class to allow Camel to generate source code for loading type converters in a faster way.
+The `@FallbackConverter` annotation has been removed, and you should use `@Converter(fallback = true)` instead. Also you can set `@Converter(generateLoader = true)` on the converter class to allow Camel to generate source code for loading type converters in a faster way.
 
 
 ### Removed JMX APIs for explaining EIPs, components, etc.
