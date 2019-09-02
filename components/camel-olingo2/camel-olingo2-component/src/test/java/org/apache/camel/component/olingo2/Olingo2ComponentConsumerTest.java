@@ -88,7 +88,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "delay=2&consumer.sendEmptyMessageWhenIdle=true&" + "consumer.splitResult=false")
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=true&" + "consumer.splitResult=false")
                     .to("mock:consumer-alreadyseen");
             };
         };
@@ -122,7 +122,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
      * get the correct number of exchanges before being satisfied. Note: -
      * consumer.splitResults is set to false since this ensures the first
      * returned message contains all the results. -
-     * consumer.sendEmptyMessageWhenIdle is set to false so only 1 message
+     * sendEmptyMessageWhenIdle is set to false so only 1 message
      * should even be returned.
      */
     @Test
@@ -138,7 +138,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "delay=2&consumer.sendEmptyMessageWhenIdle=false&" + "consumer.splitResult=false")
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=false&" + "consumer.splitResult=false")
                     .to("mock:consumer-alreadyseen");
             };
         };
@@ -164,7 +164,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
     /**
      * WithPredicate in address FilterAlreadySeen: true SplitResults: true
-     * consumer.sendEmptyMessageWhenIdle: true
+     * sendEmptyMessageWhenIdle: true
      *
      * @throws Exception
      */
@@ -176,7 +176,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "delay=2&consumer.sendEmptyMessageWhenIdle=true&" + "consumer.splitResult=true")
+                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=true&" + "consumer.splitResult=true")
                     .to("mock:consumer-splitresult-kp-manufacturer");
             };
         };
@@ -208,7 +208,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
     /**
      * WithPredicate in address FilterAlreadySeen: true SplitResults: true
-     * consumer.sendEmptyMessageWhenIdle: false
+     * sendEmptyMessageWhenIdle: false
      *
      * @throws Exception
      */
@@ -226,7 +226,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "delay=2&consumer.sendEmptyMessageWhenIdle=false&" + "consumer.splitResult=true")
+                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=false&" + "consumer.splitResult=true")
                     .to("mock:consumer-splitresult-kp-manufacturer");
             };
         };

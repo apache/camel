@@ -39,7 +39,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
         label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
-    @UriParam(optionalPrefix = "consumer.", defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
+    @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
             description = "Milliseconds before the next poll.")
     private long delay = MailConsumer.DEFAULT_CONSUMER_DELAY;
 
@@ -78,7 +78,7 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
         super(uri, component);
         this.configuration = configuration;
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
-        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
+        // so we override with a new default value. End user can override this value by providing a delay parameter
         setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
