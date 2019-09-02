@@ -39,6 +39,7 @@ import java.util.TreeSet;
 import java.util.stream.Stream;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -91,7 +92,7 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
     private void processClasses(IndexView index) {
         Map<String, Set<String>> byPackage = new HashMap<>();
 
-        Stream.of(XmlRootElement.class, XmlEnum.class)
+        Stream.of(XmlRootElement.class, XmlEnum.class, XmlType.class)
                 .map(Class::getName)
                 .map(DotName::createSimple)
                 .map(index::getAnnotations)
