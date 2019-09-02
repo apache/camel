@@ -58,7 +58,7 @@
 
         <!-- Consumer -->
         <route id="consume-route">
-            <from uri="jooq://org.apache.camel.examples.jooq.db.tables.records.BookStoreRecord?consumer.delay=5000&amp;consumeDelete=true"/>
+            <from uri="jooq://org.apache.camel.examples.jooq.db.tables.records.BookStoreRecord?delay=5000&amp;consumeDelete=true"/>
             <log message="Consumed: ${body}"/>
         </route>
     </camelContext>

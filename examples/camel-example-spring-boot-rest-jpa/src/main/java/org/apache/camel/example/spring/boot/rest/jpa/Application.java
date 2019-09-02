@@ -74,8 +74,8 @@ public class Application extends SpringBootServletInitializer {
 
             // A second route polls the DB for new orders and processes them
             from("jpa:org.apache.camel.example.spring.boot.rest.jpa.Order"
-                + "?consumer.namedQuery=new-orders"
-                + "&consumer.delay={{example.processOrderPeriod:5s}}"
+                + "?namedQuery=new-orders"
+                + "&delay={{example.processOrderPeriod:5s}}"
                 + "&consumeDelete=false")
                 .routeId("process-order")
                 .log("Processed order #id ${body.id} with ${body.amount} copies of the «${body.book.description}» book");
