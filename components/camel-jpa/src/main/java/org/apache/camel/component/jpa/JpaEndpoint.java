@@ -72,25 +72,25 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
 
-    @UriParam(optionalPrefix = "consumer.")
+    @UriParam
     private String query;
-    @UriParam(optionalPrefix = "consumer.")
+    @UriParam
     private String namedQuery;
-    @UriParam(optionalPrefix = "consumer.")
+    @UriParam
     private String nativeQuery;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.", defaultValue = "PESSIMISTIC_WRITE")
+    @UriParam(label = "consumer", defaultValue = "PESSIMISTIC_WRITE")
     private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
-    @UriParam(label = "consumer,advanced", optionalPrefix = "consumer.", multiValue = true)
+    @UriParam(label = "consumer,advanced", multiValue = true)
     private Map<String, Object> parameters;
-    @UriParam(optionalPrefix = "consumer.")
+    @UriParam
     private Class<?> resultClass;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(label = "consumer")
     private boolean transacted;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(label = "consumer")
     private boolean skipLockedEntity;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(label = "consumer")
     private DeleteHandler<Object> deleteHandler;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(label = "consumer")
     private DeleteHandler<Object> preDeleteHandler;
 
     @UriParam(label = "producer", defaultValue = "true")

@@ -76,7 +76,7 @@ public class JpaWithNamedQueryTest extends Assert {
         assertEquals("Should have no results: " + results, 0, results.size());
 
         // lets produce some objects
-        template.send(endpoint, new Processor() {
+        template.send("jpa://" + MultiSteps.class.getName(), new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody(new MultiSteps("foo@bar.com"));
             }
@@ -173,7 +173,7 @@ public class JpaWithNamedQueryTest extends Assert {
     }
 
     protected String getEndpointUri() {
-        return "jpa://" + MultiSteps.class.getName() + "?consumer.namedQuery=step1";
+        return "jpa://" + MultiSteps.class.getName() + "?namedQuery=step1";
     }
 
     @After
