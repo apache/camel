@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+
 import org.apache.camel.component.olingo4.api.Olingo4App;
 import org.apache.camel.component.olingo4.api.Olingo4ResponseHandler;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchChangeRequest;
@@ -38,6 +39,7 @@ import org.apache.camel.component.olingo4.api.batch.Olingo4BatchQueryRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchResponse;
 import org.apache.camel.component.olingo4.api.batch.Operation;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
@@ -228,7 +230,7 @@ public final class Olingo4AppImpl implements Olingo4App {
 
     @Override
     public void close() {
-
+        IOHelper.close(client);
     }
 
     @Override
