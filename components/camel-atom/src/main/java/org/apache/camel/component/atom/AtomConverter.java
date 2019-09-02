@@ -26,7 +26,7 @@ import org.apache.camel.Converter;
 /**
  * Date converters.
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class AtomConverter {
 
     public static final String DATE_PATTERN_NO_TIMEZONE = "yyyy-MM-dd'T'HH:mm:ss";

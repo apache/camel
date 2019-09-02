@@ -25,7 +25,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class FileConverter {
 
     private FileConverter() {

@@ -44,7 +44,7 @@ import org.bson.json.JsonReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class MongoDbBasicConverters {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbBasicConverters.class);
