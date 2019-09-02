@@ -48,6 +48,6 @@ public class JpaWithNativeQueryWithResultClassTest extends JpaWithNamedQueryTest
 
     @Override
     protected String getEndpointUri() {
-        return "jpa://" + MultiSteps.class.getName() + "?consumer.resultClass=org.apache.camel.examples.MultiSteps&consumer.nativeQuery=select * from MultiSteps where step = 1";
+        return "jpa://" + MultiSteps.class.getName() + "?resultClass=org.apache.camel.examples.MultiSteps&nativeQuery=select * from MultiSteps where step = 1";
     }
 }

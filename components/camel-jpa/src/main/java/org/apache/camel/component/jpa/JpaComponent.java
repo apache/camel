@@ -121,6 +121,7 @@ public class JpaComponent extends DefaultComponent {
                 endpoint.setEntityType(type);
             }
         }
+        setProperties(endpoint, options);
         return endpoint;
     }
 
