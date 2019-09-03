@@ -1,5 +1,6 @@
 [[hl7-dataformat]]
 = HL7 DataFormat
+:page-source: components/camel-hl7/src/main/docs/hl7-dataformat.adoc
 
 *Available as of Camel version 2.0*
 

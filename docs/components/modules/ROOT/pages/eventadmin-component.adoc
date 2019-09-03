@@ -1,5 +1,6 @@
 [[eventadmin-component]]
 = OSGi EventAdmin Component
+:page-source: components/camel-eventadmin/src/main/docs/eventadmin-component.adoc
 
 *Available as of Camel version 2.6*
 

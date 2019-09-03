@@ -1,5 +1,6 @@
 [[splunk-component]]
 = Splunk Component
+:page-source: components/camel-splunk/src/main/docs/splunk-component.adoc
 
 *Available as of Camel version 2.13*
 

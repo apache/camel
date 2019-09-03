@@ -1,5 +1,6 @@
 [[atomix-value-component]]
 = Atomix Value Component
+:page-source: components/camel-atomix/src/main/docs/atomix-value-component.adoc
 
 *Available as of Camel version 2.20*
 

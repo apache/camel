@@ -1,4 +1,5 @@
 = Testcontainers
+:page-source: components/camel-testcontainers/src/main/docs/testcontainers.adoc
 
 *Available since 2.22.0*
 

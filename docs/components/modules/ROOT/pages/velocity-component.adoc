@@ -1,5 +1,6 @@
 [[velocity-component]]
 = Velocity Component
+:page-source: components/camel-velocity/src/main/docs/velocity-component.adoc
 
 *Available as of Camel version 1.2*
 

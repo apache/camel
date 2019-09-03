@@ -1,5 +1,6 @@
 [[kubernetes-replication-controllers-component]]
 = Kubernetes Replication Controller Component
+:page-source: components/camel-kubernetes/src/main/docs/kubernetes-replication-controllers-component.adoc
 
 *Available as of Camel version 2.17*
 

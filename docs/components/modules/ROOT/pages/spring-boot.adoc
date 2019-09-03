@@ -1,5 +1,6 @@
 [[SpringBoot-SpringBoot]]
 = Spring Boot
+:page-source: components/camel-spring-boot/src/main/docs/spring-boot.adoc
 
 *Available as of Camel 2.15*
 

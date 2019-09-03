@@ -1,5 +1,6 @@
 [[scp-component]]
 = SCP Component
+:page-source: components/camel-jsch/src/main/docs/scp-component.adoc
 
 *Available as of Camel version 2.10*
 

@@ -1,5 +1,6 @@
 [[xmlBeans-dataformat]]
 = XML Beans DataFormat (deprecated)
+:page-source: components/camel-xmlbeans/src/main/docs/xmlBeans-dataformat.adoc
 
 *Available as of Camel version 1.2*
 

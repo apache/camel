@@ -1,5 +1,6 @@
 [[flatpack-dataformat]]
 = Flatpack DataFormat
+:page-source: components/camel-flatpack/src/main/docs/flatpack-dataformat.adoc
 
 *Available as of Camel version 2.1*
 

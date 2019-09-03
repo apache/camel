@@ -1,5 +1,6 @@
 [[reactive-streams-component]]
 = Reactive Streams Component
+:page-source: components/camel-reactive-streams/src/main/docs/reactive-streams-component.adoc
 
 *Available as of Camel version 2.19*
 

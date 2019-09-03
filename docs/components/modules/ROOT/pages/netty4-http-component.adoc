@@ -1,5 +1,6 @@
 [[netty4-http-component]]
 = Netty4 HTTP Component
+:page-source: components/camel-netty4-http/src/main/docs/netty4-http-component.adoc
 
 *Available as of Camel version 2.14*
 

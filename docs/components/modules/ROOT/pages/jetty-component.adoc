@@ -1,5 +1,6 @@
 [[jetty-component]]
 = Jetty 9 Component
+:page-source: components/camel-jetty9/src/main/docs/jetty-component.adoc
 
 *Available as of Camel version 1.2*
 

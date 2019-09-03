@@ -1,5 +1,6 @@
 [[atomix-set-component]]
 = Atomix Set Component
+:page-source: components/camel-atomix/src/main/docs/atomix-set-component.adoc
 
 *Available as of Camel version 2.20*
 

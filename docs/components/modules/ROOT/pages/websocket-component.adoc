@@ -1,5 +1,6 @@
 [[websocket-component]]
 = Jetty Websocket Component
+:page-source: components/camel-websocket/src/main/docs/websocket-component.adoc
 
 *Available as of Camel version 2.10*
 

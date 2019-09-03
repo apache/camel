@@ -1,5 +1,6 @@
 [[openstack-cinder-component]]
 = OpenStack Cinder Component
+:page-source: components/camel-openstack/src/main/docs/openstack-cinder-component.adoc
 
 *Available as of Camel version 2.19*
 

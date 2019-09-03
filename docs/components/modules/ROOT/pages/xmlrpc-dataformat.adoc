@@ -1,5 +1,6 @@
 [[xmlrpc-dataformat]]
 = XML RPC DataFormat
+:page-source: components/camel-xmlrpc/src/main/docs/xmlrpc-dataformat.adoc
 
 *Available as of Camel version 2.11*
 

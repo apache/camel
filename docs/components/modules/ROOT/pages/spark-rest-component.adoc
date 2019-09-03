@@ -1,5 +1,6 @@
 [[spark-rest-component]]
 = Spark Rest Component
+:page-source: components/camel-spark-rest/src/main/docs/spark-rest-component.adoc
 
 *Available as of Camel version 2.14*
 

@@ -1,5 +1,6 @@
 [[kubernetes-hpa-component]]
 = Kubernetes HPA Component
+:page-source: components/camel-kubernetes/src/main/docs/kubernetes-hpa-component.adoc
 
 *Available as of Camel version 2.23*
 

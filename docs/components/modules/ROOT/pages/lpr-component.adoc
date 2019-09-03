@@ -1,5 +1,6 @@
 [[lpr-component]]
 = Printer Component
+:page-source: components/camel-printer/src/main/docs/lpr-component.adoc
 
 *Available as of Camel version 2.1*
 

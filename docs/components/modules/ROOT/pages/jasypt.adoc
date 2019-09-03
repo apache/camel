@@ -1,4 +1,5 @@
 = Jasypt component
+:page-source: components/camel-jasypt/src/main/docs/jasypt.adoc
 
 *Available as of Camel 2.5*
 

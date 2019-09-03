@@ -1,5 +1,6 @@
 [[hessian-dataformat]]
 = Hessian DataFormat (deprecated)
+:page-source: components/camel-hessian/src/main/docs/hessian-dataformat.adoc
 
 *Available as of Camel version 2.17*
 

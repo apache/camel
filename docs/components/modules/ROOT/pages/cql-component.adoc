@@ -1,5 +1,6 @@
 [[cql-component]]
 = Cassandra CQL Component
+:page-source: components/camel-cassandraql/src/main/docs/cql-component.adoc
 
 *Available as of Camel version 2.15*
 

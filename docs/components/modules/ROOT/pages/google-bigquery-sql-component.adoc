@@ -1,5 +1,6 @@
 [[google-bigquery-sql-component]]
 = Google BigQuery Standard SQL Component
+:page-source: components/camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc
 *Available as of Camel version 2.23*
 *Available as of Camel version 2.23*
 

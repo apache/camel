@@ -1,5 +1,6 @@
 [[hazelcast-set-component]]
 = Hazelcast Set Component
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-set-component.adoc
 
 *Available as of Camel version 2.7*
 

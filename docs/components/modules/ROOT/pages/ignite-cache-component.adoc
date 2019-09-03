@@ -1,5 +1,6 @@
 [[ignite-cache-component]]
 = Ignite Cache Component
+:page-source: components/camel-ignite/src/main/docs/ignite-cache-component.adoc
 
 *Available as of Camel version 2.17*
 

@@ -1,5 +1,6 @@
 [[guava-eventbus-component]]
 = Guava EventBus Component
+:page-source: components/camel-guava-eventbus/src/main/docs/guava-eventbus-component.adoc
 
 *Available as of Camel version 2.10*
 

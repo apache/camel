@@ -1,5 +1,6 @@
 [[chunk-component]]
 = Chunk Component
+:page-source: components/camel-chunk/src/main/docs/chunk-component.adoc
 
 *Available as of Camel version 2.15*
 

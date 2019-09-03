@@ -1,5 +1,6 @@
 [[SpringSupport-SpringSupport]]
 = Spring Support
+:page-source: components/camel-spring/src/main/docs/spring.adoc
 
 Apache Camel is designed to work nicely with the
 http://www.springframework.org/[Spring Framework] in a number of ways.

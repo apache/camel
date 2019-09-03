@@ -1,5 +1,6 @@
 [[sql-stored-component]]
 = SQL Stored Procedure Component
+:page-source: components/camel-sql/src/main/docs/sql-stored-component.adoc
 
 *Available as of Camel version 2.17*
 

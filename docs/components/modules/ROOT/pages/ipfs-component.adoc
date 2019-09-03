@@ -1,5 +1,6 @@
 [[ipfs-component]]
 = IPFS Component
+:page-source: components/camel-ipfs/src/main/docs/ipfs-component.adoc
 
 *Available as of Camel version 2.23*
 

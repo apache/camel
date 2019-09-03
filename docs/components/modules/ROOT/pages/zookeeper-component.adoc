@@ -1,5 +1,6 @@
 [[zookeeper-component]]
 = ZooKeeper Component
+:page-source: components/camel-zookeeper/src/main/docs/zookeeper-component.adoc
 
 *Available as of Camel version 2.9*
 

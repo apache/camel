@@ -1,5 +1,6 @@
 [[mvel-language]]
 = MVEL Language
+:page-source: components/camel-mvel/src/main/docs/mvel-language.adoc
 
 *Available as of Camel version 2.0*
 

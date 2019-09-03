@@ -1,5 +1,6 @@
 [[kestrel-component]]
 = Kestrel Component (deprecated)
+:page-source: components/camel-kestrel/src/main/docs/kestrel-component.adoc
 
 *Available as of Camel version 2.6*
 

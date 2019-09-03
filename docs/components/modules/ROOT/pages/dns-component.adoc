@@ -1,5 +1,6 @@
 [[dns-component]]
 = DNS Component
+:page-source: components/camel-dns/src/main/docs/dns-component.adoc
 
 *Available as of Camel version 2.7*
 

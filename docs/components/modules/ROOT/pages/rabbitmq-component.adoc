@@ -1,5 +1,6 @@
 [[rabbitmq-component]]
 = RabbitMQ Component
+:page-source: components/camel-rabbitmq/src/main/docs/rabbitmq-component.adoc
 
 *Available as of Camel version 2.12*
 

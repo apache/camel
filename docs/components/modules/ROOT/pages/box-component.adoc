@@ -1,5 +1,6 @@
 [[box-component]]
 = Box Component
+:page-source: components/camel-box/camel-box-component/src/main/docs/box-component.adoc
 
 *Available as of Camel version 2.14*
 

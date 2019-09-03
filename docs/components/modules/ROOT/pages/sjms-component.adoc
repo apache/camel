@@ -1,5 +1,6 @@
 [[sjms-component]]
 = Simple JMS Component
+:page-source: components/camel-sjms/src/main/docs/sjms-component.adoc
 
 *Available as of Camel version 2.11*
 

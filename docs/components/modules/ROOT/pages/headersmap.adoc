@@ -1,4 +1,5 @@
 = HeadersMap
+:page-source: components/camel-headersmap/src/main/docs/headersmap.adoc
 
 *Available as of Camel 2.20*
 

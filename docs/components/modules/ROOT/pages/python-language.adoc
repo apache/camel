@@ -1,5 +1,6 @@
 [[python-language]]
 = Python Language (deprecated)
+:page-source: components/camel-script/src/main/docs/python-language.adoc
 
 *Available as of Camel version 1.0*
 

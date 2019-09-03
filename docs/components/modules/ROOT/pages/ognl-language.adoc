@@ -1,5 +1,6 @@
 [[ognl-language]]
 = OGNL Language
+:page-source: components/camel-ognl/src/main/docs/ognl-language.adoc
 
 *Available as of Camel version 1.1*
 

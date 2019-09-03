@@ -1,5 +1,6 @@
 [[smpp-component]]
 = SMPP Component
+:page-source: components/camel-smpp/src/main/docs/smpp-component.adoc
 
 *Available as of Camel version 2.2*
 

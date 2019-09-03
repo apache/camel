@@ -1,5 +1,6 @@
 [[atom-component]]
 = Atom Component
+:page-source: components/camel-atom/src/main/docs/atom-component.adoc
 
 *Available as of Camel version 1.2*
 

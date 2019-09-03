@@ -1,5 +1,6 @@
 [[servicenow-component]]
 = ServiceNow Component
+:page-source: components/camel-servicenow/camel-servicenow-component/src/main/docs/servicenow-component.adoc
 
 *Available as of Camel version 2.18*
 

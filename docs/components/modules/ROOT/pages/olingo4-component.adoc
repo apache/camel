@@ -1,5 +1,6 @@
 [[olingo4-component]]
 = Olingo4 Component
+:page-source: components/camel-olingo4/camel-olingo4-component/src/main/docs/olingo4-component.adoc
 
 *Available as of Camel version 2.19*
 

@@ -1,4 +1,5 @@
 = Camel SCR (deprecated)
+:page-source: components/camel-scr/src/main/docs/scr.adoc
 
 *Available as of Camel 2.15*
 

@@ -1,5 +1,6 @@
 [[el-language]]
 = EL Language (deprecated)
+:page-source: components/camel-juel/src/main/docs/el-language.adoc
 [[EL-EL]]
 *Available as of Camel version 1.1.0*
 *Available as of Camel version 1.1*

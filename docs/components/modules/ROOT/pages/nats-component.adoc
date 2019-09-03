@@ -1,5 +1,6 @@
 [[nats-component]]
 = Nats Component
+:page-source: components/camel-nats/src/main/docs/nats-component.adoc
 
 *Available as of Camel version 2.17*
 

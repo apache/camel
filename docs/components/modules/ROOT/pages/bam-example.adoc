@@ -1,4 +1,5 @@
 = Business Activity Monitor (BAM) Example
+:page-source: components/camel-bam/src/main/docs/bam-example.adoc
 
 The BAM (Business Activity Monitor) example shows how to
 monitor your transaction flows using Camel.

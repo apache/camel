@@ -1,5 +1,6 @@
 [[krati-component]]
 = Krati Component (deprecated)
+:page-source: components/camel-krati/src/main/docs/krati-component.adoc
 
 *Available as of Camel version 2.9*
 

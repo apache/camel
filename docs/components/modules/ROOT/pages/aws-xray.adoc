@@ -1,5 +1,6 @@
 [[AWSXRay-AWSXRayComponent]]
 = AWS XRay Component
+:page-source: components/camel-aws-xray/src/main/docs/aws-xray.adoc
 
 *Available as of Camel 2.21*
 

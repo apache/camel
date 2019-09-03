@@ -1,5 +1,6 @@
 [[sip-component]]
 = SIP Component
+:page-source: components/camel-sip/src/main/docs/sip-component.adoc
 
 *Available as of Camel version 2.5*
 

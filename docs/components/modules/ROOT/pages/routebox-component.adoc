@@ -1,5 +1,6 @@
 [[routebox-component]]
 = RouteBox Component (deprecated)
+:page-source: components/camel-routebox/src/main/docs/routebox-component.adoc
 
 *Available as of Camel version 2.6*
 

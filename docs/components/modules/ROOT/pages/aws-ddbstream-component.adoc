@@ -1,5 +1,6 @@
 [[aws-ddbstream-component]]
 = AWS DynamoDB Streams Component
+:page-source: components/camel-aws/src/main/docs/aws-ddbstream-component.adoc
 
 *Available as of Camel version 2.17*
 

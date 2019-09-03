@@ -1,5 +1,6 @@
 [[kubernetes-job-component]]
 = Kubernetes Job Component
+:page-source: components/camel-kubernetes/src/main/docs/kubernetes-job-component.adoc
 
 *Available as of Camel version 2.23*
 

@@ -1,5 +1,6 @@
 [[vertx-component]]
 = Vert.x Component
+:page-source: components/camel-vertx/src/main/docs/vertx-component.adoc
 
 *Available as of Camel version 2.12*
 

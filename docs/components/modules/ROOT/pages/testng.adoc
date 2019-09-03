@@ -1,4 +1,5 @@
 = TestNG (deprecated)
+:page-source: components/camel-testng/src/main/docs/testng.adoc
 
 *Available since Camel 2.8*
 

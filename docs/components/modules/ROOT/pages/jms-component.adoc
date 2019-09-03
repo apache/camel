@@ -1,5 +1,6 @@
 [[jms-component]]
 = JMS Component
+:page-source: components/camel-jms/src/main/docs/jms-component.adoc
 ifdef::env-github[]
 *Available as of Camel version 1.0.0*
 *Available as of Camel version 1.0*

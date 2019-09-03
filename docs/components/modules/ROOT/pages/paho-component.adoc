@@ -1,5 +1,6 @@
 [[paho-component]]
 = Paho Component
+:page-source: components/camel-paho/src/main/docs/paho-component.adoc
 
 *Available as of Camel version 2.16*
 

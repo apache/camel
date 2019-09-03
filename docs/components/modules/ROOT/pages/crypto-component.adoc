@@ -1,5 +1,6 @@
 [[crypto-component]]
 = Crypto (JCE) Component
+:page-source: components/camel-crypto/src/main/docs/crypto-component.adoc
 
 *Available as of Camel version 2.3*
 

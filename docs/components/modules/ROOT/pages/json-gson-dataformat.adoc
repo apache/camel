@@ -1,5 +1,6 @@
 [[json-gson-dataformat]]
 = JSon GSon DataFormat
+:page-source: components/camel-gson/src/main/docs/json-gson-dataformat.adoc
 
 *Available as of Camel version 2.10*
 

@@ -1,5 +1,6 @@
 [[iota-component]]
 = IOTA Component
+:page-source: components/camel-iota/src/main/docs/iota-component.adoc
 
 *Available as of Camel version 2.23*
 

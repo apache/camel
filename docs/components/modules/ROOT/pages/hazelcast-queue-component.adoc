@@ -1,5 +1,6 @@
 [[hazelcast-queue-component]]
 = Hazelcast Queue Component
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-queue-component.adoc
 
 *Available as of Camel version 2.7*
 

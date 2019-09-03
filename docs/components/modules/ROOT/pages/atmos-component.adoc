@@ -1,5 +1,6 @@
 [[atmos-component]]
 = Atmos Component
+:page-source: components/camel-atmos/src/main/docs/atmos-component.adoc
 
 *Available as of Camel version 2.15*
 

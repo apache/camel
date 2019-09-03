@@ -1,5 +1,6 @@
 [[twitter-component]]
 = Twitter Component (deprecated)
+:page-source: components/camel-twitter/src/main/docs/twitter-component.adoc
 
 *Available as of Camel version 2.10*
 

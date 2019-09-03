@@ -1,5 +1,6 @@
 [[xmlrpc-component]]
 = XML RPC Component (deprecated)
+:page-source: components/camel-xmlrpc/src/main/docs/xmlrpc-component.adoc
 
 *Available as of Camel version 2.11*
 

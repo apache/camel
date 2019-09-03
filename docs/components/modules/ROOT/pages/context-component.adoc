@@ -1,5 +1,6 @@
 [[context-component]]
 = Camel Context Component (deprecated)
+:page-source: components/camel-context/src/main/docs/context-component.adoc
 
 *Available as of Camel version 2.7*
 

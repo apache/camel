@@ -1,5 +1,6 @@
 [[pulsar-component]]
 = Apache Pulsar Component
+:page-source: components/camel-pulsar/src/main/docs/pulsar-component.adoc
 
 *Available as of Camel version 2.24*
 

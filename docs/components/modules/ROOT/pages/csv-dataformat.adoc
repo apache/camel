@@ -1,5 +1,6 @@
 [[csv-dataformat]]
 = CSV DataFormat
+:page-source: components/camel-csv/src/main/docs/csv-dataformat.adoc
 
 *Available as of Camel version 1.3*
 

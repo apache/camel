@@ -1,5 +1,6 @@
 [[twitter-streaming-component]]
 = Twitter Streaming Component
+:page-source: components/camel-twitter/src/main/docs/twitter-streaming-component.adoc
 
 *Available as of Camel version 2.10*
 

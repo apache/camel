@@ -1,5 +1,6 @@
 [[zookeeper-master-component]]
 = ZooKeeper Master Component
+:page-source: components/camel-zookeeper-master/src/main/docs/zookeeper-master-component.adoc
 
 *Available as of Camel version 2.19*
 

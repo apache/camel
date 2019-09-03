@@ -1,5 +1,6 @@
 [[elasticsearch-component]]
 = Elasticsearch Component (deprecated)
+:page-source: components/camel-elasticsearch/src/main/docs/elasticsearch-component.adoc
 
 *Available as of Camel version 2.11*
 

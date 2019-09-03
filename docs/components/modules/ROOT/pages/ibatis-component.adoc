@@ -1,5 +1,6 @@
 [[ibatis-component]]
 = iBatis Component (deprecated)
+:page-source: components/camel-ibatis/src/main/docs/ibatis-component.adoc
 
 *Available as of Camel version 1.2*
 

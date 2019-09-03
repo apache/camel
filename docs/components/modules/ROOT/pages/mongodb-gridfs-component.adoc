@@ -1,5 +1,6 @@
 [[mongodb-gridfs-component]]
 = MongoDB GridFS Component
+:page-source: components/camel-mongodb-gridfs/src/main/docs/mongodb-gridfs-component.adoc
 
 *Available as of Camel version 2.18*
 

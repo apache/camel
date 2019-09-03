@@ -1,5 +1,6 @@
 [[http4-component]]
 = HTTP4 Component
+:page-source: components/camel-http4/src/main/docs/http4-component.adoc
 
 *Available as of Camel version 2.3*
 

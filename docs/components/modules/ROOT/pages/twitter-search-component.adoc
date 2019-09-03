@@ -1,5 +1,6 @@
 [[twitter-search-component]]
 = Twitter Search Component
+:page-source: components/camel-twitter/src/main/docs/twitter-search-component.adoc
 
 *Available as of Camel version 2.10*
 

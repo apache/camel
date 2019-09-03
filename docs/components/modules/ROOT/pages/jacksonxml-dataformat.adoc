@@ -1,5 +1,6 @@
 [[jacksonxml-dataformat]]
 = JacksonXML DataFormat
+:page-source: components/camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc
 
 *Available as of Camel version 2.16*
 

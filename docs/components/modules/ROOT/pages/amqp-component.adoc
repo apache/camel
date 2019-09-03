@@ -1,5 +1,6 @@
 [[amqp-component]]
 = AMQP Component
+:page-source: components/camel-amqp/src/main/docs/amqp-component.adoc
 
 *Available as of Camel version 1.2*
 

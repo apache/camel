@@ -1,5 +1,6 @@
 [[quartz-component]]
 = Quartz Component (deprecated)
+:page-source: components/camel-quartz/src/main/docs/quartz-component.adoc
 
 *Available as of Camel version 1.0*
 

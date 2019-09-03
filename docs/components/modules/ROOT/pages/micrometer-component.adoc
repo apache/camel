@@ -1,5 +1,6 @@
 [[micrometer-component]]
 = Micrometer Component
+:page-source: components/camel-micrometer/src/main/docs/micrometer-component.adoc
 ifdef::env-github[]
 *Available as of Camel version 2.22.0*
 *Available as of Camel version 2.22*

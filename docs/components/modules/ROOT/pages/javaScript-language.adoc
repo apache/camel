@@ -1,5 +1,6 @@
 [[javaScript-language]]
 = JavaScript Language (deprecated)
+:page-source: components/camel-script/src/main/docs/javaScript-language.adoc
 
 *Available as of Camel version 1.0*
 

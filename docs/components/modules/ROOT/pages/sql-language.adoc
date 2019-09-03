@@ -1,5 +1,6 @@
 [[sql-language]]
 = SQL Language (deprecated)
+:page-source: components/camel-josql/src/main/docs/sql-language.adoc
 
 *Available as of Camel version 1.0*
 

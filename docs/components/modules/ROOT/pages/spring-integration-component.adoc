@@ -1,5 +1,6 @@
 [[spring-integration-component]]
 = Spring Integration Component
+:page-source: components/camel-spring-integration/src/main/docs/spring-integration-component.adoc
 
 *Available as of Camel version 1.4*
 

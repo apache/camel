@@ -1,5 +1,6 @@
 [[fop-component]]
 = FOP Component
+:page-source: components/camel-fop/src/main/docs/fop-component.adoc
 
 *Available as of Camel version 2.10*
 

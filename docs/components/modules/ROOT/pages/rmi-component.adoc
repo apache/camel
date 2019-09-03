@@ -1,5 +1,6 @@
 [[rmi-component]]
 = RMI Component (deprecated)
+:page-source: components/camel-rmi/src/main/docs/rmi-component.adoc
 
 *Available as of Camel version 1.0*
 

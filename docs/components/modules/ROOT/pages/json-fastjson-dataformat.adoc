@@ -1,5 +1,6 @@
 [[json-fastjson-dataformat]]
 = JSon Fastjson DataFormat
+:page-source: components/camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc
 
 *Available as of Camel version 2.20*
 

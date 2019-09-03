@@ -1,4 +1,5 @@
 = Eclipse Component
+:page-source: components/camel-eclipse/src/main/docs/eclipse.adoc
 
 *Available as of Camel 2.3*
 

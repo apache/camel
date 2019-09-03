@@ -1,5 +1,6 @@
 [[rest-swagger-component]]
 = REST Swagger Component
+:page-source: components/camel-rest-swagger/src/main/docs/rest-swagger-component.adoc
 
 *Available as of Camel version 2.19*
 

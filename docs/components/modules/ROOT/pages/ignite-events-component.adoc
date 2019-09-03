@@ -1,5 +1,6 @@
 [[ignite-events-component]]
 = Ignite Events Component
+:page-source: components/camel-ignite/src/main/docs/ignite-events-component.adoc
 
 *Available as of Camel version 2.17*
 

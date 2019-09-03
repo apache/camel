@@ -1,5 +1,6 @@
 [[master-component]]
 = Master Component
+:page-source: components/camel-master/src/main/docs/master-component.adoc
 
 *Available as of Camel version 2.20*
 

@@ -1,5 +1,6 @@
 [[asn1-dataformat]]
 = ASN.1 File DataFormat
+:page-source: components/camel-asn1/src/main/docs/asn1-dataformat.adoc
 
 *Available as of Camel version 2.20*
 

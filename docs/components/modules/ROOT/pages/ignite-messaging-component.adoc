@@ -1,5 +1,6 @@
 [[ignite-messaging-component]]
 = Ignite Messaging Component
+:page-source: components/camel-ignite/src/main/docs/ignite-messaging-component.adoc
 
 *Available as of Camel version 2.17*
 

@@ -1,5 +1,6 @@
 [[zendesk-component]]
 = Zendesk Component
+:page-source: components/camel-zendesk/src/main/docs/zendesk-component.adoc
 
 *Available as of Camel version 2.19*
 

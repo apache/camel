@@ -1,5 +1,6 @@
 [[boon-dataformat]]
 = Boon DataFormat (deprecated)
+:page-source: components/camel-boon/src/main/docs/boon-dataformat.adoc
 
 *Available as of Camel version 2.16*
 

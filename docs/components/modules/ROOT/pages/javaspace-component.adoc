@@ -1,5 +1,6 @@
 [[javaspace-component]]
 = JavaSpace Component (deprecated)
+:page-source: components/camel-javaspace/src/main/docs/javaspace-component.adoc
 
 *Available as of Camel version 2.1*
 

@@ -1,5 +1,6 @@
 [[flatpack-component]]
 = Flatpack Component
+:page-source: components/camel-flatpack/src/main/docs/flatpack-component.adoc
 
 *Available as of Camel version 1.4*
 

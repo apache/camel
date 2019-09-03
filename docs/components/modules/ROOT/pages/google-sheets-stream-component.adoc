@@ -1,5 +1,6 @@
 [[google-sheets-stream-component]]
 = Google Sheets Stream Component
+:page-source: components/camel-google-sheets/src/main/docs/google-sheets-stream-component.adoc
 
 *Available as of Camel version 2.23*
 

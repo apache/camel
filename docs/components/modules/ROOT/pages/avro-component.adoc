@@ -1,5 +1,6 @@
 [[avro-component]]
 = Avro Component
+:page-source: components/camel-avro/src/main/docs/avro-component.adoc
 
 *Available as of Camel version 2.10*
 

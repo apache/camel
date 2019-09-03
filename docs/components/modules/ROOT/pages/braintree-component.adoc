@@ -1,5 +1,6 @@
 [[braintree-component]]
 = Braintree Component
+:page-source: components/camel-braintree/src/main/docs/braintree-component.adoc
 
 *Available as of Camel version 2.17*
 

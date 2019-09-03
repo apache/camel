@@ -1,5 +1,6 @@
 [[jing-component]]
 = Jing Component
+:page-source: components/camel-jing/src/main/docs/jing-component.adoc
 
 *Available as of Camel version 1.1*
 

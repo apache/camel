@@ -1,5 +1,6 @@
 [[ldif-component]]
 = LDIF Component
+:page-source: components/camel-ldif/src/main/docs/ldif-component.adoc
 
 *Available as of Camel version 2.20*
 

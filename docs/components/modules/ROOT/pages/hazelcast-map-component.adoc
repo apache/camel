@@ -1,5 +1,6 @@
 [[hazelcast-map-component]]
 = Hazelcast Map Component
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-map-component.adoc
 
 *Available as of Camel version 2.7*
 

@@ -1,5 +1,6 @@
 [[jxpath-language]]
 = JXPath Language (deprecated)
+:page-source: components/camel-jxpath/src/main/docs/jxpath-language.adoc
 
 *Available as of Camel version 1.3*
 

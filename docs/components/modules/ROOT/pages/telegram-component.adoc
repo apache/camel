@@ -1,5 +1,6 @@
 [[telegram-component]]
 = Telegram Component
+:page-source: components/camel-telegram/src/main/docs/telegram-component.adoc
 
 *Available as of Camel version 2.18*
 

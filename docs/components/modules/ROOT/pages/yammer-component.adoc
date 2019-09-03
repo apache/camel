@@ -1,5 +1,6 @@
 [[yammer-component]]
 = Yammer Component
+:page-source: components/camel-yammer/src/main/docs/yammer-component.adoc
 
 *Available as of Camel version 2.12*
 

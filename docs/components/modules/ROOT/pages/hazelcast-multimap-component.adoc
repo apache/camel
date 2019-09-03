@@ -1,5 +1,6 @@
 [[hazelcast-multimap-component]]
 = Hazelcast Multimap Component
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-multimap-component.adoc
 
 *Available as of Camel version 2.7*
 

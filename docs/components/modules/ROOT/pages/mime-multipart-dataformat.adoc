@@ -1,5 +1,6 @@
 [[mime-multipart-dataformat]]
 = MIME Multipart DataFormat
+:page-source: components/camel-mail/src/main/docs/mime-multipart-dataformat.adoc
 
 *Available as of Camel version 2.17*
 

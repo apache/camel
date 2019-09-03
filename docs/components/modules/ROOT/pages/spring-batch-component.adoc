@@ -1,5 +1,6 @@
 [[spring-batch-component]]
 = Spring Batch Component
+:page-source: components/camel-spring-batch/src/main/docs/spring-batch-component.adoc
 
 *Available as of Camel version 2.10*
 

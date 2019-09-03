@@ -1,5 +1,6 @@
 [[cxf-component]]
 = CXF Component
+:page-source: components/camel-cxf/src/main/docs/cxf-component.adoc
 
 *Available as of Camel version 1.0*
 

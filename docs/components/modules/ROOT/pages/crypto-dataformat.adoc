@@ -1,5 +1,6 @@
 [[crypto-dataformat]]
 = Crypto (Java Cryptographic Extension) DataFormat
+:page-source: components/camel-crypto/src/main/docs/crypto-dataformat.adoc
 
 *Available as of Camel version 2.3*
 

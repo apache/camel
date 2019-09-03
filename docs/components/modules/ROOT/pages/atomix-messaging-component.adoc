@@ -1,5 +1,6 @@
 [[atomix-messaging-component]]
 = Atomix Messaging Component
+:page-source: components/camel-atomix/src/main/docs/atomix-messaging-component.adoc
 
 *Available as of Camel version 2.20*
 

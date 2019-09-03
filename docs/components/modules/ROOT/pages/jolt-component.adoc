@@ -1,5 +1,6 @@
 [[jolt-component]]
 = JOLT Component
+:page-source: components/camel-jolt/src/main/docs/jolt-component.adoc
 
 *Available as of Camel version 2.16*
 
