@@ -28,13 +28,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Generated;
 
@@ -469,6 +467,8 @@ public class EndpointDslMojo extends AbstractMojo {
                 break;
             case "rest":
                 s = "restEndpoint";
+                break;
+            default:
                 break;
             }
         }
