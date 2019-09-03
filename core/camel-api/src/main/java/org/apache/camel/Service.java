@@ -16,10 +16,12 @@
  */
 package org.apache.camel;
 
+import java.io.IOException;
+
 /**
  * Represents the core lifecycle API for services which can be initialized, started and stopped
  */
-public interface Service {
+public interface Service extends AutoCloseable {
 
     /**
      * Initialize the service
@@ -42,4 +44,21 @@ public interface Service {
      * @throws RuntimeCamelException is thrown if stopping failed
      */
     void stop();
+
+    /**
+     * Delegates to {@link Service#stop()} so it can be used in
+     * try-with-resources expression.
+     * 
+     * @throws IOException per contract of {@link AutoCloseable} if
+     *             {@link Service#stop()} fails
+     */
+    default void close() throws IOException {
+        try {
+            stop();
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
 }
