@@ -23,6 +23,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -311,6 +312,20 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                 String desc = row.getStringOrDefault("description", "");
                 String defaultValue = row.getStringOrDefault("defaultValue", "");
 
+                // is the option deprecated then include that as well in the description
+                String deprecated = row.getStringOrDefault("deprecated", "");
+                String deprecationNote = row.getStringOrDefault("deprecationNote", "");
+                if ("true".equals(deprecated)) {
+                    desc = "*Deprecated* " + desc;
+                    if (!StringHelper.isEmpty(deprecationNote)) {
+                        if (!desc.endsWith(".")) {
+                            desc = desc + ". Deprecation note: " + deprecationNote;
+                        } else {
+                            desc = desc + " Deprecation note: " + deprecationNote;
+                        }
+                    }
+                }
+
                 // skip this special option and also if not matching the filter
                 boolean skip = name.endsWith("customizer.enabled") || include != null && !name.contains("." + include + ".");
                 if (!skip) {
@@ -373,7 +388,7 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
 
         try {
             String template = loadText(UpdateSpringBootAutoConfigurationReadmeMojo.class.getClassLoader().getResourceAsStream("spring-boot-auto-configure-options.mvel"));
-            String out = (String) TemplateRuntime.eval(template, model);
+            String out = (String) TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);

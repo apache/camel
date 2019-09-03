@@ -100,7 +100,7 @@ The component supports 10 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.zipkin.client-service-mappings* | Sets client service mapping(s) that matches Camel events to the given zipkin service name. The key is the pattern, the value is the service name. |  | Map
-| *camel.zipkin.endpoint* | Sets the POST URL for zipkin's <a href="http://zipkin.io/zipkin-api/#/">v2 api</a>, usually "http://zipkinhost:9411/api/v2/spans" |  | String
+| *camel.zipkin.endpoint* | Sets the POST URL for zipkin's <a href="http://zipkin.io/zipkin-api/#/">v2 api</a>, usually "\http://zipkinhost:9411/api/v2/spans" |  | String
 | *camel.zipkin.exclude-patterns* | Sets exclude pattern(s) that will disable tracing with zipkin for Camel messages that matches the pattern. |  | Set
 | *camel.zipkin.host-name* | Sets the hostname if sending spans to a remote zipkin scribe (thrift RPC) collector. |  | String
 | *camel.zipkin.include-message-body* | Whether to include the Camel message body in the zipkin traces. This is not recommended for production usage, or when having big payloads. You can limit the size by configuring camel.springboot.log-debug-max-chars option. | false | Boolean

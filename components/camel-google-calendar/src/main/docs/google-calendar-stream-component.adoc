@@ -95,7 +95,7 @@ with the following path and query parameters:
 | *maxResults* (consumer) | Max results to be returned | 10 | int
 | *query* (consumer) | The query to execute on calendar |  | String
 | *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *scopes* (consumer) | Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/calendar/auth for more info. |  | List
+| *scopes* (consumer) | Specifies the level of permissions you want a calendar application to have to a user account. See \https://developers.google.com/calendar/auth for more info. |  | List
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -139,7 +139,7 @@ The component supports 15 options, which are listed below.
 | *camel.component.google-calendar-stream.configuration.max-results* | Max results to be returned | 10 | Integer
 | *camel.component.google-calendar-stream.configuration.query* | The query to execute on calendar |  | String
 | *camel.component.google-calendar-stream.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *camel.component.google-calendar-stream.configuration.scopes* | Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/calendar/auth for more info. |  | List
+| *camel.component.google-calendar-stream.configuration.scopes* | Specifies the level of permissions you want a calendar application to have to a user account. See \https://developers.google.com/calendar/auth for more info. |  | List
 | *camel.component.google-calendar-stream.enabled* | Whether to enable auto configuration of the google-calendar-stream component. This is enabled by default. |  | Boolean
 | *camel.component.google-calendar-stream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===

@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -915,7 +916,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
     private static String evaluateTemplate(final String templateName, final Object model) throws MojoExecutionException {
         try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(templateName)) {
             String template = loadText(templateStream);
-            return (String) TemplateRuntime.eval(template, model);
+            return (String) TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
         } catch (IOException e) {
             throw new MojoExecutionException("Error processing mvel template `" + templateName + "`", e);
         }

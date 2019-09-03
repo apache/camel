@@ -195,7 +195,7 @@ with the following path and query parameters:
 | *oAuthAppId* (security) | The application Id |  | String
 | *oAuthAppSecret* (security) | The application Secret |  | String
 | *oAuthAuthorizationURL* (security) | OAuth authorization URL | https://www.facebook.com/dialog/oauth | String
-| *oAuthPermissions* (security) | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
+| *oAuthPermissions* (security) | Default OAuth permissions. Comma separated permission names. See \https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
@@ -231,7 +231,7 @@ The component supports 29 options, which are listed below.
 | *camel.component.facebook.configuration.o-auth-app-id* | The application Id |  | String
 | *camel.component.facebook.configuration.o-auth-app-secret* | The application Secret |  | String
 | *camel.component.facebook.configuration.o-auth-authorization-u-r-l* | OAuth authorization URL | https://www.facebook.com/dialog/oauth | String
-| *camel.component.facebook.configuration.o-auth-permissions* | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
+| *camel.component.facebook.configuration.o-auth-permissions* | Default OAuth permissions. Comma separated permission names. See \https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
 | *camel.component.facebook.configuration.pretty-debug-enabled* | Prettify JSON debug output if set to true | false | Boolean
 | *camel.component.facebook.configuration.rest-base-u-r-l* | API base URL | https://graph.facebook.com/ | String
 | *camel.component.facebook.configuration.use-s-s-l* | Use SSL | true | Boolean

@@ -66,7 +66,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *client* (common) | Reference to a io.iron.ironmq.Client in the Registry. |  | Client
-| *ironMQCloud* (common) | IronMq Cloud url. Urls for public clusters: https://mq-aws-us-east-1-1.iron.io (US) and https://mq-aws-eu-west-1-1.iron.io (EU) | https://mq-aws-us-east-1-1.iron.io | String
+| *ironMQCloud* (common) | IronMq Cloud url. Urls for public clusters: \https://mq-aws-us-east-1-1.iron.io (US) and \https://mq-aws-eu-west-1-1.iron.io (EU) | https://mq-aws-us-east-1-1.iron.io | String
 | *preserveHeaders* (common) | Should message headers be preserved when publishing messages. This will add the Camel headers to the Iron MQ message as a json payload with a header list, and a message body. Useful when Camel is both consumer and producer. | false | boolean
 | *projectId* (common) | IronMQ projectId |  | String
 | *token* (common) | IronMQ token |  | String

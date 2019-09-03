@@ -116,7 +116,7 @@ with the following path and query parameters:
 | *clientSecret* (common) | Client secret of the drive application |  | String
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *refreshToken* (common) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *scopes* (common) | Specifies the level of permissions you want a drive application to have to a user account. See https://developers.google.com/drive/web/scopes for more info. |  | List
+| *scopes* (common) | Specifies the level of permissions you want a drive application to have to a user account. See \https://developers.google.com/drive/web/scopes for more info. |  | List
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -142,7 +142,7 @@ The component supports 11 options, which are listed below.
 | *camel.component.google-drive.configuration.client-secret* | Client secret of the drive application |  | String
 | *camel.component.google-drive.configuration.method-name* | What sub operation to use for the selected operation |  | String
 | *camel.component.google-drive.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *camel.component.google-drive.configuration.scopes* | Specifies the level of permissions you want a drive application to have to a user account. See https://developers.google.com/drive/web/scopes for more info. |  | List
+| *camel.component.google-drive.configuration.scopes* | Specifies the level of permissions you want a drive application to have to a user account. See \https://developers.google.com/drive/web/scopes for more info. |  | List
 | *camel.component.google-drive.enabled* | Enable google-drive component | true | Boolean
 | *camel.component.google-drive.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
