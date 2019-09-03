@@ -193,9 +193,3 @@ from("file:source/data/xml")
 
 For more information, see these resources...
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

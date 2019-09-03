@@ -267,9 +267,3 @@ ${body}
 
 And the java code:
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

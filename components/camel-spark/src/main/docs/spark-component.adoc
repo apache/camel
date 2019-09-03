@@ -428,9 +428,3 @@ Dataset<Row> cars(HiveContext hiveContext) {
 }
 ------------------------------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

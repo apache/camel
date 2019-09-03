@@ -322,10 +322,3 @@ can also implement some customized filters. Please note that `codec` and
 filters you may define are appended to the end of the filter chain; that
 is, after `codec` and `logger`.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-* <<netty-component,Netty>>

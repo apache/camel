@@ -475,11 +475,3 @@ argument to the JVM:
 
 
 
-### See Also
-
-* link:http://camel.apache.org/configuring-camel.html[Configuring Camel]
-* link:http://camel.apache.org/component.html[Component]
-* link:http://camel.apache.org/endpoint.html[Endpoint]
-* link:http://camel.apache.org/getting-started.html[Getting Started]
-
-* link:http://camel.apache.org/tracer-example.html[Tracer Example]

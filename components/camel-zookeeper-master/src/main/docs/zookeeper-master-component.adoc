@@ -180,9 +180,3 @@ A little example
         .to("file:target/outbox");
 ----
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

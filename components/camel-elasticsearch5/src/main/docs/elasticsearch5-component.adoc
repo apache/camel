@@ -202,9 +202,3 @@ http://www.elastic.co[Elastic Main Site]
 
 https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-api.html[ElasticSearch Java API]
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

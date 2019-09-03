@@ -250,11 +250,3 @@ database to processed, so we avoid consuming it twice or more.
 
 And the statements in the sqlmap file:
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* <<mybatis-component,MyBatis>>

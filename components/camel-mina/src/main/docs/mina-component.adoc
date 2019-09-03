@@ -333,12 +333,3 @@ Then, you can configure your endpoint using Spring DSL:
 </bean>
 ----------------------------------------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* <<mina2-component,MINA2>>
-* <<netty-component,Netty>>

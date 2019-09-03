@@ -365,9 +365,3 @@ There are currently 3 policies defined in the component, with different SLAs:
  thus you can be sure that no even is processed before the Policy takes its decision.
 
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

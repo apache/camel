@@ -270,9 +270,3 @@ XML file as well:
 
 ### Using the Infinispan based route policy
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

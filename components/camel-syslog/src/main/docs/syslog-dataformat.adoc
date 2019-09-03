@@ -160,9 +160,3 @@ The same route using <<mina2-component,camel-mina>>
 </camelContext>
 -------------------------------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

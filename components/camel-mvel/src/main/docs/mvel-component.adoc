@@ -205,9 +205,3 @@ from("direct:in").
   to("velocity:dummy");
 ------------------------------------------------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

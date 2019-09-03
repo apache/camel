@@ -126,13 +126,3 @@ ishttps://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encry
 *Mandatory* header if PDF document is encrypted.
 |=======================================================================
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
--
- 
--

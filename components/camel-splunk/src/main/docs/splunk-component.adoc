@@ -270,9 +270,3 @@ data with prebuilt apps for analyzing and displaying this.  +
  For example the jmx app. could be used to publish jmx attributes, eg.
 route and jvm metrics to Splunk, and displaying this on a dashboard.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -186,9 +186,3 @@ try {
     }
 -----------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

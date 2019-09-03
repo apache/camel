@@ -197,11 +197,3 @@ If you need more precise volume settings you can create new object of the type *
 
 If you need more precise server settings you can create new object of the type *org.openstack4j.model.storage.block.VolumeSnapshot* and send in the message body.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* openstack Component

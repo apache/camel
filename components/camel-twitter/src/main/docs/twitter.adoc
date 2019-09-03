@@ -144,11 +144,3 @@ from("direct:foo")
 See also the link:twitter-websocket-example.html[Twitter Websocket
 Example].
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* Twitter Websocket Example

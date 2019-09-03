@@ -882,17 +882,3 @@ body in the *inBody* endpoint parameter.
 </blueprint>
 --------------------------------------------------------------------------------------------------------------------------------------------
 
-### See Also
-
-*
-https://cwiki.apache.org/confluence/display/CAMEL/Configuring+Camel[Configuring
-Camel]
-* https://cwiki.apache.org/confluence/display/CAMEL/Component[Component]
-* https://cwiki.apache.org/confluence/display/CAMEL/Endpoint[Endpoint]
-*
-https://cwiki.apache.org/confluence/display/CAMEL/Getting+Started[Getting
-Started]
-
- 
-
-https://cwiki.apache.org/confluence/display/CAMEL/AMQP[ ]

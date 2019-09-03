@@ -216,12 +216,3 @@ Before we are ready to use <<ejb-component,EJB>> in the Camel routes:
 </camelContext>
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-* <<bean-component,Bean>>
-* Bean Binding
-* Bean Integration

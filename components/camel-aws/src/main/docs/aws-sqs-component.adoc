@@ -341,11 +341,3 @@ will not make it through the filter AND also not be deleted from the SQS
 queue. After 5000 miliseconds, the message will become visible to other
 consumers.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* AWS Component

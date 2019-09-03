@@ -164,9 +164,3 @@ Regards Camel Riders Bookstore
 
 And the java code is as follows:
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

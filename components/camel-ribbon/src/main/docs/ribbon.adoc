@@ -74,6 +74,3 @@ from("direct:start")
 </route>
 ----
 
-### See Also
-
-* link:http://camel.apache.org/servicecall-eip.html[ServiceCall EIP]

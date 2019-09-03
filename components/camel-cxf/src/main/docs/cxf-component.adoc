@@ -926,9 +926,3 @@ the key SOAPAction (case-insensitive).
 
  
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -99,9 +99,3 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

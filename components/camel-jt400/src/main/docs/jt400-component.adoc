@@ -226,9 +226,3 @@ from("jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ?keyed=true&searchKe
 .to("jms:queue:output");
 -------------------------------------------------------------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

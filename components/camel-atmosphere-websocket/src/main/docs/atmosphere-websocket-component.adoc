@@ -220,14 +220,3 @@ And the equivalent Spring sample:
 
  
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* <<servlet-component,SERVLET>>
-* <<ahc-ws-component,AHC-WS>>
-*
-https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=39621544[Websocket]

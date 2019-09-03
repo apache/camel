@@ -499,15 +499,3 @@ The automatic mapping of the Camel servlet can also be disabled.
 | camel.component.servlet.mapping.servlet-name | CamelServlet | The name of the Camel servlet
 |=======================================================================
 
-=== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* Servlet Tomcat Example
-* link:servlet-tomcat-no-spring-example.html[Servlet Tomcat No Spring
-Example]
-* <<http-component,HTTP>>
-* <<jetty-component,Jetty>>

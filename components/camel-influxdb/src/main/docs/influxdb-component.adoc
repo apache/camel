@@ -144,9 +144,3 @@ from("direct:start")
 
 For more information, see these resources...
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

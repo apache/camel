@@ -241,9 +241,3 @@ from("file:target/in")
 
 The example above could be implemented as follows in XML DSL
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

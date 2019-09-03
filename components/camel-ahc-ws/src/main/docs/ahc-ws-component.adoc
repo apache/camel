@@ -195,15 +195,3 @@ And the equivalent Spring sample:
   </route>
 </camelContext>
 ------------------------------------------------------------
-
- 
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* link:../../../../camel-ahc/src/main/docs/readme.html[AHC]
-* <<atmosphere-websocket-component,Atmosphere-Websocket>>

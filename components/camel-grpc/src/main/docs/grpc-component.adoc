@@ -299,10 +299,3 @@ http://www.grpc.io/[gRPC project site]
 
 https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
 
-### See Also
-
-* Getting Started
-* Configuring Camel
-* Component
-* Endpoint
-* <<protobuf-dataformat,Protocol Buffers Data Format>>

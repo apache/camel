@@ -210,9 +210,3 @@ Regards Camel Riders Bookstore
 {{body}}
 -------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

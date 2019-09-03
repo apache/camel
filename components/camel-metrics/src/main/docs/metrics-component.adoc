@@ -660,7 +660,3 @@ which collects information from inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
 
 
-### See Also
-
-* The `camel-example-cdi-metrics` example that illustrates the integration
-  between Camel, Metrics and CDI.

@@ -305,9 +305,3 @@ you may need to set `enableAssertions` to `false`. Please refer to the
 http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html[surefire:test
 reference] for details.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

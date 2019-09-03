@@ -155,9 +155,3 @@ In XML DSL you can do as follows from *Camel 2.7* onwards:
     </camel:route>
 ------------------------------------------------------------------------------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
