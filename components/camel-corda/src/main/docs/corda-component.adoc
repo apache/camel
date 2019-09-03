@@ -121,7 +121,7 @@ You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -133,7 +133,7 @@ You can append query options to the URI in the following format,
 
 
 
-### Samples
+== Samples
 
 Subscribe for new vault state changes:
 

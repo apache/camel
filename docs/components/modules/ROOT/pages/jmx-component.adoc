@@ -1089,8 +1089,3 @@ declared that the `EndpointUri` JMX attribute is masked:
 String getEndpointUri();
 ----
 
-=== See Also
-
-* Management Example
-* link:why-is-my-processor-not-showing-up-in-jconsole.html[Why is my
-processor not showing up in JConsole]

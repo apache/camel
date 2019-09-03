@@ -22,7 +22,7 @@ for this component:
 
 For more information you can look at <<ftp-component,FTP component>>
 
-### URI Options
+== URI Options
 
 The options below are exclusive for the FTPS component.
 

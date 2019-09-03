@@ -5,10 +5,10 @@
 
 
 
-### Using the service endpoint
+== Using the service endpoint
 
 
-### URI format
+== URI format
 
 [source]
 ----
@@ -16,7 +16,7 @@ service:serviceName:endpoint[?options]
 ----
 
 
-### Options
+== Options
 
 // component options: START
 The Service component supports 3 options, which are listed below.
@@ -95,7 +95,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Implementations
+== Implementations
 
 Camel provide the following ServiceRegistry implementations:
 
@@ -103,9 +103,3 @@ Camel provide the following ServiceRegistry implementations:
 - camel-zookeeper
 - camel-spring-cloud
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

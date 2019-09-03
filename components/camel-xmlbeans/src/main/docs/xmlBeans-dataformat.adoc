@@ -16,7 +16,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-### Options
+== Options
 
 // dataformat options: START
 The XML Beans dataformat supports 2 options, which are listed below.
@@ -59,7 +59,7 @@ The component supports 3 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-### Dependencies
+== Dependencies
 
 To use XmlBeans in your camel routes you need to add the dependency on
 *camel-xmlbeans* which implements this data format.

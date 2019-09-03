@@ -39,7 +39,7 @@ for this component:
 </dependency>
 ---------------------------------------------------------
 
-### Options
+== Options
 
 
 // component options: START
@@ -118,7 +118,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,20%,70%",options="header",]
 |=======================================================================
@@ -133,7 +133,7 @@ of what each code means.
 |`CamelCoapUri` |`String` |The URI of a CoAP server to call. Will override any existing URI configured directly on the endpoint.
 |=======================================================================
 
-#### Configuring the CoAP producer request method
+=== Configuring the CoAP producer request method
 
 The following rules determine which request method the CoAP producer will use to invoke the target URI:
 

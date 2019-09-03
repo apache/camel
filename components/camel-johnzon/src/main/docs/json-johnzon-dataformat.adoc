@@ -14,7 +14,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-### Johnzon Options
+== Johnzon Options
 
 
 
@@ -94,7 +94,7 @@ The component supports 20 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Dependencies
+== Dependencies
 
 To use Johnzon in your camel routes you need to add the dependency
 on *camel-johnzon* which implements this data format.

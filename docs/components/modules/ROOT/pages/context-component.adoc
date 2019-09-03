@@ -27,7 +27,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------------------------
@@ -114,12 +114,12 @@ The component supports 2 options, which are listed below.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Example
+== Example
 
 In this example we'll create a black box context, then we'll use it from
 another CamelContext.
 
-#### Defining the context component
+=== Defining the context component
 
 First you need to create a CamelContext, add some routes in it, start it
 and then register the CamelContext into the Registry
@@ -165,7 +165,7 @@ ID. We can do the same thing in Spring via
 </camelContext>
 --------------------------------------------------------------------------
 
-#### Using the context component
+=== Using the context component
 
 Then in another CamelContext we can then refer to this "accounts black
 box" by just sending to *accounts:purchaseOrder* and consuming from
@@ -196,7 +196,7 @@ middleware (outside of the black box) we can do things like...
 </camelContext>
 --------------------------------------------------------------------------------
 
-#### Naming endpoints
+=== Naming endpoints
 
 A context component instance can have many public input and output
 endpoints that can be accessed from outside it's CamelContext. When

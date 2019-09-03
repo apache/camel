@@ -19,7 +19,7 @@ their `pom.xml` for this component.
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ----------------------
@@ -28,7 +28,7 @@ nats:servers[?options]
 
 Where *servers* represents the list of NATS servers.
 
-### Options
+== Options
 
 
 // component options: START
@@ -133,7 +133,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Headers
+== Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

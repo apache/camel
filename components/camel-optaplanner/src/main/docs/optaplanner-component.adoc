@@ -24,7 +24,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ----------------------------------
@@ -37,7 +37,7 @@ example `/org/foo/barSolverConfig.xml`.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### OptaPlanner Options
+== OptaPlanner Options
 
 
 // component options: START
@@ -110,7 +110,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |=======================================================================
@@ -122,7 +122,7 @@ The component supports 2 options, which are listed below.
 rather than blocking the current thread.
 |=======================================================================
 
-### Message Body
+== Message Body
 
 Camel takes the planning problem for the IN body, solves it and returns
 it on the OUT body. (since v 2.16) The IN body object supports the following use cases:
@@ -136,7 +136,7 @@ wait till isEveryProblemFactChangeProcessed before returning result.
 * If the body is none of the above types, then the producer will return
 the best result from the solver identified by solverId
 
-### Termination
+== Termination
 
 The solving will take as long as specified in the `solverConfig`.
 
@@ -156,7 +156,7 @@ The solving will take as long as specified in the `solverConfig`.
 
  
 
-#### Samples
+=== Samples
 
 Solve an planning problem that's on the ActiveMQ queue with OptaPlanner:
 

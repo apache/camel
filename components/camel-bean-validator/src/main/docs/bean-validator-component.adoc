@@ -24,7 +24,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------
@@ -42,7 +42,7 @@ Where *label* is an arbitrary text value describing the endpoint. +
  You can append query options to the URI in the following format,
 ?option=value&option=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -114,7 +114,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### OSGi deployment
+== OSGi deployment
 
 To use Hibernate Validator in the OSGi environment use dedicated
 `ValidationProviderResolver` implementation, just as
@@ -139,7 +139,7 @@ If no custom `ValidationProviderResolver` is defined and the validator
 component has been deployed into the OSGi environment,
 the `HibernateValidationProviderResolver` will be automatically used.
 
-### Example
+== Example
 
 Assumed we have a java bean with the following annotations
 

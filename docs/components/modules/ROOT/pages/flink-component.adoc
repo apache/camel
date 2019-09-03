@@ -25,7 +25,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI Format
+== URI Format
 
 Currently, the Flink Component supports only Producers. One can create DataSet, DataStream jobs.
 
@@ -108,7 +108,7 @@ The component supports 6 options, which are listed below.
 
 
 
-### FlinkComponent Options
+== FlinkComponent Options
 
 
 
@@ -133,7 +133,7 @@ The Apache Flink component supports 5 options, which are listed below.
 
 
 
-### Flink DataSet Callback
+== Flink DataSet Callback
 
 [source,java]
 -----------------------------------
@@ -152,7 +152,7 @@ public DataSetCallback<Long> dataSetCallback() {
 }
 -----------------------------------
 
-### Flink DataStream Callback
+== Flink DataStream Callback
 
 [source,java]
 ---------------------------
@@ -169,7 +169,7 @@ public VoidDataStreamCallback dataStreamCallback() {
 }
 ---------------------------
 
-### Camel-Flink Producer call
+== Camel-Flink Producer call
 
 [source,java]
 -----------------------------------
@@ -186,9 +186,3 @@ try {
     }
 -----------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -13,7 +13,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon Simple Workflow. More information are available
 at http://aws.amazon.com/swf/[Amazon Simple Workflow].
 
-### URI Format
+== URI Format
 
 [source,java]
 ---------------------------------------
@@ -23,7 +23,7 @@ aws-swf://<workflow|activity>[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -169,9 +169,9 @@ You have to provide the amazonSWClient in the
 Registry or your accessKey and secretKey to access
 the http://aws.amazon.com/swf[Amazon's Simple Workflow Service].
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the SWF Workflow Producer
+=== Message headers evaluated by the SWF Workflow Producer
 
 A workflow producer allows interacting with a workflow. It can start a
 new workflow execution, query its state, send signals to a running
@@ -201,7 +201,7 @@ workflow, or terminate and cancel it.
 |`CamelSWFChildPolicy` |`String` |The policy to use on child workflows when terminating a workflow.
 |=======================================================================
 
-#### Message headers set by the SWF Workflow Producer
+=== Message headers set by the SWF Workflow Producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -212,7 +212,7 @@ workflow, or terminate and cancel it.
 |`CamelAwsDdbKeyCamelSWFRunId` |`String` |The worfklow run ID used or generated.
 |=======================================================================
 
-#### Message headers set by the SWF Workflow Consumer
+=== Message headers set by the SWF Workflow Consumer
 
 A workflow consumer represents the workflow logic. When it is started,
 it will start polling workflow decision tasks and process them. In
@@ -234,7 +234,7 @@ CamelSWFSignalReceivedAction or CamelSWFGetStateAction.
 |`CamelSWFWorkflowStartTime` |`long` |The time of the start event for this decision task.
 |=======================================================================
 
-#### Message headers set by the SWF Activity Producer
+=== Message headers set by the SWF Activity Producer
 
 An activity producer allows scheduling activity tasks. An activity
 producer can be used only from a thread started by a workflow consumer
@@ -249,7 +249,7 @@ ie, it can process synchronous exchanges started by a workflow consumer.
 |`CamelSWFVersion` |`String` |The activity version to schedule.
 |=======================================================================
 
-#### Message headers set by the SWF Activity Consumer
+=== Message headers set by the SWF Activity Consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -259,7 +259,7 @@ ie, it can process synchronous exchanges started by a workflow consumer.
 completed tasks.
 |=======================================================================
 
-#### Advanced amazonSWClient configuration
+=== Advanced amazonSWClient configuration
 
 If you need more control over the AmazonSimpleWorkflowClient instance
 configuration you can create your own instance and refer to it from the
@@ -282,7 +282,7 @@ AmazonSimpleWorkflowClient client = new AmazonSimpleWorkflowClient(awsCredential
 registry.bind("client", client);
 --------------------------------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 

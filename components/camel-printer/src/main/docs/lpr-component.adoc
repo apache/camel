@@ -29,7 +29,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 Since the URI scheme for a printer has not been standardized (the
 nearest thing to a standard being the IETF print standard) and therefore
@@ -44,7 +44,7 @@ lpr://remotehost:port/path/to/printer[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -121,17 +121,17 @@ The component supports 2 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-### Sending Messages to a Printer
+== Sending Messages to a Printer
 
-#### Printer Producer
+=== Printer Producer
 
 Sending data to the printer is very straightforward and involves
 creating a producer endpoint that can be sent message exchanges on in
 route.
 
-### Usage Samples
+== Usage Samples
 
-#### Example 1: Printing text based payloads on a Default printer using letter stationary and one-sided mode
+=== Example 1: Printing text based payloads on a Default printer using letter stationary and one-sided mode
 
 [source,java]
 -----------------------------------------------
@@ -146,7 +146,7 @@ RouteBuilder builder = new RouteBuilder() {
     }};
 -----------------------------------------------
 
-#### Example 2: Printing GIF based payloads on a Remote printer using A4 stationary and one-sided mode
+=== Example 2: Printing GIF based payloads on a Remote printer using A4 stationary and one-sided mode
 
 [source,java]
 --------------------------------------------------
@@ -160,7 +160,7 @@ RouteBuilder builder = new RouteBuilder() {
    }};
 --------------------------------------------------
 
-#### Example 3: Printing JPEG based payloads on a Remote printer using Japanese Postcard stationary and one-sided mode
+=== Example 3: Printing JPEG based payloads on a Remote printer using Japanese Postcard stationary and one-sided mode
 
 [source,java]
 --------------------------------------------------

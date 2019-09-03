@@ -13,7 +13,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon KMS. More information are available at
 https://aws.amazon.com/it/mq/[Amazon KMS].
 
-### URI Format
+== URI Format
 
 [source,java]
 -------------------------
@@ -23,7 +23,7 @@ aws-kms://label[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -127,9 +127,9 @@ You have to provide the amazonKmsClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/it/kms/[Amazon KMS] service.
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the MQ producer
+=== Message headers evaluated by the MQ producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -144,7 +144,7 @@ the https://aws.amazon.com/it/kms/[Amazon KMS] service.
 |`CamelAwsKMSKeyId` |`String` |The key Id 
 |=======================================================================
 
-#### KMS Producer operations
+=== KMS Producer operations
 
 Camel-AWS KMS component provides the following operation on the producer side:
 
@@ -173,11 +173,3 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.16 or higher).
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* AWS Component

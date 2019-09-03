@@ -12,7 +12,7 @@ Prerequisites
 You must have a valid Microsoft Azure account. More information is available at
 https://azure.microsoft.com/en-us/free/[Azure Portal].
 
-### URI Format
+== URI Format
 
 [source,java]
 ------------------------------
@@ -32,7 +32,7 @@ from("azure-queue:/camelazure/messageQueue").
 to("file://queuedirectory");
 --------------------------------------------------------------------------------
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -121,17 +121,9 @@ Required Azure Storage Queue Service component options
 
 You have to provide the containerAndQueue URI  and the credentials.
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the Azure Storage Queue Service producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-| | |
-|=======================================================================
-
-#### Message headers set by the Azure Storage Queue Service producer
+=== Message headers evaluated by the Azure Storage Queue Service producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -139,7 +131,15 @@ You have to provide the containerAndQueue URI  and the credentials.
 | | |
 |=======================================================================
 
-#### Message headers set by the Azure Storage Queue Service producer consumer
+=== Message headers set by the Azure Storage Queue Service producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+| | |
+|=======================================================================
+
+=== Message headers set by the Azure Storage Queue Service producer consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -149,7 +149,7 @@ You have to provide the containerAndQueue URI  and the credentials.
 
 
 
-#### Azure Queue Service operations
+=== Azure Queue Service operations
 
 [width="100%",cols="20%,80%",options="header",]
 |===
@@ -168,7 +168,7 @@ You have to provide the containerAndQueue URI  and the credentials.
 
 
 
-#### Azure Queue Client configuration
+=== Azure Queue Client configuration
 
 If your Camel Application is running behind a firewall or if you need to
 have more control over the Azure Queue Client configuration, you can
@@ -191,7 +191,7 @@ from("azure-queue:/camelazure/messageQueue?azureQueueClient=#client")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -209,11 +209,3 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.19.0 or higher).
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* Azure Component

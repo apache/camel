@@ -28,7 +28,7 @@ version] of http://rometools.github.io/rome/[ROME] hosted on ServiceMix
 to solve some OSGi https://issues.apache.org/jira/browse/SMX4-510[class
 loading issues].
 
-### URI format
+== URI format
 
 [source,java]
 ----------
@@ -40,7 +40,7 @@ Where `rssUri` is the URI to the RSS feed to poll.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -135,7 +135,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Exchange data types
+== Exchange data types
 
 Camel initializes the In body on the Exchange with a ROME `SyndFeed`.
 Depending on the value of the `splitEntries` flag, Camel returns either
@@ -150,7 +150,7 @@ a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
 |`splitEntries` |`false` |The entire list of entries from the current feed is set in the exchange.
 |=======================================================================
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -159,7 +159,7 @@ a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
 |`CamelRssFeed` |The entire `SyncFeed` object.
 |=======================================================================
 
-### RSS Dataformat
+== RSS Dataformat
 
 The RSS component ships with an RSS dataformat that can be used to
 convert between String (as XML) and ROME RSS model objects.
@@ -181,7 +181,7 @@ If the URL for the RSS feed uses query parameters, this component will
 resolve them. For example if the feed uses `alt=rss`, then the following example will be resolved: 
 `from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&consumer.delay=1000").to("bean:rss");`
 
-### Filtering entries
+== Filtering entries
 
 You can filter out entries using XPath, as shown in the
 data format section above. You can also exploit Camel's
@@ -201,11 +201,3 @@ public static class FilterBean {
 return firstEntry.getTitle().contains("Camel");
 ----
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* <<atom-component,Atom>>

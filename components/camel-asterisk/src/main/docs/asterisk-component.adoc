@@ -21,14 +21,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------
 asterisk:name[?options]
 -------------------------------------------------------------------------------------------------------------------------
 
-### Options
+== Options
 
 // component options: START
 The Asterisk component has no options.
@@ -98,7 +98,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Action
+== Action
 Supported actions are:
 
 * QUEUE_STATUS, Queue Status

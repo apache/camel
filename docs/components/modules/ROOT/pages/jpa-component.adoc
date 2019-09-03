@@ -22,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Sending to the endpoint
+== Sending to the endpoint
 
 You can store a Java entity bean in a database by sending it to a JPA
 producer endpoint. The body of the _In_ message is assumed to be an
@@ -48,7 +48,7 @@ if you execute `UPDATE`/`DELETE` with `namedQuery` as camel don't look into the
 named query unlike `query` and `nativeQuery`.
 
 
-### Consuming from the endpoint
+== Consuming from the endpoint
 
 Consuming messages from a JPA consumer endpoint removes (or updates)
 entity beans in the database. This allows you to use a database table as
@@ -74,7 +74,7 @@ which will be invoked on your entity bean before it has been processed
 If you are consuming a lot (100K+) of rows and experience OutOfMemory
 problems you should set the maximumResults to sensible value.
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------------
@@ -90,7 +90,7 @@ For consuming, the _entityClassName_ is mandatory.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 
@@ -224,7 +224,7 @@ The component supports 6 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 Camel adds the following message headers to the exchange:
 
@@ -246,7 +246,7 @@ reason why the support for this header has been dropped.
 
 |=======================================================================
 
-### Configuring EntityManagerFactory
+== Configuring EntityManagerFactory
 
 Its strongly advised to configure the JPA component to use a specific
 `EntityManagerFactory` instance. If failed to do so each `JpaEndpoint`
@@ -269,7 +269,7 @@ you do not need to configure this on the `JpaComponent` as shown above.
 You only need to do so if there is ambiguity, in which case Camel will
 log a WARN.
 
-### Configuring TransactionManager
+== Configuring TransactionManager
 
 Since *Camel 2.3* the `JpaComponent` will auto lookup the
 `TransactionManager` from the Registry. If Camel
@@ -294,7 +294,7 @@ explicitly configure a JPA component that references the
 </bean>
 -------------------------------------------------------------------
 
-### Using a consumer with a named query
+== Using a consumer with a named query
 
 For consuming only selected entities, you can use the
 `consumer.namedQuery` URI query option. First, you have to define the
@@ -317,7 +317,7 @@ from("jpa://org.apache.camel.examples.MultiSteps?consumer.namedQuery=step1")
 .to("bean:myBusinessLogic");
 ----------------------------------------------------------------------------
 
-### Using a consumer with a query
+== Using a consumer with a query
 
 For consuming only selected entities, you can use the `consumer.query`
 URI query option. You only have to define the query option:
@@ -328,7 +328,7 @@ from("jpa://org.apache.camel.examples.MultiSteps?consumer.query=select o from or
 .to("bean:myBusinessLogic");
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-### Using a consumer with a native query
+== Using a consumer with a native query
 
 For consuming only selected entities, you can use the
 `consumer.nativeQuery` URI query option. You only have to define the
@@ -344,7 +344,7 @@ If you use the native query option, you will receive an object array in
 the message body.
 
 
-### Using a producer with a named query
+== Using a producer with a named query
 
 For retrieving selected entities or execute bulk update/delete, you can use the
 `namedQuery` URI query option. First, you have to define the
@@ -370,7 +370,7 @@ from("direct:namedQuery")
 Note that you need to specify `useExecuteUpdate` option to `true` to execute `UPDATE`/`DELETE` statement
 as a named query.
 
-### Using a producer with a query
+== Using a producer with a query
 
 For retrieving selected entities or execute bulk update/delete, you can use the `query`
 URI query option. You only have to define the query option:
@@ -381,7 +381,7 @@ from("direct:query")
 .to("jpa://org.apache.camel.examples.MultiSteps?query=select o from org.apache.camel.examples.MultiSteps o where o.step = 1");
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-### Using a producer with a native query
+== Using a producer with a native query
 
 For retrieving selected entities or execute bulk update/delete, you can use the
 `nativeQuery` URI query option. You only have to define the
@@ -396,12 +396,12 @@ from("direct:nativeQuery")
 If you use the native query option without specifying `resultClass`, you will receive an object array in
 the message body.
 
-### Example
+== Example
 
 See link:http://camel.apache.org/tracer-example.html[Tracer Example] for an example using
 <<jpa-component,JPA>> to store traced messages into a database.
 
-### Using the JPA-Based Idempotent Repository
+== Using the JPA-Based Idempotent Repository
 
 The Idempotent Consumer from the http://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
 
@@ -475,11 +475,3 @@ argument to the JVM:
 
 
 
-### See Also
-
-* link:http://camel.apache.org/configuring-camel.html[Configuring Camel]
-* link:http://camel.apache.org/component.html[Component]
-* link:http://camel.apache.org/endpoint.html[Endpoint]
-* link:http://camel.apache.org/getting-started.html[Getting Started]
-
-* link:http://camel.apache.org/tracer-example.html[Tracer Example]

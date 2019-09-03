@@ -21,7 +21,7 @@ for this component:
 </dependency>
 ---------------------------------------------------------
 
-### Apache Gora Overview
+== Apache Gora Overview
 
 The http://gora.apache.org/[Apache Gora] open source framework provides
 an in-memory data model and persistence for big data. Gora supports
@@ -39,7 +39,7 @@ http://accumulo.apache.org/[Apache Accumulo],
 http://aws.amazon.com/dynamodb/[Amazon DynamoDB] and SQL databases such
 as http://hsqldb.org/[hsqldb], http://www.mysql.com/[MySQL] and more.
 
-### URI format
+== URI format
 
 [source,text]
 ---------------------------
@@ -62,7 +62,7 @@ _Java DSL_
 to("gora:foobar?keyClass=java.lang.Long&valueClass=org.apache.camel.component.gora.generated.Pageview&dataStoreClass=org.apache.gora.hbase.store.HBaseStore")
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Configuratiion
+== Configuratiion
 
 Using camel-gora needs some configuration. This mainly involve to
 configure the _AvroStore_ through the _gora.properties_ file and to
@@ -73,7 +73,7 @@ Extensive information for this configuration can be found in the apache
 http://gora.apache.org/current/index.html[gora documentation] and the
 http://gora.apache.org/current/gora-conf.html[gora-conf] page.
 
-### Options
+== Options
 
 
 // component options: START
@@ -164,7 +164,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Supported Gora Operations
+== Supported Gora Operations
 
 Supported operations include : *put*, *get*, *delete*, *getSchemaName*,
 *deleteSchema*, *createSchema*, *query*, *deleteByQuery*,
@@ -202,7 +202,7 @@ hold the objects._
 datastore._
 |=======================================================================
 
-### Gora Headers
+== Gora Headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -213,7 +213,7 @@ datastore._
 |GoraKey | _Used in order to define the datum key for the operations need it._
 |=======================================================================
 
-### Usage examples
+== Usage examples
 
 *Create Schema* _(XML DSL)_:
 
@@ -285,7 +285,7 @@ The full usage examples in the form of integration tests can be found at
 https://github.com/ipolyzos/camel-gora-examples/[camel-gora-examples]
 repository.
 
-### More resources
+== More resources
 
 For more please information and in depth configuration refer to the
 http://gora.apache.org/current/overview.html[Apache Gora Documentation]

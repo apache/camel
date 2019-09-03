@@ -33,7 +33,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### RFC3164 Syslog protocol
+== RFC3164 Syslog protocol
 
 Syslog uses the user datagram protocol (UDP)
 https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=1&linkCreation=true&fromPageId=24185759[1]
@@ -46,7 +46,7 @@ where we just use the `Rfc3164SyslogDataFormat` to marshal and unmarshal
 messages. Notice that from *Camel 2.14* onwards the syslog dataformat is
 renamed to `SyslogDataFormat`.
 
-### Options
+== Options
 
 // dataformat options: START
 The Syslog dataformat supports 1 options, which are listed below.
@@ -88,7 +88,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-### RFC5424 Syslog protocol
+== RFC5424 Syslog protocol
 
 *Available as of Camel 2.14*
 
@@ -97,7 +97,7 @@ existing <<mina2-component,camel-mina>> component
 or <<netty-component,camel-netty>> where we just use
 the `SyslogDataFormat` to marshal and unmarshal messages
 
-#### Exposing a Syslog listener
+=== Exposing a Syslog listener
 
 In our Spring XML file, we configure an endpoint to listen for udp
 messages on port 10514, note that in netty we disable the defaultCodec,
@@ -141,7 +141,7 @@ The same route using <<mina2-component,camel-mina>>
 </camelContext>
 -------------------------------------------------------------------------
 
-#### Sending syslog messages to a remote destination
+=== Sending syslog messages to a remote destination
 
 [source,xml]
 -------------------------------------------------------------------------

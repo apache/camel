@@ -29,7 +29,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------
@@ -40,7 +40,7 @@ Where *busName* represents the name of the
 `com.google.common.eventbus.EventBus` instance located in the Camel
 registry.
 
-### Options
+== Options
 
 
 
@@ -130,7 +130,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Usage
+== Usage
 
 Using `guava-eventbus` component on the consumer side of the route will
 capture messages sent to the Guava `EventBus` and forward them to the
@@ -172,7 +172,7 @@ eventBus.register(new Object(){
 });
 ----------------------------------------------------------------------
 
-### DeadEvent considerations
+== DeadEvent considerations
 
 Keep in mind that due to the limitations caused by the design of the
 Guava EventBus, you cannot specify event class to be received by the
@@ -221,7 +221,7 @@ follows.
 from("guava-eventbus:busName?listenerInterface=com.example.CustomListener").to("seda:queue");
 ---------------------------------------------------------------------------------------------
 
-### Consuming multiple type of events
+== Consuming multiple type of events
 
 In order to define multiple type of events to be consumed by Guava
 EventBus consumer use `listenerInterface` endpoint option, as listener

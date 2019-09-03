@@ -22,7 +22,7 @@ Predicate in a link:message-filter.html[Message
 Filter] or as an Expression for a
 Recipient List
 
-### Python Language Options
+== Python Language Options
 
 // language options: START
 The Python language supports 1 options, which are listed below.
@@ -39,7 +39,7 @@ The Python language supports 1 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Example
+== Example
 
 In the sample below we use Python to create a
 Predicate use in the route path, to route exchanges
@@ -72,7 +72,7 @@ And a Spring DSL sample as well:
     </route>
 -------------------------------------------------------------------
 
-### ScriptContext
+== ScriptContext
 
 The JSR-223 scripting languages ScriptContext is pre configured with the
 following attributes all set at `ENGINE_SCOPE`:
@@ -100,7 +100,7 @@ further below for example.
 See Scripting Languages for the list of
 languages with explicit DSL support.
 
-### Additional arguments to ScriptingEngine
+== Additional arguments to ScriptingEngine
 
 *Available as of Camel 2.8*
 
@@ -108,7 +108,7 @@ You can provide additional arguments to the `ScriptingEngine` using a
 header on the Camel message with the key `CamelScriptArguments`. +
  See this example:
 
-### Using properties function
+== Using properties function
 
 *Available as of Camel 2.9*
 
@@ -131,7 +131,7 @@ same example is simpler:
 .setHeader("myHeader").groovy("properties.resolve(request.headers.get('foo'))")
 -------------------------------------------------------------------------------
 
-### Loading script from external resource
+== Loading script from external resource
 
 *Available as of Camel 2.11*
 
@@ -145,7 +145,7 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").groovy("resource:classpath:mygroovy.groovy")
 -------------------------------------------------------------------
 
-### How to get the result from multiple statements script
+== How to get the result from multiple statements script
 
 *Available as of Camel 2.14*
 
@@ -165,7 +165,7 @@ result = body * 2 + 1
 
  
 
-### Dependencies
+== Dependencies
 
 To use scripting languages in your camel routes you need to add the a
 dependency on *camel-script* which integrates the JSR-223 scripting

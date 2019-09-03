@@ -76,7 +76,7 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source]
 ----
@@ -106,7 +106,7 @@ broker. A plain <<sjms-component,SJMS>> consumer endpoint can be used in
 conjunction with a regular non-persistence backed
 aggregator in this scenario.
 
-### Component Options and Configurations
+== Component Options and Configurations
 
 
 

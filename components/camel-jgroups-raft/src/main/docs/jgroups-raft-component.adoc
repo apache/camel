@@ -20,7 +20,7 @@ for this component.
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------------
@@ -30,7 +30,7 @@ jgroups-raft:clusterName[?options]
 Where *clusterName* represents the name of the JGroups-raft cluster the
 component should connect to.
 
-### Options
+== Options
 
 // component options: START
 The JGroups raft component supports 5 options, which are listed below.
@@ -118,7 +118,7 @@ The component supports 11 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-### Headers
+== Headers
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -151,7 +151,7 @@ The component supports 11 options, which are listed below.
 |`JGROUPSRAFT_SET_TIMEUNIT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEUNIT` |*2.24.0* | *Producer*: Timeunit to be used in set() operation.
 |=======================================================================
  
-### Usage
+== Usage
 
 Using `jgroups-raft` component with `enableRoleChangeEvents=true` on the consumer side of the route will capture
 change in JGrups-raft role and forward them to the Camel route.
@@ -174,9 +174,9 @@ to perform a setX() operation on the raftHandle associated with the endpoint..
 from("direct:start").to("jgroups-raft:clusterName");
 --------------------------------------------------
 
-### Examples
+== Examples
 
-#### Receive cluster view change notifications
+=== Receive cluster view change notifications
 
 The snippet below demonstrates how to create the consumer endpoint
 listening to the change role events. By default this option is off.
@@ -188,7 +188,7 @@ from("jgroups-raft:clusterName?enableRoleChangeEvents=true").to(mock:mockEndpoin
 ...
 ---------------------------------------------------------------------
 
-#### Keeping singleton route within the cluster
+=== Keeping singleton route within the cluster
 
 The snippet below demonstrates how to keep the singleton consumer route
 in the cluster of Camel Contexts. As soon as the master node dies, one

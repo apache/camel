@@ -22,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------
@@ -31,7 +31,7 @@ mqtt://name[?options]
 
 Where *name* is the name you want to assign the component.
 
-### Options
+== Options
 
 
 
@@ -156,7 +156,7 @@ The component supports 5 options, which are listed below.
 
 
 
-### Samples
+== Samples
 
 Sending messages:
 
@@ -172,7 +172,7 @@ Consuming messages:
 from("mqtt:bar?subscribeTopicName=test.mqtt.topic").transform(body().convertToString()).to("mock:result")
 ---------------------------------------------------------------------------------------------------------
 
-### Endpoints
+== Endpoints
 
 Camel supports the Message Endpoint pattern
 using the
@@ -198,9 +198,3 @@ implements the Polling Consumer pattern for
 consuming message exchanges from the endpoint via a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
 
-### See Also
-
-* Configuring Camel
-* Message Endpoint pattern
-* URIs
-* Writing Components

@@ -31,7 +31,7 @@ for this component:
 
  
 
-### Braintree Options
+== Braintree Options
 
 
 
@@ -137,7 +137,7 @@ The component supports 14 options, which are listed below.
 
 
 
-### URI format
+== URI format
 
  
 
@@ -170,7 +170,7 @@ Endpoint prefix can be one of:
 
  
 
-### BraintreeComponent
+== BraintreeComponent
 
 The Braintree Component can be configured with the options below. These
 options can be provided using the component's bean
@@ -198,7 +198,7 @@ of the environment, merchantId, publicKey and privateKey options.
 
 All the options above are provided by Braintree Payments
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -222,7 +222,7 @@ at https://developers.braintreepayments.com/reference/overview[https://develope
 
  
 
-#### Endpoint prefix _addOn_
+=== Endpoint prefix _addOn_
 
 The following endpoints can be invoked with the prefix *addOn* as
 follows:
@@ -240,7 +240,7 @@ braintree://addOn/endpoint
 |all |  |  |List<com.braintreegateway.Addon>
 |====================================================
 
-#### Endpoint prefix _address_
+=== Endpoint prefix _address_
 
 The following endpoints can be invoked with the prefix *address* as
 follows:
@@ -278,7 +278,7 @@ URI Options for _address_
 |id |String
 |============================================
 
-#### Endpoint prefix _clientToken_
+=== Endpoint prefix _clientToken_
 
 The following endpoints can be invoked with the prefix *clientToken* as
 follows:
@@ -305,7 +305,7 @@ URI Options for _clientToken_
 |request |com.braintreegateway.ClientTokenrequest
 |================================================
 
-#### Endpoint prefix _creditCardVerification_
+=== Endpoint prefix _creditCardVerification_
 
 The following endpoints can be invoked with the
 prefix *creditCardverification* as follows:
@@ -336,7 +336,7 @@ URI Options for _creditCardVerification_
 |query |com.braintreegateway.CreditCardVerificationSearchRequest
 |===============================================================
 
-#### Endpoint prefix _customer_
+=== Endpoint prefix _customer_
 
 The following endpoints can be invoked with the prefix *customer* as
 follows:
@@ -379,7 +379,7 @@ URI Options for _customer_
 |query |com.braintreegateway.CustomerSearchRequest
 |=================================================
 
-#### Endpoint prefix _discount_
+=== Endpoint prefix _discount_
 
 The following endpoints can be invoked with the prefix *discount* as
 follows:
@@ -401,7 +401,7 @@ braintree://discount/endpoint
 
  +
 
-#### Endpoint prefix _dispute_
+=== Endpoint prefix _dispute_
 
 The following endpoints can be invoked with the prefix *dispute* as
 follows:
@@ -458,7 +458,7 @@ URI Options for _dispute_
 |==========================================================
 
 
-#### Endpoint prefix _documentUpload_
+=== Endpoint prefix _documentUpload_
 
 The following endpoints can be invoked with the prefix *documentUpload* as
 follows:
@@ -485,7 +485,7 @@ URI Options for _documentUpload_
 |==========================================================
 
 
-#### Endpoint prefix _merchantAccount_
+=== Endpoint prefix _merchantAccount_
 
 The following endpoints can be invoked with the
 prefix *merchantAccount* as follows:
@@ -523,7 +523,7 @@ URI Options for _merchantAccount_
 |currencyRequest |com.braintreegateway.MerchantAccountCreateForCurrencyRequest
 |====================================================
 
-#### Endpoint prefix _paymentMethod_
+=== Endpoint prefix _paymentMethod_
 
 The following endpoints can be invoked with the
 prefix *paymentMethod* as follows:
@@ -561,7 +561,7 @@ URI Options for _paymentMethod_
 |deleteRequest |com.braintreegateway.PaymentMethodDeleteRequest
 |==================================================
 
-#### Endpoint prefix _paymentMethodNonce_
+=== Endpoint prefix _paymentMethodNonce_
 
 The following endpoints can be invoked with the
 prefix *paymentMethodNonce* as follows:
@@ -592,7 +592,7 @@ URI Options for _paymentMethodNonce_
 |paymentMethodNonce |String
 |==========================
 
-#### Endpoint prefix _plan_
+=== Endpoint prefix _plan_
 
 The following endpoints can be invoked with the prefix *plan* as
 follows:
@@ -611,7 +611,7 @@ braintree://plan/endpoint
 |====================================================
 
 
-#### Endpoint prefix _report_
+=== Endpoint prefix _report_
 
 The following endpoints can be invoked with the prefix *report* as
 follows:
@@ -637,7 +637,7 @@ URI Options for _report_
 |==============================================================
 
 
-#### Endpoint prefix _settlementBatchSummary_
+=== Endpoint prefix _settlementBatchSummary_
 
 The following endpoints can be invoked with the
 prefix *settlementBatchSummary* as follows:
@@ -666,7 +666,7 @@ URI Options for _settlementBatchSummary_
 |groupByCustomField |String
 |==========================
 
-#### Endpoint prefix _subscription_
+=== Endpoint prefix _subscription_
 
 The following endpoints can be invoked with the prefix *subscription* as
 follows:
@@ -718,7 +718,7 @@ URI Options for _subscription_
 
  
 
-#### Endpoint prefix _transaction_
+=== Endpoint prefix _transaction_
 
 The following endpoints can be invoked with the prefix *transaction* as
 follows:
@@ -783,7 +783,7 @@ URI Options for _transaction_
 |query |com.braintreegateway.TransactionSearchRequest
 |==========================================================
 
-#### Endpoint prefix _webhookNotification_
+=== Endpoint prefix _webhookNotification_
 
 The following endpoints can be invoked with the
 prefix *webhookNotification* as follows:
@@ -815,7 +815,7 @@ URI Options for _webhookNotification_
 
  
 
-### Consumer Endpoints
+== Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can
@@ -827,12 +827,12 @@ be executed once for each exchange. To change this behavior use the
 property *consumer.splitResults=true* to return a single exchange for
 the entire list or array. 
 
-### Message Headers
+== Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a *CamelBraintree.* prefix.
 
-### Message body
+== Message body
 
 All result message bodies utilize objects provided by the Braintree Java
 SDK. Producer endpoints can specify the option name for incoming message
@@ -842,7 +842,7 @@ body in the *inBody* endpoint parameter.
 
  
 
-### Examples
+== Examples
 
 *Blueprint*
 
@@ -882,17 +882,3 @@ body in the *inBody* endpoint parameter.
 </blueprint>
 --------------------------------------------------------------------------------------------------------------------------------------------
 
-### See Also
-
-*
-https://cwiki.apache.org/confluence/display/CAMEL/Configuring+Camel[Configuring
-Camel]
-* https://cwiki.apache.org/confluence/display/CAMEL/Component[Component]
-* https://cwiki.apache.org/confluence/display/CAMEL/Endpoint[Endpoint]
-*
-https://cwiki.apache.org/confluence/display/CAMEL/Getting+Started[Getting
-Started]
-
- 
-
-https://cwiki.apache.org/confluence/display/CAMEL/AMQP[ ]

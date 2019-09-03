@@ -25,7 +25,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### XmlRpc Overview
+== XmlRpc Overview
 
 It's a http://xmlrpc.scripting.com/spec[spec] and a set of
 implementations that allow software running on disparate operating
@@ -89,14 +89,14 @@ A typical XML-RPC fault would be:
 </methodResponse>
 --------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ----------------------------
 xmlrpc://serverUri[?options]
 ----------------------------
 
-### Options
+== Options
 
 
 // component options: START
@@ -183,7 +183,7 @@ The component supports 5 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 Camel XmlRpc uses these headers.
 
@@ -194,13 +194,13 @@ Camel XmlRpc uses these headers.
 |`CamelXmlRpcMethodName` |The XmlRpc method name which will be use for invoking the XmlRpc server.
 |=======================================================================
 
-### Using the XmlRpc data format
+== Using the XmlRpc data format
 
 As the XmlRpc message could be request or response, when you use the
 XmlRpcDataFormat, you need to specify the dataformat is for request or
 not.
 
-### Invoke XmlRpc Service from Client
+== Invoke XmlRpc Service from Client
 
 To invoke the XmlRpc service, you need to specify the methodName on the
 message header and put the parameters into the message body like below
@@ -213,7 +213,7 @@ XmlRpcException.
    String response = template.requestBodyAndHeader(xmlRpcServiceAddress, new Object[]{"me"}, XmlRpcConstants.METHOD_NAME, "hello", String.class);
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
-### How to configure the XmlRpcClient with Java code
+== How to configure the XmlRpcClient with Java code
 
 camel-xmlrpc provides a pluggable strategy for configuring the
 XmlRpcClient used by the component, user just to implement the

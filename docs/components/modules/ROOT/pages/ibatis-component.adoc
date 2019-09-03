@@ -31,7 +31,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------
@@ -52,7 +52,7 @@ the root of the classpath and expected named as `SqlMapConfig.xml`. +
  In Camel 2.2 you can configure this on the iBatisComponent with the
 `setSqlMapConfig(String)` method.
 
-### Options
+== Options
 
 
 
@@ -138,7 +138,7 @@ with the following path and query parameters:
 
 
 
-### Message Headers
+== Message Headers
 
 Camel will populate the result message, either IN or OUT with a header
 with the operationName used:
@@ -154,7 +154,7 @@ instance an `INSERT` could return the auto-generated key, or number of
 rows etc.
 |=======================================================================
 
-### Message Body
+== Message Body
 
 The response from iBatis will only be set as body if it's a `SELECT`
 statement. That means, for example, for `INSERT` statements Camel will
@@ -162,7 +162,7 @@ not replace the body. This allows you to continue routing and keep the
 original body. The response from iBatis is always stored in the header
 with the key `CamelIBatisResult`.
 
-### Samples
+== Samples
 
 For example if you wish to consume beans from a JMS queue and insert
 them into a database you could do the following:
@@ -194,7 +194,7 @@ Where *insertAccount* is the iBatis ID in the SQL map file:
   </insert>
 ------------------------------------------------------------
 
-### Using StatementType for better control of IBatis
+== Using StatementType for better control of IBatis
 
 When routing to an iBatis endpoint you want more fine grained control so
 you can control whether the SQL statement to be executed is a `SELEECT`,
@@ -212,7 +212,7 @@ We can do the same for some of the other operations, such as
 And the same for `UPDATE`, where we can send an `Account` object as IN
 body to iBatis:
 
-#### Scheduled polling example
+=== Scheduled polling example
 
 Since this component does not support scheduled polling, you need to use
 another mechanism for triggering the scheduled polls, such as the
@@ -236,7 +236,7 @@ And the iBatis SQL map file used:
   </select>
 ----------------------------------------------------------------------------
 
-#### Using onConsume
+=== Using onConsume
 
 This component supports executing statements *after* data have been
 consumed and processed by Camel. This allows you to do post updates in
@@ -250,11 +250,3 @@ database to processed, so we avoid consuming it twice or more.
 
 And the statements in the sqlmap file:
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* <<mybatis-component,MyBatis>>

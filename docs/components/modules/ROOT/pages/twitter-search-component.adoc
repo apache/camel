@@ -6,7 +6,7 @@
 
 The Twitter Search component consumes search results.
 
-### Component Options
+== Component Options
 
 // component options: START
 The Twitter Search component supports 9 options, which are listed below.
@@ -29,7 +29,7 @@ The Twitter Search component supports 9 options, which are listed below.
 // component options: END
 
 
-### Endpoint Options
+== Endpoint Options
 
 // endpoint options: START
 The Twitter Search endpoint is configured using URI syntax:

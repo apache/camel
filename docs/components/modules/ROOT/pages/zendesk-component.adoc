@@ -20,7 +20,7 @@ for this component:
     </dependency>
 -------------------------------------------
 
-### Zendesk Options
+== Zendesk Options
 
 // component options: START
 The Zendesk component supports 3 options, which are listed below.
@@ -109,7 +109,7 @@ The component supports 9 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------------------
@@ -117,12 +117,12 @@ The component supports 9 options, which are listed below.
 --------------------------------------------
 
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 Producer endpoints can use endpoint names and associated options described next. 
 
 
-### Consumer Endpoints:
+== Consumer Endpoints:
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -133,7 +133,7 @@ generate one exchange per element, and their routes will be executed
 once for each exchange.
 
 
-### Message header
+== Message header
 
 Any of the options can be provided in a message header for producer
 endpoints with *CamelZendesk.* prefix. In principal, parameter names are same as
@@ -142,7 +142,7 @@ the arugument name of each API methods on the original `org.zendesk.client.v2.Ze
  camel API component framework. To see actual parameter name, please check `org.apache.camel.component.zendesk.internal.ZendeskApiMethod`.
  
 
-### Message body
+== Message body
 
 All result message bodies utilize objects provided by the Zendesk Java Client.
 Producer endpoints can specify the option name for incoming message body

@@ -7,7 +7,7 @@
 The http://www.hazelcast.com/[Hazelcast] Topic component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed topic.
 
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast Topic component supports 3 options, which are listed below.
@@ -102,11 +102,11 @@ The component supports 8 options, which are listed below.
 
 
 
-### Topic producer – to(“hazelcast-topic:foo”)
+== Topic producer – to(“hazelcast-topic:foo”)
 
 The topic producer provides only one operation (publish).
 
-#### Sample for *publish*:
+=== Sample for *publish*:
 
 [source,java]
 ----------------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ from("direct:add")
 .toF("hazelcast-%sbar", HazelcastConstants.PUBLISH_OPERATION);
 ----------------------------------------------------------------------------------------
 
-### Topic consumer – from(“hazelcast-topic:foo”)
+== Topic consumer – from(“hazelcast-topic:foo”)
 
 The topic consumer provides only one operation (received). This
 component is supposed to support multiple consumption as it's expected

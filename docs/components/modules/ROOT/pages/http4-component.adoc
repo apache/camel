@@ -28,7 +28,7 @@ Camel-http4 uses http://hc.apache.org/httpcomponents-client-ga/[Apache
 HttpClient 4.x] while camel-http uses
 http://hc.apache.org/httpclient-3.x/[Apache HttpClient 3.x].
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------------
@@ -47,7 +47,7 @@ Therefore it should never be used as input into your Camel Routes. To
 bind/expose an HTTP endpoint via a HTTP server as input to a Camel
 route, use the <<jetty-component,Jetty Component>> instead.
 
-### Http4 Component Options
+== Http4 Component Options
 
 
 
@@ -218,7 +218,7 @@ The component supports 19 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,20%,70%",options="header",]
 |=======================================================================
@@ -249,7 +249,7 @@ a content type, such as `text/html`.
 provide a content encoding, such as `gzip`.
 |=======================================================================
 
-### Message Body
+== Message Body
 
 Camel will store the HTTP response from the external server on the OUT
 body. All headers from the IN message will be copied to the OUT message,
@@ -259,7 +259,7 @@ HTTP response headers as well to the OUT message headers.
  
 
 
-### Using System Properties
+== Using System Properties
 
 When setting useSystemProperties to true, the HTTP Client will look for
 the following System Properties and it will use it:
@@ -281,7 +281,7 @@ the following System Properties and it will use it:
 * http.keepAlive
 * http.maxConnections
 
-### Response code
+== Response code
 
 Camel will handle according to the HTTP response code:
 
@@ -299,7 +299,7 @@ the `HttpOperationFailedException` from being thrown for failed response
 codes. This allows you to get any response from the remote server. +
 There is a sample below demonstrating this.
 
-### HttpOperationFailedException
+== HttpOperationFailedException
 
 This exception contains the following information:
 
@@ -309,7 +309,7 @@ This exception contains the following information:
 * Response body as a `java.lang.String`, if server provided a body as
 response
 
-### Which HTTP method will be used
+== Which HTTP method will be used
 
 The following algorithm is used to determine what HTTP method should be used: +
  1. Use method provided as endpoint configuration (`httpMethod`). +
@@ -319,7 +319,7 @@ The following algorithm is used to determine what HTTP method should be used: +
  5. `POST` if there is data to send (body is not `null`). +
  6. `GET` otherwise.
 
-### How to get access to HttpServletRequest and HttpServletResponse
+== How to get access to HttpServletRequest and HttpServletResponse
 
 You can get access to these two using the Camel type converter system
 using +
@@ -332,7 +332,7 @@ HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
 HttpServletRequest response = exchange.getIn().getBody(HttpServletResponse.class);
 ----------------------------------------------------------------------------------
 
-### Configuring URI to call
+== Configuring URI to call
 
 You can set the HTTP producer's URI directly form the endpoint URI. In
 the route below, Camel will call out to the external server, `oldhost`,
@@ -371,7 +371,7 @@ endpoint is configured with http4://oldhost. +
 If the http4 endpoint is working in bridge mode, it will ignore the
 message header of `Exchange.HTTP_URI`.
 
-### Configuring URI Parameters
+== Configuring URI Parameters
 
 The *http* producer supports URI parameters to be sent to the HTTP
 server. The URI parameters can either be set directly on the endpoint
@@ -392,7 +392,7 @@ from("direct:start")
   .to("http4://oldhost");
 ---------------------------------------------------------------------
 
-### How to set the http method (GET/PATCH/POST/PUT/DELETE/HEAD/OPTIONS/TRACE) to the HTTP producer
+== How to set the http method (GET/PATCH/POST/PUT/DELETE/HEAD/OPTIONS/TRACE) to the HTTP producer
 
 *Using the http PATCH method*
 
@@ -432,7 +432,7 @@ And the equivalent Spring sample:
 </camelContext>
 ---------------------------------------------------------------------
 
-### Using client timeout - SO_TIMEOUT
+== Using client timeout - SO_TIMEOUT
 
 See the
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-http4/src/test/java/org/apache/camel/component/http4/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
@@ -442,7 +442,7 @@ unit test.
 https://github.com/apache/camel/blob/master/components/camel-http4/src/test/java/org/apache/camel/component/http4/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
 unit test.
 
-### Configuring a Proxy
+== Configuring a Proxy
 
 The HTTP4 component provides a way to configure a proxy.
 
@@ -455,7 +455,7 @@ from("direct:start")
 There is also support for proxy authentication via the
 `proxyAuthUsername` and `proxyAuthPassword` options.
 
-#### Using proxy settings outside of URI
+=== Using proxy settings outside of URI
 
 To avoid System properties conflicts, you can set proxy configuration
 only from the CamelContext or URI. +
@@ -486,7 +486,7 @@ Properties and then the endpoint proxy options if provided. +
 Notice in *Camel 2.8* there is also a `http.proxyScheme` property you
 can set to explicit configure the scheme to use.
 
-### Configuring charset
+== Configuring charset
 
 If you are using `POST` to send data you can configure the `charset`
 using the `Exchange` property:
@@ -496,7 +496,7 @@ using the `Exchange` property:
 exchange.setProperty(Exchange.CHARSET_NAME, "ISO-8859-1");
 ----------------------------------------------------------
 
-#### Sample with scheduled poll
+=== Sample with scheduled poll
 
 This sample polls the Google homepage every 10 seconds and write the
 page to the file `message.html`:
@@ -509,7 +509,7 @@ from("timer://foo?fixedRate=true&delay=0&period=10000")
   .to("file:target/google");
 ------------------------------------------------------------
 
-#### URI Parameters from the endpoint URI
+=== URI Parameters from the endpoint URI
 
 In this sample we have the complete URI endpoint that is just what you
 would have typed in a web browser. Multiple URI parameters can of course
@@ -522,7 +522,7 @@ web browser. Camel does no tricks here.
 template.sendBody("http4://www.google.com/search?q=Camel", null);
 -----------------------------------------------------------------
 
-#### URI Parameters from the Message
+=== URI Parameters from the Message
 
 [source,java]
 ------------------------------------------------------------------
@@ -535,7 +535,7 @@ template.sendBody("http4://www.google.com/search", null, headers);
 In the header value above notice that it should *not* be prefixed with
 `?` and you can separate parameters as usual with the `&` char.
 
-#### Getting the Response Code
+=== Getting the Response Code
 
 You can get the HTTP response code from the HTTP4 component by getting
 the value from the Out message header with
@@ -552,19 +552,19 @@ Message out = exchange.getOut();
 int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
 ------------------------------------------------------------------------------------
 
-### Disabling Cookies
+== Disabling Cookies
 
 To disable cookies you can set the HTTP Client to ignore cookies by
 adding this URI option: +
  `httpClient.cookiePolicy=ignoreCookies`
 
-### Advanced Usage
+== Advanced Usage
 
 If you need more control over the HTTP producer you should use the
 `HttpComponent` where you can set various classes to give you custom
 behavior.
 
-#### Setting up SSL for HTTP Client
+=== Setting up SSL for HTTP Client
 
 [[HTTP4-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility

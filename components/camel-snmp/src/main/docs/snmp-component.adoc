@@ -20,7 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 --------------------------------
 snmp://hostname[:port][?Options]
@@ -32,7 +32,7 @@ and receiving traps.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Snmp Producer 
+== Snmp Producer 
 
 *Available from 2.18 release*
 
@@ -40,7 +40,7 @@ It can also be used to request information using GET method.
 
 The response body type is org.apache.camel.component.snmp.SnmpMessage
 
-### Options
+== Options
 
 
 // component options: START
@@ -141,7 +141,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### The result of a poll
+== The result of a poll
 
 Given the situation, that I poll for the following OIDs:
 
@@ -197,7 +197,7 @@ requested...be prepared.
 -------------------------
 As you may notice, default snmpVersion is 0 which means *version1* in the endpoint if it is not set explicitly. Make sure you explicitly set snmpVersion which is not default value, of course in a case of where you are able to query SNMP tables with different versions. Other possible values are *version2c* and *version3*.
 
-### Examples
+== Examples
 
 Polling a remote device:
 

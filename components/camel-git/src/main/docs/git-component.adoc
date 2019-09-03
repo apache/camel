@@ -23,7 +23,7 @@ The *git:* component allows you to work with a generic Git repository. 
 git://localRepositoryPath[?options]
 -----------------------------------
 
-### URI Options
+== URI Options
 
 The producer allows to do operations on a specific repository. +
 The consumer allows consuming commits, tags and branches on a specific
@@ -109,7 +109,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,10%,10%,20%,50%",options="header",]
 |=======================================================================
@@ -131,7 +131,7 @@ The component supports 2 options, which are listed below.
 
 |=======================================================================
 
-### Producer Example
+== Producer Example
 
 Below is an example route of a producer that add a file test.java to a
 local repository, commit it with a specific message on master branch and
@@ -149,7 +149,7 @@ from("direct:start")
         .to("git:///tmp/testRepo?operation=pushTag&tagName=myTag&remoteName=origin")
 --------------------------------------------------------------------------------------------------------------------
 
-### Consumer Example
+== Consumer Example
 
 Below is an example route of a consumer that consumes commit:
 

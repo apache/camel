@@ -23,7 +23,7 @@ from("queue:foo").filter().
   to("queue:bar")
 ---------------------------
 
-### JXPath Options
+== JXPath Options
 
 
 // language options: START
@@ -70,7 +70,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Variables
+== Variables
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -83,7 +83,7 @@ The component supports 3 options, which are listed below.
 |out |Message |the exchange.out message
 |=======================================================================
 
-### Options
+== Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -97,7 +97,7 @@ http://commons.apache.org/proper/commons-jxpath//users-guide.html#Lenient_Mode[J
 Documentation] This option is by default false.
 |=======================================================================
 
-### Using XML configuration
+== Using XML configuration
 
 If you prefer to configure your routes in your Spring
 XML file then you can use JXPath expressions as follows
@@ -122,14 +122,14 @@ XML file then you can use JXPath expressions as follows
 </beans>
 ---------------------------------------------------------------------------------------------------------------
 
-### Examples
+== Examples
 
 Here is a simple
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-jxpath/src/test/java/org/apache/camel/language/jxpath/JXPathFilterTest.java[example]
 using a JXPath expression as a predicate in a
 Message Filter
 
-### JXPath injection
+== JXPath injection
 
 You can use Bean Integration to invoke a
 method on a bean and use various languages such as JXPath to extract a
@@ -148,7 +148,7 @@ public class Foo {
 }
 ---------------------------------------------------------------------------------------------
 
-### Loading script from external resource
+== Loading script from external resource
 
 *Available as of Camel 2.11*
 
@@ -162,7 +162,7 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").jxpath("resource:classpath:myjxpath.txt")
 ----------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use JXpath in your camel routes you need to add the a dependency on
 *camel-jxpath* which implements the JXpath language.

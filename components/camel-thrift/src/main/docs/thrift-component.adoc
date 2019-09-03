@@ -20,14 +20,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------
 thrift://service[?options]
 -------------------------------------
 
-### Endpoint Options
+== Endpoint Options
 
 // component options: START
 The Thrift component supports 2 options, which are listed below.
@@ -117,7 +117,7 @@ The component supports 7 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Thrift method parameters mapping
+== Thrift method parameters mapping
 
 Parameters in the called procedure must be passed as a list of objects inside the message body. The primitives are converted from the objects on the fly.
 In order to correctly find the corresponding method, all types must be transmitted regardless of the values. Please see an exmaple below, how to pass
@@ -145,7 +145,7 @@ Object responseBody = template.requestBody("direct:thrift-alltypes", requestBody
 Incoming parameters in the service consumer will also be passed to the message body as a list of objects.
 
 
-### Thrift consumer headers (will be installed after the consumer invocation)
+== Thrift consumer headers (will be installed after the consumer invocation)
 
 [width="100%",cols="25%,50,25%",options="header",]
 |=======================================================================
@@ -155,7 +155,7 @@ Incoming parameters in the service consumer will also be passed to the message b
 
 |=======================================================================
 
-### Examples
+== Examples
 
 Below is a simple synchronous method invoke with host and port parameters
 
@@ -185,7 +185,7 @@ from("thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calcul
 
 It's possible to automate Java code generation for .thrift files using *thrift-maven-plugin*, but before start the thrift compiler binary distribution for your operating system must be present on the running host.
 
-### For more information, see these resources
+== For more information, see these resources
 
 https://github.com/apache/thrift/[Thrift project GitHub]
 https://thrift.apache.org/tutorial/java [Apache Thrift Java tutorial]

@@ -20,7 +20,7 @@ for this component:
 -------------------------------------------------
 
 
-### Twilio Options
+== Twilio Options
 
 // component options: START
 The Twilio component supports 6 options, which are listed below.
@@ -108,7 +108,7 @@ The component supports 8 options, which are listed below.
 
 
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------------
@@ -175,7 +175,7 @@ Endpoint prefix can be one of:
 * validation-request
 
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -205,7 +205,7 @@ For more information on the endpoints and options see API documentation at:
 https://www.twilio.com/docs/libraries/reference/twilio-java/index.html
 
 
-### Consumer Endpoints:
+== Consumer Endpoints:
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -221,13 +221,13 @@ such as *camel-servlet*, *camel-undertow*, *camel-jetty*, and *camel-netty-http*
 to respond with https://www.twilio.com/docs/api/twiml[TwiML].
 
 
-### Message header
+== Message header
 
 Any of the options can be provided in a message header for producer
 endpoints with *CamelTwilio.* prefix.
 
 
-### Message body
+== Message body
 
 All result message bodies utilize objects provided by the Twilio Java SDK.
 Producer endpoints can specify the option name for incoming message body

@@ -12,7 +12,7 @@ Prerequisites
 You must have a valid Windows Azure Storage account. More information is available at
 https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
-### URI Format
+== URI Format
 
 [source,java]
 ------------------------------
@@ -32,7 +32,7 @@ from("azure-blob:/camelazure/container1/blockBlob").
 to("file://blobdirectory");
 --------------------------------------------------------------------------------
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -130,9 +130,9 @@ Required Azure Storage Blob Service component options
 
 You have to provide the containerOrBlob name and the credentials if the private blob needs to be accessed.
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the Azure Storage Blob Service producer
+=== Message headers evaluated by the Azure Storage Blob Service producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -140,7 +140,7 @@ You have to provide the containerOrBlob name and the credentials if the private 
 | | |
 |=======================================================================
 
-#### Message headers set by the Azure Storage Blob Service producer
+=== Message headers set by the Azure Storage Blob Service producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -148,7 +148,7 @@ You have to provide the containerOrBlob name and the credentials if the private 
 |`CamelFileName` |`String` |The file name for the downloaded blob content.
 |=======================================================================
 
-#### Message headers set by the Azure Storage Blob Service producer consumer
+=== Message headers set by the Azure Storage Blob Service producer consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -159,7 +159,7 @@ You have to provide the containerOrBlob name and the credentials if the private 
 |=======================================================================
 
 
-#### Azure Blob Service operations
+=== Azure Blob Service operations
 
 *Operations common to all block types*
 
@@ -215,7 +215,7 @@ You have to provide the containerOrBlob name and the credentials if the private 
 
 
 
-#### Azure Blob Client configuration
+=== Azure Blob Client configuration
 
 If your Camel Application is running behind a firewall or if you need to
 have more control over the Azure Blob Client configuration, you can
@@ -238,7 +238,7 @@ from("azure-blob:/camelazure/container1/blockBlob?azureBlobClient=#client")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 

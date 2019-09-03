@@ -29,7 +29,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------
@@ -39,7 +39,7 @@ cache://cacheName[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=#beanRef&...`
 
-### Options
+== Options
 
 
 
@@ -156,9 +156,9 @@ The component supports 17 options, which are listed below.
 
 
 
-### Sending/Receiving Messages to/from the cache
+== Sending/Receiving Messages to/from the cache
 
-#### Message Headers up to Camel 2.7
+=== Message Headers up to Camel 2.7
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -177,7 +177,7 @@ The component supports 17 options, which are listed below.
 |`CACHE_KEY` |The cache key used to store the Message in the cache. The cache key is
 optional if the CACHE_OPERATION is DELETEALL
 |=======================================================================
-#### Message Headers Camel 2.8+
+=== Message Headers Camel 2.8+
 
 Header changes in Camel 2.8
 
@@ -220,7 +220,7 @@ headers:
 |`CamelCacheEternal` |`Boolean` |*Camel 2.11:* Whether the content is eternal.
 |=======================================================================
 
-#### Cache Producer
+=== Cache Producer
 
 Sending data to the cache involves the ability to direct payloads in
 exchanges to be stored in a pre-existing or created-on-demand cache. The
@@ -230,7 +230,7 @@ mechanics of doing this involve
 * ensuring that the Message Exchange Body contains the message directed
 to the cache
 
-#### Cache Consumer
+=== Cache Consumer
 
 Receiving data from the cache involves the ability of the CacheConsumer
 to listen on a pre-existing or created-on-demand Cache using an event
@@ -244,7 +244,7 @@ Body containing the just added/updated payload is placed and sent.
 * in case of a CamelCacheDeleteAll operation, the Message Exchange
 Header CamelCacheKey and the Message Exchange Body are not populated.
 
-#### Cache Processors
+=== Cache Processors
 
 There are a set of nice processors with the ability to perform cache
 lookups and selectively replace payload content at the
@@ -253,9 +253,9 @@ lookups and selectively replace payload content at the
 * token
 * xpath level
 
-### Cache Usage Samples
+== Cache Usage Samples
 
-#### Example 1: Configuring the cache
+=== Example 1: Configuring the cache
 
 [source,java]
 -------------------------------------------------
@@ -271,7 +271,7 @@ from("cache://MyApplicationCache" +
           "&diskExpiryThreadIntervalSeconds=300")
 -------------------------------------------------
 
-#### Example 2: Adding keys to the cache
+=== Example 2: Adding keys to the cache
 
 [source,java]
 ---------------------------------------------------------------------------------------------
@@ -285,7 +285,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ---------------------------------------------------------------------------------------------
 
-#### Example 2: Updating existing keys in a cache
+=== Example 2: Updating existing keys in a cache
 
 [source,java]
 ------------------------------------------------------------------------------------------------
@@ -299,7 +299,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ------------------------------------------------------------------------------------------------
 
-#### Example 3: Deleting existing keys in a cache
+=== Example 3: Deleting existing keys in a cache
 
 [source,java]
 --------------------------------------------------------------------------------------
@@ -313,7 +313,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 --------------------------------------------------------------------------------------
 
-#### Example 4: Deleting all existing keys in a cache
+=== Example 4: Deleting all existing keys in a cache
 
 [source,java]
 -----------------------------------------------------------------------------------------
@@ -326,7 +326,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 -----------------------------------------------------------------------------------------
 
-#### Example 5: Notifying any changes registering in a Cache to Processors and other Producers
+=== Example 5: Notifying any changes registering in a Cache to Processors and other Producers
 
 [source,java]
 --------------------------------------------------------------------------------------------------
@@ -346,7 +346,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 --------------------------------------------------------------------------------------------------
 
-#### Example 6: Using Processors to selectively replace payload with cache values
+=== Example 6: Using Processors to selectively replace payload with cache values
 
 [source,java]
 ---------------------------------------------------------------------------------------
@@ -376,7 +376,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ---------------------------------------------------------------------------------------
 
-#### Example 7: Getting an entry from the Cache
+=== Example 7: Getting an entry from the Cache
 
 [source,java]
 ------------------------------------------------------------------------------------------------
@@ -396,7 +396,7 @@ from("direct:start")
     .to("direct:nextPhase");
 ------------------------------------------------------------------------------------------------
 
-#### Example 8: Checking for an entry in the Cache
+=== Example 8: Checking for an entry in the Cache
 
 Note: The CHECK command tests existence of an entry in the cache but
 doesn't place a message in the body.
@@ -418,7 +418,7 @@ from("direct:start")
     .end();
 ------------------------------------------------------------------------------------------------
 
-### Management of EHCache
+== Management of EHCache
 
 http://ehcache.org/[EHCache] has its own statistics and management from
 JMX.
@@ -452,7 +452,7 @@ ManagementService.registerMBeans(CacheManager.getInstance(), mbeanServer, true, 
 You can get cache hits, misses, in-memory hits, disk hits, size stats
 this way. You can also change CacheConfiguration parameters on the fly.
 
-### Cache replication Camel 2.8
+== Cache replication Camel 2.8
 
 The Camel Cache component is able to distribute a cache across server
 nodes using several different replication mechanisms including: RMI,
@@ -485,7 +485,7 @@ phase.
 manual] to get a better understanding of the Camel Cache replication
 mechanism.
 
-#### Example: JMS cache replication
+=== Example: JMS cache replication
 
 JMS replication is the most powerful and secured replication method.
 Used together with Camel Cache replication makes it also rather

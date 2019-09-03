@@ -23,7 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 To send a message to a channel.
 
@@ -39,7 +39,7 @@ To send a direct message to a slackuser.
 slack:@username[?options]
 -------------------------
 
-### Options
+== Options
 
 
 
@@ -143,7 +143,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### SlackComponent
+== SlackComponent
 
 The SlackComponent with XML must be configured as a Spring or Blueprint
 bean that contains the incoming webhook url for the integration as a
@@ -158,7 +158,7 @@ parameter.
 
 For Java you can configure this using Java code.
 
-### Example
+== Example
 
 A CamelContext with Blueprint could be as:
 
@@ -181,7 +181,7 @@ A CamelContext with Blueprint could be as:
 </blueprint>
 ---------------------------------------------------------------------------------------------------------------------------
 
-### Consumer
+== Consumer
 
 You can use also a consumer for messages in channel
 
@@ -193,9 +193,3 @@ from("slack://general?token=RAW(<YOUR_TOKEN>)&maxResults=1")
 
 In this way you'll get the last message from general channel. The consumer will take track of the timestamp of the last message consumed and in the next poll it will check from that timestamp.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -21,7 +21,7 @@ their `pom.xml` for this component:
 </dependency>
 ---------------------------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ----------------------------
@@ -34,7 +34,7 @@ invoke.
 You can append query options to the URI in the following
 format, `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -112,7 +112,7 @@ with extensions _.chtml_ or _.cxml. _If you need to specify a different
 folder or extensions, you will need to use the specific options listed
 above.
 
-### Chunk Context
+== Chunk Context
 
 Camel will provide exchange information in the Chunk context (just
 a `Map`). The `Exchange` is transferred as:
@@ -137,7 +137,7 @@ a `Map`). The `Exchange` is transferred as:
 |`response` |The Out message (only for InOut message exchange pattern).
 |=======================================================================
 
-### Dynamic templates
+== Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
@@ -154,7 +154,7 @@ configured. |
 |ChunkConstants.CHUNK_TEMPLATE |String |The template to use instead of the endpoint configured. |
 |=======================================================================
 
-### Samples
+== Samples
 
 For example you could use something like:
 
@@ -198,7 +198,7 @@ to("chunk:file_example?themeFolder=template&themeSubfolder=subfolder&extension=c
 In this example Chunk component will look for the file
 _file_example.chunk_ in the folder _template/subfolder._
 
-### The Email Sample
+== The Email Sample
 
 In this sample we want to use Chunk templating for an order confirmation
 email. The email template is laid out in Chunk as:

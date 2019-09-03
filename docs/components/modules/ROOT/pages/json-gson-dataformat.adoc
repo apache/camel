@@ -14,7 +14,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-### Gson Options
+== Gson Options
 
 
 // dataformat options: START
@@ -94,7 +94,7 @@ The component supports 20 options, which are listed below.
 
 
 
-### Dependencies
+== Dependencies
 
 To use Gson in your camel routes you need to add the dependency
 on *camel-gson* which implements this data format.

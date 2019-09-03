@@ -23,7 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 The URI scheme for a sap netweaver gateway component is as follows
 
@@ -35,7 +35,7 @@ sap-netweaver:https://host:8080/path?username=foo&password=secret
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Prerequisites
+== Prerequisites
 
 You would need to have an account to the SAP NetWeaver system to be able
 to leverage this component. SAP provides a
@@ -45,7 +45,7 @@ requires for an account.
 This component uses the basic authentication scheme for logging into SAP
 NetWeaver.
 
-### SAPNetWeaver options
+== SAPNetWeaver options
 
 
 // component options: START
@@ -117,7 +117,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 The following headers can be used by the producer.
 
@@ -130,7 +130,7 @@ http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data
 Service] format.
 |=======================================================================
 
-### Examples
+== Examples
 
 This example is using the flight demo example from SAP, which is
 available online over the internet

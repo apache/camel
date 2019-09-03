@@ -22,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------
@@ -34,12 +34,12 @@ jcr://user:password@repository/path/to/node
 From *Camel 2.10* onwards you can use consumer as an EventListener in
 JCR or a producer to read a node by identifier.
 
-### Usage
+== Usage
 
 The `repository` element of the URI is used to look up the JCR
 `Repository` object in the Camel context registry.
 
-#### JCR Options
+=== JCR Options
 
 
 // component options: START
@@ -128,7 +128,7 @@ message headers in Camel versions earlier than 2.12.3. See
 https://issues.apache.org/jira/browse/CAMEL-7067[https://issues.apache.org/jira/browse/CAMEL-7067]
 for more details.
 
-### Example
+== Example
 
 The snippet below creates a node named `node` under the `/home/test`
 node in the content repository. One additional property is added to the

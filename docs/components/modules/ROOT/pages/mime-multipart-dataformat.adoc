@@ -42,7 +42,7 @@ empty message. Up to Camel version 2.17.1 this will happen all message
 bodies that do not contain a MIME multipart message regardless of body
 type and stream cache setting.
 
-### Options
+== Options
 
 // dataformat options: START
 The MIME Multipart dataformat supports 6 options, which are listed below.
@@ -61,7 +61,7 @@ The MIME Multipart dataformat supports 6 options, which are listed below.
 |===
 // dataformat options: END
 
-### Message Headers (marshal)
+== Message Headers (marshal)
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -85,7 +85,7 @@ body part. Furthermore the given charset is applied for text to binary
 conversions.
 |=======================================================================
 
-### Message Headers (unmarshal)
+== Message Headers (unmarshal)
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -105,7 +105,7 @@ from MIME endoding descriptor to Java encoding descriptor)
 MIME multipart. The header is removed afterwards
 |=======================================================================
 
-### Examples
+== Examples
 
 [source,java]
 -----------------------------------
@@ -180,7 +180,7 @@ Content-Disposition: attachment; filename="Attachment File Name"
 ------=_Part_0_1134128170.1447659361365
 ----------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use MIME-Multipart in your Camel routes you need to add a dependency
 on *camel-mail* which implements this data format.

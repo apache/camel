@@ -22,14 +22,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------
 xchange://exchange?options
 ---------------------------------
 
-### Options
+== Options
 
 // component options: START
 The XChange component has no options.
@@ -96,7 +96,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Authentication
+== Authentication
 
 This component communicates with supported crypto currency exchanges via REST API. Some API requests use simple unauthenticated GET request. 
 For most of the interesting stuff however, you'd need an account with the exchange and have API access keys enabled.
@@ -116,11 +116,11 @@ apiKey = GuRW0*********
 secretKey = nKLki************
 ----
 
-### Message Headers
+== Message Headers
 
 [TODO]
 
-### Samples
+== Samples
 
 In this sample we find the current Bitcoin market price in USDT:
 

@@ -10,7 +10,7 @@ Hazelcast makes sense in one single "server node", but it's extremly powerful in
 *This endpoint provides no producer!*
 
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast Instance component supports 3 options, which are listed below.
@@ -123,7 +123,7 @@ The component supports 26 options, which are listed below.
 
 
 
-### instance consumer - from("hazelcast-instance:foo")
+== instance consumer - from("hazelcast-instance:foo")
 
  The instance consumer fires if a new cache instance will join or leave the cluster.
  

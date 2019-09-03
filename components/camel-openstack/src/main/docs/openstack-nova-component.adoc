@@ -6,7 +6,7 @@
 
 The openstack-nova component allows messages to be sent to an OpenStack compute services.
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -24,7 +24,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-### URI Format
+== URI Format
 
 [source,java]
 ----------------------------
@@ -34,7 +34,7 @@ openstack-nova://hosturl[?options]
 You can append query options to the URI in the following format
 `?options=value&option2=value&...`
 
-### URI Options
+== URI Options
 
 // component options: START
 The OpenStack Nova component has no options.
@@ -106,12 +106,12 @@ The component supports 2 options, which are listed below.
 
 
 
-### Usage
+== Usage
 You can use following settings for each subsystem:
 
-### flavors
+== flavors
 
-#### Operations you can perform with the Flavor producer
+=== Operations you can perform with the Flavor producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -125,7 +125,7 @@ You can use following settings for each subsystem:
 |`delete` | Delete the flavor.
 |=========================================================================
 
-#### Message headers evaluated by the Flavor producer
+=== Message headers evaluated by the Flavor producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -150,9 +150,9 @@ You can use following settings for each subsystem:
 
 If you need more precise flavor settings you can create new object of the type *org.openstack4j.model.compute.Flavor* and send in the message body.
 
-### servers
+== servers
 
-#### Operations you can perform with the Server producer
+=== Operations you can perform with the Server producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -170,7 +170,7 @@ If you need more precise flavor settings you can create new object of the type *
 |`action` | Perform an action on the server.
 |=========================================================================
 
-#### Message headers evaluated by the Server producer
+=== Message headers evaluated by the Server producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -197,9 +197,9 @@ If you need more precise flavor settings you can create new object of the type *
 
 If you need more precise server settings you can create new object of the type *org.openstack4j.model.compute.ServerCreate* and send in the message body.
 
-### keypairs
+== keypairs
 
-#### Operations you can perform with the Keypair producer
+=== Operations you can perform with the Keypair producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -214,7 +214,7 @@ If you need more precise server settings you can create new object of the type *
 
 |=========================================================================
 
-#### Message headers evaluated by the Keypair producer
+=== Message headers evaluated by the Keypair producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================

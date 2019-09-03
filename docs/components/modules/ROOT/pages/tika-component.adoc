@@ -27,7 +27,7 @@ following dependency to their `pom.xml`:
 The TIKA component only supports producer endpoints.
 
 
-### Options
+== Options
 
 // component options: START
 The Tika component has no options.
@@ -98,7 +98,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### To Detect a file's MIME Type
+== To Detect a file's MIME Type
 
 The file should be placed in the Body.
 
@@ -108,7 +108,7 @@ from("direct:start")
         .to("tika:detect");
 ----
 
-### To Parse a File
+== To Parse a File
 
 The file should be placed in the Body.
 

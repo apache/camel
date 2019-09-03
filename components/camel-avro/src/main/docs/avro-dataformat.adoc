@@ -23,7 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Apache Avro Overview
+== Apache Avro Overview
 
 Avro allows you to define message types and a protocol using a json like
 format and then generate java code for the specified types and messages.
@@ -90,7 +90,7 @@ class Value {
 _Note: Existing classes can be used only for RPC (see below), not in
 data format._
 
-### Using the Avro data format
+== Using the Avro data format
 
 Using the avro data format is as easy as specifying that the class that
 you want to marshal or unmarshal in your route.
@@ -128,7 +128,7 @@ reference it from your route.
 In the same manner you can umarshal using the avro data format.
 
 
-### Avro Dataformat Options
+== Avro Dataformat Options
 
 // dataformat options: START
 The Avro dataformat supports 2 options, which are listed below.

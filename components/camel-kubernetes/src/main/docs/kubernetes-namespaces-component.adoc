@@ -10,14 +10,14 @@ kubernetes namespace events.
 
 
 
-### Component Options
+== Component Options
 
 // component options: START
 The Kubernetes Namespaces component has no options.
 // component options: END
 
 
-### Endpoint Options
+== Endpoint Options
 
 // endpoint options: START
 The Kubernetes Namespaces endpoint is configured using URI syntax:

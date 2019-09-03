@@ -17,14 +17,14 @@ Maven users will need to add the following dependency to their pom.xml for this 
     </dependency>
 ----
 
-### URI format
+== URI format
 
 [source,java]
 ----
     atomix-map:mapName
 ----
 
-### Options
+== Options
 
 // component options: START
 The Atomix Map component supports 5 options, which are listed below.
@@ -123,7 +123,7 @@ The component supports 9 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Headers
+== Headers
 
 [width="100%",cols="10%,10%,20%a,60%",options="header",]
 |===
@@ -178,7 +178,7 @@ The component supports 9 options, which are listed below.
 
 |===
 
-### Configuring the component to connect to an Atomix cluster
+== Configuring the component to connect to an Atomix cluster
 
 The nodes of the Atomix cluster you want to join can be se at Endpoint or component level (recommended), below some examples:
 
@@ -212,7 +212,7 @@ The nodes of the Atomix cluster you want to join can be se at Endpoint or compon
 </beans>
 ----
 
-### Usage examples:
+== Usage examples:
 
 * *PUT an element with TTL of 1 second:*
 +

@@ -1,4 +1,4 @@
-## Ribbon Component
+= Ribbon Component
 
 *Available as of Camel version 2.18*
 
@@ -19,7 +19,7 @@ for this component:
 
 This component helps applying load balancing feature at the client side when using http://camel.apache.org/servicecall-eip.html[ServiceCall EIP].
 
-### Configuration
+== Configuration
 
 * *Programmatic*
 +

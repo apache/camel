@@ -23,7 +23,7 @@ their `pom.xml` for this component.
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ----------------------
@@ -32,7 +32,7 @@ nsq:servers[?options]
 
 Where *servers* represents the list of NSQ servers - nsqlookupd servers in the case of a consumer and nsqd servers in the case of a producer.
 
-### Options
+== Options
 
 
 // component options: START

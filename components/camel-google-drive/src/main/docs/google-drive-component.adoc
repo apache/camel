@@ -30,7 +30,7 @@ for this component:
         
 -------------------------------------------------------
 
-### URI Format
+== URI Format
 
 '''''
 
@@ -57,7 +57,7 @@ Endpoint prefix can be one of:
 * drive-replies
 * drive-revisions
 
-### GoogleDriveComponent
+== GoogleDriveComponent
 
 
 
@@ -164,7 +164,7 @@ The component supports 11 options, which are listed below.
 
 
 
-### Producer Endpoints
+== Producer Endpoints
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -185,7 +185,7 @@ override a `CamelGoogleDrive.option` header.
 For more information on the endpoints and options see API documentation
 at: https://developers.google.com/drive/v2/reference/[https://developers.google.com/drive/v2/reference/]
 
-### Consumer Endpoints
+== Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -195,12 +195,12 @@ invocation. Consumer endpoints that return an array or collection will
 generate one exchange per element, and their routes will be executed
 once for each exchange.
 
-### Message Headers
+== Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a `CamelGoogleDrive.` prefix.
 
-### Message Body
+== Message Body
 
 All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleDriveComponent. Producer endpoints can specify

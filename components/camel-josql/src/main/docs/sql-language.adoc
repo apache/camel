@@ -57,7 +57,7 @@ And the spring DSL:
    <to uri="queue:bar"/>
 --------------------------------------
 
-### Options
+== Options
 
 
 // language options: START
@@ -99,7 +99,7 @@ The component supports 2 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-### Loading script from external resource
+== Loading script from external resource
 
 *Available as of Camel 2.11*
 

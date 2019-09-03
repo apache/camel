@@ -29,7 +29,7 @@ Maven users will need to add the following dependency to their
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------------------
@@ -82,7 +82,7 @@ invocations so it makes sense to use this feature only for parameters
 that are indeed constant for all invocations -- for example API version
 in path such as `/api/{version}/users/{id}`. 
 
-### Options
+== Options
 
 // component options: START
 The REST Swagger component supports 9 options, which are listed below.
@@ -175,7 +175,7 @@ The component supports 10 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Example: PetStore
+== Example: PetStore
 
 Checkout the example in the `camel-example-rest-swagger` project in
 the `examples` directory.

@@ -34,14 +34,14 @@ for this component:
 </dependency>
 -----------------------------------------
 
-### URI format
+== URI format
 
 [source,text]
 ---------------------------
 github://endpoint[?options]
 ---------------------------
 
-### Mandatory Options:
+== Mandatory Options:
 
 Note that these can be configured directly through the endpoint.
 
@@ -123,7 +123,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Consumer Endpoints:
+== Consumer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -140,7 +140,7 @@ request discussion) or org.eclipse.egit.github.core.CommitComment
 |commit |polling |org.eclipse.egit.github.core.RepositoryCommit
 |=======================================================================
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================

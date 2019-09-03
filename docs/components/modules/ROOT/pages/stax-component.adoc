@@ -23,7 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------
@@ -46,7 +46,7 @@ using the # syntax as shown:
 stax:#myHandler
 ---------------
 
-### Options
+== Options
 
 
 // component options: START
@@ -113,7 +113,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Usage of a content handler as StAX parser
+== Usage of a content handler as StAX parser
 
 The message body after the handling is the handler itself.
 
@@ -133,7 +133,7 @@ from("file:target/in")
   });
 --------------------------------------------------------------------------------------------------------
 
-### Iterate over a collection using JAXB and StAX
+== Iterate over a collection using JAXB and StAX
 
 First we suppose you have JAXB objects.
 
@@ -237,13 +237,7 @@ from("file:target/in")
         .to("mock:records");
 -------------------------------------------------
 
-#### The previous example with XML DSL
+=== The previous example with XML DSL
 
 The example above could be implemented as follows in XML DSL
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

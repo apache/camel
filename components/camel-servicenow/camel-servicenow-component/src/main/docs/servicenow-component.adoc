@@ -21,14 +21,14 @@ for this component:
     </dependency>
 -------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------
     servicenow://instanceName?[options]
 ---------------------------------------
 
-### Options
+== Options
 
 
 // component options: START
@@ -213,7 +213,7 @@ The component supports 57 options, which are listed below.
 
 
 
-### Headers
+== Headers
 
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
@@ -366,7 +366,7 @@ NOTE: link:http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fu
 
 NOTE: https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/inbound-rest/reference/r_RESTResources.html[Helsinki REST API Documentation]
 
-### Usage examples:
+== Usage examples:
  
 [source,java]
 .Retrieve 10 Incidents

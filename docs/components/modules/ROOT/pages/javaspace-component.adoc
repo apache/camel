@@ -36,7 +36,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------
@@ -46,7 +46,7 @@ javaspace:jini://host[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -124,9 +124,9 @@ The component supports 2 options, which are listed below.
 
 
 
-### Examples
+== Examples
 
-#### Sending and Receiving Entries
+=== Sending and Receiving Entries
 
 [source,java]
 --------------------------------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ from("javaspace:jini://localhost?spaceName=mySpace&templateId=template&verb=take
 In this case the payload can be any object that inherits from the Jini
 `Entry` type.
 
-#### Sending and receiving serializable objects
+=== Sending and receiving serializable objects
 
 Using the preceding routes, it is also possible to send and receive any
 serializable object. The JavaSpace component detects that the payload is
@@ -150,7 +150,7 @@ not a Jini `Entry` and then it automatically wraps the payload with a
 Camel Jini `Entry`. In this way, a JavaSpace can be used as a generic
 transport mechanism.
 
-#### Using JavaSpace as a remote invocation transport
+=== Using JavaSpace as a remote invocation transport
 
 The JavaSpace component has been tailored to work in combination with
 the Camel bean component. It is therefore possible to call a remote POJO
@@ -172,9 +172,3 @@ realize the master/worker pattern. The idea is to use the POJO to
 provide the business logic and rely on Camel for sending/receiving
 requests/replies with the proper correlation.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

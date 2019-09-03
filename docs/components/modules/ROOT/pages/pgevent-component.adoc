@@ -35,7 +35,7 @@ pgevent://host:port/database/channel[?parameters]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -111,9 +111,3 @@ The component supports 2 options, which are listed below.
 
 
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

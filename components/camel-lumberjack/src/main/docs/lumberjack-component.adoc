@@ -22,7 +22,7 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------------
@@ -33,7 +33,7 @@ lumberjack:host:port
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 
@@ -126,13 +126,13 @@ The component supports 4 options, which are listed below.
 
 
 
-### Result
+== Result
 
 The result body is a `Map<String, Object>` object.
 
-### Lumberjack Usage Samples
+== Lumberjack Usage Samples
 
-#### Example 1: Streaming the log messages
+=== Example 1: Streaming the log messages
 
 [source,java]
 ------------------------------------------------------------------------------------

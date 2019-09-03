@@ -31,7 +31,7 @@ for this component:
         
 ----------------------------------------------------------
 
-### 1. Google Calendar Options
+== 1. Google Calendar Options
 
 
 
@@ -141,7 +141,7 @@ The component supports 14 options, which are listed below.
 
 
 
-### URI Format
+== URI Format
 
 The GoogleCalendar Component uses the following URI format:
 
@@ -161,7 +161,7 @@ Endpoint prefix can be one of:
 * list
 * settings
 
-### Producer Endpoints
+== Producer Endpoints
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -180,7 +180,7 @@ overrides message header, i.e. the endpoint option `inBody=option` would
 override a `CamelGoogleCalendar.option` header.
 
 
-### Consumer Endpoints
+== Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -190,12 +190,12 @@ invocation. Consumer endpoints that return an array or collection will
 generate one exchange per element, and their routes will be executed
 once for each exchange.
 
-### Message Headers
+== Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a `CamelGoogleCalendar.` prefix.
 
-### Message Body
+== Message Body
 
 All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleCalendarComponent. Producer endpoints can specify

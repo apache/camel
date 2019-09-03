@@ -13,7 +13,7 @@ https://github.com/emcvipr/dataservices-sdk-java[Atmos Client].
 from("atmos:foo/get?remotePath=/path").to("mock:test");
 -------------------------------
 
-### Options
+== Options
 
 
 // component options: START
@@ -108,7 +108,7 @@ The component supports 6 options, which are listed below.
 
 
 
-### Dependencies
+== Dependencies
 
 To use Atmos in your camel routes you need to add the dependency
 on *camel-atmos* which implements this data format.
@@ -129,7 +129,7 @@ the download page for the latest versions).
 
 [[Atmos-Integrations]]
 
-### Integrations
+== Integrations
 
 When you look at atmos integrations, there is one type of consumer, 
 GetConsumer, which is a type of ScheduledPollConsumer. 
@@ -143,7 +143,7 @@ Whereas there are 4 types of producers which are
 * `Move`
 * `Put`
 
-### Examples
+== Examples
 
 These example are taken from tests:
 
@@ -179,9 +179,3 @@ exhange
 DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, DELETED_PATH, MOVED_PATH;
 -------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

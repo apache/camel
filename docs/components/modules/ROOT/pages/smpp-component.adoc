@@ -29,7 +29,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### SMS limitations
+== SMS limitations
 
 SMS is neither reliable or secure.  Users who require reliable and
 secure delivery may want to consider using the XMPP or SIP components
@@ -56,7 +56,7 @@ schemes and other purposes where security is important.
 While the Camel component makes it as easy as possible to send messages
 to the SMS network, it can not offer an easy solution to these problems.
 
-### Data coding, alphabet and international character sets
+== Data coding, alphabet and international character sets
 
 Data coding and alphabet can be specified on a per-message basis. 
 Default values can be specified for the endpoint.  It is important to
@@ -127,7 +127,7 @@ control panel option]. It is suggested that users check with their SMSC
 operator to confirm exactly which character set is being used as the
 default.
 
-### Message splitting and throttling
+== Message splitting and throttling
 
 After transforming a message body from a String to a byte array, the
 Camel component is also responsible for splitting the message into parts
@@ -145,7 +145,7 @@ that has been split may be counted separately by the provider's
 throttling mechanism.  The Camel Throttler component can be useful for
 throttling messages in the SMPP route before handing them to the SMSC.
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------------------
@@ -163,7 +163,7 @@ use SSLSocket to init a connection to the server.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### URI Options
+== URI Options
 
 
 
@@ -326,7 +326,7 @@ You can have as many of these options as you like.
 smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=consumer
 ------------------------------------------------------------------------------------------------------------------
 
-### Producer Message Headers
+== Producer Message Headers
 
 The following message headers can be used to affect the behavior of the
 SMPP producer
@@ -461,7 +461,7 @@ converted in the following way:
 `org.jsmpp.bean.OptionalParameter.Null` -> `null`
 |=======================================================================
 
-### Consumer Message Headers
+== Consumer Message Headers
 
 The following message headers are used by the SMPP consumer to set the
 request data from the SMSC in the message header
@@ -596,7 +596,7 @@ TIP: *JSMPP library*
 See the documentation of the http://jsmpp.org[JSMPP Library] for more
 details about the underlying library.
 
-### Exception handling
+== Exception handling
 
 This component supports the general Camel exception handling
 capabilities
@@ -629,7 +629,7 @@ from("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&t
 Please refer to the http://smsforum.net/SMPP_v3_4_Issue1_2.zip[SMPP
 specification] for the complete list of error codes and their meanings.
 
-### Samples
+== Samples
 
 A route which sends an SMS using the Java DSL:
 
@@ -676,7 +676,7 @@ If you need an SMSC simulator for your test, you can use the simulator
 provided by
 http://opensmpp.logica.com/CommonPart/Download/download2.html#simulator[Logica].
 
-### Debug logging
+== Debug logging
 
 This component has log level *DEBUG*, which can be helpful in debugging
 problems. If you use log4j, you can add the following line to your
@@ -687,9 +687,3 @@ configuration:
 log4j.logger.org.apache.camel.component.smpp=DEBUG
 --------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

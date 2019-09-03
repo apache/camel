@@ -51,7 +51,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### The need for a Camel Routebox endpoint
+== The need for a Camel Routebox endpoint
 
 The routebox component is designed to ease integration in complex
 environments needing
@@ -87,7 +87,7 @@ delegate requests to inner fine grained routes to achieve a specific
 integration objective, collect the final inner result, and continue to
 progress to the next step along the coarse-grained route.
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------
@@ -97,7 +97,7 @@ routebox:routeboxname[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -180,14 +180,14 @@ The component supports 2 options, which are listed below.
 
 
 
-### Sending/Receiving Messages to/from the routebox
+== Sending/Receiving Messages to/from the routebox
 
 Before sending requests it is necessary to properly configure the
 routebox by loading the required URI parameters into the Registry as
 shown below. In the case of Spring, if the necessary beans are declared
 correctly, the registry is automatically populated by Camel.
 
-#### Step 1: Loading inner route details into the Registry
+=== Step 1: Loading inner route details into the Registry
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------
@@ -224,7 +224,7 @@ private JndiRegistry createInnerRegistry() throws Exception {
 CamelContext context = new DefaultCamelContext(createRegistry());
 ------------------------------------------------------------------------------------------------------------
 
-#### Step 2: Optionaly using a Dispatch Strategy instead of a Dispatch Map
+=== Step 2: Optionaly using a Dispatch Strategy instead of a Dispatch Map
 
 Using a dispatch Strategy involves implementing the interface
 _org.apache.camel.component.routebox.strategy.RouteboxDispatchStrategy_
@@ -254,7 +254,7 @@ public class SimpleRouteDispatchStrategy implements RouteboxDispatchStrategy {
 }
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Step 2: Launching a routebox consumer
+=== Step 2: Launching a routebox consumer
 
 When creating a route consumer, note that the # entries in the
 routeboxUri are matched to the created inner registry, routebuilder list
@@ -284,7 +284,7 @@ public void testRouteboxRequests() throws Exception {
 }
 ----------------------------------------------------------------------------------------------------------------------
 
-#### Step 3: Using a routebox producer
+=== Step 3: Using a routebox producer
 
 When sending requests to the routebox, it is not necessary for producers
 do not need to know the inner route endpoint URI and they can simply

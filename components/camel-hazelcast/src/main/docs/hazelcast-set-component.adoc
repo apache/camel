@@ -7,7 +7,7 @@
 The http://www.hazelcast.com/[Hazelcast] Set component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed set.
 
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast Set component supports 3 options, which are listed below.

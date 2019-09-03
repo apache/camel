@@ -39,14 +39,14 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source]
 ----
 twitter://endpoint[?options]
 ----
 
-### Twitter component
+== Twitter component
 
 The twitter component can be configured with the Twitter account
 settings which is mandatory to configure before using.
@@ -81,7 +81,7 @@ The Twitter component supports 9 options, which are listed below.
 
 You can also configure these options directly in the endpoint.
 
-### Consumer endpoints
+== Consumer endpoints
 
 Rather than the endpoints returning a List through one single route
 exchange, camel-twitter creates one route exchange per returned object.
@@ -124,7 +124,7 @@ polling* |[line-through]*twitter4j.Status* |[line-through]*@deprecated.
 Removed from Camel 2.11 onwards.*
 |=======================================================================
 
-### Producer endpoints
+== Producer endpoints
 
 [width="100%",cols="20%,80%",options="header",]
 |==============================
@@ -134,7 +134,7 @@ Removed from Camel 2.11 onwards.*
 |timeline/user |String
 |==============================
 
-### URI options
+== URI options
 
 
 
@@ -256,7 +256,7 @@ The component supports 10 options, which are listed below.
 
 
 
-### Message headers
+== Message headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -276,11 +276,11 @@ the option of `numberOfPages` which sets how many pages we want to
 twitter returns.
 |=======================================================================
 
-### Message body
+== Message body
 
 All message bodies utilize objects provided by the Twitter4J API.
 
-### Use cases
+== Use cases
 
 NOTE: *API Rate Limits:* Twitter REST APIs encapsulated by http://twitter4j.org/[Twitter4J] are
 subjected to https://dev.twitter.com/rest/public/rate-limiting[API Rate
@@ -289,7 +289,7 @@ https://dev.twitter.com/rest/public/rate-limits[API Rate Limits]
 documentation. Note that endpoints/resources not listed in that page are
 default to 15 requests per allotted user per window.
 
-#### To create a status update within your Twitter profile, send this producer a String body:
+=== To create a status update within your Twitter profile, send this producer a String body:
 
 [source,java]
 ----
@@ -297,7 +297,7 @@ from("direct:foo")
   .to("twitter://timeline/user?consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]);
 ----
 
-#### To poll, every 60 sec., all statuses on your home timeline:
+=== To poll, every 60 sec., all statuses on your home timeline:
 
 [source,java]
 ----
@@ -305,7 +305,7 @@ from("twitter://timeline/home?type=polling&delay=60&consumerKey=[s]&consumerSecr
   .to("bean:blah");
 ----
 
-#### To search for all statuses with the keyword 'camel' only once:
+=== To search for all statuses with the keyword 'camel' only once:
 
 [source,java]
 ----
@@ -313,7 +313,7 @@ from("twitter://search?type=polling&keywords=camel&consumerKey=[s]&consumerSecre
   .to("bean:blah");
 ----
 
-#### Searching using a producer with static keywords:
+=== Searching using a producer with static keywords:
 
 [source,java]
 ----
@@ -321,7 +321,7 @@ from("direct:foo")
   .to("twitter://search?keywords=camel&consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]");
 ----
 
-#### Searching using a producer with dynamic keywords from header:
+=== Searching using a producer with dynamic keywords from header:
 
 In the `bar` header we have the keywords we want to search, so we can
 assign this value to the `CamelTwitterKeywords` header:
@@ -333,16 +333,8 @@ from("direct:foo")
   .to("twitter://search?consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]");
 ----
 
-### Example
+== Example
 
 See also the link:twitter-websocket-example.html[Twitter Websocket
 Example].
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* Twitter Websocket Example

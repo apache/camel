@@ -13,7 +13,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon S3. More information are available at
 http://aws.amazon.com/s3[Amazon S3].
 
-### URI Format
+== URI Format
 
 [source,java]
 ------------------------------
@@ -33,7 +33,7 @@ from("aws-s3:helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=
 --------------------------------------------------------------------------------
 
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -214,7 +214,7 @@ You have to provide the amazonS3Client in the
 Registry or your accessKey and secretKey to access
 the http://aws.amazon.com/s3[Amazon's S3].
 
-### Batch Consumer
+== Batch Consumer
 
 This component implements the Batch Consumer.
 
@@ -222,9 +222,9 @@ This allows you for instance to know how many messages exists in this
 batch and for instance let the Aggregator
 aggregate this number of messages.
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the S3 producer
+=== Message headers evaluated by the S3 producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -271,7 +271,7 @@ the object using AWS-managed keys. For example use AES256.
 |`CamelAwsS3VersionId` |`String` |The version Id of the object to be stored or returned from the current operation
 |=======================================================================
 
-#### Message headers set by the S3 producer
+=== Message headers set by the S3 producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -284,7 +284,7 @@ the object using AWS-managed keys. For example use AES256.
 
 |=======================================================================
 
-#### Message headers set by the S3 consumer
+=== Message headers set by the S3 consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -333,7 +333,7 @@ specify caching behavior along the HTTP request/reply chain.
 object using AWS-managed keys.
 |=======================================================================
 
-#### S3 Producer operations
+=== S3 Producer operations
 
 Camel-AWS s3 component provides the following operation on the producer side:
 
@@ -344,7 +344,7 @@ Camel-AWS s3 component provides the following operation on the producer side:
 - downloadLink
 - listObjects
 
-#### Advanced AmazonS3 configuration
+=== Advanced AmazonS3 configuration
 
 If your Camel Application is running behind a firewall or if you need to
 have more control over the `AmazonS3` instance configuration, you can
@@ -371,7 +371,7 @@ from("aws-s3://MyBucket?amazonS3Client=#client&delay=5000&maxMessagesPerPoll=5")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
-#### Use KMS with the S3 component
+=== Use KMS with the S3 component
 
 To use AWS KMS to encrypt/decrypt data by using AWS infrastructure you can use the options introduced in 2.21.x like in the following example
 
@@ -384,7 +384,7 @@ from("file:tmp/test?fileName=test.txt")
 
 In this way you'll ask to S3, to use the KMS key 3f0637ad-296a-3dfe-a796-e60654fb128c, to encrypt the file test.txt. When you'll ask to download this file, the decryption will be done directly before the download.
 
-#### Use "useIAMCredentials" with the s3 component
+=== Use "useIAMCredentials" with the s3 component
 
 To use AWS IAM credentials, you must first verify that the EC2 in which you are launching the Camel application on has an IAM role associated with it containing the appropriate policies attached to run effectively.
 Keep in mind that this feature should only be set to "true" on remote instances. To clarify even further, you must still use static credentials locally since IAM is an AWS specific component,
@@ -394,7 +394,7 @@ when the system environment variable called "isRemote" is set to true (there are
 using IAM credentials on AWS environments takes away the need to refresh on remote environments and adds a major security boost (IAM credentials are refreshed automatically every 6 hours and update when their
 policies are updated). This is the AWS recommended way to manage credentials and therefore should be used as often as possible.
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -412,11 +412,3 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.8 or higher).
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* AWS Component

@@ -17,7 +17,7 @@ INFO:*Prerequisites*
 In order to use this component, you must have a Redis server running.
 
 
-### URI Format
+== URI Format
 
 [source,java]
 ----------------------------------
@@ -27,7 +27,7 @@ spring-redis://host:port[?options]
 You can append query options to the URI in the following format,
 `?options=value&option2=value&...`
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -104,12 +104,12 @@ The component supports 2 options, which are listed below.
 
 
 
-### Usage
+== Usage
 
 See also the unit tests available
 at https://github.com/apache/camel/tree/master/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis[https://github.com/apache/camel/tree/master/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis].
 
-#### Message headers evaluated by the Redis producer
+=== Message headers evaluated by the Redis producer
 
 The producer issues commands to the server and each command has
 different set of parameters with specific types. The result from the
@@ -393,7 +393,7 @@ milliseconds |CamelRedis.Key (String), CamelRedis.Timestamp (Long) |Boolean
 |`PUBLISH` |Post a message to a channel |CamelRedis.Channel (String), CamelRedis.Message (Object) |void
 |=======================================================================
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -411,9 +411,3 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.11 or higher).
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

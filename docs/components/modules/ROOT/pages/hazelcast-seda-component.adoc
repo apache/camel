@@ -8,7 +8,7 @@ The http://www.hazelcast.com/[Hazelcast] SEDA component is one of Camel Hazelcas
 SEDA component differs from the rest components provided. It implements a work-queue in order to support asynchronous SEDA architectures, similar to the core "SEDA" component.
 
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast SEDA component supports 3 options, which are listed below.
@@ -100,7 +100,7 @@ The component supports 6 options, which are listed below.
 
 
 
-### SEDA producer – to(“hazelcast-seda:foo”)
+== SEDA producer – to(“hazelcast-seda:foo”)
 
 The SEDA producer provides no operations. You only send data to the
 specified queue.
@@ -123,7 +123,7 @@ Spring DSL :
 </route>
 ----------------------------------
 
-### SEDA consumer – from(“hazelcast-seda:foo”)
+== SEDA consumer – from(“hazelcast-seda:foo”)
 
 The SEDA consumer provides no operations. You only retrieve data from
 the specified queue.

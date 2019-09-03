@@ -7,7 +7,7 @@
 The http://www.hazelcast.com/[Hazelcast] Multimap component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed multimap.
 
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast Multimap component supports 3 options, which are listed below.
@@ -101,7 +101,7 @@ The component supports 6 options, which are listed below.
 
 
 
-### multimap cache producer - to("hazelcast-multimap:foo")
+== multimap cache producer - to("hazelcast-multimap:foo")
 
 A multimap is a cache where you can store n values to one key. The
 multimap producer provides 4 operations (put, get, removevalue, delete).
@@ -117,7 +117,7 @@ Header Variables for the request message:
 |`CamelHazelcastObjectId` |`String` |the object id to store / find your object inside the cache
 |=======================================================================
 
-#### Sample for *put*:
+=== Sample for *put*:
 
 Java DSL:
 
@@ -143,7 +143,7 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-#### Sample for *removevalue*:
+=== Sample for *removevalue*:
 
 Java DSL:
 
@@ -174,7 +174,7 @@ inside the message body. If you have a multimap object
 \{`key: "4711" values: { "my-foo", "my-bar"`}} you have to put "my-foo"
 inside the message body to remove the "my-foo" value.
 
-#### Sample for *get*:
+=== Sample for *get*:
 
 Java DSL:
 
@@ -202,7 +202,7 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-#### Sample for *delete*:
+=== Sample for *delete*:
 
 Java DSL:
 
@@ -235,7 +235,7 @@ you can call them in your test class with:
 template.sendBodyAndHeader("direct:[put|get|removevalue|delete]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
 ------------------------------------------------------------------------------------------------------------------
 
-### multimap cache consumer - from("hazelcast-multimap:foo")
+== multimap cache consumer - from("hazelcast-multimap:foo")
 
 For the multimap cache this component provides the same listeners /
 variables as for the map cache consumer (except the update and enviction

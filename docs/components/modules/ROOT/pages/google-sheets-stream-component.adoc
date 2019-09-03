@@ -31,7 +31,7 @@ for this component:
 
 ------------------------------------------------------
 
-### URI Format
+== URI Format
 
 The Google Sheets Component uses the following URI format:
 
@@ -40,7 +40,7 @@ The Google Sheets Component uses the following URI format:
 
 --------------------------------------------------------
 
-### GoogleSheetsStreamComponent
+== GoogleSheetsStreamComponent
 
 
 // component options: START
@@ -163,7 +163,7 @@ The component supports 17 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Consumer
+== Consumer
 
 The consumer will poll by default with maxResults equals to 5.
 

@@ -28,7 +28,7 @@ END:VEVENT
 END:VCALENDAR
 ----------------------------------------------------------------------
 
-### Options
+== Options
 
 // dataformat options: START
 The iCal dataformat supports 2 options, which are listed below.
@@ -72,7 +72,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-### Basic Usage
+== Basic Usage
 
 To unmarshal and marshal the message shown above, your route will look
 like the following:

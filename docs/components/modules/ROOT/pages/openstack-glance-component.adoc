@@ -6,7 +6,7 @@
 
 The openstack-glance component allows messages to be sent to an OpenStack image services.
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -24,7 +24,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-### URI Format
+== URI Format
 
 [source,java]
 ----------------------------
@@ -34,7 +34,7 @@ openstack-glance://hosturl[?options]
 You can append query options to the URI in the following format
 `?options=value&option2=value&...`
 
-### URI Options
+== URI Options
 
 // component options: START
 The OpenStack Glance component has no options.
@@ -105,7 +105,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Usage
+== Usage
 
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
@@ -126,7 +126,7 @@ The component supports 2 options, which are listed below.
 |`delete` | Delete the image.
 |=========================================================================
 
-#### Message headers evaluated by the Glance producer
+=== Message headers evaluated by the Glance producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -157,11 +157,3 @@ The component supports 2 options, which are listed below.
 |`properties` | `Map` | Image properties.
 |=========================================================================
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* openstack Component

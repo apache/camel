@@ -11,7 +11,7 @@ into Java objects or to marshal Java objects into an XML payload.
 As usually you can use either Java DSL or Spring XML to work with Castor
 Data Format.
 
-### Using the Java DSL
+== Using the Java DSL
 
 [source,java]
 -----------------------------
@@ -60,7 +60,7 @@ castor.getMarshaller();
 castor.getUnmarshaller();
 -------------------------
 
-### Using Spring XML
+== Using Spring XML
 
 The following example shows how to use Castor to unmarshal using Spring
 configuring the castor data type
@@ -104,7 +104,7 @@ on multiple routes. You have to set the <castor> element directly in
 </camelContext>
 -----------------------------------------------------------------------
 
-### Options
+== Options
 
 // dataformat options: START
 The Castor dataformat supports 9 options, which are listed below.
@@ -162,7 +162,7 @@ The component supports 10 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-### Dependencies
+== Dependencies
 
 To use Castor in your camel routes you need to add the a dependency on
 *camel-castor* which implements this data format.

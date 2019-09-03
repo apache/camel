@@ -20,7 +20,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------------
@@ -30,7 +30,7 @@ caffeine-cache://cacheName[?options]
 You can append query options to the URI in the following
 format, `?option=value&option=#beanRef&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -138,7 +138,7 @@ The component supports 17 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Examples
+== Examples
 
 You can use your cache with the following code:
 
@@ -160,7 +160,7 @@ You can use your cache with the following code:
 
 In this way you'll work always on the same cache in the registry.
 
-### Check operation result
+== Check operation result
 
 Each time you'll use an operation on the cache you'll have two different headers to check for status:
 

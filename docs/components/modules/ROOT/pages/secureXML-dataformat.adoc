@@ -37,7 +37,7 @@ configuration. This enables true namespace matching, even if the prefix
 values in the XPath query and the target xml document are not equivalent
 strings.
 
-### XMLSecurity Options
+== XMLSecurity Options
 
 // dataformat options: START
 The XML Security dataformat supports 13 options, which are listed below.
@@ -64,7 +64,7 @@ The XML Security dataformat supports 13 options, which are listed below.
 // dataformat options: END
 
 
-#### Key Cipher Algorithm
+=== Key Cipher Algorithm
 
 As of Camel 2.12.0, the default Key Cipher Algorithm is now
 XMLCipher.RSA_OAEP instead of XMLCipher.RSA_v1dot5. Usage of
@@ -72,22 +72,22 @@ XMLCipher.RSA_v1dot5 is discouraged due to various attacks. Requests
 that use RSA v1.5 as the key cipher algorithm will be rejected unless it
 has been explicitly configured as the key cipher algorithm.
 
-### Marshal
+== Marshal
 
 In order to encrypt the payload, the `marshal` processor needs to be
 applied on the route followed by the *`secureXML()`* tag.
 
-### Unmarshal
+== Unmarshal
 
 In order to decrypt the payload, the `unmarshal` processor needs to be
 applied on the route followed by the *`secureXML()`* tag.
 
-### Examples
+== Examples
 
 Given below are several examples of how marshalling could be performed
 at the Document, Element, and Content levels.
 
-#### Full Payload encryption/decryption
+=== Full Payload encryption/decryption
 
 [source,java]
 ----------------------------
@@ -97,7 +97,7 @@ from("direct:start")
     .to("direct:end");
 ----------------------------
 
-#### Partial Payload Content Only encryption/decryption
+=== Partial Payload Content Only encryption/decryption
 
 [source,java]
 ------------------------------------------------------
@@ -110,7 +110,7 @@ from("direct:start")
     .to("direct:end");
 ------------------------------------------------------
 
-#### Partial Multi Node Payload Content Only encryption/decryption
+=== Partial Multi Node Payload Content Only encryption/decryption
 
 [source,java]
 ------------------------------------------------------
@@ -123,7 +123,7 @@ from("direct:start")
     .to("direct:end");
 ------------------------------------------------------
 
-#### Partial Payload Content Only encryption/decryption with choice of passPhrase(password)
+=== Partial Payload Content Only encryption/decryption with choice of passPhrase(password)
 
 [source,java]
 ------------------------------------------------------------------
@@ -137,7 +137,7 @@ from("direct:start")
     .to("direct:end");
 ------------------------------------------------------------------
 
-#### Partial Payload Content Only encryption/decryption with passPhrase(password) and Algorithm
+=== Partial Payload Content Only encryption/decryption with passPhrase(password) and Algorithm
 
 [source,java]
 -----------------------------------------------------------------------------
@@ -153,7 +153,7 @@ from("direct:start")
     .to("direct:end");
 -----------------------------------------------------------------------------
 
-#### Partial Payload Content with Namespace support
+=== Partial Payload Content with Namespace support
 
 [[XMLSecurityDataFormat-JavaDSL]]
 Java DSL
@@ -198,7 +198,7 @@ attribute of the `secureXML` element.
             ...
 ---------------------------------------------------------------------------------
 
-#### Asymmetric Key Encryption
+=== Asymmetric Key Encryption
 
 [[XMLSecurityDataFormat-SpringXMLSender]]
 Spring XML Sender
@@ -250,6 +250,6 @@ Spring XML Recipient
             ...
 ----------------------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 This data format is provided within the *camel-xmlsecurity* component.

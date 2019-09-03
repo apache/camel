@@ -8,7 +8,7 @@ The Ignite Sets endpoint is one of camel-ignite endpoints which allows you to in
 
 This endpoint only supports producers.
 
-### Options
+== Options
 
 // component options: START
 The Ignite Sets component supports 4 options, which are listed below.
@@ -91,7 +91,7 @@ The component supports 5 options, which are listed below.
 
 
 
-#### Headers used
+=== Headers used
 
 This endpoint uses the following headers:
 [width="100%",cols="1,1,1,4",options="header"]

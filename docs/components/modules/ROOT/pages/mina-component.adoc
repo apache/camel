@@ -25,7 +25,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------------
@@ -59,7 +59,7 @@ exchange itself over the wire. See options below.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 
@@ -139,7 +139,7 @@ with the following path and query parameters:
 
 
 
-### Using a custom codec
+== Using a custom codec
 
 See the http://mina.apache.org/tutorial-on-protocolcodecfilter.html[Mina
 documentation] how to write your own codec. To use your custom codec
@@ -148,7 +148,7 @@ Registry; for example, by creating a bean in the
 Spring XML file. Then use the `codec` option to specify the bean ID of
 your codec. See <<hl7-dataformat,HL7>> that has a custom codec.
 
-### Sample with sync=false
+== Sample with sync=false
 
 In this sample, Camel exposes a service that listens for TCP connections
 on port 6200. We use the *textline* codec. In our route, we create a
@@ -157,7 +157,7 @@ Mina consumer endpoint that listens on port 6200:
 As the sample is part of a unit test, we test it by sending some data to
 it on port 6200.
 
-### Sample with sync=true
+== Sample with sync=true
 
 In the next sample, we have a more common use case where we expose a TCP
 service on port 6201 also use the textline codec. However, this time we
@@ -169,7 +169,7 @@ using the `template.requestBody()` method. As we know the response is a
 `String`, we cast it to `String` and can assert that the response is, in
 fact, something we have dynamically set in our processor code logic.
 
-### Sample with Spring DSL
+== Sample with Spring DSL
 
 Spring DSL can, of course, also be used for <<mina-component,MINA>>. In the
 sample below we expose a TCP server on port 5555:
@@ -195,7 +195,7 @@ could be implemented as follows:
    }
 -----------------------------------------------
 
-### Configuring Mina endpoints using Spring bean style
+== Configuring Mina endpoints using Spring bean style
 
 Configuration of Mina endpoints is possible using regular Spring bean
 style configuration in the Spring DSL.
@@ -211,7 +211,7 @@ The sample below shows the factory approach:
 
 And then we can refer to our endpoint directly in the route, as follows:
 
-### Closing Session When Complete
+== Closing Session When Complete
 
 When acting as a server you sometimes want to close the session when,
 for example, a client conversion is finished. To instruct Camel to close
@@ -232,7 +232,7 @@ written the `bye` message back to the client:
         });
 --------------------------------------------------------------------------------------------------
 
-### Get the IoSession for message
+== Get the IoSession for message
 
 *Available since Camel 2.1* 
 You can get the IoSession from the message header with this key
@@ -240,7 +240,7 @@ MinaEndpoint.HEADER_MINA_IOSESSION, and also get the local host address
 with the key MinaEndpoint.HEADER_LOCAL_ADDRESS and remote host address
 with the key MinaEndpoint.HEADER_REMOTE_ADDRESS.
 
-### Configuring Mina filters
+== Configuring Mina filters
 
 Filters permit you to use some Mina Filters, such as `SslFilter`. You
 can also implement some customized filters. Please note that `codec` and
@@ -333,12 +333,3 @@ Then, you can configure your endpoint using Spring DSL:
 </bean>
 ----------------------------------------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* <<mina2-component,MINA2>>
-* <<netty-component,Netty>>

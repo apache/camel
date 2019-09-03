@@ -26,7 +26,7 @@ Note that the <<jing-component,Jing>> component also supports
 http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
 Syntax]
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------
@@ -47,7 +47,7 @@ msv:http://acme.com/cheese.rng
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 
@@ -142,7 +142,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Example
+== Example
 
 The following
 https://github.com/apache/camel/blob/master/components/camel-msv/src/test/resources/org/apache/camel/component/validator/msv/camelContext.xml[example]
@@ -152,9 +152,3 @@ based on whether or not the XML matches the given
 http://relaxng.org/[RelaxNG XML Schema] (which is supplied on the
 classpath).
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

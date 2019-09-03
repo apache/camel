@@ -8,14 +8,14 @@ The *Kubernetes Builds* component is one of <<kubernetes-component,Kubernetes C
 provides a producer to execute kubernetes build operations.
 
 
-### Component Options
+== Component Options
 
 // component options: START
 The Openshift Builds component has no options.
 // component options: END
 
 
-### Endpoint Options
+== Endpoint Options
 
 // endpoint options: START
 The Openshift Builds endpoint is configured using URI syntax:

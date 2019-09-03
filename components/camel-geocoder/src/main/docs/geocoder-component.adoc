@@ -22,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------------------
@@ -30,7 +30,7 @@ geocoder:address:name[?options]
 geocoder:latlng:latitude,longitude[?options]
 --------------------------------------------
 
-### Options
+== Options
 
 
 // component options: START
@@ -112,7 +112,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Exchange data format
+== Exchange data format
 
 Camel will deliver the body as a
 `com.google.code.geocoder.model.GeocodeResponse` type. +
@@ -123,7 +123,7 @@ If the option `headersOnly` is set to `true` then the message body is
 left as-is, and only headers will be added to the
 Exchange.
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -156,7 +156,7 @@ Exchange.
 Notice not all headers may be provided depending on available data and
 mode in use (address vs latlng).
 
-### Samples
+== Samples
 
 In the example below we get the latitude and longitude for Paris, France
 

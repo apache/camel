@@ -35,7 +35,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------------
@@ -46,7 +46,7 @@ lucene:searcherName:query[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Insert Options
+== Insert Options
 
 
 
@@ -144,9 +144,9 @@ The component supports 11 options, which are listed below.
 
 
 
-### Sending/Receiving Messages to/from the cache
+== Sending/Receiving Messages to/from the cache
 
-#### Message Headers
+=== Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -159,7 +159,7 @@ wildcards and phrases
 documentation when returning hit information.
 |=======================================================================
 
-#### Lucene Producers
+=== Lucene Producers
 
 This component supports 2 producer endpoints.
 
@@ -173,14 +173,14 @@ property name called 'QUERY'. The value of the header property 'QUERY'
 is a Lucene Query. For more details on how to create Lucene Queries
 check out http://lucene.apache.org/java/3_0_0/queryparsersyntax.html[http://lucene.apache.org/java/3_0_0/queryparsersyntax.html]
 
-#### Lucene Processor
+=== Lucene Processor
 
 There is a processor called LuceneQueryProcessor available to perform
 queries against lucene without the need to create a producer.
 
-### Lucene Usage Samples
+== Lucene Usage Samples
 
-#### Example 1: Creating a Lucene index
+=== Example 1: Creating a Lucene index
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -194,7 +194,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ------------------------------------------------------------------------------------
 
-#### Example 2: Loading properties into the JNDI registry in the Camel Context
+=== Example 2: Loading properties into the JNDI registry in the Camel Context
 
 [source,java]
 -----------------------------------------------------------------
@@ -213,7 +213,7 @@ protected JndiRegistry createRegistry() throws Exception {
 CamelContext context = new DefaultCamelContext(createRegistry());
 -----------------------------------------------------------------
 
-#### Example 2: Performing searches using a Query Producer
+=== Example 2: Performing searches using a Query Producer
 
 [source,java]
 ----------------------------------------------------------------------------------------------------
@@ -244,7 +244,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ----------------------------------------------------------------------------------------------------
 
-#### Example 3: Performing searches using a Query Processor
+=== Example 3: Performing searches using a Query Processor
 
 [source,java]
 -------------------------------------------------------------------------------------------------------

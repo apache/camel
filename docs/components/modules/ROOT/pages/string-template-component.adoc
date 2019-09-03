@@ -22,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------------
@@ -35,7 +35,7 @@ invoke; or the complete URL of the remote template.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -104,20 +104,20 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Headers
+== Headers
 
 Camel will store a reference to the resource in the message header with
 key, `org.apache.camel.stringtemplate.resource`. The Resource is an
 `org.springframework.core.io.Resource` object.
 
-### Hot reloading
+== Hot reloading
 
 The string template resource is by default hot-reloadable for both file
 and classpath resources (expanded jar). If you set `contentCache=true`,
 Camel loads the resource only once and hot-reloading is not possible.
 This scenario can be used in production when the resource never changes.
 
-### StringTemplate Attributes
+== StringTemplate Attributes
 
 Since Camel 2.14, you can define the custom context map by setting the
 message header "*CamelStringTemplateVariableMap*" just like the below
@@ -134,7 +134,7 @@ variableMap.put("exchange", exchange);
 exchange.getIn().setHeader("CamelStringTemplateVariableMap", variableMap);
 --------------------------------------------------------------------------
 
-### Samples
+== Samples
 
 For example you could use a string template as follows in order to
 formulate a response to a message:
@@ -145,7 +145,7 @@ from("activemq:My.Queue").
   to("string-template:com/acme/MyResponse.tm");
 -----------------------------------------------
 
-### The Email Sample
+== The Email Sample
 
 In this sample we want to use a string template to send an order
 confirmation email. The email template is laid out in `StringTemplate`
@@ -164,9 +164,3 @@ Regards Camel Riders Bookstore
 
 And the java code is as follows:
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -20,7 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------
@@ -28,7 +28,7 @@ elasticsearch5://clusterName[?options]
 -------------------------------------
 
 
-### Endpoint Options
+== Endpoint Options
 
 
 
@@ -123,7 +123,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Message Operations
+== Message Operations
 
 The following ElasticSearch operations are currently supported. Simply
 set an endpoint URI option or exchange header with a key of "operation"
@@ -168,7 +168,7 @@ returns a MultiSearchResponse object in the body
 indexId in the body.
 |=======================================================================
 
-### Index Example
+== Index Example
 
 Below is a simple INDEX example
 
@@ -196,15 +196,9 @@ map.put("content", "test");
 String indexId = template.requestBody("direct:index", map, String.class);
 -------------------------------------------------------------------------
 
-### For more information, see these resources
+== For more information, see these resources
 
 http://www.elastic.co[Elastic Main Site]
 
 https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-api.html[ElasticSearch Java API]
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

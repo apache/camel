@@ -6,14 +6,14 @@
 
 The jcache component enables you to perform caching operations using JSR107/JCache as cache implementation.
 
-### URI Format
+== URI Format
 
 [source,java]
 ----------------------------
 jcache:cacheName[?options]
 ----------------------------
 
-### URI Options
+== URI Options
 
 // endpoint options: START
 The JCache endpoint is configured using URI syntax:

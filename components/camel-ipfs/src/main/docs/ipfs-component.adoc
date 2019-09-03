@@ -19,14 +19,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------
 ipfs://cmd?options
 ---------------------------------
 
-### Options
+== Options
 
 // component options: START
 The IPFS component has no options.
@@ -89,15 +89,15 @@ The component supports 2 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-### Karaf support
+== Karaf support
 
 Actually this component is not supported in Karaf
 
-### Message Headers
+== Message Headers
 
 [TODO]
 
-### Samples
+== Samples
 
 In this sample we add a file to IPFS, get a file from IPFS and finally access the content of an IPFS file. 
 

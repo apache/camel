@@ -7,7 +7,7 @@
 The http://www.hazelcast.com/[Hazelcast] Map component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed map.
 
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast Map component supports 3 options, which are listed below.
@@ -100,7 +100,7 @@ The component supports 6 options, which are listed below.
 
 
 
-### Map cache producer - to("hazelcast-map:foo")
+== Map cache producer - to("hazelcast-map:foo")
 
 If you want to store a value in a map you can use the map cache
 producer. 
@@ -151,7 +151,7 @@ You can call the samples with:
 template.sendBodyAndHeader("direct:[put|get|update|delete|query|evict]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
 -------------------------------------------------------------------------------------------------------------------
 
-#### Sample for *put*:
+=== Sample for *put*:
 
 Java DSL:
 
@@ -210,7 +210,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 
 
-#### Sample for *get*:
+=== Sample for *get*:
 
 Java DSL:
 
@@ -237,7 +237,7 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-#### Sample for *update*:
+=== Sample for *update*:
 
 Java DSL:
 
@@ -262,7 +262,7 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-#### Sample for *delete*:
+=== Sample for *delete*:
 
 Java DSL:
 
@@ -287,7 +287,7 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-#### Sample for *query*
+=== Sample for *query*
 
 Java DSL:
 
@@ -324,7 +324,7 @@ template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, q1);
 -------------------------------------------------------------------------------
 
 
-### Map cache consumer - from("hazelcast-map:foo")
+== Map cache consumer - from("hazelcast-map:foo")
 
 Hazelcast provides event listeners on their data grid. If you want to be
 notified if a cache will be manipulated, you can use the map consumer.

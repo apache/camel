@@ -45,7 +45,7 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source]
 ----
@@ -79,7 +79,7 @@ sjms2:topic:Stocks.Prices
 You append query options to the URI using the following format,
 `?option=value&option=value&...`
 
-### Component Options and Configurations
+== Component Options and Configurations
 
 
 
@@ -257,9 +257,9 @@ component.setConnectionResource(connectionResource);
 component.setMaxConnections(1);
 ----
 
-### Producer Usage
+== Producer Usage
 
-#### InOnly Producer - (Default)
+=== InOnly Producer - (Default)
 
 The _InOnly_ producer is the default behavior of the SJMS2 Producer
 Endpoint.
@@ -270,7 +270,7 @@ from("direct:start")
     .to("sjms2:queue:bar");
 ----
 
-#### InOut Producer
+=== InOut Producer
 
 To enable _InOut_ behavior append the `exchangePattern` attribute to the
 URI. By default it will use a dedicated TemporaryQueue for each
@@ -291,9 +291,9 @@ from("direct:start")
     .to("sjms2:queue:bar?exchangePattern=InOut&namedReplyTo=my.reply.to.queue");
 ----
 
-### Consumer Usage
+== Consumer Usage
 
-#### Durable Shared Subscription
+=== Durable Shared Subscription
 
 To create a durable subscription that can be shared between one or more consumers.
 Use a JMS 2.0 compliant connection factory and specify a common subscriptionId. Then set the subscription properties durable and shared to true.
@@ -307,7 +307,7 @@ from("sjms2:topic:foo?consumerCount=2&subscriptionId=bar&durable=true&shared=tru
     .to("mock:result");
 ----
 
-#### InOnly Consumer - (Default)
+=== InOnly Consumer - (Default)
 
 The _InOnly_ xonsumer is the default Exchange behavior of the SJMS2
 Consumer Endpoint.
@@ -318,7 +318,7 @@ from("sjms2:queue:bar")
     .to("mock:result");
 ----
 
-#### InOut Consumer
+=== InOut Consumer
 
 To enable _InOut_ behavior append the `exchangePattern` attribute to the
 URI.
@@ -329,9 +329,9 @@ from("sjms2:queue:in.out.test?exchangePattern=InOut")
     .transform(constant("Bye Camel"));
 ----
 
-### Advanced Usage Notes
+== Advanced Usage Notes
 
-#### Plugable Connection Resource Management [[SJMS2-connectionresource]]
+=== Plugable Connection Resource Management [[SJMS2-connectionresource]]
 
 SJMS2 provides JMS
 http://docs.oracle.com/javaee/5/api/javax/jms/Connection.html[`Connection`]
@@ -413,11 +413,11 @@ camelContext.addComponent("sjms2", component);
 To see the full example of its usage please refer to the
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/test/java/org/apache/camel/component/sjms/it/ConnectionResourceIT.java[`ConnectionResourceIT`].
 
-#### Session, Consumer, & Producer Pooling & Caching Management
+=== Session, Consumer, & Producer Pooling & Caching Management
 
 Coming soon ...
 
-#### Batch Message Support
+=== Batch Message Support
 
 The Sjms2Producer supports publishing a collection of messages by
 creating an Exchange that encapsulates a `List`. This Sjms2Producer will
@@ -450,7 +450,7 @@ Then publish the list:
 template.sendBody("sjms2:queue:batch.queue", messages);
 ----
 
-#### Customizable Transaction Commit Strategies (Local JMS Transactions only)
+=== Customizable Transaction Commit Strategies (Local JMS Transactions only)
 
 SJMS2 provides a developer the means to create a custom and plugable
 transaction strategy through the use of the
@@ -463,7 +463,7 @@ is the
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/tx/BatchTransactionCommitStrategy.java[`BatchTransactionCommitStrategy`]
 which is detailed further in the next section.
 
-#### Transacted Batch Consumers & Producers
+=== Transacted Batch Consumers & Producers
 
 The SJMS2 component has been designed to support the batching of local JMS
 transactions on both the Producer and Consumer endpoints. How they are
@@ -534,9 +534,9 @@ Now publish the List with transactions enabled:
 template.sendBody("sjms2:queue:batch.queue?transacted=true", messages);
 ----
 
-### Additional Notes
+== Additional Notes
 
-#### Message Header Format
+=== Message Header Format
 
 The SJMS2 Component uses the same header format strategy that is used in
 the Camel JMS Component. This plugable strategy ensures that messages
@@ -561,7 +561,7 @@ custom strategy for formatting keys.
 For the `exchange.in.header`, the following rules apply for the header
 values:
 
-#### Message Content
+=== Message Content
 
 To deliver content over the wire we must ensure that the body of the
 message that is being delivered adheres to the JMS Message
@@ -571,7 +571,7 @@ The types, `String`, `CharSequence`, `Date`, `BigDecimal` and `BigInteger` are a
 converted to their `toString()` representation. All other types are
 dropped.
 
-#### Clustering
+=== Clustering
 
 When using _InOut_ with SJMS2 in a clustered environment you must either
 use TemporaryQueue destinations or use a unique named reply to
@@ -588,13 +588,13 @@ The _InOut_ Consumer uses this strategy as well ensuring that all
 responses messages to the included `JMSReplyTo` destination also have the
 `JMSCorrelationId` copied from the request as well.
 
-### Transaction Support [[SJMS2-transactions]]
+== Transaction Support [[SJMS2-transactions]]
 
 SJMS2 currently only supports the use of internal JMS Transactions. There
 is no support for the Camel Transaction Processor or the Java
 Transaction API (JTA).
 
-#### Does Springless Mean I Can't Use Spring?
+=== Does Springless Mean I Can't Use Spring?
 
 Not at all. Below is an example of the SJMS2 component using the Spring
 DSL:

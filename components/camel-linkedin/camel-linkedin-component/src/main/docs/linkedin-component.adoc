@@ -31,7 +31,7 @@ for this component:
     </dependency>
 -----------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------------
@@ -48,7 +48,7 @@ Endpoint prefix can be one of:
 * posts
 * search
 
-### LinkedInComponent
+== LinkedInComponent
 
 
 
@@ -155,7 +155,7 @@ The component supports 15 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -177,7 +177,7 @@ For more information on the endpoints and options see LinkedIn REST API
 documentation
 at https://developer.linkedin.com/rest[https://developer.linkedin.com/rest]. 
 
-#### Endpoint prefix _comments_
+=== Endpoint prefix _comments_
 
 The following endpoints can be invoked with the prefix *comments* as
 follows:
@@ -208,7 +208,7 @@ URI Options for _comments_
 |fields |String
 |=======================================================================
 
-#### Endpoint prefix _companies_
+=== Endpoint prefix _companies_
 
 The following endpoints can be invoked with the prefix *companies* as
 follows:
@@ -313,7 +313,7 @@ matching endpoints.
 |updatecomment |org.apache.camel.component.linkedin.api.model.UpdateComment
 |=======================================================================
 
-#### Endpoint prefix _groups_
+=== Endpoint prefix _groups_
 
 The following endpoints can be invoked with the prefix *groups* as
 follows:
@@ -344,7 +344,7 @@ URI Options for _groups_
 |post |org.apache.camel.component.linkedin.api.model.Post
 |=======================================================================
 
-#### Endpoint prefix _jobs_
+=== Endpoint prefix _jobs_
 
 The following endpoints can be invoked with the prefix *jobs* as
 follows:
@@ -383,7 +383,7 @@ URI Options for _jobs_
 |partner_job_id |Long
 |=======================================================================
 
-#### Endpoint prefix _people_
+=== Endpoint prefix _people_
 
 The following endpoints can be invoked with the prefix *people* as
 follows:
@@ -537,7 +537,7 @@ if other options do not satisfy matching endpoints.
 |updatecomment |org.apache.camel.component.linkedin.api.model.UpdateComment
 |=======================================================================
 
-#### Endpoint prefix _posts_
+=== Endpoint prefix _posts_
 
 The following endpoints can be invoked with the prefix *posts* as
 follows:
@@ -595,7 +595,7 @@ options do not satisfy matching endpoints.
 |start |Long
 |=======================================================================
 
-#### Endpoint prefix _search_
+=== Endpoint prefix _search_
 
 The following endpoints can be invoked with the prefix *search* as
 follows:
@@ -675,7 +675,7 @@ satisfy matching endpoints.
 |title |String
 |=======================================================================
 
-### Consumer Endpoints
+== Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can
@@ -687,19 +687,19 @@ be executed once for each exchange. To change this behavior use the
 property *consumer.splitResults=true* to return a single exchange for
 the entire list or array. 
 
-### Message Headers
+== Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a *CamelLinkedIn.* prefix.
 
-### Message body
+== Message body
 
 All result message bodies utilize objects provided by the Camel LinkedIn
 API SDK, which is built using Apache CXF JAX-RS. Producer endpoints can
 specify the option name for incoming message body in the *inBody*
 endpoint parameter.
 
-### Use cases
+== Use cases
 
 The following route gets user's profile:
 

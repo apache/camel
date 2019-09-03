@@ -22,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------------
@@ -38,7 +38,7 @@ the start of a route.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -111,12 +111,12 @@ The component supports 2 options, which are listed below.
 
 
 
-### Result
+== Result
 
 The result is returned in the Out body as a
 `ArrayList<javax.naming.directory.SearchResult>` object.
 
-### DirContext
+== DirContext
 
 The URI, `ldap:ldapserver`, references a Spring bean with the ID,
 `ldapserver`. The `ldapserver` bean may be defined as follows:
@@ -144,7 +144,7 @@ or that the context supports concurrency. In the Spring framework,
 `prototype` scoped objects are instantiated each time they are looked
 up.
 
-### Samples
+== Samples
 
 Following on from the Spring configuration above, the code sample below
 sends an LDAP request to filter search a group for a member. The Common
@@ -183,7 +183,7 @@ if the LDAP entry has a Common Name, use a filter expression like:
 (cn=*)
 ------
 
-#### Binding using credentials
+=== Binding using credentials
 
 A Camel end user donated this sample code he used to bind to the ldap
 server using credentials.
@@ -228,7 +228,7 @@ System.out.println(out.getOut().getBody());
 context.stop();
 ---------------------------------------------------------------------------------------
 
-### Configuring SSL
+== Configuring SSL
 
 All required is to create a custom socket factory and reference it in
 the InitialDirContext bean - see below sample.
@@ -369,9 +369,3 @@ public class CustomSocketFactory extends SSLSocketFactory {
 
  
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

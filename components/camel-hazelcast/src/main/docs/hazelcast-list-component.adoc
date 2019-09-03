@@ -6,7 +6,7 @@
 
 The http://www.hazelcast.com/[Hazelcast] List component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed list.
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast List component supports 3 options, which are listed below.
@@ -98,7 +98,7 @@ The component supports 6 options, which are listed below.
 
 
 
-### List producer – to(“hazelcast-list:foo”)
+== List producer – to(“hazelcast-list:foo”)
 
 The list producer provides 7 operations:
 * add
@@ -109,7 +109,7 @@ The list producer provides 7 operations:
 * removeAll
 * clear
 
-#### Sample for *add*:
+=== Sample for *add*:
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ from("direct:add")
 .toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX);
 ------------------------------------------------------------------------------------
 
-#### Sample for *get*:
+=== Sample for *get*:
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ from("direct:get")
 .to("seda:out");
 ------------------------------------------------------------------------------------
 
-#### Sample for *setvalue*:
+=== Sample for *setvalue*:
 
 [source,java]
 -----------------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ from("direct:set")
 .toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX);
 -----------------------------------------------------------------------------------------
 
-#### Sample for *removevalue*:
+=== Sample for *removevalue*:
 
 [source,java]
 --------------------------------------------------------------------------------------------
@@ -150,7 +150,7 @@ Note that *CamelHazelcastObjectIndex* header is used for indexing
 purpose.
 
 
-### List consumer – from(“hazelcast-list:foo”)
+== List consumer – from(“hazelcast-list:foo”)
 
 The list consumer provides 2 operations:
 * add

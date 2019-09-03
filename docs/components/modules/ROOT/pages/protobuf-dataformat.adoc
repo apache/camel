@@ -23,7 +23,7 @@ https://github.com/google/protobuf[Protobuf Implementation] +
 
 https://developers.google.com/protocol-buffers/docs/javatutorial[Protobuf Java Tutorial]
 
-### Protobuf Options
+== Protobuf Options
 
 // dataformat options: START
 The Protobuf dataformat supports 3 options, which are listed below.
@@ -69,7 +69,7 @@ The component supports 4 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-### Content type format (starting from *Camel 2.19*)
+== Content type format (starting from *Camel 2.19*)
 
 It's possible to parse JSON message to convert it to the protobuf format and unparse it back using native util converter.
 To use this option, set contentTypeFormat value to 'json' or call protobuf with second parameter.
@@ -84,12 +84,12 @@ from("direct:marshal")
     .to("mock:reverse");
 --------------------------------------------------------------------------------------------------
 
-### Protobuf overview
+== Protobuf overview
 
 This quick overview of how to use Protobuf. For more detail see the
 http://code.google.com/apis/protocolbuffers/docs/javatutorial.html[complete tutorial]
 
-### Defining the proto format
+== Defining the proto format
 
 The first step is to define the format for the body of your exchange.
 This is defined in a .proto file as so:
@@ -129,7 +129,7 @@ message AddressBook {
 }
 ------------------------------------------------------------
 
-### Generating Java classes
+== Generating Java classes
 
 The Protobuf SDK provides a compiler which will generate the Java
 classes for the format we defined in our .proto file.
@@ -184,7 +184,7 @@ to use a class that does not implement com.google.protobuf.Message. Use
 the generated builders to translate the data from any of your existing
 domain classes.
 
-### Java DSL
+== Java DSL
 
 You can use create the ProtobufDataFormat instance and pass it to Camel
 DataFormat marshal and unmarshal API like this.
@@ -211,7 +211,7 @@ default instance class name like this.
    from("direct:unmarshalB").unmarshal().protobuf(Person.getDefaultInstance()).to("mock:reverse");
 --------------------------------------------------------------------------------------------------
 
-### Spring DSL
+== Spring DSL
 
 The following example shows how to use Protobuf to unmarshal using Spring
 configuring the protobuf data type
@@ -229,7 +229,7 @@ configuring the protobuf data type
 </camelContext>
 ----------------------------------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use Protobuf in your camel routes you need to add the a dependency on
 *camel-protobuf* which implements this data format.
@@ -243,5 +243,3 @@ To use Protobuf in your camel routes you need to add the a dependency on
   <!-- use the same version as your Camel core version -->
 </dependency>
 -----------------------------------------
-### See Also
-* <<grpc-component,Camel gRPC component>>

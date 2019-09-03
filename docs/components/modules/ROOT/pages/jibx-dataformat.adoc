@@ -28,7 +28,7 @@ from("mqseries:Another.Queue").
   to("activemq:My.Queue");
 -------------------------------------------
 
-### Options
+== Options
 
 // dataformat options: START
 The JiBX dataformat supports 3 options, which are listed below.
@@ -75,7 +75,7 @@ The component supports 4 options, which are listed below.
 ND
 
 
-### JiBX Spring DSL
+== JiBX Spring DSL
 
 JiBX data format is also supported by Camel Spring DSL.
 
@@ -105,7 +105,7 @@ JiBX data format is also supported by Camel Spring DSL.
 </camelContext>
 --------------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use JiBX in your camel routes you need to add the a dependency on
 *camel-jibx* which implements this data format.

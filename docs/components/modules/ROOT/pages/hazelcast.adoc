@@ -1,4 +1,4 @@
-## Hazelcast Component
+= Hazelcast Component
 
 *Available as of Camel version 2.7*
 
@@ -29,7 +29,7 @@ for this component:
 ------------------------------------------------------------
 
 
-### Hazelcast components
+== Hazelcast components
 See followings for each component usage:
 * <<hazelcast-map-component,map>>
 * <<hazelcast-multimap-component,multimap>>
@@ -45,9 +45,9 @@ See followings for each component usage:
 
 
 
-### Using hazelcast reference
+== Using hazelcast reference
 
-#### By its name
+=== By its name
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ See followings for each component usage:
 </camelContext>
 --------------------------------------------------------------------------------------------------------
 
-#### By instance
+=== By instance
 
 [source,xml]
 ------------------------------------------------------------------------------
@@ -112,14 +112,14 @@ See followings for each component usage:
 </camelContext>
 ------------------------------------------------------------------------------
 
-### Publishing hazelcast instance as an OSGI service
+== Publishing hazelcast instance as an OSGI service
 
 If operating in an OSGI container and you would want to use one instance
 of hazelcast across all bundles in the same container. You can publish
 the instance as an OSGI service and bundles using the cache al need is
 to reference the service in the hazelcast endpoint.
 
-#### Bundle A create an instance and publishes it as an OSGI service
+=== Bundle A create an instance and publishes it as an OSGI service
 
  
 
@@ -137,7 +137,7 @@ to reference the service in the hazelcast endpoint.
 <service ref="hazelcastInstance" interface="com.hazelcast.core.HazelcastInstance" />
 --------------------------------------------------------------------------------------------------------
 
-#### Bundle B uses the instance
+=== Bundle B uses the instance
 
 [source,xml]
 --------------------------------------------------------------------------------------

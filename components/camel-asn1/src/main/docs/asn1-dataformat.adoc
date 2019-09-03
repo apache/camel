@@ -6,7 +6,7 @@
 
 The ASN.1 Data Format Data Format [Intoduction to ASN.1](https://www.itu.int/en/ITU-T/asn1/Pages/introduction.aspx) is a Camel Frameworks's data format implementation based on Bouncy Castle's bcprov-jdk15on library and jASN.1's java compiler for the formal notation used for describing data transmitted by telecommunications protocols, regardless of language implementation and physical representation of these data, whatever the application, whether complex or very simple. Messages can be unmarshalled (conversion to simple Java POJO(s)) to plain Java objects. By the help of Camel's routing engine and data transformations you can then play with POJO(s) and apply customised formatting and call other Camel Component's to convert and send messages to upstream systems.
 
-### ASN.1 Data Format Options
+== ASN.1 Data Format Options
 
 // dataformat options: START
 The ASN.1 File dataformat supports 3 options, which are listed below.
@@ -52,7 +52,7 @@ The component supports 4 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-### Unmarshal
+== Unmarshal
 
 There are 3 different ways to unmarshal ASN.1 structured messages. (Usually binary files)
 
@@ -86,7 +86,7 @@ from("direct:unmarshaldsl")
 .to("mock:unmarshaldsl");
 -----------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use ASN.1 data format in your camel routes you need to add a dependency on
 *camel-asn1* which implements this data format.

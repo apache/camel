@@ -8,7 +8,7 @@ The http://www.hazelcast.com/[Hazelcast] instance component is one of Camel Haze
 A replicated map is a weakly consistent, distributed key-value data structure with no data partition.
  
  
-### Options
+== Options
  
 // component options: START
 The Hazelcast Replicated Map component supports 3 options, which are listed below.
@@ -101,7 +101,7 @@ The component supports 6 options, which are listed below.
 
 
 
-### replicatedmap cache producer
+== replicatedmap cache producer
 
 The replicatedmap producer provides 4 operations:
 * put
@@ -120,7 +120,7 @@ Header Variables for the request message:
 |`CamelHazelcastObjectId` |`String` | the object id to store / find your object inside the cache
 |=======================================================================
 
-#### Sample for *put*:
+=== Sample for *put*:
 
 Java DSL:
 
@@ -146,7 +146,7 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-#### Sample for *get*:
+=== Sample for *get*:
 
 Java DSL:
 
@@ -174,7 +174,7 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-#### Sample for *delete*:
+=== Sample for *delete*:
 
 Java DSL:
 
@@ -207,7 +207,7 @@ you can call them in your test class with:
 template.sendBodyAndHeader("direct:[put|get|delete|clear]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
 ------------------------------------------------------------------------------------------------------------
 
-### replicatedmap cache consumer
+== replicatedmap cache consumer
 
 For the multimap cache this component provides the same listeners /
 variables as for the map cache consumer (except the update and enviction

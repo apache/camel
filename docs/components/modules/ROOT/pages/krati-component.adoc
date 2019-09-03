@@ -27,7 +27,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------
@@ -40,7 +40,7 @@ krati will use for its datastore.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Krati Options
+== Krati Options
 
 
 // component options: START
@@ -149,7 +149,7 @@ krati:/tmp/krati?operation=CamelKratiGet&initialCapacity=10000&keySerializer=#my
 For producer endpoint you can override all of the above URI options by
 passing the appropriate headers to the message.
 
-#### Message Headers for datastore
+=== Message Headers for datastore
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -163,9 +163,9 @@ CamelKratiDelete, CamelKratiDeleteAll
 |`CamelKratiValue` |The value.
 |=======================================================================
 
-### Usage Samples
+== Usage Samples
 
-#### Example 1: Putting to the datastore.
+=== Example 1: Putting to the datastore.
 
 This example will show you how you can store any message inside a
 datastore.
@@ -188,7 +188,7 @@ route.
         </route>
 ------------------------------------------------------------
 
-#### Example 2: Getting/Reading from a datastore
+=== Example 2: Getting/Reading from a datastore
 
 This example will show you how you can read the contnet of a datastore.
 
@@ -212,7 +212,7 @@ route.
 </route>
 -----------------------------------------------------------------------------
 
-#### Example 3: Consuming from a datastore
+=== Example 3: Consuming from a datastore
 
 This example will consume all items that are under the specified
 datastore.
@@ -233,7 +233,7 @@ You can achieve the same goal by using xml, as you can see below.
 </route>
 ------------------------------------------------------
 
-### Idempotent Repository
+== Idempotent Repository
 
 As already mentioned this component also offers and idemptonet
 repository which can be used for filtering out duplicate messages.
@@ -243,6 +243,6 @@ repository which can be used for filtering out duplicate messages.
 from("direct://in").idempotentConsumer(header("messageId"), new KratiIdempotentRepositroy("/tmp/idempotent").to("log://out");
 -----------------------------------------------------------------------------------------------------------------------------
 
-#### See also
+=== See also
 
 http://sna-projects.com/krati/[Krati Website]

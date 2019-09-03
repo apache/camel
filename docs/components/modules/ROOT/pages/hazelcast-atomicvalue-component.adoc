@@ -10,7 +10,7 @@ An atomic number is an object that simply provides a grid wide number (long).
 *There is no consumer for this endpoint!*
 
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast Atomic Number component supports 3 options, which are listed below.
@@ -97,7 +97,7 @@ The component supports 6 options, which are listed below.
 
 
 
-### atomic number producer - to("hazelcast-atomicvalue:foo")
+== atomic number producer - to("hazelcast-atomicvalue:foo")
 
 The operations for this producer are:
 * setvalue (set the number with a given value)
@@ -115,7 +115,7 @@ Header Variables for the request message:
 |`CamelHazelcastOperationType` |`String` |valid values are: setvalue, get, increase, decrease, destroy 
 |=======================================================================
 
-#### Sample for *set*:
+=== Sample for *set*:
 
 Java DSL:
 
@@ -143,7 +143,7 @@ Spring DSL:
 Provide the value to set inside the message body (here the value is 10):
 `template.sendBody("direct:set", 10);`
 
-#### Sample for *get*:
+=== Sample for *get*:
 
 Java DSL:
 
@@ -171,7 +171,7 @@ Spring DSL:
 You can get the number with
 `long body = template.requestBody("direct:get", null, Long.class);`.
 
-#### Sample for *increment*:
+=== Sample for *increment*:
 
 Java DSL:
 
@@ -199,7 +199,7 @@ Spring DSL:
 The actual value (after increment) will be provided inside the message
 body.
 
-#### Sample for *decrement*:
+=== Sample for *decrement*:
 
 Java DSL:
 
@@ -227,7 +227,7 @@ Spring DSL:
 The actual value (after decrement) will be provided inside the message
 body.
 
-#### Sample for *destroy*
+=== Sample for *destroy*
 
 Java DSL:
 

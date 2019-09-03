@@ -31,7 +31,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------------------------------------------
@@ -48,7 +48,7 @@ rmi://localhost:1099/path/to/service
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -122,7 +122,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Using
+== Using
 
 To call out to an existing RMI service registered in an RMI registry,
 create a route similar to the following:
@@ -155,9 +155,3 @@ In XML DSL you can do as follows from *Camel 2.7* onwards:
     </camel:route>
 ------------------------------------------------------------------------------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

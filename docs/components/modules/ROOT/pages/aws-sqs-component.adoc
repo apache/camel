@@ -13,7 +13,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon SQS. More information are available at
 http://aws.amazon.com/sqs[Amazon SQS].
 
-### URI Format
+== URI Format
 
 [source,java]
 ------------------------------
@@ -24,7 +24,7 @@ The queue will be created if they don't already exists. +
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -201,7 +201,7 @@ You have to provide the amazonSQSClient in the
 Registry or your accessKey and secretKey to access
 the http://aws.amazon.com/sqs[Amazon's SQS].
 
-### Batch Consumer
+== Batch Consumer
 
 This component implements the Batch Consumer.
 
@@ -209,9 +209,9 @@ This allows you for instance to know how many messages exists in this
 batch and for instance let the Aggregator
 aggregate this number of messages.
 
-### Usage
+== Usage
 
-#### Message headers set by the SQS producer
+=== Message headers set by the SQS producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -225,7 +225,7 @@ aggregate this number of messages.
 see by others.
 |=======================================================================
 
-#### Message headers set by the SQS consumer
+=== Message headers set by the SQS consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -240,7 +240,7 @@ see by others.
 |`CamelAwsSqsMessageAttributes` |`Map<String, String>` |The Amazon SQS message attributes.
 |=======================================================================
 
-#### Advanced AmazonSQS configuration
+=== Advanced AmazonSQS configuration
 
 If your Camel Application is running behind a firewall or if you need to
 have more control over the AmazonSQS instance configuration, you can
@@ -267,7 +267,7 @@ from("aws-sqs://MyQueue?amazonSQSClient=#client&delay=5000&maxMessagesPerPoll=5"
 .to("mock:result");
 ---------------------------------------------------------------------------------
 
-#### Creating or updating an SQS Queue
+=== Creating or updating an SQS Queue
 
 In the SQS Component, when an endpoint is started, a check is executed to obtain information 
 about the existence of the queue or not. You're able to customize the creation through the QueueAttributeName 
@@ -282,7 +282,7 @@ from("aws-sqs://MyQueue?amazonSQSClient=#client&delay=5000&maxMessagesPerPoll=5"
 In this example if the MyQueue queue is not already created on AWS, it will be created with default parameters from the 
 SQS configuration. If it's already up on AWS, the SQS configuration options will be used to override the existent AWS configuration.
 
-#### DelayQueue VS Delay for Single message
+=== DelayQueue VS Delay for Single message
 
 From 2.23.0 the component has a new option: delayQueue. When the option is set to true, the SQS Queue will be a DelayQueue with the 
 DelaySeconds option as delay. For more information about DelayQueue you can read the https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-delay-queues.html[AWS SQS documentation].
@@ -294,12 +294,12 @@ One important information to take into account is the following:
 as stated in the official documentation. If you want to specify a delay on single messages, you can ignore the delayQueue option, while you can set this option 
 to true, if you need to add a fixed delay to all messages enqueued.
 
-#### Server Side Encryption
+=== Server Side Encryption
 
 From 2.24.0 we introduce the Server Side Encryption attributes for a queue. The related option are serverSideEncryptionEnabled, keyMasterKeyId and kmsDataKeyReusePeriod.
 The SSE is disabled by default. You need to explicitly set the option to true and set the related parameters as queue attributes.
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -317,7 +317,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.6 or higher).
 
-### JMS-style Selectors
+== JMS-style Selectors
 
 SQS does not allow selectors, but you can effectively achieve this by
 using the Camel Filter EIP and setting an
@@ -341,11 +341,3 @@ will not make it through the filter AND also not be deleted from the SQS
 queue. After 5000 miliseconds, the message will become visible to other
 consumers.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* AWS Component

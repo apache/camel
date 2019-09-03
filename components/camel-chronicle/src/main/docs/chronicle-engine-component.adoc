@@ -9,7 +9,7 @@
 
 The camel chronicle-engine component let you leverage the power of OpenHFT's Chronicle-Engine
 
-### URI Format
+== URI Format
 
 [source,java]
 ----------------------------
@@ -17,7 +17,7 @@ chronicle-engine:addresses/path[?options]
 ----------------------------
 
 
-### URI Options
+== URI Options
 
 
 // component options: START

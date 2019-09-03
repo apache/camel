@@ -21,7 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------
@@ -36,7 +36,7 @@ WARNING:This component can only be used to define producer endpoints, which
 means that you cannot use the Spring Batch component in a `from()`
 statement.
 
-### Options
+== Options
 
 
 
@@ -128,7 +128,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Usage
+== Usage
 
 When Spring Batch component receives the message, it triggers the job
 execution. The job will be executed using the
@@ -150,7 +150,7 @@ parameters. `String`, `Long`, `Double` and `java.util.Date` values are
 copied to the `org.springframework.batch.core.JobParametersBuilder` -
 other data types are converted to Strings.
 
-### Examples
+== Examples
 
 Triggering the Spring Batch job execution:
 
@@ -181,12 +181,12 @@ JobExecution jobExecution = mockEndpoint.getExchanges().get(0).getIn().getBody(J
 BatchStatus currentJobStatus = jobExecution.getStatus();
 ---------------------------------------------------------------------------------------------------
 
-### Support classes
+== Support classes
 
 Apart from the Component, Camel Spring Batch provides also support
 classes, which can be used to hook into Spring Batch infrastructure.
 
-#### CamelItemReader
+=== CamelItemReader
 
 `CamelItemReader` can be used to read batch data directly from the Camel
 infrastructure.
@@ -210,7 +210,7 @@ JMS queue.
 </batch:job>
 -----------------------------------------------------------------------------------------------
 
-#### CamelItemWriter
+=== CamelItemWriter
 
 `CamelItemWriter` has similar purpose as `CamelItemReader`, but it is
 dedicated to write chunk of the processed data.
@@ -234,7 +234,7 @@ JMS queue.
 </batch:job>
 -----------------------------------------------------------------------------------------------
 
-#### CamelItemProcessor
+=== CamelItemProcessor
 
 `CamelItemProcessor` is the implementation of Spring Batch
 `org.springframework.batch.item.ItemProcessor` interface. The latter
@@ -274,7 +274,7 @@ the http://camel.apache.org/simple.html[Simple expression language].
 </batch:job>
 -------------------------------------------------------------------------------------------------------------
 
-#### CamelJobExecutionListener
+=== CamelJobExecutionListener
 
 `CamelJobExecutionListener` is the implementation of the
 `org.springframework.batch.core.JobExecutionListener` interface sending

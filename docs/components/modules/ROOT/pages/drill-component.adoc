@@ -21,7 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------
@@ -31,11 +31,11 @@ drill://host[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Drill Producer 
+== Drill Producer 
 
 The producer execute query using *CamelDrillQuery* header and put results into body.
 
-### Options
+== Options
 
 // component options: START
 The Drill component has no options.
@@ -104,9 +104,3 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

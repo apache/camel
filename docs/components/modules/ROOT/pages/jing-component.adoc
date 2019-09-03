@@ -28,7 +28,7 @@ for this component:
 Note that the <<msv-component,MSV>> component can also support RelaxNG XML
 syntax.
 
-### URI format Camel 2.16
+== URI format Camel 2.16
 
 [source,java]
 ------------------------------
@@ -38,7 +38,7 @@ jing:someLocalOrRemoteResource
 From Camel 2.16 the component use jing as name, and you can use the
 option compactSyntax to turn on either RNG or RNC mode.
 
-### Options
+== Options
 
 
 // component options: START
@@ -108,7 +108,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Example
+== Example
 
 The following
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-jing/src/test/resources/org/apache/camel/component/validator/jing/rnc-context.xml[example]
@@ -118,9 +118,3 @@ based on whether or not the XML matches the given
 http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
 Syntax] schema (which is supplied on the classpath).
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

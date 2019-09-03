@@ -9,7 +9,7 @@ http://chemistry.apache.org/java/opencmis.html[Apache Chemistry] client
 API and allows you to add/read nodes to/from a CMIS compliant content
 repositories.
 
-### URI Format
+== URI Format
 
 [source,java]
 ------------------------------
@@ -19,7 +19,7 @@ cmis://cmisServerUrl[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### CMIS Options
+== CMIS Options
 
 
 // component options: START
@@ -108,9 +108,9 @@ The component supports 3 options, which are listed below.
 
 
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the producer
+=== Message headers evaluated by the producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -135,7 +135,7 @@ the node from this cmis property and it is path
 |`cmis:contentStreamMimeType` |`null` |The mimetype to set for a document
 |=======================================================================
 
-#### Message headers set during querying Producer operation
+=== Message headers set during querying Producer operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -149,7 +149,7 @@ map is cmis property and its value. If `CamelCMISRetrieveContent` header is set 
 entry in the map with key `CamelCMISContent` will contain `InputStream`
 of the document type of nodes.
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 

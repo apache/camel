@@ -12,7 +12,7 @@ message from various transports, dynamically choose a task to execute,
 use incoming message as input data for that task and finally deliver the
 results of the execution back to the Camel pipeline.
 
-### Supported architectural styles
+== Supported architectural styles
 
 Spark component can be used as a driver application deployed into an
 application server (or executed as a fat jar).
@@ -28,14 +28,14 @@ While Spark component is primary designed to work as a _long running
 job_ serving as an bridge between Spark cluster and the other endpoints,
 you can also use it as a _fire-once_ short job.   
 
-### Running Spark in OSGi servers
+== Running Spark in OSGi servers
 
 Currently the Spark component doesn't support execution in the OSGi
 container. Spark has been designed to be executed as a fat jar, usually
 submitted as a job to a cluster. For those reasons running Spark in an
 OSGi server is at least challenging and is not support by Camel as well.
 
-### URI format
+== URI format
 
 Currently the Spark component supports only producers - it it intended
 to invoke a Spark job and return results. You can call RDD, data frame
@@ -48,7 +48,7 @@ or Hive SQL job.
 spark:{rdd|dataframe|hive}
 --------------------------
 
-#### Spark options
+=== Spark options
 
 
 
@@ -134,7 +134,7 @@ The component supports 4 options, which are listed below.
 
 
  
-### RDD jobs 
+== RDD jobs 
 
 To invoke an RDD job, use the following URI:
 
@@ -203,7 +203,7 @@ JavaRDDLike myRdd(JavaSparkContext sparkContext) {
 }
 --------------------------------------------------
 
-#### Void RDD callbacks
+=== Void RDD callbacks
 
 If your RDD callback doesn't return any value back to a Camel pipeline,
 you can either return `null` value or use `VoidRddCallback` base class:
@@ -223,7 +223,7 @@ RddCallback<Void> rddCallback() {
 }
 ------------------------------------------------------------------
 
-#### Converting RDD callbacks
+=== Converting RDD callbacks
 
 If you know what type of the input data will be sent to the RDD
 callback, you can use `ConvertingRddCallback` and let Camel to
@@ -246,7 +246,7 @@ RddCallback<Long> rddCallback(CamelContext context) {
 }
 ---------------------------------------------------------------------------
 
-#### Annotated RDD callbacks
+=== Annotated RDD callbacks
 
 Probably the easiest way to work with the RDD callbacks is to provide
 class with method marked with `@RddCallback` annotation:
@@ -313,7 +313,7 @@ long result = producerTemplate.requestBody("spark:rdd?rdd=#rdd&rddCallback=#rddC
 
  
 
-### DataFrame jobs
+== DataFrame jobs
 
 Instead of working with RDDs Spark component can work with DataFrames as
 well. 
@@ -388,7 +388,7 @@ Dataset<Row> cars(HiveContext hiveContext) {
 }
 ------------------------------------------------------------------------
 
-### Hive jobs
+== Hive jobs
 
  Instead of working with RDDs or DataFrame Spark component can also
 receive Hive SQL queries as payloads. To send Hive query to Spark

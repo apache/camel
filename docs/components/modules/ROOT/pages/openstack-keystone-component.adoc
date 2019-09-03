@@ -8,7 +8,7 @@ The openstack-keystone component allows messages to be sent to an OpenStack iden
 
 *The openstack-keystone component supports only Identity API v3!*
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -26,7 +26,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-### URI Format
+== URI Format
 
 [source,java]
 ----------------------------
@@ -36,7 +36,7 @@ openstack-keystone://hosturl[?options]
 You can append query options to the URI in the following format
 `?options=value&option2=value&...`
 
-### URI Options
+== URI Options
 
 // component options: START
 The OpenStack Keystone component has no options.
@@ -107,12 +107,12 @@ The component supports 2 options, which are listed below.
 
 
 
-### Usage
+== Usage
 You can use following settings for each subsystem:
 
-### domains
+== domains
 
-#### Operations you can perform with the Domain producer
+=== Operations you can perform with the Domain producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -128,7 +128,7 @@ You can use following settings for each subsystem:
 |`delete` | Delete the domain.
 |=========================================================================
 
-#### Message headers evaluated by the Domain producer
+=== Message headers evaluated by the Domain producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -145,9 +145,9 @@ You can use following settings for each subsystem:
 
 If you need more precise domain settings you can create new object of the type *org.openstack4j.model.identity.v3.Domain* and send in the message body.
 
-### groups
+== groups
 
-#### Operations you can perform with the Group producer
+=== Operations you can perform with the Group producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -169,7 +169,7 @@ If you need more precise domain settings you can create new object of the type *
 |`removeUserFromGroup` | Remove the user from the group.
 |=========================================================================
 
-#### Message headers evaluated by the Group producer
+=== Message headers evaluated by the Group producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -190,9 +190,9 @@ If you need more precise domain settings you can create new object of the type *
 
 If you need more precise group settings you can create new object of the type *org.openstack4j.model.identity.v3.Group* and send in the message body.
 
-### projects
+== projects
 
-#### Operations you can perform with the Project producer
+=== Operations you can perform with the Project producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -208,7 +208,7 @@ If you need more precise group settings you can create new object of the type *o
 |`delete` | Delete the project.
 |=========================================================================
 
-#### Message headers evaluated by the Project producer
+=== Message headers evaluated by the Project producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -229,9 +229,9 @@ If you need more precise group settings you can create new object of the type *o
 
 If you need more precise project settings you can create new object of the type *org.openstack4j.model.identity.v3.Project* and send in the message body.
 
-### regions
+== regions
 
-#### Operations you can perform with the Region producer
+=== Operations you can perform with the Region producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -247,7 +247,7 @@ If you need more precise project settings you can create new object of the type 
 |`delete` | Delete the region.
 |=========================================================================
 
-#### Message headers evaluated by the Region producer
+=== Message headers evaluated by the Region producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -262,9 +262,9 @@ If you need more precise project settings you can create new object of the type 
 
 If you need more precise region settings you can create new object of the type *org.openstack4j.model.identity.v3.Region* and send in the message body.
 
-### users
+== users
 
-#### Operations you can perform with the User producer
+=== Operations you can perform with the User producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -280,7 +280,7 @@ If you need more precise region settings you can create new object of the type *
 |`delete` | Delete the user.
 |=========================================================================
 
-#### Message headers evaluated by the User producer
+=== Message headers evaluated by the User producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -303,11 +303,3 @@ If you need more precise region settings you can create new object of the type *
 
 If you need more precise user settings you can create new object of the type *org.openstack4j.model.identity.v3.User* and send in the message body.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* openstack Component

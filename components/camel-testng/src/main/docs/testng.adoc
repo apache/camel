@@ -1,4 +1,4 @@
-## TestNG (deprecated)
+= TestNG (deprecated)
 
 *Available since Camel 2.8*
 

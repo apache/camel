@@ -23,7 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------
@@ -37,7 +37,7 @@ The file name can be specified either in the <path> part of the URI or
 as a "CamelFileName" header on the message (`Exchange.FILE_NAME` if used
 in code).
 
-### Options
+== Options
 
 
 
@@ -147,15 +147,9 @@ The component supports 3 options, which are listed below.
 
 
 
-### Limitations
+== Limitations
 
 Currently camel-jsch only supports a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
 (i.e. copy files to another host). 
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

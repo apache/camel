@@ -47,7 +47,7 @@ Message Filter or as an
 Expression for a
 Recipient List
 
-### EL Options
+== EL Options
 
 
 
@@ -91,7 +91,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Variables
+== Variables
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -104,7 +104,7 @@ The component supports 2 options, which are listed below.
 |out |Message |the exchange.out message
 |=======================================================================
 
-### Samples
+== Samples
 
 You can use EL dot notation to invoke operations. If you for instance
 have a body that contains a POJO that has a `getFamiliyName` method then
@@ -115,7 +115,7 @@ you can construct the syntax as follows:
 "${in.body.familyName}"
 -----------------------
 
-### Dependencies
+== Dependencies
 
 To use EL in your camel routes you need to add the a dependency on
 *camel-juel* which implements the EL language.

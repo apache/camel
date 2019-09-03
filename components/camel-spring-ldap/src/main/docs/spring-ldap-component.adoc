@@ -20,7 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ----------------------------------------
@@ -32,7 +32,7 @@ http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap
 LDAP Template bean]. In this bean, you configure the URL and the
 credentials for your LDAP access.
 
-### Options
+== Options
 
 
 // component options: START
@@ -101,7 +101,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Usage
+== Usage
 
 The component supports producer endpoint only. An attempt to create a
 consumer endpoint will result in an `UnsupportedOperationException`. +
@@ -116,36 +116,36 @@ operations. For the `search` and `function_driven` operations, the body is set t
 the search, see
 http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap/core/LdapTemplate.html#search%28java.lang.String,%20java.lang.String,%20int,%20org.springframework.ldap.core.AttributesMapper%29[http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap/core/LdapTemplate.html#search%28java.lang.String,%20java.lang.String,%20int,%20org.springframework.ldap.core.AttributesMapper%29].
 
-#### Search
+=== Search
 
 The message body must have an entry with the key *`filter`*. The value
 must be a `String` representing a valid LDAP filter, see
 http://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol#Search_and_Compare[http://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol#Search_and_Compare].
 
-#### Bind
+=== Bind
 
 The message body must have an entry with the key *`attributes`*. The
 value must be an instance of
 http://docs.oracle.com/javase/6/docs/api/javax/naming/directory/Attributes.html[javax.naming.directory.Attributes]
 This entry specifies the LDAP node to be created.
 
-#### Unbind
+=== Unbind
 
 No further entries necessary, the node with the specified *`dn`* is
 deleted.
 
-#### Authenticate
+=== Authenticate
 
 The message body must have entries with the keys *`filter`* and  *`password`*. The
 values must be an instance of `String` representing a valid LDAP filter and a user password, respectively.
 
-#### Modify Attributes
+=== Modify Attributes
 
 The message body must have an entry with the key *`modificationItems`*. The
 value must be an instance of any array of type 
 http://docs.oracle.com/javase/6/docs/api/javax/naming/directory/ModificationItem.html[javax.naming.directory.ModificationItem]
 
-#### Function-Driven
+=== Function-Driven
 
 The message body must have entries with the keys *`function`* and *`request`*. The *`function`* value must be of type `java.util.function.BiFunction<L, Q, S>`. The `L` type parameter must be of type `org.springframework.ldap.core.LdapOperations`. The *`request`* value must be the same type as the `Q` type parameter in the *`function`* and it must encapsulate the parameters expected by the LdapTemplate method being invoked within the *`function`*. The `S` type parameter represents the response type as returned by the LdapTemplate method being invoked.
 This operation allows dynamic invocation of LdapTemplate methods that are not covered by the operations mentioned above.

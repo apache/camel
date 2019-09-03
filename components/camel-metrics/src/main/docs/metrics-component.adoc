@@ -12,7 +12,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-### Metrics Component
+== Metrics Component
 
 The **metrics:** component allows to collect various metrics directly
 from Camel routes. Supported metric types
@@ -37,14 +37,14 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source]
 ----
 metrics:[ meter | counter | histogram | timer | gauge ]:metricname[?options]
 ----
 
-### Options
+== Options
 
 // component options: START
 The Metrics component supports 2 options, which are listed below.
@@ -127,7 +127,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### [[MetricsComponent-registry]]Metric Registry
+== [[MetricsComponent-registry]]Metric Registry
 
 Camel Metrics component uses by default a `MetricRegistry` instance with
 a `Slf4jReporter` that has a 60 second reporting interval.
@@ -184,7 +184,7 @@ class MyBean extends RouteBuilder {
 }
 ----
 
-### Usage
+== Usage
 
 Each metric has type and name. Supported types are
 link:#MetricsComponent-counter[counter],
@@ -192,7 +192,7 @@ link:#MetricsComponent-histogram[histogram], link:#MetricsComponent-meter[meter
 link:#MetricsComponent-timer[timer] and link:#MetricsComponent-gauge[gauge].
 Metric name is simple string. If metric type is not provided then type meter is used by default.
 
-#### Headers
+=== Headers
 
 Metric name defined in URI can be overridden by using header with name
 `CamelMetricsName`.
@@ -214,14 +214,14 @@ endpoint finishes processing of exchange. While processing exchange
 Metrics endpoint will catch all exceptions and write log entry using
 level `warn`.
 
-### [[MetricsComponent-counter]]Metrics type counter
+== [[MetricsComponent-counter]]Metrics type counter
 
 [source]
 ----
 metrics:counter:metricname[?options]
 ----
 
-#### Options
+=== Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=====================================================
@@ -258,7 +258,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-#### Headers
+=== Headers
 
 Message headers can be used to override `increment` and `decrement`
 values specified in Metrics component URI.
@@ -289,14 +289,14 @@ from("direct:in")
 
 ----
 
-### [[MetricsComponent-histogram]]Metric type histogram
+== [[MetricsComponent-histogram]]Metric type histogram
 
 [source]
 ----
 metrics:histogram:metricname[?options]
 ----
 
-#### Options
+=== Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===================================
@@ -324,7 +324,7 @@ from("direct:in")
 
 ----
 
-#### Headers
+=== Headers
 
 Message header can be used to override value specified in Metrics
 component URI.
@@ -345,14 +345,14 @@ from("direct:in")
 
 ----
 
-### [[MetricsComponent-meter]]Metric type meter
+== [[MetricsComponent-meter]]Metric type meter
 
 [source]
 ----
 metrics:meter:metricname[?options]
 ----
 
-#### Options
+=== Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===================================
@@ -378,7 +378,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-#### Headers
+=== Headers
 
 Message header can be used to override `mark` value specified in Metrics
 component URI.
@@ -398,14 +398,14 @@ from("direct:in")
     .to("direct:out");
 ----
 
-### [[MetricsComponent-timer]]Metrics type timer
+== [[MetricsComponent-timer]]Metrics type timer
 
 [source]
 ----
 metrics:timer:metricname[?options]
 ----
 
-#### Options
+=== Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |==========================
@@ -430,7 +430,7 @@ from("direct:in")
 `TimerContext` objects are stored as Exchange properties between
 different Metrics component calls.
 
-#### Headers
+=== Headers
 
 Message header can be used to override action value specified in Metrics
 component URI.
@@ -451,14 +451,14 @@ from("direct:in")
     .to("direct:out");
 ----
 
-### [[MetricsComponent-gauge]]Metric type gauge
+== [[MetricsComponent-gauge]]Metric type gauge
 
 [source]
 ----
 metrics:gauge:metricname[?options]
 ----
 
-#### Options
+=== Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=====================================================
@@ -476,7 +476,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-#### Headers
+=== Headers
 
 Message headers can be used to override `subject` values specified in Metrics component URI.
 Note: if `CamelMetricsName` header is specified, then new gauge is registered in addition to
@@ -497,7 +497,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-### MetricsRoutePolicyFactory
+== MetricsRoutePolicyFactory
 
 This factory allows to add a RoutePolicy for each
 route which exposes route utilization statistics using Dropwizard metrics.
@@ -575,7 +575,7 @@ if (registryService != null) {
 }
 ----
 
-### MetricsMessageHistoryFactory
+== MetricsMessageHistoryFactory
 
 *Available as of Camel 2.17*
 
@@ -651,7 +651,7 @@ String json = service.dumpStatisticsAsJson();
 And the JMX API the MBean is registered in the `type=services` tree
 with `name=MetricsMessageHistoryService`.
 
-### InstrumentedThreadPoolFactory
+== InstrumentedThreadPoolFactory
 
 *Available as of Camel 2.18*
 

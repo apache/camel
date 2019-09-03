@@ -37,7 +37,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 The URI scheme for a netty component is as follows
 
@@ -64,7 +64,7 @@ headers (like `CamelHttpQuery`). Endpoint options can be specified only
 at the endpoint URI definition level (like `to` or `from` DSL elements).
 
 
-### HTTP Options
+== HTTP Options
 
 INFO: *A lot more options*. *Important:* This component inherits all the options from
 <<netty-component,Netty>>. So make sure to look at the
@@ -271,7 +271,7 @@ The component supports 31 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 The following headers can be used on the producer to control the HTTP
 request.
@@ -336,7 +336,7 @@ with the value `Basic`.
 |`Content-Type` |`String` | The content type if provided. For example: `text/plain; charset="UTF-8"`.
 |=======================================================================
 
-### Access to Netty types
+== Access to Netty types
 
 This component uses the
 `org.apache.camel.component.netty.http.NettyHttpMessage` as the message
@@ -350,7 +350,7 @@ accessible at all times.
 org.jboss.netty.handler.codec.http.HttpRequest request = exchange.getIn(NettyHttpMessage.class).getHttpRequest();
 -----------------------------------------------------------------------------------------------------------------
 
-### Examples
+== Examples
 
 In the route below we use <<netty-http-component,Netty HTTP>> as a HTTP
 server, which returns back a hardcoded "Bye World" message.
@@ -372,7 +372,7 @@ ProducerTemplate as shown below:
 
 And we get back "Bye World" as the output.
 
-### How do I let Netty match wildcards
+== How do I let Netty match wildcards
 
 By default <<netty-http-component,Netty HTTP>> will only match on exact
 uri's. But you can instruct Netty to match prefixes. For example
@@ -403,7 +403,7 @@ To match *any* endpoint you can do:
 from("netty-http:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
 ----------------------------------------------------------------------------
 
-### Using multiple routes with same port
+== Using multiple routes with same port
 
 In the same CamelContext you can have multiple
 routes from <<netty-http-component,Netty HTTP>> that shares the same port
@@ -456,7 +456,7 @@ from("netty-http:http://0.0.0.0:{{port}}/bar?ssl=true")
   .transform().constant("Bye Camel");
 --------------------------------------------------------------------------------------
 
-#### Reusing same server bootstrap configuration with multiple routes
+=== Reusing same server bootstrap configuration with multiple routes
 
 By configuring the common server bootstrap option in an single instance
 of a
@@ -494,12 +494,12 @@ And in the routes you refer to this option as shown below
 </route>
 ---------------------------------------------------------------------------------------------------------
 
-#### Reusing same server bootstrap configuration with multiple routes across multiple bundles in OSGi container
+=== Reusing same server bootstrap configuration with multiple routes across multiple bundles in OSGi container
 
 See the Netty HTTP Server Example
 for more details and example how to do that.
 
-### Using HTTP Basic Authentication
+== Using HTTP Basic Authentication
 
 The <<netty-http-component,Netty HTTP>> consumer supports HTTP basic
 authentication by specifying the security realm name to use, as shown
@@ -522,7 +522,7 @@ End user of Apache Karaf / ServiceMix has a karaf realm out of the box,
 and hence why the example above would work out of the box in these
 containers.
 
-#### Specifying ACL on web resources
+=== Specifying ACL on web resources
 
 The `org.apache.camel.component.netty.http.SecurityConstraint` allows to
 define constrains on web resources. And the

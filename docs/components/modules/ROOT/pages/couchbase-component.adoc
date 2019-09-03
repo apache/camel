@@ -21,14 +21,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------------
 couchbase:url
 -------------------------------------------------
 
-### Options
+== Options
 
 // component options: START
 The Couchbase component has no options.

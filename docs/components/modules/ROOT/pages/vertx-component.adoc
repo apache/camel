@@ -26,14 +26,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------
 vertx:channelName[?options]
 ---------------------------
 
-### Options
+== Options
 
 
 
@@ -133,7 +133,7 @@ point when sending to a vertx endpoint.
 You can append query options to the URI in the following format, ?option=value&option=value&...
 -----------------------------------------------------------------------------------------------
 
-### Connecting to the existing Vert.x instance
+== Connecting to the existing Vert.x instance
 
 If you would like to connect to the Vert.x instance already existing in
 your JVM, you can set the instance on the component level:
@@ -146,9 +146,3 @@ vertxComponent.setVertx(vertx);
 camelContext.addComponent("vertx", vertxComponent);
 -----------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

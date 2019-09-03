@@ -9,7 +9,7 @@ The Ignite Events endpoint is one of camel-ignite endpoints which allows you to 
 This endpoint only supports consumers.
 The Exchanges created by this consumer put the received Event object into the body of the IN message.
 
-### Options
+== Options
 
 // component options: START
 The Ignite Events component supports 4 options, which are listed below.

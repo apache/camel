@@ -25,7 +25,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI Format
+== URI Format
 
 [source,java]
 -------------------------------------------------
@@ -35,7 +35,7 @@ ahc-wss://hostname[:port][/resourceUri][?options]
 
 Will by default use port 80 for ahc-ws and 443 for ahc-wss.
 
-### AHC-WS Options
+== AHC-WS Options
 
 As the AHC-WS component is based on the AHC component, you can use the
 various configuration options of the AHC component.
@@ -73,7 +73,7 @@ ahc-ws:httpUri
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (18 parameters):
+== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -146,13 +146,13 @@ The component supports 9 options, which are listed below.
 
 
 
-### Writing and Reading Data over Websocket
+== Writing and Reading Data over Websocket
 
 An ahc-ws endpoint can either write data to the socket or read from the
 socket, depending on whether the endpoint is configured as the producer
 or the consumer, respectively.
 
-### Configuring URI to Write or Read Data
+== Configuring URI to Write or Read Data
 
 In the route below, Camel will write to the specified websocket
 connection.

@@ -6,14 +6,14 @@
 
 The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
 
-### URI Format
+== URI Format
 
 [source,java]
 ----------------------------
 etcd:namespace/path[?options]
 ----------------------------
 
-### URI Options
+== URI Options
 
 // component options: START
 The etcd component supports 7 options, which are listed below.

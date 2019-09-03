@@ -20,14 +20,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------------------------------
 ssh:[username[:password]@]host[:port][?options]
 -----------------------------------------------
 
-### Options
+== Options
 
 
 
@@ -181,7 +181,7 @@ The component supports 32 options, which are listed below.
 
 
 
-### Usage as a Producer endpoint
+== Usage as a Producer endpoint
 
 When the SSH Component is used as a Producer (`.to("ssh://...")`), it
 will send the message body as the command to execute on the remote SSH
@@ -202,7 +202,7 @@ an XML encoded newline (`+&#10;+`).
 </route>
 ----------------------------------------------
 
-### Authentication
+== Authentication
 
 The SSH Component can authenticate against the remote SSH server using
 one of two mechanisms: Public Key certificate or username/password.
@@ -273,14 +273,8 @@ of Camel you are using.
 </dependency>
 -----------------------------------------
 
-### Example
+== Example
 
 See the `examples/camel-example-ssh` and
 `examples/camel-example-ssh-security` in the Camel distribution.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

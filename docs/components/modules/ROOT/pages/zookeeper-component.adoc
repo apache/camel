@@ -30,7 +30,7 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source]
 ----
@@ -40,7 +40,7 @@ zookeeper://zookeeper-server[:port][/path][?options]
 The path from the URI specifies the node in the ZooKeeper server (a.k.a.
 _znode_) that will be the target of the endpoint:
 
-### Options
+== Options
 
 // component options: START
 The ZooKeeper component supports 2 options, which are listed below.
@@ -180,9 +180,9 @@ The component supports 57 options, which are listed below.
 
 
 
-### Use cases
+== Use cases
 
-#### Reading from a _znode_
+=== Reading from a _znode_
 
 The following snippet will read the data from the _znode_
 `/somepath/somenode/` provided that it already exists. The data
@@ -202,7 +202,7 @@ endpoint await its creation:
 from("zookeeper://localhost:39913/somepath/somenode?awaitCreation=true").to("mock:result");
 ----
 
-#### Reading from a _znode_ (additional Camel 2.10 onwards)
+=== Reading from a _znode_ (additional Camel 2.10 onwards)
 
 When data is read due to a `WatchedEvent` received from the ZooKeeper
 ensemble, the `CamelZookeeperEventType` header holds ZooKeeper's
@@ -211,7 +211,7 @@ value from that `WatchedEvent`. If the data is read initially (not
 triggered by a `WatchedEvent`) the `CamelZookeeperEventType` header will not
 be set.
 
-#### Writing to a _znode_
+=== Writing to a _znode_
 
 The following snippet will write the payload of the exchange into the
 znode at `/somepath/somenode/` provided that it already exists:
@@ -304,7 +304,7 @@ Object testPayload = ...
 template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPayload, "CamelZooKeeperCreateMode", "PERSISTENT");
 ----
 
-### ZooKeeper enabled Route policies
+== ZooKeeper enabled Route policies
 
 NOTE: This functionality with route policy is deprecated, instead use `ZooKeeperClusterService`
 or the `camel-zookeeper-master` component.
@@ -365,9 +365,3 @@ There are currently 3 policies defined in the component, with different SLAs:
  thus you can be sure that no even is processed before the Policy takes its decision.
 
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

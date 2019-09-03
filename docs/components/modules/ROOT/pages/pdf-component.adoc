@@ -24,7 +24,7 @@ following dependency to their `pom.xml`:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 The PDF component only supports producer endpoints.
 
@@ -33,7 +33,7 @@ The PDF component only supports producer endpoints.
 pdf:operation[?options]
 -----------------------
 
-### Options
+== Options
 
 // component options: START
 The PDF component has no options.
@@ -107,7 +107,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Headers
+== Headers
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
 |Header |Description
@@ -126,13 +126,3 @@ ishttps://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encry
 *Mandatory* header if PDF document is encrypted.
 |=======================================================================
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
--
- 
--

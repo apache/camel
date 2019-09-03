@@ -18,7 +18,7 @@ rendering the pdf manuals. And then the mysterious symbols vanished.
 TidyMarkup only supports the *unmarshal* operation
 as we really don't want to turn well formed HTML into ugly HTML.
 
-### TidyMarkup Options
+== TidyMarkup Options
 
 
 
@@ -68,7 +68,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Java DSL Example
+== Java DSL Example
 
 An example where the consumer provides some HTML
 
@@ -77,7 +77,7 @@ An example where the consumer provides some HTML
 from("file://site/inbox").unmarshal().tidyMarkup().to("file://site/blogs");
 ---------------------------------------------------------------------------
 
-### Spring XML Example
+== Spring XML Example
 
 The following example shows how to use TidyMarkup
 to unmarshal using Spring
@@ -95,7 +95,7 @@ to unmarshal using Spring
 </camelContext>
 -----------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use TidyMarkup in your camel routes you need to add the a dependency
 on *camel-tagsoup* which implements this data format.

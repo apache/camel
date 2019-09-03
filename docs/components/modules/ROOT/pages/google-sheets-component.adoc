@@ -31,7 +31,7 @@ for this component:
 
 ----------------------------------------------------------
 
-### URI Format
+== URI Format
 
 The GoogleSheets Component uses the following URI format:
 
@@ -45,7 +45,7 @@ Endpoint prefix can be one of:
 * spreadsheets
 * data
 
-### GoogleSheetsComponent
+== GoogleSheetsComponent
 
 
 
@@ -148,7 +148,7 @@ The component supports 10 options, which are listed below.
 
 
 
-### Producer Endpoints
+== Producer Endpoints
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -169,7 +169,7 @@ override a `CamelGoogleSheets.option` header.
 For more information on the endpoints and options see API documentation
 at: https://developers.google.com/sheets/api/reference/rest/[https://developers.google.com/sheets/api/reference/rest/]
 
-### Consumer Endpoints
+== Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -179,12 +179,12 @@ invocation. Consumer endpoints that return an array or collection will
 generate one exchange per element, and their routes will be executed
 once for each exchange.
 
-### Message Headers
+== Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a `CamelGoogleSheets.` prefix.
 
-### Message Body
+== Message Body
 
 All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleSheetsComponent. Producer endpoints can specify

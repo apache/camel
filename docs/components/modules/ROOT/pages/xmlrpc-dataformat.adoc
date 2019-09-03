@@ -38,7 +38,7 @@ not.
 </camelContext>
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
-### XmlRpc Dataformat Options
+== XmlRpc Dataformat Options
 
 // dataformat options: START
 The XML RPC dataformat supports 2 options, which are listed below.

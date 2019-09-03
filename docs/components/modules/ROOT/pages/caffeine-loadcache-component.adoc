@@ -20,7 +20,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------------
@@ -30,7 +30,7 @@ caffeine-loadcache://cacheName[?options]
 You can append query options to the URI in the following
 format, `?option=value&option=#beanRef&...`
 
-### Options
+== Options
 
 
 // component options: START

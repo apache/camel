@@ -13,7 +13,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon MQ. More information are available at
 https://aws.amazon.com/it/mq/[Amazon MQ].
 
-### URI Format
+== URI Format
 
 [source,java]
 -------------------------
@@ -23,7 +23,7 @@ aws-mq://label[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -127,9 +127,9 @@ You have to provide the amazonEc2Client in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/it/ec2/[Amazon EC2] service.
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the MQ producer
+=== Message headers evaluated by the MQ producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

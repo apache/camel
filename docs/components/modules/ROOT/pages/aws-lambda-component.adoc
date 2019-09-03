@@ -19,7 +19,7 @@ When creating a Lambda function, you need to specify a IAM role which has at lea
 
 Lambda is regional service. Unlike S3 bucket, Lambda function created in a given region is not available on other regions.
 
-### URI Format
+== URI Format
 
 [source,java]
 -------------------------
@@ -29,7 +29,7 @@ aws-lambda://functionName[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -134,9 +134,9 @@ You have to provide the awsLambdaClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/lambda/[Amazon Lambda] service.
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the Lambda producer
+=== Message headers evaluated by the Lambda producer
 
 [width="100%",cols="5%,5%,10%,75%,5%",options="header",]
 |=======================================================================
@@ -195,7 +195,7 @@ The default is 3 seconds.|No
 
 |=======================================================================
 
-### List of Avalaible Operations
+== List of Avalaible Operations
 
 - listFunctions
 - getFunction,
@@ -207,12 +207,12 @@ The default is 3 seconds.|No
 - deleteEventSourceMapping
 - listEventSourceMapping
 
-### Example
+== Example
 
 To have a full understanding of how the component works, you may have a look at this https://github.com/apache/camel/blob/master/components/camel-aws/src/test/java/org/apache/camel/component/aws/lambda/integration/LambdaComponentIntegrationTest.java[integration test]
 
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -230,11 +230,3 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.16 or higher).
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* AWS Component

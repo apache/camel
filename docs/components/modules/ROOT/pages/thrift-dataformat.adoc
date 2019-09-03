@@ -15,7 +15,7 @@ consumed by other language implementations.
 
 https://github.com/apache/thrift[Apache Thrift Implementation] +
 
-### Thrift Options
+== Thrift Options
 
 // dataformat options: START
 The Thrift dataformat supports 3 options, which are listed below.
@@ -64,7 +64,7 @@ The component supports 7 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-### Content type format
+== Content type format
 
 It's possible to parse JSON message to convert it to the Thrift format and unparse it back using native util converter.
 To use this option, set contentTypeFormat value to 'json' or call thrift with second parameter.
@@ -80,12 +80,12 @@ from("direct:marshal")
     .to("mock:reverse");
 ----
 
-### Thrift overview
+== Thrift overview
 
 This quick overview of how to use Thrift. For more detail see the
 https://thrift.apache.org/tutorial/[complete tutorial]
 
-### Defining the thrift format
+== Defining the thrift format
 
 The first step is to define the format for the body of your exchange.
 This is defined in a .thrift file as so:
@@ -111,7 +111,7 @@ struct Work {
 }
 ----
 
-### Generating Java classes
+== Generating Java classes
 
 The Apache Thrift provides a compiler which will generate the Java
 classes for the format we defined in our .thrift file.
@@ -129,7 +129,7 @@ Camel will throw an exception on route creation if you attempt to tell
 the Data Format to use a class that does not implement 
 org.apache.thrift.TBase.
 
-### Java DSL
+== Java DSL
 
 You can use create the ThriftDataFormat instance and pass it to Camel
 DataFormat marshal and unmarshal API like this.
@@ -156,7 +156,7 @@ default instance class name like this.
    from("direct:unmarshalB").unmarshal().thrift(new Work()).to("mock:reverse");
 ----
 
-### Spring DSL
+== Spring DSL
 
 The following example shows how to use Thrift to unmarshal using Spring
 configuring the thrift data type
@@ -174,7 +174,7 @@ configuring the thrift data type
 </camelContext>
 ----
 
-### Dependencies
+== Dependencies
 
 To use Thrift in your camel routes you need to add the a dependency on
 *camel-thrift* which implements this data format.

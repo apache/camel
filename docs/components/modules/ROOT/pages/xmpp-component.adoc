@@ -19,7 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,text]
 ------------------------------------------------------
@@ -35,7 +35,7 @@ starting.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -121,7 +121,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Headers and setting Subject or Language
+== Headers and setting Subject or Language
 
 Camel sets the message IN headers as properties on the XMPP message. You
 can configure a `HeaderFilterStategy` if you need custom filtering of
@@ -129,7 +129,7 @@ headers.
 The *Subject* and *Language* of the XMPP message are also set if they
 are provided as IN headers.
 
-### Examples
+== Examples
 
 User `superman` to join room `krypton` at `jabber` server with password,
 `secret`:
@@ -192,9 +192,3 @@ from("direct:start").
 
  
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

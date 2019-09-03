@@ -34,14 +34,14 @@ for this component:
 </dependency>
 ---------------------------------------
 
-### URI format
+== URI format
 
 [source,text]
 -------------------------
 jira://endpoint[?options]
 -------------------------
 
-### JIRA Options
+== JIRA Options
 
 
 // component options: START
@@ -118,7 +118,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### JQL:
+== JQL:
 
 The JQL URI option is used by both consumer endpoints.  Theoretically,
 items like "project key", etc. could be URI options themselves.

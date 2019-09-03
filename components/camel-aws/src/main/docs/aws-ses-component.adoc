@@ -13,7 +13,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon SES. More information are available at
 http://aws.amazon.com/ses[Amazon SES].
 
-### URI Format
+== URI Format
 
 [source,java]
 ------------------------
@@ -23,7 +23,7 @@ aws-ses://from[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -134,9 +134,9 @@ You have to provide the amazonSESClient in the
 Registry or your accessKey and secretKey to access
 the http://aws.amazon.com/ses[Amazon's SES].
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the SES producer
+=== Message headers evaluated by the SES producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -155,7 +155,7 @@ the http://aws.amazon.com/ses[Amazon's SES].
 |`CamelAwsSesHtmlEmail` |`Boolean` |*Since Camel 2.12.3* The flag to show if email content is HTML.
 |=======================================================================
 
-#### Message headers set by the SES producer
+=== Message headers set by the SES producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -164,7 +164,7 @@ the http://aws.amazon.com/ses[Amazon's SES].
 |`CamelAwsSesMessageId` |`String` |The Amazon SES message ID.
 |=======================================================================
 
-#### Advanced AmazonSimpleEmailService configuration
+=== Advanced AmazonSimpleEmailService configuration
 
 If you need more control over the `AmazonSimpleEmailService` instance
 configuration you can create your own instance and refer to it from the
@@ -192,7 +192,7 @@ AmazonSimpleEmailService client = new AmazonSimpleEmailServiceClient(awsCredenti
 registry.bind("client", client);
 ----------------------------------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 

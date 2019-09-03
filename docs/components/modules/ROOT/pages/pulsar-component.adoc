@@ -18,14 +18,14 @@ their `pom.xml` for this component.
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ----------------------
 pulsar:[persistent|non-persistent]://tenant/namespace/topic
 ----------------------
 
-### Options
+== Options
 
 
 // component options: START

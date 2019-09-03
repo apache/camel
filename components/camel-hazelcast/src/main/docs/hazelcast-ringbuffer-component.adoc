@@ -9,7 +9,7 @@
 The http://www.hazelcast.com/[Hazelcast] ringbuffer component is one of Camel Hazelcast Components which allows you to access Hazelcast ringbuffer.
 Ringbuffer is a distributed data structure where the data is stored in a ring-like structure. You can think of it as a circular array with a certain capacity. 
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast Ringbuffer component supports 3 options, which are listed below.
@@ -97,7 +97,7 @@ The component supports 6 options, which are listed below.
 
 
 
-### ringbuffer cache producer 
+== ringbuffer cache producer 
 
 The ringbuffer producer provides 5 operations:
 * add
@@ -117,7 +117,7 @@ Header Variables for the request message:
 |`CamelHazelcastObjectId` |`String` |the object id to store / find your object inside the cache
 |=======================================================================
 
-#### Sample for *put*:
+=== Sample for *put*:
 
 Java DSL:
 
@@ -143,7 +143,7 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-#### Sample for *readonce from head*:
+=== Sample for *readonce from head*:
 
 Java DSL:
 

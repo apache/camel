@@ -1,4 +1,4 @@
-## Camel SCR (deprecated)
+= Camel SCR (deprecated)
 
 *Available as of Camel 2.15*
 
@@ -17,7 +17,7 @@ completely in Java world; there is no need to edit XML or properties
 files. This offers you full control over everything and means your IDE
 of choice knows exactly what is going on in your project.
 
-### Camel SCR support
+== Camel SCR support
 
 Camel-scr bundle is not included in Apache Camel versions prior 2.15.0,
 but the artifact itself can be used with any Camel version since 2.12.0.
@@ -304,7 +304,7 @@ allows you to create more instances of your routes just by providing
 alternative configurations. More on this in section _Using Camel SCR
 bundle as a template_.
 
-### AbstractCamelRunner's lifecycle in SCR
+== AbstractCamelRunner's lifecycle in SCR
 
 1.  When component's configuration policy and mandatory references are
 satisfied SCR calls `activate()`. This creates and sets up a
@@ -330,7 +330,7 @@ In (non-OSGi) unit tests you should use `prepare()` → `run()` → `stop()`
 instead of `activate()` → `deactivate()` for more fine-grained control.
 Also, this allows us to avoid possible SCR specific operations in tests.
 
-### Using camel-archetype-scr
+== Using camel-archetype-scr
 
 The easiest way to create an Camel SCR bundle project is to use
 `camel-archetype-scr` and Maven.
@@ -378,7 +378,7 @@ mvn install
 
 and the bundle is ready to be deployed.
 
-### Unit testing Camel routes
+== Unit testing Camel routes
 
 Service Component is a POJO and has no special requirements for
 (non-OSGi) unit testing. There are however some techniques that are
@@ -568,7 +568,7 @@ Here we start the Service Component and along with it the routes.
 
 Here we send a message to a route in test.
 
-### Running the bundle in Apache Karaf
+== Running the bundle in Apache Karaf
 
 Once the bundle has been built with `mvn install` it's ready to be
 deployed. To deploy the bundle on Apache Karaf perform the following
@@ -596,7 +596,7 @@ karaf@root> log:tail -n 10
 Press ctrl-c to stop watching the log.
 ------------------------------------------------------------------------
 
-#### Overriding the default configuration
+=== Overriding the default configuration
 
 By default, Service Component's configuration PID equals the fully
 qualified name of its class. You can change the example bundle's
@@ -613,7 +613,7 @@ karaf@root> config:propset -p example.CamelScrExample messageOk "This is better 
 Or you can change the configuration by editing property files in Karaf's
 `etc` folder.
 
-#### Using Camel SCR bundle as a template
+=== Using Camel SCR bundle as a template
 
 Let's say you have a Camel SCR bundle that implements an integration
 pattern that you use frequently, say, *from → to*, with success/failure
@@ -643,7 +643,7 @@ karaf@root> config:update
 This will start a new CamelContext with your overridden properties. How
 convenient.
 
-### Notes
+== Notes
 
 When designing a Service Component to be a template you typically don't
 want it to start without a "tailed" configuration i.e. with the default

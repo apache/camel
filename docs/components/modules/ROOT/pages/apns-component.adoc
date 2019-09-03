@@ -32,7 +32,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 To send notifications:
 
@@ -48,7 +48,7 @@ To consume feedback:
 apns:consumer[?options]
 -----------------------
 
-### Options
+== Options
 
 
 
@@ -149,7 +149,7 @@ The component supports 3 options, which are listed below.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-#### Component
+=== Component
 
 The `ApnsComponent` must be configured with a
 `com.notnoop.apns.ApnsService`. The service can be created and
@@ -159,20 +159,20 @@ further below for an example. And as well in the
 https://github.com/apache/camel/tree/master/components/camel-apns[test
 source code].
 
-##### SSL Setting
+==== SSL Setting
 In order to use secure connection, an instance of `org.apache.camel.util.jsse.SSLContextParameters`
  should be injected to `org.apache.camel.component.apns.factory.ApnsServiceFactory` which is
  used to configure the component. See the test resources for an example.
  https://github.com/apache/camel/blob/master/components/camel-apns/src/test/resources/org/apache/camel/component/apns/spring/SpringApnsConsumerTest-context.xml[ssl example]
 
-### Exchange data format
+== Exchange data format
 
 When Camel will fetch feedback data corresponding to inactive devices,
 it will retrieve a List of InactiveDevice objects. Each InactiveDevice
 object of the retrieved list will be setted as the In body, and then
 processed by the consumer endpoint.
 
-### Message Headers
+== Message Headers
 
 Camel Apns uses these headers.
 
@@ -187,7 +187,7 @@ onwards APNS_NOTIFICATION is used for sending message body as
 com.notnoop.apns.ApnsNotification types.
 |=======================================================================
 
-### ApnsServiceFactory builder callback
+== ApnsServiceFactory builder callback
 
 `ApnsServiceFactory` comes with the empty callback method that could be
 used to configure (or even replace) the default `ApnsServiceBuilder`
@@ -212,9 +212,9 @@ ApnsServiceFactory proxiedApnsServiceFactory = new ApnsServiceFactory(){
 };
 -------------------------------------------------------------------------------------------
 
-### Samples
+== Samples
 
-#### Camel Xml route
+=== Camel Xml route
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -270,7 +270,7 @@ ApnsServiceFactory proxiedApnsServiceFactory = new ApnsServiceFactory(){
 </beans>
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Camel Java route
+=== Camel Java route
 
 [[APNS-Createcamelcontextanddeclareapnscomponentprogrammatically]]
 Create camel context and declare apns component programmatically
@@ -335,10 +335,3 @@ from("apns:consumer?initialDelay=10&delay=3600&timeUnit=SECONDS")
     .to("mock:result");
 --------------------------------------------------------------------------
 
-### See Also
-
-* http://camel.apache.org/component.html[Component]
-* http://camel.apache.org/endpoint.html[Endpoint]
-*
-http://blog.xebia.fr/2010/09/30/creer-un-composant-apache-camel-de-connexion-a-lapns-1-sur-3/[Blog
-about using APNS (in french)]

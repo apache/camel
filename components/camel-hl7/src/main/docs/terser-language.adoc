@@ -1,6 +1,6 @@
 [[terser-language]]
 = HL7 Terser Language
-### Terser language
+== Terser language
 *Available as of Camel version 2.11.0*
 *Available as of Camel version 2.11*
 
@@ -31,7 +31,7 @@ import static org.apache.camel.component.hl7.HL7.terser;
       .to("mock:test2");
 --------------------------------------------------------------------------------------------------
 
-### Terser Language options
+== Terser Language options
 
 // language options: START
 The HL7 Terser language supports 1 options, which are listed below.

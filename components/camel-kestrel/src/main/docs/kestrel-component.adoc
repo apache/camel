@@ -14,7 +14,7 @@ WARNING: The kestrel project is inactive and the Camel team regard this
 components as deprecated.
 
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------
@@ -61,7 +61,7 @@ concurrently from a queue:
 kestrel://kserver03:22133/massive?concurrentConsumers=25&waitTimeMs=500
 -----------------------------------------------------------------------
 
-### Options
+== Options
 
 
 
@@ -154,7 +154,7 @@ The component supports 5 options, which are listed below.
 
 
 
-### Configuring the Kestrel component using Spring XML
+== Configuring the Kestrel component using Spring XML
 
 The simplest form of explicit configuration is as follows:
 
@@ -206,9 +206,9 @@ can set up a KestrelConfiguration POJO as follows:
 </beans>
 ---------------------------------------------------------------------------------------------------------------
 
-### Usage Examples
+== Usage Examples
 
-#### Example 1: Consuming
+=== Example 1: Consuming
 
 [source,java]
 -------------------------------------------------------------------------------
@@ -225,7 +225,7 @@ public class MyConsumer {
 }
 -------------------------------------------
 
-#### Example 2: Producing
+=== Example 2: Producing
 
 [source,java]
 ------------------------------------------------------------------------------
@@ -239,7 +239,7 @@ public class MyProducer {
 }
 ------------------------------------------------------------------------------
 
-#### Example 3: Spring XML Configuration
+=== Example 3: Spring XML Configuration
 
 [source,xml]
 ----------------------------------------------------------------------------------------
@@ -264,13 +264,13 @@ public class MyBean {
 }
 -------------------------------------------
 
-### Dependencies
+== Dependencies
 
 The Kestrel component has the following dependencies:
 
 * `spymemcached` 2.5 (or greater)
 
-#### spymemcached
+=== spymemcached
 
 You *must* have the `spymemcached` jar on your classpath. Here is a
 snippet you can use in your pom.xml:

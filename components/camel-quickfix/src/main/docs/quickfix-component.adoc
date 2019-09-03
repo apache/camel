@@ -23,7 +23,7 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source]
 ----
@@ -58,7 +58,7 @@ quickfix:config.cfg?sessionID=FIX.4.2:MyTradingCompany->SomeExchange
 quickfix:config.cfg?sessionID=FIX.4.2:MyTradingCompany->SomeExchange&lazyCreateEngine=true
 ----
 
-### Endpoints
+== Endpoints
 
 FIX sessions are endpoints for the *quickfix* component. An endpoint URI
 may specify a single session or all sessions managed by a specific
@@ -74,7 +74,7 @@ include the session-related fields in the FIX message being sent. If a
 session is specified in the URI then the component will automatically
 inject the session-related fields into the FIX message.
 
-### Options
+== Options
 
 // component options: START
 The QuickFix component supports 6 options, which are listed below.
@@ -160,7 +160,7 @@ The component supports 7 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Exchange Format
+== Exchange Format
 
 The exchange headers include information to help with exchange
 filtering, routing and other processing. The following headers are
@@ -188,7 +188,7 @@ dictionary to parse certain types of messages (with repeating groups,
 for example). By injecting a DataDictionary header in the route after
 receiving a message string, the FIX engine can properly parse the data.
 
-### QuickFIX/J Configuration Extensions
+== QuickFIX/J Configuration Extensions
 
 When using QuickFIX/J directly, one typically writes code to create
 instances of logging adapters, message stores and communication
@@ -203,7 +203,7 @@ QuickFIX/J configuration, see the
 http://www.quickfixj.org/quickfixj/usermanual/usage/configuration.html[QFJ
 user manual].
 
-#### Communication Connectors
+=== Communication Connectors
 
 When the component detects an initiator or acceptor session setting in
 the QuickFIX/J configuration file it will automatically create the
@@ -232,7 +232,7 @@ and must be placed in the settings default section.
 `ThreadedSocketAcceptor`
 |=======================================================================
 
-#### Logging
+=== Logging
 
 The QuickFIX/J logger implementation can be specified by including the
 following settings in the default section of the configuration file. The
@@ -259,7 +259,7 @@ will cause this log to be used.
 |`JdbcDriver` |Use a `JdbcLog`
 |=======================================================================
 
-#### Message Store
+=== Message Store
 
 The QuickFIX/J message store implementation can be specified by
 including the following settings in the default section of the
@@ -278,14 +278,14 @@ QuickFIX/J settings file.
 |`SleepycatDatabaseDir` |Use a `SleepcatStore`
 |=============================================
 
-#### Message Factory
+=== Message Factory
 
 A message factory is used to construct domain objects from raw FIX
 messages. The default message factory is `DefaultMessageFactory`.
 However, advanced applications may require a custom message factory.
 This can be set on the QuickFIX/J component.
 
-#### JMX
+=== JMX
 
 [width="100%",cols="10%,90%",options="header",]
 |============================================
@@ -293,7 +293,7 @@ This can be set on the QuickFIX/J component.
 |`UseJmx` |if `Y`, then enable QuickFIX/J JMX
 |============================================
 
-#### Other Defaults
+=== Other Defaults
 
 The component provides some default settings for what are normally
 required settings in QuickFIX/J configuration files. `SessionStartTime`
@@ -301,7 +301,7 @@ and `SessionEndTime` default to "00:00:00", meaning the session will not
 be automatically started and stopped. The `HeartBtInt` (heartbeat
 interval) defaults to 30 seconds.
 
-#### Minimal Initiator Configuration Example
+=== Minimal Initiator Configuration Example
 
 [source]
 ----
@@ -312,7 +312,7 @@ SenderCompID=YOUR_SENDER
 TargetCompID=YOUR_TARGET
 ----
 
-### Using the InOut Message Exchange Pattern
+== Using the InOut Message Exchange Pattern
 
 *Camel 2.8+*
 
@@ -324,7 +324,7 @@ be a single request message and single reply message to the request.
 Examples include an
 OrderStatusRequest message and UserRequest.
 
-#### Implementing InOut Exchanges for Consumers
+=== Implementing InOut Exchanges for Consumers
 
 Add "exchangePattern=InOut" to the QuickFIX/J enpoint URI. The
 `MessageOrderStatusService` in
@@ -340,7 +340,7 @@ to the requestor session.
         .bean(new MarketOrderStatusService());
 ----
 
-#### Implementing InOut Exchanges for Producers
+=== Implementing InOut Exchanges for Producers
 
 For producers, sending a message will block until a reply is received or
 a timeout occurs. There
@@ -376,7 +376,7 @@ exchange.setProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY,
         .withField(OrderID.FIELD, request.getString(OrderID.FIELD)));
 ----
 
-#### Example
+=== Example
 
 The source code contains an example called `RequestReplyExample` that
 demonstrates the InOut exchanges
@@ -392,7 +392,7 @@ provided as the web response.
 The Spring configuration have changed from Camel 2.9 onwards. See
 further below for example.
 
-### Spring Configuration
+== Spring Configuration
 
 *Camel 2.6 - 2.8.x*
 
@@ -467,7 +467,7 @@ settings for both sessions.
 include::../../test/resources/org/apache/camel/component/quickfixj/QuickfixjSpringTest-context.xml[tags=e1]
 ----
 
-### Exception handling
+== Exception handling
 
 QuickFIX/J behavior can be modified if certain exceptions are thrown
 during processing of a message. If a `RejectLogon` exception is thrown
@@ -484,7 +484,7 @@ being processed __synchronously__. If it is processed asynchronously (on
 another thread), the FIX engine will immediately send the unmodified
 outgoing message when it's callback method returns.
 
-### FIX Sequence Number Management
+== FIX Sequence Number Management
 
 If an application exception is thrown during _synchronous_ exchange
 processing, this will cause QuickFIX/J to not increment incoming FIX
@@ -509,7 +509,7 @@ sending messages.
 See the FIX protocol specifications and the QuickFIX/J documentation for
 more details about FIX sequence number management.
 
-### Route Examples
+== Route Examples
 
 Several examples are included in the QuickFIX/J component source code
 (test subdirectories). One of these examples implements a trival trade
@@ -545,7 +545,7 @@ from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET").
     bean(new MyTradeExecutionProcessor());
 ----
 
-### QuickFIX/J Component Prior to Camel 2.5
+== QuickFIX/J Component Prior to Camel 2.5
 
 The *quickfix* component is an implementation of the
 http://www.quickfixj.org/[QuickFIX/J] engine for Java . This engine
@@ -556,7 +556,7 @@ standard.
 *Note:* The component can be used to send/receives messages to a FIX
 server.
 
-### URI format
+== URI format
 
 [source]
 ----
@@ -576,7 +576,7 @@ The quickfix-server endpoint must be used to receive from FIX server FIX
 messages and quickfix-client endpoint in the case that you want to send
 messages to a FIX gateway.
 
-### Exchange data format
+== Exchange data format
 
 The QuickFIX/J engine is like CXF component a messaging bus using MINA
 as protocol layer to create the socket connection with the FIX engine
@@ -594,7 +594,7 @@ message.
 When a message must be send to QuickFix, then you must create a
 QuickFix.Message instance.
 
-### Lazy creating engines
+== Lazy creating engines
 
 From *Camel 2.12.3* onwards, you can configure the QuickFixComponent to
 lazy create and start the engines, which then only start these
@@ -602,7 +602,7 @@ on-demand. For example you can use this when you have multiple Camel
 applications in a cluster with master/slaves. And want the slaves to be
 standby.
 
-### Samples
+== Samples
 
 Direction : to FIX gateway
 

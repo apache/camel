@@ -21,7 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 *NOTE:* solrs and solrCloud are new added since *Camel 2.14*.
 
@@ -32,7 +32,7 @@ solrs://host[:port]/solr?[options]
 solrCloud://host[:port]/solr?[options]
 --------------------------------------
 
-### Solr Options
+== Solr Options
 
 
 // component options: START
@@ -113,7 +113,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Message Operations
+== Message Operations
 
 The following Solr operations are currently supported. Simply set an
 exchange header with a key of "SolrOperation" and a value set to one of
@@ -158,7 +158,7 @@ bean]
 optimize command
 |=======================================================================
 
-### Example
+== Example
 
 Below is a simple INSERT, DELETE and COMMIT example
 
@@ -217,7 +217,7 @@ delete routes and then call the commit route.
     template.sendBody("direct:commit", null);
 -----------------------------------------------
 
-### Querying Solr
+== Querying Solr
 
 Currently, this component doesn't support querying data natively (may be
 added later). For now, you can query Solr using <<http-component,HTTP>> as
@@ -241,9 +241,3 @@ Tutorial]
 
 http://wiki.apache.org/solr/SolrQuerySyntax[Solr Query Syntax]
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
