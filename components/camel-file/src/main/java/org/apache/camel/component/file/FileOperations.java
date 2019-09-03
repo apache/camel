@@ -157,6 +157,9 @@ public class FileOperations implements GenericFileOperations<File> {
         File endpointPath = endpoint.getFile();
         File target = new File(directory);
 
+        // check if directory is a path
+        boolean isPath = Math.max(directory.lastIndexOf("/"), directory.lastIndexOf("\\")) != -1;
+
         File path;
         if (absolute) {
             // absolute path
@@ -164,16 +167,19 @@ public class FileOperations implements GenericFileOperations<File> {
         } else if (endpointPath.equals(target)) {
             // its just the root of the endpoint path
             path = endpointPath;
-        } else {
+        } else if (isPath) {
             // relative after the endpoint path
             String afterRoot = StringHelper.after(directory, endpointPath.getPath() + File.separator);
             if (ObjectHelper.isNotEmpty(afterRoot)) {
                 // dir is under the root path
                 path = new File(endpoint.getFile(), afterRoot);
             } else {
-                // dir is relative to the root path
-                path = new File(endpoint.getFile(), directory);
+                // dir path is relative to the root path
+                path = new File(directory);
             }
+        } else {
+            // dir is a child of the root path
+            path = new File(endpoint.getFile(), directory);
         }
 
         // We need to make sure that this is thread-safe and only one thread tries to create the path directory at the same time.

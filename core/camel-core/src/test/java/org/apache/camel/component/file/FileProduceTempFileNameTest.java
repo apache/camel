@@ -32,11 +32,13 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
 
     private String fileUrl = "file://target/data/tempandrename/?tempFileName=inprogress-${file:name.noext}.tmp";
     private String parentFileUrl = "file://target/data/tempandrename/?tempFileName=../work/${file:name.noext}.tmp";
+    private String childFileUrl = "file://target/data/tempandrename/?tempFileName=work/${file:name.noext}.tmp";
 
     @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/data/tempandrename");
+        deleteDirectory("target/data/work");
         super.setUp();
     }
 
@@ -67,7 +69,23 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("target/data/tempandrename/hello.txt");
-        assertEquals("The generated file should exists: " + file, true, file.exists());
+        assertEquals("The generated file should exist: " + file, true, file.exists());
+    }
+
+    @Test
+    public void testParentTempFileName() throws Exception {
+        template.sendBodyAndHeader("direct:b", "Hello World", Exchange.FILE_NAME, "hello.txt");
+
+        File file = new File("target/data/work");
+        assertEquals("The generated temp directory should exist: " + file, true, file.exists());
+    }
+
+    @Test
+    public void testChildTempFileName() throws Exception {
+        template.sendBodyAndHeader("direct:c", "Hello World", Exchange.FILE_NAME, "hello.txt");
+
+        File file = new File("target/data/tempandrename/work");
+        assertEquals("The generated temp directory should exist: " + file, true, file.exists());
     }
 
     @Test
@@ -86,6 +104,8 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:a").to(fileUrl);
+                from("direct:b").to(parentFileUrl);
+                from("direct:c").to(childFileUrl);
             }
         };
     }
