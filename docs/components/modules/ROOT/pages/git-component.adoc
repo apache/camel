@@ -1,9 +1,10 @@
+[[git-component]]
 = Git Component
 
 *Available as of Camel version 2.16*
 
 
-The Git component allows you to work with a generic Git repository. 
+The *git:* component allows you to work with a generic Git repository. 
 
 [source,xml]
 ------------------------------------------------------------
@@ -22,7 +23,7 @@ The Git component allows you to work with a generic Git repository.
 git://localRepositoryPath[?options]
 -----------------------------------
 
-== URI Options
+### URI Options
 
 The producer allows to do operations on a specific repository. +
 The consumer allows consuming commits, tags and branches on a specific
@@ -45,7 +46,7 @@ git:localPath
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -55,7 +56,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (13 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +78,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-git-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -96,7 +109,7 @@ The component supports 2 options, which are listed below.
 
 
 
-== Message Headers
+### Message Headers
 
 [width="100%",cols="10%,10%,10%,20%,50%",options="header",]
 |=======================================================================
@@ -118,7 +131,7 @@ The component supports 2 options, which are listed below.
 
 |=======================================================================
 
-== Producer Example
+### Producer Example
 
 Below is an example route of a producer that add a file test.java to a
 local repository, commit it with a specific message on master branch and
@@ -136,7 +149,7 @@ from("direct:start")
         .to("git:///tmp/testRepo?operation=pushTag&tagName=myTag&remoteName=origin")
 --------------------------------------------------------------------------------------------------------------------
 
-== Consumer Example
+### Consumer Example
 
 Below is an example route of a consumer that consumes commit:
 

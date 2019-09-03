@@ -1,4 +1,4 @@
-= Testcontainers
+## Testcontainers
 
 *Available since 2.22.0*
 
@@ -22,7 +22,7 @@ In order to define leverage testcontainers, add the following dependency to your
 To learn more about testcontainers, please have a look at the official documentation https://www.testcontainers.org
 ====
 
-To leverage testcontainers in your tests, you can use `ContainerAwareTestSupport` which is an extension of `CamelTestSupport` which:
+To leverage testcontaners in your tests, you can use `ContainerAwareTestSupport` which is an extension of `CamelTestSupport` which:
 
 - create/destroy containers according to camel context lifecycle
 - inject a custom `PropertiesFunction` to access container specific options from properties
@@ -77,8 +77,8 @@ You may need to wait for some condition to be satisfied before starting your tes
 
 Camel Testcontainer provides a PropertiesFunction implementation that can be used to:
 
-- retrieve the container host with the following syntax `container:host:$\{container-name\}`
-- retrieve the port mapping with the following syntax `container:port:$\{exposed-port\}@$\{container-name\}`
+- retrieve the container host with the following syntax `container:host:${container-name}`
+- retrieve the port mapping with the following syntax `container:port:${exposed-port}@${container-name}`
 
 [source,java]
 .Example

@@ -1,7 +1,8 @@
 [[as2-component]]
-== AS2 Component
+= AS2 Component
 
 *Available as of Camel version 2.22*
+
 
 The AS2 component provides transport of EDI messages using the HTTP transfer protocol
 as specified in https://tools.ietf.org/html/rfc4130[RFC4130]. 
@@ -60,7 +61,7 @@ as2:apiName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -70,7 +71,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (31 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,7 +111,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-as2-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 29 options, which are listed below.
@@ -271,4 +284,3 @@ URI Options for _server_
 
 |requestUriPattern |String
 |===
-

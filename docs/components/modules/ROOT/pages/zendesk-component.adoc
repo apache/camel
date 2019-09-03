@@ -1,6 +1,8 @@
+[[zendesk-component]]
 = Zendesk Component
 
 *Available as of Camel version 2.19*
+
 
 The Zendesk component provides access to all of the zendesk.com APIs accessible
 using https://github.com/cloudbees/zendesk-java-client[zendesk-java-client]. It
@@ -18,7 +20,7 @@ for this component:
     </dependency>
 -------------------------------------------
 
-== Zendesk Options
+### Zendesk Options
 
 // component options: START
 The Zendesk component supports 3 options, which are listed below.
@@ -43,7 +45,7 @@ zendesk:methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -53,7 +55,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,7 +74,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-zendesk-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 9 options, which are listed below.
@@ -95,7 +109,7 @@ The component supports 9 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== URI format
+### URI format
 
 [source,java]
 --------------------------------------------
@@ -103,12 +117,12 @@ The component supports 9 options, which are listed below.
 --------------------------------------------
 
 
-== Producer Endpoints:
+### Producer Endpoints:
 
 Producer endpoints can use endpoint names and associated options described next. 
 
 
-== Consumer Endpoints:
+### Consumer Endpoints:
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -119,16 +133,16 @@ generate one exchange per element, and their routes will be executed
 once for each exchange.
 
 
-== Message header
+### Message header
 
-Any of the options can be provided in a message header for producer
+Any of the options can be provided in a message header for producer
 endpoints with *CamelZendesk.* prefix. In principal, parameter names are same as
 the arugument name of each API methods on the original `org.zendesk.client.v2.Zendesk`
  class. However some of them are renamed to the other name to avoid confliction in the
  camel API component framework. To see actual parameter name, please check `org.apache.camel.component.zendesk.internal.ZendeskApiMethod`.
  
 
-== Message body
+### Message body
 
 All result message bodies utilize objects provided by the Zendesk Java Client.
 Producer endpoints can specify the option name for incoming message body

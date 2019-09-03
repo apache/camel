@@ -1,9 +1,10 @@
+[[spring-ws-component]]
 = Spring WebService Component
 
 *Available as of Camel version 2.6*
 
 
-The Spring WS component allows you to integrate with
+The *spring-ws:* component allows you to integrate with
 http://static.springsource.org/spring-ws/sites/1.5/[Spring Web
 Services]. It offers both _client_-side support, for accessing web
 services, and _server_-side support for creating your own contract-first
@@ -22,21 +23,19 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[NOTE]
-====
-*Dependencies*
-
-This component ships with Spring-WS 2.0.x which (like
-the rest of Camel) requires Spring 3.0.x. In order to run earlier versions of
+INFO:*Dependencies*
+As of Camel 2.8 this component ships with Spring-WS 2.0.x which (like
+the rest of Camel) requires Spring 3.0.x.
+Earlier Camel versions shipped Spring-WS 1.5.9 which is compatible with
+Spring 2.5.x and 3.0.x. In order to run earlier versions of
 `camel-spring-ws` on Spring 2.5.x you need to add the `spring-webmvc`
 module from Spring 2.5.x. In order to run Spring-WS 1.5.9 on Spring
 3.0.x you need to exclude the OXM module from Spring 3.0.x as this
 module is also included in Spring-WS 1.5.9 (see
 http://stackoverflow.com/questions/3313314/can-spring-ws-1-5-be-used-with-spring-3[this
-post]).
-====
+post])
 
-== URI format
+### URI format
 
 The URI scheme for this component is as follows
 
@@ -80,7 +79,7 @@ calling upon.
 You can append query *options* to the URI in the following format,
 `?option=value&option=value&...`
 
-== Options
+### Options
 
 
 // component options: START
@@ -107,7 +106,7 @@ spring-ws:type:lookupKey:webServiceEndpointUri
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -119,7 +118,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+=== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -150,7 +149,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-spring-ws-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 3 options, which are listed below.
@@ -168,7 +179,7 @@ The component supports 3 options, which are listed below.
 
 
 
-=== Message headers
+#### Message headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -180,7 +191,7 @@ part of the endpoint URI
 |`CamelSpringWebserviceSoapAction` |String |Header to specify the SOAP action of the message, overrides `soapAction`
 option if present
 
-|CamelSpringWebserviceSoapHeader |Source |Use this header to specify/access the SOAP headers of
+|CamelSpringWebserviceSoapHeader |Source |*Camel 2.11.1:* Use this header to specify/access the SOAP headers of
 the message.
 
 |`CamelSpringWebserviceAddressingAction` |URI |Use this header to specify the WS-Addressing action of the message,
@@ -199,9 +210,9 @@ outputAction option if present
 faultAction option if present
 |=======================================================================
 
-== Accessing web services
+### Accessing web services
 
-To call a web service at `\http://foo.com/bar` simply define a route:
+To call a web service at `http://foo.com/bar` simply define a route:
 
 [source,java]
 ---------------------------------------------------------
@@ -218,7 +229,7 @@ template.requestBody("direct:example", "<foobar xmlns=\"http://foo.com\"><msg>te
 Remember if it's a SOAP service you're calling you don't have to include
 SOAP tags. Spring-WS will perform the XML-to-SOAP marshaling.
 
-== Sending SOAP and WS-Addressing action headers
+### Sending SOAP and WS-Addressing action headers
 
 When a remote web service requires a SOAP action or use of the
 WS-Addressing standard you define your route as:
@@ -238,7 +249,7 @@ template.requestBodyAndHeader("direct:example",
 SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "http://baz.com");
 --------------------------------------------------------------------
 
-== Using SOAP headers
+### Using SOAP headers
 
 *Available as of Camel 2.11.1*
 
@@ -270,10 +281,10 @@ For an example see this
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring-ws/src/test/java/org/apache/camel/component/spring/ws/SoapHeaderTest.java[unit
 test].
 
-== The header and attachment propagation
+### The header and attachment propagation
 
 Spring WS Camel supports propagation of the headers and attachments into
-Spring-WS WebServiceMessage response. The
+Spring-WS WebServiceMessage response since version *2.10.3*. The
 endpoint will use so called "hook" the MessageFilter (default
 implementation is provided by BasicMessageFilter) to propagate the
 exchange headers and attachments into WebServiceMessage response. Now
@@ -289,7 +300,7 @@ Note: If the exchange header in the pipeline contains text, it generates
 Qname(key)=value attribute in the soap header. Recommended is to create
 a QName class directly and put into any key into header.
 
-== How to transform the soap header using a stylesheet
+### How to transform the soap header using a stylesheet
 The header transformation filter (HeaderTransformationMessageFilter.java)
 can be used to transform the soap header for a soap request. If you want to use 
 the header transformation filter, see the below example:
@@ -311,7 +322,7 @@ Use the bead defined above in the camel endpoint
 ------------------------------------------------------------------
 
 
-== How to use MTOM attachments
+### How to use MTOM attachments
 
 The BasicMessageFilter provides all required information for Apache
 Axiom in order to produce MTOM message. If you want to use Apache Camel
@@ -369,7 +380,7 @@ from("direct:send")
 - Now, your producer will generate MTOM message with otpmized
 attachments.
 
-== The custom header and attachment filtering
+### The custom header and attachment filtering
 
 If you need to provide your custom processing of either headers or
 attachments, extend existing BasicMessageFilter and override the
@@ -412,7 +423,7 @@ protected void doProcessSoapAttachements(Message inOrOut, SoapMessage response)
 { your code /*no need to call super*/ }
 -------------------------------------------------------------------------------
 
-== Using a custom MessageSender and MessageFactory
+### Using a custom MessageSender and MessageFactory
 
 A custom message sender or factory in the registry can be referenced
 like this:
@@ -445,7 +456,7 @@ Spring configuration:
 </bean>
 ---------------------------------------------------------------------------------------------------------------------
 
-== Exposing web services
+### Exposing web services
 
 In order to expose a web service using this component you first need to
 set-up a
@@ -504,13 +515,13 @@ comes in). Also don't forget to check out the
 Spring Web Services Example included in the
 Camel distribution.
 
-== Endpoint mapping in routes
+### Endpoint mapping in routes
 
 With the XML configuration in-place you can now use Camel's DSL to
 define what web service requests are handled by your endpoint:
 
 The following route will receive all web service requests that have a
-root element named "GetFoo" within the `\http://example.com/` namespace.
+root element named "GetFoo" within the `http://example.com/` namespace.
 
 [source,java]
 ----------------------------------------------------------------------------------------
@@ -519,7 +530,7 @@ from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointM
 ----------------------------------------------------------------------------------------
 
 The following route will receive web service requests containing the
-`\http://example.com/GetFoo` SOAP action.
+`http://example.com/GetFoo` SOAP action.
 
 [source,java]
 ---------------------------------------------------------------------------------------
@@ -528,7 +539,7 @@ from("spring-ws:soapaction:http://example.com/GetFoo?endpointMapping=#endpointMa
 ---------------------------------------------------------------------------------------
 
 The following route will receive all requests sent to
-`\http://example.com/foobar`.
+`http://example.com/foobar`.
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -546,7 +557,7 @@ from("spring-ws:xpathresult:abc?expression=//foobar&endpointMapping=#endpointMap
 .convertBodyTo(String.class).to(mock:example)
 --------------------------------------------------------------------------------------
 
-== Alternative configuration, using existing endpoint mappings
+### Alternative configuration, using existing endpoint mappings
 
 For every endpoint with mapping-type `beanname` one bean of type
 `CamelEndpointDispatcher` with a corresponding name is required in the
@@ -589,7 +600,7 @@ An example of a route using `beanname`:
 <bean id="FutureEndpointDispatcher" class="org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher" />
 ------------------------------------------------------------------------------------------------------------------------
 
-== POJO (un)marshalling
+### POJO (un)marshalling
 
 Camel's pluggable data formats offer support for
 pojo/xml marshalling using libraries such as JAXB, XStream, JibX, Castor
@@ -615,3 +626,10 @@ to POJO's and marshal the response message back to XML:
 from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointMapping").unmarshal(jaxb)
 .to("mock:example").marshal(jaxb);
 --------------------------------------------------------------------------------------------------------
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

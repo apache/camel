@@ -1,5 +1,4 @@
-[[sticky-eip]]
-== Sticky EIP
+= Sticky EIP
 
 Sticky Load Balancer. Sticky load balancing uses an Expression to calculate a correlation key to perform the sticky load balancing.
 

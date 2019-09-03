@@ -1,5 +1,4 @@
-[[removeProperties-eip]]
-== Remove Properties EIP
+= Remove Properties EIP
 
 The RemoveProperties EIP allows you to remove Properties from you exchange.
 

@@ -1,5 +1,4 @@
-[[sort-eip]]
-== Sort EIP
+= Sort EIP
 
 Sort can be used to sort a message. Imagine you consume text files and before processing each file you want to be sure the content is sorted.
 

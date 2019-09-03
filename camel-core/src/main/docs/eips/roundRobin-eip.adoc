@@ -1,5 +1,4 @@
-[[roundRobin-eip]]
-== Round Robin EIP
+= Round Robin EIP
 
 Round Robin Load Balancer. With this Load Balancing policy, a random endpoint is selected for each exchange.
 

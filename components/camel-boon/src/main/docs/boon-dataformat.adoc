@@ -1,6 +1,8 @@
-== Boon DataFormat (deprecated)
+[[boon-dataformat]]
+= Boon DataFormat (deprecated)
 
 *Available as of Camel version 2.16*
+
 
 Boon is a Data Format which uses the
 http://richardhightower.github.io/site/Boon/Welcome.html[Boon
@@ -29,7 +31,19 @@ The Boon dataformat supports 3 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-boon-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 4 options, which are listed below.

@@ -1,47 +1,108 @@
-[[Test]]
-= Test Module
+[[Test-TestComponent]]
+== Test Component
 
-The `camel-test` module is used for unit testing Camel.
+Testing of distributed and asynchronous processing is
+notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
+and <<dataset-component,DataSet>> endpoints work great with the
+Camel Testing Framework to simplify your unit and
+integration testing using
+link:enterprise-integration-patterns.html[Enterprise Integration
+Patterns] and Camel's large range of Components
+together with the powerful Bean Integration.
 
-The class `org.apache.camel.test.junit4.CamelTestSupport` provides a base JUnit class which you would extend
-and implement your Camel unit test.
+The *test* component extends the <<mock-component,Mock>> component to
+support pulling messages from another endpoint on startup to set the
+expected message bodies on the underlying <<mock-component,Mock>> endpoint.
+That is, you use the test endpoint in a route and messages arriving on
+it will be implicitly compared to some expected messages extracted from
+some other location.
 
-== Simple unit test example
+So you can use, for example, an expected set of message bodies as files.
+This will then set up a properly configured <<mock-component,Mock>>
+endpoint, which is only valid if the received messages match the number
+of expected messages and their message payloads are equal.
 
-As shown below is a basic junit test which uses `camel-test`. The `createRouteBuilder` method is used
-for build the routes to be tested. Then the methods with `@Test` annotations are JUnit test methods which
-will be executed. The base class `CamelTestSupport` has a number of helper methods to configure testing,
-see more at the javadoc of this class.
+Maven users will need to add the following dependency to their `pom.xml`
+for this component when using *Camel 2.8* or older:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+From Camel 2.9 onwards the <<test-component,Test>> component is provided
+directly in the camel-core.
+
+[[Test-URIformat]]
+URI format
+^^^^^^^^^^
 
 [source,java]
-----
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+--------------------------------
+test:expectedMessagesEndpointUri
+--------------------------------
 
-public class SimpleMockTest extends CamelTestSupport {
+Where *expectedMessagesEndpointUri* refers to some other
+Component URI that the expected message bodies are
+pulled from before starting the test.
 
-    @Test
-    public void testMock() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+[[Test-URIOptions]]
+URI Options
+^^^^^^^^^^^
 
-        template.sendBody("direct:start", "Hello World");
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Default Value |Description
 
-        assertMockEndpointsSatisfied();
-    }
+|`timeout` |`2000` |*Camel 2.12:* The timeout to use when polling for message bodies from
+the URI.
 
-    @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .to("mock:result");
-            }
-        };
-    }
+|anyOrder |false |*Camel 2.17:* Whether the expected messages should arrive in the same
+order or can be in any order.
 
-}
-----
+|split |false |*Camel 2.17:* If enabled the messages loaded from the test endpoint
+will be split using \n\r delimiters (new lines) so each line is an
+expected message. +
+For example to use a file endpoint to load a file where each line is an
+expected message. 
+
+|delimiter |\n,\r |*Camel 2.17:* The split delimiter to use when split is enabled. By
+default the delimiter is new line based. The delimiter can be a regular
+expression.
+|=======================================================================
+
+[[Test-Example]]
+Example
+^^^^^^^
+
+For example, you could write a test case as follows:
+
+[source,java]
+--------------------------------------------------
+from("seda:someEndpoint").
+  to("test:file://data/expectedOutput?noop=true");
+--------------------------------------------------
+
+If your test then invokes the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#assertIsSatisfied(org.apache.camel.CamelContext)[MockEndpoint.assertIsSatisfied(camelContext)
+method], your test case will perform the necessary assertions.
+
+To see how you can set other expectations on the test endpoint, see the
+<<mock-component,Mock>> component.
+
+[[Test-SeeAlso]]
+See Also
+^^^^^^^^
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* Spring Testing
 

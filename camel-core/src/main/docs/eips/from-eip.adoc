@@ -1,5 +1,4 @@
-[[from-eip]]
-== From EIP
+= From EIP
 Starting point for a Camel route that starts a route with a given endpoint. The endpoint can be from one of the many Camel link:https://github.com/apache/camel/tree/master/components[Components]. The component creates Camel exchanges from their respective sources and puts them into the route.
 
 === Options

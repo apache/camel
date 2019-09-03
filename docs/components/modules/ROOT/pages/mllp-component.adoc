@@ -1,19 +1,20 @@
+[[mllp-component]]
 = MLLP Component
 
 *Available as of Camel version 2.17*
 
 
 The MLLP component is specifically designed to handle the nuances of the
-MLLP protocol and provide the functionality required by Healthcare
+MLLP protocol and provide the functionality required by Healthcare
 providers to communicate with other systems using the MLLP protocol.
- The MLLP component  provides a simple configuration URI, automated HL7
+ The MLLP component  provides a simple configuration URI, automated HL7
 acknowledgment generation and automatic acknowledgement interrogation.
 
 The MLLP protocol does not typically use a large number of concurrent
 TCP connections - a single active TCP connection is the normal case.
- Therefore, the MLLP component uses a simple thread-per-connection model
+ Therefore, the MLLP component uses a simple thread-per-connection model
 based an standard Java Sockets. This keeps the implementation simple
-and eliminates the dependencies other than Camel itself.
+and eliminates the dependencies other than Camel itself.
 
 The component supports the following:
 
@@ -21,7 +22,7 @@ The component supports the following:
 * A Camel producer using a TCP Client
 
 The MLLP component uses byte[] payloads, and relies on Camel Type
-Conversion to convert byte[] to other types.  
+Conversion to convert byte[] to other types.  
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -36,7 +37,7 @@ for this component:
 </dependency>
 ---------------------------------------------------------
 
-== MLLP Options
+=== MLLP Options
 
 
 
@@ -72,7 +73,7 @@ mllp:hostname:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,7 +84,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (27 parameters):
+=== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -119,7 +120,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-mllp-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 31 options, which are listed below.
@@ -158,8 +171,8 @@ The component supports 31 options, which are listed below.
 | *camel.component.mllp.log-phi* | Set the component to log PHI data. | true | Boolean
 | *camel.component.mllp.log-phi-max-bytes* | Set the maximum number of bytes of PHI that will be logged in a log entry. | 5120 | Integer
 | *camel.component.mllp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.mllp.configuration.buffer-writes* | Enable/Disable the buffering of HL7 payloads before writing to the socket. | false | Boolean
-| *camel.component.mllp.configuration.max-receive-timeouts* | The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
+| *camel.component.mllp.configuration.buffer-writes* | *Deprecated* Enable/Disable the buffering of HL7 payloads before writing to the socket. | false | Boolean
+| *camel.component.mllp.configuration.max-receive-timeouts* | *Deprecated* The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
 |===
 // spring-boot-auto-configure options: END
 
@@ -170,44 +183,44 @@ The component supports 31 options, which are listed below.
 
 
 
-== MLLP Consumer
+=== MLLP Consumer
 
 The MLLP Consumer supports receiving MLLP-framed messages and sending
-HL7 Acknowledgements.  The MLLP Consumer can automatically generate the
+HL7 Acknowledgements.  The MLLP Consumer can automatically generate the
 HL7 Acknowledgement (HL7 Application Acknowledgements only - AA, AE and
 AR), or the acknowledgement can be specified using
-the CamelMllpAcknowledgement exchange property.  Additionally, the type
+the CamelMllpAcknowledgement exchange property.  Additionally, the type
 of acknowledgement that will be generated can be controlled by setting
 the CamelMllpAcknowledgementType exchange property.
 
-== *Message Headers*
+=== *Message Headers*
 
 The MLLP Consumer adds these headers on the Camel message:
 
 [width="100%",cols="<34%,<33%,<33%",]
 |===========================================
 |*Key* |*Description* |
-|CamelMllpLocalAddress | The local TCP Address of the Socket |
-|CamelMllpRemoteAddress | The local TCP Address of the Socket |
+|CamelMllpLocalAddress | The local TCP Address of the Socket |
+|CamelMllpRemoteAddress | The local TCP Address of the Socket |
 |CamelMllpSendingApplication | MSH-3 value |
 |CamelMllpSendingFacility | MSH-4 value |
 |CamelMllpReceivingApplication | MSH-5 value |
 |CamelMllpReceivingFacility | MSH-6 value |
 |CamelMllpTimestamp | MSH-7 value |
-|CamelMllpSecurity | MSH-8 value |
-|CamelMllpMessageType | MSH-9 value |
-|CamelMllpEventType | MSH-9-1 value |
-|CamelMllpTriggerEvent | MSH-9-2 value |
-|CamelMllpMessageControlId | MSH-10 value |
-|CamelMllpProcessingId | MSH-11 value |
-|CamelMllpVersionId | MSH-12 value |
-|CamelMllpCharset | MSH-18 value |
+|CamelMllpSecurity | MSH-8 value |
+|CamelMllpMessageType | MSH-9 value |
+|CamelMllpEventType | MSH-9-1 value |
+|CamelMllpTriggerEvent | MSH-9-2 value |
+|CamelMllpMessageControlId | MSH-10 value |
+|CamelMllpProcessingId | MSH-11 value |
+|CamelMllpVersionId | MSH-12 value |
+|CamelMllpCharset | MSH-18 value |
 |===========================================
 
-All headers are String types. If a header value is missing, its value
-is null.
+All headers are String types. If a header value is missing, its value
+is null.
 
-== *Exchange Properties*
+=== *Exchange Properties*
 
 The type of acknowledgment the MLLP Consumer generates and state of the TCP Socket can be controlled
 by these properties on the Camel exchange:
@@ -215,10 +228,10 @@ by these properties on the Camel exchange:
 [width="100%",cols="<34%,<33%,<33%",]
 |====================================
 |*Key* |*Type* |*Description*
-|CamelMllpAcknowledgement | byte[] | If present, this property will we sent to client as the MLLP Acknowledgement
-|CamelMllpAcknowledgementString | String | If present and CamelMllpAcknowledgement is not present, this property will we sent to client as the MLLP Acknowledgement
+|CamelMllpAcknowledgement | byte[] | If present, this property will we sent to client as the MLLP Acknowledgement
+|CamelMllpAcknowledgementString | String | If present and CamelMllpAcknowledgement is not present, this property will we sent to client as the MLLP Acknowledgement
 |CamelMllpAcknowledgementMsaText | String | If neither CamelMllpAcknowledgement or CamelMllpAcknowledgementString are present and autoAck is true, this property can be used to specify the contents of MSA-3 in the generated HL7 acknowledgement
-|CamelMllpAcknowledgementType | String  | If neither CamelMllpAcknowledgement or CamelMllpAcknowledgementString are present and autoAck is true, this property can be used to specify the HL7 acknowledgement type (i.e. AA, AE, AR)
+|CamelMllpAcknowledgementType | String  | If neither CamelMllpAcknowledgement or CamelMllpAcknowledgementString are present and autoAck is true, this property can be used to specify the HL7 acknowledgement type (i.e. AA, AE, AR)
 |CamelMllpAutoAcknowledge | Boolean | Overrides the autoAck query parameter
 
 |CamelMllpCloseConnectionBeforeSend | Boolean | If true, the Socket will be closed before sending data
@@ -230,29 +243,29 @@ by these properties on the Camel exchange:
 // REVISIT - Empty section is bad for AsciiDoc build
 //=== Consumer Configuration
 
-== MLLP Producer
+=== MLLP Producer
 
 The MLLP Producer supports sending MLLP-framed messages and receiving
-HL7 Acknowledgements.  The MLLP Producer interrogates the HL7
+HL7 Acknowledgements.  The MLLP Producer interrogates the HL7
 Acknowledgments and raises exceptions if a negative acknowledgement is
-received.  The received acknowledgement is interrogated and an exception
+received.  The received acknowledgement is interrogated and an exception
 is raised in the event of a negative acknowledgement.
 
-== *Message Headers*
+=== *Message Headers*
 
 The MLLP Producer adds these headers on the Camel message:
 
 [width="100%",cols="<34%,<33%,<33%",]
 |===================================
 |*Key* |*Description* |
-|CamelMllpLocalAddress | The local TCP Address of the Socket | 
-|CamelMllpRemoteAddress | The remote TCP Address of the Socket | 
-|CamelMllpAcknowledgement | The HL7 Acknowledgment byte[] received | 
-|CamelMllpAcknowledgementString | The HL7 Acknowledgment received, converted to a String | 
-|CamelMllpAcknowledgementType | The HL7 acknowledgement type (AA, AE, AR, etc)
+|CamelMllpLocalAddress | The local TCP Address of the Socket | 
+|CamelMllpRemoteAddress | The remote TCP Address of the Socket | 
+|CamelMllpAcknowledgement | The HL7 Acknowledgment byte[] received | 
+|CamelMllpAcknowledgementString | The HL7 Acknowledgment received, converted to a String | 
+|CamelMllpAcknowledgementType | The HL7 acknowledgement type (AA, AE, AR, etc)
 |===================================
 
-== *Exchange Properties*
+=== *Exchange Properties*
 
 The state of the TCP Socket can be controlled by these properties on the Camel exchange:
 

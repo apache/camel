@@ -1,3 +1,4 @@
+[[spring-redis-component]]
 = Spring Redis Component
 
 *Available as of Camel version 2.11*
@@ -7,16 +8,16 @@ This component allows sending and receiving messages from
 https://redis.io/[Redis]. Redis is advanced key-value store where
 keys can contain strings, hashes, lists, sets and sorted sets. In
 addition it provides pub/sub functionality for inter-app
-communications.
-Camel provides a producer for executing commands, consumer for
+communications. +
+ Camel provides a producer for executing commands, consumer for
 subscribing to pub/sub messages an idempotent repository for filtering
 out duplicate messages.
 
-NOTE: *Prerequisites:*
+INFO:*Prerequisites*
 In order to use this component, you must have a Redis server running.
 
 
-== URI Format
+### URI Format
 
 [source,java]
 ----------------------------------
@@ -26,7 +27,7 @@ spring-redis://host:port[?options]
 You can append query options to the URI in the following format,
 `?options=value&option2=value&...`
 
-== URI Options
+### URI Options
 
 
 // component options: START
@@ -44,7 +45,7 @@ spring-redis:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -55,7 +56,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -74,7 +75,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-spring-redis-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -91,12 +104,12 @@ The component supports 2 options, which are listed below.
 
 
 
-== Usage
+### Usage
 
 See also the unit tests available
-at https://github.com/apache/camel/tree/master/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis[https://github.com/apache/camel/tree/master/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis].
+at https://github.com/apache/camel/tree/master/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis[https://github.com/apache/camel/tree/master/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis].
 
-=== Message headers evaluated by the Redis producer
+#### Message headers evaluated by the Redis producer
 
 The producer issues commands to the server and each command has
 different set of parameters with specific types. The result from the
@@ -380,7 +393,7 @@ milliseconds |CamelRedis.Key (String), CamelRedis.Timestamp (Long) |Boolean
 |`PUBLISH` |Post a message to a channel |CamelRedis.Channel (String), CamelRedis.Message (Object) |void
 |=======================================================================
 
-== Dependencies
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -395,4 +408,12 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 -----------------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel.
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.11 or higher).
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

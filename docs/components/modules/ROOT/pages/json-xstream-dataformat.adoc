@@ -1,16 +1,18 @@
+[[json-xstream-dataformat]]
 = JSon XStream DataFormat
 
 *Available as of Camel version 2.0*
+
 
 XStream is a Data Format which uses the
 http://xstream.codehaus.org/[XStream library] to marshal and unmarshal
 Java objects to and from XML.
 
 To use XStream in your camel routes you need to add the a dependency
-on *camel-xstream* which implements this data format.
+on *camel-xstream* which implements this data format.
 
 Maven users will need to add the following dependency to their
-`pom.xml` for this component:
+`pom.xml` for this component:
 
 [source,xml]
 ----------------------------------------------------------
@@ -22,7 +24,7 @@ Maven users will need to add the following dependency to their
 </dependency>
 ----------------------------------------------------------
 
-== Options
+### Options
 
 // dataformat options: START
 The JSon XStream dataformat supports 19 options, which are listed below.
@@ -55,7 +57,7 @@ The JSon XStream dataformat supports 19 options, which are listed below.
 // dataformat options: END
 
 
-== Using the Java DSL
+### Using the Java DSL
 
 [source,java]
 -----------------------------------------------------------
@@ -81,3 +83,69 @@ from("direct:marshal").
   marshal(new XStreamDataFormat(xStream)).
   to("mock:marshaled");
 ---------------------------------------------------------
+
+### XMLInputFactory and XMLOutputFactory
+
+http://xstream.codehaus.org/[The XStream library] uses the
+`javax.xml.stream.XMLInputFactory` and
+`javax.xml.stream.XMLOutputFactory`, you can control which
+implementation of this factory should be used.
+
+The Factory is discovered using this algorithm: 
+ 1. Use the `javax.xml.stream.XMLInputFactory` ,
+`javax.xml.stream.XMLOutputFactory` system property. 
+ 2. Use the `lib/xml.stream.properties` file in the `JRE_HOME`
+directory. 
+ 3. Use the Services API, if available, to determine the classname by
+looking in the `META-INF/services/javax.xml.stream.XMLInputFactory`,
+`META-INF/services/javax.xml.stream.XMLOutputFactory` files in jars
+available to the JRE. 
+ 4. Use the platform default XMLInputFactory,XMLOutputFactory instance.
+
+### How to set the XML encoding in Xstream DataFormat?
+
+From Camel 2.2.0, you can set the encoding of XML in Xstream DataFormat
+by setting the Exchange's property with the key `Exchange.CHARSET_NAME`,
+or setting the encoding property on Xstream from DSL or Spring config.
+
+[source,java]
+-------------------------------
+from("activemq:My.Queue").
+  marshal().xstream("UTF-8").
+  to("mqseries:Another.Queue");
+-------------------------------
+
+### Setting the type permissions of Xstream DataFormat
+
+In Camel, one can always use its own processing step in the route to
+filter and block certain XML documents to be routed to the XStream's
+unmarhall step. From Camel 2.16.1, 2.15.5, you can
+set http://x-stream.github.io/security.html[XStream's type
+permissions] to automatically allow or deny the instantiation of certain
+types.
+
+The default type permissions setting used by Camel denies all types
+except for those from java.lang and java.util packages. This setting can
+be changed by setting System property
+org.apache.camel.xstream.permissions. Its value is a string of
+comma-separated permission terms, each representing a type being allowed
+or denied, depending on whether the term is prefixed with '+' (note '+'
+may be omitted) or with '-', respectively.
+
+Each term may contain a wildcard character '*'. For example, value
+"-*,java.lang.*,java.util.*" indicates denying all types except for
+java.lang.* and java.util.* classes. Setting this value to an empty
+string "" reverts to the default XStream's type permissions handling
+which denies certain blacklisted classes and allow others.
+
+The type permissions setting can be extended at an individual XStream
+DataFormat instance by setting its type permissions property.
+
+[source,java]
+-------------------------------------------------------------------
+    <dataFormats>
+        <xstream id="xstream-default" 
+                 permissions="org.apache.camel.samples.xstream.*"/>
+        ...
+
+-------------------------------------------------------------------

@@ -1,28 +1,29 @@
+[[ganglia-component]]
 = Ganglia Component
 
 *Available as of Camel version 2.15*
 
 
 Provides a mechanism to send a value (the message body) as a metric to
-the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j
-library.  Can be used in conjunction with standard
+the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j
+library.  Can be used in conjunction with standard
 http://ganglia.info[Ganglia] and
 https://github.com/ganglia/jmxetric[JMXetric] for monitoring metrics
 from the OS, JVM and business processes through a single platform.
 
 You should have a Ganglia gmond agent running on the machine where your
-JVM runs.  The gmond sends a heartbeat to the Ganglia infrastructure,
+JVM runs.  The gmond sends a heartbeat to the Ganglia infrastructure,
 camel-ganglia can't send the heartbeat itself currently.
 
 On most Linux systems (Debian, Ubuntu, Fedora and RHEL/CentOS with EPEL)
 you can just install the Ganglia agent package and it runs automatically
-using multicast configuration.  You can configure it to use regular UDP
+using multicast configuration.  You can configure it to use regular UDP
 unicast if you prefer.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
- 
+ 
 
 [source,xml]
 ----
@@ -34,7 +35,7 @@ for this component:
 </dependency>
 ----
 
-== URI format
+=== URI format
 
 [source,java]
 ----
@@ -44,7 +45,7 @@ ganglia:address:port[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== Ganglia component and endpoint URI options
+=== Ganglia component and endpoint URI options
 
 
 
@@ -77,7 +78,7 @@ ganglia:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (13 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,7 +111,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-ganglia-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 16 options, which are listed below.
@@ -142,23 +155,23 @@ The component supports 16 options, which are listed below.
 
 
 
-== Message body
+=== Message body
 
 Any value (such as a string or numeric type) in the body is sent to the
 Ganglia system.
 
-== Return value / response
+=== Return value / response
 
-Ganglia sends metrics using unidirectional UDP or multicast.  There is
+Ganglia sends metrics using unidirectional UDP or multicast.  There is
 no response or change to the message body.
 
-== Examples
+=== Examples
 
-=== Sending a String metric
+==== Sending a String metric
 
 The message body will be converted to a String and sent as a metric
-value.  Unlike numeric metrics, String values can't be charted but
-Ganglia makes them available for reporting.  The os_version string at
+value.  Unlike numeric metrics, String values can't be charted but
+Ganglia makes them available for reporting.  The os_version string at
 the top of every Ganglia host page is an example of a String metric.
 
 [source,java]
@@ -172,7 +185,7 @@ from("direct:ganglia.tx")
     .to("ganglia:239.2.11.71:8649?mode=MULTICAST&prefix=test");
 ----
 
-=== Sending a numeric metric
+==== Sending a numeric metric
 
 [source,java]
 ----

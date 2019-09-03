@@ -1,3 +1,4 @@
+[[stax-component]]
 = StAX Component
 
 *Available as of Camel version 2.9*
@@ -22,7 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 --------------------------
@@ -36,7 +37,8 @@ example:
 stax:org.superbiz.FooContentHandler
 -----------------------------------
 
-You can lookup a `org.xml.sax.ContentHandler` bean from the Registry
+From *Camel 2.11.1* onwards you can lookup a
+`org.xml.sax.ContentHandler` bean from the Registry
 using the # syntax as shown:
 
 [source,java]
@@ -44,7 +46,7 @@ using the # syntax as shown:
 stax:#myHandler
 ---------------
 
-== Options
+### Options
 
 
 // component options: START
@@ -62,7 +64,7 @@ stax:contentHandlerClass
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (1 parameters):
+=== Query Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -82,7 +84,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-stax-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -99,7 +113,7 @@ The component supports 2 options, which are listed below.
 
 
 
-== Usage of a content handler as StAX parser
+### Usage of a content handler as StAX parser
 
 The message body after the handling is the handler itself.
 
@@ -119,7 +133,7 @@ from("file:target/in")
   });
 --------------------------------------------------------------------------------------------------------
 
-== Iterate over a collection using JAXB and StAX
+### Iterate over a collection using JAXB and StAX
 
 First we suppose you have JAXB objects.
 
@@ -213,7 +227,7 @@ from("file:target/in")
 Where `stax` is a static method on
 `org.apache.camel.component.stax.StAXBuilder` which you can static
 import in the Java code. The stax builder is by default namespace aware
-on the XMLReader it uses. You can turn this
+on the XMLReader it uses. From *Camel 2.11.1* onwards you can turn this
 off by setting the boolean parameter to false, as shown below:
 
 [source,java]
@@ -223,6 +237,13 @@ from("file:target/in")
         .to("mock:records");
 -------------------------------------------------
 
-=== The previous example with XML DSL
+#### The previous example with XML DSL
 
 The example above could be implemented as follows in XML DSL
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

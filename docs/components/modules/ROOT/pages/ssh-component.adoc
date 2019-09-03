@@ -1,3 +1,4 @@
+[[ssh-component]]
 = SSH Component
 
 *Available as of Camel version 2.10*
@@ -19,14 +20,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 -----------------------------------------------
 ssh:[username[:password]@]host[:port][?options]
 -----------------------------------------------
 
-== Options
+### Options
 
 
 
@@ -69,7 +70,7 @@ ssh:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,7 +81,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (32 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -121,7 +122,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-ssh-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 32 options, which are listed below.
@@ -161,14 +174,14 @@ The component supports 32 options, which are listed below.
 | *camel.component.ssh.sleep-for-shell-prompt* | Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds. |  | Long
 | *camel.component.ssh.timeout* | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds. |  | Long
 | *camel.component.ssh.username* | Sets the username to use in logging into the remote SSH server. |  | String
-| *camel.component.ssh.cert-filename* | Sets the resource path of the certificate to use for Authentication. |  | String
-| *camel.component.ssh.configuration.cert-filename* | @deprecated As of version 2.11, replaced by             {@link #setCertResource(String)} |  | String
+| *camel.component.ssh.cert-filename* | *Deprecated* Sets the resource path of the certificate to use for Authentication. |  | String
+| *camel.component.ssh.configuration.cert-filename* | *Deprecated* @deprecated As of version 2.11, replaced by             {@link #setCertResource(String)} |  | String
 |===
 // spring-boot-auto-configure options: END
 
 
 
-== Usage as a Producer endpoint
+### Usage as a Producer endpoint
 
 When the SSH Component is used as a Producer (`.to("ssh://...")`), it
 will send the message body as the command to execute on the remote SSH
@@ -189,7 +202,7 @@ an XML encoded newline (`+&#10;+`).
 </route>
 ----------------------------------------------
 
-== Authentication
+### Authentication
 
 The SSH Component can authenticate against the remote SSH server using
 one of two mechanisms: Public Key certificate or username/password.
@@ -237,7 +250,8 @@ An example of using Public Key authentication is provided in
 Certificate Dependencies
 
 You will need to add some additional runtime dependencies if you use
-certificate based authentication. You may need to use later versions depending what version
+certificate based authentication. The dependency versions shown are as
+of Camel 2.11, you may need to use later versions depending what version
 of Camel you are using.
 
 [source,xml]
@@ -259,7 +273,14 @@ of Camel you are using.
 </dependency>
 -----------------------------------------
 
-== Example
+### Example
 
 See the `examples/camel-example-ssh` and
 `examples/camel-example-ssh-security` in the Camel distribution.
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

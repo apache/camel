@@ -1,9 +1,10 @@
+[[rabbitmq-component]]
 = RabbitMQ Component
 
 *Available as of Camel version 2.12*
 
 
-The RabbitMQ component allows you produce and consume messages from
+The *rabbitmq:* component allows you produce and consume messages from
 http://www.rabbitmq.com/[RabbitMQ] instances. Using the RabbitMQ AMQP
 client, this component offers a pure RabbitMQ approach over the generic
 http://camel.apache.org/amqp.html[AMQP] component.
@@ -21,7 +22,7 @@ for this component:
 </dependency>
 ----
 
-== URI format
+=== URI format
 
 The old syntax is *deprecated*:
 [source,text]
@@ -44,7 +45,7 @@ RabbitMQ client default (5672). The exchange name determines which
 exchange produced messages will sent to. In the case of consumers, the
 exchange name determines which exchange the queue will bind to.
 
-== Options
+=== Options
 
 // component options: START
 The RabbitMQ component supports 50 options, which are listed below.
@@ -84,7 +85,7 @@ The RabbitMQ component supports 50 options, which are listed below.
 | *guaranteedDeliveries* (producer) | When true, an exception will be thrown when the message cannot be delivered (basic.return) and the message is marked as mandatory. PublisherAcknowledgement will also be activated in this case. See also publisher acknowledgements - When will messages be confirmed. | false | boolean
 | *mandatory* (producer) | This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. If the header is present rabbitmq.MANDATORY it will override this option. | false | boolean
 | *immediate* (producer) | This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed. If the header is present rabbitmq.IMMEDIATE it will override this option. | false | boolean
-| *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
+| *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
 | *sslProtocol* (security) | Enables SSL on connection, accepted value are true, TLS and 'SSLv3 |  | String
 | *trustManager* (security) | Configure SSL trust manager, SSL should be enabled for this option to be effective |  | TrustManager
@@ -117,7 +118,7 @@ rabbitmq:exchangeName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -127,7 +128,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (62 parameters):
+=== Query Parameters (62 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -173,7 +174,7 @@ with the following path and query parameters:
 | *mandatory* (producer) | This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. If the header is present rabbitmq.MANDATORY it will override this option. | false | boolean
 | *publisherAcknowledgements* (producer) | When true, the message will be published with publisher acknowledgements turned on | false | boolean
 | *publisherAcknowledgements Timeout* (producer) | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server |  | long
-| *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
+| *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | *automaticRecoveryEnabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
 | *bindingArgs* (advanced) | *Deprecated* Key/value args for configuring the queue binding parameters when declare=true |  | Map
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
@@ -198,7 +199,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-rabbitmq-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 51 options, which are listed below.
@@ -210,7 +223,7 @@ The component supports 51 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.rabbitmq.addresses* | If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345, server2:12345 |  | String
 | *camel.component.rabbitmq.allow-null-headers* | Allow pass null values to header | false | Boolean
-| *camel.component.rabbitmq.args* | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
+| *camel.component.rabbitmq.args* | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | *camel.component.rabbitmq.auto-ack* | If messages should be auto acknowledged | true | Boolean
 | *camel.component.rabbitmq.auto-delete* | If it is true, the exchange will be deleted when it is no longer in use | true | Boolean
 | *camel.component.rabbitmq.auto-detect-connection-factory* | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | Boolean
@@ -268,7 +281,7 @@ See
 http://www.rabbitmq.com/releases/rabbitmq-java-client/current-javadoc/com/rabbitmq/client/ConnectionFactory.html[http://www.rabbitmq.com/releases/rabbitmq-java-client/current-javadoc/com/rabbitmq/client/ConnectionFactory.html]
 and the AMQP specification for more information on connection options.
 
-== Using connection factory
+=== Using connection factory
 
 To connect to RabbitMQ you can setup a `ConnectionFactory` (same as with JMS) with the login details such as:
 
@@ -291,7 +304,7 @@ And then refer to the connection factory in the endpoint uri as shown below:
 </camelContext>
 ----
 
-The `ConnectionFactory` is auto-detected by default, so you can just do
+From Camel 2.21 onwards the `ConnectionFactory` is auto-detected by default, so you can just do
 
 [source,xml]
 ----
@@ -304,7 +317,7 @@ The `ConnectionFactory` is auto-detected by default, so you can just do
 ----
 
 
-== Message Headers
+=== Message Headers
 
 The following headers are set on exchanges when consuming messages.
 
@@ -321,13 +334,13 @@ that will be used when producing a message
 
 |`rabbitmq.REDELIVERY_TAG` |Whether the message is a redelivered
 
-|`rabbitmq.REQUEUE` |This is used by the consumer to control rejection of the
+|`rabbitmq.REQUEUE` |*Camel 2.14.2:* This is used by the consumer to control rejection of the
 message. When the consumer is complete processing the exchange, and if
 the exchange failed, then the consumer is going to reject the message
 from the RabbitMQ broker. The value of this header controls this
 behavior. If the value is false (by default) then the message is
 discarded/dead-lettered. If the value is true, then the message is
-re-queued. 
+re-queued. 
 |===
 
 The following headers are used by the producer. If these are set on the
@@ -341,7 +354,7 @@ camel exchange then they will be set on the RabbitMQ message.
 
 |`rabbitmq.EXCHANGE_NAME` |The exchange the message was received from
 
-|`rabbitmq.EXCHANGE_OVERRIDE_NAME` |Used for force sending the message to this exchange instead of the endpoint configured name on the producer
+|`rabbitmq.EXCHANGE_OVERRIDE_NAME` | *Camel 2.21:* Used for force sending the message to this exchange instead of the endpoint configured name on the producer
 
 |`rabbitmq.CONTENT_TYPE` |The contentType to set on the RabbitMQ message
 
@@ -375,14 +388,14 @@ producer will also set the headers for downstream processors once the
 exchange has taken place. Any headers set prior to production that the
 producer sets will be overriden.
 
-== Message Body
+=== Message Body
 
 The component will use the camel exchange in body as the rabbit mq
 message body. The camel exchange in object must be convertible to a byte
 array. Otherwise the producer will throw an exception of unsupported
 body type.
 
-== Samples
+=== Samples
 
 To receive messages from a queue that is bound to an exchange A with the
 routing key B,
@@ -424,4 +437,52 @@ For example declaring a method in spring
 public Map<String, Object> bindArgsBuilder() {
     return Collections.singletonMap("foo", "bar");
 }
+----
+
+==== Issue when routing between exchanges (in Camel 2.20.x or older)
+
+If you for example want to route messages from one Rabbit exchange to another as shown
+in the example below with foo -> bar:
+
+[source,java]
+----
+from("rabbitmq:foo")
+  .to("rabbitmq:bar")
+----
+
+Then beware that Camel will route the message to itself, eg foo -> foo. So why is that?
+This is because the consumer that receives the message (eg from) provides the message header
+`rabbitmq.EXCHANGE_NAME` with the name of the exchange, eg `foo`. And when the Camel producer
+is sending the message to `bar` then the header `rabbitmq.EXCHANGE_NAME` will override this
+and instead send the message to `foo`.
+
+To avoid this you need to either:
+
+- Remove the header:
+
+[source,java]
+----
+from("rabbitmq:foo")
+  .removeHeader("rabbitmq.EXCHANGE_NAME")
+  .to("rabbitmq:bar")
+----
+
+- Or turn on `bridgeEndpoint` mode on the producer:
+
+[source,java]
+----
+from("rabbitmq:foo")
+  .to("rabbitmq:bar?bridgeEndpoint=true")
+----
+
+From Camel 2.21 onwards this has been improved so you can easily route between exchanges.
+The header `rabbitmq.EXCHANGE_NAME` is not longer used by the producer to override the destination exchange.
+Instead a new header `rabbitmq.EXCHANGE_OVERRIDE_NAME` can be used to send to a different exchange.
+For example to send to cheese exchange you can do
+
+[source,java]
+----
+from("rabbitmq:foo")
+  .setHeader("rabbitmq.EXCHANGE_OVERRIDE_NAME", constant("cheese"))
+  .to("rabbitmq:bar")
 ----

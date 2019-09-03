@@ -1,15 +1,16 @@
+[[barcode-dataformat]]
 = Barcode DataFormat
 
 *Available as of Camel version 2.14*
 
 
-The Barcode data format is based on the
+The barcode data format is based on the
 https://github.com/zxing/zxing[zxing library]. The goal of this
 component is to create a barcode image from a String (marshal) and a
 String from a barcode image (unmarshal). You're free to use all features
 that zxing offers.
 
-== Dependencies
+### Dependencies
 
 To use the barcode data format in your camel routes you need to add the
 a dependency on *camel-barcode* which implements this data format.
@@ -27,7 +28,7 @@ the download page for the latest versions).
 </dependency>
 ----------------------------------------
 
-== Barcode Options
+### Barcode Options
 
 // dataformat options: START
 The Barcode dataformat supports 5 options, which are listed below.
@@ -45,7 +46,19 @@ The Barcode dataformat supports 5 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-barcode-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 6 options, which are listed below.
@@ -65,7 +78,7 @@ The component supports 6 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-== Using the Java DSL
+### Using the Java DSL
 
 First you have to initialize the barcode data fomat class. You can use
 the default constructor, or one of parameterized (see JavaDoc). The
@@ -101,7 +114,7 @@ code.addToHintMap(DecodeHintType.TRY_HARDER, Boolean.true);
 
 For possible hints, please consult the xzing documentation.
 
-=== Marshalling
+#### Marshalling
 
 [source,java]
 ----------------------------
@@ -119,9 +132,9 @@ template.sendBody("direct://code", "This is a testmessage!");
 
 You should find inside the 'barcode_out' folder this image:
 
-image::qr-code.png[image]
+image:qr-code.png[image]
 
-=== Unmarshalling
+#### Unmarshalling
 
 The unmarshaller is generic. For unmarshalling you can use any
 BarcodeDataFormat instance. If you've two instances, one for
@@ -146,6 +159,6 @@ the barcode data format as header variable:
 
 |BarcodeFormat |String |Value of com.google.zxing.BarcodeFormat.
 |=======================================================================
- 
+ 
 
- 
+ 

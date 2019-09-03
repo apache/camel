@@ -1,7 +1,8 @@
 [[spark-rest-component]]
-== Spark Rest Component
+= Spark Rest Component
 
 *Available as of Camel version 2.14*
+
 
 The Spark-rest component allows to define REST endpoints using the
 http://sparkjava.com/[Spark REST Java library] using the
@@ -67,7 +68,7 @@ spark-rest:verb:path
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

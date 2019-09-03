@@ -1,5 +1,4 @@
-[[toD-eip]]
-== To D EIP
+= To D EIP
 
 There is a new `.toD` / `<toD>` that allows to send a message to a dynamic
 computed <<Endpoint-Endpoints,Endpoint>> using one or
@@ -216,5 +215,3 @@ during startup if `toD` was optimised, or if there was a failure loading the opt
 ----
 Detected SendDynamicAware component: http optimising toD: http:myloginserver:8080/login?userid=${header.userName}
 ----
-
-

@@ -1,5 +1,4 @@
-[[inOnly-eip]]
-== In Only EIP
+= In Only EIP
 
 The *inOnly:* EIP define an InOnly ExchangePattern.
 

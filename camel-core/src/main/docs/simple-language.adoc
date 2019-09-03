@@ -1,5 +1,5 @@
 [[simple-language]]
-== Simple Language
+= Simple Language
 
 *Available as of Camel version 1.1*
 

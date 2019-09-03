@@ -1,5 +1,4 @@
-[[recipientList-eip]]
-== Recipient List EIP
+= Recipient List EIP
 The link:http://www.enterpriseintegrationpatterns.com/RecipientList.html[Recipient List] from the EIP patterns allows you to route messages to a number of dynamically specified recipients.
 
 image:http://www.enterpriseintegrationpatterns.com/img/RecipientList.gif[image]

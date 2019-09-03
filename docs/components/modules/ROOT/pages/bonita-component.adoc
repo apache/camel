@@ -1,3 +1,4 @@
+[[bonita-component]]
 = Bonita Component
 
 *Available as of Camel version 2.19*
@@ -5,7 +6,7 @@
 
 Used for communicating with a remote Bonita BPM process engine.
 
-== URI format
+### URI format
 
 [source,java]
 ------------------------------
@@ -14,7 +15,7 @@ bonita://[operation]?[options]
 
 Where *operation* is the specific action to perform on Bonita.
 
-== General Options
+### General Options
 
 // component options: START
 The Bonita component has no options.
@@ -30,7 +31,7 @@ bonita:operation
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -40,7 +41,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -58,7 +59,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-bonita-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -74,12 +87,12 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Body content
+### Body content
 
 For the startCase operation, the input variables are retrieved from the body message. This one has to contains a Map<String,Serializable>.
 
 
-== Examples
+### Examples
 
 The following example start a new case in Bonita:
 
@@ -88,7 +101,7 @@ The following example start a new case in Bonita:
 from("direct:start").to("bonita:startCase?hostname=localhost&amp;port=8080&amp;processName=TestProcess&amp;username=install&amp;password=install")
 ----------------------------------------------------------------------
 
-== Dependencies
+### Dependencies
 
 To use Bonita in your Camel routes you need to add a dependency on
 *camel-bonita*, which implements the component.

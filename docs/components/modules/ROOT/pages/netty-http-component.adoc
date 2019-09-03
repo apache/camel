@@ -1,30 +1,28 @@
+[[netty-http-component]]
 = Netty HTTP Component (deprecated)
 
-*Available as of Camel version 2.14*
 *Available as of Camel version 2.12*
 
 
-The Netty HTTP component is an extension to xref:netty-component.adoc[Netty]
-component to facilitiate HTTP transport with xref:netty-component.adoc[Netty].
+The *netty-http* component is an extension to <<netty-component,Netty>>
+component to facilitiate HTTP transport with <<netty-component,Netty>>.
 
 This camel component supports both producer and consumer endpoints.
 
+WARNING: This component is deprecated. You should use
+<<netty4-http-component,Netty4 HTTP>>.
 
-[NOTE]
-====
-*Stream*
-
+INFO: *Stream*.
 Netty is stream based, which means the input it receives is submitted to
 Camel as a stream. That means you will only be able to read the content
 of the stream *once*. If you find a situation where the message body appears to be empty or
 you need to access the data multiple times (eg: doing multicasting, or
 redelivery error handling) you should use Stream caching or convert the
-message body to a `String` which is safe to be re-read multiple times. 
-Notice Netty HTTP reads the entire stream into memory using
+message body to a `String` which is safe to be re-read multiple times.
+Notice Netty4 HTTP reads the entire stream into memory using
 `io.netty.handler.codec.http.HttpObjectAggregator` to build the entire
 full http message. But the resulting message is still a stream based
 message which is readable once.
-====
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -39,51 +37,42 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 The URI scheme for a netty component is as follows
 
 [source,java]
--------------------------------------------
+------------------------------------------
 netty-http:http://0.0.0.0:8080[?options]
--------------------------------------------
+------------------------------------------
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-
-[NOTE]
-====
-*Query parameters vs endpoint options*
-
-You may be wondering how Camel recognizes URI query parameters and
-endpoint options. For example you might create endpoint URI as follows:
+INFO: *Query parameters vs endpoint options*. You may be wondering how Camel recognizes URI query parameters and
+endpoint options. For example you might create endpoint URI as follows -
 `netty-http:http//example.com?myParam=myValue&compression=true` . In
 this example `myParam` is the HTTP parameter, while `compression` is the
 Camel endpoint option. The strategy used by Camel in such situations is
 to resolve available endpoint options and remove them from the URI. It
 means that for the discussed example, the HTTP request sent by Netty
-HTTP producer to the endpoint will look as follows:
-`http//example.com?myParam=myValue`, because `compression` endpoint
+HTTP producer to the endpoint will look as follows
+- `http//example.com?myParam=myValue` , because `compression` endpoint
 option will be resolved and removed from the target URL.
 Keep also in mind that you cannot specify endpoint options using dynamic
 headers (like `CamelHttpQuery`). Endpoint options can be specified only
 at the endpoint URI definition level (like `to` or `from` DSL elements).
-====
 
-== HTTP Options
 
-[IMPORTANT]
-====
-*A lot more options*
+### HTTP Options
 
-This component inherits all the options from
-xref:netty-component.adoc[Netty], so make sure to look at
-the xref:netty-component.adoc[Netty] documentation as well.
-Notice that some options from xref:netty-component.adoc[Netty] is not
-applicable when using this Netty HTTP component, such as options
-related to UDP transport.
-====
+INFO: *A lot more options*. *Important:* This component inherits all the options from
+<<netty-component,Netty>>. So make sure to look at the
+<<netty-component,Netty>> documentation as well. +
+ Notice that some options from <<netty-component,Netty>> is not applicable
+when using this <<netty-http-component,Netty HTTP>> component, such as
+options related to UDP transport.
+
 
 
 
@@ -113,8 +102,6 @@ The Netty HTTP component supports 7 options, which are listed below.
 
 
 
-
-
 // endpoint options: START
 The Netty HTTP endpoint is configured using URI syntax:
 
@@ -124,7 +111,7 @@ netty-http:protocol:host:port/path
 
 with the following path and query parameters:
 
-==== Path Parameters (4 parameters):
+=== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -137,7 +124,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (78 parameters):
+=== Query Parameters (78 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -224,7 +211,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-netty-http-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 31 options, which are listed below.
@@ -272,9 +271,7 @@ The component supports 31 options, which are listed below.
 
 
 
-
-
-== Message Headers
+### Message Headers
 
 The following headers can be used on the producer to control the HTTP
 request.
@@ -284,17 +281,18 @@ request.
 |Name |Type |Description
 
 |`CamelHttpMethod` |`String` |Allow to control what HTTP method to use such as GET, POST, TRACE etc.
-The type can also be a `io.netty.handler.codec.http.HttpMethod`
+The type can also be a `org.jboss.netty.handler.codec.http.HttpMethod`
 instance.
 
 |`CamelHttpQuery` |`String` |Allows to provide URI query parameters as a `String` value that
 overrides the endpoint configuration. Separate multiple parameters using
 the & sign. For example: `foo=bar&beer=yes`.
 
-|`CamelHttpPath` |`String` |Allows to provide URI context-path and query parameters as a `String`
-value that overrides the endpoint configuration. This allows to reuse
-the same producer for calling same remote http server, but using a
-dynamic context-path and query parameters.
+|`CamelHttpPath` |`String` |*Camel 2.13.1/2.12.4:* Allows to provide URI context-path and query
+parameters as a `String` value that overrides the endpoint
+configuration. This allows to reuse the same producer for calling same
+remote http server, but using a dynamic context-path and query
+parameters.
 
 |`Content-Type` |`String` |To set the content-type of the HTTP body. For example:
 `text/plain; charset="UTF-8"`.
@@ -304,7 +302,7 @@ success, and 500 for failure.
 |=======================================================================
 
 The following headers is provided as meta-data when a route starts from
-an Netty HTTP endpoint:
+an <<netty-http-component,Netty HTTP>> endpoint:
 
 The description in the table takes offset in a route having:
 `from("netty-http:http:0.0.0.0:8080/myapp")...`
@@ -315,16 +313,15 @@ The description in the table takes offset in a route having:
 
 |`CamelHttpMethod` |`String` |The HTTP method used, such as GET, POST, TRACE etc.
 
-|`CamelHttpUrl` |`String` |The URL including protocol, host and port, etc: 
-`\http://0.0.0.0:8080/myapp`
+|`CamelHttpUrl` |`String` |The URL including protocol, host and port, etc
 
-|`CamelHttpUri` |`String` |The URI without protocol, host and port, etc:
-`/myapp`
+|`CamelHttpUri` |`String` |The URI without protocol, host and port, etc
 
 |`CamelHttpQuery` |`String` |Any query parameters, such as `foo=bar&beer=yes`
 
-|`CamelHttpRawQuery` |`String` |Any query parameters, such as `foo=bar&beer=yes`. Stored in the raw
-form, as they arrived to the consumer (i.e. before URL decoding).
+|`CamelHttpRawQuery` |`String` |*Camel 2.13.0*: Any query parameters, such as `foo=bar&beer=yes`. Stored
+in the raw form, as they arrived to the consumer (i.e. before URL
+decoding).
 
 |`CamelHttpPath` |`String` |Additional context-path. This value is empty if the client called the
 context-path `/myapp`. If the client calls `/myapp/mystuff`, then this
@@ -336,11 +333,10 @@ context-path configured on the route endpoint.
 |`CamelHttpAuthentication` |`String` |If the user was authenticated using HTTP Basic then this header is added
 with the value `Basic`.
 
-|`Content-Type` |`String` |The content type if provided. For example:
-`text/plain; charset="UTF-8"`.
+|`Content-Type` |`String` | The content type if provided. For example: `text/plain; charset="UTF-8"`.
 |=======================================================================
 
-== Access to Netty types
+### Access to Netty types
 
 This component uses the
 `org.apache.camel.component.netty.http.NettyHttpMessage` as the message
@@ -350,72 +346,72 @@ needed, as shown below. Mind that the original response may not be
 accessible at all times.
 
 [source,java]
-----------------------------------------------------------------------------------------------------------
-io.netty.handler.codec.http.HttpRequest request = exchange.getIn(NettyHttpMessage.class).getHttpRequest();
-----------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------
+org.jboss.netty.handler.codec.http.HttpRequest request = exchange.getIn(NettyHttpMessage.class).getHttpRequest();
+-----------------------------------------------------------------------------------------------------------------
 
-== Examples
+### Examples
 
-In the route below we use Netty HTTP as a HTTP server, which returns
-back a hardcoded "Bye World" message.
+In the route below we use <<netty-http-component,Netty HTTP>> as a HTTP
+server, which returns back a hardcoded "Bye World" message.
 
 [source,java]
------------------------------------------------
+----------------------------------------------
     from("netty-http:http://0.0.0.0:8080/foo")
       .transform().constant("Bye World");
------------------------------------------------
+----------------------------------------------
 
 And we can call this HTTP server using Camel also, with the
 ProducerTemplate as shown below:
 
 [source,java]
-------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
     String out = template.requestBody("netty-http:http://0.0.0.0:8080/foo", "Hello World", String.class);
     System.out.println(out);
-------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
 
 And we get back "Bye World" as the output.
 
-=== How do I let Netty match wildcards
+### How do I let Netty match wildcards
 
-By default Netty HTTP will only match on exact uri's. But you can
-instruct Netty to match prefixes. For example
+By default <<netty-http-component,Netty HTTP>> will only match on exact
+uri's. But you can instruct Netty to match prefixes. For example
 
 [source,java]
------------------------------------------------------------
+----------------------------------------------------------
 from("netty-http:http://0.0.0.0:8123/foo").to("mock:foo");
------------------------------------------------------------
+----------------------------------------------------------
 
-In the route above Netty HTTP will only match if the uri is an exact
-match, so it will match if you enter +
- `\http://0.0.0.0:8123/foo` but not match if you do
-`\http://0.0.0.0:8123/foo/bar`.
+In the route above <<netty-http-component,Netty HTTP>> will only match if
+the uri is an exact match, so it will match if you enter +
+ `http://0.0.0.0:8123/foo` but not match if you do
+`http://0.0.0.0:8123/foo/bar`.
 
 So if you want to enable wildcard matching you do as follows:
 
 [source,java]
----------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 from("netty-http:http://0.0.0.0:8123/foo?matchOnUriPrefix=true").to("mock:foo");
----------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 So now Netty matches any endpoints with starts with `foo`.
 
 To match *any* endpoint you can do:
 
 [source,java]
------------------------------------------------------------------------------
+----------------------------------------------------------------------------
 from("netty-http:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
------------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
-=== Using multiple routes with same port
+### Using multiple routes with same port
 
 In the same CamelContext you can have multiple
-routes from Netty HTTP that shares the same port (eg a
-`io.netty.bootstrap.ServerBootstrap` instance). Doing this requires a
-number of bootstrap options to be identical in the routes, as the routes
-will share the same `io.netty.bootstrap.ServerBootstrap` instance. The
-instance will be configured with the options from the first route
-created.
+routes from <<netty-http-component,Netty HTTP>> that shares the same port
+(eg a `org.jboss.netty.bootstrap.ServerBootstrap` instance). Doing this
+requires a number of bootstrap options to be identical in the routes, as
+the routes will share the same
+`org.jboss.netty.bootstrap.ServerBootstrap` instance. The instance will
+be configured with the options from the first route created.
 
 The options the routes must be identical configured is all the options
 defined in the
@@ -430,7 +426,7 @@ Here is an example with two routes that share the same port.
 *Two routes sharing the same port*
 
 [source,java]
------------------------------------------------
+----------------------------------------------
 from("netty-http:http://0.0.0.0:{{port}}/foo")
   .to("mock:foo")
   .transform().constant("Bye World");
@@ -438,7 +434,7 @@ from("netty-http:http://0.0.0.0:{{port}}/foo")
 from("netty-http:http://0.0.0.0:{{port}}/bar")
   .to("mock:bar")
   .transform().constant("Bye Camel");
------------------------------------------------
+----------------------------------------------
 
 And here is an example of a mis configured 2nd route that do not have
 identical
@@ -460,27 +456,28 @@ from("netty-http:http://0.0.0.0:{{port}}/bar?ssl=true")
   .transform().constant("Bye Camel");
 --------------------------------------------------------------------------------------
 
-=== Reusing same server bootstrap configuration with multiple routes
+#### Reusing same server bootstrap configuration with multiple routes
 
 By configuring the common server bootstrap option in an single instance
 of a
 `org.apache.camel.component.netty.NettyServerBootstrapConfiguration`
-type, we can use the `bootstrapConfiguration` option on the Netty HTTP
-consumers to refer and reuse the same options across all consumers.
+type, we can use the `bootstrapConfiguration` option on the
+<<netty-http-component,Netty HTTP>> consumers to refer and reuse the same
+options across all consumers.
 
 [source,xml]
------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
 <bean id="nettyHttpBootstrapOptions" class="org.apache.camel.component.netty.NettyServerBootstrapConfiguration">
   <property name="backlog" value="200"/>
-  <property name="connectionTimeout" value="20000"/>
+  <property name="connectTimeout" value="20000"/>
   <property name="workerCount" value="16"/>
 </bean>
------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
 
 And in the routes you refer to this option as shown below
 
 [source,xml]
-----------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------
 <route>
   <from uri="netty-http:http://0.0.0.0:{{port}}/foo?bootstrapConfiguration=#nettyHttpBootstrapOptions"/>
   ...
@@ -495,56 +492,26 @@ And in the routes you refer to this option as shown below
   <from uri="netty-http:http://0.0.0.0:{{port}}/beer?bootstrapConfiguration=#nettyHttpBootstrapOptions"/>
   ...
 </route>
-----------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------
 
-=== Reusing same server bootstrap configuration with multiple routes across multiple bundles in OSGi container
+#### Reusing same server bootstrap configuration with multiple routes across multiple bundles in OSGi container
 
 See the Netty HTTP Server Example
 for more details and example how to do that.
 
-=== Implementing a reverse proxy
+### Using HTTP Basic Authentication
 
-Netty HTTP component can act as a reverse proxy, in that case
-`Exchange.HTTP_SCHEME`, `Exchange.HTTP_HOST` and
-`Exchange.HTTP_PORT` headers are populated from the absolute
-URL received on the request line of the HTTP request.
-
-Here's an example of a HTTP proxy that simply transforms the response
-from the origin server to uppercase.
+The <<netty-http-component,Netty HTTP>> consumer supports HTTP basic
+authentication by specifying the security realm name to use, as shown
+below
 
 [source,java]
-------------------------------------------------------------------------------------------
-from("netty-http:proxy://0.0.0.0:8080")
-    .toD("netty-http:"
-        + "${headers." + Exchange.HTTP_SCHEME + "}://"
-        + "${headers." + Exchange.HTTP_HOST + "}:"
-        + "${headers." + Exchange.HTTP_PORT + "}")
-    .process(this::processResponse);
-
-void processResponse(final Exchange exchange) {
-    final NettyHttpMessage message = exchange.getIn(NettyHttpMessage.class);
-    final FullHttpResponse response = message.getHttpResponse();
-
-    final ByteBuf buf = response.content();
-    final String string = buf.toString(StandardCharsets.UTF_8);
-
-    buf.resetWriterIndex();
-    ByteBufUtil.writeUtf8(buf, string.toUpperCase(Locale.US));
-}
-------------------------------------------------------------------------------------------
-
-== Using HTTP Basic Authentication
-
-The Netty HTTP consumer supports HTTP basic authentication by specifying
-the security realm name to use, as shown below
-
-[source,java]
-------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
 <route>
    <from uri="netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=karaf"/>
    ...
 </route>
-------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
 
 The realm name is mandatory to enable basic authentication. By default
 the JAAS based authenticator is used, which will use the realm name
@@ -555,10 +522,10 @@ End user of Apache Karaf / ServiceMix has a karaf realm out of the box,
 and hence why the example above would work out of the box in these
 containers.
 
-=== Specifying ACL on web resources
+#### Specifying ACL on web resources
 
-The `org.apache.camel.component.netty.http.SecurityConstraint` allows
-to define constrains on web resources. And the
+The `org.apache.camel.component.netty.http.SecurityConstraint` allows to
+define constrains on web resources. And the
 `org.apache.camel.component.netty.http.SecurityConstraintMapping` is
 provided out of the box, allowing to easily define inclusions and
 exclusions with roles.
@@ -567,7 +534,7 @@ For example as shown below in the XML DSL, we define the constraint
 bean:
 
 [source,xml]
--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
   <bean id="constraint" class="org.apache.camel.component.netty.http.SecurityConstraintMapping">
     <!-- inclusions defines url -> roles restrictions -->
     <!-- a * should be used for any role accepted (or even no roles) -->
@@ -585,7 +552,7 @@ bean:
       </set>
     </property>
   </bean>
--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 
 The constraint above is define so that
 
@@ -600,9 +567,20 @@ To use this constraint we just need to refer to the bean id as shown
 below:
 
 [source,xml]
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 <route>
    <from uri="netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true&amp;securityConfiguration.realm=karaf&amp;securityConfiguration.securityConstraint=#constraint"/>
    ...
 </route>
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* <<netty-component,Netty>>
+* Netty HTTP Server Example
+* <<jetty-component,Jetty>>

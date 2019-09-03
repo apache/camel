@@ -1,5 +1,4 @@
-[[script-eip]]
-== Script EIP
+= Script EIP
 *Available as of Camel 2.16*
 
 Is used to execute a script which does not change the message (by default).

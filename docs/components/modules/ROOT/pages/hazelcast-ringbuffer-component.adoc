@@ -1,12 +1,15 @@
+[[hazelcast-ringbuffer-component]]
 = Hazelcast Ringbuffer Component
 
 *Available as of Camel version 2.16*
 
 
-The http://www.hazelcast.com/[Hazelcast] ringbuffer component is one of Camel Hazelcast Components which allows you to access Hazelcast ringbuffer.
-Ringbuffer is a distributed data structure where the data is stored in a ring-like structure. You can think of it as a circular array with a certain capacity. 
+*Avalaible from Camel 2.16*
 
-== Options
+The http://www.hazelcast.com/[Hazelcast] ringbuffer component is one of Camel Hazelcast Components which allows you to access Hazelcast ringbuffer.
+Ringbuffer is a distributed data structure where the data is stored in a ring-like structure. You can think of it as a circular array with a certain capacity. 
+
+### Options
 
 // component options: START
 The Hazelcast Ringbuffer component supports 3 options, which are listed below.
@@ -31,7 +34,7 @@ hazelcast-ringbuffer:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -41,7 +44,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -60,7 +63,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hazelcast-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 6 options, which are listed below.
@@ -82,7 +97,7 @@ The component supports 6 options, which are listed below.
 
 
 
-== ringbuffer cache producer 
+### ringbuffer cache producer 
 
 The ringbuffer producer provides 5 operations:
 * add
@@ -102,7 +117,7 @@ Header Variables for the request message:
 |`CamelHazelcastObjectId` |`String` |the object id to store / find your object inside the cache
 |=======================================================================
 
-=== Sample for *put*:
+#### Sample for *put*:
 
 Java DSL:
 
@@ -120,14 +135,15 @@ Spring DSL:
 <route>
     <from uri="direct:put" />
     <log message="put.."/>
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>add</constant>
     </setHeader>
     <to uri="hazelcast-ringbuffer:foo" />
 </route>
 -----------------------------------------------------------------------------------------------
 
-=== Sample for *readonce from head*:
+#### Sample for *readonce from head*:
 
 Java DSL:
 

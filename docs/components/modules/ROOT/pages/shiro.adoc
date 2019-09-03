@@ -1,9 +1,9 @@
 [[ShiroSecurity-ShiroSecurityComponent]]
-= Shiro Security Component
+== Shiro Security Component
 
 *Available as of Camel 2.5*
 
-The Shiro Security component in Camel is a security focused component,
+The *shiro-security* component in Camel is a security focused component,
 based on the Apache Shiro security project.
 
 Apache Shiro is a powerful and flexible open-source security framework
@@ -37,7 +37,8 @@ for this component:
 ------------------------------------------------------------
 
 [[ShiroSecurity-ShiroSecurityBasics]]
-== Shiro Security Basics
+Shiro Security Basics
+^^^^^^^^^^^^^^^^^^^^^
 
 To employ Shiro security on a camel route, a ShiroSecurityPolicy object
 must be instantiated with security configuration details (including
@@ -74,7 +75,8 @@ sec-level1 = zone1:readonly:*
 ------------------------------------------------------------------
 
 [[ShiroSecurity-InstantiatingaShiroSecurityPolicyObject]]
-== Instantiating a ShiroSecurityPolicy Object
+Instantiating a ShiroSecurityPolicy Object
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A ShiroSecurityPolicy object is instantiated as follows
 
@@ -95,7 +97,8 @@ A ShiroSecurityPolicy object is instantiated as follows
 ----------------------------------------------------------------------------------------
 
 [[ShiroSecurity-ShiroSecurityPolicyOptions]]
-== ShiroSecurityPolicy Options
+ShiroSecurityPolicy Options
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 [width="100%",cols="10%,10%,10%,90%",options="header",]
 |=======================================================================
@@ -120,7 +123,7 @@ ShiroSecurityPolicy object, then authorization is deemed as not
 required. Note that the default is that authorization is granted if any
 of the Permission Objects in the list are applicable.
 
-|`rolesList` |`none` |List<String> |A List of roles required in order for an authenticated
+|`rolesList` |`none` |List<String> |*Camel 2.13:* A List of roles required in order for an authenticated
 user to be authorized to perform further action i.e continue further on
 the route. If no roles list or permissions list (see above) is provided
 to the ShiroSecurityPolicy object, then authorization is deemed as not
@@ -130,21 +133,22 @@ of the roles in the list are applicable.
 |`cipherService` |`AES` |org.apache.shiro.crypto.CipherService |Shiro ships with AES & Blowfish based CipherServices. You may use one
 these or pass in your own Cipher implementation
 
-|`base64` |`false` |`boolean` |To use base64 encoding for the security token header,
-which allows transferring the header over xref:jms-component.adoc[JMS] etc. This
+|`base64` |`false` |`boolean` |*Camel 2.12:* To use base64 encoding for the security token header,
+which allows transferring the header over <<jms-component,JMS>> etc. This
 option must also be set on `ShiroSecurityTokenInjector` as well.
 
-|`allPermissionsRequired` |`false` |`boolean` |The default is that authorization is granted if any of the
+|`allPermissionsRequired` |`false` |`boolean` |*Camel 2.13:* The default is that authorization is granted if any of the
 Permission Objects in the permissionsList parameter are applicable. Set
 this to true to require all of the Permissions to be met.
 
-|`allRolesRequired` |`false` |`boolean` |The default is that authorization is granted if any of the
+|`allRolesRequired` |`false` |`boolean` |*Camel 2.13:* The default is that authorization is granted if any of the
 roles in the rolesList parameter are applicable. Set this to true to
 require all of the roles to be met.
 |=======================================================================
 
 [[ShiroSecurity-ApplyingShiroAuthenticationonaCamelRoute]]
-== Applying Shiro Authentication on a Camel Route
+Applying Shiro Authentication on a Camel Route
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ShiroSecurityPolicy, tests and permits incoming message exchanges
 containing a encrypted SecurityToken in the Message Header to proceed
@@ -179,7 +183,8 @@ the user is a valid user.
 -----------------------------------------------------------------------
 
 [[ShiroSecurity-ApplyingShiroAuthorizationonaCamelRoute]]
-=== Applying Shiro Authorization on a Camel Route
+Applying Shiro Authorization on a Camel Route
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Authorization can be applied on a camel route by associating a
 Permissions List with the ShiroSecurityPolicy. The Permissions List
@@ -214,7 +219,8 @@ permission set, the request is not authorized to continue any further.
 -------------------------------------------------------------------------------------------
 
 [[ShiroSecurity-CreatingaShiroSecurityTokenandinjectingitintoaMessageExchange]]
-== Creating a ShiroSecurityToken and injecting it into a Message Exchange
+Creating a ShiroSecurityToken and injecting it into a Message Exchange
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A ShiroSecurityToken object may be created and injected into a Message
 Exchange using a Shiro Processor called ShiroSecurityTokenInjector. An
@@ -233,7 +239,8 @@ ShiroSecurityTokenInjector in the client is shown below
 -------------------------------------------------------------------------------------
 
 [[ShiroSecurity-SendingMessagestoroutessecuredbyaShiroSecurityPolicy]]
-== Sending Messages to routes secured by a ShiroSecurityPolicy
+Sending Messages to routes secured by a ShiroSecurityPolicy
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Messages and Message Exchanges sent along the camel route where the
 security policy is applied need to be accompanied by a SecurityToken in
@@ -266,8 +273,16 @@ ProducerTemplate in Camel along with a SecurityToken
     } 
 -------------------------------------------------------------------------------------------------
 
+[[ShiroSecurity-SendingMessagestoroutessecuredbyaShiroSecurityPolicymucheasierfromCamel2.12onwards]]
+Sending Messages to routes secured by a ShiroSecurityPolicy (much easier from Camel 2.12 onwards)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+From *Camel 2.12* onwards its even easier as you can provide the subject
+in two different ways.
+
 [[ShiroSecurity-UsingShiroSecurityToken]]
-== Using ShiroSecurityToken
+Using ShiroSecurityToken
+++++++++++++++++++++++++
 
 You can send a message to a Camel route with a header of key
 `ShiroSecurityConstants.SHIRO_SECURITY_TOKEN` of the type
@@ -293,7 +308,7 @@ as shown below:
 --------------------------------------------------------------------------------------
 
 When you use the username and password headers, then the
-ShiroSecurityPolicy in the Camel route will automatically transform those
+ShiroSecurityPolicy in the Camel route will automatic transform those
 into a single header with key
 ShiroSecurityConstants.SHIRO_SECURITY_TOKEN with the token. Then token
 is either a `ShiroSecurityToken` instance, or a base64 representation as

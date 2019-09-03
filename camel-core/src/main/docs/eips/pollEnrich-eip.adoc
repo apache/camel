@@ -1,5 +1,4 @@
-[[pollEnrich-eip]]
-== Poll Enrich EIP
+= Poll Enrich EIP
 
 Camel comes with flavor `pollEnrich` as a choice of content enricher in the DSL.
 The other one is `enrich`

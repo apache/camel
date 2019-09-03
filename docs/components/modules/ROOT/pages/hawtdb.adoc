@@ -1,5 +1,5 @@
 [[HawtDB-HawtDB]]
-= HawtDB (deprecated)
+== HawtDB (deprecated)
 
 *Available as of Camel 2.3*
 

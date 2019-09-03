@@ -1,5 +1,5 @@
 [[xpath-language]]
-== XPath Language
+= XPath Language
 
 *Available as of Camel version 1.1*
 

@@ -2,7 +2,6 @@
 == Clustering
 
 *Available as of Camel 2.20*
-
 [WARNING]
 ====
 *Experimental feature*

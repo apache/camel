@@ -1,5 +1,5 @@
 [[file-language]]
-== File Language
+= File Language
 
 *Available as of Camel version 1.1*
 

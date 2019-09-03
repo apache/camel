@@ -1,3 +1,4 @@
+[[beanio-dataformat]]
 = BeanIO DataFormat
 
 *Available as of Camel version 2.10*
@@ -12,7 +13,7 @@ http://beanio.org/2.0/docs/reference/index.html#TheMappingFile[mappings
 XML] file where you define the mapping from the flat format to Objects
 (POJOs). This mapping file is mandatory to use.
 
-== Options
+### Options
 
 // dataformat options: START
 The BeanIO dataformat supports 9 options, which are listed below.
@@ -34,7 +35,19 @@ The BeanIO dataformat supports 9 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-beanio-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 10 options, which are listed below.
@@ -58,13 +71,13 @@ The component supports 10 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-== Usage
+### Usage
 
 An example of a
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-beanio/src/test/resources/org/apache/camel/dataformat/beanio/mappings.xml[mapping
 file is here].
 
-=== Using Java DSL
+#### Using Java DSL
 
 To use the `BeanIODataFormat` you need to configure the data format with
 the mapping file, as well the name of the stream. +
@@ -81,13 +94,13 @@ List<Employee> into a stream of CSV data.
 
 The CSV data could for example be as below:
 
-=== Using XML DSL
+#### Using XML DSL
 
 To use the BeanIO data format in XML, you need to configure it using the
 <beanio> XML tag as shown below. The routes is similar to the example
 above.
 
-== Dependencies
+### Dependencies
 
 To use BeanIO in your Camel routes you need to add a dependency on
 *camel-beanio* which implements this data format.

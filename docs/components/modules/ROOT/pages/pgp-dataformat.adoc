@@ -1,3 +1,4 @@
+[[pgp-dataformat]]
 = PGP DataFormat
 
 *Available as of Camel version 2.9*
@@ -11,7 +12,7 @@ encryption to cyphertext and unmarshalling to mean decryption back to
 the original plaintext. This data format implements only symmetric
 (shared-key) encryption and decyption.
 
-== PGPDataFormat Options
+### PGPDataFormat Options
 
 // dataformat options: START
 The PGP dataformat supports 15 options, which are listed below.
@@ -39,7 +40,7 @@ The PGP dataformat supports 15 options, which are listed below.
 |===
 // dataformat options: END
 
-== PGPDataFormat Message Headers
+### PGPDataFormat Message Headers
 
 You can override the PGPDataFormat options by applying below headers
 into message dynamically.
@@ -48,53 +49,53 @@ into message dynamically.
 |=======================================================================
 |Name |Type |Description
 
-|`CamelPGPDataFormatKeyFileName` |`String` |filename of the keyring; will override existing
+|`CamelPGPDataFormatKeyFileName` |`String` |*Since Camel 2.11.0*; filename of the keyring; will override existing
 setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatEncryptionKeyRing` |`byte[]` |the encryption keyring; will override existing
+|`CamelPGPDataFormatEncryptionKeyRing` |`byte[]` |*Since Camel 2.12.1*; the encryption keyring; will override existing
 setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatKeyUserid` |`String` |the User ID of the key in the PGP keyring; will
+|`CamelPGPDataFormatKeyUserid` |`String` |*Since Camel 2.11.0*; the User ID of the key in the PGP keyring; will
 override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatKeyUserids` |`List<String>` |the User IDs of the key in the PGP keyring; will
+|`CamelPGPDataFormatKeyUserids` |`List<String>` |*Since camel 2.12.2*: the User IDs of the key in the PGP keyring; will
 override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatKeyPassword` |`String` |password used when opening the private key; will
+|`CamelPGPDataFormatKeyPassword` |`String` |*Since Camel 2.11.0*; password used when opening the private key; will
 override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureKeyFileName` |`String` |filename of the signature keyring; will override
+|`CamelPGPDataFormatSignatureKeyFileName` |`String` |*Since Camel 2.11.0*; filename of the signature keyring; will override
 existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureKeyRing` |`byte[]` |the signature keyring; will override existing
+|`CamelPGPDataFormatSignatureKeyRing` |`byte[]` |*Since Camel 2.12.1*; the signature keyring; will override existing
 setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureKeyUserid` |`String` |the User ID of the signature key in the PGP
+|`CamelPGPDataFormatSignatureKeyUserid` |`String` |*Since Camel 2.11.0*; the User ID of the signature key in the PGP
 keyring; will override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureKeyUserids` |`List<String>` |the User IDs of the signature keys in the PGP
+|`CamelPGPDataFormatSignatureKeyUserids` |`List<String>` |*Since Camel 2.12.3*; the User IDs of the signature keys in the PGP
 keyring; will override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureKeyPassword` |`String` |password used when opening the signature private
+|`CamelPGPDataFormatSignatureKeyPassword` |`String` |*Since Camel 2.11.0*; password used when opening the signature private
 key; will override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatEncryptionAlgorithm` |`int` |symmetric key encryption algorithm; will override
+|`CamelPGPDataFormatEncryptionAlgorithm` |`int` |*Since Camel 2.12.2*; symmetric key encryption algorithm; will override
 existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureHashAlgorithm` |`int` |signature hash algorithm; will override existing
+|`CamelPGPDataFormatSignatureHashAlgorithm` |`int` |*Since Camel 2.12.2*; signature hash algorithm; will override existing
 setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatCompressionAlgorithm` |`int` |compression algorithm; will override existing
+|`CamelPGPDataFormatCompressionAlgorithm` |`int` |*Since Camel 2.12.2*; compression algorithm; will override existing
 setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatNumberOfEncryptionKeys` |`Integer` |number of public keys used for encrypting the
+|`CamelPGPDataFormatNumberOfEncryptionKeys` |`Integer` |*Since* *Camel 2.12.3; *number of public keys used for encrypting the
 symmectric key, set by PGPDataFormat during encryptiion process
 
-|`CamelPGPDataFormatNumberOfSigningKeys` |`Integer` |number of private keys used for creating
+|`CamelPGPDataFormatNumberOfSigningKeys` |`Integer` |*Since* *Camel 2.12.3; *number of private keys used for creating
 signatures, set by PGPDataFormat during signing process
 |=======================================================================
 
-== Encrypting with PGPDataFormat
+### Encrypting with PGPDataFormat
 
 The following sample uses the popular PGP format for
 encrypting/decrypting files using the
@@ -106,7 +107,7 @@ encryption, but you can obviously use different keys:
 
 Or using Spring:
 
-=== To work with the previous example you need the following
+#### To work with the previous example you need the following
 
 * A public keyring file which contains the public keys used to encrypt
 the data
@@ -114,7 +115,7 @@ the data
 data
 * The keyring password
 
-=== Managing your keyring
+#### Managing your keyring
 
 To manage the keyring, I use the command line tools, I find this to be
 the simplest approach in managing the keys. There are also Java
@@ -149,7 +150,9 @@ ls -l ~/.gnupg/pubring.gpg ~/.gnupg/secring.gpg
 
 [[Crypto-PGPDecrypting/VerifyingofMessagesEncrypted/SignedbyDifferentPrivate/PublicKeys]]
 PGP Decrypting/Verifying of Messages Encrypted/Signed by Different
-== Private/Public Keys
+### Private/Public Keys
+
+Since *Camel 2.12.2*.
 
 A PGP Data Formater can decrypt/verify messages which have been
 encrypted by different public keys or signed by different private keys.
@@ -192,13 +195,15 @@ same mechanism is also used to locate the public key for verifying a
 signature. Therefore you no longer must specify User IDs for the
 unmarshaling.
 
-== Restricting the Signer Identities during PGP Signature Verification
+### Restricting the Signer Identities during PGP Signature Verification
+
+Since *Camel 2.12.3.*
 
 If you verify a signature you not only want to verify the correctness of
 the signature but you also want check that the signature comes from a
 certain identity or a specific set of identities. Therefore it is
 possible to restrict the number of public keys from the public keyring
-which can be used for the verification of a signature.  
+which can be used for the verification of a signature.  
 
 *Signature User IDs*
 
@@ -208,13 +213,13 @@ which can be used for the verification of a signature.
  List<String> expectedSigUserIds = new ArrayList<String>();
  expectedSigUserIds.add("Trusted company1");
  expectedSigUserIds.add("Trusted company2");
- 
+ 
  PGPDataFormat pgpVerifyWithSpecificKeysAndDecrypt = new PGPDataFormat();
  pgpVerifyWithSpecificKeysAndDecrypt.setPassword("my password"); // for decrypting with private key
  pgpVerifyWithSpecificKeysAndDecrypt.setKeyFileName(keyfileName);
  pgpVerifyWithSpecificKeysAndDecrypt.setSignatureKeyFileName(signatgureKeyfileName);
  pgpVerifyWithSpecificKeysAndDecrypt.setSignatureKeyUserids(expectedSigUserIds); // if you have only one signer identity then you can also use setSignatureKeyUserid("expected Signer")
- 
+ 
 from("direct:start")
          ...     
         .unmarshal(pgpVerifyWithSpecificKeysAndDecrypt)
@@ -227,7 +232,9 @@ successful as soon as one signature can be verified.
 then do not specify the signature key User IDs. In this case all public
 keys in the public keyring are taken into account.
 
-== Several Signatures in One PGP Data Format
+### Several Signatures in One PGP Data Format
+
+Since *Camel 2.12.3.*
 
 The PGP specification allows that one PGP data format can contain
 several signatures from different keys. Since Camel 2.13.3 it is
@@ -248,29 +255,31 @@ User IDs which relate to several private keys in the secret keyring.
  signerUserIds.add("company old key");
  signerUserIds.add("company new key");
  pgpSignAndEncryptSeveralSignerKeys.setSignatureKeyUserids(signerUserIds);
- 
+ 
 from("direct:start")
          ...     
         .marshal(pgpSignAndEncryptSeveralSignerKeys)
         ...      
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-== Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
+### Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
 
+Since *Camel 2.12.3. +
 *An https://tools.ietf.org/html/rfc4880#section-12.1[OpenPGP V4 key] can
 have a primary key and sub-keys. The usage of the keys is indicated by
 the so called https://tools.ietf.org/html/rfc4880#section-5.2.3.21[Key
 Flags]. For example, you can have a primary key with two sub-keys; the
 primary key shall only be used for certifying other keys (Key Flag
-0x01), the first sub-key  shall only be used for signing (Key Flag
+0x01), the first sub-key  shall only be used for signing (Key Flag
 0x02), and the second sub-key shall only be used for encryption (Key
 Flag 0x04 or 0x08). The PGP Data Format marshaler takes into account
 these Key Flags of the primary key and sub-keys in order to determine
 the right key for signing and encryption. This is necessary because the
 primary key and its sub-keys have the same User IDs.
 
-== Support of Custom Key Accessors
+### Support of Custom Key Accessors
 
+Since *Camel 2.13.0. +
 *You can implement custom key accessors for encryption/signing. The
 above PGPDataFormat class selects in a certain predefined way the keys
 which should be used for signing/encryption or verifying/decryption. If
@@ -292,7 +301,7 @@ PGPKeyAccessDataFormat has the same options as PGPDataFormat except
 password, keyFileName, encryptionKeyRing, signaturePassword,
 signatureKeyFileName, and signatureKeyRing.
 
-== Dependencies
+### Dependencies
 
 To use the PGP dataformat in your camel routes you
 need to add the following dependency to your pom.
@@ -306,3 +315,9 @@ need to add the following dependency to your pom.
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
+
+### See Also
+
+* Data Format
+* Crypto (Digital Signatures)
+* http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]

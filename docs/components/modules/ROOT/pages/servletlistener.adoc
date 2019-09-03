@@ -1,5 +1,5 @@
 [[ServletListenerComponent-ServletListenerComponent]]
-= ServletListener Component
+== ServletListener Component
 
 *Available as of Camel 2.11*
 

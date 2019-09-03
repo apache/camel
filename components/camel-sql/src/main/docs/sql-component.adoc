@@ -1,7 +1,8 @@
 [[sql-component]]
-== SQL Component
+= SQL Component
 
 *Available as of Camel version 1.4*
+
 
 The *sql:* component allows you to work with databases using JDBC
 queries. The difference between this component and <<jdbc-component,JDBC>>
@@ -133,7 +134,7 @@ sql:query
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -143,7 +144,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (45 parameters):
+=== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -197,7 +198,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-sql-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 4 options, which are listed below.
@@ -812,4 +825,3 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 ----
 
 You should also include the specific database driver, if needed.
-

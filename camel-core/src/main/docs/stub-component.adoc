@@ -1,5 +1,5 @@
 [[stub-component]]
-== Stub Component
+= Stub Component
 
 *Available as of Camel version 2.10*
 
@@ -55,7 +55,7 @@ stub:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +65,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

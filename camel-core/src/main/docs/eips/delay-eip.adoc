@@ -1,5 +1,4 @@
-[[delay-eip]]
-== Delay EIP
+= Delay EIP
 The Delayer Pattern allows you to delay the delivery of messages to some destination.
 
 == Options

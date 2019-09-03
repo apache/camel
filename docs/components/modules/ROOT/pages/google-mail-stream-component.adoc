@@ -1,44 +1,46 @@
+[[google-mail-stream-component]]
 = Google Mail Stream Component
 
 *Available as of Camel version 2.22*
 
 
 The Google Mail component provides access
-to http://gmail.com/[Gmail] via
-the https://developers.google.com/gmail/api/v1/reference/[Google Mail
+to http://gmail.com/[Gmail] via
+the https://developers.google.com/gmail/api/v1/reference/[Google Mail
 Web APIs].
 
 Google Mail uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need
-to https://developers.google.com/gmail/api/auth/web-server[create an
+to https://developers.google.com/gmail/api/auth/web-server[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is
-the https://developers.google.com/oauthplayground[OAuth playground].
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 ------------------------------------------------------
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-google-mail</artifactId>
-    <!-- use the same version as your Camel core version -->
-    <version>x.y.z</version>
-</dependency>
+    <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-google-mail</artifactId>
+            <version>2.22-SNAPSHOT</version>
+    </dependency>
+
 ------------------------------------------------------
 
-== URI Format
+### URI Format
 
 The GoogleMail Component uses the following URI format:
 
 --------------------------------------------------------
         google-mail-stream://index?[options]
+
 --------------------------------------------------------
 
-== GoogleMailStreamComponent
+### GoogleMailStreamComponent
 
 
 // component options: START
@@ -67,7 +69,7 @@ google-mail-stream:index
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (28 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,7 +116,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-mail-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 13 options, which are listed below.
@@ -141,7 +155,7 @@ The component supports 13 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Consumer
+### Consumer
 
 The consumer will poll by default with the query "is:unread" and maxResults equals to 10.
 
@@ -154,4 +168,4 @@ from("google-mail-stream://test?markAsRead=true&delay=5000&maxResults=5&labels=G
 
 This route will consume unread messages with labels Github and Apache and it will mark the messages as read.
 
-   
+   

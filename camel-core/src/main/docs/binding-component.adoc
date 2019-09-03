@@ -1,5 +1,5 @@
 [[binding-component]]
-== Binding Component (deprecated)
+= Binding Component (deprecated)
 
 *Available as of Camel version 2.11*
 
@@ -35,7 +35,7 @@ binding:bindingName:delegateUri
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -46,7 +46,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (4 parameters):
+=== Query Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

@@ -1,7 +1,8 @@
 [[hazelcast-set-component]]
-== Hazelcast Set Component
+= Hazelcast Set Component
 
 *Available as of Camel version 2.7*
+
 
 The http://www.hazelcast.com/[Hazelcast] Set component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed set.
 
@@ -30,7 +31,7 @@ hazelcast-set:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -40,7 +41,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +66,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hazelcast-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 6 options, which are listed below.
@@ -83,4 +96,3 @@ The component supports 6 options, which are listed below.
 | *camel.component.hazelcast-set.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
-

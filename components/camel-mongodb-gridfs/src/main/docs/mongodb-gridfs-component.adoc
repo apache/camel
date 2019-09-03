@@ -1,7 +1,8 @@
 [[mongodb-gridfs-component]]
-== MongoDB GridFS Component
+= MongoDB GridFS Component
 
 *Available as of Camel version 2.18*
+
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -41,7 +42,7 @@ mongodb-gridfs:connectionBean
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -51,7 +52,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +78,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-mongodb-gridfs-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.

@@ -1,9 +1,10 @@
+[[atomix-multimap-component]]
 = Atomix MultiMap Component
 
 *Available as of Camel version 2.20*
 
 
-The camel Atomix-Multimap component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/primitives/DistributedMultimap/[Distributed MultiMap] collection.
+The camel atomix-multimap component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/primitives/DistributedMultimap/[Distributed MultiMap] collection.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -17,7 +18,7 @@ for this component:
     </dependency>
 ----
 
-== URI format
+### URI format
 
 [source,java]
 ----
@@ -49,7 +50,7 @@ atomix-multimap:resourceName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -59,7 +60,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (18 parameters):
+=== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -86,7 +87,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-atomix-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 9 options, which are listed below.

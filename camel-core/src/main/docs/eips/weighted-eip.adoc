@@ -1,5 +1,4 @@
-[[weighted-eip]]
-== Weighted EIP
+= Weighted EIP
 
 Weighted Load Balancer, with this policy in case of failures the exchange will be tried on the next endpoint.
 

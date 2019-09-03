@@ -1,14 +1,15 @@
+[[jolt-component]]
 = JOLT Component
 
 *Available as of Camel version 2.16*
 
 
-The Jolt component allows you to process a JSON messages using an
+The *jolt:* component allows you to process a JSON messages using an
 https://github.com/bazaarvoice/jolt[JOLT] specification. This can be
 ideal when doing JSON to JSON transformation.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 
 [source,xml]
 ------------------------------------------------------------
@@ -20,23 +21,23 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
- 
+ 
 
-== URI format
+### URI format
 
 [source,java]
 -----------------------
 jolt:specName[?options]
 -----------------------
 
-Where *specName* is the classpath-local URI of the specification to
+Where *specName* is the classpath-local URI of the specification to
 invoke; or the complete URL of the remote specification
-(eg: \file://folder/myfile.vm).
+(eg: file://folder/myfile.vm[file://folder/myfile.json]).
 
 You can append query options to the URI in the following
-format, `?option=value&option=value&...`
+format, `?option=value&option=value&...`
 
-== Options
+### Options
 
 
 
@@ -68,7 +69,7 @@ jolt:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +93,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jolt-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 3 options, which are listed below.
@@ -111,7 +124,7 @@ The component supports 3 options, which are listed below.
 
 
 
-== Samples
+### Samples
 
 For example you could use something like
 
@@ -140,4 +153,11 @@ from("direct:in").
   to("jolt:dummy");
 ---------------------------------------------------------------------
 
- 
+ 
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

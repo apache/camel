@@ -1,7 +1,8 @@
 [[jclouds-component]]
-== JClouds Component
+= JClouds Component
 
 *Available as of Camel version 2.9*
+
 
 This component allows interaction with cloud provider key-value engines
 (blobstores) and compute services. The component uses
@@ -130,7 +131,7 @@ jclouds:command:providerId
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -141,7 +142,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (15 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

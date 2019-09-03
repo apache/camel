@@ -1,3 +1,4 @@
+[[thrift-component]]
 = Thrift Component
 
 *Available as of Camel version 2.20*
@@ -19,14 +20,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 -------------------------------------
 thrift://service[?options]
 -------------------------------------
 
-== Endpoint Options
+### Endpoint Options
 
 // component options: START
 The Thrift component supports 2 options, which are listed below.
@@ -50,7 +51,7 @@ thrift:host:port/service
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -62,7 +63,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,7 +84,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-thrift-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 7 options, which are listed below.
@@ -104,7 +117,7 @@ The component supports 7 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Thrift method parameters mapping
+### Thrift method parameters mapping
 
 Parameters in the called procedure must be passed as a list of objects inside the message body. The primitives are converted from the objects on the fly.
 In order to correctly find the corresponding method, all types must be transmitted regardless of the values. Please see an exmaple below, how to pass
@@ -132,7 +145,7 @@ Object responseBody = template.requestBody("direct:thrift-alltypes", requestBody
 Incoming parameters in the service consumer will also be passed to the message body as a list of objects.
 
 
-== Thrift consumer headers (will be installed after the consumer invocation)
+### Thrift consumer headers (will be installed after the consumer invocation)
 
 [width="100%",cols="25%,50,25%",options="header",]
 |=======================================================================
@@ -142,7 +155,7 @@ Incoming parameters in the service consumer will also be passed to the message b
 
 |=======================================================================
 
-== Examples
+### Examples
 
 Below is a simple synchronous method invoke with host and port parameters
 
@@ -172,7 +185,14 @@ from("thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calcul
 
 It's possible to automate Java code generation for .thrift files using *thrift-maven-plugin*, but before start the thrift compiler binary distribution for your operating system must be present on the running host.
 
-== For more information, see these resources
+### For more information, see these resources
 
 https://github.com/apache/thrift/[Thrift project GitHub]
 https://thrift.apache.org/tutorial/java [Apache Thrift Java tutorial]
+
+### See Also
+
+* Getting Started
+* Configuring Camel
+* Component
+* Endpoint

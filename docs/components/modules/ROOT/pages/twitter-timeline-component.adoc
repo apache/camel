@@ -1,3 +1,4 @@
+[[twitter-timeline-component]]
 = Twitter Timeline Component
 
 *Available as of Camel version 2.10*
@@ -5,7 +6,7 @@
 
 The Twitter Timeline component consumes twitter timeline or update the status of specific user.
 
-== Component Options
+### Component Options
 
 // component options: START
 The Twitter Timeline component supports 9 options, which are listed below.
@@ -28,7 +29,7 @@ The Twitter Timeline component supports 9 options, which are listed below.
 // component options: END
 
 
-== Endpoint Options
+### Endpoint Options
 
 // endpoint options: START
 The Twitter Timeline endpoint is configured using URI syntax:
@@ -39,7 +40,7 @@ twitter-timeline:timelineType
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -49,7 +50,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (43 parameters):
+=== Query Parameters (43 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -101,7 +102,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-twitter-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 10 options, which are listed below.

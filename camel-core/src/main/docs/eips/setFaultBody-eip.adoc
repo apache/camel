@@ -1,5 +1,4 @@
-[[setFaultBody-eip]]
-== Set Fault Body EIP
+= Set Fault Body EIP
 
 The SetFaultBody EIP allows you to set contents of a fault message's body.
 

@@ -1,9 +1,10 @@
+[[sip-component]]
 = SIP Component
 
 *Available as of Camel version 2.5*
 
 
-The SIP component in Camel is a communication component, based on the
+The *sip* component in Camel is a communication component, based on the
 Jain SIP implementation (available under the JCP license).
 
 Session Initiation Protocol (SIP) is an IETF-defined signaling protocol,
@@ -46,7 +47,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 The URI scheme for a sip endpoint is as follows:
 
@@ -62,7 +63,7 @@ UDP.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== Options
+### Options
 
 The SIP Component offers an extensive set of configuration options &
 capability to create custom stateful headers needed to propagate state
@@ -84,7 +85,7 @@ sip:uri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,7 +95,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (44 parameters):
+=== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -147,7 +148,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-sip-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -163,9 +176,9 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Sending Messages to/from a SIP endpoint
+### Sending Messages to/from a SIP endpoint
 
-=== Creating a Camel SIP Publisher
+#### Creating a Camel SIP Publisher
 
 In the example below, a SIP Publisher is created to send SIP Event
 publications to  +
@@ -189,7 +202,7 @@ producerTemplate.sendBodyAndHeader(
     Request.PUBLISH);  
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-=== Creating a Camel SIP Subscriber
+#### Creating a Camel SIP Subscriber
 
 In the example below, a SIP Subscriber is created to receive SIP Event
 publications sent to  +

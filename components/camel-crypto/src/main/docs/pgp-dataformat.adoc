@@ -1,7 +1,8 @@
 [[pgp-dataformat]]
-== PGP DataFormat
+= PGP DataFormat
 
 *Available as of Camel version 2.9*
+
 
 The PGP Data Format integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible

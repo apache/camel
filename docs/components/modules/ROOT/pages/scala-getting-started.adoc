@@ -1,5 +1,5 @@
 [[ScalaDSL-GettingStarted]]
-= Scala DSL Getting Started
+=== Scala DSL Getting Started
 
 Just like the Java DSL, the Scala DSL has a RouteBuilder
 class (`org.apache.camel.scala.dsl.builder.RouteBuilder`) that you can

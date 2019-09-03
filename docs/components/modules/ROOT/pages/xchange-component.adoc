@@ -1,8 +1,10 @@
+[[xchange-component]]
 = XChange Component
 
 *Available as of Camel version 2.21*
 
-The XChange component uses the https://knowm.org/open-source/xchange/[XChange] Java library to provide access to 60+ Bitcoin and Altcoin exchanges.
+
+The *xchange:* component uses the https://knowm.org/open-source/xchange/[XChange] Java library to provide access to 60+ Bitcoin and Altcoin exchanges.
 It comes with a consistent interface for trading and accessing market data. 
 
 Camel can get crypto currency market data, query historical data, place market orders and much more.
@@ -20,14 +22,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 ---------------------------------
 xchange://exchange?options
 ---------------------------------
 
-== Options
+### Options
 
 // component options: START
 The XChange component has no options.
@@ -42,7 +44,7 @@ xchange:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -52,7 +54,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +68,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-xchange-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -82,7 +96,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Authentication
+### Authentication
 
 This component communicates with supported crypto currency exchanges via REST API. Some API requests use simple unauthenticated GET request. 
 For most of the interesting stuff however, you'd need an account with the exchange and have API access keys enabled.
@@ -102,11 +116,11 @@ apiKey = GuRW0*********
 secretKey = nKLki************
 ----
 
-== Message Headers
+### Message Headers
 
 [TODO]
 
-== Samples
+### Samples
 
 In this sample we find the current Bitcoin market price in USDT:
 

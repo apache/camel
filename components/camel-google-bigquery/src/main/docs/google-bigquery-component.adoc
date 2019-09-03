@@ -1,7 +1,8 @@
 [[google-bigquery-component]]
-== Google BigQuery Component
+= Google BigQuery Component
 
 *Available as of Camel version 2.20*
+
 
 The Google Bigquery component provides access
 to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
@@ -80,7 +81,7 @@ google-bigquery:projectId:datasetId:tableName
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +93,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (3 parameters):
+=== Query Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -104,7 +105,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-bigquery-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 4 options, which are listed below.

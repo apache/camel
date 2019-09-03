@@ -1,11 +1,12 @@
+[[openstack-glance-component]]
 = OpenStack Glance Component
 
 *Available as of Camel version 2.19*
 
 
-The Openstack Glance component allows messages to be sent to an OpenStack image services.
+The openstack-glance component allows messages to be sent to an OpenStack image services.
 
-== Dependencies
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -23,7 +24,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-== URI Format
+### URI Format
 
 [source,java]
 ----------------------------
@@ -33,7 +34,7 @@ openstack-glance://hosturl[?options]
 You can append query options to the URI in the following format
 `?options=value&option2=value&...`
 
-== URI Options
+### URI Options
 
 // component options: START
 The OpenStack Glance component has no options.
@@ -48,7 +49,7 @@ openstack-glance:host
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -58,7 +59,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +76,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-openstack-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -92,7 +105,7 @@ The component supports 2 options, which are listed below.
 
 
 
-== Usage
+### Usage
 
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
@@ -113,7 +126,7 @@ The component supports 2 options, which are listed below.
 |`delete` | Delete the image.
 |=========================================================================
 
-=== Message headers evaluated by the Glance producer
+#### Message headers evaluated by the Glance producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -143,3 +156,12 @@ The component supports 2 options, which are listed below.
 
 |`properties` | `Map` | Image properties.
 |=========================================================================
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* openstack Component

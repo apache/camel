@@ -1,4 +1,4 @@
-= Spring Cloud Netflix
+=== Spring Cloud Netflix
 
 *Available as of Camel 2.19*
 
@@ -16,7 +16,7 @@ Maven users will need to add the following dependency to their `pom.xml` in orde
 </dependency>
 ----
 
-`camel-spring-cloud-netflix` jar comes with the `spring.factories` file, so as soon as you add that dependency into your classpath, Spring Boot will automatically auto-configure Camel for you.
+`camel-spring-cloud-netflix` jar comes with the `spring.factories` file, so as soon as you add that dependency into your classpath, Spring Boot will automatically auto-configure Camel for you.
 
 You can disable Camel Spring Cloud Netflix with the following properties:
 
@@ -29,7 +29,7 @@ camel.cloud.netflix = true
 camel.cloud.netflix.ribbon = true
 ----
 
-== Spring Cloud Netflix Starter
+=== Spring Cloud Netflix Starter
 
 *Available as of Camel 2.19*
 

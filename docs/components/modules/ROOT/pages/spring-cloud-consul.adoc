@@ -1,3 +1,3 @@
-= Spring Cloud Consul
+=== Spring Cloud Consul
 
 *Available as of Camel 2.22*

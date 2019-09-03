@@ -1,4 +1,4 @@
-= RxJava2 Component
+== RxJava2 Component
 
 *Available as of Camel version 2.22*
 

@@ -1,5 +1,4 @@
-[[batch-config-eip]]
-== Batch-config EIP
+= Batch-config EIP
 
 Batch-processing resequence EIP
 

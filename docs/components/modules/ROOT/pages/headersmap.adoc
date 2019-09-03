@@ -1,11 +1,11 @@
-= HeadersMap
+## HeadersMap
 
 *Available as of Camel 2.20*
 
 The camel-headersmap is a faster implementation of a case-insenstive map which can be plugged in
 and used by Camel at runtime to have slight faster performance in the Camel Message headers.
 
-== Auto detection from classpath
+### Auto detection from classpath
 
 To use this implementation all you need to do is to add the `camel-headersmap` dependency to the classpath,
 and Camel should auto-detect this on startup and log as follows:
@@ -16,7 +16,7 @@ Detected and using custom HeadersMapFactory: org.apache.camel.component.headersm
 
 For spring-boot there is a `camel-headersmap-starter` dependency you should use.
 
-== Manual enabling
+### Manual enabling
 
 If you use OSGi or the implementation is not added to the classpath, you need to enable this explict such:
 

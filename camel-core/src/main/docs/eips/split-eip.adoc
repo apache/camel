@@ -1,5 +1,4 @@
-[[split-eip]]
-== Split EIP
+= Split EIP
 
 The link:http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html[Splitter] from the link:enterprise-integration-patterns.html[EIP patterns] allows you split a message into a number of pieces and process them individually.
 

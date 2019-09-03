@@ -1,7 +1,8 @@
 [[barcode-dataformat]]
-== Barcode DataFormat
+= Barcode DataFormat
 
 *Available as of Camel version 2.14*
+
 
 The barcode data format is based on the
 https://github.com/zxing/zxing[zxing library]. The goal of this
@@ -45,7 +46,19 @@ The Barcode dataformat supports 5 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-barcode-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 6 options, which are listed below.

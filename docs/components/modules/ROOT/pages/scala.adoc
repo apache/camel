@@ -1,5 +1,5 @@
 [[ScalaDSL-AbouttheScalaDSL]]
-= About the Scala DSL
+== About the Scala DSL
 
 **Deprecated**
 

@@ -1,5 +1,5 @@
 [[Guice-CamelGuice]]
-= Camel Guice
+== Camel Guice
 
 We have support for http://code.google.com/p/google-guice/[Google Guice]
 as a dependency injection framework.

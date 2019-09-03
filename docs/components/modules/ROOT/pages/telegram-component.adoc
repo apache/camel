@@ -1,15 +1,16 @@
+[[telegram-component]]
 = Telegram Component
 
 *Available as of Camel version 2.18*
 
 
-The Telegram component provides access to the https://core.telegram.org/bots/api[Telegram Bot API].
+The *Telegram* component provides access to the https://core.telegram.org/bots/api[Telegram Bot API].
 It allows a Camel-based application to send and receive messages by acting as a Bot, participating in
 direct conversations with normal users, private and public groups or channels.
 
 A Telegram Bot must be created before using this component, following the instructions at the
-https://core.telegram.org/bots#3-how-do-i-create-a-bot[Telegram Bot developers home].
-When a new Bot is created, the https://telegram.me/botfather[BotFather] provides an
+link:https://core.telegram.org/bots#3-how-do-i-create-a-bot[Telegram Bot developers home].
+When a new Bot is created, the link:https://telegram.me/botfather[BotFather] provides an
 **authorization token** corresponding to the Bot. The authorization token is a mandatory parameter
 for the camel-telegram endpoint.
 
@@ -31,7 +32,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+=== URI format
 
 [source,text]
 ----------------------------------------------------
@@ -41,7 +42,7 @@ telegram:type/authorizationToken[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== Options
+=== Options
 
 // component options: START
 The Telegram component supports 2 options, which are listed below.
@@ -67,7 +68,7 @@ telegram:type/authorizationToken
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (24 parameters):
+=== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -111,7 +112,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-telegram-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 3 options, which are listed below.
@@ -131,7 +144,7 @@ The component supports 3 options, which are listed below.
 
 
 
-== Message Headers
+=== Message Headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -153,12 +166,12 @@ for outgoing binary messages.
 
 |=======================================================================
 
-== Usage
+=== Usage
 
 The Telegram component supports both consumer and producer endpoints.
 It can also be used in *reactive chat-bot mode* (to consume, then produce messages).
 
-== Producer Example
+=== Producer Example
 
 The following is a basic example of how to send a message to a Telegram chat through the
 Telegram Bot API.
@@ -194,17 +207,13 @@ The following message bodies are allowed for a producer endpoint (messages of ty
 | `OutgoingAudioMessage` | To send a mp3 audio to a chat
 | `OutgoingVideoMessage` | To send a mp4 video to a chat
 | `OutgoingDocumentMessage` | To send a file to a chat (any media type)
-| `SendLocationMessage` | To send a location (setSendLocation)
-| `EditMessageLiveLocationMessage` | To send changes to a live location (editMessageLiveLocation)
-| `StopMessageLiveLocationMessage` | To stop updating a live location message sent by the bot or via the bot (for inline bots) before live_period expires (stopMessageLiveLocation)
-| `SendVenueMessage` | To send information about a venue (sendVenue)
 | `byte[]` | To send any media type supported. It requires the `CamelTelegramMediaType` header to be set to the appropriate media type
 | `String` | To send a text message to a chat. It gets converted automatically into a `OutgoingTextMessage`
 
 |===================================================
 
 
-== Consumer Example
+=== Consumer Example
 
 The following is a basic example of how to receive all messages that telegram users are sending to the configured Bot.
 In Java DSL
@@ -257,7 +266,7 @@ Supported types for incoming messages are
 
 
 
-== Reactive Chat-Bot Example
+=== Reactive Chat-Bot Example
 
 The reactive chat-bot mode is a simple way of using the Camel component to build a simple
 chat bot that replies directly to chat messages received from the Telegram users.
@@ -306,7 +315,7 @@ public class ChatBotLogic {
 Every non-null string returned by the `chatBotProcess` method is automatically routed to the
 chat that originated the request (as the `CamelTelegramChatId` header is used to route the message).
 
-== Getting the Chat ID
+=== Getting the Chat ID
 
 If you want to push messages to a specific Telegram chat when an event occurs, you need to
 retrieve the corresponding chat ID. The chat ID is not currently shown in the telegram client,
@@ -334,7 +343,7 @@ to("telegram:bots/123456789:insertYourAuthorizationTokenHere?chatId=123456")
 
 Note that the corresponding URI parameter is simply `chatId`.
 
-== Customizing keyboard
+=== Customizing keyboard
 
 You can customize the user keyboard instead of asking him to write an option. `OutgoingTextMessage` has the property `ReplyKeyboardMarkup` which can be used for such thing.
 
@@ -345,16 +354,16 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setText("Choose one option!");
-
+        
         InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
                 .text("Option One - I").build();
-
+        
         InlineKeyboardButton buttonOptionOneII = InlineKeyboardButton.builder()
                 .text("Option One - II").build();
-
+        
         InlineKeyboardButton buttonOptionTwoI = InlineKeyboardButton.builder()
                 .text("Option Two - I").build();
-
+        
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
                 .keyboard()
                     .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
@@ -362,7 +371,7 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
                     .close()
                 .oneTimeKeyboard(true)
                 .build();
-
+        
         msg.setReplyKeyboardMarkup(replyMarkup);
 
         exchange.getIn().setBody(msg);
@@ -379,47 +388,14 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setText("Your answer was accepted!");
-
+        
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
                 .removeKeyboard(true)
                 .build();
-
+        
         msg.setReplyKeyboardMarkup(replyMarkup);
 
         exchange.getIn().setBody(msg);
     })
     .to("telegram:bots/123456789:insertYourAuthorizationTokenHere");
 ---------------------------------------------------------
-
-
-== Webhook Mode
-
-The Telegram component supports usage in the *webhook mode* using the *camel-webhook* component.
-
-In order to enable webhook mode, users need first to add a REST implementation to their application.
-Maven users, for example, can add *netty-http* to their `pom.xml` file:
-
-[source,xml]
-------------------------------------------------------------
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-netty-http</artifactId>
-    <version>x.x.x</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
-------------------------------------------------------------
-
-Once done, you need to prepend the webhook URI to the telegram URI you want to use.
-
-In Java DSL:
-
-[source,java]
----------------------------------------------------------
-from("webhook:telegram:bots/123456789:insertYourAuthorizationTokenHere").to("log:info");
----------------------------------------------------------
-
-Some endpoints will be exposed by your application and Telegram will be configured to send messages to them.
-You need to ensure that your server is exposed to the internet and to pass the right value of the
-*camel.component.webhook.configuration.webhook-external-url* property.
-
-Refer to the *camel-webhook* component documentation for instructions on how to set it.

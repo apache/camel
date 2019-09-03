@@ -1,4 +1,4 @@
-= Test Karaf
+## Test Karaf
 
 *Available since Camel 2.18*
 

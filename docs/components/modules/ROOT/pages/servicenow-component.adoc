@@ -1,3 +1,4 @@
+[[servicenow-component]]
 = ServiceNow Component
 
 *Available as of Camel version 2.18*
@@ -5,7 +6,7 @@
 
 The ServiceNow component provides access to ServiceNow platform through their REST API.
 
-The component supports multiple version of ServiceNow platform with default to Helsinki. Supported version are <<ServiceNow-Fuji>> and <<ServiceNow-Helsinki>>
+NOTE: From Camel 2.18.1 the component supports multiple version of ServiceNow platform with default to Helsinki. Supported version are <<ServiceNow-Fuji>> and <<ServiceNow-Helsinki>>
 
 
 Maven users will need to add the following dependency to their pom.xml
@@ -20,14 +21,14 @@ for this component:
     </dependency>
 -------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 ---------------------------------------
     servicenow://instanceName?[options]
 ---------------------------------------
 
-== Options
+### Options
 
 
 // component options: START
@@ -65,7 +66,7 @@ servicenow:instanceName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (44 parameters):
+=== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,7 +95,7 @@ with the following path and query parameters:
 | *key* (producer) | Set this parameter to true to return only scorecards for key indicators. |  | Boolean
 | *models* (producer) | Defines both request and response models |  | String
 | *perPage* (producer) | Enter the maximum number of scorecards each query can return. By default this value is 10, and the maximum is 100. | 10 | Integer
-| *release* (producer) | The ServiceNow release to target, default to Helsinki See https://docs.servicenow.com | HELSINKI | ServiceNowRelease
+| *release* (producer) | The ServiceNow release to target, default to Helsinki See \https://docs.servicenow.com | HELSINKI | ServiceNowRelease
 | *requestModels* (producer) | Defines the request model |  | String
 | *resource* (producer) | The default resource, can be overridden by header CamelServiceNowResource |  | String
 | *responseModels* (producer) | Defines the response model |  | String
@@ -123,12 +124,24 @@ with the following path and query parameters:
 | *password* (security) | *Required* ServiceNow account password, MUST be provided |  | String
 | *proxyPassword* (security) | Password for proxy authentication |  | String
 | *proxyUserName* (security) | Username for proxy authentication |  | String
-| *sslContextParameters* (security) | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html |  | SSLContextParameters
+| *sslContextParameters* (security) | To configure security using SSLContextParameters. See \http://camel.apache.org/camel-configuration-utilities.html |  | SSLContextParameters
 | *userName* (security) | *Required* ServiceNow user account name, MUST be provided |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-servicenow-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 57 options, which are listed below.
@@ -167,14 +180,14 @@ The component supports 57 options, which are listed below.
 | *camel.component.servicenow.configuration.proxy-password* | Password for proxy authentication |  | String
 | *camel.component.servicenow.configuration.proxy-port* | The proxy port number |  | Integer
 | *camel.component.servicenow.configuration.proxy-user-name* | Username for proxy authentication |  | String
-| *camel.component.servicenow.configuration.release* | The ServiceNow release to target, default to Helsinki See https://docs.servicenow.com |  | ServiceNowRelease
+| *camel.component.servicenow.configuration.release* | The ServiceNow release to target, default to Helsinki See \https://docs.servicenow.com |  | ServiceNowRelease
 | *camel.component.servicenow.configuration.request-models* | Defines the request model |  | Map
 | *camel.component.servicenow.configuration.resource* | The default resource, can be overridden by header CamelServiceNowResource |  | String
 | *camel.component.servicenow.configuration.response-models* | Defines the response model |  | Map
 | *camel.component.servicenow.configuration.retrieve-target-record-on-import* | Set this parameter to true to retrieve the target record when using import set api. The import set result is then replaced by the target record | false | Boolean
 | *camel.component.servicenow.configuration.sort-by* | Specify the value to use when sorting results. By default, queries sort records by value. |  | String
 | *camel.component.servicenow.configuration.sort-dir* | Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use sysparm_sortdir=asc to sort in ascending order. |  | String
-| *camel.component.servicenow.configuration.ssl-context-parameters* | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html |  | SSLContextParameters
+| *camel.component.servicenow.configuration.ssl-context-parameters* | To configure security using SSLContextParameters. See \http://camel.apache.org/camel-configuration-utilities.html |  | SSLContextParameters
 | *camel.component.servicenow.configuration.suppress-auto-sys-field* | True to suppress auto generation of system fields (default: false) |  | Boolean
 | *camel.component.servicenow.configuration.suppress-pagination-header* | Set this value to true to remove the Link header from the response. The Link header allows you to request additional pages of data when the number of records matching your query exceeds the query limit |  | Boolean
 | *camel.component.servicenow.configuration.table* | The default table, can be overridden by header CamelServiceNowTable |  | String
@@ -200,7 +213,7 @@ The component supports 57 options, which are listed below.
 
 
 
-== Headers
+### Headers
 
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
@@ -279,21 +292,21 @@ The component supports 57 options, which are listed below.
 |===
 | CamelServiceNowResource | CamelServiceNowAction | Method | API URI
 1.5+<.^|TABLE
-| RETRIEVE | GET | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| CREATE | POST | /api/now/v1/table/\{table_name\}
-| MODIFY | PUT | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| DELETE | DELETE | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| UPDATE | PATCH | /api/now/v1/table/\{table_name\}/\{sys_id\}
+| RETRIEVE | GET | /api/now/v1/table/{table_name}/{sys_id}
+| CREATE | POST | /api/now/v1/table/{table_name}
+| MODIFY | PUT | /api/now/v1/table/{table_name}/{sys_id}
+| DELETE | DELETE | /api/now/v1/table/{table_name}/{sys_id}
+| UPDATE | PATCH | /api/now/v1/table/{table_name}/{sys_id}
 
 | AGGREGATE
-| RETRIEVE | GET | /api/now/v1/stats/\{table_name\}
+| RETRIEVE | GET | /api/now/v1/stats/{table_name}
 
 1.2+<.^|IMPORT
-| RETRIEVE | GET | /api/now/import/\{table_name\}/\{sys_id\}
-| CREATE | POST | /api/now/import/\{table_name\}
+| RETRIEVE | GET | /api/now/import/{table_name}/{sys_id}
+| CREATE | POST | /api/now/import/{table_name}
 |===
 
-NOTE: http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji REST API Documentation]
+NOTE: link:http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji REST API Documentation]
 
 [[ServiceNow-Helsinki]]
 [cols="10%a,10%a,10%a,10%a,60%a", options="header"]
@@ -301,24 +314,24 @@ NOTE: http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji RE
 |===
 | CamelServiceNowResource | CamelServiceNowAction | CamelServiceNowActionSubject | Method | API URI
 1.5+<.^|TABLE
-| RETRIEVE | | GET | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| CREATE | | POST | /api/now/v1/table/\{table_name\}
-| MODIFY | | PUT | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| DELETE | | DELETE | /api/now/v1/table/\{table_name\}/\{sys_id\}
-| UPDATE | | PATCH | /api/now/v1/table/\{table_name\}/\{sys_id\}
+| RETRIEVE | | GET | /api/now/v1/table/{table_name}/{sys_id}
+| CREATE | | POST | /api/now/v1/table/{table_name}
+| MODIFY | | PUT | /api/now/v1/table/{table_name}/{sys_id}
+| DELETE | | DELETE | /api/now/v1/table/{table_name}/{sys_id}
+| UPDATE | | PATCH | /api/now/v1/table/{table_name}/{sys_id}
 
 | AGGREGATE
-| RETRIEVE | | GET | /api/now/v1/stats/\{table_name\}
+| RETRIEVE | | GET | /api/now/v1/stats/{table_name}
 
 1.2+<.^|IMPORT
-| RETRIEVE | | GET | /api/now/import/\{table_name\}/\{sys_id\}
-| CREATE | | POST | /api/now/import/\{table_name\}
+| RETRIEVE | | GET | /api/now/import/{table_name}/{sys_id}
+| CREATE | | POST | /api/now/import/{table_name}
 
 1.4+<.^|ATTACHMENT
-| RETRIEVE | | GET | /api/now/api/now/attachment/\{sys_id\}
-| CONTENT | | GET | /api/now/attachment/\{sys_id\}/file
+| RETRIEVE | | GET | /api/now/api/now/attachment/{sys_id}
+| CONTENT | | GET | /api/now/attachment/{sys_id}/file
 | UPLOAD | | POST | /api/now/api/now/attachment/file
-| DELETE | | DELETE | /api/now/attachment/\{sys_id\}
+| DELETE | | DELETE | /api/now/attachment/{sys_id}
 
 | SCORECARDS
 | RETRIEVE | PERFORMANCE_ANALYTICS | GET | /api/now/pa/scorecards
@@ -328,33 +341,33 @@ NOTE: http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji RE
 | CREATE | IDENTIFY_RECONCILE | POST | /api/now/identifyreconcile
 
 1.2+<.^|SERVICE_CATALOG
-| RETRIEVE | | GET | /sn_sc/servicecatalog/catalogs/\{sys_id\}
-| RETRIEVE | CATEGORIES |  GET | /sn_sc/servicecatalog/catalogs/\{sys_id\}/categories
+| RETRIEVE | | GET | /sn_sc/servicecatalog/catalogs/{sys_id}
+| RETRIEVE | CATEGORIES |  GET | /sn_sc/servicecatalog/catalogs/{sys_id}/categories
 
 1.5+<.^|SERVICE_CATALOG_ITEMS
-| RETRIEVE | | GET | /sn_sc/servicecatalog/items/\{sys_id\}
-| RETRIEVE | SUBMIT_GUIDE | POST | /sn_sc/servicecatalog/items/\{sys_id\}/submit_guide
-| RETRIEVE | CHECKOUT_GUIDE | POST | /sn_sc/servicecatalog/items/\{sys_id\}/checkout_guide
-| CREATE | SUBJECT_CART | POST | /sn_sc/servicecatalog/items/\{sys_id\}/add_to_cart
-| CREATE | SUBJECT_PRODUCER | POST | /sn_sc/servicecatalog/items/\{sys_id\}/submit_producer
+| RETRIEVE | | GET | /sn_sc/servicecatalog/items/{sys_id}
+| RETRIEVE | SUBMIT_GUIDE | POST | /sn_sc/servicecatalog/items/{sys_id}/submit_guide
+| RETRIEVE | CHECKOUT_GUIDE | POST | /sn_sc/servicecatalog/items/{sys_id}/checkout_guide
+| CREATE | SUBJECT_CART | POST | /sn_sc/servicecatalog/items/{sys_id}/add_to_cart
+| CREATE | SUBJECT_PRODUCER | POST | /sn_sc/servicecatalog/items/{sys_id}/submit_producer
 
 1.6+<.^|SERVICE_CATALOG_CARTS
 | RETRIEVE | | GET | /sn_sc/servicecatalog/cart
-| RETRIEVE | DELIVERY_ADDRESS | GET | /sn_sc/servicecatalog/cart/delivery_address/\{user_id\}
+| RETRIEVE | DELIVERY_ADDRESS | GET | /sn_sc/servicecatalog/cart/delivery_address/{user_id}
 | RETRIEVE | CHECKOUT | POST | /sn_sc/servicecatalog/cart/checkout
-| UPDATE | | POST | /sn_sc/servicecatalog/cart/\{cart_item_id\}
+| UPDATE | | POST | /sn_sc/servicecatalog/cart/{cart_item_id}
 | UPDATE | CHECKOUT | POST | /sn_sc/servicecatalog/cart/submit_order
-| DELETE | | DELETE | /sn_sc/servicecatalog/cart/\{sys_id\}/empty
+| DELETE | | DELETE | /sn_sc/servicecatalog/cart/{sys_id}/empty
 
 | SERVICE_CATALOG_CATEGORIES
-| RETRIEVE | | GET | /sn_sc/servicecatalog/categories/\{sys_id\}
+| RETRIEVE | | GET | /sn_sc/servicecatalog/categories/{sys_id}
 
 |===
 
 NOTE: https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/inbound-rest/reference/r_RESTResources.html[Helsinki REST API Documentation]
 
-== Usage examples:
- 
+### Usage examples:
+ 
 [source,java]
 .Retrieve 10 Incidents
 -------------------------------------------------------------------------------------------------------------------
@@ -368,7 +381,7 @@ context.addRoutes(new RouteBuilder() {
                + "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}"
            .to("mock:servicenow");
     }
-}); 
+}); 
 
 FluentProducerTemplate.on(context)
     .withHeader(ServiceNowConstants.RESOURCE, "table")

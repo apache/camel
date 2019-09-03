@@ -1,5 +1,4 @@
-[[to-eip]]
-== To EIP
+= To EIP
 
 See message related documentation
 

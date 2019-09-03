@@ -1,5 +1,5 @@
 [[exchangeProperty-language]]
-== ExchangeProperty Language
+= ExchangeProperty Language
 
 *Available as of Camel version 2.0*
 

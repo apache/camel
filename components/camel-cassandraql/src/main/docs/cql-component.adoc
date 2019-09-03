@@ -1,7 +1,8 @@
 [[cql-component]]
-== Cassandra CQL Component
+= Cassandra CQL Component
 
 *Available as of Camel version 2.15*
+
 
 http://cassandra.apache.org[Apache Cassandra] is an open source NoSQL
 database designed to handle large amounts on commodity hardware. Like
@@ -69,7 +70,7 @@ cql:beanRef:hosts:port/keyspace
 
 with the following path and query parameters:
 
-==== Path Parameters (4 parameters):
+=== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -82,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (29 parameters):
+=== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -120,7 +121,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-cassandraql-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -279,5 +292,3 @@ Arrays.asList("davsclaus", "Claus", "Ibsen")
 ---------------------------------------------------------
 
 The same approach can be used for updating or querying the table.
-
-

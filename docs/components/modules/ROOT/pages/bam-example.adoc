@@ -1,4 +1,4 @@
-= Business Activity Monitor (BAM) Example
+## Business Activity Monitor (BAM) Example
 
 The BAM (Business Activity Monitor) example shows how to
 monitor your transaction flows using Camel.
@@ -15,7 +15,7 @@ amount of time (2 seconds in this example). If an invoice is not
 generated within the allowed amount of time and error is generated and
 sent to an Endpoint.
 
-== Overview
+### Overview
 
 This example lives in the _examples/camel-example-bam_ directory. It
 will poll the following directories
@@ -39,7 +39,7 @@ http://svn.apache.org/repos/asf/camel/trunk/examples/camel-example-bam/src/main/
 which defines the JPA `EntityManagerFactory` and tells Camel to look in
 the *org.apache.camel.example.bam* package to find its routes.
 
-== Using BAM
+### Using BAM
 
 So lets start with the activities definition in
 http://svn.apache.org/repos/asf/camel/trunk/examples/camel-example-bam/src/main/java/org/apache/camel/example/bam/MyActivities.java[MyActivities]
@@ -65,7 +65,7 @@ Components such as ActiveMQ,
 <<jms-component,JMS>>, <<jms-component,IRC>>, <<jms-component,Mail>>,
 <<xmpp-component,XMPP>> etc.
 
-== Running the example
+### Running the example
 
 To run the example we use the link:camel-maven-plugin.html[Camel Maven
 Plugin]. For example from the source or binary distribution the

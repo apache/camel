@@ -1,7 +1,8 @@
 [[sjms-component]]
-== Simple JMS Component
+= Simple JMS Component
 
 *Available as of Camel version 2.11*
+
 
 The Simple JMS Component, or SJMS, is a JMS client for use with Camel
 that uses well known best practices when it comes to JMS client creation
@@ -125,7 +126,7 @@ sjms:destinationType:destinationName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -136,7 +137,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (34 parameters):
+=== Query Parameters (34 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -179,7 +180,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-sjms-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 15 options, which are listed below.

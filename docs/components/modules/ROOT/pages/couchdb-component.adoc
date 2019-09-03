@@ -1,3 +1,4 @@
+[[couchdb-component]]
 = CouchDB Component
 
 *Available as of Camel version 2.11*
@@ -10,8 +11,8 @@ has the following features:
 
 * As a consumer, monitors couch changesets for inserts, updates and
 deletes and publishes these as messages into camel routes.
-* As a producer, can save, update, delete (by using CouchDbMethod with DELETE value)
-documents and get documents by id (by using CouchDbMethod with GET value) into couch.
+* As a producer, can save, update, from Camel 2.18 delete (by using CouchDbMethod with DELETE value) 
+documents and from Camel 2.22 get document by id (by using CouchDbMethod with GET value) into couch.
 * Can support as many endpoints as required, eg for multiple databases
 across multiple instances.
 * Ability to have events trigger for only deletes, only inserts/updates
@@ -32,7 +33,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 -------------------------------------------------
@@ -42,7 +43,7 @@ couchdb:http://hostname[:port]/database?[options]
 Where *hostname* is the hostname of the running couchdb instance. Port
 is optional and if not specified then defaults to 5984.
 
-== Options
+### Options
 
 // component options: START
 The CouchDB component has no options.
@@ -57,7 +58,7 @@ couchdb:protocol:hostname:port/database
 
 with the following path and query parameters:
 
-==== Path Parameters (4 parameters):
+=== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -70,7 +71,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +92,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-couchdb-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -107,7 +120,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Headers
+### Headers
 
 The following headers are set on exchanges during message transport.
 
@@ -133,7 +146,7 @@ ignored. That means for example, if you set CouchDbId as a header, it
 will not be used as the id for insertion, the id of the document will
 still be used.
 
-== Message Body
+### Message Body
 
 The component will use the message body as the document to be inserted.
 If the body is an instance of String, then it will be marshalled into a
@@ -142,7 +155,7 @@ or the insert / update will fail. If the body is an instance of a
 com.google.gson.JsonElement then it will be inserted as is. Otherwise
 the producer will throw an exception of unsupported body type.
 
-== Samples
+### Samples
 
 For example if you wish to consume all inserts, updates and deletes from
 a CouchDB instance running locally, on port 9999 then you could use the

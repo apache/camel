@@ -1,9 +1,10 @@
+[[mvel-component]]
 = MVEL Component
 
 *Available as of Camel version 2.12*
 
 
-The MVEL component allows you to process a message using an
+The *mvel:* component allows you to process a message using an
 http://mvel.codehaus.org/[MVEL] template. This can be ideal when using
 Templating to generate responses for requests.
 
@@ -20,7 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 ---------------------------
@@ -29,12 +30,12 @@ mvel:templateName[?options]
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (eg:
-\file://folder/myfile.mvel).
+file://folder/myfile.mvel[file://folder/myfile.mvel]).
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== Options
+### Options
 
 
 // component options: START
@@ -53,7 +54,7 @@ mvel:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -63,7 +64,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (3 parameters):
+=== Query Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +76,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-mvel-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 4 options, which are listed below.
@@ -95,7 +108,7 @@ The component supports 4 options, which are listed below.
 
 
 
-== Message Headers
+### Message Headers
 
 The mvel component sets a couple headers on the message.
 
@@ -106,7 +119,7 @@ The mvel component sets a couple headers on the message.
 |`CamelMvelResourceUri` |The *templateName* as a `String` object.
 |=======================================================================
 
-== MVEL Context
+### MVEL Context
 
 Camel will provide exchange information in the MVEL context (just a
 `Map`). The `Exchange` is transfered as:
@@ -134,7 +147,7 @@ Camel will provide exchange information in the MVEL context (just a
 |`response` |The Out message (only for InOut message exchange pattern).
 |=======================================================================
 
-== Hot reloading
+### Hot reloading
 
 The mvel template resource is, by default, hot reloadable for both file
 and classpath resources (expanded jar). If you set `contentCache=true`,
@@ -142,7 +155,7 @@ Camel will only load the resource once, and thus hot reloading is not
 possible. This scenario can be used in production, when the resource
 never changes.
 
-== Dynamic templates
+### Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
@@ -159,7 +172,7 @@ configured.
 |CamelMvelTemplate |String |The template to use instead of the endpoint configured.
 |=======================================================================
 
-== Samples
+### Samples
 
 For example you could use something like
 
@@ -191,3 +204,10 @@ from("direct:in").
   setHeader("CamelMvelTemplate").constant("@{\"The result is \" + request.body * 3}\" }").
   to("velocity:dummy");
 ------------------------------------------------------------------------------------------
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

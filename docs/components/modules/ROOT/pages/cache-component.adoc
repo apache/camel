@@ -3,6 +3,7 @@
 
 *Available as of Camel version 2.1*
 
+
 The *cache* component enables you to perform caching operations using
 EHCache as the Cache Implementation. The cache itself is created on
 demand or if a cache of that name already exists then it is simply
@@ -73,7 +74,7 @@ cache:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,7 +84,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -111,7 +112,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-cache-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 17 options, which are listed below.
@@ -137,7 +150,7 @@ The component supports 17 options, which are listed below.
 | *camel.component.cache.configuration.time-to-live-seconds* | The maximum time between creation time and when an element expires. Is used only if the element is not eternal | 300 | Long
 | *camel.component.cache.enabled* | Enable cache component | true | Boolean
 | *camel.component.cache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.cache.configuration.disk-store-path* | This parameter is ignored. CacheManager sets it using setter injection. |  | String
+| *camel.component.cache.configuration.disk-store-path* | *Deprecated* This parameter is ignored. CacheManager sets it using setter injection. |  | String
 |===
 // spring-boot-auto-configure options: END
 

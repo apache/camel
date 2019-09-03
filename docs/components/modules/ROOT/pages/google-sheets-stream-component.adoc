@@ -1,22 +1,23 @@
+[[google-sheets-stream-component]]
 = Google Sheets Stream Component
 
 *Available as of Camel version 2.23*
 
 
 The Google Sheets component provides access
-to https://sheets.google.com/[Sheets] via
-the https://developers.google.com/sheets/api/reference/rest/[Google Sheets
+to https://sheets.google.com/[Sheets] via
+the https://developers.google.com/sheets/api/reference/rest/[Google Sheets
 Web APIs].
 
 Google Sheets uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need
-to https://developers.google.com/google-apps/sheets/auth[create an
+to https://developers.google.com/google-apps/sheets/auth[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is
-the https://developers.google.com/oauthplayground[OAuth playground].
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -25,13 +26,12 @@ for this component:
     <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-google-sheets</artifactId>
-            <!-- use the same version as your Camel core version -->
-            <version>x.x.x</version>
+            <version>2.23.0</version>
     </dependency>
 
 ------------------------------------------------------
 
-== URI Format
+### URI Format
 
 The Google Sheets Component uses the following URI format:
 
@@ -40,7 +40,7 @@ The Google Sheets Component uses the following URI format:
 
 --------------------------------------------------------
 
-== GoogleSheetsStreamComponent
+### GoogleSheetsStreamComponent
 
 
 // component options: START
@@ -69,7 +69,7 @@ google-sheets-stream:apiName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (32 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,7 +95,7 @@ with the following path and query parameters:
 | *maxResults* (consumer) | Specify the maximum number of returned results. This will limit the number of rows in a returned value range data set or the number of returned value ranges in a batch request. | 0 | int
 | *range* (consumer) | Specifies the range of rows and columns in a sheet to get data from. |  | String
 | *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *scopes* (consumer) | Specifies the level of permissions you want a sheets application to have to a user account. See https://developers.google.com/identity/protocols/googlescopes for more info. |  | List
+| *scopes* (consumer) | Specifies the level of permissions you want a sheets application to have to a user account. See \https://developers.google.com/identity/protocols/googlescopes for more info. |  | List
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *splitResults* (consumer) | True if value range result should be split into rows or columns to process each of them individually. When true each row or column is represented with a separate exchange in batch processing. Otherwise value range object is used as exchange junk size. | false | boolean
 | *spreadsheetId* (consumer) | Specifies the spreadsheet identifier that is used to identify the target to obtain. |  | String
@@ -120,7 +120,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-sheets-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 17 options, which are listed below.
@@ -141,7 +153,7 @@ The component supports 17 options, which are listed below.
 | *camel.component.google-sheets-stream.configuration.max-results* | Specify the maximum number of returned results. This will limit the number of rows in a returned value range data set or the number of returned value ranges in a batch request. | 0 | Integer
 | *camel.component.google-sheets-stream.configuration.range* | Specifies the range of rows and columns in a sheet to get data from. |  | String
 | *camel.component.google-sheets-stream.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *camel.component.google-sheets-stream.configuration.scopes* | Specifies the level of permissions you want a sheets application to have to a user account. See https://developers.google.com/identity/protocols/googlescopes for more info. |  | List
+| *camel.component.google-sheets-stream.configuration.scopes* | Specifies the level of permissions you want a sheets application to have to a user account. See \https://developers.google.com/identity/protocols/googlescopes for more info. |  | List
 | *camel.component.google-sheets-stream.configuration.split-results* | True if value range result should be split into rows or columns to process each of them individually. When true each row or column is represented with a separate exchange in batch processing. Otherwise value range object is used as exchange junk size. | false | Boolean
 | *camel.component.google-sheets-stream.configuration.spreadsheet-id* | Specifies the spreadsheet identifier that is used to identify the target to obtain. |  | String
 | *camel.component.google-sheets-stream.configuration.value-render-option* | Determines how values should be rendered in the output. | FORMATTED_VALUE | String
@@ -151,7 +163,7 @@ The component supports 17 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Consumer
+### Consumer
 
 The consumer will poll by default with maxResults equals to 5.
 
@@ -164,4 +176,4 @@ from("google-sheets-stream://data?range=A:B&delay=5000&maxResults=5").to("mock:r
 
 This route will consume the next ten events starting from the date of polling.
 
-   
+   

@@ -1,5 +1,5 @@
 [[UrlRewrite-UrlRewriteComponent]]
-= UrlRewrite Component
+== UrlRewrite Component
 
 *Available as of Camel 2.11*
 

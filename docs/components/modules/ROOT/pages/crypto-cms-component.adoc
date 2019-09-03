@@ -1,3 +1,4 @@
+[[crypto-cms-component]]
 = Crypto CMS Component
 
 *Available as of Camel version 2.20*
@@ -31,7 +32,7 @@ Security.addProvider(new BouncyCastleProvider());
 
 If the Bouncy Castle security provider is not registered then the Crypto CMS component will register the provider.
 
-== Options
+### Options
 
 // component options: START
 The Crypto CMS component supports 3 options, which are listed below.
@@ -56,7 +57,7 @@ crypto-cms:cryptoOperation:name
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -67,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (15 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,10 +80,10 @@ with the following path and query parameters:
 | *password* (decrypt) | Sets the password of the private keys. It is assumed that all private keys in the keystore have the same password. If not set then it is assumed that the password of the private keys is given by the keystore password given in the KeyStoreParameters. |  | Char[]
 | *fromBase64* (decrypt_verify) | If true then the CMS message is base 64 encoded and must be decoded during the processing. Default value is false. | false | Boolean
 | *contentEncryptionAlgorithm* (encrypt) | Encryption algorithm, for example DESede/CBC/PKCS5Padding. Further possible values: DESede/CBC/PKCS5Padding, AES/CBC/PKCS5Padding, Camellia/CBC/PKCS5Padding, CAST5/CBC/PKCS5Padding. |  | String
-| *originatorInformation Provider* (encrypt) | Provider for the originator info. See https://tools.ietf.org/html/rfc5652#section-6.1. The default value is null. |  | OriginatorInformation Provider
+| *originatorInformation Provider* (encrypt) | Provider for the originator info. See \https://tools.ietf.org/html/rfc5652#section-6.1. The default value is null. |  | OriginatorInformation Provider
 | *recipient* (encrypt) | Recipient Info: reference to a bean which implements the interface org.apache.camel.component.crypto.cms.api.TransRecipientInfo |  | List
 | *secretKeyLength* (encrypt) | Key length for the secret symmetric key used for the content encryption. Only used if the specified content-encryption algorithm allows keys of different sizes. If contentEncryptionAlgorithm=AES/CBC/PKCS5Padding or Camellia/CBC/PKCS5Padding then 128; if contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding then 192, 128; if strong encryption is enabled then for AES/CBC/PKCS5Padding and Camellia/CBC/PKCS5Padding also the key lengths 192 and 256 are possible. |  | int
-| *unprotectedAttributes GeneratorProvider* (encrypt) | Provider of the generator for the unprotected attributes. The default value is null which means no unprotected attribute is added to the Enveloped Data object. See https://tools.ietf.org/html/rfc5652#section-6.1. |  | AttributesGenerator Provider
+| *unprotectedAttributes GeneratorProvider* (encrypt) | Provider of the generator for the unprotected attributes. The default value is null which means no unprotected attribute is added to the Enveloped Data object. See \https://tools.ietf.org/html/rfc5652#section-6.1. |  | AttributesGenerator Provider
 | *toBase64* (encrypt_sign) | Indicates whether the Signed Data or Enveloped Data instance shall be base 64 encoded. Default value is false. | false | Boolean
 | *includeContent* (sign) | Indicates whether the signed content should be included into the Signed Data instance. If false then a detached Signed Data instance is created in the header CamelCryptoCmsSignedData. | true | Boolean
 | *signer* (sign) | Signer information: reference to a bean which implements org.apache.camel.component.crypto.cms.api.SignerInfo |  | List
@@ -91,7 +92,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-crypto-cms-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 4 options, which are listed below.
@@ -109,7 +122,7 @@ The component supports 4 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Enveloped Data
+### Enveloped Data
 
 Note, that a `crypto-cms:encypt` endpoint is typically defined in one route and the complimentary `crypto-cms:decrypt` in another, though for simplicity in the
 examples they appear one after the other.
@@ -120,7 +133,7 @@ The following example shows how you can create an Enveloped Data message and how
 
 [source,java]
 ----
-import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.component.crypto.cms.crypt.DefaultKeyTransRecipientInfo;
 ...
 KeyStoreParameters keystore  = new KeyStoreParameters();
@@ -166,7 +179,7 @@ from("direct:start")
 
 [source,java]
 ----
-import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.component.crypto.cms.crypt.DefaultKeyTransRecipientInfo;
 ...
 KeyStoreParameters keystore  = new KeyStoreParameters();
@@ -219,7 +232,7 @@ from("direct:start")
     </route> 
 ----
 
-== Signed Data
+### Signed Data
 
 Note, that a `crypto-cms:sign` endpoint is typically defined in one route and the complimentary `crypto-cms:verify` in another, though for simplicity in the
 examples they appear one after the other.
@@ -230,7 +243,7 @@ The following example shows how you can create a Signed Data message and how you
 
 [source,java]
 ----
-import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo;
 ...
 KeyStoreParameters keystore  = new KeyStoreParameters();
@@ -285,7 +298,7 @@ from("direct:start")
 
 [source,java]
 ----
-import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo;
 ...
 KeyStoreParameters keystore  = new KeyStoreParameters();
@@ -314,7 +327,7 @@ simpleReg.put("signer1", signerInfo1); //register signer info in the registry
 simpleReg.put("signer2", signerInfo2); //register signer info in the registry
 
 from("direct:start")
-    .to("crypto-cms:sign://testsign?signer=#signer1,#signer2&includeContent=true")
+    .to("crypto-cms:sign://testsign?signer=#signer1&signer=#signer2&includeContent=true")
     .to("crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters")
     .to("mock:result");
 ----
@@ -346,7 +359,7 @@ from("direct:start")
 ...
     <route>
         <from uri="direct:start" />
-        <to uri="crypto-cms:sign://testsign?signer=#signer1,#signer2&amp;includeContent=true" />
+        <to uri="crypto-cms:sign://testsign?signer=#signer1&amp;signer=#signer2&amp;includeContent=true" />
         <to uri="crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters1" />
         <to uri="mock:result" />
     </route>    
@@ -356,7 +369,7 @@ from("direct:start")
 
 [source,java]
 ----
-import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo;
 ...
 KeyStoreParameters keystore  = new KeyStoreParameters();

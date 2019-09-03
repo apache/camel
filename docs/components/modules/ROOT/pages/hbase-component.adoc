@@ -1,3 +1,4 @@
+[[hbase-component]]
 = HBase Component
 
 *Available as of Camel version 2.10*
@@ -19,7 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== Apache HBase Overview
+### Apache HBase Overview
 
 HBase is an open-source, distributed, versioned, column-oriented store
 modeled after Google's Bigtable: A Distributed Storage System for
@@ -27,7 +28,7 @@ Structured Data. You can use HBase when you need random, realtime
 read/write access to your Big Data. More information at
 http://hbase.apache.org[Apache HBase].
 
-== Camel and HBase
+### Camel and HBase
 
 When using a datasotre inside a camel route, there is always the
 chalenge of specifying how the camel message will stored to the
@@ -56,7 +57,7 @@ Regardless of the mapping strategy camel-hbase will convert a message
 into an org.apache.camel.component.hbase.model.HBaseData object and use
 that object for its internal operations.
 
-== Configuring the component
+### Configuring the component
 
 The HBase component can be provided a custom HBaseConfiguration object
 as a property or it can create an HBase configuration object on its own
@@ -76,7 +77,7 @@ You can find more information about how to configure HBase clients at:
 http://archive.apache.org/dist/hbase/docs/client_dependencies.html[HBase
 client configuration and dependencies]
 
-== HBase Producer
+### HBase Producer
 
 As mentioned above camel provides produers endpoints for HBase. This
 allows you to store, delete, retrieve or query data from HBase using
@@ -96,7 +97,7 @@ The supported operations are:
 * Delete
 * Scan
 
-=== Supported URI options
+#### Supported URI options
 
 
 
@@ -129,7 +130,7 @@ hbase:tableName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -139,7 +140,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -164,7 +165,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hbase-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 4 options, which are listed below.
@@ -184,7 +197,7 @@ The component supports 4 options, which are listed below.
 
 
 
-=== Put Operations.
+#### Put Operations.
 
 HBase is a column based store, which allows you to store data into a
 specific column of a specific row. Columns are grouped into families, so
@@ -200,11 +213,11 @@ would be to store part of the message body to specified HBase column.
         <route>
             <from uri="direct:in"/>
             <!-- Set the HBase Row -->
-            <setHeader name="CamelHBaseRowId">
+            <setHeader headerName="CamelHBaseRowId">
                 <el>${in.body.id}</el>
             </setHeader>
             <!-- Set the HBase Value -->
-            <setHeader name="CamelHBaseValue">
+            <setHeader headerName="CamelHBaseValue">
                 <el>${in.body.value}</el>
             </setHeader>
             <to uri="hbase:mytable?operation=CamelHBasePut&amp;family=myfamily&amp;qualifier=myqualifier"/>
@@ -224,19 +237,19 @@ does not have the number 1.
         <route>
             <from uri="direct:in"/>
             <!-- Set the HBase Row 1st column -->
-            <setHeader name="CamelHBaseRowId">
+            <setHeader headerName="CamelHBaseRowId">
                 <el>${in.body.id}</el>
             </setHeader>
             <!-- Set the HBase Row 2nd column -->
-            <setHeader name="CamelHBaseRowId2">
+            <setHeader headerName="CamelHBaseRowId2">
                 <el>${in.body.id}</el>
             </setHeader>
             <!-- Set the HBase Value for 1st column -->
-            <setHeader name="CamelHBaseValue">
+            <setHeader headerName="CamelHBaseValue">
                 <el>${in.body.value}</el>
             </setHeader>
             <!-- Set the HBase Value for 2nd column -->
-            <setHeader name="CamelHBaseValue2">
+            <setHeader headerName="CamelHBaseValue2">
                 <el>${in.body.othervalue}</el>
             </setHeader>
             <to uri="hbase:mytable?operation=CamelHBasePut&amp;family=myfamily&amp;qualifier=myqualifier&amp;family2=myfamily&amp;qualifier2=myqualifier2"/>
@@ -248,7 +261,7 @@ headers or a combination of both. It is recommended to specify constants
 as part of the uri and dynamic values as headers. If something is
 defined both as header and as part of the uri, the header will be used.
 
-=== Get Operations.
+#### Get Operations.
 
 A Get Operation is an operation that is used to retrieve one or more
 values from a specified HBase row. To specify what are the values that
@@ -260,7 +273,7 @@ message headers.
         <route>
             <from uri="direct:in"/>
             <!-- Set the HBase Row of the Get -->
-            <setHeader name="CamelHBaseRowId">
+            <setHeader headerName="CamelHBaseRowId">
                 <el>${in.body.id}</el>
             </setHeader>
             <to uri="hbase:mytable?operation=CamelHBaseGet&amp;family=myfamily&amp;qualifier=myqualifier&amp;valueType=java.lang.Long"/>
@@ -271,7 +284,7 @@ message headers.
 In the example above the result of the get operation will be stored as a
 header with name CamelHBaseValue.
 
-=== Delete Operations.
+#### Delete Operations.
 
 You can also you camel-hbase to perform HBase delete operation. The
 delete operation will remove an entire row. All that needs to be
@@ -282,14 +295,14 @@ specified is one or more rows as part of the message headers.
         <route>
             <from uri="direct:in"/>
             <!-- Set the HBase Row of the Get -->
-            <setHeader name="CamelHBaseRowId">
+            <setHeader headerName="CamelHBaseRowId">
                 <el>${in.body.id}</el>
             </setHeader>
             <to uri="hbase:mytable?operation=CamelHBaseDelete"/>
         </route>
 ----------------------------------------------------------------
 
-=== Scan Operations.
+#### Scan Operations.
 
 A scan operation is the equivalent of a query in HBase. You can use the
 scan operation to retrieve multiple rows. To specify what columns should
@@ -325,29 +338,29 @@ can make use of the ModelAwareColumnMatchingFilter as shown below.
         <route>
             <from uri="direct:scan"/>
             <!-- Set the Criteria -->
-            <setHeader name="CamelHBaseFamily">
+            <setHeader headerName="CamelHBaseFamily">
                 <constant>name</constant>
             </setHeader>
-            <setHeader name="CamelHBaseQualifier">
+            <setHeader headerName="CamelHBaseQualifier">
                 <constant>first</constant>
             </setHeader>
-            <setHeader name="CamelHBaseValue">
+            <setHeader headerName="CamelHBaseValue">
                 <el>in.body.firstName</el>
             </setHeader>
-            <setHeader name="CamelHBaseFamily2">
+            <setHeader headerName="CamelHBaseFamily2">
                 <constant>name</constant>
             </setHeader>
-            <setHeader name="CamelHBaseQualifier2">
+            <setHeader headerName="CamelHBaseQualifier2">
                 <constant>last</constant>
             </setHeader>
-            <setHeader name="CamelHBaseValue2">
+            <setHeader headerName="CamelHBaseValue2">
                 <el>in.body.lastName</el>
             </setHeader>
             <!-- Set additional fields that you want to be return by skipping value -->
-            <setHeader name="CamelHBaseFamily3">
+            <setHeader headerName="CamelHBaseFamily3">
                 <constant>address</constant>
             </setHeader>
-            <setHeader name="CamelHBaseQualifier3">
+            <setHeader headerName="CamelHBaseQualifier3">
                 <constant>country</constant>
             </setHeader>
             <to uri="hbase:mytable?operation=CamelHBaseScan&amp;filters=#myFilterList"/>
@@ -370,7 +383,7 @@ and will pass that model the ModelAwareColumnMatchingFilter. The
 filter will filter out any rows, that do not contain columns that match
 the model. It is like query by example.
 
-== HBase Consumer
+### HBase Consumer
 
 The Camel HBase Consumer, will perform repeated scan on the specified
 HBase table and will return the scan results as part of the message. You
@@ -396,7 +409,7 @@ specified fields and the scan results will populate the model object
 with values. Finally the mapping strategy will be used to map this model
 to the camel message.
 
-== HBase Idempotent repository
+### HBase Idempotent repository
 
 The camel-hbase component also provides an idempotent repository which
 can be used when you want to make sure that each message is processed
@@ -414,14 +427,14 @@ from("direct:in")
   .to("log:out);
 ------------------------------------------------------------------------------------------------------------------
 
-== HBase Mapping
+### HBase Mapping
 
 It was mentioned above that you the default mapping strategies are
 *header* and *body* mapping. +
  Below you can find some detailed examples of how each mapping strategy
 works.
 
-=== HBase Header mapping Examples
+#### HBase Header mapping Examples
 
 The header mapping is the default mapping. 
  To put the value "myvalue" into HBase row "myrow" and column
@@ -483,7 +496,7 @@ Please note that in order to avoid boilerplate headers that are
 considered constant for all messages, you can also specify them as part
 of the endpoint uri, as you will see below.
 
-=== Body mapping Examples
+#### Body mapping Examples
 
 In order to use the body mapping strategy you will have to specify the
 option mappingStrategy as part of the uri, for example:
@@ -515,3 +528,8 @@ myvalue to the column myfamily:myqualifier. +
  The body mapping strategy might not seem very appealing at first. The
 advantage it has over the header mapping strategy is that the HBaseData
 object can be easily converted to or from xml/json.
+
+### See also
+
+* Polling Consumer
+* http://hbase.apache.org[Apache HBase]

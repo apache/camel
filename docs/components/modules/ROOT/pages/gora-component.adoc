@@ -1,3 +1,4 @@
+[[gora-component]]
 = Gora Component
 
 *Available as of Camel version 2.14*
@@ -13,14 +14,14 @@ for this component:
 [source,xml]
 ---------------------------------------------------------
 <dependency>
- <groupId>org.apache.camel</groupId>
- <artifactId>camel-gora</artifactId>
- <!-- use the same version as your Camel core version -->
- <version>x.x.x</version>
+ <groupId>org.apache.camel</groupId>
+ <artifactId>camel-gora</artifactId>
+ <version>x.x.x</version>
+ <!-- use the same version as your Camel core version -->
 </dependency>
 ---------------------------------------------------------
 
-== Apache Gora Overview
+### Apache Gora Overview
 
 The http://gora.apache.org/[Apache Gora] open source framework provides
 an in-memory data model and persistence for big data. Gora supports
@@ -35,10 +36,10 @@ Apache Gora currently supports the following datastores:
 http://hbase.apache.org/[Apache HBase],
 http://cassandra.apache.org/[Apache Cassandra],
 http://accumulo.apache.org/[Apache Accumulo],
-https://aws.amazon.com/dynamodb/[Amazon DynamoDB] and SQL databases such
+http://aws.amazon.com/dynamodb/[Amazon DynamoDB] and SQL databases such
 as http://hsqldb.org/[hsqldb], http://www.mysql.com/[MySQL] and more.
 
-== URI format
+### URI format
 
 [source,text]
 ---------------------------
@@ -61,7 +62,7 @@ _Java DSL_
 to("gora:foobar?keyClass=java.lang.Long&valueClass=org.apache.camel.component.gora.generated.Pageview&dataStoreClass=org.apache.gora.hbase.store.HBaseStore")
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-== Configuratiion
+### Configuratiion
 
 Using camel-gora needs some configuration. This mainly involve to
 configure the _AvroStore_ through the _gora.properties_ file and to
@@ -72,7 +73,7 @@ Extensive information for this configuration can be found in the apache
 http://gora.apache.org/current/index.html[gora documentation] and the
 http://gora.apache.org/current/gora-conf.html[gora-conf] page.
 
-== Options
+### Options
 
 
 // component options: START
@@ -92,7 +93,7 @@ gora:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -102,7 +103,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (21 parameters):
+=== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -132,7 +133,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-gora-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -151,7 +164,7 @@ The component supports 2 options, which are listed below.
 
 
 
-== Supported Gora Operations
+### Supported Gora Operations
 
 Supported operations include : *put*, *get*, *delete*, *getSchemaName*,
 *deleteSchema*, *createSchema*, *query*, *deleteByQuery*,
@@ -189,7 +202,7 @@ hold the objects._
 datastore._
 |=======================================================================
 
-== Gora Headers
+### Gora Headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -200,14 +213,14 @@ datastore._
 |GoraKey | _Used in order to define the datum key for the operations need it._
 |=======================================================================
 
-== Usage examples
+### Usage examples
 
 *Create Schema* _(XML DSL)_:
 
 [source,xml]
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<setHeader name="GoraOperation">
- <constant>CreateSchema</constant>
+<setHeader headerName="GoraOperation">
+ <constant>CreateSchema</constant>
 </setHeader>
 <to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -216,21 +229,21 @@ datastore._
 
 [source,xml]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<setHeader name="GoraOperation">
- <constant>SchemaExists</constant>
+<setHeader headerName="GoraOperation">
+ <constant>SchemaExists</constant>
 </setHeader>
- <to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
+ <to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *Put* _(XML DSL)_:
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<setHeader name="GoraOperation">
- <constant>put</constant>
+<setHeader headerName="GoraOperation">
+ <constant>put</constant>
 </setHeader>
-<setHeader name="GoraKey">
- <constant>22222</constant>
+<setHeader headerName="GoraKey">
+ <constant>22222</constant>
 </setHeader>
 <to uri="gora:foo?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -239,11 +252,11 @@ datastore._
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<setHeader name="GoraOperation">
- <constant>GET</constant>
+<setHeader headerName="GoraOperation">
+ <constant>GET</constant>
 </setHeader>
-<setHeader name="GoraKey">
- <constant>10101</constant>
+<setHeader headerName="GoraKey">
+ <constant>10101</constant>
 </setHeader>
 <to uri="gora:bar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -252,11 +265,11 @@ datastore._
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<setHeader name="GoraOperation">
- <constant>DELETE</constant>
+<setHeader headerName="GoraOperation">
+ <constant>DELETE</constant>
 </setHeader>
-<setHeader name="GoraKey">
- <constant>22222</constant>
+<setHeader headerName="GoraKey">
+ <constant>22222</constant>
 </setHeader>
 <to uri="gora:bar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -272,7 +285,7 @@ The full usage examples in the form of integration tests can be found at
 https://github.com/ipolyzos/camel-gora-examples/[camel-gora-examples]
 repository.
 
-== More resources
+### More resources
 
 For more please information and in depth configuration refer to the
 http://gora.apache.org/current/overview.html[Apache Gora Documentation]

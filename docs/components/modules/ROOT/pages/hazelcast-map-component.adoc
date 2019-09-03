@@ -1,3 +1,4 @@
+[[hazelcast-map-component]]
 = Hazelcast Map Component
 
 *Available as of Camel version 2.7*
@@ -6,7 +7,7 @@
 The http://www.hazelcast.com/[Hazelcast] Map component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed map.
 
 
-== Options
+### Options
 
 // component options: START
 The Hazelcast Map component supports 3 options, which are listed below.
@@ -30,7 +31,7 @@ hazelcast-map:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -40,7 +41,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +66,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hazelcast-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 6 options, which are listed below.
@@ -87,7 +100,7 @@ The component supports 6 options, which are listed below.
 
 
 
-== Map cache producer - to("hazelcast-map:foo")
+### Map cache producer - to("hazelcast-map:foo")
 
 If you want to store a value in a map you can use the map cache
 producer. 
@@ -138,7 +151,7 @@ You can call the samples with:
 template.sendBodyAndHeader("direct:[put|get|update|delete|query|evict]", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
 -------------------------------------------------------------------------------------------------------------------
 
-=== Sample for *put*:
+#### Sample for *put*:
 
 Java DSL:
 
@@ -155,7 +168,8 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:put" />
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>put</constant>
     </setHeader>
     <to uri="hazelcast-map:foo" />
@@ -181,13 +195,14 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:put" />
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>put</constant>
     </setHeader>
-    <setHeader name="HazelcastConstants.TTL_VALUE">
+    <setHeader headerName="HazelcastConstants.TTL_VALUE">
         <simple resultType="java.lang.Long">1</simple>
     </setHeader>
-    <setHeader name="HazelcastConstants.TTL_UNIT">
+    <setHeader headerName="HazelcastConstants.TTL_UNIT">
         <simple resultType="java.util.concurrent.TimeUnit">TimeUnit.MINUTES</simple>
     </setHeader>
     <to uri="hazelcast-map:foo" />
@@ -195,7 +210,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 
 
-=== Sample for *get*:
+#### Sample for *get*:
 
 Java DSL:
 
@@ -213,7 +228,8 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:get" />
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>get</constant>
     </setHeader>
     <to uri="hazelcast-map:foo" />
@@ -221,7 +237,7 @@ Spring DSL:
 </route>
 -----------------------------------------------------------------------------------------------
 
-=== Sample for *update*:
+#### Sample for *update*:
 
 Java DSL:
 
@@ -238,14 +254,15 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:update" />
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>update</constant>
     </setHeader>
     <to uri="hazelcast-map:foo" />
 </route>
 -----------------------------------------------------------------------------------------------
 
-=== Sample for *delete*:
+#### Sample for *delete*:
 
 Java DSL:
 
@@ -262,14 +279,15 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:delete" />
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>delete</constant>
     </setHeader>
     <to uri="hazelcast-map:foo" />
 </route>
 -----------------------------------------------------------------------------------------------
 
-=== Sample for *query*
+#### Sample for *query*
 
 Java DSL:
 
@@ -287,7 +305,8 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:query" />
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>query</constant>
     </setHeader>
     <to uri="hazelcast-map:foo" />
@@ -305,7 +324,7 @@ template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, q1);
 -------------------------------------------------------------------------------
 
 
-== Map cache consumer - from("hazelcast-map:foo")
+### Map cache consumer - from("hazelcast-map:foo")
 
 Hazelcast provides event listeners on their data grid. If you want to be
 notified if a cache will be manipulated, you can use the map consumer.

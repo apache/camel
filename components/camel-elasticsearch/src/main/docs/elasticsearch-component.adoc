@@ -1,7 +1,8 @@
 [[elasticsearch-component]]
-== Elasticsearch Component (deprecated)
+= Elasticsearch Component (deprecated)
 
 *Available as of Camel version 2.11*
+
 
 The ElasticSearch component allows you to interface with an
 http://elasticsearch.org[ElasticSearch] server.
@@ -57,7 +58,7 @@ elasticsearch:clusterName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -67,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,14 +81,26 @@ with the following path and query parameters:
 | *indexType* (producer) | The type of the index to act against |  | String
 | *ip* (producer) | The TransportClient remote host ip to use |  | String
 | *operation* (producer) | What operation to perform |  | String
-| *pathHome* (producer) | The path.home property of ElasticSearch configuration. You need to provide a valid path, otherwise the default, $user.home/.elasticsearch, will be used. | ${user.home}/.elasticsearch | String
+| *pathHome* (producer) | The path.home property of ElasticSearch configuration. You need to provide a valid path, otherwise the default, \$user.home/.elasticsearch, will be used. | ${user.home}/.elasticsearch | String
 | *port* (producer) | The TransportClient remote port to use (defaults to 9300) | 9300 | int
 | *transportAddresses* (producer) | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for transportAddresses to be considered instead. |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-elasticsearch-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 3 options, which are listed below.

@@ -3,6 +3,7 @@
 
 *Available as of Camel version 2.14*
 
+
 The *netty4-http* component is an extension to <<netty4-component,Netty4>>
 component to facilitiate HTTP transport with <<netty4-component,Netty4>>.
 
@@ -113,7 +114,7 @@ netty4-http:protocol:host:port/path
 
 with the following path and query parameters:
 
-==== Path Parameters (4 parameters):
+=== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -126,7 +127,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (79 parameters):
+=== Query Parameters (79 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -181,7 +182,7 @@ with the following path and query parameters:
 | *configuration* (advanced) | To use a custom configured NettyHttpConfiguration for configuring this endpoint. |  | NettyHttpConfiguration
 | *disableStreamCache* (advanced) | Determines whether or not the raw input stream from Netty HttpRequest#getContent() or HttpResponset#getContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. Mind that if you enable this option, then you cannot read the Netty stream multiple times out of the box, and you would need manually to reset the reader index on the Netty raw stream. Also Netty will auto-close the Netty stream when the Netty HTTP server/HTTP client is done processing, which means that if the asynchronous routing engine is in use then any asynchronous thread that may continue routing the org.apache.camel.Exchange may not be able to read the Netty stream, because Netty has closed it. | false | boolean
 | *headerFilterStrategy* (advanced) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers. |  | HeaderFilterStrategy
-| *nativeTransport* (advanced) | Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms. You need to add the netty JAR for the host operating system you are using. See more details at: http://netty.io/wiki/native-transports.html | false | boolean
+| *nativeTransport* (advanced) | Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms. You need to add the netty JAR for the host operating system you are using. See more details at: \http://netty.io/wiki/native-transports.html | false | boolean
 | *nettyHttpBinding* (advanced) | To use a custom org.apache.camel.component.netty4.http.NettyHttpBinding for binding to/from Netty and Camel Message API. |  | NettyHttpBinding
 | *options* (advanced) | Allows to configure additional netty options using option. as prefix. For example option.child.keepAlive=false to set the netty option child.keepAlive=false. See the Netty documentation for possible options that can be used. |  | Map
 | *receiveBufferSize* (advanced) | The TCP/UDP buffer sizes to be used during inbound communication. Size is bytes. | 65536 | int
@@ -214,7 +215,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-netty4-http-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 33 options, which are listed below.

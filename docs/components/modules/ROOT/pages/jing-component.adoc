@@ -1,3 +1,4 @@
+[[jing-component]]
 = Jing Component
 
 *Available as of Camel version 1.1*
@@ -24,20 +25,20 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-Note that the xref:msv-component.adoc[MSV] component can also support RelaxNG XML
+Note that the <<msv-component,MSV>> component can also support RelaxNG XML
 syntax.
 
-== URI format
+### URI format Camel 2.16
 
 [source,java]
 ------------------------------
 jing:someLocalOrRemoteResource
 ------------------------------
 
-The component uses jing as name, and you can use the
+From Camel 2.16 the component use jing as name, and you can use the
 option compactSyntax to turn on either RNG or RNC mode.
 
-== Options
+### Options
 
 
 // component options: START
@@ -56,7 +57,7 @@ jing:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +67,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (2 parameters):
+=== Query Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +78,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jing-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -95,7 +108,7 @@ The component supports 2 options, which are listed below.
 
 
 
-== Example
+### Example
 
 The following
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-jing/src/test/resources/org/apache/camel/component/validator/jing/rnc-context.xml[example]
@@ -104,3 +117,10 @@ then goes to one of two endpoints, either *mock:valid* or *mock:invalid*
 based on whether or not the XML matches the given
 http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
 Syntax] schema (which is supplied on the classpath).
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

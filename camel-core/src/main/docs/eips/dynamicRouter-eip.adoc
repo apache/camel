@@ -1,5 +1,4 @@
-[[dynamicRouter-eip]]
-== Dynamic Router EIP
+= Dynamic Router EIP
 
 The link:http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic Router] from the link:../../../../readme-eip.adoc[EIP patterns] allows you to route messages while avoiding the dependency of the router on all possible destinations while maintaining its efficiency.
 

@@ -1,7 +1,8 @@
 [[rest-swagger-component]]
-== REST Swagger Component
+= REST Swagger Component
 
 *Available as of Camel version 2.19*
+
 
 The *rest-swagger* configures rest producers from 
 http://swagger.io/[Swagger] (Open API) specification document and
@@ -94,9 +95,9 @@ The REST Swagger component supports 9 options, which are listed below.
 | *basePath* (producer) | API basePath, for example /v2. Default is unset, if set overrides the value present in Swagger specification. |  | String
 | *componentName* (producer) | Name of the Camel component that will perform the requests. The component must be present in Camel registry and it must implement RestProducerFactory service provider interface. If not set CLASSPATH is searched for single component that implements RestProducerFactory SPI. Can be overridden in endpoint configuration. |  | String
 | *consumes* (producer) | What payload type this component capable of consuming. Could be one type, like application/json or multiple types as application/json, application/xml; q=0.5 according to the RFC7231. This equates to the value of Accept HTTP header. If set overrides any value found in the Swagger specification. Can be overridden in endpoint configuration |  | String
-| *host* (producer) | Scheme hostname and port to direct the HTTP requests to in the form of https://hostname:port. Can be configured at the endpoint, component or in the correspoding REST configuration in the Camel Context. If you give this component a name (e.g. petstore) that REST configuration is consulted first, rest-swagger next, and global configuration last. If set overrides any value found in the Swagger specification, RestConfiguration. Can be overridden in endpoint configuration. |  | String
+| *host* (producer) | Scheme hostname and port to direct the HTTP requests to in the form of \https://hostname:port. Can be configured at the endpoint, component or in the correspoding REST configuration in the Camel Context. If you give this component a name (e.g. petstore) that REST configuration is consulted first, rest-swagger next, and global configuration last. If set overrides any value found in the Swagger specification, RestConfiguration. Can be overridden in endpoint configuration. |  | String
 | *produces* (producer) | What payload type this component is producing. For example application/json according to the RFC7231. This equates to the value of Content-Type HTTP header. If set overrides any value present in the Swagger specification. Can be overridden in endpoint configuration. |  | String
-| *specificationUri* (producer) | Path to the Swagger specification file. The scheme, host base path are taken from this specification, but these can be overriden with properties on the component or endpoint level. If not given the component tries to load swagger.json resource. Note that the host defined on the component and endpoint of this Component should contain the scheme, hostname and optionally the port in the URI syntax (i.e. https://api.example.com:8080). Can be overridden in endpoint configuration. | swagger.json | URI
+| *specificationUri* (producer) | Path to the Swagger specification file. The scheme, host base path are taken from this specification, but these can be overriden with properties on the component or endpoint level. If not given the component tries to load swagger.json resource. Note that the host defined on the component and endpoint of this Component should contain the scheme, hostname and optionally the port in the URI syntax (i.e. \https://api.example.com:8080). Can be overridden in endpoint configuration. | swagger.json | URI
 | *sslContextParameters* (security) | Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
@@ -112,18 +113,18 @@ rest-swagger:specificationUri#operationId
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *specificationUri* | Path to the Swagger specification file. The scheme, host base path are taken from this specification, but these can be overridden with properties on the component or endpoint level. If not given the component tries to load swagger.json resource from the classpath. Note that the host defined on the component and endpoint of this Component should contain the scheme, hostname and optionally the port in the URI syntax (i.e. http://api.example.com:8080). Overrides component configuration. The Swagger specification can be loaded from different sources by prefixing with file: classpath: http: https:. Support for https is limited to using the JDK installed UrlHandler, and as such it can be cumbersome to setup TLS/SSL certificates for https (such as setting a number of javax.net.ssl JVM system properties). How to do that consult the JDK documentation for UrlHandler. | swagger.json | URI
+| *specificationUri* | Path to the Swagger specification file. The scheme, host base path are taken from this specification, but these can be overridden with properties on the component or endpoint level. If not given the component tries to load swagger.json resource from the classpath. Note that the host defined on the component and endpoint of this Component should contain the scheme, hostname and optionally the port in the URI syntax (i.e. \http://api.example.com:8080). Overrides component configuration. The Swagger specification can be loaded from different sources by prefixing with file: classpath: http: https:. Support for https is limited to using the JDK installed UrlHandler, and as such it can be cumbersome to setup TLS/SSL certificates for https (such as setting a number of javax.net.ssl JVM system properties). How to do that consult the JDK documentation for UrlHandler. | swagger.json | URI
 | *operationId* | *Required* ID of the operation from the Swagger specification. |  | String
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -132,13 +133,25 @@ with the following path and query parameters:
 | *basePath* (producer) | API basePath, for example /v2. Default is unset, if set overrides the value present in Swagger specification and in the component configuration. |  | String
 | *componentName* (producer) | Name of the Camel component that will perform the requests. The compnent must be present in Camel registry and it must implement RestProducerFactory service provider interface. If not set CLASSPATH is searched for single component that implements RestProducerFactory SPI. Overrides component configuration. |  | String
 | *consumes* (producer) | What payload type this component capable of consuming. Could be one type, like application/json or multiple types as application/json, application/xml; q=0.5 according to the RFC7231. This equates to the value of Accept HTTP header. If set overrides any value found in the Swagger specification and. in the component configuration |  | String
-| *host* (producer) | Scheme hostname and port to direct the HTTP requests to in the form of https://hostname:port. Can be configured at the endpoint, component or in the correspoding REST configuration in the Camel Context. If you give this component a name (e.g. petstore) that REST configuration is consulted first, rest-swagger next, and global configuration last. If set overrides any value found in the Swagger specification, RestConfiguration. Overrides all other configuration. |  | String
+| *host* (producer) | Scheme hostname and port to direct the HTTP requests to in the form of \https://hostname:port. Can be configured at the endpoint, component or in the correspoding REST configuration in the Camel Context. If you give this component a name (e.g. petstore) that REST configuration is consulted first, rest-swagger next, and global configuration last. If set overrides any value found in the Swagger specification, RestConfiguration. Overrides all other configuration. |  | String
 | *produces* (producer) | What payload type this component is producing. For example application/json according to the RFC7231. This equates to the value of Content-Type HTTP header. If set overrides any value present in the Swagger specification. Overrides all other configuration. |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-rest-swagger-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 10 options, which are listed below.
@@ -152,10 +165,10 @@ The component supports 10 options, which are listed below.
 | *camel.component.rest-swagger.component-name* | Name of the Camel component that will perform the requests. The component must be present in Camel registry and it must implement RestProducerFactory service provider interface. If not set CLASSPATH is searched for single component that implements RestProducerFactory SPI. Can be overridden in endpoint configuration. |  | String
 | *camel.component.rest-swagger.consumes* | What payload type this component capable of consuming. Could be one type, like application/json or multiple types as application/json, application/xml; q=0.5 according to the RFC7231. This equates to the value of Accept HTTP header. If set overrides any value found in the Swagger specification. Can be overridden in endpoint configuration |  | String
 | *camel.component.rest-swagger.enabled* | Enable rest-swagger component | true | Boolean
-| *camel.component.rest-swagger.host* | Scheme hostname and port to direct the HTTP requests to in the form of https://hostname:port. Can be configured at the endpoint, component or in the correspoding REST configuration in the Camel Context. If you give this component a name (e.g. petstore) that REST configuration is consulted first, rest-swagger next, and global configuration last. If set overrides any value found in the Swagger specification, RestConfiguration. Can be overridden in endpoint configuration. |  | String
+| *camel.component.rest-swagger.host* | Scheme hostname and port to direct the HTTP requests to in the form of \https://hostname:port. Can be configured at the endpoint, component or in the correspoding REST configuration in the Camel Context. If you give this component a name (e.g. petstore) that REST configuration is consulted first, rest-swagger next, and global configuration last. If set overrides any value found in the Swagger specification, RestConfiguration. Can be overridden in endpoint configuration. |  | String
 | *camel.component.rest-swagger.produces* | What payload type this component is producing. For example application/json according to the RFC7231. This equates to the value of Content-Type HTTP header. If set overrides any value present in the Swagger specification. Can be overridden in endpoint configuration. |  | String
 | *camel.component.rest-swagger.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.rest-swagger.specification-uri* | Path to the Swagger specification file. The scheme, host base path are taken from this specification, but these can be overriden with properties on the component or endpoint level. If not given the component tries to load swagger.json resource. Note that the host defined on the component and endpoint of this Component should contain the scheme, hostname and optionally the port in the URI syntax (i.e. https://api.example.com:8080). Can be overridden in endpoint configuration. |  | URI
+| *camel.component.rest-swagger.specification-uri* | Path to the Swagger specification file. The scheme, host base path are taken from this specification, but these can be overriden with properties on the component or endpoint level. If not given the component tries to load swagger.json resource. Note that the host defined on the component and endpoint of this Component should contain the scheme, hostname and optionally the port in the URI syntax (i.e. \https://api.example.com:8080). Can be overridden in endpoint configuration. |  | URI
 | *camel.component.rest-swagger.ssl-context-parameters* | Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
 | *camel.component.rest-swagger.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===

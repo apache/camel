@@ -1,3 +1,4 @@
+[[ignite-messaging-component]]
 = Ignite Messaging Component
 
 *Available as of Camel version 2.17*
@@ -7,7 +8,7 @@ The Ignite Messaging endpoint is one of camel-ignite endpoints which allows you 
 
 This endpoint supports producers (to send messages) and consumers (to receive messages).
 
-== Options
+### Options
 
 // component options: START
 The Ignite Messaging component supports 4 options, which are listed below.
@@ -33,7 +34,7 @@ ignite-messaging:topic
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -43,7 +44,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -61,7 +62,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-ignite-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 5 options, which are listed below.
@@ -81,7 +94,7 @@ The component supports 5 options, which are listed below.
 
 
 
-=== Headers used
+#### Headers used
 
 This endpoint uses the following headers:
 [width="100%",cols="1,1,1,4",options="header"]

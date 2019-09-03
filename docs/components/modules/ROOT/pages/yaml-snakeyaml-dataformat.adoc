@@ -1,21 +1,22 @@
+[[yaml-snakeyaml-dataformat]]
 = YAML SnakeYAML DataFormat
 
 *Available as of Camel version 2.17*
 
 
-YAML is a Data Format to marshal and unmarshal
-Java objects to and from http://www.yaml.org/[YAML].
+YAML is a Data Format to marshal and unmarshal
+Java objects to and from http://www.yaml.org/[YAML].
 
 For YAML to object marshalling, Camel provides integration with three
 popular YAML libraries:
 
-* The http://www.snakeyaml.org/[SnakeYAML] library
+* The http://www.snakeyaml.org/[SnakeYAML] library
 
 Every library requires adding the special camel component (see
 "Dependency..." paragraphs further down). By default Camel uses the
 SnakeYAML library.
 
-== YAML Options
+### YAML Options
 
 // dataformat options: START
 The YAML SnakeYAML dataformat supports 11 options, which are listed below.
@@ -39,7 +40,19 @@ The YAML SnakeYAML dataformat supports 11 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-snakeyaml-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 12 options, which are listed below.
@@ -66,7 +79,7 @@ The component supports 12 options, which are listed below.
 
 WARNING: SnakeYAML can load any class from YAML definition which may lead to security breach so by default, SnakeYAML DataForma restrict the object it can load to standard Java objects like List or Long. If you want to load custom POJOs you need to add theirs type to SnakeYAML DataFormat type filter list. If your source is trusted, you can set the property allowAnyType to true so SnakeYAML DataForma won't perform any filter on the types.
 
-== Using YAML data format with the SnakeYAML library
+### Using YAML data format with the SnakeYAML library
 
 - Turn Object messages into yaml then send to MQSeries
 +
@@ -99,10 +112,10 @@ from("activemq:My.Queue")
   .to("mqseries:Another.Queue");
 ------------------------------------------------------------
 
-== Using YAML in Spring DSL
+### Using YAML in Spring DSL
 
-When using Data Format in Spring DSL you need to
-declare the data formats first. This is done in the *DataFormats* XML
+When using Data Format in Spring DSL you need to
+declare the data formats first. This is done in the *DataFormats* XML
 tag.
 
 [source,xml]
@@ -151,14 +164,14 @@ And then you can refer to those ids in the route:
 -------------------------------------
 
 
-== Dependencies for SnakeYAML
+### Dependencies for SnakeYAML
 
 To use YAML in your camel routes you need to add the a dependency
-on *camel-snakeyaml* which implements this data format.
+on *camel-snakeyaml* which implements this data format.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release
-(see the download page for the latest versions).
+(see the download page for the latest versions).
 
 [source,xml]
 ------------------------------------------
@@ -169,6 +182,6 @@ substituting the version number for the latest & greatest release
 </dependency>
 ------------------------------------------
 
- 
+ 
 
- 
+ 

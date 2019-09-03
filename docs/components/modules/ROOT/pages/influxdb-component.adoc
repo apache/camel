@@ -1,3 +1,4 @@
+[[influxdb-component]]
 = InfluxDB Component
 
 *Available as of Camel version 2.18*
@@ -12,7 +13,7 @@ Aditionally of course you may register your own Converters to your data type to 
 (un)marshalling tools provided by camel.
 
 
-Influxdb component requires at least Java 8.
+From *Camel 2.18* onwards Influxdb requires Java 8.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -27,14 +28,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 -------------------------------
 influxdb://beanName?[options]
 -------------------------------
 
-== URI Options
+### URI Options
 
 The producer allows sending messages to a influxdb
 configured in the registry, using the native java driver.
@@ -57,7 +58,7 @@ influxdb:connectionBean
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -67,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -82,7 +83,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-influxdb-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -98,7 +111,20 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Example
+
+
+
+### Message Headers
+
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
+|=======================================================================
+|Name |Default Value |Type |Context |Description
+
+| | | | |
+|=======================================================================
+
+### Example
+
 
 Below is an example route that stores a point into the db (taking the db name from the URI)
 specific key:
@@ -117,3 +143,10 @@ from("direct:start")
 ------------------------------------------------------------------------------------
 
 For more information, see these resources...
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

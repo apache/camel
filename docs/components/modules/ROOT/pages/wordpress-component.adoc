@@ -1,12 +1,14 @@
+[[wordpress-component]]
 = Wordpress Component
 
 *Available as of Camel version 2.21*
+
 
 Camel component for https://developer.wordpress.org/rest-api/reference/[Wordpress API].
 
 Currently only the **Posts** and **Users** operations are supported.
 
-== Options
+=== Options
 
 // component options: START
 The Wordpress component supports 2 options, which are listed below.
@@ -30,7 +32,7 @@ wordpress:operationDetail
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -41,7 +43,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -52,7 +54,7 @@ with the following path and query parameters:
 | *force* (common) | Whether to bypass trash and force deletion. | false | Boolean
 | *id* (common) | The entity id |  | Integer
 | *password* (common) | Password from authorized user |  | String
-| *url* (common) | *Required* The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/ |  | String
+| *url* (common) | *Required* The Wordpress API URL from your site, e.g. \http://myblog.com/wp-json/ |  | String
 | *user* (common) | Authorized user to perform writing operations |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -61,7 +63,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-wordpress-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 10 options, which are listed below.
@@ -77,7 +91,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.wordpress.configuration.id* | The entity id |  | Integer
 | *camel.component.wordpress.configuration.password* | Password from authorized user |  | String
 | *camel.component.wordpress.configuration.search-criteria* |  |  | SearchCriteria
-| *camel.component.wordpress.configuration.url* | The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/ |  | String
+| *camel.component.wordpress.configuration.url* | The Wordpress API URL from your site, e.g. \http://myblog.com/wp-json/ |  | String
 | *camel.component.wordpress.configuration.user* | Authorized user to perform writing operations |  | String
 | *camel.component.wordpress.enabled* | Whether to enable auto configuration of the wordpress component. This is enabled by default. |  | Boolean
 | *camel.component.wordpress.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
@@ -92,7 +106,7 @@ Most of parameters needed when performing a read operation mirrors from the offi
 wordpress:post?criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json
 ----
 
-=== Configuring Wordpress component
+==== Configuring Wordpress component
 
 The `WordpressConfiguration` class can be used to set initial properties configuration to the component instead of passing it as query parameter. The following listing shows how to set the component to be used in your routes.
 
@@ -111,14 +125,14 @@ public void configure() {
 }
 ----
 
-=== Consumer Example
+==== Consumer Example
 
 Consumer polls from the API from time to time domain objects from Wordpress. Following, an example using the `Post` operation:
 
 - `wordpress:post` retrieves posts (defaults to 10 posts)    
 - `wordpress:post?id=1` search for a specific post
 
-=== Producer Example
+==== Producer Example
 
 Producer performs write operations on Wordpress like adding a new user or update a post. To be able to write, you must have an authorized user credentials (see Authentication). 
 
@@ -126,7 +140,7 @@ Producer performs write operations on Wordpress like adding a new user or update
 - `wordpress:post?id=1` updates a post based on data `org.apache.camel.component.wordpress.api.model.Post` from the message body.  
 - `wordpress:post:delete?id=1` deletes a specific post
 
-== Authentication
+=== Authentication
 
 Producers that perform write operations (e.g. create a new post) https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/[must have an authenticated user] to do so. The standard authentication mechanism used by Wordpress is cookie. Unfortunately this method is not supported outside Wordpress environment because it's rely on https://codex.wordpress.org/WordPress_Nonces[nonce] internal function.
 

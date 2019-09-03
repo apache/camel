@@ -1,7 +1,8 @@
 [[infinispan-component]]
-== Infinispan Component
+= Infinispan Component
 
 *Available as of Camel version 2.13*
+
 
 This component allows you to interact with
 http://infinispan.org/[Infinispan] distributed data grid / cache.
@@ -64,7 +65,7 @@ infinispan:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -74,7 +75,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (18 parameters):
+=== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -101,7 +102,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-infinispan-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 21 options, which are listed below.
@@ -131,7 +144,7 @@ The component supports 21 options, which are listed below.
 | *camel.component.infinispan.customizer.remote-cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
 | *camel.component.infinispan.enabled* | Enable infinispan component | true | Boolean
 | *camel.component.infinispan.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.infinispan.configuration.command* | The operation to perform. | PUT | String
+| *camel.component.infinispan.configuration.command* | *Deprecated* The operation to perform. | PUT | String
 |===
 // spring-boot-auto-configure options: END
 

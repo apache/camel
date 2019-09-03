@@ -1,3 +1,4 @@
+[[spark-component]]
 = Apache Spark Component
 
 *Available as of Camel version 2.17*
@@ -11,32 +12,32 @@ message from various transports, dynamically choose a task to execute,
 use incoming message as input data for that task and finally deliver the
 results of the execution back to the Camel pipeline.
 
-== Supported architectural styles
+### Supported architectural styles
 
 Spark component can be used as a driver application deployed into an
 application server (or executed as a fat jar).
 
-image::camel_spark_driver.png[image]
+image:camel_spark_driver.png[image]
 
 Spark component can also be submitted as a job directly into the Spark
 cluster.
 
-image::camel_spark_cluster.png[image]
+image:camel_spark_cluster.png[image]
 
 While Spark component is primary designed to work as a _long running
-job_ serving as an bridge between Spark cluster and the other endpoints,
-you can also use it as a _fire-once_ short job.   
+job_ serving as an bridge between Spark cluster and the other endpoints,
+you can also use it as a _fire-once_ short job.   
 
-== Running Spark in OSGi servers
+### Running Spark in OSGi servers
 
 Currently the Spark component doesn't support execution in the OSGi
 container. Spark has been designed to be executed as a fat jar, usually
 submitted as a job to a cluster. For those reasons running Spark in an
 OSGi server is at least challenging and is not support by Camel as well.
 
-== URI format
+### URI format
 
-Currently the Spark component supports only producers - it is intended
+Currently the Spark component supports only producers - it it intended
 to invoke a Spark job and return results. You can call RDD, data frame
 or Hive SQL job.
 
@@ -47,7 +48,7 @@ or Hive SQL job.
 spark:{rdd|dataframe|hive}
 --------------------------
 
-=== Spark options
+#### Spark options
 
 
 
@@ -77,7 +78,7 @@ spark:endpointType
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -87,7 +88,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -102,7 +103,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-spark-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 4 options, which are listed below.
@@ -120,8 +133,8 @@ The component supports 4 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
- 
-== RDD jobs 
+ 
+### RDD jobs 
 
 To invoke an RDD job, use the following URI:
 
@@ -132,10 +145,10 @@ To invoke an RDD job, use the following URI:
 spark:rdd?rdd=#testFileRdd&rddCallback=#transformation
 ------------------------------------------------------
 
- Where `rdd` option refers to the name of an RDD instance (subclass of
+ Where `rdd` option refers to the name of an RDD instance (subclass of
 `org.apache.spark.api.java.JavaRDDLike`) from a Camel registry, while
 `rddCallback` refers to the implementation
-of `org.apache.camel.component.spark.RddCallback` interface (also from a
+of `org.apache.camel.component.spark.RddCallback` interface (also from a
 registry). RDD callback provides a single method used to apply incoming
 messages against the given RDD. Results of callback computations are
 saved as a body to an exchange.
@@ -190,10 +203,10 @@ JavaRDDLike myRdd(JavaSparkContext sparkContext) {
 }
 --------------------------------------------------
 
-=== Void RDD callbacks
+#### Void RDD callbacks
 
 If your RDD callback doesn't return any value back to a Camel pipeline,
-you can either return `null` value or use `VoidRddCallback` base class:
+you can either return `null` value or use `VoidRddCallback` base class:
 
 *Spark RDD definition*
 
@@ -210,10 +223,10 @@ RddCallback<Void> rddCallback() {
 }
 ------------------------------------------------------------------
 
-=== Converting RDD callbacks
+#### Converting RDD callbacks
 
 If you know what type of the input data will be sent to the RDD
-callback, you can use `ConvertingRddCallback` and let Camel to
+callback, you can use `ConvertingRddCallback` and let Camel to
 automatically convert incoming messages before inserting those into the
 callback:
 
@@ -233,33 +246,33 @@ RddCallback<Long> rddCallback(CamelContext context) {
 }
 ---------------------------------------------------------------------------
 
-=== Annotated RDD callbacks
+#### Annotated RDD callbacks
 
 Probably the easiest way to work with the RDD callbacks is to provide
-class with method marked with `@RddCallback` annotation:
+class with method marked with `@RddCallback` annotation:
 
 *Annotated RDD callback definition*
 
 [source,java]
 -----------------------------------------------------------------------------------------------------
 import static org.apache.camel.component.spark.annotations.AnnotatedRddCallback.annotatedRddCallback;
- 
+ 
 @Bean
 RddCallback<Long> rddCallback() {
     return annotatedRddCallback(new MyTransformation());
 }
- 
+ 
 ...
- 
+ 
 import org.apache.camel.component.spark.annotation.RddCallback;
- 
+ 
 public class MyTransformation {
- 
+ 
     @RddCallback
     long countLines(JavaRDD<String> textFile, int first, int second) {
         return textFile.count() * first * second;
     }
- 
+ 
 }
 -----------------------------------------------------------------------------------------------------
 
@@ -272,38 +285,38 @@ to match the parameters of the annotated method:
 [source,java]
 ------------------------------------------------------------------------------------------------------------------------------
 import static org.apache.camel.component.spark.annotations.AnnotatedRddCallback.annotatedRddCallback;
- 
+ 
 @Bean
 RddCallback<Long> rddCallback(CamelContext camelContext) {
     return annotatedRddCallback(new MyTransformation(), camelContext);
 }
- 
+ 
 ...
 
- 
+ 
 import org.apache.camel.component.spark.annotation.RddCallback;
- 
+ 
 public class MyTransformation {
- 
+ 
     @RddCallback
     long countLines(JavaRDD<String> textFile, int first, int second) {
         return textFile.count() * first * second;
     }
- 
+ 
 }
- 
+ 
 ...
- 
+ 
 // Convert String "10" to integer
 long result = producerTemplate.requestBody("spark:rdd?rdd=#rdd&rddCallback=#rddCallback" Arrays.asList(10, "10"), long.class);
 ------------------------------------------------------------------------------------------------------------------------------
 
- 
+ 
 
-== DataFrame jobs
+### DataFrame jobs
 
 Instead of working with RDDs Spark component can work with DataFrames as
-well. 
+well. 
 
 To invoke an DataFrame job, use the following URI:
 
@@ -314,10 +327,10 @@ To invoke an DataFrame job, use the following URI:
 spark:dataframe?dataFrame=#testDataFrame&dataFrameCallback=#transformation
 --------------------------------------------------------------------------
 
- Where `dataFrame` option refers to the name of an DataFrame instance
+ Where `dataFrame` option refers to the name of an DataFrame instance
 (`instances of org.apache.spark.sql.Dataset and org.apache.spark.sql.Row`) from a Camel registry,
-while `dataFrameCallback` refers to the implementation
-of `org.apache.camel.component.spark.DataFrameCallback` interface (also
+while `dataFrameCallback` refers to the implementation
+of `org.apache.camel.component.spark.DataFrameCallback` interface (also
 from a registry). DataFrame callback provides a single method used to
 apply incoming messages against the given DataFrame. Results of callback
 computations are saved as a body to an exchange.
@@ -375,10 +388,10 @@ Dataset<Row> cars(HiveContext hiveContext) {
 }
 ------------------------------------------------------------------------
 
-== Hive jobs
+### Hive jobs
 
- Instead of working with RDDs or DataFrame Spark component can also
-receive Hive SQL queries as payloads. To send Hive query to Spark
+ Instead of working with RDDs or DataFrame Spark component can also
+receive Hive SQL queries as payloads. To send Hive query to Spark
 component, use the following URI:
 
 *Spark RDD producer*
@@ -414,3 +427,10 @@ Dataset<Row> cars(HiveContext hiveContext) {
     return jsonCars;
 }
 ------------------------------------------------------------------------
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

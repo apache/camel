@@ -1,5 +1,4 @@
-[[transform-eip]]
-== Transform EIP
+= Transform EIP
 
 See below for details
 

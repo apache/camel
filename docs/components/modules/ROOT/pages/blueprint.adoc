@@ -1,10 +1,10 @@
-= Using OSGi blueprint with Camel
+## Using OSGi blueprint with Camel
 
 A custom XML namespace for Blueprint has been created to let you leverage the nice XML dialect.
 Given Blueprint custom namespaces are not standardized yet, this namespace can only be used on the Apache Aries Blueprint
 implementation, which is the one used by Apache Karaf.
 
-== Overview
+### Overview
 
 The XML schema is mostly the same as the one for Spring, so all the xml snippets throughout the documentation
 referring to Spring XML also apply to Blueprint routes.
@@ -37,7 +37,7 @@ However, using blueprint when you deploy your applications in an OSGi enviroment
 - you can use Blueprint property placeholders
 
 
-== Using camel-blueprint
+### Using camel-blueprint
 
 To leverage camel-blueprint in OSGi, you only need the Aries Blueprint bundle and the camel-blueprint bundle,
 in addition to camel-core and its dependencies.

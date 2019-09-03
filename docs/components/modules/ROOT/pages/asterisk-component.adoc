@@ -1,9 +1,10 @@
+[[asterisk-component]]
 = Asterisk Component
 
 *Available as of Camel version 2.18*
 
 
-The Asterisk component allows you to work easily with an Asterisk PBX Server http://www.asterisk.org/ using https://asterisk-java.org/[asterisk-java]
+The *asterisk:* component allows you to work easily with an Asterisk PBX Server http://www.asterisk.org/ using https://asterisk-java.org/[asterisk-java]
 
 This component help to interface with http://www.voip-info.org/wiki-Asterisk+manager+API[Asterisk Manager Interface]
 
@@ -20,14 +21,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------
 asterisk:name[?options]
 -------------------------------------------------------------------------------------------------------------------------
 
-== Options
+### Options
 
 // component options: START
 The Asterisk component has no options.
@@ -42,7 +43,7 @@ asterisk:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -52,7 +53,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -69,7 +70,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-asterisk-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -85,7 +98,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Action
+### Action
 Supported actions are:
 
 * QUEUE_STATUS, Queue Status

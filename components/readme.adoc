@@ -282,10 +282,10 @@ Number of Components: 311 in 211 JAR artifacts (25 deprecated)
 `freemarker:resourceUri` | 2.10 | Transforms the message using a FreeMarker template.
 
 | link:camel-ftp/src/main/docs/ftp-component.adoc[FTP] (camel-ftp) +
-`ftp:host:port/directoryName` | 1.1 | The ftp component is used for uploading or downloading files from FTP servers.
+`ftp:host:port/directoryName` | 1.1 | The \ftp component is used for uploading or downloading files from FTP servers.
 
 | link:camel-ftp/src/main/docs/ftps-component.adoc[FTPS] (camel-ftp) +
-`ftps:host:port/directoryName` | 2.2 | The ftps (FTP secure SSL/TLS) component is used for uploading or downloading files from FTP servers.
+`ftps:host:port/directoryName` | 2.2 | The \ftps (FTP secure SSL/TLS) component is used for uploading or downloading files from FTP servers.
 
 | link:camel-ganglia/src/main/docs/ganglia-component.adoc[Ganglia] (camel-ganglia) +
 `ganglia:host:port` | 2.15 | The ganglia component is used for sending metrics to the Ganglia monitoring system.
@@ -780,7 +780,7 @@ Number of Components: 311 in 211 JAR artifacts (25 deprecated)
 `servlet:contextPath` | 2.0 | To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
 
 | link:camel-ftp/src/main/docs/sftp-component.adoc[SFTP] (camel-ftp) +
-`sftp:host:port/directoryName` | 1.1 | The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
+`sftp:host:port/directoryName` | 1.1 | The \sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
 
 | link:camel-sjms/src/main/docs/sjms-component.adoc[Simple JMS] (camel-sjms) +
 `sjms:destinationType:destinationName` | 2.11 | The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 1.x API).

@@ -1,12 +1,13 @@
+[[nats-component]]
 = Nats Component
 
 *Available as of Camel version 2.17*
 
 
-http://nats.io/[NATS] is a fast and reliable messaging platform.
+http://nats.io/[NATS] is a fast and reliable messaging platform.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component.
+their `pom.xml` for this component.
 
 [source,xml]
 ------------------------------------------------------------
@@ -18,16 +19,16 @@ their `pom.xml` for this component.
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 ----------------------
 nats:servers[?options]
 ----------------------
 
-Where *servers* represents the list of NATS servers.
+Where *servers* represents the list of NATS servers.
 
-== Options
+### Options
 
 
 // component options: START
@@ -56,7 +57,7 @@ nats:servers
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +67,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (25 parameters):
+=== Query Parameters (25 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -100,7 +101,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-nats-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 3 options, which are listed below.
@@ -120,15 +133,15 @@ The component supports 3 options, which are listed below.
 
 
 
-== Headers
+### Headers
 
-[width="100%",options="header"]
+[width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Name |Type |Description
 
 |CamelNatsMessageTimestamp |long |The timestamp of a consumed message.
 |=======================================================================
- 
+ 
 *Producer example:*
 
 [source,java]

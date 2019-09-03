@@ -1,8 +1,8 @@
-= Ribbon Component
+## Ribbon Component
 
 *Available as of Camel version 2.18*
 
-The Ribbon component provides use of Netflix Ribbon for client side load balancing.
+The ribbon component provides use of Netflix Ribbon for client side load balancing.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -19,7 +19,7 @@ for this component:
 
 This component helps applying load balancing feature at the client side when using http://camel.apache.org/servicecall-eip.html[ServiceCall EIP].
 
-== Configuration
+### Configuration
 
 * *Programmatic*
 +
@@ -74,3 +74,6 @@ from("direct:start")
 </route>
 ----
 
+### See Also
+
+* link:http://camel.apache.org/servicecall-eip.html[ServiceCall EIP]

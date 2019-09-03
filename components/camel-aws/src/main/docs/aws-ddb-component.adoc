@@ -1,7 +1,8 @@
 [[aws-ddb-component]]
-== AWS DynamoDB Component
+= AWS DynamoDB Component
 
 *Available as of Camel version 2.10*
+
 
 The DynamoDB component supports storing and retrieving data from/to
 http://aws.amazon.com/dynamodb[Amazon's DynamoDB] service.
@@ -53,7 +54,7 @@ aws-ddb:tableName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -63,7 +64,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (13 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,7 +86,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-aws-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 18 options, which are listed below.

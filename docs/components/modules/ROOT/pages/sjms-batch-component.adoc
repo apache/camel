@@ -1,3 +1,4 @@
+[[sjms-batch-component]]
 = Simple JMS Batch Component
 
 *Available as of Camel version 2.16*
@@ -14,7 +15,7 @@ In order to ensure that data is not lost if the system performing the
 processing fails, it is typically consumed within a transaction from the
 queue, and once aggregated stored in a persistent
 `AggregationRepository`, such as the one found in the
-xref:jdbc-component.adoc[JDBC Component].
+<<jdbc-component,JDBC Component>>.
 
 The behavior of the aggregator pattern involves fetching data from the
 `AggregationRepository` before an incoming message is aggregated, and
@@ -75,7 +76,7 @@ for this component:
 </dependency>
 ----
 
-== URI format
+### URI format
 
 [source]
 ----
@@ -101,11 +102,11 @@ Topic consumption is not supported, as there is no advantage to using
 batch consumption within that context. Topic messages are usually
 non-persistent, and loss is acceptable. If consumed within a transaction
 that fails, a topic message will likely not be redelivered by the
-broker. A plain xref:sjms-component.adoc[SJMS] consumer endpoint can be used in
+broker. A plain <<sjms-component,SJMS>> consumer endpoint can be used in
 conjunction with a regular non-persistence backed
 aggregator in this scenario.
 
-== Component Options and Configurations
+### Component Options and Configurations
 
 
 
@@ -143,7 +144,7 @@ sjms-batch:destinationName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -153,7 +154,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (23 parameters):
+=== Query Parameters (23 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -185,7 +186,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-sjms-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 6 options, which are listed below.

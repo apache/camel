@@ -1,12 +1,13 @@
+[[eventadmin-component]]
 = OSGi EventAdmin Component
 
 *Available as of Camel version 2.6*
 
 
-The Eventadmin component can be used in an OSGi environment to receive
+The `eventadmin` component can be used in an OSGi environment to receive
 OSGi EventAdmin events and process them.
 
-== Dependencies
+### Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -19,9 +20,10 @@ Maven users need to add the following dependency to their `pom.xml`
 </dependency>
 -------------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel.
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.6.0 or higher).
 
-== URI format
+### URI format
 
 [source,xml]
 --------------------------
@@ -30,7 +32,7 @@ eventadmin:topic[?options]
 
 where `topic` is the name of the topic to listen too.
 
-== URI options
+### URI options
 
 // component options: START
 The OSGi EventAdmin component supports 2 options, which are listed below.
@@ -54,7 +56,7 @@ eventadmin:topic
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -64,7 +66,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +80,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-== Message headers
+### Message headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -86,11 +88,11 @@ with the following path and query parameters:
 | | |
 |=======================================================================
 
-== Message body
+### Message body
 
 The `in` message body will be set to the received Event.
 
-== Example usage
+### Example usage
 
 [source,xml]
 ------------------------------

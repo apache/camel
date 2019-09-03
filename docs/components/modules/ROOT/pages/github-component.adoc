@@ -1,12 +1,13 @@
+[[github-component]]
 = GitHub Component
 
 *Available as of Camel version 2.15*
 
 
 The GitHub component interacts with the GitHub API by
-encapsulating http://org.eclipse.egit.github.core[egit-github]. It
+encapsulating http://org.eclipse.egit.github.core[egit-github]. It
 currently provides polling for new pull requests, pull request comments,
-tags, and commits.  It is also able to produce comments on pull
+tags, and commits.  It is also able to produce comments on pull
 requests, as well as close the pull request entirely.
 
 Rather than webhooks, this endpoint relies on simple polling. Reasons
@@ -18,7 +19,7 @@ paging is available in the API)
 * The need to support apps running somewhere not publicly accessible
 where a webhook would fail
 
-Note that the GitHub API is fairly expansive.  Therefore, this component
+Note that the GitHub API is fairly expansive.  Therefore, this component
 could be easily expanded to provide additional interactions.
 
 Maven users will need to add the following dependency to their pom.xml
@@ -33,14 +34,14 @@ for this component:
 </dependency>
 -----------------------------------------
 
-== URI format
+### URI format
 
 [source,text]
 ---------------------------
 github://endpoint[?options]
 ---------------------------
 
-== Mandatory Options:
+### Mandatory Options:
 
 Note that these can be configured directly through the endpoint.
 
@@ -60,7 +61,7 @@ github:type/branchName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -71,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +93,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-github-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -110,7 +123,7 @@ The component supports 2 options, which are listed below.
 
 
 
-== Consumer Endpoints:
+### Consumer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -127,7 +140,7 @@ request discussion) or org.eclipse.egit.github.core.CommitComment
 |commit |polling |org.eclipse.egit.github.core.RepositoryCommit
 |=======================================================================
 
-== Producer Endpoints:
+### Producer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -141,5 +154,5 @@ pull request discussion is assumed.
 
 |closePullRequest |none | - GitHubPullRequest (integer) (REQUIRED): Pull request number.
 
-|createIssue |String (issue body text) | - GitHubIssueTitle (String) (REQUIRED): Issue Title.
+|createIssue (From Camel 2.18) |String (issue body text) | - GitHubIssueTitle (String) (REQUIRED): Issue Title.
 |=======================================================================

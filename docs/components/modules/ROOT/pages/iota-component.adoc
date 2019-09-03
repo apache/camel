@@ -1,3 +1,4 @@
+[[iota-component]]
 = IOTA Component
 
 *Available as of Camel version 2.23*
@@ -18,14 +19,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+=== URI format
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------
 iota:name?url=nodeurl[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
-== Options
+=== Options
 
 // component options: START
 The IOTA component has no options.
@@ -40,7 +41,7 @@ iota:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -50,7 +51,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -70,7 +71,19 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-iota-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -85,7 +98,7 @@ The component supports 2 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-== Sample route
+=== Sample route
 
 The following route defined in Spring XML send a message to tangle
 
@@ -98,16 +111,16 @@ The following route defined in Spring XML send a message to tangle
   <setMessage>
   	<constant>Hello world!</constant>
   </setMessage>
-  <setHeader name="CamelIOTASeed">
+  <setHeader headerName="CamelIOTASeed">
   	<constant>MYSEEDHERE</constant>
   </setHeader>
-  <setHeader name="CamelIOTAValue">
+  <setHeader headerName="CamelIOTAValue">
   	<constant>1</constant>
   </setHeader>
-  <setHeader name="CamelIOTAToAddress">
+  <setHeader headerName="CamelIOTAToAddress">
   	<constant>RECIPIENTADDRESS</constant>
   </setHeader>
-  <setHeader name="CamelIOTAToAddress">
+  <setHeader headerName="CamelIOTAToAddress">
   	<constant>RECIPIENTADDRESS</constant>
   </setHeader>
   
@@ -124,10 +137,10 @@ The following route defined in Spring XML create a new address
 ---------------------------------------------------------------------------------------------------------------------------
 <route>
   <from uri="direct:start" />
-  <setHeader name="CamelIOTASeed">
+  <setHeader headerName="CamelIOTASeed">
   	<constant>MYSEEDHERE</constant>
   </setHeader>
-  <setHeader name="CamelIOTAAddressIndex">
+  <setHeader headerName="CamelIOTAAddressIndex">
   	<constant>1</constant>
   </setHeader>
   
@@ -144,13 +157,13 @@ The following route defined in Spring XML retrieve transfers data
 ---------------------------------------------------------------------------------------------------------------------------
 <route>
   <from uri="direct:start" />
-  <setHeader name="CamelIOTASeed">
+  <setHeader headerName="CamelIOTASeed">
   	<constant>MYSEEDHERE</constant>
   </setHeader>
-  <setHeader name="CamelIOTAAddressStartIndex">
+  <setHeader headerName="CamelIOTAAddressStartIndex">
   	<constant>1</constant>
   </setHeader>
-  <setHeader name="CamelIOTAAddressEndIndex">
+  <setHeader headerName="CamelIOTAAddressEndIndex">
   	<constant>10</constant>
   </setHeader>
   
@@ -158,3 +171,8 @@ The following route defined in Spring XML retrieve transfers data
   <to uri="direct:result" />
 </route>
 ---------------------------------------------------------------------------------------------------------------------------
+
+=== See also
+
+* https://www.iota.org/[IOTA website]
+* https://github.com/iotaledger/iota.lib.java[IOTA java lib]

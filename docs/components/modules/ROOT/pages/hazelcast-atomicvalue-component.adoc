@@ -1,3 +1,4 @@
+[[hazelcast-atomicvalue-component]]
 = Hazelcast Atomic Number Component
 
 *Available as of Camel version 2.7*
@@ -9,7 +10,7 @@ An atomic number is an object that simply provides a grid wide number (long).
 *There is no consumer for this endpoint!*
 
 
-== Options
+### Options
 
 // component options: START
 The Hazelcast Atomic Number component supports 3 options, which are listed below.
@@ -34,7 +35,7 @@ hazelcast-atomicvalue:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -44,7 +45,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -63,7 +64,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hazelcast-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 6 options, which are listed below.
@@ -84,7 +97,7 @@ The component supports 6 options, which are listed below.
 
 
 
-== atomic number producer - to("hazelcast-atomicvalue:foo")
+### atomic number producer - to("hazelcast-atomicvalue:foo")
 
 The operations for this producer are:
 * setvalue (set the number with a given value)
@@ -102,7 +115,7 @@ Header Variables for the request message:
 |`CamelHazelcastOperationType` |`String` |valid values are: setvalue, get, increase, decrease, destroy 
 |=======================================================================
 
-=== Sample for *set*:
+#### Sample for *set*:
 
 Java DSL:
 
@@ -119,7 +132,8 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:set" />
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>setvalue</constant>
     </setHeader>
     <to uri="hazelcast-atomicvalue:foo" />
@@ -129,7 +143,7 @@ Spring DSL:
 Provide the value to set inside the message body (here the value is 10):
 `template.sendBody("direct:set", 10);`
 
-=== Sample for *get*:
+#### Sample for *get*:
 
 Java DSL:
 
@@ -146,7 +160,8 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:get" />
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>get</constant>
     </setHeader>
     <to uri="hazelcast-atomicvalue:foo" />
@@ -156,7 +171,7 @@ Spring DSL:
 You can get the number with
 `long body = template.requestBody("direct:get", null, Long.class);`.
 
-=== Sample for *increment*:
+#### Sample for *increment*:
 
 Java DSL:
 
@@ -173,7 +188,8 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:increment" />
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>increment</constant>
     </setHeader>
     <to uri="hazelcast-atomicvalue:foo" />
@@ -183,7 +199,7 @@ Spring DSL:
 The actual value (after increment) will be provided inside the message
 body.
 
-=== Sample for *decrement*:
+#### Sample for *decrement*:
 
 Java DSL:
 
@@ -200,7 +216,8 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:decrement" />
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>decrement</constant>
     </setHeader>
     <to uri="hazelcast-atomicvalue:foo" />
@@ -210,7 +227,7 @@ Spring DSL:
 The actual value (after decrement) will be provided inside the message
 body.
 
-=== Sample for *destroy*
+#### Sample for *destroy*
 
 Java DSL:
 
@@ -227,7 +244,8 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:destroy" />
-    <setHeader name="hazelcast.operation.type">
+        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
+    <setHeader headerName="hazelcast.operation.type">
         <constant>destroy</constant>
     </setHeader>
     <to uri="hazelcast-atomicvalue:foo" />

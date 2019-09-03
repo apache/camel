@@ -1,6 +1,8 @@
+[[zookeeper-master-component]]
 = ZooKeeper Master Component
 
 *Available as of Camel version 2.19*
+
 
 The **zookeeper-master:** endpoint provides a way to ensure only a single consumer in a cluster consumes from a given endpoint;
 with automatic failover if that JVM dies.
@@ -8,7 +10,7 @@ with automatic failover if that JVM dies.
 This can be very useful if you need to consume from some legacy back end which either doesn't support concurrent
 consumption or due to commercial or stability reasons you can only have a single connection at any point in time.
 
-== Using the master endpoint
+### Using the master endpoint
 
 Just prefix any camel endpoint with **zookeeper-master:someName:** where _someName_ is a logical name and is
 used to acquire the master lock. e.g.
@@ -20,7 +22,7 @@ The above simulates the [Exclusive Consumers](http://activemq.apache.org/exclusi
 ActiveMQ; but on any third party JMS provider which maybe doesn't support exclusive consumers.
 
 
-== URI format
+### URI format
 
 [source]
 ----
@@ -30,7 +32,7 @@ zookeeper-master:name:endpoint[?options]
 Where endpoint is any Camel endpoint you want to run in master/slave mode.
 
 
-== Options
+### Options
 
 // component options: START
 The ZooKeeper Master component supports 7 options, which are listed below.
@@ -59,7 +61,7 @@ zookeeper-master:groupName:consumerEndpointUri
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -70,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (4 parameters):
+=== Query Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,7 +85,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-zookeeper-master-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 8 options, which are listed below.
@@ -105,7 +119,7 @@ The component supports 8 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Example
+### Example
 
 You can protect a clustered Camel application to only consume files from one active node.
 
@@ -136,7 +150,7 @@ However you can also configure the url of the ZooKeeper ensemble using environme
 
     export ZOOKEEPER_URL = "myzookeeper:2181"
 
-== Master RoutePolicy
+## Master RoutePolicy
 
 You can also use a `RoutePolicy` to control routes in master/slave mode.
 
@@ -165,3 +179,10 @@ A little example
         .log(name + " - Done file:     ${file:name}")
         .to("file:target/outbox");
 ----
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

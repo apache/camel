@@ -1,5 +1,5 @@
 [[timer-component]]
-== Timer Component
+= Timer Component
 
 *Available as of Camel version 1.0*
 
@@ -49,7 +49,7 @@ timer:timerName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -59,7 +59,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

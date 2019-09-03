@@ -1,5 +1,4 @@
-[[idempotentConsumer-eip]]
-== Idempotent Consumer EIP
+= Idempotent Consumer EIP
 
 The
 http://www.enterpriseintegrationpatterns.com/IdempotentReceiver.html[Idempotent

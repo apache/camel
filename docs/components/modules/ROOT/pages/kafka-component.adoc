@@ -1,10 +1,11 @@
+[[kafka-component]]
 = Kafka Component
 
 *Available as of Camel version 2.13*
 
 
-The Kafka component is used for communicating with
-http://kafka.apache.org/[Apache Kafka] message broker.
+The *kafka:* component is used for communicating with
+http://kafka.apache.org/[Apache Kafka] message broker.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component.
@@ -20,7 +21,7 @@ for this component.
 ------------------------------------------------------------
 
 
-== URI format
+=== URI format
 
 [source,java]
 ---------------------------
@@ -29,7 +30,7 @@ kafka:topic[?options]
 ---------------------------
 
 
-== Options
+=== Options
 
 
 // component options: START
@@ -62,7 +63,7 @@ kafka:topic
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (93 parameters):
+=== Query Parameters (93 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -154,7 +155,7 @@ with the following path and query parameters:
 | *kerberosRenewWindowFactor* (security) | Login thread will sleep until the specified window factor of time from last refresh to ticket's expiry has been reached, at which time it will try to renew the ticket. | 0.8 | Double
 | *saslJaasConfig* (security) | Expose the kafka sasl.jaas.config parameter Example: org.apache.kafka.common.security.plain.PlainLoginModule required username=USERNAME password=PASSWORD; |  | String
 | *saslKerberosServiceName* (security) | The Kerberos principal name that Kafka runs as. This can be defined either in Kafka's JAAS config or in Kafka's config. |  | String
-| *saslMechanism* (security) | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml | GSSAPI | String
+| *saslMechanism* (security) | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see \http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml | GSSAPI | String
 | *securityProtocol* (security) | Protocol used to communicate with brokers. Currently only PLAINTEXT and SSL are supported. | PLAINTEXT | String
 | *sslCipherSuites* (security) | A list of cipher suites. This is a named combination of authentication, encryption, MAC and key exchange algorithm used to negotiate the security settings for a network connection using TLS or SSL network protocol.By default all the available cipher suites are supported. |  | String
 | *sslContextParameters* (security) | SSL configuration using a Camel SSLContextParameters object. If configured it's applied before the other SSL endpoint parameters. |  | SSLContextParameters
@@ -174,7 +175,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-kafka-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 98 options, which are listed below.
@@ -250,7 +263,7 @@ The component supports 98 options, which are listed below.
 | *camel.component.kafka.configuration.retry-backoff-ms* | Before each retry, the producer refreshes the metadata of relevant topics to see if a new leader has been elected. Since leader election takes a bit of time, this property specifies the amount of time that the producer waits before refreshing the metadata. | 100 | Integer
 | *camel.component.kafka.configuration.sasl-jaas-config* | Expose the kafka sasl.jaas.config parameter Example: org.apache.kafka.common.security.plain.PlainLoginModule required username=USERNAME password=PASSWORD; |  | String
 | *camel.component.kafka.configuration.sasl-kerberos-service-name* | The Kerberos principal name that Kafka runs as. This can be defined either in Kafka's JAAS config or in Kafka's config. |  | String
-| *camel.component.kafka.configuration.sasl-mechanism* | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml | GSSAPI | String
+| *camel.component.kafka.configuration.sasl-mechanism* | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see \http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml | GSSAPI | String
 | *camel.component.kafka.configuration.security-protocol* | Protocol used to communicate with brokers. Currently only PLAINTEXT and SSL are supported. | PLAINTEXT | String
 | *camel.component.kafka.configuration.seek-to* | Set if KafkaConsumer will read from beginning or end on startup: beginning : read from beginning end : read from end This is replacing the earlier property seekToBeginning |  | String
 | *camel.component.kafka.configuration.send-buffer-bytes* | Socket write buffer size | 131072 | Integer
@@ -290,9 +303,9 @@ For more information about Producer/Consumer configuration:
 http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
 http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.org/documentation.html#producerconfigs]
 
-== Message headers
+=== Message headers
 
-=== Consumer headers
+==== Consumer headers
 
 The following headers are available when consuming messages from Kafka.
 [width="100%",cols="2m,2m,1m,5",options="header"]
@@ -307,7 +320,7 @@ The following headers are available when consuming messages from Kafka.
 | KafkaConstants.MANUAL_COMMIT             | "CamelKafkaManualCommit"          | KafkaManualCommit | Can be used for forcing manual offset commit when using Kafka consumer. |
 |===
 
-=== Producer headers
+==== Producer headers
 
 Before sending a message to Kafka you can configure the following headers.
 [width="100%",cols="2m,2m,1m,5",options="header"]
@@ -326,9 +339,9 @@ After the message is sent to Kafka, the following headers are available
 |===
 
 
-== Samples
+=== Samples
 
-=== Consuming messages from Kafka
+==== Consuming messages from Kafka
 
 Here is the minimal route you need in order to read messages from Kafka.
 
@@ -365,7 +378,7 @@ Here how to use it :
 FileStateRepository repository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
 
 // Bind this repository into the Camel registry
-Registry registry = createCamelRegistry();
+JndiRegistry registry = new JndiRegistry();
 registry.bind("offsetRepo", repository);
 
 // Configure the camel context
@@ -385,9 +398,9 @@ camelContext.addRoutes(new RouteBuilder() {
     }
 });
 ----
- 
+ 
 
-=== Producing messages to Kafka
+==== Producing messages to Kafka
 
 Here is the minimal route you need in order to write messages to Kafka.
 
@@ -399,7 +412,7 @@ from("direct:start")
     .to("kafka:test?brokers=localhost:9092");
 ----
 
-== SSL configuration
+=== SSL configuration
 
 You have 2 different ways to configure the SSL communication on the Kafka` component.
 
@@ -431,7 +444,7 @@ SSLContextParameters scp = new SSLContextParameters();
 scp.setKeyManagers(kmp);
 
 // Bind this SSLContextParameters into the Camel registry
-Registry registry = createCamelRegistry();
+JndiRegistry registry = new JndiRegistry();
 registry.bind("ssl", scp);
 
 // Configure the camel context
@@ -452,7 +465,7 @@ camelContext.addRoutes(new RouteBuilder() {
 });
 ----
 
-== Using the Kafka idempotent repository
+=== Using the Kafka idempotent repository
 *Available from Camel 2.19*
 
 The `camel-kafka` library provides a Kafka topic-based idempotent repository. This repository stores broadcasts all changes to idempotent state (add/remove) in a Kafka topic, and populates a local in-memory cache for each repository's process instance through event sourcing.
@@ -526,7 +539,7 @@ In XML:
 </bean>
 ----
 
-== Using manual commit with Kafka consumer
+=== Using manual commit with Kafka consumer
 *Available as of Camel 2.21*
 
 By default the Kafka consumer will use auto commit, where the offset will be committed automatically in the background using a given interval.
@@ -558,7 +571,7 @@ This will force a synchronous commit which will block until the commit is acknow
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
 
-== Kafka Headers propagation
+=== Kafka Headers propagation
 *Available as of Camel 2.22*
 
 When consuming messages from Kafka, headers will be propagated to camel exchange headers automatically.

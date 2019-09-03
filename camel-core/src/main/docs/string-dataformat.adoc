@@ -1,5 +1,5 @@
 [[string-dataformat]]
-== String Encoding DataFormat (deprecated)
+= String Encoding DataFormat (deprecated)
 
 *Available as of Camel version 2.12*
 

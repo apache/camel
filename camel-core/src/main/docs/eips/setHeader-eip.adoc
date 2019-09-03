@@ -1,5 +1,4 @@
-[[setHeader-eip]]
-== Set Header EIP
+= Set Header EIP
 
 The SetHeader EIP allows you to set and header on your exchange.
 

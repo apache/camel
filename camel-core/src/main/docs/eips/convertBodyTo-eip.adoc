@@ -1,5 +1,4 @@
-[[convertBodyTo-eip]]
-== Convert Body To EIP
+= Convert Body To EIP
 
 The ConvertBodyTo EIP allows you to transform your body to a different type.
 

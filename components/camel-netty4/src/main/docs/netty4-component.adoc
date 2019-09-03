@@ -1,7 +1,8 @@
 [[netty4-component]]
-== Netty4 Component
+= Netty4 Component
 
 *Available as of Camel version 2.14*
+
 
 The *netty4* component in Camel is a socket communication component,
 based on the http://netty.io/[Netty] project version 4. +
@@ -76,7 +77,7 @@ netty4:protocol:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (72 parameters):
+=== Query Parameters (72 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -169,7 +170,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-netty4-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 78 options, which are listed below.
@@ -251,12 +264,12 @@ The component supports 78 options, which are listed below.
 | *camel.component.netty4.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.netty4.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
 | *camel.component.netty4.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
-| *camel.component.netty4.configuration.client-pipeline-factory* | @deprecated use #setClientInitializerFactory |  | ClientInitializer Factory
-| *camel.component.netty4.configuration.decoder* | A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. |  | ChannelHandler
-| *camel.component.netty4.configuration.encoder* | A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads. |  | ChannelHandler
-| *camel.component.netty4.configuration.key-store-file* | Client side certificate keystore to be used for encryption |  | File
-| *camel.component.netty4.configuration.server-pipeline-factory* | @deprecated use #setServerInitializerFactory |  | ServerInitializer Factory
-| *camel.component.netty4.configuration.trust-store-file* | Server side certificate keystore to be used for encryption |  | File
+| *camel.component.netty4.configuration.client-pipeline-factory* | *Deprecated* @deprecated use #setClientInitializerFactory |  | ClientInitializer Factory
+| *camel.component.netty4.configuration.decoder* | *Deprecated* A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. |  | ChannelHandler
+| *camel.component.netty4.configuration.encoder* | *Deprecated* A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads. |  | ChannelHandler
+| *camel.component.netty4.configuration.key-store-file* | *Deprecated* Client side certificate keystore to be used for encryption |  | File
+| *camel.component.netty4.configuration.server-pipeline-factory* | *Deprecated* @deprecated use #setServerInitializerFactory |  | ServerInitializer Factory
+| *camel.component.netty4.configuration.trust-store-file* | *Deprecated* Server side certificate keystore to be used for encryption |  | File
 |===
 // spring-boot-auto-configure options: END
 

@@ -1,3 +1,4 @@
+[[box-component]]
 = Box Component
 
 *Available as of Camel version 2.14*
@@ -29,23 +30,23 @@ for this component:
 </dependency>
 ----
 
-== Connection Authentication Types
+=== Connection Authentication Types
 
 The Box component supports three different types of authenticated connections.
 
-=== Standard Authentication
+==== Standard Authentication
 
 *Standard Authentication* uses the *OAuth 2.0 three-legged authentication process* to authenticate its connections with Box.com. This type of authentication enables Box *managed users* and *external users* to access, edit, and save their Box content through the Box component.
 
-=== App Enterprise Authentication
+==== App Enterprise Authentication
 
 *App Enterprise Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as a *Service Account* for a *Box Application*. This type of authentication enables a service account to access, edit, and save the Box content of its *Box Application* through the Box component.
 
-=== App User Authentication
+==== App User Authentication
 
 *App User Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as an *App User* for a *Box Application*. This type of authentication enables app users to access, edit, and save their Box content in its *Box Application* through the Box component.
 
-== Box Options
+=== Box Options
 
 // component options: START
 The Box component supports 2 options, which are listed below.
@@ -69,7 +70,7 @@ box:apiName/methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,7 +81,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (20 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -109,7 +110,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-box-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 17 options, which are listed below.
@@ -139,7 +152,7 @@ The component supports 17 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-== URI format
+=== URI format
 
 [source]
 ----
@@ -160,7 +173,7 @@ apiName can be one of:
 * users
 
 
-== Producer Endpoints:
+=== Producer Endpoints:
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -169,30 +182,30 @@ some endpoints. The endpoint URI MUST contain a prefix.
 Endpoint options that are not mandatory are denoted by *[]*. When there
 are no mandatory options for an endpoint, one of the set of *[]* options
 MUST be provided. Producer endpoints can also use a special
-option *`inBody`* that in turn should contain the name of the endpoint
+option *`inBody`* that in turn should contain the name of the endpoint
 option whose value will be contained in the Camel Exchange In message.
 
 Any of the endpoint options can be provided in either the endpoint URI,
 or dynamically in a message header. The message header name must be of
-the format *`CamelBox.<option>`*. Note that the *`inBody`* option
+the format *`CamelBox.<option>`*. Note that the *`inBody`* option
 overrides message header, i.e. the endpoint
-option *`inBody=option`* would override a *`CamelBox.option`* header.
+option *`inBody=option`* would override a *`CamelBox.option`* header.
 
 If a value is not provided for the option *defaultRequest* either in the
-endpoint URI or in a message header, it will be assumed to be `null`.
-Note that the `null` value will only be used if other options do not
+endpoint URI or in a message header, it will be assumed to be `null`.
+Note that the `null` value will only be used if other options do not
 satisfy matching endpoints.
 
 In case of Box API errors the endpoint will throw a
 RuntimeCamelException with a
-*com.box.sdk.BoxAPIException* derived exception
+*com.box.sdk.BoxAPIException* derived exception
 cause.
 
-=== Endpoint Prefix _collaborations_
+==== Endpoint Prefix _collaborations_
 
 For more information on Box collaborations see
-https://developer.box.com/reference#collaboration-object[https://developer.box.com/reference#collaboration-object]. The
-following endpoints can be invoked with the prefix *`collaborations`* as
+https://developer.box.com/reference#collaboration-object[https://developer.box.com/reference#collaboration-object]. The
+following endpoints can be invoked with the prefix *`collaborations`* as
 follows:
 
 [source]
@@ -219,7 +232,7 @@ box:collaborations/endpoint?[options]
 |updateCollaborationInfo |updateInfo |collaborationId, info |com.box.sdk.BoxCollaboration
 |===
 
-URI Options for _collaborations_
+URI Options for _collaborations_
 
 
 [width="100%",cols="10%,90%",options="header"]
@@ -239,11 +252,11 @@ URI Options for _collaborations_
 |info |com.box.sdk.BoxCollaboration.Info
 |===
 
-=== Endpoint Prefix _comments_
+==== Endpoint Prefix _comments_
 
 For more information on Box comments see
-https://developer.box.com/reference#comment-object[https://developer.box.com/reference#comment-object]. The
-following endpoints can be invoked with the prefix *`comments`* as
+https://developer.box.com/reference#comment-object[https://developer.box.com/reference#comment-object]. The
+following endpoints can be invoked with the prefix *`comments`* as
 follows:
 
 [source]
@@ -268,7 +281,7 @@ box:comments/endpoint?[options]
 |replyToComment |reply |commentId, message |com.box.sdk.BoxComment
 |===
 
-URI Options for _collaborations_
+URI Options for _collaborations_
 
 
 [width="100%",cols="10%,90%",options="header"]
@@ -283,11 +296,11 @@ URI Options for _collaborations_
 
 |===
 
-=== Endpoint Prefix _events-logs_
+==== Endpoint Prefix _events-logs_
 
 For more information on Box event logs see
 https://developer.box.com/reference#events[https://developer.box.com/reference#events].
-The following endpoints can be invoked with the prefix *`event-logs`* as follows:
+The following endpoints can be invoked with the prefix *`event-logs`* as follows:
 
 [source]
 ----
@@ -301,7 +314,7 @@ box:event-logs/endpoint?[options]
 |getEnterpriseEvents |events |position, after, before, [types] |java.util.List
 |===
 
-URI Options for _event-logs_
+URI Options for _event-logs_
 
 [width="100%",cols="10%,90%",options="header"]
 |===
@@ -316,12 +329,12 @@ URI Options for _event-logs_
 |types |com.box.sdk.BoxEvent.Types[]
 |===
 
-=== Endpoint Prefix _files_
+==== Endpoint Prefix _files_
 
 For more information on Box files see
 https://developer.box.com/reference#file-object[https://developer.box.com/reference#file-object].
 The following endpoints can be invoked with the
-prefix *`files`* as follows. 
+prefix *`files`* as follows. 
 
 [source]
 ----
@@ -436,12 +449,12 @@ URI Options for _files_
 |typeName |String
 |===
 
-=== Endpoint Prefix _folders_
+==== Endpoint Prefix _folders_
 
 For more information on Box folders see
 https://developer.box.com/reference#folder-object[https://developer.box.com/reference#folder-object].
 The following endpoints can be invoked with the prefix
-*`folders`* as follows. 
+*`folders`* as follows. 
 
 [source]
 ----
@@ -512,11 +525,11 @@ URI Options for _folders_
 |permissions |com.box.sdk.BoxSharedLink.Permissions
 |===
 
-=== Endpoint Prefix _groups_
+==== Endpoint Prefix _groups_
 
 For more information on Box groups see
 https://developer.box.com/reference#group-object[https://developer.box.com/reference#group-object].
-The following endpoints can be invoked with the prefix *`groups`* as
+The following endpoints can be invoked with the prefix *`groups`* as
 follows:
 
 [source]
@@ -546,12 +559,12 @@ box:groups/endpoint?[options]
 
 |getGroupMemberships |memberships |groupId |java.uti.Collection
 
-|getGroupMembershipInfo |membershipInfo |groupMembershipId |com.box.sdk.BoxGroup.Info
+|getGroupMembershipInfo |membershipInfo |groupMemebershipId |com.box.sdk.BoxGroup.Info
 
-|updateGroupMembershipInfo |updateMembershipInfo |groupMembershipId, info |com.box.sdk.BoxGroupMembership
+|updateGroupMembershipInfo |updateMembershipInfo |groupMemebershipId, info |com.box.sdk.BoxGroupMembership
 |===
 
-URI Options for _groups_
+URI Options for _groups_
 
 [width="100%",cols="10%,90%",options="header"]
 |===
@@ -571,11 +584,11 @@ URI Options for _groups_
 
 |===
 
-=== Endpoint Prefix _search_
+==== Endpoint Prefix _search_
 
 For more information on Box search API see
-https://developer.box.com/reference#searching-for-content[https://developer.box.com/reference#searching-for-content]. The
-following endpoints can be invoked with the prefix *`search`* as
+https://developer.box.com/reference#searching-for-content[https://developer.box.com/reference#searching-for-content]. The
+following endpoints can be invoked with the prefix *`search`* as
 follows:
 
 [source]
@@ -590,7 +603,7 @@ box:search/endpoint?[options]
 |searchFolder |search |folderId, query |java.util.Collection
 |===
 
-URI Options for _search_
+URI Options for _search_
 
 [width="100%",cols="10%,90%",options="header"]
 |===
@@ -601,11 +614,11 @@ URI Options for _search_
 |query |String
 |===
 
-=== Endpoint Prefix _tasks_
+==== Endpoint Prefix _tasks_
 
 For information on Box tasks see
 https://developer.box.com/reference#task-object-1[https://developer.box.com/reference#task-object-1].
-The following endpoints can be invoked with the prefix *`tasks`* as
+The following endpoints can be invoked with the prefix *`tasks`* as
 follows:
 
 [source]
@@ -636,7 +649,7 @@ box:tasks/endpoint?[options]
 |getTaskAssignmentInfo |assignmentInfo |taskAssignmentId |com.box.sdk.BoxTaskAssignment.Info
 |===
 
-URI Options for _tasks_
+URI Options for _tasks_
 
 [width="100%",cols="10%,90%",options="header"]
 |===
@@ -659,11 +672,11 @@ URI Options for _tasks_
 |taskAssignmentId |String
 |===
 
-=== Endpoint Prefix _users_
+==== Endpoint Prefix _users_
 
 For information on Box users see
 https://developer.box.com/reference#user-object[https://developer.box.com/reference#user-object].
-The following endpoints can be invoked with the prefix *`users`* as
+The following endpoints can be invoked with the prefix *`users`* as
 follows:
 
 [source]
@@ -696,40 +709,34 @@ box:users/endpoint?[options]
 |moveFolderToUser |- |userId, sourceUserId |com.box.sdk.BoxFolder.Info
 |===
 
-URI Options for _users_
+URI Options for _users_
 
 [width="100%",cols="10%,90%",options="header"]
 |===
 |Name |Type
 
-|email |String
+|defaultRequest |com.box.restclientv2.requestsbase.BoxDefaultRequestObject
 
-|emailAliasId |String
+|emailAliasRequest |com.box.boxjavalibv2.requests.requestobjects.BoxEmailAliasRequestObject
 
-|fields |String[]
+|emailId |String
 
 |filterTerm |String
 
 |folderId |String
 
-|force |boolean
+|simpleUserRequest |com.box.boxjavalibv2.requests.requestobjects.BoxSimpleUserRequestObject
 
-|info |com.box.sdk.BoxUser.Info
-
-|login |String
-
-|name |String
-
-|notifyUser |boolean
-
-|params |com.box.sdk.CreateUserParams
-
-|sourceUserId |String
+|userDeleteRequest |com.box.boxjavalibv2.requests.requestobjects.BoxUserDeleteRequestObject
 
 |userId |String
+
+|userRequest |com.box.boxjavalibv2.requests.requestobjects.BoxUserRequestObject
+
+|userUpdateLoginRequest |com.box.boxjavalibv2.requests.requestobjects.BoxUserUpdateLoginRequestObject
 |===
 
-== Consumer Endpoints:
+=== Consumer Endpoints:
 
 For more information on Box events see
 https://developer.box.com/reference#events[https://developer.box.com/reference#events].
@@ -748,7 +755,7 @@ box:events/endpoint?[options]
 |events |  |[startingPosition] |com.box.sdk.BoxEvent 
 |===
 
-URI Options for _events_
+URI Options for _events_
 
 [width="100%",cols="10%,90%",options="header",]
 |===
@@ -757,18 +764,18 @@ URI Options for _events_
 |startingPosition |Long
 |===
 
-== Message header
+=== Message header
 
-Any of the options can be provided in a message header for producer
+Any of the options can be provided in a message header for producer
 endpoints with *CamelBox.* prefix.
 
-== Message body
+=== Message body
 
 All result message bodies utilize objects provided by the Box Java SDK.
 Producer endpoints can specify the option name for incoming message body
 in the *inBody* endpoint parameter.
 
-== Samples
+=== Samples
 
 The following route uploads new files to the user's root folder:
 
@@ -786,8 +793,8 @@ from("box://events/listen?startingPosition=-1")
     .to("bean:blah");
 ----
 
-The following route uses a producer with dynamic header options. The
-*fileId* property has the Box file id and the *output* property has 
+The following route uses a producer with dynamic header options. The
+*fileId* property has the Box file id and the *output* property has 
 the output stream of the file contents, so they are assigned to the
 *CamelBox.fileId* header and *CamelBox.output* header respectively
 as follows:

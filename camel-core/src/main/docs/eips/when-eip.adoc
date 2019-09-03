@@ -1,5 +1,4 @@
-[[when-eip]]
-== When EIP
+= When EIP
 
 The When EIP is related to http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
 Based Router] from the link:enterprise-integration-patterns.html[EIP

@@ -1,7 +1,8 @@
 [[grpc-component]]
-== gRPC Component
+= gRPC Component
 
 *Available as of Camel version 2.19*
+
 
 The gRPC component allows you to call or expose Remote Procedure Call (RPC) services
 using https://developers.google.com/protocol-buffers/docs/overview[Protocol Buffers (protobuf)] 
@@ -52,7 +53,7 @@ grpc:host:port/service
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -64,7 +65,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (25 parameters):
+=== Query Parameters (25 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -98,7 +99,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-grpc-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.

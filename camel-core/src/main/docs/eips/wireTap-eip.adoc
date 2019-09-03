@@ -1,5 +1,4 @@
-[[wireTap-eip]]
-== Wire Tap EIP
+= Wire Tap EIP
 
 http://www.enterpriseintegrationpatterns.com/WireTap.html[Wire Tap]
 (from the link:enterprise-integration-patterns.html[EIP patterns])

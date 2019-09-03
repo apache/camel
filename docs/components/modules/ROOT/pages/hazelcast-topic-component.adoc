@@ -1,3 +1,4 @@
+[[hazelcast-topic-component]]
 = Hazelcast Topic Component
 
 *Available as of Camel version 2.15*
@@ -6,7 +7,7 @@
 The http://www.hazelcast.com/[Hazelcast] Topic component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed topic.
 
 
-== Options
+### Options
 
 // component options: START
 The Hazelcast Topic component supports 3 options, which are listed below.
@@ -30,7 +31,7 @@ hazelcast-topic:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -40,7 +41,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +66,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hazelcast-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 8 options, which are listed below.
@@ -89,11 +102,11 @@ The component supports 8 options, which are listed below.
 
 
 
-== Topic producer – to(“hazelcast-topic:foo”)
+### Topic producer – to(“hazelcast-topic:foo”)
 
 The topic producer provides only one operation (publish).
 
-=== Sample for *publish*:
+#### Sample for *publish*:
 
 [source,java]
 ----------------------------------------------------------------------------------------
@@ -102,7 +115,7 @@ from("direct:add")
 .toF("hazelcast-%sbar", HazelcastConstants.PUBLISH_OPERATION);
 ----------------------------------------------------------------------------------------
 
-== Topic consumer – from(“hazelcast-topic:foo”)
+### Topic consumer – from(“hazelcast-topic:foo”)
 
 The topic consumer provides only one operation (received). This
 component is supposed to support multiple consumption as it's expected

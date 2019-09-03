@@ -1,15 +1,16 @@
+[[pdf-component]]
 = PDF Component
 
 *Available as of Camel version 2.16*
 
 
-The PDF components provides the ability to create, modify or extract
+The *PDF*: components provides the ability to create, modify or extract
 content from PDF documents. This component uses
 https://pdfbox.apache.org/[Apache PDFBox] as underlying library to work
 with PDF documents.
 
 In order to use the PDF component, Maven users will need to add the
-following dependency to their `pom.xml`:
+following dependency to their `pom.xml`:
 
 *pom.xml*
 
@@ -23,7 +24,7 @@ following dependency to their `pom.xml`:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 The PDF component only supports producer endpoints.
 
@@ -32,7 +33,7 @@ The PDF component only supports producer endpoints.
 pdf:operation[?options]
 -----------------------
 
-== Options
+### Options
 
 // component options: START
 The PDF component has no options.
@@ -49,7 +50,7 @@ pdf:operation
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -59,7 +60,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +78,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-pdf-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -94,7 +107,7 @@ The component supports 2 options, which are listed below.
 
 
 
-== Headers
+### Headers
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
 |Header |Description
@@ -104,11 +117,22 @@ operations. Expected type is
 https://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/PDDocument.html[PDDocument].
 Stores PDF document which will be used for append operation.
 
-|`protection-policy` |Expected type is
-https://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encryption/ProtectionPolicy.html[ProtectionPolicy].
+|`protection-policy` |Expected type
+ishttps://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encryption/ProtectionPolicy.html[ProtectionPolicy].
 If specified then PDF document will be encrypted with it.
 
-|`decryption-material` |Expected type is
-https://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial].
+|`decryption-material` |Expected type
+ishttps://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial].
 *Mandatory* header if PDF document is encrypted.
 |=======================================================================
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+-
+ 
+-

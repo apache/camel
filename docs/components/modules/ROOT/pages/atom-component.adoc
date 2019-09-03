@@ -1,9 +1,10 @@
+[[atom-component]]
 = Atom Component
 
 *Available as of Camel version 1.2*
 
 
-The Atom component is used for polling Atom feeds.
+The *atom:* component is used for polling Atom feeds.
 
 Camel will poll the feed every 60 seconds by default. +
  *Note:* The component currently only supports polling (consuming)
@@ -22,7 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 ------------------------
@@ -31,7 +32,7 @@ atom://atomUri[?options]
 
 Where *atomUri* is the URI to the Atom feed to poll.
 
-== Options
+### Options
 
 
 // component options: START
@@ -49,7 +50,7 @@ atom:feedUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -59,7 +60,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (27 parameters):
+=== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,7 +96,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-atom-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -115,7 +128,7 @@ The component supports 2 options, which are listed below.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== Exchange data format
+### Exchange data format
 
 Camel will set the In body on the returned `Exchange` with the entries.
 Depending on the `splitEntries` flag Camel will either return one
@@ -134,7 +147,7 @@ Depending on the `splitEntries` flag Camel will either return one
 Camel can set the `Feed` object on the In header (see `feedHeader`
 option to disable this):
 
-== Message Headers
+### Message Headers
 
 Camel atom uses these headers.
 
@@ -145,7 +158,7 @@ Camel atom uses these headers.
 header.
 |=======================================================================
 
-== Samples
+### Samples
 
 In this sample we poll James Strachan's blog.
 
@@ -157,3 +170,12 @@ from("atom://http://macstrac.blogspot.com/feeds/posts/default").to("seda:feeds")
 In this sample we want to filter only good blogs we like to a SEDA
 queue. The sample also shows how to setup Camel standalone, not running
 in any Container or using Spring.
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* <<rss-component,RSS>>

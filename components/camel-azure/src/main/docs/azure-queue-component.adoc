@@ -1,7 +1,8 @@
 [[azure-queue-component]]
-== Azure Storage Queue Service Component
+= Azure Storage Queue Service Component
 
 *Available as of Camel version 2.19*
+
 
 The Azure Queue component supports storing and retrieving the messages to/from
 https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] service.
@@ -57,7 +58,7 @@ azure-queue:containerAndQueueUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -67,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -86,7 +87,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-azure-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.

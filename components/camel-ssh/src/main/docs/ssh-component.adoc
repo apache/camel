@@ -1,7 +1,8 @@
 [[ssh-component]]
-== SSH Component
+= SSH Component
 
 *Available as of Camel version 2.10*
+
 
 The SSH component enables access to SSH servers such that you can send
 an SSH command, and process the response.
@@ -69,7 +70,7 @@ ssh:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,7 +81,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (32 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -121,7 +122,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-ssh-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 32 options, which are listed below.
@@ -161,8 +174,8 @@ The component supports 32 options, which are listed below.
 | *camel.component.ssh.sleep-for-shell-prompt* | Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds. |  | Long
 | *camel.component.ssh.timeout* | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds. |  | Long
 | *camel.component.ssh.username* | Sets the username to use in logging into the remote SSH server. |  | String
-| *camel.component.ssh.cert-filename* | Sets the resource path of the certificate to use for Authentication. |  | String
-| *camel.component.ssh.configuration.cert-filename* | @deprecated As of version 2.11, replaced by             {@link #setCertResource(String)} |  | String
+| *camel.component.ssh.cert-filename* | *Deprecated* Sets the resource path of the certificate to use for Authentication. |  | String
+| *camel.component.ssh.configuration.cert-filename* | *Deprecated* @deprecated As of version 2.11, replaced by             {@link #setCertResource(String)} |  | String
 |===
 // spring-boot-auto-configure options: END
 

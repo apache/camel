@@ -1,24 +1,26 @@
+[[jira-component]]
 = JIRA Component (deprecated)
 
-*Available as of Camel version 3.0*
 *Available as of Camel version 2.15*
 
 
-The JIRA component interacts with the JIRA API by encapsulating
-Atlassian's https://bitbucket.org/atlassian/jira-rest-java-client/src/master/[REST
+
+The JIRA component interacts with the JIRA API by encapsulating
+Atlassian's https://marketplace.atlassian.com/plugins/com.atlassian.jira.jira-rest-java-client[REST
 Java Client for JIRA]. It currently provides polling for new issues and
-new comments.  It is also able to create new issues, add comments, change issues, add/remove watchers, add attachment
-and transition the state of an issue.
+new comments.  It is also able to create new issues.
 
 Rather than webhooks, this endpoint relies on simple polling. Reasons
 include:
 
 * Concern for reliability/stability
-* The types of payloads we're polling aren't typically large (plus, paging is available in the API)
-* The need to support apps running somewhere not publicly accessible where a webhook would fail
+* The types of payloads we're polling aren't typically large (plus,
+paging is available in the API)
+* The need to support apps running somewhere not publicly accessible
+where a webhook would fail
 
-Note that the JIRA API is fairly expansive.  Therefore, this component could be easily expanded to provide additional
-interactions.
+Note that the JIRA API is fairly expansive.  Therefore, this component
+could be easily expanded to provide additional interactions.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -32,38 +34,22 @@ for this component:
 </dependency>
 ---------------------------------------
 
-== URI format
+### URI format
 
 [source,text]
 -------------------------
-jira://type[?options]
+jira://endpoint[?options]
 -------------------------
 
-== JIRA Options
+### JIRA Options
 
 
 // component options: START
 The JIRA component has no options.
 // component options: END
 
-The Jira type accepts the following operations:
 
-For consumers:
 
-* newIssues: retrieve only new issues after the route is started
-* newComments: retrieve only new comments after the route is started
-
-For producers:
-
-* addIssue: add an issue
-* addComment: add a comment on a given issue
-* attach: add an attachment on a given issue
-* deleteIssue: delete a given issue
-* updateIssue: update fields of a given issue
-* transitionIssue: transition a status of a given issue
-* watchers: add/remove watchers of a given issue
-
-As Jira is fully customizable, you must assure the fields IDs exists for the project and workflow, as they can change between different Jira servers.
 
 // endpoint options: START
 The JIRA endpoint is configured using URI syntax:
@@ -74,7 +60,7 @@ jira:type
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,7 +70,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -101,9 +87,20 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
-
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jira-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -119,132 +116,36 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Client Factory
 
-You can bind the `JiraRestClientFactory` with name *JiraRestClientFactory* in the registry to have it automatically set in the Jira endpoint.
 
-== Authentication
+### JQL:
 
-Camel-jira supports *https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-basic-authentication/[Basic Authentication]* and *https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-oauth-authentication/[OAuth 3 legged authentication]*.
-
-We recommend to use OAuth whenever possible, as it provides the best security for your users and system.
-
-=== Basic authentication requirements:
-
-* An username and password
-
-=== OAuth authentication requirements:
-
-Follow the tutorial in https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-oauth-authentication/[Jira OAuth documentation]
-to generate the client private key, consumer key, verification code and access token.
-
-* a private key, generated locally on your system.
-* A verification code, generated by Jira server.
-* The consumer key, set in the Jira server settings.
-* An access token, generated by Jira server.
-
-== JQL:
-
-The JQL URI option is used by both consumer endpoints.  Theoretically,
+The JQL URI option is used by both consumer endpoints.  Theoretically,
 items like "project key", etc. could be URI options themselves.
- However, by requiring the use of JQL, the consumers become much more
+ However, by requiring the use of JQL, the consumers become much more
 flexible and powerful.
 
 At the bare minimum, the consumers will require the following:
 
 [source,text]
 --------------------------------------------------------------
-jira://[type]?[required options]&jql=project=[project key]
+jira://[endpoint]?[required options]&jql=project=[project key]
 --------------------------------------------------------------
 
-One important thing to note is that the newIssues consumer will
-automatically set the JQL as:
-
-* append `ORDER BY key desc` to your JQL
-* prepend `id > latestIssueId` to retrieve issues added after the camel route was started.
-
-This is in order to optimize startup processing, rather than having to index every single
+One important thing to note is that the newIssue consumer will
+automatically append "ORDER BY key desc" to your JQL.  This is in order
+to optimize startup processing, rather than having to index every single
 issue in the project.
 
-Another note is that, similarly, the newComments consumer will have to
-index every single issue *and* comment in the project. Therefore, for
-large projects, it's *vital* to optimize the JQL expression as much as
-possible. For example, the JIRA Toolkit Plugin includes a "Number of
+Another note is that, similarly, the newComment consumer will have to
+index every single issue *and* comment in the project.  Therefore, for
+large projects, it's *vital* to optimize the JQL expression as much as
+possible.  For example, the JIRA Toolkit Plugin includes a "Number of
 comments" custom field -- use '"Number of comments" > 0' in your query.
-Also try to minimize based on state (status=Open), increase the polling
-delay, etc. Example:
+Also try to minimize based on state (status=Open), increase the polling
+delay, etc.  Example:
 
 [source,text]
 ----------------------------------------------------------------------------------------------------------------------------------------------
-jira://[type]?[required options]&jql=RAW(project=[project key] AND status in (Open, \"Coding In Progress\") AND \"Number of comments\">0)"
+jira://[endpoint]?[required options]&jql=RAW(project=[project key] AND status in (Open, \"Coding In Progress\") AND \"Number of comments\">0)"
 ----------------------------------------------------------------------------------------------------------------------------------------------
-
-== Operations
-
-See a list of required headers to set when using the Jira operations. The author field for the producers is automatically set to the authenticated user in the Jira side.
-
-If any required field is not set, then an IllegalArgumentException is throw.
-
-There are operations that requires `id` for fields suchs as: issue type, priority, transition. Check the valid `id` on your jira project as they may differ on a jira installation and project workflow.
-
-== AddIssue
-
-Required:
-
-* `ProjectKey`: The project key, example: CAMEL, HHH, MYP.
-* `IssueTypeId` or `IssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `\http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
-* `IssueSummary`: The summary of the issue.
-
-Optional:
-
-* `IssueAssignee`: the assignee user
-* `IssuePriorityId` or `IssuePriorityName`: The priority of the issue, you can see the valid list in `\http://jira_server/rest/api/2/priority`.
-* `IssueComponents`: A list of string with the valid component names.
-* `IssueWatchersAdd`: A list of strings with the usernames to add to the watcher list.
-* `IssueDescription`: The description of the issue.
-
-== AddComment
-
-Required:
-
-* `IssueKey`: The issue key identifier.
-* body of the exchange is the description.
-
-== AttachFile
-
-Only one file should attach per invocation.
-
-Required:
-
-* `IssueKey`: The issue key identifier.
-* body of the exchange should be of type `GenericFile`
-
-== DeleteIssue
-
-Required:
-
-* `IssueKey`: The issue key identifier.
-
-== TransitionIssue
-
-Required:
-
-* `IssueKey`: The issue key identifier.
-* `IssueTransitionId`: The issue transition `id`.
-* body of the exchange is the description.
-
-== UpdateIssue
-
-* `IssueKey`: The issue key identifier.
-* `IssueTypeId` or `IssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `\http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
-* `IssueSummary`: The summary of the issue.
-* `IssueAssignee`: the assignee user
-* `IssuePriorityId` or `IssuePriorityName`: The priority of the issue, you can see the valid list in `\http://jira_server/rest/api/2/priority`.
-* `IssueComponents`: A list of string with the valid component names.
-* `IssueDescription`: The description of the issue.
-
-== Watcher
-
-* `IssueKey`: The issue key identifier.
-* `IssueWatchersAdd`: A list of strings with the usernames to add to the watcher list.
-* `IssueWatchersRemove`: A list of strings with the usernames to remove from the watcher list.

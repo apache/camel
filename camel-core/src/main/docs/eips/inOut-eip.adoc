@@ -1,5 +1,4 @@
-[[inOut-eip]]
-== In Out EIP
+= In Out EIP
 
 The *inOut:* EIP define an InOut ExchangePattern.
 

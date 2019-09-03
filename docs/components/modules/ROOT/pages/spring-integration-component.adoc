@@ -1,9 +1,10 @@
+[[spring-integration-component]]
 = Spring Integration Component
 
 *Available as of Camel version 1.4*
 
 
-The Spring Integration component provides a bridge for Camel
+The *spring-integration:* component provides a bridge for Camel
 components to talk to
 http://www.springsource.org/spring-integration[spring integration
 endpoints].
@@ -21,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 -----------------------------------------------
@@ -36,7 +37,7 @@ used by the Spring Integration Spring context. It will equal to the
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== Options
+### Options
 
 
 // component options: START
@@ -54,7 +55,7 @@ spring-integration:defaultChannel
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -64,7 +65,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,7 +81,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-spring-integration-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -97,7 +110,7 @@ The component supports 2 options, which are listed below.
 
 
 
-== Usage
+### Usage
 
 The Spring integration component is a bridge that connects Camel
 endpoints with Spring integration endpoints through the Spring
@@ -105,15 +118,15 @@ integration's input channels and output channels. Using this component,
 we can send Camel messages to Spring Integration endpoints or receive
 messages from Spring integration endpoints in a Camel routing context.
 
-== Examples
+### Examples
 
-=== Using the Spring integration endpoint
+#### Using the Spring integration endpoint
 
 You can set up a Spring integration endpoint using a URI, as follows:
 
 Or directly using a Spring integration channel name:
 
-=== The Source and Target adapter
+#### The Source and Target adapter
 
 Spring integration also provides the Spring integration's source and
 target adapters, which can route messages from a Spring integration
@@ -123,3 +136,10 @@ integration channel.
 This example uses the following namespaces:
 
 You can bind your source or target to a Camel endpoint as follows:
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

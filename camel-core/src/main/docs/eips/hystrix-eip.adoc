@@ -1,5 +1,4 @@
-[[hystrix-eip]]
-== Hystrix EIP
+= Hystrix EIP
 
 *Available as of Camel 2.18*
 

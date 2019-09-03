@@ -1,5 +1,4 @@
-[[filter-eip]]
-== Filter EIP
+= Filter EIP
 
 The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
 Filter] from the link:enterprise-integration-patterns.html[EIP patterns]

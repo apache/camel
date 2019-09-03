@@ -1,9 +1,10 @@
+[[restlet-component]]
 = Restlet Component
 
 *Available as of Camel version 2.0*
 
 
-The Restlet component provides http://www.restlet.org[Restlet] based
+The *Restlet* component provides http://www.restlet.org[Restlet] based
 endpoints for consuming and producing RESTful
 resources.
 
@@ -20,7 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+=== URI format
 
 [source,text]
 ----
@@ -48,12 +49,15 @@ NOTE: It seems Restlet is case sensitive in understanding headers. For example
 to use content-type, use `Content-Type`, and for location use `Location` and
 so on.
 
-To keep up performance you can set
+WARNING: We have received a report about drop in performance in camel-restlet in
+Camel 2.14.0 and 2.14.1. We have reported this to the Restlet team in
+https://github.com/restlet/restlet-framework-java/issues/996[issue 996].
+To remedy the issue then from Camel 2.14.2 onwards you can set
 synchronous=true as option on the endpoint uris, Or set it on the
 RestletComponent as a global option so all endpoints inherit this
 option.
 
-== Options
+=== Options
 
 
 
@@ -103,7 +107,7 @@ restlet:protocol:host:port/uriPattern
 
 with the following path and query parameters:
 
-==== Path Parameters (4 parameters):
+=== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -116,7 +120,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (18 parameters):
+=== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -143,7 +147,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-restlet-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 24 options, which are listed below.
@@ -182,7 +198,7 @@ The component supports 24 options, which are listed below.
 
 
 
-== Message Headers
+=== Message Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
@@ -191,12 +207,14 @@ The component supports 24 options, which are listed below.
 |`Content-Type` |`String` |Specifies the content type, which can be set on the OUT message by the
 application/processor. The value is the `content-type` of the response
 message. If this header is not set, the content type is based on the
-object type of the OUT message body. If the
+object type of the OUT message body. In Camel 2.3 onward, if the
 Content-Type header is specified in the Camel IN message, the value of
-the header determine the content type for the Restlet request message.  
-Otherwise, it is defaulted to "application/x-www-form-urlencoded'.
+the header determine the content type for the Restlet request message.  
+Otherwise, it is defaulted to "application/x-www-form-urlencoded'. Prior
+to release 2.3, it is not possible to change the request content type
+default.
 
-|`CamelAcceptContentType` |`String` |The HTTP Accept request header.
+|`CamelAcceptContentType` |`String` |*Since Camel 2.9.3, 2.10.0:* The HTTP Accept request header.
 
 |`CamelHttpMethod` |`String` |The HTTP request method. This is set in the IN message header.
 
@@ -218,27 +236,27 @@ Camel.
 the application and gets filtered before the restlet request header by
 Camel.
 
-|`CamelRestletRequest` |`Request` |The `org.restlet.Request` object which holds all request
+|`CamelRestletRequest` |`Request` |*Camel 2.8:* The `org.restlet.Request` object which holds all request
 details.
 
-|`CamelRestletResponse` |`Response` |The `org.restlet.Response` object. You can use this to
+|`CamelRestletResponse` |`Response` |*Camel 2.8:* The `org.restlet.Response` object. You can use this to
 create responses using the API from Restlet. See examples below.
 
 |`org.restlet.*` |  |Attributes of a Restlet message that get propagated to Camel IN headers.
 
-|`cache-control` |`String` or `List<CacheDirective>` |User can set the cache-control with the String value or
+|`cache-control` |`String` or `List<CacheDirective>` |*Camel 2.11:* User can set the cache-control with the String value or
 the List of CacheDirective of Restlet from the camel message header.
 |===
 
-== Message Body
+=== Message Body
 
 Camel will store the restlet response from the external server on the
 OUT body. All headers from the IN message will be copied to the OUT
 message, so that headers are preserved during routing.
 
-== Samples
+=== Samples
 
-=== Restlet Endpoint with Authentication
+==== Restlet Endpoint with Authentication
 
 The following route starts a `restlet` consumer endpoint that listens
 for `POST` requests on http://localhost:8080. The processor creates a
@@ -276,7 +294,7 @@ The sample client gets a response like the following:
 received [<order foo='1'/>] as an order id = 89531
 ----
 
-=== Single restlet endpoint to service multiple methods and URI templates (deprecated)
+==== Single restlet endpoint to service multiple methods and URI templates (deprecated)
 
 This functionality is *deprecated* so do NOT use!
 
@@ -303,7 +321,7 @@ The `restletUriPatterns=#uriTemplates` option references the
 </util:list>
 ----
 
-=== Using Restlet API to populate response
+==== Using Restlet API to populate response
 
 *Available as of Camel 2.8*
 
@@ -314,7 +332,7 @@ the response from an inlined Camel Processor:
 
 *Generating response using Restlet Response API*
 
-=== Configuring max threads on component
+==== Configuring max threads on component
 
 To configure the max threads options you must do this on the component,
 such as:
@@ -326,7 +344,7 @@ such as:
 </bean>
 ----
 
-=== Using the Restlet servlet within a webapp
+==== Using the Restlet servlet within a webapp
 
 *Available as of Camel 2.8* +
  There are
@@ -384,7 +402,7 @@ And add this to your web.xml;
 ----
 
 You will then be able to access the deployed route at
-`\http://localhost:8080/mywebapp/rs/demo/1234` where;
+`http://localhost:8080/mywebapp/rs/demo/1234` where;
 
 `localhost:8080` is the server and port of your servlet container +
  `mywebapp` is the name of your deployed webapp +

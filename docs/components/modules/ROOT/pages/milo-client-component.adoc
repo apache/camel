@@ -1,9 +1,10 @@
+[[milo-client-component]]
 = OPC UA Client Component
 
 *Available as of Camel version 2.19*
 
 
-The Milo Client component provides access to OPC UA servers using the
+The *Milo Client* component provides access to OPC UA servers using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -40,7 +41,7 @@ The OPC UA Client component supports 6 options, which are listed below.
 
 
 
-== URI format
+=== URI format
 
 The URI syntax of the endpoint is: 
 
@@ -57,7 +58,7 @@ milo-client:tcp://[user:password@]host:port?node=RAW(nsu=urn:foo:bar;s=item-1)
 
 If no user credentials are provided the client will switch to anonymous mode.
 
-== URI options
+=== URI options
 
 All configuration options in the group +client+ are applicable to the shared client instance. Endpoints
 will share client instances for each endpoint URI. So the first time a request for that endpoint URI is
@@ -87,7 +88,7 @@ milo-client:endpointUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -97,7 +98,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (27 parameters):
+=== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -133,7 +134,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-milo-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 24 options, which are listed below.
@@ -174,13 +187,13 @@ The component supports 24 options, which are listed below.
 
 
 
-=== Discovery
+==== Discovery
 
 If the server uses a dedicated discovery endpoint (e.g. `/discovery`), which may support different (less secure) security policies,
 then you can make use of this via the parameter `discoveryEndpointSuffix`, which will be appended to the `endpointUri`. Or by using
 an explicit `discoveryEndpointUri`.
 
-=== Overriding the host name
+==== Overriding the host name
 
 The client uses the host information from the endpoint information, queried from the server. However in some situations this endpoint URI
 might be different, and wrong from the point of view of the connecting client (e.g. an internal hostname).
@@ -188,7 +201,7 @@ might be different, and wrong from the point of view of the connecting client (e
 In this case it is possible to set the parameter `overrideHost` to `true`, which will take the discovered endpoint information,
 but override the host information with the value of the original URI.
 
-=== Node ID
+==== Node ID
 
 
 In order to define a target node a namespace and node id is required. In previous versions this was possible by
@@ -219,7 +232,7 @@ However Camel allows to wrap the actual value inside `RAW(…)`, which makes esc
 milo-client:tcp://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)
 ------------------------
 
-=== Method ID
+==== Method ID
 
 It is possible to perform methods calls on OPC UA nodes. If the parameter `method` is set to the Node ID of a method call (the node ID must be set to the parent object in this case),
 then a method call will be performed instead of a write operation.
@@ -231,11 +244,18 @@ Input parameters are taken from the body:
 * If the body is a `Variant`, then it will be wrapped in a `Variant[]` array
 * Otherwise the body will be converted into a `Variant` and wrapped in an array of `Variant[]`
 
-=== Security policies
+==== Security policies
 
-When setting the allowing security policies is it possible to use the well known OPC UA URIs (e.g. `\http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15`)
+When setting the allowing security policies is it possible to use the well known OPC UA URIs (e.g. `http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15`)
 or to use the Milo enum literals (e.g. `None`). Specifying an unknown security policy URI or enum is an error.
 
 The known security policy URIs and enum literals are can be seen here: https://github.com/eclipse/milo/blob/master/opc-ua-stack/stack-core/src/main/java/org/eclipse/milo/opcua/stack/core/security/SecurityPolicy.java[SecurityPolicy.java] 
 
 **Note:** In any case security policies are considered case sensitive.
+
+=== See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

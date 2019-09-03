@@ -1,4 +1,4 @@
-= Hazelcast Component
+## Hazelcast Component
 
 *Available as of Camel version 2.7*
 
@@ -29,25 +29,25 @@ for this component:
 ------------------------------------------------------------
 
 
-== Hazelcast components
+### Hazelcast components
 See followings for each component usage:
-* xref:hazelcast-map-component.adoc[map]
-* xref:hazelcast-multimap-component.adoc[multimap]
-* xref:hazelcast-queue-component.adoc[queue]
-* xref:hazelcast-topic-component.adoc[topic]
-* xref:hazelcast-list-component.adoc[list]
-* xref:hazelcast-seda-component.adoc[seda]
-* xref:hazelcast-set-component.adoc[set]
-* xref:hazelcast-atomicvalue-component.adoc[atomic number]
-* xref:hazelcast-instance-component.adoc[cluster support (instance)]
-* xref:hazelcast-replicatedmap-component.adoc[replicatedmap] 
-* xref:hazelcast-ringbuffer-component.adoc[ringbuffer] 
+* <<hazelcast-map-component,map>>
+* <<hazelcast-multimap-component,multimap>>
+* <<hazelcast-queue-component,queue>>
+* <<hazelcast-topic-component,topic>>
+* <<hazelcast-list-component,list>>
+* <<hazelcast-seda-component,seda>>
+* <<hazelcast-set-component,set>>
+* <<hazelcast-atomicvalue-component,atomic number>>
+* <<hazelcast-instance-component,cluster support (instance)>>
+* <<hazelcast-replicatedmap-component,replicatedmap>> 
+* <<hazelcast-ringbuffer-component,ringbuffer>> 
 
 
 
-== Using hazelcast reference
+### Using hazelcast reference
 
-=== By its name
+#### By its name
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ See followings for each component usage:
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="testHazelcastInstanceBeanRefPut">
         <from uri="direct:testHazelcastInstanceBeanRefPut"/>
-        <setHeader name="CamelHazelcastOperationType">
+        <setHeader headerName="CamelHazelcastOperationType">
             <constant>put</constant>
         </setHeader>
         <to uri="hazelcast-map:testmap?hazelcastInstanceName=HZ.INSTANCE"/>
@@ -73,7 +73,7 @@ See followings for each component usage:
 
     <route id="testHazelcastInstanceBeanRefGet">
         <from uri="direct:testHazelcastInstanceBeanRefGet" />
-        <setHeader name="CamelHazelcastOperationType">
+        <setHeader headerName="CamelHazelcastOperationType">
             <constant>get</constant>
         </setHeader>
         <to uri="hazelcast-map:testmap?hazelcastInstanceName=HZ.INSTANCE"/>
@@ -82,7 +82,7 @@ See followings for each component usage:
 </camelContext>
 --------------------------------------------------------------------------------------------------------
 
-=== By instance
+#### By instance
 
 [source,xml]
 ------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ See followings for each component usage:
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="testHazelcastInstanceBeanRefPut">
         <from uri="direct:testHazelcastInstanceBeanRefPut"/>
-        <setHeader name="CamelHazelcastOperationType">
+        <setHeader headerName="CamelHazelcastOperationType">
             <constant>put</constant>
         </setHeader>
         <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>
@@ -103,7 +103,7 @@ See followings for each component usage:
 
     <route id="testHazelcastInstanceBeanRefGet">
         <from uri="direct:testHazelcastInstanceBeanRefGet" />
-        <setHeader name="CamelHazelcastOperationType">
+        <setHeader headerName="CamelHazelcastOperationType">
             <constant>get</constant>
         </setHeader>
         <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>
@@ -112,16 +112,16 @@ See followings for each component usage:
 </camelContext>
 ------------------------------------------------------------------------------
 
-== Publishing hazelcast instance as an OSGI service
+### Publishing hazelcast instance as an OSGI service
 
 If operating in an OSGI container and you would want to use one instance
 of hazelcast across all bundles in the same container. You can publish
 the instance as an OSGI service and bundles using the cache al need is
 to reference the service in the hazelcast endpoint.
 
-=== Bundle A create an instance and publishes it as an OSGI service
+#### Bundle A create an instance and publishes it as an OSGI service
 
- 
+ 
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ to reference the service in the hazelcast endpoint.
 <service ref="hazelcastInstance" interface="com.hazelcast.core.HazelcastInstance" />
 --------------------------------------------------------------------------------------------------------
 
-=== Bundle B uses the instance
+#### Bundle B uses the instance
 
 [source,xml]
 --------------------------------------------------------------------------------------
@@ -147,7 +147,7 @@ to reference the service in the hazelcast endpoint.
 <camelContext xmlns="http://camel.apache.org/schema/blueprint">
     <route id="testHazelcastInstanceBeanRefPut">
         <from uri="direct:testHazelcastInstanceBeanRefPut"/>
-        <setHeader name="CamelHazelcastOperationType">
+        <setHeader headerName="CamelHazelcastOperationType">
             <constant>put</constant>
         </setHeader>
         <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>
@@ -155,7 +155,7 @@ to reference the service in the hazelcast endpoint.
 
     <route id="testHazelcastInstanceBeanRefGet">
         <from uri="direct:testHazelcastInstanceBeanRefGet" />
-        <setHeader name="CamelHazelcastOperationType">
+        <setHeader headerName="CamelHazelcastOperationType">
             <constant>get</constant>
         </setHeader>
         <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>

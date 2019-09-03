@@ -1,5 +1,4 @@
-[[log-eip]]
-== Log EIP
+= Log EIP
 
 How can I log the processing of a link:message.html[Message]?
 

@@ -1,5 +1,5 @@
 [[BAM-BusinessActivityMonitoring]]
-= Business Activity Monitoring
+== Business Activity Monitoring
 
 The *Camel BAM* module provides a Business Activity Monitoring (BAM)
 framework for testing business processes across multiple message

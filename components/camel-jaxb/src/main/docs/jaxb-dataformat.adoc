@@ -1,7 +1,8 @@
 [[jaxb-dataformat]]
-== JAXB DataFormat
+= JAXB DataFormat
 
 *Available as of Camel version 1.0*
+
 
 JAXB is a Data Format which uses the JAXB2 XML
 marshalling standard which is included in Java 6 to unmarshal an XML
@@ -39,7 +40,19 @@ The JAXB dataformat supports 18 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jaxb-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 19 options, which are listed below.

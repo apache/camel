@@ -1,3 +1,4 @@
+[[spark-rest-component]]
 = Spark Rest Component
 
 *Available as of Camel version 2.14*
@@ -7,7 +8,7 @@ The Spark-rest component allows to define REST endpoints using the
 http://sparkjava.com/[Spark REST Java library] using the
 Rest DSL.
 
-NOTE: Spark Java requires Java 8 runtime.
+INFO: Spark Java requires Java 8 runtime.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -21,14 +22,14 @@ for this component:
     </dependency>
 -------------------------------------------------
 
-== URI format
+=== URI format
 
 [source,text]
 ----------------------------------
 spark-rest://verb:path?[options]
 ----------------------------------
 
-== URI Options
+=== URI Options
 
 
 
@@ -67,7 +68,7 @@ spark-rest:verb:path
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -99,7 +100,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-== Path using Spark syntax
+=== Path using Spark syntax
 
 The path option is defined using a Spark REST syntax where you define
 the REST context path using support for parameters and splat. See more
@@ -123,10 +124,10 @@ from("spark-rest:get:hello/:me")
   .transform().simple("Bye ${header.me}");
 --------------------------------------------
 
-== Mapping to Camel Message
+=== Mapping to Camel Message
 
 The Spark Request object is mapped to a Camel Message as
-a `org.apache.camel.component.sparkrest.SparkMessage` which has access
+a `org.apache.camel.component.sparkrest.SparkMessage` which has access
 to the raw Spark request using the getRequest method. By default the
 Spark body is mapped to Camel message body, and any HTTP headers / Spark
 parameters is mapped to Camel Message headers. There is special support
@@ -134,7 +135,7 @@ for the Spark splat syntax, which is mapped to the Camel message header
 with key splat.
 
 For example the given route below uses Spark splat (the asterisk
-sign) in the context path which we can access as a header form the
+sign) in the context path which we can access as a header form the
 Simple language to construct a response message.
 
 [source,java]
@@ -143,7 +144,7 @@ from("spark-rest:get:/hello/*/to/*")
   .transform().simple("Bye big ${header.splat[1]} from ${header.splat[0]}");
 ------------------------------------------------------------------------------
 
-== Rest DSL
+=== Rest DSL
 
 Apache Camel provides a new Rest DSL that allow to define the REST
 services in a nice REST style. For example we can define a REST hello
@@ -175,9 +176,9 @@ return new RouteBuilder() {
 </camelContext>
 --------------------------------------------------------------
 
-See more details at the Rest DSL.
+See more details at the Rest DSL.
 
-== More examples
+=== More examples
 
 There is a *camel-example-spark-rest-tomcat* example in the Apache Camel
 distribution, that demonstrates how to use camel-spark-rest in a web

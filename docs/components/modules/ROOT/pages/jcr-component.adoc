@@ -1,9 +1,10 @@
+[[jcr-component]]
 = JCR Component
 
 *Available as of Camel version 1.3*
 
 
-The JCR component allows you to add/read nodes to/from a JCR
+The *`jcr`* component allows you to add/read nodes to/from a JCR
 compliant content repository (for example,
 http://jackrabbit.apache.org/[Apache Jackrabbit]) with its producer, or
 register an EventListener with the consumer.
@@ -21,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 -------------------------------------------
@@ -30,15 +31,15 @@ jcr://user:password@repository/path/to/node
 
 *Consumer added*
 
-You can use consumer as an EventListener in
+From *Camel 2.10* onwards you can use consumer as an EventListener in
 JCR or a producer to read a node by identifier.
 
-== Usage
+### Usage
 
 The `repository` element of the URI is used to look up the JCR
 `Repository` object in the Camel context registry.
 
-=== JCR Options
+#### JCR Options
 
 
 // component options: START
@@ -57,7 +58,7 @@ jcr:host/base
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -68,7 +69,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +92,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jcr-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -106,7 +119,16 @@ The component supports 2 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-== Example
+
+
+
+
+Please note that the JCR Producer used message properties instead of
+message headers in Camel versions earlier than 2.12.3. See
+https://issues.apache.org/jira/browse/CAMEL-7067[https://issues.apache.org/jira/browse/CAMEL-7067]
+for more details.
+
+### Example
 
 The snippet below creates a node named `node` under the `/home/test`
 node in the content repository. One additional property is added to the
@@ -120,7 +142,7 @@ from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node"))
     .to("jcr://user:pass@repository/home/test");
 ------------------------------------------------------------------------
 
- 
+ 
 
 The following code will register an EventListener under the path
 import-application/inbox for Event.NODE_ADDED and Event.NODE_REMOVED
@@ -134,3 +156,10 @@ all the children.
     <to uri="direct:execute-import-application" />
 </route>
 ---------------------------------------------------------------------------------------------
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

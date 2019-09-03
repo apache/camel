@@ -1,7 +1,8 @@
 [[jacksonxml-dataformat]]
-== JacksonXML DataFormat
+= JacksonXML DataFormat
 
 *Available as of Camel version 2.16*
+
 
 Jackson XML is a Data Format which uses the
 http://wiki.fasterxml.com/JacksonHome/[Jackson library] with the
@@ -58,7 +59,19 @@ The JacksonXML dataformat supports 15 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jacksonxml-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 16 options, which are listed below.

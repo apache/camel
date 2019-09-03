@@ -1,3 +1,4 @@
+[[csv-dataformat]]
 = CSV DataFormat
 
 *Available as of Camel version 1.3*
@@ -9,7 +10,7 @@ handle CSV payloads (Comma Separated Values) such as those
 exported/imported by Excel.
 
 
-== Options
+### Options
 
 // dataformat options: START
 The CSV dataformat supports 28 options, which are listed below.
@@ -50,7 +51,19 @@ The CSV dataformat supports 28 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-csv-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 29 options, which are listed below.
@@ -95,7 +108,7 @@ ND
 
 
 
-== Marshalling a Map to CSV
+### Marshalling a Map to CSV
 
 The component allows you to marshal a Java Map (or any other message
 type that can be converted in a Map) into a
@@ -139,7 +152,7 @@ then it will produce
 abc,123
 ----
 
-== Unmarshalling a CSV message into a Java List
+### Unmarshalling a CSV message into a Java List
 
 Unmarshalling will transform a CSV messsage into a Java List with CSV
 file lines (containing another List with all the field values).
@@ -175,7 +188,7 @@ for (List<String> line : data) {
 }
 --------------------------------------------------------------------------------------------------------------
 
-== Marshalling a List<Map> to CSV
+### Marshalling a List<Map> to CSV
 
 *Available as of Camel 2.1*
 
@@ -184,7 +197,7 @@ format you can now store the message payload as a
 `List<Map<String, Object>>` object where the list contains a Map for
 each row.
 
-== File Poller of CSV, then unmarshaling
+### File Poller of CSV, then unmarshaling
 
 Given a bean which can handle the incoming data...
 
@@ -211,7 +224,7 @@ public void doHandleCsvData(List<List<String>> csvData)
 </route>
 ------------------------------------------------------------------------------------------------
 
-== Marshaling with a pipe as delimiter
+### Marshaling with a pipe as delimiter
 Considering the following body
 
 [source,java]
@@ -226,6 +239,14 @@ and this Java route definition
 
 [source,java]
 -------------------------------------------------------
+// Camel version < 2.15
+CsvDataFormat oldCSV = new CsvDataFormat();
+oldCSV.setDelimiter("|");
+from("direct:start")
+    .marshal(oldCSV)
+    .to("mock:result")
+ 
+// Camel version >= 2.15
 from("direct:start")
     .marshal(new CsvDataFormat().setDelimiter(&#39;|&#39;))
     .to("mock:result")
@@ -252,7 +273,7 @@ abc|123
 
 [[CSV-UsingautogenColumns,configRefandstrategyRefattributesinsideXMLDSL]]
 Using autogenColumns, configRef and strategyRef attributes inside XML
-== DSL
+### DSL
 
 *Available as of Camel 2.9.2 / 2.10 and deleted for Camel 2.15*
 
@@ -291,7 +312,7 @@ should illustrate this customization.
 </bean>
 -----------------------------------------------------------------------------------------------------------------------------
 
-== Using skipFirstLine option while unmarshaling
+### Using skipFirstLine option while unmarshaling
 
 *Available as of Camel 2.10 and deleted for Camel 2.15*
 
@@ -321,7 +342,7 @@ from("direct:start")
 .to("bean:myCsvHandler?method=doHandleCsv");
 --------------------------------------------
 
-== Unmarshaling with a pipe as delimiter
+### Unmarshaling with a pipe as delimiter
 
 Using the Spring/XML DSL:
 
@@ -384,7 +405,7 @@ csvConfig.setDelimiter(';');
 
 doesn't work. You have to set the delimiter as a String!
 
-== Dependencies
+### Dependencies
 
 To use CSV in your Camel routes you need to add a dependency on
 *camel-csv*, which implements this data format.

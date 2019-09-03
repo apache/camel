@@ -1,3 +1,4 @@
+[[disruptor-component]]
 = Disruptor Component
 
 *Available as of Camel version 2.12*
@@ -125,7 +126,7 @@ disruptor:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -135,7 +136,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -156,7 +157,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-disruptor-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 18 options, which are listed below.
@@ -182,8 +195,8 @@ The component supports 18 options, which are listed below.
 | *camel.component.disruptor.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default value is Blocking. |  | DisruptorWaitStrategy
 | *camel.component.disruptor.enabled* | Enable disruptor component | true | Boolean
 | *camel.component.disruptor.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.disruptor-vm.queue-size* | To configure the ring buffer size |  | Integer
-| *camel.component.disruptor.queue-size* | To configure the ring buffer size |  | Integer
+| *camel.component.disruptor-vm.queue-size* | *Deprecated* To configure the ring buffer size |  | Integer
+| *camel.component.disruptor.queue-size* | *Deprecated* To configure the ring buffer size |  | Integer
 |===
 // spring-boot-auto-configure options: END
 

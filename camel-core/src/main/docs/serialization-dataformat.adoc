@@ -1,5 +1,5 @@
 [[serialization-dataformat]]
-== Java Object Serialization DataFormat (deprecated)
+= Java Object Serialization DataFormat (deprecated)
 
 *Available as of Camel version 2.12*
 

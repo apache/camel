@@ -1,5 +1,5 @@
 [[Swagger-SwaggerScalaComponent]]
-= Swagger Scala Component (deprecated)
+== Swagger Scala Component (deprecated)
 
 *Available as of Camel 2.14*
 

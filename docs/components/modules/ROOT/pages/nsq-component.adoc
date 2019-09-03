@@ -1,12 +1,17 @@
+[[nsq-component]]
 = NSQ Component
 
 *Available as of Camel version 2.23*
 
 
-http://nsq.io/[NSQ] is a realtime distributed messaging platform.
+*Available as of Camel version 2.23*
+
+
+
+http://nsq.io/[NSQ] is a realtime distributed messaging platform.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component.
+their `pom.xml` for this component.
 
 [source,xml]
 ------------------------------------------------------------
@@ -18,16 +23,16 @@ their `pom.xml` for this component.
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 ----------------------
 nsq:servers[?options]
 ----------------------
 
-Where *servers* represents the list of NSQ servers - nsqlookupd servers in the case of a consumer and nsqd servers in the case of a producer.
+Where *servers* represents the list of NSQ servers - nsqlookupd servers in the case of a consumer and nsqd servers in the case of a producer.
 
-== Options
+### Options
 
 
 // component options: START
@@ -56,7 +61,7 @@ nsq:servers
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +71,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +96,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-nsq-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 3 options, which are listed below.

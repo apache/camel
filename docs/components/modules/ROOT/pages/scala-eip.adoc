@@ -1,5 +1,5 @@
 [[ScalaDSL-SupportedDSL]]
-= Scala Supported DSL
+=== Scala Supported DSL
 
 The Scala DSL supports *every* DSL from the
 Java DSL.

@@ -1,7 +1,8 @@
 [[hdfs2-component]]
-== HDFS2 Component
+= HDFS2 Component
 
 *Available as of Camel version 2.14*
+
 
 The *hdfs2* component enables you to read and write messages from/to an
 HDFS file system using Hadoop 2.x. HDFS is the distributed file system
@@ -80,7 +81,7 @@ hdfs2:hostName:port/path
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +93,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (38 parameters):
+=== Query Parameters (38 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -139,7 +140,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hdfs2-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 3 options, which are listed below.

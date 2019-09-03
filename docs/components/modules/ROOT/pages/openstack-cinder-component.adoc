@@ -1,11 +1,12 @@
+[[openstack-cinder-component]]
 = OpenStack Cinder Component
 
 *Available as of Camel version 2.19*
 
 
-The Openstack Cinder component allows messages to be sent to an OpenStack block storage services.
+The openstack-cinder component allows messages to be sent to an OpenStack block storage services.
 
-== Dependencies
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -23,7 +24,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-== URI Format
+### URI Format
 
 [source,java]
 ----------------------------
@@ -33,7 +34,7 @@ openstack-cinder://hosturl[?options]
 You can append query options to the URI in the following format
 `?options=value&option2=value&...`
 
-== URI Options
+### URI Options
 
 // component options: START
 The OpenStack Cinder component has no options.
@@ -48,7 +49,7 @@ openstack-cinder:host
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -58,7 +59,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,7 +77,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-openstack-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -93,12 +106,12 @@ The component supports 2 options, which are listed below.
 
 
 
-== Usage
+### Usage
 You can use following settings for each subsystem:
 
-== volumes
+### volumes
 
-=== Operations you can perform with the Volume producer
+#### Operations you can perform with the Volume producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -116,7 +129,7 @@ You can use following settings for each subsystem:
 |`delete` | Delete the volume.
 |=========================================================================
 
-=== Message headers evaluated by the Volume producer
+#### Message headers evaluated by the Volume producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -143,9 +156,9 @@ You can use following settings for each subsystem:
 
 If you need more precise volume settings you can create new object of the type *org.openstack4j.model.storage.block.Volume* and send in the message body.
 
-== snapshots
+### snapshots
 
-=== Operations you can perform with the Snapshot producer
+#### Operations you can perform with the Snapshot producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -162,7 +175,7 @@ If you need more precise volume settings you can create new object of the type *
 
 |=========================================================================
 
-=== Message headers evaluated by the Snapshot producer
+#### Message headers evaluated by the Snapshot producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -183,3 +196,12 @@ If you need more precise volume settings you can create new object of the type *
 |=========================================================================
 
 If you need more precise server settings you can create new object of the type *org.openstack4j.model.storage.block.VolumeSnapshot* and send in the message body.
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* openstack Component

@@ -1,10 +1,11 @@
+[[grpc-component]]
 = gRPC Component
 
 *Available as of Camel version 2.19*
 
 
 The gRPC component allows you to call or expose Remote Procedure Call (RPC) services
-using https://developers.google.com/protocol-buffers/docs/overview[Protocol Buffers (protobuf)]
+using https://developers.google.com/protocol-buffers/docs/overview[Protocol Buffers (protobuf)] 
 exchange format over HTTP/2 transport.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -20,7 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-gRCP requires strong own of the Google Guava version. It's necessary to
+Starting with Camel *2.22* gRCP requires strong own of the Google Guava version. It's necessary to
 add following configuration property to the maven file
 
 [source,xml]
@@ -30,14 +31,14 @@ add following configuration property to the maven file
 <properties>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 -------------------------------------
 grpc://service[?options]
 -------------------------------------
 
-== Endpoint Options
+### Endpoint Options
 
 // component options: START
 The gRPC component has no options.
@@ -52,7 +53,7 @@ grpc:host:port/service
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -64,7 +65,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (25 parameters):
+=== Query Parameters (25 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -98,7 +99,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-grpc-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -114,7 +127,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Transport security and authentication support
+### Transport security and authentication support (available from *Camel 2.20*)
 
 The following https://grpc.io/docs/guides/auth.html[authentication] mechanisms are built-in to gRPC and available in this component:
 
@@ -144,10 +157,7 @@ To enable these features the following component properties combinations must be
 TLS with OpenSSL is currently the recommended approach for using gRPC over TLS component.
 Using the JDK for ALPN is generally much slower and may not support the necessary ciphers for HTTP2. This function is not implemented in the component.
 
-There might be a need to install additional libraries according to the Operating System of choice.
-For more information consult https://github.com/grpc/grpc-java/blob/master/SECURITY.md[the Security page of gRPC].
-
-== gRPC producer resource type mapping
+### gRPC producer resource type mapping
 
 The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note, that invocation of the procedures with incoming stream parameter in asynchronous style are not allowed.
 
@@ -167,7 +177,7 @@ The table below shows the types of objects in the message body, depending on the
 
 |=======================================================================
 
-== gRPC consumer headers (will be installed after the consumer invocation)
+### gRPC consumer headers (will be installed after the consumer invocation)
 
 [width="100%",cols="25%,50,25%",options="header",]
 |=======================================================================
@@ -179,7 +189,7 @@ The table below shows the types of objects in the message body, depending on the
 
 |=======================================================================
 
-== Examples
+### Examples
 
 Below is a simple synchronous method invoke with host and port parameters
 
@@ -240,13 +250,13 @@ from("direct:grpc-jwt")
 .to("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true&authenticationType=JWT&jwtSecret=supersecuredsecret");
 -------------------------------------------------------------------------------
 
-== Configuration
+### Configuration
 
 It's it is recommended to use Maven Protocol Buffers Plugin which calls Protocol Buffer Compiler (protoc) tool to generate Java source files from .proto (protocol buffer definition) files for the custom project. This plugin will generate procedures request and response classes, their builders and gRPC procedures stubs classes as well.
 
 Following steps are required:
 
-Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set \${os.detected.classifier} parameter manually
+Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set ${os.detected.classifier} parameter manually 
 [source,xml]
 -------------------------------------------------------------------------
 <extensions>
@@ -283,8 +293,16 @@ Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the pro
 </plugin>
 -------------------------------------------------------------------------
 
-== For more information, see these resources
+### For more information, see these resources
 
 http://www.grpc.io/[gRPC project site]
 
 https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
+
+### See Also
+
+* Getting Started
+* Configuring Camel
+* Component
+* Endpoint
+* <<protobuf-dataformat,Protocol Buffers Data Format>>

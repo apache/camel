@@ -1,9 +1,10 @@
+[[drill-component]]
 = Drill Component
 
 *Available as of Camel version 2.19*
 
 
-The Drill component gives you the ability to querying to https://drill.apache.org/[Apache Drill Cluster]
+The *drill:* component gives you the ability to querying to https://drill.apache.org/[Apache Drill Cluster]
 
 Drill is an Apache open-source SQL query engine for Big Data exploration. Drill is designed from the ground up to support high-performance analysis on the semi-structured and rapidly evolving data coming from modern Big Data applications, while still providing the familiarity and ecosystem of ANSI SQL, the industry-standard query language
 
@@ -20,7 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 --------------------------------
@@ -30,11 +31,11 @@ drill://host[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== Drill Producer 
+### Drill Producer 
 
-The producer executes a query using the *CamelDrillQuery* header and puts the results into the body.
+The producer execute query using *CamelDrillQuery* header and put results into body.
 
-== Options
+### Options
 
 // component options: START
 The Drill component has no options.
@@ -51,7 +52,7 @@ drill:host
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -61,21 +62,33 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *clusterId* (producer) | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id |  | String
+| *clusterId* (producer) | Cluster ID \https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id |  | String
 | *directory* (producer) | Drill directory in ZooKeeper |  | String
-| *mode* (producer) | Connection mode: zk: Zookeeper drillbit: Drillbit direct connection https://drill.apache.org/docs/using-the-jdbc-driver/ | ZK | DrillConnectionMode
+| *mode* (producer) | Connection mode: zk: Zookeeper drillbit: Drillbit direct connection \https://drill.apache.org/docs/using-the-jdbc-driver/ | ZK | DrillConnectionMode
 | *port* (producer) | ZooKeeper port number |  | Integer
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-drill-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -89,3 +102,11 @@ The component supports 2 options, which are listed below.
 | *camel.component.drill.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
+
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

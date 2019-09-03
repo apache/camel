@@ -1,13 +1,13 @@
-= Swagger Java Component
+== Swagger Java Component
 
 *Available as of Camel 2.16*
 
-The  Rest DSL can be integrated with
-the `camel-swagger-java` module which is used for exposing the REST
+The  Rest DSL can be integrated with
+the `camel-swagger-java` module which is used for exposing the REST
 services and their APIs using http://swagger.io/[Swagger].
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 
 [source,xml]
 ----
@@ -22,10 +22,11 @@ their `pom.xml` for this component:
 The camel-swagger-java module can be used from
 the REST components (without the need for servlet)
 
-== Using Swagger in rest-dsl
+
+=== Using Swagger in rest-dsl
 
 You can enable the swagger api from the rest-dsl by configuring the
-`apiContextPath` dsl as shown below:
+`apiContextPath` dsl as shown below:
 
 [source,java]
 ----
@@ -34,7 +35,7 @@ public class UserRouteBuilder extends RouteBuilder {
     public void configure() throws Exception {
         // configure we want to use servlet as the component for the rest DSL
         // and we enable json binding mode
-        restConfiguration().component("netty-http").bindingMode(RestBindingMode.json)
+        restConfiguration().component("netty4-http").bindingMode(RestBindingMode.json)
             // and output using pretty print
             .dataFormatProperty("prettyPrint", "true")
             // setup context path and port number that netty will use
@@ -54,20 +55,20 @@ public class UserRouteBuilder extends RouteBuilder {
             .put().description("Updates or create a user").type(User.class)
                 .param().name("body").type(body).description("The user to update or create").endParam()
                 .to("bean:userService?method=updateUser")
-            .get("/findAll").description("Find all users").outType(User[].class)
+            .get("/findAll").description("Find all users").outTypeList(User.class)
                 .to("bean:userService?method=listUsers");
     }
 }
 ----
- 
+ 
 
-== Options
+=== Options
 
 The swagger module can be configured using the following options. To
 configure using a servlet you use the init-param as shown above. When
 configuring directly in the rest-dsl, you use the appropriate method,
-such as `enableCORS`, `host,contextPath`, dsl. The options
-with `api.xxx` is configured using `apiProperty` dsl.
+such as `enableCORS`, `host,contextPath`, dsl. The options
+with `api.xxx` is configured using `apiProperty` dsl.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
@@ -82,7 +83,12 @@ false.
 |host |String |To setup the hostname. If not configured camel-swagger-java will
 calculate the name as localhost based.
 
-|schemes |String |The protocol schemes to use. Multiple values can be
+|schemas |String |The protocol schemes to use. Multiple values can be separated by comma
+such as "http,https". The default value is "http". This option is
+*deprecated* from Camel 2.17 onwards due it should have been named
+schemes.
+
+|schemes |String |*Camel 2.17:* The protocol schemes to use. Multiple values can be
 separated by comma such as "http,https". The default value is "http".
 
 |base.path |String |*Required*: To setup the base path where the REST services is available.
@@ -125,7 +131,7 @@ wildcard. Its the same pattern matching as used by
 Intercept
 |===
 
-== Adding Security Definitions in API doc
+=== Adding Security Definitions in API doc
 
 *Available as of Camel 2.22.0*
 
@@ -167,16 +173,16 @@ is using OAuth security with permitted scopes of read and write pets.
 
 
 
-== ContextIdListing enabled
+=== ContextIdListing enabled
 
 When contextIdListing is enabled then its detecting all the running
 CamelContexts in the same JVM. These contexts are listed in the root
 path, eg `/api-docs` as a simple list of names in json format. To access
 the swagger documentation then the context-path must be appended with
 the Camel context id, such as `api-docs/myCamel`. The
-option apiContextIdPattern can be used to filter the names in this list.
+option apiContextIdPattern can be used to filter the names in this list.
 
-== JSon or Yaml
+=== JSon or Yaml
 
 *Available as of Camel 2.17*
 
@@ -187,8 +193,8 @@ the HTTP Accept header is used to detect if json or yaml can be
 accepted. If either both is accepted or none was set as accepted then
 json is returned as the default format.
 
-== Examples
+=== Examples
 
 In the Apache Camel distribution we ship
-the `camel-example-swagger-cdi` and `camel-example-swagger-java` which
+the `camel-example-swagger-cdi` and `camel-example-swagger-java` which
 demonstrates using this Swagger component.

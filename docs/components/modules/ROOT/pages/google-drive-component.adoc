@@ -1,3 +1,4 @@
+[[google-drive-component]]
 = Google Drive Component
 
 *Available as of Camel version 2.14*
@@ -8,13 +9,13 @@ http://drive.google.com[Google Drive file storage service] via the
 https://developers.google.com/drive/v2/reference[Google Drive Web APIs].
 
 Google Drive uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need to
 https://developers.google.com/drive/web/auth/web-server[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is the
+generating a long-lived refreshToken is the
 https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
@@ -24,13 +25,12 @@ for this component:
     <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-google-drive</artifactId>
-            <!-- use the same version as your Camel core version -->
-            <version>x.x.x</version>
+            <version>2.14-SNAPSHOT</version>
     </dependency>
         
 -------------------------------------------------------
 
-== URI Format
+### URI Format
 
 '''''
 
@@ -57,7 +57,7 @@ Endpoint prefix can be one of:
 * drive-replies
 * drive-revisions
 
-== GoogleDriveComponent
+### GoogleDriveComponent
 
 
 
@@ -93,7 +93,7 @@ google-drive:apiName/methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -104,7 +104,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -117,7 +117,7 @@ with the following path and query parameters:
 | *clientSecret* (common) | Client secret of the drive application |  | String
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *refreshToken* (common) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *scopes* (common) | Specifies the level of permissions you want a drive application to have to a user account. See https://developers.google.com/drive/web/scopes for more info. |  | List
+| *scopes* (common) | Specifies the level of permissions you want a drive application to have to a user account. See \https://developers.google.com/drive/web/scopes for more info. |  | List
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -125,7 +125,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-drive-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 11 options, which are listed below.
@@ -143,7 +155,7 @@ The component supports 11 options, which are listed below.
 | *camel.component.google-drive.configuration.client-secret* | Client secret of the drive application |  | String
 | *camel.component.google-drive.configuration.method-name* | What sub operation to use for the selected operation |  | String
 | *camel.component.google-drive.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *camel.component.google-drive.configuration.scopes* | Specifies the level of permissions you want a drive application to have to a user account. See https://developers.google.com/drive/web/scopes for more info. |  | List
+| *camel.component.google-drive.configuration.scopes* | Specifies the level of permissions you want a drive application to have to a user account. See \https://developers.google.com/drive/web/scopes for more info. |  | List
 | *camel.component.google-drive.enabled* | Enable google-drive component | true | Boolean
 | *camel.component.google-drive.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
@@ -152,7 +164,7 @@ The component supports 11 options, which are listed below.
 
 
 
-== Producer Endpoints
+### Producer Endpoints
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -171,9 +183,9 @@ overrides message header, i.e. the endpoint option `inBody=option` would
 override a `CamelGoogleDrive.option` header.
 
 For more information on the endpoints and options see API documentation
-at: https://developers.google.com/drive/v2/reference/[https://developers.google.com/drive/v2/reference/]
+at: https://developers.google.com/drive/v2/reference/[https://developers.google.com/drive/v2/reference/]
 
-== Consumer Endpoints
+### Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -183,15 +195,15 @@ invocation. Consumer endpoints that return an array or collection will
 generate one exchange per element, and their routes will be executed
 once for each exchange.
 
-== Message Headers
+### Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a `CamelGoogleDrive.` prefix.
 
-== Message Body
+### Message Body
 
 All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleDriveComponent. Producer endpoints can specify
 the option name for incoming message body in the `inBody` endpoint URI
 parameter. For endpoints that return an array or collection, a consumer
-endpoint will map every element to distinct messages.     
+endpoint will map every element to distinct messages.     

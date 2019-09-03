@@ -1,9 +1,10 @@
+[[jt400-component]]
 = JT400 Component
 
 *Available as of Camel version 1.5*
 
 
-The JT400 component allows you to exchanges messages with an AS/400
+The *`jt400`* component allows you to exchanges messages with an AS/400
 system using data queues.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -19,14 +20,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 ----------------------------------------------------------------------
 jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ[?options]
 ----------------------------------------------------------------------
 
-To call remote program
+To call remote program (*Camel 2.7*)
 
 [source,java]
 -----------------------------------------------------------------------
@@ -36,7 +37,7 @@ jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/program.PGM[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== JT400 options
+### JT400 options
 
 // component options: START
 The JT400 component supports 2 options, which are listed below.
@@ -61,7 +62,7 @@ jt400:userID:password/systemName/objectPath.type
 
 with the following path and query parameters:
 
-==== Path Parameters (5 parameters):
+=== Path Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (30 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,7 +115,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jt400-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 3 options, which are listed below.
@@ -132,7 +145,7 @@ The component supports 3 options, which are listed below.
 
 
 
-== Usage
+### Usage
 
 When configured as a consumer endpoint, the endpoint will poll a data
 queue on a remote system. For every entry on the data queue, a new
@@ -141,14 +154,15 @@ formatted either as a `String` or a `byte[]`, depending on the format.
 For a provider endpoint, the _In_ message body contents will be put on
 the data queue as either raw bytes or text.
 
-== Connection pool
+### Connection pool
 
 *Available as of Camel 2.10*
 
-You can explicit configure a connection pool on the Jt400Component, or as an uri option
+Connection pooling is in use from Camel 2.10 onwards. You can explicit
+configure a connection pool on the Jt400Component, or as an uri option
 on the endpoint.
 
-=== Remote program call (*Camel 2.7*)
+#### Remote program call (*Camel 2.7*)
 
 This endpoint expects the input to be either a String array or byte[]
 array (depending on format) and handles all the CCSID handling through
@@ -159,7 +173,7 @@ String array or byte[] array with the values as they were returned by
 the program (the input only parameters will contain the same data as the
 beginning of the invocation). This endpoint does not implement a provider endpoint!
 
-== Example
+### Example
 
 In the snippet below, the data for an exchange sent to the
 `direct:george` endpoint will be put in the data queue `PENNYLANE` in
@@ -178,7 +192,7 @@ public class Jt400RouteBuilder extends RouteBuilder {
 }
 -------------------------------------------------------------------------------------------------------
 
-=== Remote program call example
+#### Remote program call example (*Camel 2.7*)
 
 In the snippet below, the data Exchange sent to the direct:work endpoint
 will contain three string that will be used as the arguments for the
@@ -196,7 +210,7 @@ public class Jt400RouteBuilder extends RouteBuilder {
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-=== Writing to keyed data queues
+#### Writing to keyed data queues
 
 [source,java]
 ------------------------------------------------------------------------
@@ -204,10 +218,17 @@ from("jms:queue:input")
 .to("jt400://username:password@system/lib.lib/MSGINDQ.DTAQ?keyed=true");
 ------------------------------------------------------------------------
 
-=== Reading from keyed data queues
+#### Reading from keyed data queues
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
 from("jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ?keyed=true&searchKey=MYKEY&searchType=GE")
 .to("jms:queue:output");
 -------------------------------------------------------------------------------------------------------
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

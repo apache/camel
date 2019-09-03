@@ -1,5 +1,5 @@
 [[properties-component]]
-== Properties Component
+= Properties Component
 
 *Available as of Camel version 2.3*
 
@@ -52,7 +52,7 @@ properties:key
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -62,7 +62,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +79,8 @@ with the following path and query parameters:
 
 
 [TIP]
-**Resolving property from Java code** +
+**Resolving property from Java code**
+
 You can use the method `resolvePropertyPlaceholders` on the
 `CamelContext` to resolve a property from any Java code.
 
@@ -99,7 +100,8 @@ link:how-do-i-use-spring-property-placeholder-with-camel-xml.html[How do
 I use Spring Property Placeholder with Camel XML].
 
 [TIP]
-**Bridging Spring and Camel property placeholders** +
+**Bridging Spring and Camel property placeholders**
+
 From Camel 2.10 onwards, you can bridge the Spring property placeholder
 with Camel, see further below for more details.
 
@@ -302,13 +304,15 @@ Setting the properties location through the location tag works just fine but som
 ----
 
 [TIP]
-**Specifying the cache option inside XML** +
+**Specifying the cache option inside XML**
+
 Camel 2.10 onwards supports specifying a value for the cache option both
 inside the Spring as well as the Blueprint XML.
 
 === Using a Properties from the Registry
 
-*Available as of Camel 2.4* +
+*Available as of Camel 2.4*
+
 For example in OSGi you may want to expose a service which returns the
 properties as a `java.util.Properties` object.
 
@@ -453,7 +457,8 @@ the `<camelContext>` tag such as `trace` as shown here:
 
 === Overriding a property setting using a JVM System Property
 
-*Available as of Camel 2.5* +
+*Available as of Camel 2.5*
+
 It is possible to override a property value at runtime using a JVM
 System property without the need to restart the application to pick up
 the change. This may also be accomplished from the command line by
@@ -753,7 +758,8 @@ An alternative is to configure the `PropertyPlaceholderConfigurer` with
 When Testing with Camel and using the
 <<properties-component,Properties>> component, you may want to be able to
 provide the properties to be used from directly within the unit test
-source code. +
+source code.
+
 This is now possible from Camel 2.10 onwards, as the Camel test kits, eg
 `CamelTestSupport` class offers the following methods
 

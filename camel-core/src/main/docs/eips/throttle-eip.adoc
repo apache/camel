@@ -1,5 +1,4 @@
-[[throttle-eip]]
-== Throttle EIP
+= Throttle EIP
 
 The Throttler Pattern allows you to ensure that a specific endpoint does not get overloaded, or that we don't exceed an agreed SLA with some external service.
 

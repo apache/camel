@@ -1,3 +1,4 @@
+[[base64-dataformat]]
 = Base64 DataFormat
 
 *Available as of Camel version 2.11*
@@ -5,7 +6,7 @@
 
 The Base64 data format is used for base64 encoding and decoding.
 
-== Options
+=== Options
 
 // dataformat options: START
 The Base64 dataformat supports 4 options, which are listed below.
@@ -22,7 +23,19 @@ The Base64 dataformat supports 4 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-base64-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 5 options, which are listed below.
@@ -70,7 +83,7 @@ Most of the time, you won't need to declare the data format if you use
 the default options. In that case, you can declare the data format
 inline as shown below.
 
-== Marshal
+=== Marshal
 
 In this example we marshal the file content to base64 object.
 
@@ -92,7 +105,7 @@ In Spring DSL:
  <to uri="jms://myqueue"/> 
 ----
 
-== Unmarshal
+=== Unmarshal
 
 In this example we unmarshal the payload from the JMS queue to a byte[]
 object, before its processed by the newOrder processor.
@@ -115,7 +128,7 @@ In Spring DSL:
  <to uri="bean:newOrder"/> 
 ----
 
-== Dependencies
+=== Dependencies
 
 To use Base64 in your Camel routes you need to add a dependency on
 *camel-base64* which implements this data format.

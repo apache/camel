@@ -1,7 +1,8 @@
 [[kafka-component]]
-== Kafka Component
+= Kafka Component
 
 *Available as of Camel version 2.13*
+
 
 The *kafka:* component is used for communicating with
 http://kafka.apache.org/[Apache Kafka] message broker.
@@ -62,7 +63,7 @@ kafka:topic
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (93 parameters):
+=== Query Parameters (93 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -154,7 +155,7 @@ with the following path and query parameters:
 | *kerberosRenewWindowFactor* (security) | Login thread will sleep until the specified window factor of time from last refresh to ticket's expiry has been reached, at which time it will try to renew the ticket. | 0.8 | Double
 | *saslJaasConfig* (security) | Expose the kafka sasl.jaas.config parameter Example: org.apache.kafka.common.security.plain.PlainLoginModule required username=USERNAME password=PASSWORD; |  | String
 | *saslKerberosServiceName* (security) | The Kerberos principal name that Kafka runs as. This can be defined either in Kafka's JAAS config or in Kafka's config. |  | String
-| *saslMechanism* (security) | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml | GSSAPI | String
+| *saslMechanism* (security) | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see \http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml | GSSAPI | String
 | *securityProtocol* (security) | Protocol used to communicate with brokers. Currently only PLAINTEXT and SSL are supported. | PLAINTEXT | String
 | *sslCipherSuites* (security) | A list of cipher suites. This is a named combination of authentication, encryption, MAC and key exchange algorithm used to negotiate the security settings for a network connection using TLS or SSL network protocol.By default all the available cipher suites are supported. |  | String
 | *sslContextParameters* (security) | SSL configuration using a Camel SSLContextParameters object. If configured it's applied before the other SSL endpoint parameters. |  | SSLContextParameters
@@ -174,7 +175,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-kafka-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 98 options, which are listed below.
@@ -250,7 +263,7 @@ The component supports 98 options, which are listed below.
 | *camel.component.kafka.configuration.retry-backoff-ms* | Before each retry, the producer refreshes the metadata of relevant topics to see if a new leader has been elected. Since leader election takes a bit of time, this property specifies the amount of time that the producer waits before refreshing the metadata. | 100 | Integer
 | *camel.component.kafka.configuration.sasl-jaas-config* | Expose the kafka sasl.jaas.config parameter Example: org.apache.kafka.common.security.plain.PlainLoginModule required username=USERNAME password=PASSWORD; |  | String
 | *camel.component.kafka.configuration.sasl-kerberos-service-name* | The Kerberos principal name that Kafka runs as. This can be defined either in Kafka's JAAS config or in Kafka's config. |  | String
-| *camel.component.kafka.configuration.sasl-mechanism* | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml | GSSAPI | String
+| *camel.component.kafka.configuration.sasl-mechanism* | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see \http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml | GSSAPI | String
 | *camel.component.kafka.configuration.security-protocol* | Protocol used to communicate with brokers. Currently only PLAINTEXT and SSL are supported. | PLAINTEXT | String
 | *camel.component.kafka.configuration.seek-to* | Set if KafkaConsumer will read from beginning or end on startup: beginning : read from beginning end : read from end This is replacing the earlier property seekToBeginning |  | String
 | *camel.component.kafka.configuration.send-buffer-bytes* | Socket write buffer size | 131072 | Integer

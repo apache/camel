@@ -1,7 +1,8 @@
 [[ehcache-component]]
-== Ehcache Component
+= Ehcache Component
 
 *Available as of Camel version 2.18*
+
 
 The *ehcache* component enables you to perform caching operations using
 Ehcache 3 as the Cache Implementation.
@@ -66,7 +67,7 @@ ehcache:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -102,7 +103,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-ehcache-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 25 options, which are listed below.
@@ -136,7 +149,7 @@ The component supports 25 options, which are listed below.
 | *camel.component.ehcache.customizer.cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
 | *camel.component.ehcache.enabled* | Enable ehcache component | true | Boolean
 | *camel.component.ehcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.ehcache.configuration.config-uri* | URI pointing to the Ehcache XML configuration file's location  @deprecated use {@link #setConfigurationUri(String)} instead |  | String
+| *camel.component.ehcache.configuration.config-uri* | *Deprecated* URI pointing to the Ehcache XML configuration file's location  @deprecated use {@link #setConfigurationUri(String)} instead |  | String
 |===
 // spring-boot-auto-configure options: END
 

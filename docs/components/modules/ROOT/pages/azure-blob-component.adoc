@@ -1,3 +1,4 @@
+[[azure-blob-component]]
 = Azure Storage Blob Service Component
 
 *Available as of Camel version 2.19*
@@ -11,7 +12,7 @@ Prerequisites
 You must have a valid Windows Azure Storage account. More information is available at
 https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
-== URI Format
+### URI Format
 
 [source,java]
 ------------------------------
@@ -31,7 +32,7 @@ from("azure-blob:/camelazure/container1/blockBlob").
 to("file://blobdirectory");
 --------------------------------------------------------------------------------
 
-== URI Options
+### URI Options
 
 
 // component options: START
@@ -57,7 +58,7 @@ azure-blob:containerOrBlobUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -67,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,7 +96,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-azure-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -117,9 +130,17 @@ Required Azure Storage Blob Service component options
 
 You have to provide the containerOrBlob name and the credentials if the private blob needs to be accessed.
 
-== Usage
+### Usage
 
-=== Message headers set by the Azure Storage Blob Service producer
+#### Message headers evaluated by the Azure Storage Blob Service producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+| | |
+|=======================================================================
+
+#### Message headers set by the Azure Storage Blob Service producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -127,16 +148,18 @@ You have to provide the containerOrBlob name and the credentials if the private 
 |`CamelFileName` |`String` |The file name for the downloaded blob content.
 |=======================================================================
 
-=== Message headers set by the Azure Storage Blob Service producer consumer
+#### Message headers set by the Azure Storage Blob Service producer consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
+
 |`CamelFileName` |`String` |The file name for the downloaded blob content.
+
 |=======================================================================
 
 
-=== Azure Blob Service operations
+#### Azure Blob Service operations
 
 *Operations common to all block types*
 
@@ -192,7 +215,7 @@ You have to provide the containerOrBlob name and the credentials if the private 
 
 
 
-=== Azure Blob Client configuration
+#### Azure Blob Client configuration
 
 If your Camel Application is running behind a firewall or if you need to
 have more control over the Azure Blob Client configuration, you can
@@ -200,8 +223,10 @@ create your own instance:
 
 [source,java]
 --------------------------------------------------------------------------------------
-StorageCredentials credentials = new StorageCredentialsAccountAndKey("camelazure", Base64.encode("thekey".getBytes()));
-CloudBlob client = new CloudBlockBlob("camelazure", credentials);
+StorageCredentials credentials = new StorageCredentialsAccountAndKey("camelazure", "thekey");
+
+CloudBlob client = new CloudBlob("camelazure", credentials);
+
 registry.bind("azureBlobClient", client);
 --------------------------------------------------------------------------------------
 
@@ -209,11 +234,11 @@ and refer to it in your Camel azure-blob component configuration:
 
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-blob://camelazure/container1/blockBlob?azureBlobClient=#client")
+from("azure-blob:/camelazure/container1/blockBlob?azureBlobClient=#client")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
-== Dependencies
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -228,4 +253,14 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel.
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.19.0 or higher).
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* Azure Component

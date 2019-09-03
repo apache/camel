@@ -1,9 +1,10 @@
+[[flatpack-dataformat]]
 = Flatpack DataFormat
 
 *Available as of Camel version 2.1*
 
 
-The xref:flatpack-component.adoc[Flatpack] component ships with the Flatpack data
+The <<flatpack-component,Flatpack>> component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
 messages to a `List` of rows as `Map`.
 
@@ -19,7 +20,7 @@ Splitter.
 *Notice:* The Flatpack library does currently not support header and
 trailers for the marshal operation.
 
-== Options
+### Options
 
 // dataformat options: START
 The Flatpack dataformat supports 9 options, which are listed below.
@@ -41,7 +42,19 @@ The Flatpack dataformat supports 9 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-flatpack-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 12 options, which are listed below.
@@ -67,7 +80,7 @@ The component supports 12 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-== Usage
+### Usage
 
 To use the data format, simply instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
@@ -102,7 +115,7 @@ in Java code from e.g. a processor. We marshal the data according to the
 Flatpack format and convert the result as a `String` object and store it
 on a JMS queue.
 
-== Dependencies
+### Dependencies
 
 To use Flatpack in your camel routes you need to add the a dependency on
 *camel-flatpack* which implements this data format.

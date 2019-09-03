@@ -1,3 +1,4 @@
+[[nagios-component]]
 = Nagios Component
 
 *Available as of Camel version 2.3*
@@ -66,7 +67,7 @@ nagios:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,7 +94,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-nagios-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 10 options, which are listed below.
@@ -112,7 +125,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.nagios.configuration.timeout* | Sending timeout in millis. | 5000 | Integer
 | *camel.component.nagios.enabled* | Enable nagios component | true | Boolean
 | *camel.component.nagios.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.nagios.configuration.encryption-method* | To specify an encryption method. |  | NagiosEncryptionMethod
+| *camel.component.nagios.configuration.encryption-method* | *Deprecated* To specify an encryption method. |  | NagiosEncryptionMethod
 |===
 // spring-boot-auto-configure options: END
 

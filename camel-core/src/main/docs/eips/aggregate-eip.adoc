@@ -1,5 +1,4 @@
-[[aggregate-eip]]
-== Aggregate EIP
+= Aggregate EIP
 
 The
 http://www.enterpriseintegrationpatterns.com/Aggregator.html[Aggregator]

@@ -1,5 +1,4 @@
-[[multicast-eip]]
-== Multicast EIP
+= Multicast EIP
 
 The Multicast EIP allows to route the same message to a number of endpoints
 and process them in a different way. The main difference between the

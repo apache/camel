@@ -1,3 +1,4 @@
+[[facebook-component]]
 = Facebook Component
 
 *Available as of Camel version 2.14*
@@ -78,7 +79,7 @@ facebook:methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (102 parameters):
+=== Query Parameters (102 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -195,11 +196,23 @@ with the following path and query parameters:
 | *oAuthAppId* (security) | The application Id |  | String
 | *oAuthAppSecret* (security) | The application Secret |  | String
 | *oAuthAuthorizationURL* (security) | OAuth authorization URL | https://www.facebook.com/dialog/oauth | String
-| *oAuthPermissions* (security) | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
+| *oAuthPermissions* (security) | Default OAuth permissions. Comma separated permission names. See \https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-facebook-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 29 options, which are listed below.
@@ -231,7 +244,7 @@ The component supports 29 options, which are listed below.
 | *camel.component.facebook.configuration.o-auth-app-id* | The application Id |  | String
 | *camel.component.facebook.configuration.o-auth-app-secret* | The application Secret |  | String
 | *camel.component.facebook.configuration.o-auth-authorization-u-r-l* | OAuth authorization URL | https://www.facebook.com/dialog/oauth | String
-| *camel.component.facebook.configuration.o-auth-permissions* | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
+| *camel.component.facebook.configuration.o-auth-permissions* | Default OAuth permissions. Comma separated permission names. See \https://developers.facebook.com/docs/reference/login/#permissions for the detail |  | String
 | *camel.component.facebook.configuration.pretty-debug-enabled* | Prettify JSON debug output if set to true | false | Boolean
 | *camel.component.facebook.configuration.rest-base-u-r-l* | API base URL | https://graph.facebook.com/ | String
 | *camel.component.facebook.configuration.use-s-s-l* | Use SSL | true | Boolean

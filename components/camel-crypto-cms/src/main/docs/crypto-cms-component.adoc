@@ -1,7 +1,8 @@
 [[crypto-cms-component]]
-== Crypto CMS Component
+= Crypto CMS Component
 
 *Available as of Camel version 2.20*
+
 
 http://tools.ietf.org/html/rfc5652[Cryptographic Message Syntax (CMS)] is a well established standard for signing and encrypting messages. The Apache Crypto CMS component supports the following parts of this standard:
 * Content Type "Enveloped Data" with Key Transport (asymmetric key),
@@ -56,7 +57,7 @@ crypto-cms:cryptoOperation:name
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -67,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (15 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +92,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-crypto-cms-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 4 options, which are listed below.

@@ -1,22 +1,23 @@
+[[google-calendar-stream-component]]
 = Google Calendar Stream Component
 
 *Available as of Camel version 2.23*
 
 
 The Google Calendar component provides access
-to https://calendar.google.com[Calendar] via
-the https://developers.google.com/calendar/overview[Google Calendar
+to https://calendar.google.com[Calendar] via
+the https://developers.google.com/calendar/overview[Google Calendar
 Web APIs].
 
 Google Calendar uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need
-to https://developers.google.com/calendar/auth[create an
+to https://developers.google.com/calendar/auth[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is
-the https://developers.google.com/oauthplayground[OAuth playground].
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -25,13 +26,12 @@ for this component:
     <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-google-calendar</artifactId>
-            <!-- use the same version as your Camel core version -->
-            <version>x.x.x</version>
+            <version>2.23.0</version>
     </dependency>
 
 ------------------------------------------------------
 
-== URI Format
+### URI Format
 
 The Google Calendar Component uses the following URI format:
 
@@ -40,7 +40,7 @@ The Google Calendar Component uses the following URI format:
 
 --------------------------------------------------------
 
-== Google Calendar stream component options
+### GoogleCalendarStreamComponent
 
 
 // component options: START
@@ -69,7 +69,7 @@ google-calendar-stream:index
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (30 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,7 +96,7 @@ with the following path and query parameters:
 | *maxResults* (consumer) | Max results to be returned | 10 | int
 | *query* (consumer) | The query to execute on calendar |  | String
 | *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *scopes* (consumer) | Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/calendar/auth for more info. |  | List
+| *scopes* (consumer) | Specifies the level of permissions you want a calendar application to have to a user account. See \https://developers.google.com/calendar/auth for more info. |  | List
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -118,7 +118,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-calendar-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 15 options, which are listed below.
@@ -140,14 +152,14 @@ The component supports 15 options, which are listed below.
 | *camel.component.google-calendar-stream.configuration.max-results* | Max results to be returned | 10 | Integer
 | *camel.component.google-calendar-stream.configuration.query* | The query to execute on calendar |  | String
 | *camel.component.google-calendar-stream.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *camel.component.google-calendar-stream.configuration.scopes* | Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/calendar/auth for more info. |  | List
+| *camel.component.google-calendar-stream.configuration.scopes* | Specifies the level of permissions you want a calendar application to have to a user account. See \https://developers.google.com/calendar/auth for more info. |  | List
 | *camel.component.google-calendar-stream.enabled* | Whether to enable auto configuration of the google-calendar-stream component. This is enabled by default. |  | Boolean
 | *camel.component.google-calendar-stream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
-== Consumer
+### Consumer
 
 The consumer will poll by default with maxResults equals to 5.
 
@@ -160,4 +172,4 @@ from("google-calendar-stream://test?markAsRead=true&delay=5000&maxResults=5").to
 
 This route will consume the next five events starting from the date of polling.
 
-   
+   

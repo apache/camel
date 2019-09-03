@@ -1,7 +1,8 @@
 [[soapjaxb-dataformat]]
-== SOAP DataFormat
+= SOAP DataFormat
 
 *Available as of Camel version 2.3*
+
 
 SOAP is a Data Format which uses JAXB2 and JAX-WS
 annotations to marshal and unmarshal SOAP payloads. It provides the
@@ -38,7 +39,19 @@ The SOAP dataformat supports 7 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-soap-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 8 options, which are listed below.

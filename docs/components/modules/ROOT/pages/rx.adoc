@@ -1,5 +1,5 @@
 [[RX-CamelRX]]
-= Camel RX (deprecated)
+== Camel RX (deprecated)
 
 *Available as of Camel 2.11*
 

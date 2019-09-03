@@ -1,3 +1,4 @@
+[[ftp-component]]
 = FTP Component
 
 *Available as of Camel version 1.1*
@@ -9,7 +10,7 @@ SFTP protocols.
 When consuming from remote FTP server make sure you read the section titled _Default when consuming files_
 further below for details related to consuming files.
 
-Absolute path is *not* supported. Camel translates absolute path to relative by trimming all
+Absolute path is *not* supported. *Camel 2.16* will translate absolute path to relative by trimming all
 leading slashes from `directoryname`. There'll be WARN message printed
 in the logs.
 
@@ -27,7 +28,7 @@ for this component:
 ----
 
 
-== URI format
+=== URI format
 
 [source,java]
 ----
@@ -40,10 +41,16 @@ Where *directoryname* represents the underlying directory. The directory
 name is a relative path. Absolute path's is *not* supported. The
 relative path can contain nested folders, such as /inbox/us.
 
-The `autoCreate` option is supported. When consumer
+For Camel versions before *Camel 2.16*, the directoryName *must* exist
+already as this component does not support the `autoCreate` option
+(which the file component does). The reason is that its the FTP
+administrator (FTP server) task to properly setup user accounts, and
+home directories with the right file permissions etc.
+
+For *Camel 2.16*, `autoCreate` option is supported. When consumer
 starts, before polling is scheduled, there's additional FTP operation
 performed to create the directory configured for endpoint. The default
-value for `autoCreate` is `true`.
+value for `autoCreate` is `true`.
 
 If no *username* is provided, then `anonymous` login is attempted using
 no password. +
@@ -57,11 +64,12 @@ This component uses two different libraries for the actual FTP work. FTP
 and FTPS uses http://commons.apache.org/net/[Apache Commons Net] while
 SFTP uses http://www.jcraft.com/jsch/[JCraft JSCH].
 
+The FTPS component is only available in Camel 2.2 or newer. +
  FTPS (also known as FTP Secure) is an extension to FTP that adds
 support for the Transport Layer Security (TLS) and the Secure Sockets
 Layer (SSL) cryptographic protocols.
 
-== URI Options
+=== URI Options
 
 The options below are exclusive for the FTP component.
 
@@ -81,7 +89,7 @@ ftp:host:port/directoryName
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,7 +101,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (110 parameters):
+=== Query Parameters (110 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -102,14 +110,14 @@ with the following path and query parameters:
 | *binary* (common) | Specifies the file transfer mode, BINARY or ASCII. Default is ASCII (false). | false | boolean
 | *charset* (common) | This option is used to specify the encoding of the file. You can use this on the consumer, to specify the encodings of the files, which allow Camel to know the charset it should load the file content in case the file content is being accessed. Likewise when writing a file, you can use this option to specify which charset to write the file as well. Do mind that when writing the file Camel may have to read the message content into memory to be able to convert the data into the configured charset, so do not use this if you have big messages. |  | String
 | *disconnect* (common) | Whether or not to disconnect from remote FTP server right after use. Disconnect will only disconnect the current connection to the FTP server. If you have a consumer which you want to stop, then you need to stop the consumer/route instead. | false | boolean
-| *doneFileName* (common) | Producer: If provided, then Camel will write a 2nd done file when the original file has been written. The done file will be empty. This option configures what file name to use. Either you can specify a fixed name. Or you can use dynamic placeholders. The done file will always be written in the same folder as the original file. Consumer: If provided, Camel will only consume files if a done file exists. This option configures what file name to use. Either you can specify a fixed name. Or you can use dynamic placeholders.The done file is always expected in the same folder as the original file. Only $file.name and $file.name.noext is supported as dynamic placeholders. |  | String
-| *fileName* (common) | Use Expression such as File Language to dynamically set the filename. For consumers, it's used as a filename filter. For producers, it's used to evaluate the filename to write. If an expression is set, it take precedence over the CamelFileName header. (Note: The header itself can also be an Expression). The expression options support both String and Expression types. If the expression is a String type, it is always evaluated using the File Language. If the expression is an Expression type, the specified Expression type is used - this allows you, for instance, to use OGNL expressions. For the consumer, you can use it to filter filenames, so you can for instance consume today's file using the File Language syntax: mydata-$date:now:yyyyMMdd.txt. The producers support the CamelOverruleFileName header which takes precedence over any existing CamelFileName header; the CamelOverruleFileName is a header that is used only once, and makes it easier as this avoids to temporary store CamelFileName and have to restore it afterwards. |  | String
+| *doneFileName* (common) | Producer: If provided, then Camel will write a 2nd done file when the original file has been written. The done file will be empty. This option configures what file name to use. Either you can specify a fixed name. Or you can use dynamic placeholders. The done file will always be written in the same folder as the original file. Consumer: If provided, Camel will only consume files if a done file exists. This option configures what file name to use. Either you can specify a fixed name. Or you can use dynamic placeholders.The done file is always expected in the same folder as the original file. Only \$file.name and \$file.name.noext is supported as dynamic placeholders. |  | String
+| *fileName* (common) | Use Expression such as File Language to dynamically set the filename. For consumers, it's used as a filename filter. For producers, it's used to evaluate the filename to write. If an expression is set, it take precedence over the CamelFileName header. (Note: The header itself can also be an Expression). The expression options support both String and Expression types. If the expression is a String type, it is always evaluated using the File Language. If the expression is an Expression type, the specified Expression type is used - this allows you, for instance, to use OGNL expressions. For the consumer, you can use it to filter filenames, so you can for instance consume today's file using the File Language syntax: mydata-\$date:now:yyyyMMdd.txt. The producers support the CamelOverruleFileName header which takes precedence over any existing CamelFileName header; the CamelOverruleFileName is a header that is used only once, and makes it easier as this avoids to temporary store CamelFileName and have to restore it afterwards. |  | String
 | *passiveMode* (common) | Sets passive mode connections. Default is active mode connections. | false | boolean
 | *separator* (common) | Sets the path separator to be used. UNIX = Uses unix style path separator Windows = Uses windows style path separator Auto = (is default) Use existing path separator in file name | UNIX | PathSeparator
 | *transferLoggingInterval Seconds* (common) | Configures the interval in seconds to use when logging the progress of upload and download operations that are in-flight. This is used for logging progress when operations takes longer time. | 5 | int
 | *transferLoggingLevel* (common) | Configure the logging level to use when logging the progress of upload and download operations. | DEBUG | LoggingLevel
 | *transferLoggingVerbose* (common) | Configures whether the perform verbose (fine grained) logging of the progress of upload and download operations. | false | boolean
-| *fastExistsCheck* (common) | If set this option to be true, camel-ftp will use the list file directly to check if the file exists. Since some FTP server may not support to list the file directly, if the option is false, camel-ftp will use the old way to list the directory and check if the file exists. This option also influences readLock=changed to control whether it performs a fast check to update file information or not. This can be used to speed up the process if the FTP server has a lot of files. | false | boolean
+| *fastExistsCheck* (common) | If set this option to be true, camel-\ftp will use the list file directly to check if the file exists. Since some FTP server may not support to list the file directly, if the option is false, camel-\ftp will use the old way to list the directory and check if the file exists. This option also influences readLock=changed to control whether it performs a fast check to update file information or not. This can be used to speed up the process if the FTP server has a lot of files. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *delete* (consumer) | If true, the file will be deleted after it is processed successfully. | false | boolean
 | *moveFailed* (consumer) | Sets the move failure expression based on Simple language. For example, to move files into a .error subdirectory use: .error. Note: When moving the files to the fail location Camel will handle the error and will not pick up the file again. |  | String
@@ -144,7 +152,7 @@ with the following path and query parameters:
 | *chmod* (producer) | Allows you to set chmod on the stored file. For example chmod=640. |  | String
 | *disconnectOnBatchComplete* (producer) | Whether or not to disconnect from remote FTP server right after a Batch upload is complete. disconnectOnBatchComplete will only disconnect the current connection to the FTP server. | false | boolean
 | *eagerDeleteTargetFile* (producer) | Whether or not to eagerly delete any existing target file. This option only applies when you use fileExists=Override and the tempFileName option as well. You can use this to disable (set it to false) deleting the target file before the temp file is written. For example you may write big files and want the target file to exists during the temp file is being written. This ensure the target file is only deleted until the very last moment, just before the temp file is being renamed to the target filename. This option is also used to control whether to delete any existing files when fileExist=Move is enabled, and an existing file exists. If this option copyAndDeleteOnRenameFails false, then an exception will be thrown if an existing file existed, if its true, then the existing file is deleted before the move operation. | true | boolean
-| *keepLastModified* (producer) | Will keep the last modified timestamp from the source file (if any). Will use the Exchange.FILE_LAST_MODIFIED header to located the timestamp. This header can contain either a java.util.Date or long with the timestamp. If the timestamp exists and the option is enabled it will set this timestamp on the written file. Note: This option only applies to the file producer. You cannot use this option with any of the ftp producers. | false | boolean
+| *keepLastModified* (producer) | Will keep the last modified timestamp from the source file (if any). Will use the Exchange.FILE_LAST_MODIFIED header to located the timestamp. This header can contain either a java.util.Date or long with the timestamp. If the timestamp exists and the option is enabled it will set this timestamp on the written file. Note: This option only applies to the file producer. You cannot use this option with any of the \ftp producers. | false | boolean
 | *moveExistingFileStrategy* (producer) | Strategy (Custom Strategy) used to move file with special naming token to use when fileExist=Move is configured. By default, there is an implementation used if no custom strategy is provided |  | FileMoveExisting Strategy
 | *sendNoop* (producer) | Whether to send a noop command as a pre-write check before uploading files to the FTP server. This is enabled by default as a validation of the connection is still valid, which allows to silently re-connect to be able to upload the file. However if this causes problems, you can turn this option off. | true | boolean
 | *activePortRange* (advanced) | Set the client side port range in active mode. The syntax is: minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to include all 1xxxx ports. |  | String
@@ -169,10 +177,10 @@ with the following path and query parameters:
 | *eagerMaxMessagesPerPoll* (filter) | Allows for controlling whether the limit from maxMessagesPerPoll is eager or not. If eager then the limit is during the scanning of files. Where as false would scan all files, and then perform sorting. Setting this option to false allows for sorting all files first, and then limit the poll. Mind that this requires a higher memory usage as all file details are in memory to perform the sorting. | true | boolean
 | *exclude* (filter) | Is used to exclude files, if filename matches the regex pattern (matching is case in-senstive). Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See more details at configuring endpoint uris |  | String
 | *filter* (filter) | Pluggable filter as a org.apache.camel.component.file.GenericFileFilter class. Will skip files if filter returns false in its accept() method. |  | GenericFileFilter
-| *filterDirectory* (filter) | Filters the directory based on Simple language. For example to filter on current date, you can use a simple date pattern such as $date:now:yyyMMdd |  | String
-| *filterFile* (filter) | Filters the file based on Simple language. For example to filter on file size, you can use $file:size 5000 |  | String
+| *filterDirectory* (filter) | Filters the directory based on Simple language. For example to filter on current date, you can use a simple date pattern such as \$date:now:yyyMMdd |  | String
+| *filterFile* (filter) | Filters the file based on Simple language. For example to filter on file size, you can use \$file:size 5000 |  | String
 | *idempotent* (filter) | Option to use the Idempotent Consumer EIP pattern to let Camel skip already processed files. Will by default use a memory based LRUCache that holds 1000 entries. If noop=true then idempotent will be enabled as well to avoid consuming the same files over and over again. | false | Boolean
-| *idempotentKey* (filter) | To use a custom idempotent key. By default the absolute path of the file is used. You can use the File Language, for example to use the file name and file size, you can do: idempotentKey=$file:name-$file:size |  | String
+| *idempotentKey* (filter) | To use a custom idempotent key. By default the absolute path of the file is used. You can use the File Language, for example to use the file name and file size, you can do: idempotentKey=\$file:name-\$file:size |  | String
 | *idempotentRepository* (filter) | A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use MemoryMessageIdRepository if none is specified and idempotent is true. |  | IdempotentRepository
 | *include* (filter) | Is used to include files, if filename matches the regex pattern (matching is case in-sensitive). Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See more details at configuring endpoint uris |  | String
 | *maxDepth* (filter) | The maximum depth to traverse when recursively processing a directory. | 2147483647 | int
@@ -212,7 +220,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-ftp-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -222,7 +242,7 @@ The component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.ftp.enabled* | Enable ftp component | true | Boolean
+| *camel.component.ftp.enabled* | Enable \ftp component | true | Boolean
 | *camel.component.ftp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
@@ -230,7 +250,7 @@ The component supports 2 options, which are listed below.
 
 
 
-== FTPS component default trust store
+=== FTPS component default trust store
 
 When using the `ftpClient.` properties related to SSL with the FTPS
 component, the trust store accept all certificates. If you only want
@@ -264,7 +284,7 @@ from("ftp://foo@myserver?password=secret&ftpClient.dataTimeout=30000&ftpClientCo
 You can have as many of these options as you like.
 
 See the documentation of the Apache Commons FTP FTPClientConfig for
-possible options and more details. And as well for Apache Commons FTP
+possible options and more details. And as well for Apache Commons FTP
 FTPClient.
 
 If you do not like having many and long configuration in the url you can
@@ -293,17 +313,14 @@ from("ftp://foo@myserver?password=secret&ftpClientConfig=#myConfig").to("bean:fo
 //=== More URI options
 
 
-== Examples
+=== Examples
 
-----
-ftp://someone@someftpserver.com/public/upload/images/holiday2008?password=secret&binary=true
+`ftp://someone@someftpserver.com/public/upload/images/holiday2008?password=secret&binary=true` +
 
-ftp://someoneelse@someotherftpserver.co.uk:12049/reports/2008/password=secret&binary=false
+`ftp://someoneelse@someotherftpserver.co.uk:12049/reports/2008/password=secret&binary=false` +
+ `ftp://publicftpserver.com/download`
 
-ftp://publicftpserver.com/download
-----
-
-== Concurrency
+=== Concurrency
 
 FTP Consumer does not support concurrency
 
@@ -314,13 +331,13 @@ is only a single endpoint that does not support concurrent consumers.
 
 The FTP producer does *not* have this issue, it supports concurrency.
 
-== More information
+=== More information
 
 This component is an extension of the File component.
 So there are more samples and details on the File
 component page.
 
-== Default when consuming files
+=== Default when consuming files
 
 The FTP consumer will by default leave the consumed
 files untouched on the remote FTP server. You have to configure it
@@ -333,7 +350,7 @@ default move files to a `.camel` sub directory. The reason Camel does
 *not* do this by default for the FTP consumer is that it may lack
 permissions by default to be able to move or delete files.
 
-=== limitations
+==== limitations
 
 The option *readLock* can be used to force Camel *not* to consume files
 that is currently in the progress of being written. However, this option
@@ -349,7 +366,7 @@ restricted to the FTP_ROOT folder. That prevents you from moving files
 outside the FTP area. If you want to move files to another area you can
 use soft links and move files into a soft linked folder.
 
-== Message Headers
+=== Message Headers
 
 The following message headers can be used to affect the behavior of the
 component
@@ -383,12 +400,12 @@ In addition the FTP/FTPS consumer and producer will enrich the Camel
 |=======================================================================
 |Header |Description
 
-|`CamelFtpReplyCode` |The FTP client reply code (the type is a integer)
+|`CamelFtpReplyCode` |*Camel 2.11.1:* The FTP client reply code (the type is a integer)
 
-|`CamelFtpReplyString` |The FTP client reply string
+|`CamelFtpReplyString` | *Camel 2.11.1:* The FTP client reply string
 |=======================================================================
 
-== About timeouts
+=== About timeouts
 
 The two set of libraries (see top) has different API for setting
 timeout. You can use the `connectTimeout` option for both of them to set
@@ -396,10 +413,10 @@ a timeout in millis to establish a network connection. An individual
 `soTimeout` can also be set on the FTP/FTPS, which corresponds to using
 `ftpClient.soTimeout`. Notice SFTP will automatically use
 `connectTimeout` as its `soTimeout`. The `timeout` option only applies
-for FTP/FTPS as the data timeout, which corresponds to the
+for FTP/FTSP as the data timeout, which corresponds to the
 `ftpClient.dataTimeout` value. All timeout values are in millis.
 
-== Using Local Work Directory
+=== Using Local Work Directory
 
 Camel supports consuming from remote FTP servers and downloading the
 files directly into a local work directory. This avoids reading the
@@ -421,14 +438,14 @@ from("ftp://someone@someserver.com?password=secret&localWorkDirectory=/tmp").to(
 ----
 
 [TIP, caption='Optimization by renaming work file']
-===
+====
 The route above is ultra efficient as it avoids reading the entire file content into memory.
 It will download the remote file directly to a local file stream.
 The `java.io.File` handle is then used as the Exchange body. The file producer leverages this fact and can work directly on the work file `java.io.File` handle and perform a `java.io.File.rename` to the target filename.
 As Camel knows it's a local work file, it can optimize and use a rename instead of a file copy, as the work file is meant to be deleted anyway.
-===
+====
 
-== Stepwise changing directories
+=== Stepwise changing directories
 
 Camel FTP can operate in two modes in terms of
 traversing directories when consuming files (eg downloading) or
@@ -439,9 +456,16 @@ producing files (eg uploading)
 
 You may want to pick either one depending on your situation and security
 issues. Some Camel end users can only download files if they use
-stepwise, while others can only download if they do not.
+stepwise, while others can only download if they do not. At least you
+have the choice to pick (from Camel 2.6 onwards).
 
-You can use the `stepwise` option to control the behavior.
+In Camel 2.0 - 2.5 there is only one mode and it is:
+
+* before 2.5 not stepwise
+* 2.5 stepwise
+
+From Camel 2.6 onwards there is now an option `stepwise` you can use to
+control the behavior.
 
 Note that stepwise changing of directory will in most cases only work
 when the user is confined to it's home directory and when the home
@@ -463,7 +487,7 @@ FTP server we need to traverse and download files:
 And that we have a file in each of sub-a (a.txt) and sub-b (b.txt)
 folder.
 
-== Using stepwise=true (default mode)
+==== Using stepwise=true (default mode)
 
 [source,java]
 ----
@@ -553,7 +577,7 @@ disconnected.
 As you can see when stepwise is enabled, it will traverse the directory
 structure using CD xxx.
 
-== Using stepwise=false
+==== Using stepwise=false
 
 [source,java]
 ----
@@ -600,7 +624,7 @@ disconnected.
 As you can see when not using stepwise, there are no CD operation
 invoked at all.
 
-== Samples
+=== Samples
 
 In the sample below we set up Camel to download all the reports from the
 FTP server once every hour (60 min) as BINARY content and store it as
@@ -616,7 +640,7 @@ And the route using Spring DSL:
   </route>
 ----
 
-=== Consuming a remote FTPS server (implicit SSL) and client authentication
+==== Consuming a remote FTPS server (implicit SSL) and client authentication
 
 [source,java]
 ----
@@ -626,7 +650,7 @@ from("ftps://admin@localhost:2222/public/camel?password=admin&securityProtocol=S
   .to("bean:foo");
 ----
 
-=== Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
+==== Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
 
 [source,java]
 ----
@@ -634,7 +658,7 @@ from("ftps://admin@localhost:2222/public/camel?password=admin&ftpClient.trustSto
   .to("bean:foo");
 ----
 
-== Custom filtering
+=== Filter using `org.apache.camel.component.file.GenericFileFilter`
 
 Camel supports pluggable filtering strategies. This strategy it to use
 the build in `org.apache.camel.component.file.GenericFileFilter` in
@@ -659,7 +683,7 @@ spring XML file:
   </route>
 ----
 
-== Filtering using ANT path matcher
+=== Filtering using ANT path matcher
 
 The ANT path matcher is a filter that is shipped out-of-the-box in the
 *camel-spring* jar. So you need to depend on *camel-spring* if you are
@@ -676,7 +700,7 @@ The file paths are matched with the following rules:
 
 The sample below demonstrates how to use it:
 
-== Using a proxy with SFTP
+=== Using a proxy with SFTP
 
 To use an HTTP proxy to connect to your remote host, you can configure
 your route in the following way:
@@ -699,7 +723,7 @@ You can also assign a user name and password to the proxy, if necessary.
 Please consult the documentation for `com.jcraft.jsch.Proxy` to discover
 all options.
 
-== Setting preferred SFTP authentication method
+=== Setting preferred SFTP authentication method
 
 If you want to explicitly specify the list of authentication methods
 that should be used by `sftp` component, use `preferredAuthentications`
@@ -714,7 +738,7 @@ from("sftp://localhost:9999/root?username=admin&password=admin&preferredAuthenti
   to("bean:processFile");
 ----
 
-== Consuming a single file using a fixed name
+=== Consuming a single file using a fixed name
 
 When you want to download a single file and knows the file name, you can
 use `fileName=myFileName.txt` to tell Camel the name of the file to
@@ -739,7 +763,7 @@ from("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=fal
   .to("activemq:queue:report");
 ----
 
-Notice that we have used all the options we talked above.
+Notice that we have use all the options we talked above above.
 
 You can also use this with `ConsumerTemplate`. For example to download a
 single file (if it exists) and grab the file content as a String type:
@@ -749,7 +773,16 @@ single file (if it exists) and grab the file content as a String type:
 String data = template.retrieveBodyNoWait("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true", String.class);
 ----
 
-== Debug logging
+=== Debug logging
 
 This component has log level *TRACE* that can be helpful if you have
 problems.
+
+=== See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* File2

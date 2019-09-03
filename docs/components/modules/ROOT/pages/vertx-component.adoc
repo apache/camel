@@ -1,14 +1,16 @@
+[[vertx-component]]
 = Vert.x Component
 
 *Available as of Camel version 2.12*
 
-The Vert.x component is for working with the http://vertx.io/[Vertx]
+
+The *vertx* component is for working with the http://vertx.io/[Vertx]
 https://vertx.io/docs/vertx-core/java/#event_bus[EventBus].
 
 The vertx https://vertx.io/docs/vertx-core/java/#event_bus[EventBus]
 sends and receives JSON events.
 
-NOTE: The version of Vert.x, used by the component, requires at least Java 1.8 at
+INFO:From *Camel 2.16* onwards vertx 3 is in use which requires Java 1.8 at
 runtime.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -24,14 +26,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 ---------------------------
 vertx:channelName[?options]
 ---------------------------
 
-== Options
+### Options
 
 
 
@@ -65,7 +67,7 @@ vertx:address
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -89,7 +91,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-vertx-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 8 options, which are listed below.
@@ -112,14 +126,14 @@ The component supports 8 options, which are listed below.
 
 
 
-Whether to use publish/subscribe instead of point to
+*Camel 2.12.3:* Whether to use publish/subscribe instead of point to
 point when sending to a vertx endpoint.
 
 -----------------------------------------------------------------------------------------------
 You can append query options to the URI in the following format, ?option=value&option=value&...
 -----------------------------------------------------------------------------------------------
 
-== Connecting to the existing Vert.x instance
+### Connecting to the existing Vert.x instance
 
 If you would like to connect to the Vert.x instance already existing in
 your JVM, you can set the instance on the component level:
@@ -131,3 +145,10 @@ VertxComponent vertxComponent = new VertxComponent();
 vertxComponent.setVertx(vertx);
 camelContext.addComponent("vertx", vertxComponent);
 -----------------------------------------------------
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

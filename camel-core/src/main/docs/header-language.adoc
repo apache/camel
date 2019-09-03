@@ -1,5 +1,5 @@
 [[header-language]]
-== Header Language
+= Header Language
 
 *Available as of Camel version 1.5*
 

@@ -1,6 +1,5 @@
-[[validate-eip]]
-== Validate EIP
-*Available as of Camel 2.3* +
+= Validate EIP
+*Available as of Camel 2.3*
 
 Validate uses an expression or predicates to validate the contents of a message.
 It is useful for ensuring that messages are valid before attempting to process them.

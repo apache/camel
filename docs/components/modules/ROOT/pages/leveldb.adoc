@@ -1,5 +1,5 @@
 [[LevelDB-LevelDB]]
-= LevelDB
+== LevelDB
 
 *Available as of Camel 2.10*
 
@@ -13,7 +13,8 @@ Current features it provides:
 * LevelDBAggregationRepository
 
 [[LevelDB-UsingLevelDBAggregationRepository]]
-= Using LevelDBAggregationRepository
+Using LevelDBAggregationRepository
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 `LevelDBAggregationRepository` is an `AggregationRepository` which on
 the fly persists the aggregated messages. This ensures that you will not
@@ -36,7 +37,7 @@ file is created.
 |`levelDBFile` |LevelDBFile |Use an existing configured
 `org.apache.camel.component.leveldb.LevelDBFile` instance.
 
-|`sync` |boolean |Whether or not the LevelDBFile should sync on write or
+|`sync` |boolean |*Camel 2.12:* Whether or not the LevelDBFile should sync on write or
 not. Default is false. By sync on write ensures that its always waiting
 for all writes to be spooled to disk and thus will not loose updates.
 See http://leveldb.googlecode.com/svn/trunk/doc/index.html[LevelDB docs]
@@ -69,7 +70,8 @@ The `repositoryName` option must be provided. Then either the
 `persistentFileName` or the `levelDBFile` must be provided.
 
 [[LevelDB-Whatispreservedwhenpersisting]]
-=== What is preserved when persisting
+What is preserved when persisting
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 `LevelDBAggregationRepository` will only preserve any `Serializable`
 compatible message body data types. Message headers must be primitive /
@@ -78,7 +80,8 @@ and a `WARN` is logged. And it only persists the `Message` body and the
 `Message` headers. The `Exchange` properties are *not* persisted.
 
 [[LevelDB-Recovery]]
-=== Recovery
+Recovery
+^^^^^^^^
 
 The `LevelDBAggregationRepository` will by default recover any failed
 Exchange. It does this by having a background tasks
@@ -120,18 +123,21 @@ https://svn.apache.org/repos/asf/camel/trunk/components/camel-leveldb/src/test/j
 test].
 
 [[LevelDB-UsingLevelDBAggregationRepositoryinJavaDSL]]
-== Using LevelDBAggregationRepository in Java DSL
+Using LevelDBAggregationRepository in Java DSL
+++++++++++++++++++++++++++++++++++++++++++++++
 
 In this example we want to persist aggregated messages in the
 `target/data/leveldb.dat` file.
 
 [[LevelDB-UsingLevelDBAggregationRepositoryinSpringXML]]
-== Using LevelDBAggregationRepository in Spring XML
+Using LevelDBAggregationRepository in Spring XML
+++++++++++++++++++++++++++++++++++++++++++++++++
 
 The same example but using Spring XML instead:
 
 [[LevelDB-Dependencies]]
-== Dependencies
+Dependencies
+^^^^^^^^^^^^
 
 To use LevelDB in your camel routes you need to add
 the a dependency on *camel-leveldb*.
@@ -145,7 +151,20 @@ the download page for the latest versions).
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-leveldb</artifactId>
-  <version>x.y.z</version>
+  <version>2.10.0</version>
 </dependency>
 ----------------------------------------
+
+[[LevelDB-SeeAlso]]
+See Also
+^^^^^^^^
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* Aggregator
+* HawtDB
+* Components
 

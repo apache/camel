@@ -1,5 +1,5 @@
 [[zip-dataformat]]
-== Zip Deflate Compression DataFormat
+= Zip Deflate Compression DataFormat
 
 *Available as of Camel version 2.12*
 

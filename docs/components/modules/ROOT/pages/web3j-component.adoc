@@ -1,8 +1,10 @@
+[[web3j-component]]
 = Web3j Ethereum Blockchain Component
 
 *Available as of Camel version 2.22*
 
-The Ethereum blockchain component uses the
+
+The *Ethereum* blockchain component uses the
 https://github.com/web3j/web3j[web3j] client
 API and allows you to interact with Ethereum compatible nodes such as https://github.com/ethereum/go-ethereum/wiki/geth[Geth], https://github.com/paritytech/parity[Parity], https://github.com/jpmorganchase/quorum/wiki[Quorum], https://infura.io[Infura], etc.
 
@@ -19,14 +21,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI Format
+=== URI Format
 
 [source,text]
 ----
 web3j://<local/remote host:port or local IPC path>[?options]
 ----
 
-== Web3j Options
+=== Web3j Options
 
 
 // component options: START
@@ -52,7 +54,7 @@ web3j:nodeAddress
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -62,7 +64,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (38 parameters):
+=== Query Parameters (38 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -109,7 +111,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-web3j-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 33 options, which are listed below.
@@ -161,7 +175,7 @@ You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
 
-== Message Headers
+### Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -173,7 +187,7 @@ You can append query options to the URI in the following format,
 
 
 
-== Samples
+### Samples
 
 Listen for new mined blocks and send the block hash to a jms queue:
 

@@ -1,32 +1,32 @@
-= Kubernetes Components
+## Kubernetes Components
 
 *Available as of Camel version 2.17*
 
-The Kubernetes components integrate your application with Kubernetes standalone or on top of Openshift. 
+The *Kubernetes* components integrate your application with Kubernetes standalone or on top of Openshift. 
 
 The camel-kubernetes consists of 13 components:
 
-* xref:kubernetes-config-maps-component.adoc[Kubernetes ConfigMap]
-* xref:kubernetes-namespaces-component.adoc[Kubernetes Namespace]
-* xref:kubernetes-nodes-component.adoc[Kubernetes Node]
-* xref:kubernetes-persistent-volumes-component.adoc[Kubernetes Persistent Volume]
-* xref:kubernetes-persistent-volumes-claims-component.adoc[Kubernetes Persistent Volume Claim]
-* xref:kubernetes-pods-component.adoc[Kubernetes Pod]
-* xref:kubernetes-replication-controllers-component.adoc[Kubernetes Replication Controller]
-* xref:kubernetes-resources-quota-component.adoc[Kubernetes Resource Quota]
-* xref:kubernetes-secrets-component.adoc[Kubernetes Secrets]
-* xref:kubernetes-service-accounts-component.adoc[Kubernetes Service Account]
-* xref:kubernetes-services-component.adoc[Kubernetes Service]
+* <<kubernetes-config-maps-component,Kubernetes ConfigMap>>
+* <<kubernetes-namespaces-component,Kubernetes Namespace>>
+* <<kubernetes-nodes-component,Kubernetes Node>>
+* <<kubernetes-persistent-volumes-component,Kubernetes Persistent Volume>>
+* <<kubernetes-persistent-volumes-claims-component,Kubernetes Persistent Volume Claim>>
+* <<kubernetes-pods-component,Kubernetes Pod>>
+* <<kubernetes-replication-controllers-component,Kubernetes Replication Controller>>
+* <<kubernetes-resources-quota-component,Kubernetes Resource Quota>>
+* <<kubernetes-secrets-component,Kubernetes Secrets>>
+* <<kubernetes-service-accounts-component,Kubernetes Service Account>>
+* <<kubernetes-services-component,Kubernetes Service>>
 
 In OpenShift, also:
 
-* xref:openshift-build-configs-component.adoc[Kubernetes Build Config]
+* <<openshift-build-configs-component,Kubernetes Build Config>>
 * Kubernetes Build
 
 
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 [source,xml]
 ------------------------------------------------------------
 <dependency>
@@ -38,9 +38,9 @@ their `pom.xml` for this component:
 ------------------------------------------------------------
 
 
-== Headers
+### Headers
 
-[width="100%",options="header"]
+[width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Name |Type |Description
 
@@ -122,13 +122,13 @@ their `pom.xml` for this component:
 |=======================================================================
 
 
-== Usage
+### Usage
 
-=== Producer examples
+#### Producer examples
 
 Here we show some examples of producer using camel-kubernetes.
 
-=== Create a pod
+#### Create a pod
 
 [source,java]
 -------------------------------------------------------------
@@ -138,7 +138,7 @@ from("direct:createPod")
 
 By using the KubernetesConstants.KUBERNETES_POD_SPEC header you can specify your PodSpec and pass it to this operation.
 
-=== Delete a pod
+#### Delete a pod
 
 [source,java]
 -------------------------------------------------------------

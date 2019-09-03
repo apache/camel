@@ -1,9 +1,9 @@
 [[SpringSecurity-SpringSecurity]]
-= Spring Security
+== Spring Security
 
 *Available as of Camel 2.3*
 
-The Camel Spring Security component provides role-based authorization
+The *camel-spring-security* component provides role-based authorization
 for Camel routes. It leverages the authentication and user services
 provided by
 http://static.springsource.org/spring-security/site/index.html[Spring
@@ -16,7 +16,7 @@ authorization system, please review the current reference documentation
 on the SpringSource web site linked above.
 
 [[SpringSecurity-Creatingauthorizationpolicies]]
-== Creating authorization policies
+=== Creating authorization policies
 
 Access to a route is controlled by an instance of a
 `SpringSecurityAuthorizationPolicy` object. A policy object contains the
@@ -46,7 +46,7 @@ context
 |`accessDecisionManager` |`accessDecisionManager` |The name of the Spring Security `AccessDecisionManager` object in the
 context
 
-|`authenticationAdapter` |DefaultAuthenticationAdapter |The name of a *camel-spring-security*
+|`authenticationAdapter` |DefaultAuthenticationAdapter |*Camel 2.4* The name of a *camel-spring-security*
 `AuthenticationAdapter` object in the context that is used to convert a
 `javax.security.auth.Subject` into a Spring Security `Authentication`
 instance.
@@ -60,7 +60,7 @@ header under Exchange.AUTHENTICATION, check the Spring Security
 |=======================================================================
 
 [[SpringSecurity-ControllingaccesstoCamelroutes]]
-== Controlling access to Camel routes
+=== Controlling access to Camel routes
 
 A Spring Security `AuthenticationManager` and `AccessDecisionManager`
 are required to use this component. Here is an example of how to
@@ -77,16 +77,16 @@ authenticated and contains the `ROLE_ADMIN` authority can be located by
 the _admin_ `SpringSecurityAuthorizationPolicy`.
 
 [[SpringSecurity-Authentication]]
-== Authentication
+=== Authentication
 
 The process of obtaining security credentials that are used for
 authorization is not specified by this component. You can write your own
 processors or components which get authentication information from the
 exchange depending on your needs. For example, you might create a
 processor that gets credentials from an HTTP request header originating
-in the xref:jetty-component.adoc[Jetty] component. No matter how the credentials
+in the <<jetty-component,Jetty>> component. No matter how the credentials
 are collected, they need to be placed in the In message or the
-`SecurityContextHolder` so the Camel xref:spring-security.adoc[Spring
+`SecurityContextHolder` so the Camel link:spring-security.html[Spring
 Security] component can access them:
 
 [source,java]
@@ -143,11 +143,11 @@ implementation of the
 `org.apache.camel.component.spring.security.AuthenticationAdapter` to
 your `<authorizationPolicy>` bean. This can be useful if you are working
 with components that do not use Spring Security but do provide a
-`Subject`. At this time, only the xref:cxf-component.adoc[CXF] component populates
+`Subject`. At this time, only the <<cxf-component,CXF>> component populates
 the `Exchange.AUTHENTICATION` header.
 
 [[SpringSecurity-Handlingauthenticationandauthorizationerrors]]
-== Handling authentication and authorization errors
+=== Handling authentication and authorization errors
 
 If authentication or authorization fails in the
 `SpringSecurityAuthorizationPolicy`, a `CamelAuthorizationException`
@@ -179,7 +179,7 @@ policy as well as the type of exception:
 ------------------------------------------------------------------------------------------
 
 [[SpringSecurity-Dependencies]]
-== Dependencies
+=== Dependencies
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -190,11 +190,21 @@ for this component:
 <dependency> 
   <groupId>org.apache.camel</groupId> 
   <artifactId>camel-spring-security</artifactId> 
-  <version>x.y.z</version>
+  <version>2.4.0</version> 
 </dependency> 
 -------------------------------------------------
 
 This dependency will also pull in
 `org.springframework.security:spring-security-core:3.0.3.RELEASE` and
 `org.springframework.security:spring-security-config:3.0.3.RELEASE`.
+
+[[SpringSecurity-SeeAlso]]
+=== See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* Components
 

@@ -1,7 +1,8 @@
 [[zookeeper-master-component]]
-== ZooKeeper Master Component
+= ZooKeeper Master Component
 
 *Available as of Camel version 2.19*
+
 
 The **zookeeper-master:** endpoint provides a way to ensure only a single consumer in a cluster consumes from a given endpoint;
 with automatic failover if that JVM dies.
@@ -60,7 +61,7 @@ zookeeper-master:groupName:consumerEndpointUri
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -71,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (4 parameters):
+=== Query Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,7 +85,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-zookeeper-master-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 8 options, which are listed below.

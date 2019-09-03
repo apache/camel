@@ -1,5 +1,4 @@
-[[topic-eip]]
-== Topic EIP
+= Topic EIP
 
 Topic Load Balancer, with this policy you'll get a Topic behavior by sending to all destinations.
 

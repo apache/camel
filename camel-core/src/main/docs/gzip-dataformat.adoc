@@ -1,5 +1,5 @@
 [[gzip-dataformat]]
-== GZip DataFormat
+= GZip DataFormat
 
 *Available as of Camel version 2.0*
 

@@ -1,16 +1,18 @@
+[[xstream-dataformat]]
 = XStream DataFormat
 
 *Available as of Camel version 1.3*
+
 
 XStream is a Data Format which uses the
 http://x-stream.github.io/[XStream library] to marshal and unmarshal
 Java objects to and from XML.
 
 To use XStream in your camel routes you need to add the a dependency
-on *camel-xstream* which implements this data format.
+on *camel-xstream* which implements this data format.
 
 Maven users will need to add the following dependency to their
-`pom.xml` for this component:
+`pom.xml` for this component:
 
 [source,xml]
 ----------------------------------------------------------
@@ -22,7 +24,7 @@ Maven users will need to add the following dependency to their
 </dependency>
 ----------------------------------------------------------
 
-== Options
+### Options
 
 // dataformat options: START
 The XStream dataformat supports 10 options, which are listed below.
@@ -45,7 +47,19 @@ The XStream dataformat supports 10 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-xstream-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 31 options, which are listed below.
@@ -91,7 +105,7 @@ The component supports 31 options, which are listed below.
 ND
 
 
-== Using the Java DSL
+### Using the Java DSL
 
 [source,java]
 -----------------------------------------------------------
@@ -118,7 +132,7 @@ from("direct:marshal").
   to("mock:marshaled");
 ---------------------------------------------------------
 
-== XMLInputFactory and XMLOutputFactory
+### XMLInputFactory and XMLOutputFactory
 
 http://x-stream.github.io/[The XStream library] uses the
 `javax.xml.stream.XMLInputFactory` and
@@ -136,9 +150,9 @@ looking in the `META-INF/services/javax.xml.stream.XMLInputFactory`,
 available to the JRE. 
  4. Use the platform default XMLInputFactory,XMLOutputFactory instance.
 
-== How to set the XML encoding in Xstream DataFormat?
+### How to set the XML encoding in Xstream DataFormat?
 
-You can set the encoding of XML in Xstream DataFormat
+From Camel 2.2.0, you can set the encoding of XML in Xstream DataFormat
 by setting the Exchange's property with the key `Exchange.CHARSET_NAME`,
 or setting the encoding property on Xstream from DSL or Spring config.
 
@@ -149,13 +163,13 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-== Setting the type permissions of Xstream DataFormat
+### Setting the type permissions of Xstream DataFormat
 
 In Camel, one can always use its own processing step in the route to
 filter and block certain XML documents to be routed to the XStream's
-unmarhall step. You can
-set http://x-stream.github.io/security.html[XStream's type
-permissions] to automatically allow or deny the instantiation of certain
+unmarhall step. From Camel 2.16.1, 2.15.5, you can
+set http://x-stream.github.io/security.html[XStream's type
+permissions] to automatically allow or deny the instantiation of certain
 types.
 
 The default type permissions setting used by Camel denies all types

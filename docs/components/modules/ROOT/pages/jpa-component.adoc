@@ -1,9 +1,10 @@
+[[jpa-component]]
 = JPA Component
 
 *Available as of Camel version 1.0*
 
 
-The JPA component enables you to store and retrieve Java objects from
+The *jpa* component enables you to store and retrieve Java objects from
 persistent storage using EJB 3's Java Persistence Architecture (JPA),
 which is a standard interface layer that wraps Object/Relational Mapping
 (ORM) products such as OpenJPA, Hibernate, TopLink, and so on.
@@ -21,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== Sending to the endpoint
+### Sending to the endpoint
 
 You can store a Java entity bean in a database by sending it to a JPA
 producer endpoint. The body of the _In_ message is assumed to be an
@@ -37,7 +38,7 @@ If the body does not contain one of the previous listed types, put a
 Message Translator in front of the
 endpoint to perform the necessary conversion first.
 
-You can use `query`, `namedQuery` or `nativeQuery`
+From *Camel 2.19* onwards you can use `query`, `namedQuery` or `nativeQuery`
 for the producer as well. Also in the value of the `parameters`, you can use
 Simple expression which allows you to retrieve parameter values from Message body, header
 and etc. Those query can be used for retrieving a set of data with using `SELECT`
@@ -47,7 +48,7 @@ if you execute `UPDATE`/`DELETE` with `namedQuery` as camel don't look into the
 named query unlike `query` and `nativeQuery`.
 
 
-== Consuming from the endpoint
+### Consuming from the endpoint
 
 Consuming messages from a JPA consumer endpoint removes (or updates)
 entity beans in the database. This allows you to use a database table as
@@ -65,14 +66,15 @@ http://camel.apache.org/maven/current/camel-jpa/apidocs/org/apache/camel/compone
 which will be invoked on your entity bean when the entity bean when it
 has been processed (and when routing is done).
 
-You can use http://camel.apache.org/maven/current/camel-jpa/apidocs/org/apache/camel/component/jpa/PreConsumed.html[@PreConsumed]
+From *Camel 2.13* onwards you can use
+http://camel.apache.org/maven/current/camel-jpa/apidocs/org/apache/camel/component/jpa/PreConsumed.html[@PreConsumed]
 which will be invoked on your entity bean before it has been processed
 (before routing).
 
 If you are consuming a lot (100K+) of rows and experience OutOfMemory
 problems you should set the maximumResults to sensible value.
 
-== URI format
+### URI format
 
 [source,java]
 -----------------------------
@@ -80,7 +82,7 @@ jpa:entityClassName[?options]
 -----------------------------
 
 For sending to the endpoint, the _entityClassName_ is optional. If
-specified, it helps the http://camel.apache.org/type-converter.html[Type Converter] to
+specified, it helps the link:http://camel.apache.org/type-converter.html[Type Converter] to
 ensure the body is of the correct type.
 
 For consuming, the _entityClassName_ is mandatory.
@@ -88,7 +90,7 @@ For consuming, the _entityClassName_ is mandatory.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-== Options
+### Options
 
 
 
@@ -125,7 +127,7 @@ jpa:entityType
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -135,7 +137,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (42 parameters):
+=== Query Parameters (42 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -186,7 +188,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jpa-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 6 options, which are listed below.
@@ -210,7 +224,7 @@ The component supports 6 options, which are listed below.
 
 
 
-== Message Headers
+### Message Headers
 
 Camel adds the following message headers to the exchange:
 
@@ -218,13 +232,21 @@ Camel adds the following message headers to the exchange:
 |=======================================================================
 |Header |Type |Description
 
-|`CamelEntityManager` |`EntityManager` |The JPA `EntityManager` object being used by `JpaConsumer` or `JpaProducer`.
+|`CamelJpaTemplate` |`JpaTemplate` |*Not supported anymore since Camel 2.12:* The `JpaTemplate` object that
+is used to access the entity bean. You need this object in some
+situations, for instance in a type converter or when you are doing some
+custom processing. See
+https://issues.apache.org/jira/browse/CAMEL-5932[CAMEL-5932] for the
+reason why the support for this header has been dropped.
 
-|`CamelJpaParameters` |`Map<String, Object>` |Alternative way for passing query parameters as an Exchange header.
+|`CamelEntityManager` |`EntityManager` |*Camel 2.12: JPA consumer / Camel 2.12.2: JPA producer:* The JPA
+`EntityManager` object being used by `JpaConsumer` or `JpaProducer`.
+
+|`CamelJpaParameters` |`Map<String, Object>` |*Camel 2.23: JPA producer:* Alternative way for passing query parameters as an Exchange header.
 
 |=======================================================================
 
-== Configuring EntityManagerFactory
+### Configuring EntityManagerFactory
 
 Its strongly advised to configure the JPA component to use a specific
 `EntityManagerFactory` instance. If failed to do so each `JpaEndpoint`
@@ -241,19 +263,19 @@ For example, you can instantiate a JPA component that references the
 </bean>
 -------------------------------------------------------------------
 
-The `JpaComponent` looks up automatically the
+In *Camel 2.3* the `JpaComponent` will auto lookup the
 `EntityManagerFactory` from the Registry which means
 you do not need to configure this on the `JpaComponent` as shown above.
 You only need to do so if there is ambiguity, in which case Camel will
 log a WARN.
 
-== Configuring TransactionManager
+### Configuring TransactionManager
 
-The `JpaComponent` looks up automatically the
+Since *Camel 2.3* the `JpaComponent` will auto lookup the
 `TransactionManager` from the Registry. If Camel
 won't find any `TransactionManager` instance registered, it will also
-look up for the `TransactionTemplate` and try to
-extract `TransactionManager` from it.
+look up for the `TransactionTemplate` and try to
+extract `TransactionManager` from it.
 
 If none `TransactionTemplate` is available in the registry,
 `JpaEndpoint` will auto create their own instance of
@@ -272,7 +294,7 @@ explicitly configure a JPA component that references the
 </bean>
 -------------------------------------------------------------------
 
-== Using a consumer with a named query
+### Using a consumer with a named query
 
 For consuming only selected entities, you can use the
 `consumer.namedQuery` URI query option. First, you have to define the
@@ -295,7 +317,7 @@ from("jpa://org.apache.camel.examples.MultiSteps?consumer.namedQuery=step1")
 .to("bean:myBusinessLogic");
 ----------------------------------------------------------------------------
 
-== Using a consumer with a query
+### Using a consumer with a query
 
 For consuming only selected entities, you can use the `consumer.query`
 URI query option. You only have to define the query option:
@@ -306,7 +328,7 @@ from("jpa://org.apache.camel.examples.MultiSteps?consumer.query=select o from or
 .to("bean:myBusinessLogic");
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-== Using a consumer with a native query
+### Using a consumer with a native query
 
 For consuming only selected entities, you can use the
 `consumer.nativeQuery` URI query option. You only have to define the
@@ -322,7 +344,7 @@ If you use the native query option, you will receive an object array in
 the message body.
 
 
-== Using a producer with a named query
+### Using a producer with a named query
 
 For retrieving selected entities or execute bulk update/delete, you can use the
 `namedQuery` URI query option. First, you have to define the
@@ -348,7 +370,7 @@ from("direct:namedQuery")
 Note that you need to specify `useExecuteUpdate` option to `true` to execute `UPDATE`/`DELETE` statement
 as a named query.
 
-== Using a producer with a query
+### Using a producer with a query
 
 For retrieving selected entities or execute bulk update/delete, you can use the `query`
 URI query option. You only have to define the query option:
@@ -359,7 +381,7 @@ from("direct:query")
 .to("jpa://org.apache.camel.examples.MultiSteps?query=select o from org.apache.camel.examples.MultiSteps o where o.step = 1");
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-== Using a producer with a native query
+### Using a producer with a native query
 
 For retrieving selected entities or execute bulk update/delete, you can use the
 `nativeQuery` URI query option. You only have to define the
@@ -374,12 +396,12 @@ from("direct:nativeQuery")
 If you use the native query option without specifying `resultClass`, you will receive an object array in
 the message body.
 
-== Example
+### Example
 
-See http://camel.apache.org/tracer-example.html[Tracer Example] for an example using
-xref:jpa-component.adoc[JPA] to store traced messages into a database.
+See link:http://camel.apache.org/tracer-example.html[Tracer Example] for an example using
+<<jpa-component,JPA>> to store traced messages into a database.
 
-== Using the JPA-Based Idempotent Repository
+### Using the JPA-Based Idempotent Repository
 
 The Idempotent Consumer from the http://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
 
@@ -450,3 +472,14 @@ argument to the JVM:
  
 -javaagent:<path_to_your_local_m2_cache>/org/apache/openjpa/openjpa/2.2.1/openjpa-2.2.1.jar
 -------------------------------------------------------------------------------------------
+
+
+
+### See Also
+
+* link:http://camel.apache.org/configuring-camel.html[Configuring Camel]
+* link:http://camel.apache.org/component.html[Component]
+* link:http://camel.apache.org/endpoint.html[Endpoint]
+* link:http://camel.apache.org/getting-started.html[Getting Started]
+
+* link:http://camel.apache.org/tracer-example.html[Tracer Example]

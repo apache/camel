@@ -1,9 +1,10 @@
+[[ical-dataformat]]
 = iCal DataFormat
 
 *Available as of Camel version 2.12*
 
 
-The ICal dataformat is used for working with
+The *ICal* dataformat is used for working with
 http://en.wikipedia.org/wiki/ICalendar[iCalendar] messages.
 
 A typical iCalendar message looks like:
@@ -27,7 +28,7 @@ END:VEVENT
 END:VCALENDAR
 ----------------------------------------------------------------------
 
-== Options
+### Options
 
 // dataformat options: START
 The iCal dataformat supports 2 options, which are listed below.
@@ -42,7 +43,19 @@ The iCal dataformat supports 2 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-ical-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 3 options, which are listed below.
@@ -59,7 +72,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-== Basic Usage
+### Basic Usage
 
 To unmarshal and marshal the message shown above, your route will look
 like the following:
@@ -85,3 +98,10 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

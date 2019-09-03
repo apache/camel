@@ -1,22 +1,23 @@
+[[google-calendar-component]]
 = Google Calendar Component
 
 *Available as of Camel version 2.15*
 
 
 The Google Calendar component provides access
-to http://google.com/calendar[Google Calendar] via
-the https://developers.google.com/google-apps/calendar/v3/reference/[Google
+to http://google.com/calendar[Google Calendar] via
+the https://developers.google.com/google-apps/calendar/v3/reference/[Google
 Calendar Web APIs].
 
 Google Calendar uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need
-to https://developers.google.com/google-apps/calendar/auth[create an
+to https://developers.google.com/google-apps/calendar/auth[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is
-the https://developers.google.com/oauthplayground[OAuth playground].
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -25,13 +26,12 @@ for this component:
     <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-google-calendar</artifactId>
-            <!-- use the same version as your Camel core version -->
-            <version>x.x.x</version>
+            <version>2.15.0</version>
     </dependency>
         
 ----------------------------------------------------------
 
-== 1. Google Calendar Options
+### 1. Google Calendar Options
 
 
 
@@ -66,7 +66,7 @@ google-calendar:apiName/methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +91,7 @@ with the following path and query parameters:
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *p12FileName* (common) | The name of the p12 file which has the private key to use with the Google Service Account. |  | String
 | *refreshToken* (common) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *scopes* (common) | Specifies the level of permissions you want a calendar application to have to a user account. You can separate multiple scopes by comma. See https://developers.google.com/google-apps/calendar/auth for more info. | https://www.googleapis.com/auth/calendar | String
+| *scopes* (common) | Specifies the level of permissions you want a calendar application to have to a user account. You can separate multiple scopes by comma. See \https://developers.google.com/google-apps/calendar/auth for more info. | https://www.googleapis.com/auth/calendar | String
 | *user* (common) | The email address of the user the application is trying to impersonate in the service account flow |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -100,7 +100,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-calendar-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 14 options, which are listed below.
@@ -120,7 +132,7 @@ The component supports 14 options, which are listed below.
 | *camel.component.google-calendar.configuration.method-name* | What sub operation to use for the selected operation |  | String
 | *camel.component.google-calendar.configuration.p12-file-name* | The name of the p12 file which has the private key to use with the Google Service Account. |  | String
 | *camel.component.google-calendar.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *camel.component.google-calendar.configuration.scopes* | Specifies the level of permissions you want a calendar application to have to a user account. You can separate multiple scopes by comma. See https://developers.google.com/google-apps/calendar/auth for more info. | https://www.googleapis.com/auth/calendar | String
+| *camel.component.google-calendar.configuration.scopes* | Specifies the level of permissions you want a calendar application to have to a user account. You can separate multiple scopes by comma. See \https://developers.google.com/google-apps/calendar/auth for more info. | https://www.googleapis.com/auth/calendar | String
 | *camel.component.google-calendar.configuration.user* | The email address of the user the application is trying to impersonate in the service account flow |  | String
 | *camel.component.google-calendar.enabled* | Enable google-calendar component | true | Boolean
 | *camel.component.google-calendar.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
@@ -129,7 +141,7 @@ The component supports 14 options, which are listed below.
 
 
 
-== URI Format
+### URI Format
 
 The GoogleCalendar Component uses the following URI format:
 
@@ -149,7 +161,7 @@ Endpoint prefix can be one of:
 * list
 * settings
 
-== Producer Endpoints
+### Producer Endpoints
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -168,7 +180,7 @@ overrides message header, i.e. the endpoint option `inBody=option` would
 override a `CamelGoogleCalendar.option` header.
 
 
-== Consumer Endpoints
+### Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -178,15 +190,15 @@ invocation. Consumer endpoints that return an array or collection will
 generate one exchange per element, and their routes will be executed
 once for each exchange.
 
-== Message Headers
+### Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a `CamelGoogleCalendar.` prefix.
 
-== Message Body
+### Message Body
 
 All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleCalendarComponent. Producer endpoints can specify
 the option name for incoming message body in the `inBody` endpoint URI
 parameter. For endpoints that return an array or collection, a consumer
-endpoint will map every element to distinct messages.     
+endpoint will map every element to distinct messages.     

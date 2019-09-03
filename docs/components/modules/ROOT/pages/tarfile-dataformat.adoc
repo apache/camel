@@ -1,3 +1,4 @@
+[[tarfile-dataformat]]
 = Tar File DataFormat
 
 *Available as of Camel version 2.16*
@@ -11,7 +12,7 @@ entry can be unmarshalled (decompressed) to the original file contents.
 There is also a aggregation strategy that can
 aggregate multiple messages into a single Tar File.
 
-== TarFile Options
+### TarFile Options
 
 
 // dataformat options: START
@@ -29,7 +30,19 @@ The Tar File dataformat supports 4 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-tarfile-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 5 options, which are listed below.
@@ -46,9 +59,10 @@ The component supports 5 options, which are listed below.
 | *camel.dataformat.tarfile.using-iterator* | If the tar file has more then one entry, the setting this option to true, allows to work with the splitter EIP, to split the data using an iterator in a streaming mode. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
+ND
 
 
-== Marshal
+### Marshal
 
 In this example we marshal a regular text/XML payload to a compressed
 payload using Tar File compression, and send it to an ActiveMQ queue
@@ -89,7 +103,7 @@ from("direct:start").setHeader(Exchange.FILE_NAME, constant("report.txt")).marsh
 This route would result in a Tar File named "report.txt.tar" in the
 output directory, containing a single Tar entry named "report.txt".
 
-== Unmarshal
+### Unmarshal
 
 In this example we unmarshal a Tar File payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
@@ -97,7 +111,7 @@ the `UnTarpedMessageProcessor`.
 
 [source,java]
 -----------------------------------------------------------------------------------------------
-from("activemq:queue:MY_QUEUE").unmarshal().tarFile().process(new UnTarpedMessageProcessor()); 
+from("activemq:queue:MY_QUEUE").unmarshal().tarFile().process(new UnTarpedMessageProcessor()); 
 -----------------------------------------------------------------------------------------------
 
 If the Tar File has more then one entry, the usingIterator option of
@@ -129,13 +143,13 @@ like this
 ----------------------------------------------------------------------------------------------------
 
 
-== Aggregate
+### Aggregate
 
-NOTE: Please note that this aggregation strategy requires eager completion
+INFO:Please note that this aggregation strategy requires eager completion
 check to work properly.
 
 In this example we aggregate all text files found in the input directory
-into a single Tar File that is stored in the output directory. 
+into a single Tar File that is stored in the output directory. 
 
 [source,java]
 -------------------------------------------------
@@ -147,10 +161,10 @@ into a single Tar File that is stored in the output directory.
    .to("file:output/directory");
 -------------------------------------------------
 
-The outgoing `CamelFileName` message header is created using
-java.io.File.createTempFile, with the ".tar" suffix. If you want to
+The outgoing `CamelFileName` message header is created using
+java.io.File.createTempFile, with the ".tar" suffix. If you want to
 override this behavior, then you can set the value of
-the `CamelFileName` header explicitly in your route:
+the `CamelFileName` header explicitly in your route:
 
 [source,java]
 ------------------------------------------------------------
@@ -163,7 +177,7 @@ the `CamelFileName` header explicitly in your route:
    .to("file:output/directory");
 ------------------------------------------------------------
 
-== Dependencies
+### Dependencies
 
 To use Tar Files in your camel routes you need to add a dependency on
 *camel-tarfile* which implements this data format.

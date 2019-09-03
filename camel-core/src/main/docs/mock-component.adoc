@@ -1,5 +1,5 @@
 [[mock-component]]
-== Mock Component
+= Mock Component
 
 *Available as of Camel version 1.0*
 
@@ -93,7 +93,7 @@ mock:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,7 +103,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -153,7 +153,8 @@ invoked. This can be configured by setting the
 
 === Using assertPeriod
 
-*Available as of Camel 2.7* +
+*Available as of Camel 2.7*
+
 When the assertion is satisfied then Camel will stop waiting and
 continue from the `assertIsSatisfied` method. That means if a new
 message arrives on the mock endpoint, just a bit later, that arrival

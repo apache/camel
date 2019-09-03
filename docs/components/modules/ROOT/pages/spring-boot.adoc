@@ -74,7 +74,19 @@ or `application.yml` file.
 
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-spring-boot-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 140 options, which are listed below.
@@ -221,9 +233,9 @@ The component supports 140 options, which are listed below.
 | *management.endpoint.camelroutes.enabled* | To turn on or off information about Camel Routes via actuator endpoint. | true | Boolean
 | *management.endpoint.camelroutes.read-only* | Whether Camel Routes actuator is in read-only mode. If not in read-only mode then operations to start/stop routes would be enabled. | true | Boolean
 | *management.info.camel.enabled* | Whether to enable Camel info. | true | Boolean
-| *camel.springboot.stream-caching* | Sets whether stream caching is enabled or not (deprecated use stream-caching-enabled instead). Default is false. | false | Boolean
-| *camel.springboot.stream-caching-spool-chiper* | Sets a stream caching chiper name to use when spooling to disk to write with encryption. By default the data is not encrypted. @deprecated use streamCachingSpoolCipher |  | String
-| *camel.springboot.use-m-d-c-logging* | To turn on MDC logging (deprecated use use-mdc-logging instead) | false | Boolean
+| *camel.springboot.stream-caching* | *Deprecated* Sets whether stream caching is enabled or not (deprecated use stream-caching-enabled instead). Default is false. | false | Boolean
+| *camel.springboot.stream-caching-spool-chiper* | *Deprecated* Sets a stream caching chiper name to use when spooling to disk to write with encryption. By default the data is not encrypted. @deprecated use streamCachingSpoolCipher |  | String
+| *camel.springboot.use-m-d-c-logging* | *Deprecated* To turn on MDC logging (deprecated use use-mdc-logging instead) | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 

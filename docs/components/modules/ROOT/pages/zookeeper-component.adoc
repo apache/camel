@@ -1,6 +1,8 @@
+[[zookeeper-component]]
 = ZooKeeper Component
 
 *Available as of Camel version 2.9*
+
 
 The ZooKeeper component allows interaction with a
 http://hadoop.apache.org/zookeeper/[ZooKeeper] cluster and exposes the
@@ -28,7 +30,7 @@ for this component:
 </dependency>
 ----
 
-== URI format
+### URI format
 
 [source]
 ----
@@ -38,7 +40,7 @@ zookeeper://zookeeper-server[:port][/path][?options]
 The path from the URI specifies the node in the ZooKeeper server (a.k.a.
 _znode_) that will be the target of the endpoint:
 
-== Options
+### Options
 
 // component options: START
 The ZooKeeper component supports 2 options, which are listed below.
@@ -62,7 +64,7 @@ zookeeper:serverUrls/path
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -73,7 +75,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,7 +96,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-zookeeper-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 57 options, which are listed below.
@@ -160,15 +174,15 @@ The component supports 57 options, which are listed below.
 | *camel.component.zookeeper.service-registry.service-host* |  |  | String
 | *camel.component.zookeeper.service-registry.session-timeout* |  |  | Long
 | *camel.component.zookeeper.service-registry.session-timeout-unit* |  |  | TimeUnit
-| *camel.component.zookeeper.configuration.await-existence* | Not in use | true | Boolean
+| *camel.component.zookeeper.configuration.await-existence* | *Deprecated* Not in use | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
-== Use cases
+### Use cases
 
-=== Reading from a _znode_
+#### Reading from a _znode_
 
 The following snippet will read the data from the _znode_
 `/somepath/somenode/` provided that it already exists. The data
@@ -188,7 +202,7 @@ endpoint await its creation:
 from("zookeeper://localhost:39913/somepath/somenode?awaitCreation=true").to("mock:result");
 ----
 
-=== Reading from a _znode_
+#### Reading from a _znode_ (additional Camel 2.10 onwards)
 
 When data is read due to a `WatchedEvent` received from the ZooKeeper
 ensemble, the `CamelZookeeperEventType` header holds ZooKeeper's
@@ -197,7 +211,7 @@ value from that `WatchedEvent`. If the data is read initially (not
 triggered by a `WatchedEvent`) the `CamelZookeeperEventType` header will not
 be set.
 
-=== Writing to a _znode_
+#### Writing to a _znode_
 
 The following snippet will write the payload of the exchange into the
 znode at `/somepath/somenode/` provided that it already exists:
@@ -234,7 +248,7 @@ from("direct:create-and-write-to-znode")
     .to("zookeeper://localhost:39913/somepath/somenode?create=true");
 ----
 
-It is also possible to *delete* a node using the
+Starting *version 2.11* it is also possible to *delete* a node using the
 header `CamelZookeeperOperation` by setting it to `DELETE`:
 
 [source,java]
@@ -289,3 +303,71 @@ ZooKeeper is byte based.
 Object testPayload = ...
 template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPayload, "CamelZooKeeperCreateMode", "PERSISTENT");
 ----
+
+### ZooKeeper enabled Route policies
+
+NOTE: This functionality with route policy is deprecated, instead use `ZooKeeperClusterService`
+or the `camel-zookeeper-master` component.
+
+ZooKeeper allows for very simple and effective leader election out of
+the box. This component exploits this election capability in a
+`RoutePolicy` to control when and how routes are
+enabled. This policy would typically be used in fail-over scenarios, to
+control identical instances of a route across a cluster of Camel based
+servers. A very common scenario is a simple 'Master-Slave' setup where
+there are multiple instances of a route distributed across a cluster but
+only one of them, that of the master, should be running at a time. If
+the master fails, a new master should be elected from the available
+slaves and the route in this new master should be started.
+
+The policy uses a common _znode_ path across all instances of the
+`RoutePolicy` that will be involved in the election. Each policy writes
+its id into this node and Zookeeper will order the writes in the order
+it received them. The policy then reads the listing of the node to see
+what position of its id; this position is used to determine if the route
+should be started or not. The policy is configured at startup with the
+number of route instances that should be started across the cluster and
+if its position in the list is less than this value then its route will
+be started. For a Master-slave scenario, the route is configured with 1
+route instance and only the first entry in the listing will start its
+route. All policies watch for updates to the listing and if the listing
+changes they recalculate if their route should be started. For more info
+on Zookeeper's leader election capability see
+http://zookeeper.apache.org/doc/trunk/recipes.html#sc_leaderElection[this
+page].
+
+The following example uses the node `/someapplication/somepolicy` for
+the election and is set up to start only the top '1' entries in the node
+listing i.e. elect a master:
+
+[source,java]
+----
+ZooKeeperRoutePolicy policy = new ZooKeeperRoutePolicy("zookeeper:localhost:39913/someapp/somepolicy", 1);
+from("direct:policy-controlled")
+    .routePolicy(policy)
+    .to("mock:controlled");
+----
+
+There are currently 3 policies defined in the component, with different SLAs:
+
+* `ZooKeeperRoutePolicy`
+* `CuratorLeaderRoutePolicy` (since *2.19*)
+* `MultiMasterCuratorLeaderRoutePolicy` (since *2.19*)
+
+*ZooKeeperRoutePolicy* supports multiple active nodes, but it's activation kicks in only after a Camel component and its correspondent Consumer have already been started,
+ this introduces, depending on your routes definition, the risk that you component can already start consuming events and producing `Exchange`s, before the policy could estabilish
+ that the node should not be activated.
+
+*CuratorLeaderRoutePolicy* supports only a single active node, but it's bound to a different `CamelContext` lifecycle method; this Policy kicks in before any route or consumer is started
+ thus you can be sure that no even is processed before the Policy takes its decision.
+
+*MultiMasterCuratorLeaderRoutePolicy* support multiple active nodes, and it's bound to the same lifecycle method as `CuratorLeaderRoutePolicy`; this Policy kicks in before any route or consumer is started
+ thus you can be sure that no even is processed before the Policy takes its decision.
+
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

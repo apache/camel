@@ -1,11 +1,12 @@
+[[openstack-neutron-component]]
 = OpenStack Neutron Component
 
 *Available as of Camel version 2.19*
 
 
-The Openstack Neutron component allows messages to be sent to an OpenStack network services.
+The openstack-neutron component allows messages to be sent to an OpenStack network services.
 
-== Dependencies
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -23,7 +24,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-== URI Format
+### URI Format
 
 [source,java]
 ----------------------------
@@ -33,7 +34,7 @@ openstack-neutron://hosturl[?options]
 You can append query options to the URI in the following format
 `?options=value&option2=value&...`
 
-== URI Options
+### URI Options
 
 // component options: START
 The OpenStack Neutron component has no options.
@@ -48,7 +49,7 @@ openstack-neutron:host
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -58,7 +59,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,7 +77,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-openstack-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -93,12 +106,12 @@ The component supports 2 options, which are listed below.
 
 
 
-== Usage
+### Usage
 You can use following settings for each subsystem:
 
-== networks
+### networks
 
-=== Operations you can perform with the Network producer
+#### Operations you can perform with the Network producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -112,7 +125,7 @@ You can use following settings for each subsystem:
 |`delete` | Delete the network.
 |=========================================================================
 
-=== Message headers evaluated by the Network producer
+#### Message headers evaluated by the Network producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -141,9 +154,9 @@ You can use following settings for each subsystem:
 
 If you need more precise network settings you can create new object of the type *org.openstack4j.model.network.Network* and send in the message body.
 
-== subnets
+### subnets
 
-=== Operations you can perform with the Subnet producer
+#### Operations you can perform with the Subnet producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -159,7 +172,7 @@ If you need more precise network settings you can create new object of the type 
 |`action` | Perform an action on the subnet.
 |=========================================================================
 
-=== Message headers evaluated by the Subnet producer
+#### Message headers evaluated by the Subnet producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -180,9 +193,9 @@ If you need more precise network settings you can create new object of the type 
 
 If you need more precise subnet settings you can create new object of the type *org.openstack4j.model.network.Subnet* and send in the message body.
 
-== ports
+### ports
 
-=== Operations you can perform with the Port producer
+#### Operations you can perform with the Port producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -199,7 +212,7 @@ If you need more precise subnet settings you can create new object of the type *
 
 |=========================================================================
 
-=== Message headers evaluated by the Port producer
+#### Message headers evaluated by the Port producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -218,9 +231,9 @@ If you need more precise subnet settings you can create new object of the type *
 |`macAddress` | `String` | MAC address.
 |=========================================================================
 
-== routers
+### routers
 
-=== Operations you can perform with the Router producer
+#### Operations you can perform with the Router producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -241,7 +254,7 @@ If you need more precise subnet settings you can create new object of the type *
 
 |=========================================================================
 
-=== Message headers evaluated by the Port producer
+#### Message headers evaluated by the Port producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -261,3 +274,13 @@ If you need more precise subnet settings you can create new object of the type *
 
 |`tenantId` | `String` | Tenant ID.
 |=========================================================================
+
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* openstack Component

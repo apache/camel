@@ -1,3 +1,4 @@
+[[dns-component]]
 = DNS Component
 
 *Available as of Camel version 2.7*
@@ -5,23 +6,19 @@
 
 This is an additional component for Camel to run DNS queries, using
 DNSJava. The component is a thin layer on top of
-http://www.xbill.org/dnsjava/[DNSJava].
-The component offers the following operations:
+http://www.xbill.org/dnsjava/[DNSJava]. +
+ The component offers the following operations:
 
 * ip, to resolve a domain by its ip
 * lookup, to lookup information about the domain
 * dig, to run DNS queries
 
-[NOTE]
-====
-*Requires SUN JVM*
-
-The DNSJava library requires running on the SUN JVM.
+INFO:*Requires SUN JVM*
+The DNSJava library requires running on the SUN JVM. +
  If you use Apache ServiceMix or Apache Karaf, you'll need to adjust the
 `etc/jre.properties` file, to add `sun.net.spi.nameservice` to the list
 of Java platform packages exported. The server will need restarting
 before this change takes effect.
-====
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -36,7 +33,7 @@ for this component:
 </dependency>
 ----
 
-== URI format
+=== URI format
 
 The URI scheme for a DNS component is as follows
 
@@ -47,7 +44,7 @@ dns://operation[?options]
 
 This component only supports producers.
 
-== Options
+=== Options
 
 
 // component options: START
@@ -65,7 +62,7 @@ dns:dnsType
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (1 parameters):
+=== Query Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,7 +82,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-dns-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 2 options, which are listed below.
@@ -102,7 +111,7 @@ The component supports 2 options, which are listed below.
 
 
 
-== Headers
+=== Headers
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
 
@@ -124,9 +133,9 @@ Optional.
 one specified by the OS will be used. Optional.
 |===
 
-== Examples
+=== Examples
 
-=== IP lookup
+==== IP lookup
 
 [source,xml]
 ----
@@ -141,7 +150,7 @@ This looks up a domain's IP. For example, www.example.com resolves to
  The IP address to lookup must be provided in the header with key
 `"dns.domain"`.
 
-=== DNS lookup
+==== DNS lookup
 
 [source,xml]
 ----
@@ -155,7 +164,7 @@ This returns a set of DNS records associated with a domain. +
  The name to lookup must be provided in the header with key
 `"dns.name"`.
 
-=== DNS Dig
+==== DNS Dig
 
 Dig is a Unix command-line utility to run DNS queries.
 
@@ -170,7 +179,7 @@ Dig is a Unix command-line utility to run DNS queries.
 The query must be provided in the header with key `"dns.query"`.
 
 
-== Dns Activation Policy
+=== Dns Activation Policy
 
 DnsActivationPolicy can be used to dynamically start and stop routes based on dns state.
 

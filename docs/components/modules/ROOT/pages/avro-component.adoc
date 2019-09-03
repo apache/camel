@@ -1,3 +1,4 @@
+[[avro-component]]
 = Avro Component
 
 *Available as of Camel version 2.10*
@@ -22,7 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== Apache Avro Overview
+### Apache Avro Overview
 
 Avro allows you to define message types and a protocol using a json like
 format and then generate java code for the specified types and messages.
@@ -89,7 +90,7 @@ class Value {
 _Note: Existing classes can be used only for RPC (see below), not in
 data format._
 
-== Using the Avro data format
+### Using the Avro data format
 
 Using the avro data format is as easy as specifying that the class that
 you want to marshal or unmarshal in your route.
@@ -118,7 +119,7 @@ reference it from your route.
         </dataFormats>
         <route>
             <from uri="direct:in"/>
-            <marshal><custom ref="avro"/></marshal>
+            <marshal ref="avro"/>
             <to uri="log:out"/>
         </route>
     </camelContext>
@@ -126,7 +127,7 @@ reference it from your route.
 
 In the same manner you can umarshal using the avro data format.
 
-== Using Avro RPC in Camel
+### Using Avro RPC in Camel
 
 As mentioned above Avro also provides RPC support over multiple
 transports such as http and netty. Camel provides consumers and
@@ -165,7 +166,7 @@ got only one parameter, *since 2.12* you can use `singleParameter` URI
 option to receive it direcly in the "in" message body without array
 wrapping.
 
-== Avro RPC URI Options
+### Avro RPC URI Options
 
 
 
@@ -198,7 +199,7 @@ avro:transport:host:port/messageName
 
 with the following path and query parameters:
 
-==== Path Parameters (4 parameters):
+=== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -211,7 +212,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -230,7 +231,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-avro-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 15 options, which are listed below.
@@ -260,7 +273,7 @@ The component supports 15 options, which are listed below.
 
 
 
-== Avro RPC Headers
+### Avro RPC Headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -270,7 +283,7 @@ The component supports 15 options, which are listed below.
 URI (if any)
 |=======================================================================
 
-== Examples
+### Examples
 
 An example of using camel avro producers via http:
 
@@ -288,11 +301,11 @@ In the example above you need to fill `CamelAvroMessageName` header.
 
 [source,xml]
 -------------------------------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:start"/>
-            <to uri="avro:http:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
-            <to uri="log:avro"/>
-        </route>
+        <route>
+            <from uri="direct:start"/>
+            <to uri="avro:http:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <to uri="log:avro"/>
+        </route>
 -------------------------------------------------------------------------------------------------------------------------------
 
 An example of consuming messages using camel avro consumers via netty:

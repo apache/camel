@@ -1,5 +1,4 @@
-[[setOutHeader-eip]]
-== Set Out Header EIP (deprecated)
+= Set Out Header EIP (deprecated)
 == Set Header EIP
 
 This EIP is deprecated.

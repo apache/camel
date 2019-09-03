@@ -1,6 +1,8 @@
+[[yammer-component]]
 = Yammer Component
 
 *Available as of Camel version 2.12*
+
 
 The Yammer component allows you to interact with the
 https://www.yammer.com[Yammer] enterprise social network. Consuming
@@ -25,14 +27,14 @@ for this component:
 </dependency>
 ----
 
-== URI format
+=== URI format
 
 [source]
 ----
 yammer:[function]?[options]
 ----
 
-== Component options
+=== Component options
 
 The Yammer component can be configured with the Yammer account settings
 which are mandatory to configure before using.
@@ -61,7 +63,7 @@ The Yammer component supports 5 options, which are listed below.
 
 You can also configure these options directly in the endpoint.
 
-== Endpoint options
+=== Endpoint options
 
 
 
@@ -74,7 +76,7 @@ yammer:function
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,7 +86,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (28 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -121,7 +123,19 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-yammer-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 18 options, which are listed below.
@@ -154,7 +168,7 @@ The component supports 18 options, which are listed below.
 
 
 
-== Consuming messages
+=== Consuming messages
 
 The Yammer component provides several endpoints for consuming
 messages:
@@ -181,11 +195,11 @@ and topics that the user is following.
 |yammer:private?[options]
 |Private messages received by the user.
 |yammer:received?[options]
-|All messages received by the user
+|*Camel 2.12.1:* All messages received by the user
 |=======================================================================
 
 
-=== Message format
+==== Message format
 
 All messages by default are converted to a POJO model provided in the
 `org.apache.camel.component.yammer.model` package. The original message
@@ -294,7 +308,7 @@ That said, marshaling this data into POJOs is not free so if you need
 you can switch back to using pure JSON by adding the `useJson=false`
 option to your URI.
 
-== Creating messages
+=== Creating messages
 
 To create a new message in the account of the current user, you can use
 the following URI:
@@ -340,7 +354,7 @@ assertEquals("Hi from Camel!", messages.getMessages().get(0).getBody().getPlain(
 ----
 
 
-== Retrieving users
+=== Retrieving users
 
 The Yammer component provides several endpoints for retrieving
 users:
@@ -355,7 +369,7 @@ users:
 |=====================================================
 
 
-== Using an enricher
+=== Using an enricher
 
 It is helpful sometimes (or maybe always in the case of users
 to use an enricher pattern rather than a route

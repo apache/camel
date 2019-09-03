@@ -1,3 +1,4 @@
+[[jgroups-raft-component]]
 = JGroups raft Component
 
 *Available as of Camel version 2.24*
@@ -15,11 +16,11 @@ for this component.
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-jgroups-raft</artifactId>
     <!-- use the same version as your Camel core version -->
-    <version>x.y.z</version>
+    <version>x.y.z</version>
 </dependency>
 ------------------------------------------------------------
 
-== URI format
+### URI format
 
 [source,java]
 -----------------------------
@@ -29,7 +30,7 @@ jgroups-raft:clusterName[?options]
 Where *clusterName* represents the name of the JGroups-raft cluster the
 component should connect to.
 
-== Options
+### Options
 
 // component options: START
 The JGroups raft component supports 5 options, which are listed below.
@@ -56,7 +57,7 @@ jgroups-raft:clusterName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +67,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -81,7 +82,19 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jgroups-raft-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
 The component supports 11 options, which are listed below.
@@ -105,43 +118,43 @@ The component supports 11 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-== Headers
+### Headers
 
-[width="100%",cols="10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
 |Header |Constant |Since version |Description
 
-|`JGROUPSRAFT_COMMIT_INDEX` |`JGroupsRaftEndpoint.HEADER_JGROUPSRAFT_COMMIT_INDEX` | *Consumer* : The commit index (int).
+|`JGROUPSRAFT_COMMIT_INDEX` |`JGroupsRaftEndpoint.HEADER_JGROUPSRAFT_COMMIT_INDEX` |*2.24.0* | *Consumer* : The commit index (int).
 
-|`JGROUPSRAFT_CURRENT_TERM` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_CURRENT_TERM` | *Consumer* : The current raft term (int).
+|`JGROUPSRAFT_CURRENT_TERM` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_CURRENT_TERM` |*2.24.0* | *Consumer* : The current raft term (int).
 
-|`JGROUPSRAFT_IS_LEADER` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_IS_LEADER` | *Consumer*: Whether the node is the Raft Leader or not (boolean).
+|`JGROUPSRAFT_IS_LEADER` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_IS_LEADER` |*2.24.0* | *Consumer*: Whether the node is the Raft Leader or not (boolean).
 
-|`JGROUPSRAFT_LAST_APPLIED` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LAST_APPLIED` | *Consumer*: The index of the last log entry that was appended to the log (int).
+|`JGROUPSRAFT_LAST_APPLIED` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LAST_APPLIED` |*2.24.0* | *Consumer*: The index of the last log entry that was appended to the log (int).
 
-|`JGROUPSRAFT_LEADER_ADDRESS` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LEADER_ADDRESS` | *Consumer*: The Address ot Raft Leader or not (org.jgroups.Address).
+|`JGROUPSRAFT_LEADER_ADDRESS` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LEADER_ADDRESS` |*2.24.0* | *Consumer*: The Address ot Raft Leader or not (org.jgroups.Address).
 
-|`JGROUPSRAFT_LOG_SIZE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LOG_SIZE` | *Consumer*: The Raft log size in number of entries (int).
+|`JGROUPSRAFT_LOG_SIZE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LOG_SIZE` |*2.24.0* | *Consumer*: The Raft log size in number of entries (int).
 
-|`JGROUPSRAFT_LOG_SIZE_BYTE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LOG_SIZE_BYTE` | *Consumer*: The Raft log size in bytes (int).
+|`JGROUPSRAFT_LOG_SIZE_BYTE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LOG_SIZE_BYTE` |*2.24.0* | *Consumer*: The Raft log size in bytes (int).
 
-|`JGROUPSRAFT_RAFT_ID` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_RAFT_ID` | *Consumer*: The Raft id of the node (String).
+|`JGROUPSRAFT_RAFT_ID` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_RAFT_ID` |*2.24.0* | *Consumer*: The Raft id of the node (String).
 
-|`JGROUPSRAFT_EVENT_TYPE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_EVENT_TYPE` | *Consumer*: The event type, one of org.apache.camel.component.jgroups.raft.JGroupsRaftEventType ENUM.
+|`JGROUPSRAFT_EVENT_TYPE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_EVENT_TYPE` |*2.24.0* | *Consumer*: The event type, one of org.apache.camel.component.jgroups.raft.JGroupsRaftEventType ENUM.
 
-|`JGROUPSRAFT_SET_OFFSET` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_OFFSET` | *Producer*: Offset to use in the byte[] buffer to be set().
+|`JGROUPSRAFT_SET_OFFSET` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_OFFSET` |*2.24.0* | *Producer*: Offset to use in the byte[] buffer to be set().
 
-|`JGROUPSRAFT_SET_LENGTH` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_LENGTH` | *Producer*: Length to use in the byte[] buffer to be set().
+|`JGROUPSRAFT_SET_LENGTH` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_LENGTH` |*2.24.0* | *Producer*: Length to use in the byte[] buffer to be set().
 
-|`JGROUPSRAFT_SET_TIMEOUT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEOUT` | *Producer*: Timeout to be used in set() operation.
+|`JGROUPSRAFT_SET_TIMEOUT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEOUT` |*2.24.0* | *Producer*: Timeout to be used in set() operation.
 
-|`JGROUPSRAFT_SET_TIMEUNIT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEUNIT` | *Producer*: Timeunit to be used in set() operation.
+|`JGROUPSRAFT_SET_TIMEUNIT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEUNIT` |*2.24.0* | *Producer*: Timeunit to be used in set() operation.
 |=======================================================================
- 
-== Usage
+ 
+### Usage
 
 Using `jgroups-raft` component with `enableRoleChangeEvents=true` on the consumer side of the route will capture
-change in JGroups-raft role and forward them to the Camel route.
+change in JGrups-raft role and forward them to the Camel route.
 JGroups-raft consumer processes incoming messages
 http://camel.apache.org/asynchronous-routing-engine.html[asynchronously].
 
@@ -161,12 +174,12 @@ to perform a setX() operation on the raftHandle associated with the endpoint..
 from("direct:start").to("jgroups-raft:clusterName");
 --------------------------------------------------
 
-== Examples
+### Examples
 
-=== Receive cluster view change notifications
+#### Receive cluster view change notifications
 
 The snippet below demonstrates how to create the consumer endpoint
-listening to the change role events. By default this option is off.
+listening to the change role events. By default this option is off.
 
 [source,java]
 ---------------------------------------------------------------------
@@ -175,12 +188,12 @@ from("jgroups-raft:clusterName?enableRoleChangeEvents=true").to(mock:mockEndpoin
 ...
 ---------------------------------------------------------------------
 
-=== Keeping singleton route within the cluster
+#### Keeping singleton route within the cluster
 
 The snippet below demonstrates how to keep the singleton consumer route
 in the cluster of Camel Contexts. As soon as the master node dies, one
 of the slaves will be elected as a new master and started. In this
-particular example we want to keep singleton xref:jetty-component.adoc[jetty]
+particular example we want to keep singleton <<jetty-component,jetty>>
 instance listening for the requests on
 address` http://localhost:8080/orders`.
 
@@ -193,5 +206,5 @@ service.setJgroupsClusterName("clusterName");
 ...
 context.addService(service);
 
-from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
+from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
