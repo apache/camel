@@ -52,11 +52,6 @@ public class CreateCamelContextPerTestTrueTest extends CamelTestSupport {
     protected ProducerTemplate template;
 
     @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         LOG.info("createCamelContext()");
         CREATED_CONTEXTS.incrementAndGet();

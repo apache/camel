@@ -23,7 +23,7 @@ import org.junit.Test;
 public class FtpProducerConnectErrorsHeaderTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://xxx@localhost:" + getPort() + "/tmp4/camel?password=xxx&consumer.delay=5000";
+        return "ftp://xxx@localhost:" + getPort() + "/tmp4/camel?password=xxx&delay=5000";
     }
 
     @Test

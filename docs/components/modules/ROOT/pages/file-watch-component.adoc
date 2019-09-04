@@ -1,5 +1,6 @@
 [[file-watch-component]]
 = file-watch Component
+:page-source: components/camel-file-watch/src/main/docs/file-watch-component.adoc
 
 *Available as of Camel version 3.0*
 

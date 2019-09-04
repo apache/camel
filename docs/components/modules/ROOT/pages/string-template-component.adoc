@@ -1,5 +1,6 @@
 [[string-template-component]]
 = String Template Component
+:page-source: components/camel-stringtemplate/src/main/docs/string-template-component.adoc
 
 *Available as of Camel version 1.2*
 

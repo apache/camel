@@ -1,5 +1,6 @@
 [[dynamicRouter-eip]]
 = Dynamic Router EIP
+:page-source: core/camel-core/src/main/docs/eips/dynamicRouter-eip.adoc
 
 The http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic Router] from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows you to route messages while avoiding the dependency of the router on all possible destinations while maintaining its efficiency.
 

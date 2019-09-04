@@ -53,7 +53,7 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public class FallbackTypeConverter {
 
     public static final String PRETTY_PRINT = "CamelJaxbPrettyPrint";

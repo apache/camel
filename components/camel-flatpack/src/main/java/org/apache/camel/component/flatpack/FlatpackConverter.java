@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 import net.sf.flatpack.DataSet;
 import org.apache.camel.Converter;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class FlatpackConverter {
 
     private FlatpackConverter() {

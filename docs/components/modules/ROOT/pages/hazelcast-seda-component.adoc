@@ -1,5 +1,6 @@
 [[hazelcast-seda-component]]
 = Hazelcast SEDA Component
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-seda-component.adoc
 
 *Available as of Camel version 2.7*
 

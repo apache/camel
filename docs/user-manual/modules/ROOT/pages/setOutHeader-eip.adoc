@@ -1,5 +1,6 @@
 [[setOutHeader-eip]]
 = Set Out Header EIP (deprecated)
+:page-source: core/camel-core/src/main/docs/eips/setOutHeader-eip.adoc
 == Set Header EIP
 
 This EIP is deprecated.

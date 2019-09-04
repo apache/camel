@@ -1,5 +1,6 @@
 [[github-component]]
 = GitHub Component
+:page-source: components/camel-github/src/main/docs/github-component.adoc
 
 *Available as of Camel version 2.15*
 

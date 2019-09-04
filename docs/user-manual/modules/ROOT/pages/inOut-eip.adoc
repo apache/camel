@@ -1,5 +1,6 @@
 [[inOut-eip]]
 = In Out EIP
+:page-source: core/camel-core/src/main/docs/eips/inOut-eip.adoc
 
 The *inOut:* EIP define an InOut ExchangePattern.
 

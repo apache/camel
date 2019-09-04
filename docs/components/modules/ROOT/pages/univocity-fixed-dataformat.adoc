@@ -1,5 +1,6 @@
 [[univocity-fixed-dataformat]]
 = uniVocity Fixed Length DataFormat
+:page-source: components/camel-univocity-parsers/src/main/docs/univocity-fixed-dataformat.adoc
 
 *Available as of Camel version 2.15*
 

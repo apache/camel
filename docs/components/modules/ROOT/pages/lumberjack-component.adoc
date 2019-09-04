@@ -1,5 +1,6 @@
 [[lumberjack-component]]
 = Lumberjack Component
+:page-source: components/camel-lumberjack/src/main/docs/lumberjack-component.adoc
 
 *Available as of Camel version 2.18*
 

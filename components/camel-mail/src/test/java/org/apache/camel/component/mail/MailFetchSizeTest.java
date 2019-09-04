@@ -97,7 +97,7 @@ public class MailFetchSizeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&fetchSize=2&consumer.delay=2000"
+                from("pop3://jones@localhost?password=secret&fetchSize=2&delay=2000"
                     + "&delete=true").to("mock:result");
             }
         };

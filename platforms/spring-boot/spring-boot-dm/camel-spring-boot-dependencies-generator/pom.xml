@@ -160,6 +160,7 @@
                             <exclude>javax.servlet:javax.servlet-api</exclude>
                             <exclude>junit:*</exclude>
                             <exclude>org.junit.jupiter:*</exclude>
+                            <exclude>org.junit.vintage:*</exclude>
                             <exclude>net.sf.ehcache:ehcache</exclude>
 
                             <exclude>xml-apis:*</exclude>

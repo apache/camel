@@ -1,5 +1,6 @@
 [[exec-component]]
 = Exec Component
+:page-source: components/camel-exec/src/main/docs/exec-component.adoc
 
 *Available as of Camel version 2.3*
 

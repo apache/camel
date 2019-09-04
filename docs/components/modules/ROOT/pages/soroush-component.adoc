@@ -1,5 +1,6 @@
 [[soroush-component]]
 = Soroush Component
+:page-source: components/camel-soroush/src/main/docs/soroush-component.adoc
 
 *Available as of Camel version 3.0*
 

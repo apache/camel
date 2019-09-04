@@ -31,13 +31,14 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -300,6 +301,7 @@ public class RestProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException("JSon DataFormat " + name + " not found.");
         }
 
+        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         if (json != null) {
             Class<?> clazz = null;
             if (type != null) {
@@ -307,8 +309,8 @@ public class RestProducer extends DefaultAsyncProducer {
                 clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
             }
             if (clazz != null) {
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), json, "unmarshalType", clazz);
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), json, "useList", type.endsWith("[]"));
+                beanIntrospection.setProperty(camelContext, json, "unmarshalType", clazz);
+                beanIntrospection.setProperty(camelContext, json, "useList", type.endsWith("[]"));
             }
             setAdditionalConfiguration(configuration, camelContext, json, "json.in.");
 
@@ -318,8 +320,8 @@ public class RestProducer extends DefaultAsyncProducer {
                 outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
             }
             if (outClazz != null) {
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJson, "unmarshalType", outClazz);
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJson, "useList", outType.endsWith("[]"));
+                beanIntrospection.setProperty(camelContext, outJson, "unmarshalType", outClazz);
+                beanIntrospection.setProperty(camelContext, outJson, "useList", outType.endsWith("[]"));
             }
             setAdditionalConfiguration(configuration, camelContext, outJson, "json.out.");
         }
@@ -352,7 +354,7 @@ public class RestProducer extends DefaultAsyncProducer {
             }
             if (clazz != null) {
                 JAXBContext jc = JAXBContext.newInstance(clazz);
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), jaxb, "context", jc);
+                beanIntrospection.setProperty(camelContext, jaxb, "context", jc);
             }
             setAdditionalConfiguration(configuration, camelContext, jaxb, "xml.in.");
 
@@ -363,11 +365,11 @@ public class RestProducer extends DefaultAsyncProducer {
             }
             if (outClazz != null) {
                 JAXBContext jc = JAXBContext.newInstance(outClazz);
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJaxb, "context", jc);
+                beanIntrospection.setProperty(camelContext, outJaxb, "context", jc);
             } else if (clazz != null) {
                 // fallback and use the context from the input
                 JAXBContext jc = JAXBContext.newInstance(clazz);
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJaxb, "context", jc);
+                beanIntrospection.setProperty(camelContext, outJaxb, "context", jc);
             }
             setAdditionalConfiguration(configuration, camelContext, outJaxb, "xml.out.");
         }

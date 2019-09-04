@@ -1,5 +1,6 @@
 [[pollEnrich-eip]]
 = Poll Enrich EIP
+:page-source: core/camel-core/src/main/docs/eips/pollEnrich-eip.adoc
 
 Camel comes with flavor `pollEnrich` as a choice of content enricher in the DSL.
 The other one is `enrich`

@@ -1,5 +1,6 @@
 [[seda-component]]
 = SEDA Component
+:page-source: components/camel-seda/src/main/docs/seda-component.adoc
 
 *Available as of Camel version 1.1*
 

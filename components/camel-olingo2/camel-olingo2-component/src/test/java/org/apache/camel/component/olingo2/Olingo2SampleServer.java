@@ -82,7 +82,7 @@ public class Olingo2SampleServer {
             m.invoke(null, serviceUrl);
         } catch (Throwable t) {
             LOG.error("Unable to load the required sample class", t);
-            throw new IOException("unable to load the required sample class");
+            throw new IOException("unable to load the required sample class", t);
         }
     }
 }

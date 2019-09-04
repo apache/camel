@@ -1,5 +1,6 @@
 [[onFallback-eip]]
 = On Fallback EIP
+:page-source: core/camel-core/src/main/docs/eips/onFallback-eip.adoc
 
 If you are using *onFallback* then that is intended to be local processing only where you can do a message transformation or call a bean or something as the fallback. If you need to call an external service over the network then you should use *onFallbackViaNetwork* that runs in another independent *HystrixCommand* that uses its own thread pool to not exhaust the first command.
 Configuring Hystrix Example

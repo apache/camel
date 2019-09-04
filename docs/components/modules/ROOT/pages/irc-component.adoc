@@ -1,5 +1,6 @@
 [[irc-component]]
 = IRC Component
+:page-source: components/camel-irc/src/main/docs/irc-component.adoc
 
 *Available as of Camel version 1.1*
 

@@ -1,5 +1,6 @@
 [[SpringJavaConfig-SpringJavaConfig]]
 = Spring Java Config
+:page-source: components/camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc
 
 Spring started life using XML Config to wire beans
 together. However some folks don't like using XML and would rather use

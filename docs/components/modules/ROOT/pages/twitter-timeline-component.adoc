@@ -1,5 +1,6 @@
 [[twitter-timeline-component]]
 = Twitter Timeline Component
+:page-source: components/camel-twitter/src/main/docs/twitter-timeline-component.adoc
 
 *Available as of Camel version 2.10*
 

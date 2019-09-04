@@ -57,12 +57,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -188,7 +188,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
 
         // extract filterInit. parameters
-        Map<String, String> filterInitParameters =  IntrospectionSupport.extractStringProperties(IntrospectionSupport.extractProperties(parameters, "filterInit."));
+        Map filterInitParameters = PropertiesHelper.extractProperties(parameters, "filterInit.");
 
         String address = remaining;
         URI addressUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(address));
@@ -224,9 +224,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             getCamelContext().addService(urlRewrite);
             endpoint.setUrlRewrite(urlRewrite);
         }
-        // setup the proxy host and proxy port
-
-        if (filterInitParameters != null && !filterInitParameters.isEmpty()) {
+        if (!filterInitParameters.isEmpty()) {
             endpoint.setFilterInitParameters(filterInitParameters);
         }
         if (handlerList.size() > 0) {

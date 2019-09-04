@@ -95,7 +95,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
             throw new IllegalArgumentException("Only read method is supported for consumer endpoints");
         }
         final Olingo4Consumer consumer = new Olingo4Consumer(this, processor);
-        // also set consumer.* properties
+        consumer.setSplitResult(configuration.isSplitResult());
         configureConsumer(consumer);
         return consumer;
     }
@@ -205,10 +205,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
             final Map.Entry<String, Object> entry = it.next();
             final String paramName = entry.getKey();
 
-            /**
-             * Avoid swallowing consumer scheduler properties, which get
-             * processed in configureProperties()
-             */
+            // Avoid swallowing consumer scheduler properties, which get processed in configureProperties()
             if (paramName.startsWith("consumer.")) {
                 continue;
             }

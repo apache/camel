@@ -23,7 +23,7 @@ import org.junit.Test;
 public class FromFilePercentSignInPasswordTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://localhost:" + getPort() + "/tmp3/camel?username=us@r&password=t%25st&consumer.initialDelay=3000";
+        return "ftp://localhost:" + getPort() + "/tmp3/camel?username=us@r&password=t%25st&initialDelay=3000";
     }
 
     @Test
@@ -40,7 +40,7 @@ public class FromFilePercentSignInPasswordTest extends FtpServerTestSupport {
             public void configure() throws Exception {
                 from(getFtpUrl()).to("mock:result");
 
-                from("file:src/main/data?noop=true&consumer.delay=3000").to(getFtpUrl());
+                from("file:src/main/data?noop=true&delay=3000").to(getFtpUrl());
             }
         };
     }

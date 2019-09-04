@@ -1,4 +1,5 @@
 = Attachments Component
+:page-source: components/camel-attachments/src/main/docs/attachments.adoc
 
 The attachments component provides the `javax.attachments` API support for Apache Camel.
 A few Camel component uses attachments such as mail and web-service components.

@@ -1,5 +1,6 @@
 [[univocity-csv-dataformat]]
 = uniVocity CSV DataFormat
+:page-source: components/camel-univocity-parsers/src/main/docs/univocity-csv-dataformat.adoc
 
 *Available as of Camel version 2.15*
 

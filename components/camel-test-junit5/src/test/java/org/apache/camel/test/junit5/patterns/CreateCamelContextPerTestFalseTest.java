@@ -27,12 +27,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class CreateCamelContextPerTestFalseTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateCamelContextPerTestFalseTest.class);
@@ -45,11 +47,6 @@ public class CreateCamelContextPerTestFalseTest extends CamelTestSupport {
 
     @Produce("direct:start")
     protected ProducerTemplate template;
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return false;
-    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

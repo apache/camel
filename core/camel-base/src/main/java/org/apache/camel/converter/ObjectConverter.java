@@ -27,7 +27,7 @@ import org.apache.camel.support.ObjectHelper;
  * Some core java.lang based <a
  * href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class ObjectConverter {
 
     /**

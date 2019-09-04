@@ -1,5 +1,6 @@
 [[caffeine-loadcache-component]]
 = Caffeine LoadCache Component
+:page-source: components/camel-caffeine/src/main/docs/caffeine-loadcache-component.adoc
 
 *Available as of Camel version 2.20*
 

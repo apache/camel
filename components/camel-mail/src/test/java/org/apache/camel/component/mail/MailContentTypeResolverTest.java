@@ -94,7 +94,7 @@ public class MailContentTypeResolverTest extends CamelTestSupport {
                     }
                 });
 
-                from("pop3://james@mymailserver.com?password=secret&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
+                from("pop3://james@mymailserver.com?password=secret&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

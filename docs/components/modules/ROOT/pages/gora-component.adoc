@@ -1,5 +1,6 @@
 [[gora-component]]
 = Gora Component
+:page-source: components/camel-gora/src/main/docs/gora-component.adoc
 
 *Available as of Camel version 2.14*
 

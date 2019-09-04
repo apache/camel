@@ -28,7 +28,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 /**
  * A set of converter methods for working with MINA types
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class MinaConverter {
 
     private MinaConverter() {

@@ -34,10 +34,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
@@ -72,25 +72,25 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
 
-    @UriParam(optionalPrefix = "consumer.")
+    @UriParam
     private String query;
-    @UriParam(optionalPrefix = "consumer.")
+    @UriParam
     private String namedQuery;
-    @UriParam(optionalPrefix = "consumer.")
+    @UriParam
     private String nativeQuery;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.", defaultValue = "PESSIMISTIC_WRITE")
+    @UriParam(label = "consumer", defaultValue = "PESSIMISTIC_WRITE")
     private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
-    @UriParam(label = "consumer,advanced", optionalPrefix = "consumer.", multiValue = true)
+    @UriParam(label = "consumer,advanced", multiValue = true)
     private Map<String, Object> parameters;
-    @UriParam(optionalPrefix = "consumer.")
+    @UriParam
     private Class<?> resultClass;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(label = "consumer")
     private boolean transacted;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(label = "consumer")
     private boolean skipLockedEntity;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(label = "consumer")
     private DeleteHandler<Object> deleteHandler;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(label = "consumer")
     private DeleteHandler<Object> preDeleteHandler;
 
     @UriParam(label = "producer", defaultValue = "true")
@@ -173,8 +173,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     @Override
     public void configureProperties(Map<String, Object> options) {
         super.configureProperties(options);
-        Map<String, Object> emProperties = IntrospectionSupport.extractProperties(options, "emf.");
-        if (emProperties != null) {
+        Map<String, Object> emProperties = PropertiesHelper.extractProperties(options, "emf.");
+        if (!emProperties.isEmpty()) {
             setEntityManagerProperties(emProperties);
         }
     }

@@ -1,5 +1,6 @@
 [[ftp-component]]
 = FTP Component
+:page-source: components/camel-ftp/src/main/docs/ftp-component.adoc
 
 *Available as of Camel version 1.1*
 

@@ -1,5 +1,6 @@
 [[hazelcast-atomicvalue-component]]
 = Hazelcast Atomic Number Component
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-atomicvalue-component.adoc
 
 *Available as of Camel version 2.7*
 

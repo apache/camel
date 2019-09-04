@@ -1,5 +1,6 @@
 [[bean-eip]]
 = Bean EIP
+:page-source: core/camel-core/src/main/docs/eips/bean-eip.adoc
 
 The Bean EIP binds beans to Camel message exchanges.
 

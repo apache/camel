@@ -23,7 +23,7 @@ import org.apache.camel.Converter;
 /**
  * Converters for java.time.Duration.
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class DurationConverter {
 
     /**

@@ -30,7 +30,7 @@ import org.junit.Test;
 public class FtpConsumerIPV6BodyAsStringTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@[::1]:" + getPort() + "/tmp4/camel?password=admin&consumer.delay=5000";
+        return "ftp://admin@[::1]:" + getPort() + "/tmp4/camel?password=admin&delay=5000";
     }
 
     @Override

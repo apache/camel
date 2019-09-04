@@ -31,7 +31,7 @@ import org.apache.camel.Component;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * Abstract base class for API Component Endpoints.
  */
 public abstract class AbstractApiEndpoint<E extends ApiName, T>
-    extends DefaultEndpoint implements PropertyNamesInterceptor, PropertiesInterceptor {
+    extends ScheduledPollEndpoint implements PropertyNamesInterceptor, PropertiesInterceptor {
 
     // thread pool executor with Endpoint Class name as keys
     private static Map<String, ExecutorService> executorServiceMap = new ConcurrentHashMap<>();

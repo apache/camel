@@ -1,5 +1,6 @@
 [[aggregate-eip]]
 = Aggregate EIP
+:page-source: core/camel-core/src/main/docs/eips/aggregate-eip.adoc
 
 The
 http://www.enterpriseintegrationpatterns.com/Aggregator.html[Aggregator]

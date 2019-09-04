@@ -1,5 +1,6 @@
 [[log-eip]]
 = Log EIP
+:page-source: core/camel-core/src/main/docs/eips/log-eip.adoc
 
 How can I log the processing of a xref:message.adoc[Message]?
 

@@ -37,9 +37,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 
 /**
  * Integrates Camel with Wordpress.
@@ -123,7 +123,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
 
             if (configuration.getSearchCriteria() == null) {
                 final SearchCriteria searchCriteria = WordpressOperationType.valueOf(operation).getCriteriaType().newInstance();
-                Map<String, Object> criteriaOptions = IntrospectionSupport.extractProperties(options, "criteria.");
+                Map<String, Object> criteriaOptions = PropertiesHelper.extractProperties(options, "criteria.");
                 // any property that has a "," should be a List
                 criteriaOptions = criteriaOptions.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
                     if (e.toString().contains(",")) {

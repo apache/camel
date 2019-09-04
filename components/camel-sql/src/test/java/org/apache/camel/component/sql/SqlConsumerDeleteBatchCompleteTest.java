@@ -80,7 +80,7 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects order by id?consumer.initialDelay=0&consumer.delay=50&consumer.onConsumeBatchComplete=delete from projects")
+                from("sql:select * from projects order by id?initialDelay=0&delay=50&consumer.onConsumeBatchComplete=delete from projects")
                     .to("mock:result");
             }
         };

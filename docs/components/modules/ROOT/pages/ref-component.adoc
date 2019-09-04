@@ -1,5 +1,6 @@
 [[ref-component]]
 = Ref Component
+:page-source: components/camel-ref/src/main/docs/ref-component.adoc
 
 *Available as of Camel version 1.2*
 

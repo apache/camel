@@ -1,5 +1,6 @@
 [[properties-component]]
 = Properties Component
+:page-source: components/camel-properties/src/main/docs/properties-component.adoc
 
 *Available as of Camel version 2.3*
 

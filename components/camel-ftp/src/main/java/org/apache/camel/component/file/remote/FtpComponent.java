@@ -24,7 +24,7 @@ import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.strategy.FtpProcessStrategyFactory;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
@@ -77,8 +77,8 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
      * when creating a client.
      */
     protected void extractAndSetFtpClientConfigParameters(Map<String, Object> parameters, FtpEndpoint<FTPFile> answer) {
-        if (IntrospectionSupport.hasProperties(parameters, "ftpClientConfig.")) {
-            Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClientConfig.");
+        if (PropertiesHelper.hasProperties(parameters, "ftpClientConfig.")) {
+            Map<String, Object> param = PropertiesHelper.extractProperties(parameters, "ftpClientConfig.");
             answer.setFtpClientConfigParameters(param);
         }
     }
@@ -89,8 +89,8 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
      * when creating a client.
      */
     protected void extractAndSetFtpClientParameters(Map<String, Object> parameters, FtpEndpoint<FTPFile> answer) {
-        if (IntrospectionSupport.hasProperties(parameters, "ftpClient.")) {
-            Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClient.");
+        if (PropertiesHelper.hasProperties(parameters, "ftpClient.")) {
+            Map<String, Object> param = PropertiesHelper.extractProperties(parameters, "ftpClient.");
             answer.setFtpClientParameters(param);
         }
     }

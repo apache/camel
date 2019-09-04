@@ -29,10 +29,10 @@ import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerContext;
@@ -42,12 +42,8 @@ import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 
 /**
- * A factory for QuartzEndpoint. This component will hold a Quartz Scheduler that will provide scheduled timer based
+ * This component will hold a Quartz Scheduler that will provide scheduled timer based
  * endpoint that generate a QuartzMessage to a route. Currently it support Cron and Simple trigger scheduling type.
- *
- * <p>This component uses Quartz 2.x API and provide all the features from "camel-quartz". It has reused some
- * of the code, but mostly has been re-written in attempt to be more easier to maintain, and use Quartz more
- * fully.</p>
  */
 @Component("quartz")
 public class QuartzComponent extends DefaultComponent implements ExtendedStartupListener {
@@ -341,8 +337,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         }
 
         // Extract trigger.XXX and job.XXX properties to be set on endpoint below
-        Map<String, Object> triggerParameters = IntrospectionSupport.extractProperties(parameters, "trigger.");
-        Map<String, Object> jobParameters = IntrospectionSupport.extractProperties(parameters, "job.");
+        Map<String, Object> triggerParameters = PropertiesHelper.extractProperties(parameters, "trigger.");
+        Map<String, Object> jobParameters = PropertiesHelper.extractProperties(parameters, "job.");
 
         // Create quartz endpoint
         QuartzEndpoint result = new QuartzEndpoint(uri, this);

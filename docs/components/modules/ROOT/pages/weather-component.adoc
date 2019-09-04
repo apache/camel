@@ -1,5 +1,6 @@
 [[weather-component]]
 = Weather Component
+:page-source: components/camel-weather/src/main/docs/weather-component.adoc
 
 *Available as of Camel version 2.12*
 

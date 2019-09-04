@@ -20,7 +20,7 @@ public class FromFilePercentSignInPasswordUserInfoEncodedTest extends FromFilePe
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://us%40r:t%25st@localhost:" + getPort() + "/tmp3/camel?consumer.initialDelay=3000";
+        return "ftp://us%40r:t%25st@localhost:" + getPort() + "/tmp3/camel?initialDelay=3000";
     }
 
 }

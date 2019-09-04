@@ -27,7 +27,7 @@ import org.junit.Test;
 public class FromFtpRemoteFileSortByIgnoreCaseExpressionTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/sortbyignore?password=admin&consumer.delay=5000";
+        return "ftp://admin@localhost:" + getPort() + "/sortbyignore?password=admin&delay=5000";
     }
 
     @Override

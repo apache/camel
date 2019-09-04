@@ -1,5 +1,6 @@
 [[hazelcast-topic-component]]
 = Hazelcast Topic Component
+:page-source: components/camel-hazelcast/src/main/docs/hazelcast-topic-component.adoc
 
 *Available as of Camel version 2.15*
 

@@ -21,8 +21,11 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XStreamDataFormatOmitFieldsTest extends CamelTestSupport {
 
@@ -40,10 +43,10 @@ public class XStreamDataFormatOmitFieldsTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);        
-        assertTrue("Should contain name field", body.contains("<name>"));
-        assertFalse("Should not contain price field", body.contains("price"));
-        assertTrue("Should contain amount field", body.contains("<amount>"));
+        String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertTrue(body.contains("<name>"), "Should contain name field");
+        assertFalse(body.contains("price"), "Should not contain price field");
+        assertTrue(body.contains("<amount>"), "Should contain amount field");
     }
     
 

@@ -1,5 +1,6 @@
 [[jcache-component]]
 = JCache Component
+:page-source: components/camel-jcache/src/main/docs/jcache-component.adoc
 
 *Available as of Camel version 2.17*
 

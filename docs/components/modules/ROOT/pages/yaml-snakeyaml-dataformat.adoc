@@ -1,5 +1,6 @@
 [[yaml-snakeyaml-dataformat]]
 = YAML SnakeYAML DataFormat
+:page-source: components/camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc
 
 *Available as of Camel version 2.17*
 

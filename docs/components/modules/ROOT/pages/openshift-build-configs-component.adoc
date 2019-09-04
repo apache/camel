@@ -1,5 +1,6 @@
 [[openshift-build-configs-component]]
 = Openshift Build Config Component
+:page-source: components/camel-kubernetes/src/main/docs/openshift-build-configs-component.adoc
 
 *Available as of Camel version 2.17*
 

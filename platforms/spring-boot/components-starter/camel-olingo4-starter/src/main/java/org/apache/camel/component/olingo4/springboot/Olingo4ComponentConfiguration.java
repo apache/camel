@@ -143,6 +143,12 @@ public class Olingo4ComponentConfiguration
          * communicated by this component.
          */
         private Boolean filterAlreadySeen = false;
+        /**
+         * For endpoints that return an array or collection, a consumer endpoint
+         * will map every element to distinct messages, unless splitResult is
+         * set to false.
+         */
+        private Boolean splitResult = true;
 
         public Olingo4ApiName getApiName() {
             return apiName;
@@ -240,6 +246,14 @@ public class Olingo4ComponentConfiguration
 
         public void setFilterAlreadySeen(Boolean filterAlreadySeen) {
             this.filterAlreadySeen = filterAlreadySeen;
+        }
+
+        public Boolean getSplitResult() {
+            return splitResult;
+        }
+
+        public void setSplitResult(Boolean splitResult) {
+            this.splitResult = splitResult;
         }
     }
 }

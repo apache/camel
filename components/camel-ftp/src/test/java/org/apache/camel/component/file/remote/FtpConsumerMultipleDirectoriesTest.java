@@ -26,7 +26,7 @@ import org.junit.Test;
 public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/multidir/?password=admin&recursive=true&consumer.delay=5000&sortBy=file:path";
+        return "ftp://admin@localhost:" + getPort() + "/multidir/?password=admin&recursive=true&delay=5000&sortBy=file:path";
     }
 
     @Override

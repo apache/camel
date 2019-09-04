@@ -680,18 +680,15 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     static RestClient createRestClient(final CamelContext camelContext, final Map<String, Object> properties) throws Exception {
 
         final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
-        // let's work with a copy for IntrospectionSupport so original
-        // properties are intact
+        // let's work with a copy so original properties are intact
         PropertyBindingSupport.bindProperties(camelContext, config, new HashMap<>(properties));
 
         final SalesforceLoginConfig loginConfig = new SalesforceLoginConfig();
-        // let's work with a copy for IntrospectionSupport so original
-        // properties are intact
+        // let's work with a copy so original properties are intact
         PropertyBindingSupport.bindProperties(camelContext, loginConfig, new HashMap<>(properties));
 
         final SSLContextParameters sslContextParameters = Optional.ofNullable(camelContext.getSSLContextParameters()).orElseGet(() -> new SSLContextParameters());
-        // let's work with a copy for IntrospectionSupport so original
-        // properties are intact
+        // let's work with a copy so original properties are intact
         PropertyBindingSupport.bindProperties(camelContext, sslContextParameters, new HashMap<>(properties));
 
         final SslContextFactory sslContextFactory = new SslContextFactory();

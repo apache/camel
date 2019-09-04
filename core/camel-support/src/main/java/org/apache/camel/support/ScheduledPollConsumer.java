@@ -413,15 +413,17 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         }
 
         if (scheduler == null) {
-            scheduler = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
+            DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
+            scheduler.setDelay(delay);
+            scheduler.setInitialDelay(initialDelay);
+            scheduler.setTimeUnit(timeUnit);
+            scheduler.setUseFixedDelay(useFixedDelay);
+            this.scheduler = scheduler;
         }
         scheduler.setCamelContext(getEndpoint().getCamelContext());
         scheduler.onInit(this);
 
         // configure scheduler with options from this consumer
-        Map<String, Object> properties = new LinkedHashMap<>();
-        getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(this, properties, null);
-        PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, properties);
         if (schedulerProperties != null && !schedulerProperties.isEmpty()) {
             // need to use a copy in case the consumer is restarted so we keep the properties
             Map<String, Object> copy = new LinkedHashMap<>(schedulerProperties);

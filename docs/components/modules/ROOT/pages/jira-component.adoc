@@ -1,5 +1,6 @@
 [[jira-component]]
 = Jira Component
+:page-source: components/camel-jira/src/main/docs/jira-component.adoc
 
 *Available as of Camel version 3.0*
 

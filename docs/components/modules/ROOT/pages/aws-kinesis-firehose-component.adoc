@@ -1,5 +1,6 @@
 [[aws-kinesis-firehose-component]]
 = AWS Kinesis Firehose Component
+:page-source: components/camel-aws-kinesis/src/main/docs/aws-kinesis-firehose-component.adoc
 
 *Available as of Camel version 2.19*
 

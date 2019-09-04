@@ -1,5 +1,6 @@
 [[mail-component]]
 = Mail Component
+:page-source: components/camel-mail/src/main/docs/mail-component.adoc
 
 *Available as of Camel version 1.0*
 
@@ -500,7 +501,7 @@ interval, `consumer.delay`, as 60000 milliseconds = 60 seconds.
 [source,java]
 -------------------------------------------------------
 from("imap://admin@mymailserver.com
-     password=secret&unseen=true&consumer.delay=60000")
+     password=secret&unseen=true&delay=60000")
     .to("seda://mails");
 -------------------------------------------------------
 
@@ -537,7 +538,7 @@ extensive documentation on how to do this.
 [source,java]
 -------------------------------------------------------------------------------------
 from("imaps://imap.gmail.com?username=YOUR_USERNAME@gmail.com&password=YOUR_PASSWORD"
-    + "&delete=false&unseen=true&consumer.delay=60000").to("log:newmail");
+    + "&delete=false&unseen=true&delay=60000").to("log:newmail");
 -------------------------------------------------------------------------------------
 
 The preceding route polls the Google mail inbox for new mails once every
@@ -565,7 +566,7 @@ SSL sample:
 [source,java]
 ---------------------------------------------------------------------------------------
 from("imaps://imap.gmail.com?username=YOUR_USERNAME@gmail.com&password=YOUR_PASSWORD"
-    + "&delete=false&unseen=true&consumer.delay=60000").process(new MyMailProcessor());
+    + "&delete=false&unseen=true&delay=60000").process(new MyMailProcessor());
 ---------------------------------------------------------------------------------------
 
 Instead of logging the mail we use a processor where we can process the

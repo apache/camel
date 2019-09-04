@@ -1,5 +1,6 @@
 [[jooq-component]]
 = JOOQ Component
+:page-source: components/camel-jooq/src/main/docs/jooq-component.adoc
 
 *Available as of Camel version 3.0*
 

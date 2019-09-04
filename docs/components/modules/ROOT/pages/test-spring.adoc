@@ -1,4 +1,5 @@
 = Test Spring
+:page-source: components/camel-test-spring/src/main/docs/test-spring.adoc
 
 *Available since 2.10*
 

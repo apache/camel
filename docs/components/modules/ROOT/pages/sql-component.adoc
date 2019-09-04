@@ -1,5 +1,6 @@
 [[sql-component]]
 = SQL Component
+:page-source: components/camel-sql/src/main/docs/sql-component.adoc
 
 *Available as of Camel version 1.4*
 

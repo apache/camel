@@ -139,6 +139,10 @@ The `rxjava2` component has been renamed to `rxjava`, and it's corresponding com
 
 We have also renamed `camel-jetty9` to `camel-jetty`. The supported scheme is now `jetty`.
 
+### Using endpoint options with consumer. prefix
+
+Endpoints with `consumer.` prefix such as `consumer.delay=5000` are no longer supported (deprecated in latest Camel 2.x) and you should just use the option without the `consumer.` prefix, eg `delay=5000`.
+
 ### Tracing
 
 A new tracer has been implemented and the old tracer has been removed.
@@ -500,7 +504,7 @@ When using the option `groupedExchange` on the aggregator EIP then the output of
 
 ### Fallback type converters
 
-The `@FallbackConverter` annotation has been removed, and you should use `@Converter(fallback = true)` instead. Also you can set `@Converter(loader = true)` on the converter class to allow Camel to generate source code for loading type converters in a faster way.
+The `@FallbackConverter` annotation has been removed, and you should use `@Converter(fallback = true)` instead. Also you can set `@Converter(generateLoader = true)` on the converter class to allow Camel to generate source code for loading type converters in a faster way.
 
 
 ### Removed JMX APIs for explaining EIPs, components, etc.

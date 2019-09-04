@@ -1,5 +1,6 @@
 [[webhook-component]]
 = Webhook Component
+:page-source: components/camel-webhook/src/main/docs/webhook-component.adoc
 
 *Available as of Camel version 3.0*
 

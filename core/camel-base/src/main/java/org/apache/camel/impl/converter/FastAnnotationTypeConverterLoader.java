@@ -30,7 +30,7 @@ public final class FastAnnotationTypeConverterLoader extends AnnotationTypeConve
         Converter conv = clazz.getAnnotation(Converter.class);
         if (conv != null) {
             // skip all loader classes as they have already been loaded
-            return !conv.loader();
+            return !conv.generateLoader();
         }
         return true;
     }

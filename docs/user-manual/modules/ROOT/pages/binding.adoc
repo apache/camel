@@ -5,7 +5,7 @@ In Camel terms a _binding_ is a way of wrapping an
 xref:endpoint.adoc[Endpoint] in a contract; such as a
 xref:data-format.adoc[Data Format], a xref:content-enricher.adoc[Content
 Enricher] or validation step. Bindings are completely optional and you
-can choose to use them on any xref:xref:components::index.adoc[camel endpoint].
+can choose to use them on any xref:components::index.adoc[camel endpoint].
 
 Bindings are inspired by the work of
 http://www.jboss.org/switchyard[SwitchYard project] adding service

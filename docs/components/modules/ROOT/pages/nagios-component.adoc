@@ -1,5 +1,6 @@
 [[nagios-component]]
 = Nagios Component
+:page-source: components/camel-nagios/src/main/docs/nagios-component.adoc
 
 *Available as of Camel version 2.3*
 

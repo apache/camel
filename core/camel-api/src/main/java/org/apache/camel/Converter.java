@@ -73,6 +73,6 @@ public @interface Converter {
      * <p/>
      * Important this configuration must be set on the class-level, not on the method.
      */
-    boolean loader() default false;
+    boolean generateLoader() default false;
 
 }

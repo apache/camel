@@ -28,6 +28,4 @@ import org.quartz.PersistJobDataAfterExecution;
 @DisallowConcurrentExecution
 public class StatefulCamelJob extends CamelJob {
 
-    private static final long serialVersionUID = 25L;
-
 }
