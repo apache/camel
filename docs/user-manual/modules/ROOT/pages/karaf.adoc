@@ -109,7 +109,7 @@ To install Camel, just install the `camel` feature:
 
 [source,sh]
 ----
-karaf@root> features:install camel
+karaf@root> feature:install camel
 ----
 
 You have to install the Camel features depending of your requirements.
@@ -119,7 +119,7 @@ install the `camel-blueprint` feature:
 
 [source,sh]
 ----
-karaf@root> features:install camel-blueprint
+karaf@root> feature:install camel-blueprint
 ----
 
 If, in your route, you use an endpoint like `stream:out`, you have to
@@ -127,7 +127,7 @@ install the `camel-stream` feature:
 
 [source,sh]
 ----
-karaf@root> features:install camel-stream
+karaf@root> feature:install camel-stream
 ----
 
 [[Karaf-Karafcommands]]
