@@ -32,7 +32,7 @@ Maven users will need to add the following dependency to their
 </dependency>
 ------------------------------------------------------------
 
-=== URI format
+== URI format
 
 The endpoint can initiate the Cassandra connection or use an existing
 one.
@@ -52,7 +52,7 @@ To fine tune the Cassandra connection (SSL options, pooling options,
 load balancing policy, retry policy, reconnection policy...), create
 your own Cluster instance and give it to the Camel endpoint.
 
-=== Cassandra Options
+== Cassandra Options
 
 
 // component options: START
@@ -148,9 +148,9 @@ The component supports 2 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Messages
+== Messages
 
-==== Incoming Message
+=== Incoming Message
 
 The Camel Cassandra endpoint expects a bunch of simple objects (`Object`
 or `Object[]` or `Collection<Object>`) which will be bound to the CQL
@@ -162,7 +162,7 @@ Headers:
 * `CamelCqlQuery` (optional, `String` or `RegularStatement`): CQL query
 either as a plain String or built using the `QueryBuilder`.
 
-==== Outgoing Message
+=== Outgoing Message
 
 The Camel Cassandra endpoint produces one or many a Cassandra Row
 objects depending on the `resultSetConversionStrategy`:
@@ -175,7 +175,7 @@ objects depending on the `resultSetConversionStrategy`:
 * Anything else, if `resultSetConversionStrategy` is a custom
 implementation of the `ResultSetConversionStrategy`
 
-=== Repositories
+== Repositories
 
 Cassandra can be used to store message keys or messages for the
 idempotent and aggregation EIP.
@@ -186,7 +186,7 @@ anti-patterns queues and queue like datasets]. It's advised to use
 LeveledCompaction and a small GC grace setting for these tables to allow
 tombstoned rows to be removed quickly.
 
-=== Idempotent repository
+== Idempotent repository
 
 The `NamedCassandraIdempotentRepository` stores messages keys in a
 Cassandra table like this:
@@ -228,7 +228,7 @@ Alternatively, the `CassandraIdempotentRepository` does not have a
 `LOCAL_QUORUM`…
 |=======================================================================
 
-=== Aggregation repository
+== Aggregation repository
 
 The `NamedCassandraAggregationRepository` stores exchanges by
 correlation key in a Cassandra table like this:
@@ -273,7 +273,7 @@ Alternatively, the `CassandraAggregationRepository` does not have a
 `LOCAL_QUORUM`…
 |=======================================================================
 
-=== Examples
+== Examples
 
 To insert something on a table you can use the following code:
 

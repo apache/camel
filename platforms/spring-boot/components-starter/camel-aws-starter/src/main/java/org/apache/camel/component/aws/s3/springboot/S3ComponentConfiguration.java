@@ -127,8 +127,7 @@ public class S3ComponentConfiguration
          */
         private String secretKey;
         /**
-         * Reference to a com.amazonaws.services.sqs.AmazonS3 in the
-         * link:registry.htmlRegistry.
+         * Reference to a com.amazonaws.services.sqs.AmazonS3 in the registry.
          */
         private AmazonS3 amazonS3Client;
         /**

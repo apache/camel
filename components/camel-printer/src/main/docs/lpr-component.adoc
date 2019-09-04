@@ -138,10 +138,14 @@ route.
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
        from(file://inputdir/?delete=true)
-       .to("lpr://localhost/default?copies=2" +
-           "&flavor=DocFlavor.INPUT_STREAM&" +
-           "&mimeType=AUTOSENSE" +
-           "&mediaSize=NA_LETTER" +
+       .to("lpr://localhost/default?copies=2"
+
+           "&flavor=DocFlavor.INPUT_STREAM&"
+
+           "&mimeType=AUTOSENSE"
+
+           "&mediaSize=NA_LETTER"
+
            "&sides=one-sided")
     }};
 -----------------------------------------------
@@ -153,9 +157,12 @@ RouteBuilder builder = new RouteBuilder() {
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
        from(file://inputdir/?delete=true)
-       .to("lpr://remotehost/sales/salesprinter" +
-           "?copies=2&sides=one-sided" +
-           "&mimeType=GIF&mediaSize=ISO_A4" +
+       .to("lpr://remotehost/sales/salesprinter"
+
+           "?copies=2&sides=one-sided"
+
+           "&mimeType=GIF&mediaSize=ISO_A4"
+
            "&flavor=DocFlavor.INPUT_STREAM")
    }};
 --------------------------------------------------
@@ -167,10 +174,14 @@ RouteBuilder builder = new RouteBuilder() {
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
        from(file://inputdir/?delete=true)
-       .to("lpr://remotehost/sales/salesprinter" +
-           "?copies=2&sides=one-sided" +
-           "&mimeType=JPEG" +
-           "&mediaSize=JAPANESE_POSTCARD" +
+       .to("lpr://remotehost/sales/salesprinter"
+
+           "?copies=2&sides=one-sided"
+
+           "&mimeType=JPEG"
+
+           "&mediaSize=JAPANESE_POSTCARD"
+
            "&flavor=DocFlavor.INPUT_STREAM")
     }};
 --------------------------------------------------

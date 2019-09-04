@@ -6,10 +6,12 @@
 
 
 The *netty4* component in Camel is a socket communication component,
-based on the http://netty.io/[Netty] project version 4. +
+based on the http://netty.io/[Netty] project version 4.
+
  Netty is a NIO client server framework which enables quick and easy
 development of networkServerInitializerFactory applications such as
-protocol servers and clients. +
+protocol servers and clients.
+
  Netty greatly simplifies and streamlines network programming such as
 TCP and UDP socket server.
 
@@ -33,7 +35,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 The URI scheme for a netty component is as follows
 
@@ -49,7 +51,7 @@ UDP.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 // component options: START
 The Netty4 component supports 6 options, which are listed below.
@@ -404,7 +406,7 @@ RouteBuilder builder = new RouteBuilder() {
 Using the JSSE Configuration Utility
 
 As of Camel 2.9, the Netty component supports SSL/TLS configuration
-through the link:camel-configuration-utilities.html[Camel JSSE
+through the xref:latest@manual::camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how
@@ -485,7 +487,7 @@ Getting access to SSLSession and the client certificate
 
 You can get access to the `javax.net.ssl.SSLSession` if you eg need to
 get details about the client certificate. When `ssl=true` then the
-<<netty4-component,Netty4>> component will store the `SSLSession` as a
+xref:netty4-component.adoc[Netty4] component will store the `SSLSession` as a
 header on the Camel Message as shown below:
 
 [source,java]
@@ -616,14 +618,17 @@ or via XML.
 === Closing Channel When Complete
 
 When acting as a server you sometimes want to close the channel when,
-for example, a client conversion is finished. +
+for example, a client conversion is finished.
+
  You can do this by simply setting the endpoint option
 `disconnect=true`.
 
-However you can also instruct Camel on a per message basis as follows. +
+However you can also instruct Camel on a per message basis as follows.
+
  To instruct Camel to close the channel, you should add a header with
 the key `CamelNettyCloseChannelWhenComplete` set to a boolean `true`
-value. +
+value.
+
  For instance, the example below will close the channel after it has
 written the bye message back to the client:
 
@@ -745,9 +750,7 @@ for Netty consumers, and a
 Netty producers.
 
 Then in the Camel routes we can refer to this worker pools by
-configuring the `workerPool` option in the
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=URI&linkCreation=true&fromPageId=45877614[URI]
-as shown below:
+configuring the `workerPool` option as shown below:
 
 [source,xml]
 ----
@@ -794,4 +797,3 @@ This provides support for timeout and other complexities you otherwise would nee
 
 You can find an example with the Apache Camel source code in the examples directory
 under the `camel-example-netty-custom-correlation` directory.
-

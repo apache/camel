@@ -26,7 +26,8 @@ part, if the parameter is set to false it will leave the message alone.
 
 MIME headers of the mulitpart as "MIME-Version" and "Content-Type" are
 set as camel headers to the message. If the parameter "headersInline" is
-set to true it will also create a MIME multipart message in any case.  +
+set to true it will also create a MIME multipart message in any case. 
+
 Furthermore the MIME headers of the multipart are written as part of the
 message body, not as camel headers.
 

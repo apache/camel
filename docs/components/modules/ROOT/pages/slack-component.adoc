@@ -193,4 +193,3 @@ from("slack://general?token=RAW(<YOUR_TOKEN>)&maxResults=1")
 ---------------------------------------------------------------------------------------------------------------------------
 
 In this way you'll get the last message from general channel. The consumer will take track of the timestamp of the last message consumed and in the next poll it will check from that timestamp.
-

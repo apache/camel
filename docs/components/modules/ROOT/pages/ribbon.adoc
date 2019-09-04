@@ -74,4 +74,3 @@ from("direct:start")
     </serviceCall>
 </route>
 ----
-

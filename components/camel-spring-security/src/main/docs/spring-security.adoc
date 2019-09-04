@@ -1,5 +1,5 @@
 [[SpringSecurity-SpringSecurity]]
-== Spring Security
+= Spring Security
 
 *Available as of Camel 2.3*
 
@@ -16,7 +16,7 @@ authorization system, please review the current reference documentation
 on the SpringSource web site linked above.
 
 [[SpringSecurity-Creatingauthorizationpolicies]]
-=== Creating authorization policies
+== Creating authorization policies
 
 Access to a route is controlled by an instance of a
 `SpringSecurityAuthorizationPolicy` object. A policy object contains the
@@ -60,7 +60,7 @@ header under Exchange.AUTHENTICATION, check the Spring Security
 |=======================================================================
 
 [[SpringSecurity-ControllingaccesstoCamelroutes]]
-=== Controlling access to Camel routes
+== Controlling access to Camel routes
 
 A Spring Security `AuthenticationManager` and `AccessDecisionManager`
 are required to use this component. Here is an example of how to
@@ -77,17 +77,16 @@ authenticated and contains the `ROLE_ADMIN` authority can be located by
 the _admin_ `SpringSecurityAuthorizationPolicy`.
 
 [[SpringSecurity-Authentication]]
-=== Authentication
+== Authentication
 
 The process of obtaining security credentials that are used for
 authorization is not specified by this component. You can write your own
 processors or components which get authentication information from the
 exchange depending on your needs. For example, you might create a
 processor that gets credentials from an HTTP request header originating
-in the <<jetty-component,Jetty>> component. No matter how the credentials
+in the xref:jetty-component.adoc[Jetty] component. No matter how the credentials
 are collected, they need to be placed in the In message or the
-`SecurityContextHolder` so the Camel link:spring-security.html[Spring
-Security] component can access them:
+`SecurityContextHolder` so the Camel Spring Security component can access them:
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------
@@ -143,11 +142,11 @@ implementation of the
 `org.apache.camel.component.spring.security.AuthenticationAdapter` to
 your `<authorizationPolicy>` bean. This can be useful if you are working
 with components that do not use Spring Security but do provide a
-`Subject`. At this time, only the <<cxf-component,CXF>> component populates
+`Subject`. At this time, only the xref:cxf-component.adoc[CXF] component populates
 the `Exchange.AUTHENTICATION` header.
 
 [[SpringSecurity-Handlingauthenticationandauthorizationerrors]]
-=== Handling authentication and authorization errors
+== Handling authentication and authorization errors
 
 If authentication or authorization fails in the
 `SpringSecurityAuthorizationPolicy`, a `CamelAuthorizationException`
@@ -179,7 +178,7 @@ policy as well as the type of exception:
 ------------------------------------------------------------------------------------------
 
 [[SpringSecurity-Dependencies]]
-=== Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

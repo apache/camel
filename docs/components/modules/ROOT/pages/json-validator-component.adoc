@@ -23,7 +23,7 @@ for this component:
 ----
 
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -35,7 +35,7 @@ Where *resourceUri* is some URL to a local resource on the classpath or a
 full URL to a remote resource or resource on the file system which contains 
 the JSON Schema to validate against.
  
-=== URI Options
+== URI Options
 
 // component options: START
 The JSON Schema Validator component has no options.
@@ -107,7 +107,7 @@ The component supports 2 options, which are listed below.
 
 
 
-=== Example
+== Example
 
 Assumed we have the following JSON Schema
 

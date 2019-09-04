@@ -6,7 +6,8 @@
 
 
 The StAX component allows messages to be process through a SAX
-http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler]. +
+http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler].
+
 Another feature of this component is to allow to iterate over JAXB
 records using StAX, for example using the Splitter
 EIP.
@@ -241,4 +242,3 @@ from("file:target/in")
 === The previous example with XML DSL
 
 The example above could be implemented as follows in XML DSL
-

@@ -9,12 +9,12 @@ http://swagger.io/[Swagger] (Open API) specification document and
 delegates to a component implementing the _RestProducerFactory_
 interface. Currently known working components are:
 
-* <<http-component,http>>
-* <<http4-component,http4>>
-* <<netty4-http-component,netty4-http>>
-* <<restlet-component,restlet>>
-* <<jetty-component,jetty>>
-* <<undertow-component,undertow>>
+* xref:http-component.adoc[HTTP]
+* xref:http4-component.adoc[HTTP4]
+* xref:netty4-http-component.adoc[Netty HTTP]
+* xref:restlet-component.adoc[Restlet]
+* xref:jetty-component.adoc[Jetty]
+* xref:undertow-component.adoc[undertow]
 
 Maven users will need to add the following dependency to their
 `pom.xml` for this component:
@@ -80,7 +80,7 @@ to message headers you can specify REST operation's parameters as
 endpoint parameters, these will be constant for all subsequent
 invocations so it makes sense to use this feature only for parameters
 that are indeed constant for all invocations -- for example API version
-in path such as `/api/{version}/users/{id}`. 
+in path such as `/api/\{version\}/users/\{id\}`. 
 
 == Options
 
@@ -185,7 +185,7 @@ http://petstore.swagger.io/[_PetStore_] provided REST API simply
 reference the specification URI and desired operation id from the
 Swagger specification or download the specification and store it as
 `swagger.json` (in the root) of CLASSPATH that way it will be 
-automaticaly used. Let's use the <<undertow-component,Undertow>>
+automaticaly used. Let's use the xref:undertow-component.adoc[Undertow]
 component to perform all the requests and Camels excelent support for 
 Spring Boot.
 

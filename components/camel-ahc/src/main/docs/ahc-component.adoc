@@ -235,11 +235,16 @@ response
 == Calling using GET or POST
 
 The following algorithm is used to determine if either `GET` or `POST`
-HTTP method should be used: +
- 1. Use method provided in header. +
- 2. `GET` if query string is provided in header. +
- 3. `GET` if endpoint is configured with a query string. +
- 4. `POST` if there is data to send (body is not null). +
+HTTP method should be used:
+
+ 1. Use method provided in header.
+
+ 2. `GET` if query string is provided in header.
+
+ 3. `GET` if endpoint is configured with a query string.
+
+ 4. `POST` if there is data to send (body is not null).
+
  5. `GET` otherwise.
 
 == Configuring URI to call
@@ -381,7 +386,8 @@ Exchange exchange = template.send("ahc:http://www.google.com/search", new Proces
 == Configuring AsyncHttpClient
 
 The `AsyncHttpClient` client uses a `AsyncHttpClientConfig` to configure
-the client. See the documentation at +
+the client. See the documentation at
+
  http://github.com/sonatype/async-http-client[Async Http Client] for
 more details.
 

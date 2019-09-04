@@ -278,4 +278,3 @@ of Camel you are using.
 
 See the `examples/camel-example-ssh` and
 `examples/camel-example-ssh-security` in the Camel distribution.
-

@@ -44,14 +44,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI format
+== URI format
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------
 mongodb3:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
-=== MongoDB options
+== MongoDB options
 
 
 // component options: START
@@ -177,7 +177,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/context
 === Sample route
 
 The following route defined in Spring XML executes the operation
-<<mongodb3-component,*dbStats*>> on a collection.
+<<*dbStats*>> on a collection.
 
 *Get DB stats for specified collection*
 
@@ -211,17 +211,13 @@ from("direct:findById")
     .to("mock:resultFindById");
 ------------------------------------------------------------------------------
 
-
-TIP: *Supports optional parameters*. This operation supports specifying a fields filter. See
-<<mongodb3-component,Specifying optional parameters>>.
-
 ===== findOneByQuery
 
 Use this operation to retrieve just one element (the first) from the collection that
 matches a MongoDB query. *The query object is extracted `CamelMongoDbCriteria` header*.
 if the CamelMongoDbCriteria header is null the query object is extracted 
 message body, i.e. it should be of type `Bson` or convertible to
-`Bson`. It can be a JSON String or a Hashmap. See <<mongodb3-component,#Type conversions>> for more info.
+`Bson`. It can be a JSON String or a Hashmap. See <<Type conversions>> for more info.
 you can use the Filters class from MongoDB Driver.
 
 Example with no query (returns any object of the collection):
@@ -243,9 +239,6 @@ from("direct:findOneByQuery")
     .to("mock:resultFindOneByQuery");
 ------------------------------------------------------------------------------------
 
-TIP: *Supports optional parameters*. This operation supports specifying a fields projection and/or a sort clause. See
-<<mongodb3-component,Specifying optional parameters>>.
-
 ===== findAll
 
 The `findAll` operation returns all documents matching a query, or none
@@ -254,7 +247,7 @@ returned.  *The query object is extracted `CamelMongoDbCriteria` header*.
 if the CamelMongoDbCriteria header is null the query object is extracted 
 message body, i.e. it should be of type `Bson` or convertible to
 `Bson`. It can be
-a JSON String or a Hashmap. See <<mongodb3-component,#Type conversions>> for
+a JSON String or a Hashmap. See <<Type conversions>> for
 more info.
 
 Example with no query (returns all object in the collection):
@@ -326,13 +319,11 @@ consideration. |int/Integer
 consideration. |int/Integer
 |=======================================================================
 
-TIP: *Supports optional parameters*. This operation supports specifying a fields projection and/or a sort clause. See
-<<mongodb3-component,Specifying optional parameters>>.
-
 ===== count
 
 Returns the total number of objects in a collection, returning a Long as
-the OUT message body. +
+the OUT message body.
+
 The following example will count the number of records in the
 "dynamicCollectionName" collection. Notice how dynamicity is enabled,
 and as a result, the operation will not run against the
@@ -431,7 +422,8 @@ to a single field, based on the `documentTimestamp` field:
 
 Inserts an new object into the MongoDB collection, taken from the IN
 message body. Type conversion is attempted to turn it into `Document` or
-a `List`. +
+a `List`.
+
  Two modes are supported: single insert and multiple insert. For
 multiple insert, the endpoint will expect a List, Array or Collections
 of objects of any type, as long as they are - or can be converted to -
@@ -587,7 +579,8 @@ Object result = template.requestBodyAndHeader("direct:update", updateObj, MongoD
 
 Remove matching records from the collection. The IN message body will
 act as the removal filter query, and is expected to be of type
-`DBObject` or a type convertible to it. +
+`DBObject` or a type convertible to it.
+
  The following example will remove all objects whose field
 'conditionField' equals true, in the science database, notableScientists
 collection:
@@ -697,7 +690,8 @@ Calling `.streaming()` is thus required to load data into memory by batches.
 ===== getDbStats
 
 Equivalent of running the `db.stats()` command in the MongoDB shell,
-which displays useful statistic figures about the database. +
+which displays useful statistic figures about the database.
+
  For example:
 
 [source,java]
@@ -734,7 +728,8 @@ in the shell, in the form of a `Document` in the OUT message body.
 ===== getColStats
 
 Equivalent of running the `db.collection.stats()` command in the MongoDB
-shell, which displays useful statistic figures about the collection. +
+shell, which displays useful statistic figures about the collection.
+
  For example:
 
 [source,java]
@@ -789,7 +784,8 @@ Object result = template.requestBody("direct:command", commandBody);
 
 An Exchange can override the endpoint's fixed operation by setting the
 `CamelMongoDbOperation` header, defined by the
-`MongoDbConstants.OPERATION_HEADER` constant. +
+`MongoDbConstants.OPERATION_HEADER` constant.
+
  The values supported are determined by the MongoDbOperation enumeration
 and match the accepted values for the `operation` parameter on the
 endpoint URI.
@@ -962,13 +958,3 @@ object to a `Map`, which is in turn used to initialise a new
 
 This type converter is auto-discovered, so you don't need to configure
 anything manually.
-
-=== See also
-
-* http://www.mongodb.org/[MongoDB website]
-* http://en.wikipedia.org/wiki/NoSQL[NoSQL Wikipedia article]
-* http://api.mongodb.org/java/current/[MongoDB Java driver API docs -
-current version]
-*
-http://svn.apache.org/viewvc/camel/trunk/components/camel-mongodb/src/test/[Unit
-tests] for more examples of usage

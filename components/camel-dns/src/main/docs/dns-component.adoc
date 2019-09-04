@@ -6,7 +6,8 @@
 
 This is an additional component for Camel to run DNS queries, using
 DNSJava. The component is a thin layer on top of
-http://www.xbill.org/dnsjava/[DNSJava]. +
+http://www.xbill.org/dnsjava/[DNSJava].
+
  The component offers the following operations:
 
 * ip, to resolve a domain by its ip
@@ -14,7 +15,8 @@ http://www.xbill.org/dnsjava/[DNSJava]. +
 * dig, to run DNS queries
 
 INFO:*Requires SUN JVM*
-The DNSJava library requires running on the SUN JVM. +
+The DNSJava library requires running on the SUN JVM.
+
  If you use Apache ServiceMix or Apache Karaf, you'll need to adjust the
 `etc/jre.properties` file, to add `sun.net.spi.nameservice` to the list
 of Java platform packages exported. The server will need restarting
@@ -33,7 +35,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 The URI scheme for a DNS component is as follows
 
@@ -44,7 +46,7 @@ dns://operation[?options]
 
 This component only supports producers.
 
-=== Options
+== Options
 
 
 // component options: START
@@ -111,7 +113,7 @@ The component supports 2 options, which are listed below.
 
 
 
-=== Headers
+== Headers
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
 
@@ -133,9 +135,9 @@ Optional.
 one specified by the OS will be used. Optional.
 |===
 
-=== Examples
+== Examples
 
-==== IP lookup
+=== IP lookup
 
 [source,xml]
 ----
@@ -146,11 +148,12 @@ one specified by the OS will be used. Optional.
 ----
 
 This looks up a domain's IP. For example, www.example.com resolves to
-192.0.32.10. +
+192.0.32.10.
+
  The IP address to lookup must be provided in the header with key
 `"dns.domain"`.
 
-==== DNS lookup
+=== DNS lookup
 
 [source,xml]
 ----
@@ -160,11 +163,12 @@ This looks up a domain's IP. For example, www.example.com resolves to
         </route>
 ----
 
-This returns a set of DNS records associated with a domain. +
+This returns a set of DNS records associated with a domain.
+
  The name to lookup must be provided in the header with key
 `"dns.name"`.
 
-==== DNS Dig
+=== DNS Dig
 
 Dig is a Unix command-line utility to run DNS queries.
 
@@ -179,7 +183,7 @@ Dig is a Unix command-line utility to run DNS queries.
 The query must be provided in the header with key `"dns.query"`.
 
 
-=== Dns Activation Policy
+== Dns Activation Policy
 
 DnsActivationPolicy can be used to dynamically start and stop routes based on dns state.
 

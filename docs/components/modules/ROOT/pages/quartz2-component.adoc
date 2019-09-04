@@ -6,7 +6,8 @@
 
 
 The *quartz2:* component provides a scheduled delivery of messages using
-the http://www.quartz-scheduler.org/[Quartz Scheduler 2.x].  +
+the http://www.quartz-scheduler.org/[Quartz Scheduler 2.x]. 
+
  Each endpoint represents a different timer (in Quartz terms, a Trigger
 and JobDetail).
 
@@ -24,10 +25,11 @@ for this component:
 ------------------------------------------------------------
 
 *NOTE:* Quartz 2.x API is not compatible with Quartz 1.x. If you need to
-remain on old Quartz 1.x, please +
- use the old <<quartz-component,Quartz>> component instead.
+remain on old Quartz 1.x, please
 
-=== URI format
+ use the old xref:quartz-component.adoc[Quartz] component instead.
+
+== URI format
 
 ----
 quartz2://timerName?options
@@ -44,7 +46,7 @@ name.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 
@@ -178,7 +180,7 @@ INFO: *Running in OSGi and having multiple bundles with quartz
 routes*
 If you run in OSGi such as Apache ServiceMix, or Apache Karaf, and have
 multiple bundles with Camel routes that start from
-<<quartz2-component,Quartz2>> endpoints, then make sure if you assign an `id` 
+xref:quartz2-component.adoc[Quartz2] endpoints, then make sure if you assign an `id` 
 to the <camelContext> that this id is unique, as this is
 required by the `QuartzScheduler` in the OSGi container. If you do not
 set any `id` on <camelContext> then a unique id is auto assigned, and there is no problem.
@@ -190,7 +192,7 @@ By default Quartz will look for a `quartz.properties` file in the
 deployments this means just drop the quartz.properties in
 `WEB-INF/classes/org/quartz`.
 
-However the Camel <<quartz2-component,Quartz2>> component also allows you
+However the Camel xref:quartz2-component.adoc[Quartz2] component also allows you
 to configure properties:
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
@@ -213,7 +215,8 @@ To do this you can configure this in Spring XML as follows
 
 === Enabling Quartz scheduler in JMX
 
-You need to configure the quartz scheduler properties to enable JMX. +
+You need to configure the quartz scheduler properties to enable JMX.
+
  That is typically setting the option
 `"org.quartz.scheduler.jmx.export"` to a `true` value in the
 configuration file.
@@ -223,7 +226,7 @@ unless explicit disabled.
 
 === Starting the Quartz scheduler
 
-The <<quartz2-component,Quartz2>> component offers an option to let the
+The xref:quartz2-component.adoc[Quartz2] component offers an option to let the
 Quartz scheduler be started delayed, or not auto started at all.
 
 This is an example:
@@ -238,7 +241,7 @@ This is an example:
 === Clustering
 
 If you use Quartz in clustered mode, e.g. the `JobStore` is clustered.
-Then the <<quartz2-component,Quartz2>> component will *not* pause/remove
+Then the xref:quartz2-component.adoc[Quartz2] component will *not* pause/remove
 triggers when a node is being stopped/shutdown. This allows the trigger
 to keep running on the other nodes in the cluster.
 
@@ -248,7 +251,8 @@ unique job name/group for endpoints.
 === Message Headers
 
 Camel adds the getters from the Quartz Execution Context as header
-values. The following headers are added: +
+values. The following headers are added:
+
  `calendar`, `fireTime`, `jobDetail`, `jobInstance`, `jobRuntTime`,
 `mergedJobDataMap`, `nextFireTime`, `previousFireTime`, `refireCount`,
 `result`, `scheduledFireTime`, `scheduler`, `trigger`, `triggerName`,
@@ -303,9 +307,9 @@ The timeZone value is the values accepted by `java.util.TimeZone`.
 
 === Using QuartzScheduledPollConsumerScheduler
 
-The <<quartz2-component,Quartz2>> component provides a
+The xref:quartz2-component.adoc[Quartz2] component provides a
 Polling Consumer scheduler which allows to
-use cron based scheduling for link:polling-consumer.html[Polling
+use cron based scheduling for xref:latest@manual::polling-consumer.adoc[Polling
 Consumer] such as the File and FTP
 consumers.
 
@@ -319,8 +323,8 @@ second, then a Camel route can be define simply as:
 ----
 
 Notice we define the `scheduler=quartz2` to instruct Camel to use the
-<<quartz2-component,Quartz2>> based scheduler. Then we use `scheduler.xxx`
-options to configure the scheduler. The <<quartz2-component,Quartz2>>
+xref:quartz2-component.adoc[Quartz2] based scheduler. Then we use `scheduler.xxx`
+options to configure the scheduler. The xref:quartz2-component.adoc[Quartz2]
 scheduler requires the cron option to be set.
 
 The following options is supported:
@@ -330,7 +334,7 @@ The following options is supported:
 |Parameter |Default |Type |Description
 
 |`quartzScheduler` |`null` |`org.quartz.Scheduler` |To use a custom Quartz scheduler. If none configure then the shared
-scheduler from the <<quartz2-component,Quartz2>> component is used.
+scheduler from the xref:quartz2-component.adoc[Quartz2] component is used.
 
 |`cron` |`null` |`String` |*Mandatory*: To define the cron expression for triggering the polls.
 

@@ -1,5 +1,6 @@
 [[Script-Script]]
-== Script
+= Script
+:page-source: components/camel-script/src/main/docs/script.adoc
 
 *Available as of Camel 2.16*
 
@@ -14,8 +15,7 @@ return value should be used as a changed message body then
 use Message Translator EIP instead.
 
 [[Script-UsingfromJavaDSL]]
-Using from Java DSL
-^^^^^^^^^^^^^^^^^^^
+== Using from Java DSL
 
 The route below will read the file contents and validate them against a
 regular expression.
@@ -28,8 +28,7 @@ from("file://inbox")
 ---------------------------------------------------
 
 [[Script-UsingfromSpringDSL]]
-Using from Spring DSL
-^^^^^^^^^^^^^^^^^^^^^
+== Using from Spring DSL
 
 And from XML its easy as well
 
@@ -64,8 +63,7 @@ Mind that you can use CDATA in XML if the groovy scrip uses < > etc
 -------------------------------------------------------------------------------------------------
 
 [[Script-Usingexternalscriptfiles]]
-Using external script files
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+== Using external script files
 
 You can refer to external script files instead of inlining the script.
 For example to load a groovy script from the classpath you need to
@@ -87,11 +85,8 @@ prefix the value with *resource:* as shown:
 You can also refer to the script from the file system with file: instead
 of classpath: such as file:/var/myscript.groovy
 
- 
-
 [[Script-UsingThisPattern]]
-Using This Pattern
-++++++++++++++++++
+== Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
 Getting Started, you may also find the

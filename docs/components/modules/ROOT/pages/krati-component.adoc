@@ -177,7 +177,8 @@ from("direct:put").to("krati:target/test/producertest");
 --------------------------------------------------------
 
 In the above example you can override any of the URI parameters with
-headers on the message. +
+headers on the message.
+
  Here is how the above example would look like using xml to define our
 route.
 
@@ -201,7 +202,8 @@ from("direct:get")
 --------------------------------------------------------------------------------------------
 
 In the above example you can override any of the URI parameters with
-headers on the message. +
+headers on the message.
+
  Here is how the above example would look like using xml to define our
 route.
 
@@ -243,7 +245,3 @@ repository which can be used for filtering out duplicate messages.
 -----------------------------------------------------------------------------------------------------------------------------
 from("direct://in").idempotentConsumer(header("messageId"), new KratiIdempotentRepositroy("/tmp/idempotent").to("log://out");
 -----------------------------------------------------------------------------------------------------------------------------
-
-=== See also
-
-http://sna-projects.com/krati/[Krati Website]

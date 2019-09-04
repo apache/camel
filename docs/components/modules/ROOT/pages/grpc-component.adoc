@@ -128,7 +128,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-== Transport security and authentication support (available from *Camel 2.20*)
+== Transport security and authentication support
 
 The following https://grpc.io/docs/guides/auth.html[authentication] mechanisms are built-in to gRPC and available in this component:
 
@@ -299,4 +299,3 @@ Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the pro
 http://www.grpc.io/[gRPC project site]
 
 https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
-

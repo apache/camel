@@ -178,7 +178,8 @@ beginning of the invocation). This endpoint does not implement a provider endpoi
 
 In the snippet below, the data for an exchange sent to the
 `direct:george` endpoint will be put in the data queue `PENNYLANE` in
-library `BEATLES` on a system named `LIVERPOOL`.  +
+library `BEATLES` on a system named `LIVERPOOL`. 
+
  Another user connects to the same data queue to receive the information
 from the data queue and forward it to the `mock:ringo` endpoint.
 
@@ -193,7 +194,7 @@ public class Jt400RouteBuilder extends RouteBuilder {
 }
 -------------------------------------------------------------------------------------------------------
 
-=== Remote program call example (*Camel 2.7*)
+=== Remote program call example
 
 In the snippet below, the data Exchange sent to the direct:work endpoint
 will contain three string that will be used as the arguments for the
@@ -226,4 +227,3 @@ from("jms:queue:input")
 from("jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ?keyed=true&searchKey=MYKEY&searchType=GE")
 .to("jms:queue:output");
 -------------------------------------------------------------------------------------------------------
-

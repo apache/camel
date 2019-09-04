@@ -29,7 +29,8 @@ hdfs2://hostname[:port][/path][?options]
 ----------------------------------------
 
 You can append query options to the URI in the following format,
-`?option=value&option=value&...` +
+`?option=value&option=value&...`
+
  The path is treated in the following way:
 
 1.  as a consumer, if it's a file, it just reads the file, otherwise if
@@ -198,7 +199,8 @@ this problem in this way:
 * If the split strategy option has been defined, the hdfs path will be
 used as a directory and files will be created using the configured
 UuidGenerator
-* Every time a splitting condition is met, a new file is created. +
+* Every time a splitting condition is met, a new file is created.
+
  The splitStrategy option is defined as a string with the following
 syntax: splitStrategy=<ST>:<value>,<ST>:<value>,*
 
@@ -246,7 +248,7 @@ split strategy.
 
 == Controlling to close file stream
 
-When using the <<hdfs2-component,HDFS2>> producer *without* a split
+When using the xref:hdfs2-component.adoc[HDFS2] producer *without* a split
 strategy, then the file output stream is by default closed after the
 write. However you may want to keep the stream open, and only explicitly
 close the stream later. For that you can use the header

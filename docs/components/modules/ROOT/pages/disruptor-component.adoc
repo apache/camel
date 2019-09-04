@@ -80,8 +80,10 @@ or
 
 Where **someName** can be any string that uniquely identifies the
 endpoint within the current CamelContext (or
-across contexts in case of +
- **disruptor-vm:**). +
+across contexts in case of
+
+ **disruptor-vm:**).
+
  You can append query options to the URI in the following format:
 
 [source,java]

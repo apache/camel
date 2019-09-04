@@ -398,9 +398,11 @@ braintree://discount/endpoint
 |all |  |  |List<com.braintreegateway.Discount>
 |====================================================
 
- +
 
- +
+
+
+
+
 
 === Endpoint prefix _dispute_
 
@@ -882,4 +884,3 @@ body in the *inBody* endpoint parameter.
 
 </blueprint>
 --------------------------------------------------------------------------------------------------------------------------------------------
-

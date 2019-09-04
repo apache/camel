@@ -109,6 +109,3 @@ The component supports 2 options, which are listed below.
 | *camel.component.pgevent.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
-
-
-

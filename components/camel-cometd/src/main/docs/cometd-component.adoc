@@ -7,7 +7,8 @@
 The Cometd component is a transport for working with the
 http://www.mortbay.org/jetty[jetty] implementation of the
 http://docs.codehaus.org/display/JETTY/Cometd+%28aka+Bayeux%29[cometd/bayeux
-protocol]. +
+protocol].
+
  Using this component in combination with the dojo toolkit library it's
 possible to push Camel messages directly into the browser using an AJAX
 based mechanism.
@@ -162,7 +163,8 @@ You can append query options to the URI in the following format,
 Here is some examples on How to pass the parameters
 
 For file (for webapp resources located in the Web Application directory
---> cometd://localhost:8080?resourceBase=file./webapp +
+--> cometd://localhost:8080?resourceBase=file./webapp
+
  For classpath (when by example the web resources are packaged inside
 the webapp folder -->
 cometd://localhost:8080?resourceBase=classpath:webapp

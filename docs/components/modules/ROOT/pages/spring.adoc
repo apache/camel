@@ -246,7 +246,8 @@ a couple of routes as shown:
 *myCoolRoutes.xml*
 
 Then in your XML file which contains the CamelContext you can use Spring
-to import the `myCoolRoute.xml` file. +
+to import the `myCoolRoute.xml` file.
+
  And then inside `<camelContext/>` you can refer to the
 `<routeContext/>` by its id as shown below:
 
@@ -354,4 +355,3 @@ Integration] for further injections.
 To avoid a hung route when testing using Spring Transactions see the
 note about Spring Integration Testing
 under Transactional Client.
-

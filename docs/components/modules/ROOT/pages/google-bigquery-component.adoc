@@ -29,7 +29,7 @@ for this component:
 
 [[GoogleBigQuery-AuthenticationConfiguration]]
 
-=== Authentication Configuration
+== Authentication Configuration
 
 Google BigQuery component authentication is targeted for use with the GCP Service Accounts.
 For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
@@ -48,7 +48,7 @@ https://developers.google.com/identity/protocols/application-default-credentials
 
 Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
 
-=== URI Format
+== URI Format
 
 [source,text]
 --------------------------------------------------------
@@ -56,7 +56,7 @@ Service Account Email and Service Account Key can be found in the GCP JSON crede
 --------------------------------------------------------
 
 
-=== Options
+== Options
 
 // component options: START
 The Google BigQuery component supports 4 options, which are listed below.
@@ -136,7 +136,7 @@ The component supports 4 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Message Headers
+== Message Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -148,7 +148,7 @@ The component supports 4 options, which are listed below.
 |=======================================================================
 
 
-=== Producer Endpoints
+== Producer Endpoints
 
 Producer endpoints can accept and deliver to BigQuery individual and grouped
 exchanges alike. Grouped exchanges have `Exchange.GROUPED_EXCHANGE` property set.
@@ -160,7 +160,7 @@ correct suffix or partition decorator.
 Google BigQuery endpoint expects the payload to be either a map or list of maps. A payload containing a map
 will insert a single row and a payload containing a list of map's will insert a row for each entry in the list.
 
-=== Template tables
+== Template tables
 
 Reference: https://cloud.google.com/bigquery/streaming-data-into-bigquery#template-tables
 
@@ -176,7 +176,7 @@ from("direct:start")
 ------------------------------------------------------
 Note it is recommended to use partitioning for this use case.
 
-=== Partitioning
+== Partitioning
 
 Reference: https://cloud.google.com/bigquery/docs/creating-partitioned-tables
 
@@ -184,7 +184,7 @@ Partitioning is specified when creating a table and if set data will be automati
 separate tables. When inserting data a specific partition can be specified by setting the
 `GoogleBigQueryConstants.PARTITION_DECORATOR` header on the exchange.
 
-=== Ensuring data consistency
+== Ensuring data consistency
 
 Reference: https://cloud.google.com/bigquery/streaming-data-into-bigquery#dataconsistency
 

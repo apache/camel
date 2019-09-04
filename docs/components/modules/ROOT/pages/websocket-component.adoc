@@ -175,10 +175,12 @@ use the `sendToAll` option on the endpoint instead of using this header.
 
 In this example we let Camel exposes a websocket server which clients
 can communicate with. The websocket server uses the default host and
-port, which would be `0.0.0.0:9292`. +
+port, which would be `0.0.0.0:9292`.
+
  The example will send back an echo of the input. To send back a
 message, we need to send the transformed message to the same endpoint
-`"websocket://echo"`. This is needed +
+`"websocket://echo"`. This is needed
+
  because by default the messaging is InOnly.
 
 This example is part of an unit test, which you can find

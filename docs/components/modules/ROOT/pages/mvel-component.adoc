@@ -31,7 +31,7 @@ mvel:templateName[?options]
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (eg:
-file://folder/myfile.mvel[file://folder/myfile.mvel]).
+`\file://folder/myfile.mvel`).
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
@@ -205,4 +205,3 @@ from("direct:in").
   setHeader("CamelMvelTemplate").constant("@{\"The result is \" + request.body * 3}\" }").
   to("velocity:dummy");
 ------------------------------------------------------------------------------------------
-

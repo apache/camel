@@ -30,7 +30,8 @@ hdfs://hostname[:port][/path][?options]
 ---------------------------------------
 
 You can append query options to the URI in the following format,
-`?option=value&option=value&...` +
+`?option=value&option=value&...`
+
  The path is treated in the following way:
 
 1.  as a consumer, if it's a file, it just reads the file, otherwise if
@@ -203,9 +204,11 @@ this problem in this way:
 * If the split strategy option has been defined, the hdfs path will be
 used as a directory and files will be created using the configured
 UuidGenerator
-* Every time a splitting condition is met, a new file is created. +
+* Every time a splitting condition is met, a new file is created.
+
  The splitStrategy option is defined as a string with the following
-syntax: +
+syntax:
+
  splitStrategy=<ST>:<value>,<ST>:<value>,*
 
 where <ST> can be:
@@ -256,7 +259,7 @@ split strategy.
 
 *Available as of Camel 2.10.4*
 
-When using the <<hdfs-component,HDFS>> producer *without* a split strategy,
+When using the xref:hdfs-component.adoc[HDFS] producer *without* a split strategy,
 then the file output stream is by default closed after the write.
 However you may want to keep the stream open, and only explicitly close
 the stream later. For that you can use the header

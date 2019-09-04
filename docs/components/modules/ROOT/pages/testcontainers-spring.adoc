@@ -1,4 +1,5 @@
-== Testcontainers Spring
+= Testcontainers Spring
+:page-source: components/camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc
 
 *Available since 2.22.0*
 
@@ -6,4 +7,3 @@ Testing camel components is sometime complex because the 3th party system a comp
 
 This module is an extension to the camel-testcontainers component to add support for Spring.
 Therefore see the documentation for testcontainers for more details.
-

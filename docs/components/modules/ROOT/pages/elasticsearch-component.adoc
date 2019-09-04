@@ -202,4 +202,3 @@ http://elasticsearch.org[ElasticSearch Main Site]
 
 http://www.elasticsearch.org/guide/reference/java-api/[ElasticSearch
 Java API]
-

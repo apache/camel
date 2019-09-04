@@ -1,21 +1,21 @@
 [[GroovyDSL-AbouttheGroovyDSL]]
-== About the Groovy DSL (deprecated)
+= About the Groovy DSL (deprecated)
 
 The Groovy DSL implementation is built on top of the existing Java-based
 DSL, but it additionally allows to use Groovy language
 features in your routes, particularly
 http://www.groovy-lang.org/closures.html[Closures] acting as
 Processor, Expression,
-Predicate, or link:aggregator.html[Aggregation
-Strategy]. +
+Predicate, or xref:manual::aggregate-eip.adoc[Aggregation
+Strategy].
+
  With the Groovy DSL you write your RouteBuilder classes entirely in
 Groovy, while the scripting component
 allows to embed small scripts into Java routes. The Groovy DSL requires
 Groovy 2.0 or newer and is available as of *Camel 2.11*.
 
 [[GroovyDSL-Introduction]]
-Introduction
-^^^^^^^^^^^^
+== Introduction
 
 Because Groovy is syntactically very similar to Java, you can write your
 Groovy routes just like Java routes. The same Java DSL classes are being
@@ -66,8 +66,7 @@ The corresponding route in Java would look something like this:
 -----------------------------------------------------------------------------------------
 
 [[GroovyDSL-DevelopingwiththeGroovyDSL]]
-Developing with the Groovy DSL
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+== Developing with the Groovy DSL
 
 To be able to use the Groovy DSL in your camel routes you need to add
 the a dependency on *camel-groovy* which implements the Groovy DSL.
@@ -131,8 +130,7 @@ when `mvn eclipse:eclipse` is executed:
 ----------------------------------------------------------------------------------------
 
 [[GroovyDSL-UsingClosuresinyourroutes]]
-Using Closures in your routes
-+++++++++++++++++++++++++++++
+=== Using Closures in your routes
 
 Groovy closures can be used to write concise implementations of Camel
 processors, expressions, predicates, and aggregation strategies. It is
@@ -250,8 +248,7 @@ Similarly, `expression(Closure)` returns a Camel expression,
 returns an AggregationStrategy.
 
 [[GroovyDSL-UsingGroovyXMLprocessing]]
-Using Groovy XML processing
-+++++++++++++++++++++++++++
+=== Using Groovy XML processing
 
 Groovy provides special http://groovy-lang.org/processing-xml.html[XML
 processing support] through its `XmlParser`, `XmlNodePrinter` and
@@ -298,8 +295,7 @@ Currently, marshalling is only supported for `groovy.util.Node` objects.
 ------------------------------------------------------
 
 [[GroovyDSL-UsingGroovyGStrings]]
-Using Groovy GStrings
-+++++++++++++++++++++
+=== Using Groovy GStrings
 
 Groovy
 http://docs.groovy-lang.org/latest/html/documentation/index.html#all-strings[GStrings]
@@ -316,8 +312,7 @@ TypeConverter to automatically turn them into
 the required type.
 
 [[GroovyDSL-CustomDSLextensions]]
-Custom DSL extensions
-+++++++++++++++++++++
+=== Custom DSL extensions
 
 You can easily define your custom extensions - be it as a Java DSL
 extension for your Groovy routes or for any other class unrelated to
@@ -325,7 +320,8 @@ Camel. All you have to do is to write your extension methods and provide
 a extension module descriptor - the details are described in the
 http://www.groovy-lang.org/metaprogramming.html#_extension_modules[Groovy
 documentation]. And as long as you don't require other extension
-methods, you can even use plain Java code to achieve this! +
+methods, you can even use plain Java code to achieve this!
+
  As an example, let's write two DSL extensions to make commonly used DSL
 methods more concise:
 

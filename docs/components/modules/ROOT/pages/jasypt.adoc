@@ -76,7 +76,8 @@ Encrypted text: qaEEacuW7BUti8LcMgyjKw==
 
 This means the encrypted representation `qaEEacuW7BUti8LcMgyjKw==` can
 be decrypted back to `tiger` if you know the master password which was
-`secret`. +
+`secret`.
+
  If you run the tool again then the encrypted value will return a
 different result. But decrypting the value will always return the
 correct original value.
@@ -286,4 +287,3 @@ to Jasypt.
 
 </blueprint>
 ----------------------------------------------------------------------------------------------------------------
-

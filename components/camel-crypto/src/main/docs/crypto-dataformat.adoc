@@ -322,7 +322,7 @@ or with spring.
 
 == Dependencies
 
-To use the <<crypto-component,Crypto>> dataformat in your camel routes you
+To use the xref:crypto-component.adoc[Crypto] dataformat in your camel routes you
 need to add the following dependency to your pom.
 
 [source,xml]
@@ -334,4 +334,3 @@ need to add the following dependency to your pom.
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
-

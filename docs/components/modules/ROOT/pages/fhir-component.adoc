@@ -22,7 +22,7 @@ for this component:
 </dependency>
 ----
 
-=== URI Format
+== URI Format
 
 The FHIR Component uses the following URI format:
 

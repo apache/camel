@@ -1,5 +1,5 @@
 [[ServletListenerComponent-ServletListenerComponent]]
-== ServletListener Component
+= ServletListener Component
 
 *Available as of Camel 2.11*
 
@@ -33,8 +33,7 @@ for this component:
 ------------------------------------------------------------
 
 [[ServletListenerComponent-Using]]
-Using
-^^^^^
+== Using
 
 You would need to chose one of the following implementations of the
 abstract class
@@ -50,8 +49,7 @@ To use this you need to configure the
 in the `WEB-INF/web.xml` file as shown below:
 
 [[ServletListenerComponent-Options]]
-Options
-^^^^^^^
+== Options
 
 The
 `org.apache.camel.component.servletlistener.CamelServletContextListener`
@@ -66,7 +64,7 @@ in the web.xml file.
 in Camel. You should prefix the option with "propertyPlaceholder.", for
 example to configure the location, use propertyPlaceholder.location as
 name. You can configure all the options from the
-<<properties-component,Properties>> component.
+Properties component.
 
 |jmx.XXX |  | To configure JMX. You should prefix the option with
 "jmx.", for example to disable JMX, use jmx.disabled as name. You can
@@ -114,15 +112,13 @@ below for further details.
 |=======================================================================
 
 [[ServletListenerComponent-Examples]]
-Examples
-^^^^^^^^
+== Examples
 
-See link:servlet-tomcat-no-spring-example.html[Servlet Tomcat No Spring
+See https://github.com/apache/camel/tree/camel-2.x/examples/camel-example-servlet-tomcat-no-spring[Servlet Tomcat No Spring
 Example].
 
 [[ServletListenerComponent-AccessingthecreatedCamelContext]]
-Accessing the created CamelContext
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+== Accessing the created CamelContext
 
 *Available as of Camel 2.14/2.13.3/2.12.5*
 
@@ -139,16 +135,14 @@ CamelContext camel = (CamelContext) sc.getAttribute("CamelContext");
  
 
 [[ServletListenerComponent-Configuringroutes]]
-Configuring routes
-^^^^^^^^^^^^^^^^^^
+== Configuring routes
 
 You need to configure which routes to use in the web.xml file. You can
 do this in a number of ways, though all the parameters must be prefixed
 with "routeBuilder".
 
 [[ServletListenerComponent-UsingaRouteBuilderclass]]
-Using a RouteBuilder class
-++++++++++++++++++++++++++
+== Using a RouteBuilder class
 
 By default Camel will assume the param-value is a FQN classname for a
 Camel RouteBuilder class, as shown below:
@@ -181,8 +175,7 @@ have "routeBuilder-routes". But you could just as well have named it
 "routeBuilder.foo".
 
 [[ServletListenerComponent-Usingpackagescanning]]
-Using package scanning
-++++++++++++++++++++++
+=== Using package scanning
 
 You can also tell Camel to use package scanning, which mean it will look
 in the given package for all classes of
@@ -200,8 +193,7 @@ Camel routes. To do that you need to prefix the value with
 --------------------------------------------------------------------------------------------
 
 [[ServletListenerComponent-UsingaXMLfile]]
-Using a XML file
-++++++++++++++++
+=== Using a XML file
 
 You can also define Camel routes using XML DSL, though as we are not
 using Spring or Blueprint the XML file can only contain Camel route(s).
@@ -248,8 +240,7 @@ runtime no Spring JARs is needed. Maybe in Camel 3.0 the namespace can
 be renamed to a generic name.
 
 [[ServletListenerComponent-Configuringpropertplaceholders]]
-Configuring propert placeholders
-++++++++++++++++++++++++++++++++
+=== Configuring propert placeholders
 
 Here is a snippet of a web.xml configuration for setting up property
 placeholders to load `myproperties.properties` from the classpath
@@ -270,8 +261,7 @@ placeholders to load `myproperties.properties` from the classpath
 ------------------------------------------------------------------------------------------------------------------------------------
 
 [[ServletListenerComponent-ConfiguringJMX]]
-Configuring JMX
-+++++++++++++++
+=== Configuring JMX
 
 Here is a snippet of a web.xml configuration for configuring JMX, such
 as disabling JMX.
@@ -287,20 +277,19 @@ as disabling JMX.
 ------------------------------------------------------------------
 
 [[ServletListenerComponent-JNDIorSimpleasCamel]]
-JNDI or Simple as Camel Registry
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+== JNDI or Simple as Camel Registry
 
 This component uses either JNDI or Simple as the
-Registry. +
- This allows you to lookup <<bean-component,Bean>>s and other services in
-JNDI, and as well to bind and unbind your own <<bean-component,Bean>>s.
+Registry.
+
+ This allows you to lookup xref:latest@manual::bean-eip.adoc[Bean]s and other services in
+JNDI, and as well to bind and unbind your own xref:latest@manual::bean-eip.adoc[Bean]s.
 
 This is done from Java code by implementing the
 `org.apache.camel.component.servletlistener.CamelContextLifecycle`.
 
 [[ServletListenerComponent-UsingcustomCamelContextLifecycle]]
-Using custom CamelContextLifecycle
-++++++++++++++++++++++++++++++++++
+== Using custom CamelContextLifecycle
 
 In the code below we use the callbacks `beforeStart` and `afterStop` to
 enlist our custom bean in the Simple Registry, and
@@ -320,8 +309,8 @@ interface.
   </context-param>
 -------------------------------------------------------------------------------------
 
-As we enlisted our HelloBean <<bean-component,Bean>> using the name
-"myBean" we can refer to this <<bean-component,Bean>> in the Camel routes
+As we enlisted our HelloBean xref:latest@manual::bean-eip.adoc[Bean] using the name
+"myBean" we can refer to this xref:latest@manual::bean-eip.adoc[Bean] in the Camel routes
 as shown below:
 
 [source,java]
@@ -342,13 +331,3 @@ then the `CamelContextLifecycle` must use the `JndiRegistry` as well.
 And likewise if the servlet is
 `org.apache.camel.component.servletlistener.SimpleCamelServletContextListener`
 then the `CamelContextLifecycle` must use the `SimpleRegistry`
-
-[[ServletListenerComponent-SeeAlso]]
-See Also
-^^^^^^^^
-
-* <<servlet-component,SERVLET>>
-* Servlet Tomcat Example
-* link:servlet-tomcat-no-spring-example.html[Servlet Tomcat No Spring
-Example]
-

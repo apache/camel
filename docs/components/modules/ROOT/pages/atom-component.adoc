@@ -7,7 +7,8 @@
 
 The *atom:* component is used for polling Atom feeds.
 
-Camel will poll the feed every 60 seconds by default. +
+Camel will poll the feed every 60 seconds by default.
+
  *Note:* The component currently only supports polling (consuming)
 feeds.
 
@@ -171,4 +172,3 @@ from("atom://http://macstrac.blogspot.com/feeds/posts/default").to("seda:feeds")
 In this sample we want to filter only good blogs we like to a SEDA
 queue. The sample also shows how to setup Camel standalone, not running
 in any Container or using Spring.
-

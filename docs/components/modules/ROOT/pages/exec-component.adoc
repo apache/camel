@@ -20,7 +20,7 @@ Maven users need to add the following dependency to their `pom.xml`
 </dependency>
 -------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
+where `$\{camel-version\}` must be replaced by the actual version of Camel
 (2.3.0 or higher).
 
 == URI format
@@ -175,7 +175,7 @@ If an out file is specified (in the endpoint via `outFile` or the
 message headers via `ExecBinding.EXEC_COMMAND_OUT_FILE`), converters
 will return the content of the out file. If no out file is used, then
 this component will convert the stdout of the process to the target
-type. For more details, please refer to the <<exec-component,usage examples>> below.
+type. For more details, please refer to the xref:exec-component.adoc[usage examples] below.
 
 == Usage examples
 
@@ -263,4 +263,3 @@ such a command - `echo` - in Windows.
 ----------------------------------------------------------
 from("direct:exec").to("exec:cmd?args=/C echo echoString")
 ----------------------------------------------------------
-

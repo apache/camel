@@ -5,13 +5,14 @@
 *Available as of Camel version 2.12*
 
 
-The *netty-http* component is an extension to <<netty-component,Netty>>
-component to facilitiate HTTP transport with <<netty-component,Netty>>.
+
+The *netty-http* component is an extension to xref:netty-component.adoc[Netty]
+component to facilitiate HTTP transport with xref:netty-component.adoc[Netty].
 
 This camel component supports both producer and consumer endpoints.
 
 WARNING: This component is deprecated. You should use
-<<netty4-http-component,Netty4 HTTP>>.
+xref:netty4-http-component.adoc[Netty HTTP].
 
 INFO: *Stream*.
 Netty is stream based, which means the input it receives is submitted to
@@ -68,10 +69,11 @@ at the endpoint URI definition level (like `to` or `from` DSL elements).
 == HTTP Options
 
 INFO: *A lot more options*. *Important:* This component inherits all the options from
-<<netty-component,Netty>>. So make sure to look at the
-<<netty-component,Netty>> documentation as well. +
- Notice that some options from <<netty-component,Netty>> is not applicable
-when using this <<netty-http-component,Netty HTTP>> component, such as
+xref:netty-component.adoc[Netty]. So make sure to look at the
+xref:netty-component.adoc[Netty] documentation as well.
+
+ Notice that some options from xref:netty-component.adoc[Netty] is not applicable
+when using this xref:netty-http-component.adoc[Netty HTTP] component, such as
 options related to UDP transport.
 
 
@@ -303,7 +305,7 @@ success, and 500 for failure.
 |=======================================================================
 
 The following headers is provided as meta-data when a route starts from
-an <<netty-http-component,Netty HTTP>> endpoint:
+an xref:netty-http-component.adoc[Netty HTTP] endpoint:
 
 The description in the table takes offset in a route having:
 `from("netty-http:http:0.0.0.0:8080/myapp")...`
@@ -353,7 +355,7 @@ org.jboss.netty.handler.codec.http.HttpRequest request = exchange.getIn(NettyHtt
 
 == Examples
 
-In the route below we use <<netty-http-component,Netty HTTP>> as a HTTP
+In the route below we use xref:netty-http-component.adoc[Netty HTTP] as a HTTP
 server, which returns back a hardcoded "Bye World" message.
 
 [source,java]
@@ -375,7 +377,7 @@ And we get back "Bye World" as the output.
 
 == How do I let Netty match wildcards
 
-By default <<netty-http-component,Netty HTTP>> will only match on exact
+By default xref:netty-http-component.adoc[Netty HTTP] will only match on exact
 uri's. But you can instruct Netty to match prefixes. For example
 
 [source,java]
@@ -383,8 +385,9 @@ uri's. But you can instruct Netty to match prefixes. For example
 from("netty-http:http://0.0.0.0:8123/foo").to("mock:foo");
 ----------------------------------------------------------
 
-In the route above <<netty-http-component,Netty HTTP>> will only match if
-the uri is an exact match, so it will match if you enter +
+In the route above xref:netty-http-component.adoc[Netty HTTP] will only match if
+the uri is an exact match, so it will match if you enter
+
  `http://0.0.0.0:8123/foo` but not match if you do
 `http://0.0.0.0:8123/foo/bar`.
 
@@ -407,7 +410,7 @@ from("netty-http:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
 == Using multiple routes with same port
 
 In the same CamelContext you can have multiple
-routes from <<netty-http-component,Netty HTTP>> that shares the same port
+routes from xref:netty-http-component.adoc[Netty HTTP] that shares the same port
 (eg a `org.jboss.netty.bootstrap.ServerBootstrap` instance). Doing this
 requires a number of bootstrap options to be identical in the routes, as
 the routes will share the same
@@ -463,7 +466,7 @@ By configuring the common server bootstrap option in an single instance
 of a
 `org.apache.camel.component.netty.NettyServerBootstrapConfiguration`
 type, we can use the `bootstrapConfiguration` option on the
-<<netty-http-component,Netty HTTP>> consumers to refer and reuse the same
+xref:netty-http-component.adoc[Netty HTTP] consumers to refer and reuse the same
 options across all consumers.
 
 [source,xml]
@@ -502,7 +505,7 @@ for more details and example how to do that.
 
 == Using HTTP Basic Authentication
 
-The <<netty-http-component,Netty HTTP>> consumer supports HTTP basic
+The xref:netty-http-component.adoc[Netty HTTP] consumer supports HTTP basic
 authentication by specifying the security realm name to use, as shown
 below
 
@@ -574,4 +577,3 @@ below:
    ...
 </route>
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-

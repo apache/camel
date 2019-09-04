@@ -20,7 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI format
+== URI format
 
 [source,java]
 -----------------------
@@ -45,7 +45,7 @@ producers (that is, it cannot appear in `from()`).
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 // component options: START
@@ -133,20 +133,22 @@ The component supports 2 options, which are listed below.
 
 
 
-=== Message content
+== Message content
 
 The *stream:* component supports either `String` or `byte[]` for writing
 to streams. Just add either `String` or `byte[]` content to the
 `message.in.body`. Messages sent to the *stream:* producer in binary
 mode are not followed by the newline character (as opposed to the
 `String` messages). Message with `null` body will not be appended to the
-output stream. +
+output stream.
+
  The special `stream:header` URI is used for custom output streams. Just
 add a `java.io.OutputStream` object to `message.in.header` in the key
-`header`. +
+`header`.
+
  See samples for an example.
 
-=== Samples
+== Samples
 
 In the following sample we route messages from the `direct:in` endpoint
 to the `System.out` stream:

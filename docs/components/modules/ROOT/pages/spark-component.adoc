@@ -428,4 +428,3 @@ Dataset<Row> cars(HiveContext hiveContext) {
     return jsonCars;
 }
 ------------------------------------------------------------------------
-

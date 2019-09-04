@@ -23,7 +23,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 The old syntax is *deprecated*:
 [source,text]
@@ -46,7 +46,7 @@ RabbitMQ client default (5672). The exchange name determines which
 exchange produced messages will sent to. In the case of consumers, the
 exchange name determines which exchange the queue will bind to.
 
-=== Options
+== Options
 
 // component options: START
 The RabbitMQ component supports 50 options, which are listed below.
@@ -282,7 +282,7 @@ See
 http://www.rabbitmq.com/releases/rabbitmq-java-client/current-javadoc/com/rabbitmq/client/ConnectionFactory.html[http://www.rabbitmq.com/releases/rabbitmq-java-client/current-javadoc/com/rabbitmq/client/ConnectionFactory.html]
 and the AMQP specification for more information on connection options.
 
-=== Using connection factory
+== Using connection factory
 
 To connect to RabbitMQ you can setup a `ConnectionFactory` (same as with JMS) with the login details such as:
 
@@ -318,7 +318,7 @@ From Camel 2.21 onwards the `ConnectionFactory` is auto-detected by default, so 
 ----
 
 
-=== Message Headers
+== Message Headers
 
 The following headers are set on exchanges when consuming messages.
 
@@ -389,14 +389,14 @@ producer will also set the headers for downstream processors once the
 exchange has taken place. Any headers set prior to production that the
 producer sets will be overriden.
 
-=== Message Body
+== Message Body
 
 The component will use the camel exchange in body as the rabbit mq
 message body. The camel exchange in object must be convertible to a byte
 array. Otherwise the producer will throw an exception of unsupported
 body type.
 
-=== Samples
+== Samples
 
 To receive messages from a queue that is bound to an exchange A with the
 routing key B,
@@ -440,7 +440,7 @@ public Map<String, Object> bindArgsBuilder() {
 }
 ----
 
-==== Issue when routing between exchanges (in Camel 2.20.x or older)
+=== Issue when routing between exchanges (in Camel 2.20.x or older)
 
 If you for example want to route messages from one Rabbit exchange to another as shown
 in the example below with foo -> bar:

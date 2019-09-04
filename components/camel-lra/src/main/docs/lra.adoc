@@ -1,4 +1,4 @@
-== LRA Component
+= LRA Component
 
 *Available as of Camel version 2.21.0*
 

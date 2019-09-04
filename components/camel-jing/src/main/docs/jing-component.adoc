@@ -25,10 +25,10 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-Note that the <<msv-component,MSV>> component can also support RelaxNG XML
+Note that the xref:msv-component.adoc[MSV] component can also support RelaxNG XML
 syntax.
 
-== URI format Camel 2.16
+== URI format
 
 [source,java]
 ------------------------------
@@ -117,4 +117,3 @@ then goes to one of two endpoints, either *mock:valid* or *mock:invalid*
 based on whether or not the XML matches the given
 http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
 Syntax] schema (which is supplied on the classpath).
-

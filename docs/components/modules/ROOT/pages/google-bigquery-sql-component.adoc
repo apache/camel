@@ -1,12 +1,8 @@
 [[google-bigquery-sql-component]]
 = Google BigQuery Standard SQL Component
 :page-source: components/camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc
+
 *Available as of Camel version 2.23*
-*Available as of Camel version 2.23*
-
-
-
-
 
 The Google Bigquery SQL component provides access
 to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
@@ -31,7 +27,7 @@ for this component:
 
 [[GoogleBigQuery-AuthenticationConfiguration]]
 
-=== Authentication Configuration
+== Authentication Configuration
 
 Google BigQuery component authentication is targeted for use with the GCP Service Accounts.
 For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
@@ -50,7 +46,7 @@ https://developers.google.com/identity/protocols/application-default-credentials
 
 Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
 
-=== URI Format
+== URI Format
 
 [source,text]
 --------------------------------------------------------
@@ -65,7 +61,7 @@ Examples:
 --------------------------------------------------------
 where
 
- * parameters in form \${name} are extracted from message headers and formed the translated query
+ * parameters in form $\{name} are extracted from message headers and formed the translated query
  * parameters in form @name are extracted from body or message headers and sent to Google Bigquery
 
 You can externalize your SQL queries to files in the classpath or file system as shown:
@@ -76,7 +72,7 @@ You can externalize your SQL queries to files in the classpath or file system as
 
 
 
-=== Options
+== Options
 
 // component options: START
 The Google BigQuery Standard SQL component supports 3 options, which are listed below.
@@ -152,7 +148,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Ouput Message Headers
+== Ouput Message Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -161,6 +157,6 @@ The component supports 3 options, which are listed below.
 |=======================================================================
 
 
-=== Producer Endpoints
+== Producer Endpoints
 
 Google BigQuery SQL endpoint expects the payload to be either empty or a map of query parameters.

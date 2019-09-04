@@ -98,4 +98,3 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
-

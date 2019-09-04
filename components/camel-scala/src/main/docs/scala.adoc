@@ -1,5 +1,5 @@
 [[ScalaDSL-AbouttheScalaDSL]]
-== About the Scala DSL
+= About the Scala DSL
 
 **Deprecated**
 
@@ -11,21 +11,19 @@ Java-based DSL, but it adds Scala syntax sugar to make
 building routes even more convenient.
 
 [[ScalaDSL-Documentation]]
-Documentation
-^^^^^^^^^^^^^
+== Documentation
 
 * Scala DSL - Getting Started gives
 you basic information on how to use the Scala DSL.
 * Scala DSL - EIP shows you the Scala DSL
 syntax for every EIP supported. Scala DSL supports
 every EIP from the Java DSL.
-* link:scala-dsl-supported-languages.html[Scala DSL - Supported
+* xref:scala-supported-languages.adoc[Scala DSL - Supported
 languages] explains the usage of traits to add support for other
 languages (e.g. XPath)
 
 [[ScalaDSL-References]]
-References
-^^^^^^^^^^
+== References
 
 * At http://www.eu.apachecon.com[ApacheCon Europe 2008] there was a Fast
 Feather talk that introduced some of the basic Scala language concepts
@@ -39,8 +37,7 @@ within the Scala DSL, as well as how to use
 Camel's test kit to test the example.
 
 [[ScalaDSL-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+== Dependencies
 
 To use the Scala DSL in your camel routes you need to add the a
 dependency on *camel-scala* which implements the Scala DSL.

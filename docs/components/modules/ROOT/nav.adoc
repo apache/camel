@@ -290,7 +290,7 @@
 * xref:routebox-component.adoc[RouteBox Component (deprecated)]
 * xref:rss-component.adoc[RSS Component]
 * xref:rss-dataformat.adoc[RSS DataFormat]
-* xref:ruby.adoc['admin'").to("seda:adminQueue")]
+* xref:ruby.adoc[Ruby]
 * xref:rx.adoc[Camel RX (deprecated)]
 * xref:rxjava2.adoc[RxJava2 Component]
 * xref:salesforce-component.adoc[Salesforce Component]

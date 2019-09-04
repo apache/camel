@@ -1,5 +1,6 @@
 [[ScalaDSL-GettingStarted]]
-=== Scala DSL Getting Started
+= Scala DSL Getting Started
+:page-source: components/camel-scala/src/main/docs/scala-getting-started.adoc
 
 Just like the Java DSL, the Scala DSL has a RouteBuilder
 class (`org.apache.camel.scala.dsl.builder.RouteBuilder`) that you can
@@ -18,8 +19,7 @@ If you compare this to the Java DSL, you notice:
 * `→` is just an alias for `to`
 
 [[ScalaDSL-GettingStarted-SettingtherouteID]]
-Setting the route ID
-^^^^^^^^^^^^^^^^^^^^
+== Setting the route ID
 
 To assign the unique ID to the Scala route, insert the `routeId` method
 invocation after the "from" part of the DSL.
@@ -30,8 +30,7 @@ invocation after the "from" part of the DSL.
 -----------------------------------------
 
 [[ScalaDSL-GettingStarted-CreatinganewCamelScalaproject]]
-Creating a new Camel Scala project
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+== Creating a new Camel Scala project
 
 Camel offers Maven archetypes that
 allow you to quickly setup a new project.
@@ -45,7 +44,8 @@ mvn archetype:generate
 ----------------------
 
 This runs Maven interactively - just type `camel` and press <Enter> to
-filter for Camel-related archetypes. +
+filter for Camel-related archetypes.
+
  From the list, pick the number for `camel-archetype-scala`, then fill
 in the remaining details (such as the Camel version, _et cetera_).
 

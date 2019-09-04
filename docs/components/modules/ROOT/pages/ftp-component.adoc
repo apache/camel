@@ -29,7 +29,7 @@ for this component:
 ----
 
 
-=== URI format
+== URI format
 
 [source,java]
 ----
@@ -54,7 +54,8 @@ performed to create the directory configured for endpoint. The default
 value for `autoCreate` is `true`.
 
 If no *username* is provided, then `anonymous` login is attempted using
-no password. +
+no password.
+
  If no *port* number is provided, Camel will provide default values
 according to the protocol (ftp = 21, sftp = 22, ftps = 2222).
 
@@ -65,12 +66,13 @@ This component uses two different libraries for the actual FTP work. FTP
 and FTPS uses http://commons.apache.org/net/[Apache Commons Net] while
 SFTP uses http://www.jcraft.com/jsch/[JCraft JSCH].
 
-The FTPS component is only available in Camel 2.2 or newer. +
+The FTPS component is only available in Camel 2.2 or newer.
+
  FTPS (also known as FTP Secure) is an extension to FTP that adds
 support for the Transport Layer Security (TLS) and the Secure Sockets
 Layer (SSL) cryptographic protocols.
 
-=== URI Options
+== URI Options
 
 The options below are exclusive for the FTP component.
 
@@ -251,7 +253,7 @@ The component supports 2 options, which are listed below.
 
 
 
-=== FTPS component default trust store
+== FTPS component default trust store
 
 When using the `ftpClient.` properties related to SSL with the FTPS
 component, the trust store accept all certificates. If you only want
@@ -314,31 +316,35 @@ from("ftp://foo@myserver?password=secret&ftpClientConfig=#myConfig").to("bean:fo
 //=== More URI options
 
 
-=== Examples
+== Examples
 
-`ftp://someone@someftpserver.com/public/upload/images/holiday2008?password=secret&binary=true` +
+----
+ftp://someone@someftpserver.com/public/upload/images/holiday2008?password=secret&binary=true
 
-`ftp://someoneelse@someotherftpserver.co.uk:12049/reports/2008/password=secret&binary=false` +
- `ftp://publicftpserver.com/download`
+ftp://someoneelse@someotherftpserver.co.uk:12049/reports/2008/password=secret&binary=false
 
-=== Concurrency
+ftp://publicftpserver.com/download
+----
+
+== Concurrency
 
 FTP Consumer does not support concurrency
 
 The FTP consumer (with the same endpoint) does not support concurrency
-(the backing FTP client is not thread safe). +
+(the backing FTP client is not thread safe).
+
  You can use multiple FTP consumers to poll from different endpoints. It
 is only a single endpoint that does not support concurrent consumers.
 
 The FTP producer does *not* have this issue, it supports concurrency.
 
-=== More information
+== More information
 
 This component is an extension of the File component.
 So there are more samples and details on the File
 component page.
 
-=== Default when consuming files
+== Default when consuming files
 
 The FTP consumer will by default leave the consumed
 files untouched on the remote FTP server. You have to configure it
@@ -351,13 +357,14 @@ default move files to a `.camel` sub directory. The reason Camel does
 *not* do this by default for the FTP consumer is that it may lack
 permissions by default to be able to move or delete files.
 
-==== limitations
+=== limitations
 
 The option *readLock* can be used to force Camel *not* to consume files
 that is currently in the progress of being written. However, this option
 is turned off by default, as it requires that the user has write access.
 See the options table at File2 for more details about
-read locks. +
+read locks.
+
  There are other solutions to avoid consuming files that are currently
 being written over FTP; for instance, you can write to a temporary
 destination and move the file after it has been written.
@@ -367,7 +374,7 @@ restricted to the FTP_ROOT folder. That prevents you from moving files
 outside the FTP area. If you want to move files to another area you can
 use soft links and move files into a soft linked folder.
 
-=== Message Headers
+== Message Headers
 
 The following message headers can be used to affect the behavior of the
 component
@@ -406,7 +413,7 @@ In addition the FTP/FTPS consumer and producer will enrich the Camel
 |`CamelFtpReplyString` | *Camel 2.11.1:* The FTP client reply string
 |=======================================================================
 
-=== About timeouts
+== About timeouts
 
 The two set of libraries (see top) has different API for setting
 timeout. You can use the `connectTimeout` option for both of them to set
@@ -417,7 +424,7 @@ a timeout in millis to establish a network connection. An individual
 for FTP/FTSP as the data timeout, which corresponds to the
 `ftpClient.dataTimeout` value. All timeout values are in millis.
 
-=== Using Local Work Directory
+== Using Local Work Directory
 
 Camel supports consuming from remote FTP servers and downloading the
 files directly into a local work directory. This avoids reading the
@@ -446,7 +453,7 @@ The `java.io.File` handle is then used as the Exchange body. The file producer l
 As Camel knows it's a local work file, it can optimize and use a rename instead of a file copy, as the work file is meant to be deleted anyway.
 ====
 
-=== Stepwise changing directories
+== Stepwise changing directories
 
 Camel FTP can operate in two modes in terms of
 traversing directories when consuming files (eg downloading) or
@@ -488,7 +495,7 @@ FTP server we need to traverse and download files:
 And that we have a file in each of sub-a (a.txt) and sub-b (b.txt)
 folder.
 
-==== Using stepwise=true (default mode)
+== Using stepwise=true (default mode)
 
 [source,java]
 ----
@@ -578,7 +585,7 @@ disconnected.
 As you can see when stepwise is enabled, it will traverse the directory
 structure using CD xxx.
 
-==== Using stepwise=false
+== Using stepwise=false
 
 [source,java]
 ----
@@ -625,7 +632,7 @@ disconnected.
 As you can see when not using stepwise, there are no CD operation
 invoked at all.
 
-=== Samples
+== Samples
 
 In the sample below we set up Camel to download all the reports from the
 FTP server once every hour (60 min) as BINARY content and store it as
@@ -641,7 +648,7 @@ And the route using Spring DSL:
   </route>
 ----
 
-==== Consuming a remote FTPS server (implicit SSL) and client authentication
+=== Consuming a remote FTPS server (implicit SSL) and client authentication
 
 [source,java]
 ----
@@ -651,7 +658,7 @@ from("ftps://admin@localhost:2222/public/camel?password=admin&securityProtocol=S
   .to("bean:foo");
 ----
 
-==== Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
+=== Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
 
 [source,java]
 ----
@@ -684,11 +691,12 @@ spring XML file:
   </route>
 ----
 
-=== Filtering using ANT path matcher
+== Filtering using ANT path matcher
 
 The ANT path matcher is a filter that is shipped out-of-the-box in the
 *camel-spring* jar. So you need to depend on *camel-spring* if you are
-using Maven. +
+using Maven.
+
  The reason is that we leverage Spring's
 http://static.springsource.org/spring/docs/3.0.x/api/org/springframework/util/AntPathMatcher.html[AntPathMatcher]
 to do the actual matching.
@@ -701,7 +709,7 @@ The file paths are matched with the following rules:
 
 The sample below demonstrates how to use it:
 
-=== Using a proxy with SFTP
+== Using a proxy with SFTP
 
 To use an HTTP proxy to connect to your remote host, you can configure
 your route in the following way:
@@ -724,7 +732,7 @@ You can also assign a user name and password to the proxy, if necessary.
 Please consult the documentation for `com.jcraft.jsch.Proxy` to discover
 all options.
 
-=== Setting preferred SFTP authentication method
+== Setting preferred SFTP authentication method
 
 If you want to explicitly specify the list of authentication methods
 that should be used by `sftp` component, use `preferredAuthentications`
@@ -739,7 +747,7 @@ from("sftp://localhost:9999/root?username=admin&password=admin&preferredAuthenti
   to("bean:processFile");
 ----
 
-=== Consuming a single file using a fixed name
+== Consuming a single file using a fixed name
 
 When you want to download a single file and knows the file name, you can
 use `fileName=myFileName.txt` to tell Camel the name of the file to
@@ -774,8 +782,7 @@ single file (if it exists) and grab the file content as a String type:
 String data = template.retrieveBodyNoWait("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true", String.class);
 ----
 
-=== Debug logging
+== Debug logging
 
 This component has log level *TRACE* that can be helpful if you have
 problems.
-

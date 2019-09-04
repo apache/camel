@@ -189,4 +189,3 @@ Camel provide the following ClusterService implementations:
 - camel-file
 - camel-kubernetes
 - camel-zookeeper
-

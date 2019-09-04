@@ -193,7 +193,7 @@ from("jgroups-raft:clusterName?enableRoleChangeEvents=true").to(mock:mockEndpoin
 The snippet below demonstrates how to keep the singleton consumer route
 in the cluster of Camel Contexts. As soon as the master node dies, one
 of the slaves will be elected as a new master and started. In this
-particular example we want to keep singleton <<jetty-component,jetty>>
+particular example we want to keep singleton xref:jetty-component.adoc[Jetty]
 instance listening for the requests on
 address` http://localhost:8080/orders`.
 

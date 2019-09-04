@@ -9,11 +9,11 @@
 ====================================================================================
 The composite twitter component has been deprecated. Use individual component for directmessage, search, streaming and timeline.
 
-* <<twitter-component,Twitter Components>>
-  ** <<twitter-directmessage-component,Twitter Direct Message>>
-  ** <<twitter-search-component,Twitter Search>>
-  ** <<twitter-streaming-component,Twitter Streaming>>
-  ** <<twitter-timeline-component,Twitter Timeline>>
+* Twitter Components
+  ** xref:twitter-directmessage-component.adoc[Twitter Direct Message]
+  ** xref:twitter-search-component.adoc[Twitter Search]
+  ** xref:twitter-streaming-component.adoc[Twitter Streaming]
+  ** xref:twitter-timeline-component.adoc[Twitter Timeline]
 ====================================================================================
 
 The Twitter component enables the most useful features of the Twitter
@@ -336,6 +336,5 @@ from("direct:foo")
 
 == Example
 
-See also the link:twitter-websocket-example.html[Twitter Websocket
+See also the https://github.com/apache/camel/tree/camel-2.x/examples/camel-example-twitter-websocket[Twitter Websocket
 Example].
-

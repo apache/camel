@@ -225,5 +225,3 @@ They require a PubNub account, from where you can obtain a publish- and subscrib
  
 The example PubNubSensorExample already contains a subscribe key provided by PubNub, so this is ready to run without a account. 
 The example illustrates the PubNub component subscribing to a infinite stream of sensor data.
-
-

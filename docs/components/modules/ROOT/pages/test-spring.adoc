@@ -35,7 +35,7 @@ a|
 * JUnit 4.x - camel-test-spring
 * TestNG - camel-test-ng
 
-|<<plain-spring-test, Plain Spring Test>> a|
+|<<Plain Spring Test>> a|
 * JUnit 3.x
 * JUnit 4.x
 * TestNG
@@ -60,7 +60,7 @@ a|
 * JUnit 4.x - None
 * TestNG - None
 
-|<<camel-enhanced-spring-test,Camel Enhanced Spring Test>> a|
+|<<Camel Enhanced Spring Test>> a|
 * JUnit 4.x
 * TestNG
 
@@ -435,7 +435,7 @@ public class MyCamelTest extends AbstractJUnit38SpringContextTests {
 
 == Sending and Receiving Messages
 
-It might be that the http://camel.apache.org/enterprise-integration-patterns.html[Enterprise Integration Patterns] you have defined in either http://camel.apache.org/spring.html[Spring] XML or using the Java http://camel.apache.org/dsl.html[DSL] do all of the sending and receiving and you might just work with the http://camel.apache.org/mock.html[Mock] endpoints as described above. However sometimes in a test case its useful to explicitly send or receive messages directly.
+It might be that the xref:latest@manual::enterprise-integration-patterns.adoc[Enterprise Integration Patterns] you have defined in either http://camel.apache.org/spring.html[Spring] XML or using the Java http://camel.apache.org/dsl.html[DSL] do all of the sending and receiving and you might just work with the http://camel.apache.org/mock.html[Mock] endpoints as described above. However sometimes in a test case its useful to explicitly send or receive messages directly.
 
 To send or receive messages you should use the http://camel.apache.org/bean-integration.html[Bean Integration] mechanism. For example to send messages inject a `ProducerTemplate` using the `@EndpointInject` annotation then call the various send methods on this object to send a message to an endpoint. To consume messages use the `@MessageDriven` annotation on a method to have the method invoked when a message is received.
 [source,java]
@@ -456,5 +456,3 @@ public class Foo {
   }
 }
 ----
-
-

@@ -8,14 +8,14 @@
 The *atmosphere-websocket:* component provides Websocket
 based endpoints for a servlet communicating with
 external clients over Websocket (as a servlet accepting websocket
-connections from external clients). +
-The component uses the <<servlet-component,SERVLET>> component and uses
+connections from external clients).
+
+The component uses the xref:servlet-component.adoc[Servlet component] component and uses
 the https://github.com/Atmosphere/atmosphere[Atmosphere] library to
 support the Websocket transport in various Servlet containers (e..g.,
 Jetty, Tomcat, ...).
 
-Unlike the
-https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=39621544[Websocket]
+Unlike the xref:websocket-component.adoc[Websocket]
 component that starts the embedded Jetty server, this component uses the
 servlet provider of the container.
 
@@ -220,4 +220,3 @@ And the equivalent Spring sample:
 ------------------------------------------------------------
 
  
-

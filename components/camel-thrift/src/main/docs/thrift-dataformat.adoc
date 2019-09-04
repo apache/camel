@@ -13,7 +13,8 @@ Apache Thrift is language-neutral and
 platform-neutral, so messages produced by your Camel routes may be
 consumed by other language implementations.
 
-https://github.com/apache/thrift[Apache Thrift Implementation] +
+https://github.com/apache/thrift[Apache Thrift Implementation]
+
 
 == Thrift Options
 

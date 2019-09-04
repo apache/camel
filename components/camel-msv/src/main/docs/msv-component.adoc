@@ -22,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-Note that the <<jing-component,Jing>> component also supports
+Note that the xref:jing-component.adoc[Jing] component also supports
 http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
 Syntax]
 
@@ -151,4 +151,3 @@ goes to one of two endpoints, either *mock:valid* or *mock:invalid*
 based on whether or not the XML matches the given
 http://relaxng.org/[RelaxNG XML Schema] (which is supplied on the
 classpath).
-

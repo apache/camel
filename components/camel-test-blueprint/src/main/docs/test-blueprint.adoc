@@ -19,7 +19,8 @@ http://team.ops4j.org/wiki/display/paxexam/Pax+Exam[Pax Exam]. Please
 make sure all test jars in your classpath are OSGi bundles.
 
 Also notice the use of *`getBlueprintDescriptor`* to specify the
-location of the OSGi Blueprint XML file. +
+location of the OSGi Blueprint XML file.
+
  If you have multiple OSGi Blueprint XML files, then you can specify
 them with a comma-separated list in the *`getBlueprintDescriptor`*
 method. Notice that only **one** `CamelContext` is supported per blueprint bundle,

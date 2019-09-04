@@ -1,5 +1,6 @@
 [[SpringJavaConfig-SpringJavaConfig]]
-== Spring Java Config
+= Spring Java Config
+:page-source: components/camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc
 
 Spring started life using XML Config to wire beans
 together. However some folks don't like using XML and would rather use
@@ -10,8 +11,7 @@ You can use either the XML or Java config approaches with Camel; its
 your choice really on which you prefer.
 
 [[SpringJavaConfig-UsingSpringJavaConfig]]
-Using Spring Java Config
-^^^^^^^^^^^^^^^^^^^^^^^^
+== Using Spring Java Config
 
 To use Spring Java Config in your Camel project the easiest thing to do
 is add the following to your pom.xml
@@ -32,8 +32,7 @@ Note that this library is totally optional; you could just wire Camel
 together yourself with Java Config.
 
 [[SpringJavaConfig-Configuration]]
-Configuration
-^^^^^^^^^^^^^
+== Configuration
 
 The most common case of using JavaConfig with Camel would be to create
 configuration with defined list of routes to be used by router.
@@ -69,8 +68,7 @@ public class MyRouteConfiguration extends CamelConfiguration {
 --------------------------------------------------------------
 
 [[SpringJavaConfig-Testing]]
-Testing
-^^^^^^^
+== Testing
 
 Since *Camel 2.11.0* you can use the `CamelSpringJUnit4ClassRunner` with
 `CamelSpringDelegatingTestContextLoader`. This is the recommended way to

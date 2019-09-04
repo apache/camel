@@ -23,7 +23,7 @@ for this component:
 
 ------------------------------------------------------
 
-=== URI Format
+== URI Format
 
 The Google Pubsub Component uses the following URI format:
 
@@ -33,7 +33,7 @@ google-pubsub://project-id:destinationName?[options]
 
 Destination Name can be either a topic or a subscription name.
 
-=== Options
+== Options
 
 // component options: START
 The Google Pubsub component supports 2 options, which are listed below.
@@ -114,7 +114,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Producer Endpoints
+== Producer Endpoints
 
 Producer endpoints can accept and deliver to PubSub individual and grouped
 exchanges alike. Grouped exchanges have `Exchange.GROUPED_EXCHANGE` property set.
@@ -129,7 +129,7 @@ A Map set as message header `GooglePubsubConstants.ATTRIBUTES` will be sent as P
 Once exchange has been delivered to PubSub the PubSub Message ID will be assigned to
 the header `GooglePubsubConstants.MESSAGE_ID`.
 
-=== Consumer Endpoints
+== Consumer Endpoints
 Google PubSub will redeliver the message if it has not been acknowledged within the time period set
 as a configuration option on the subscription.
 
@@ -142,7 +142,7 @@ To ack/nack the message the component uses Acknowledgement ID stored as header `
 If the header is removed or tampered with, the ack will fail and the message will be redelivered
 again after the ack deadline.
 
-=== Message Headers
+== Message Headers
 Headers set by the consumer endpoints:
 
 * GooglePubsubConstants.MESSAGE_ID
@@ -150,12 +150,12 @@ Headers set by the consumer endpoints:
 * GooglePubsubConstants.PUBLISH_TIME
 * GooglePubsubConstants.ACK_ID
 
-=== Message Body
+== Message Body
 
 The consumer endpoint returns the content of the message as byte[] - exactly as the underlying system sends it.
 It is up for the route to convert/unmarshall the contents.
 
-=== Authentication Configuration
+== Authentication Configuration
 
 Google Pubsub component authentication is targeted for use with the GCP Service Accounts.
 For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
@@ -174,7 +174,7 @@ https://developers.google.com/identity/protocols/application-default-credentials
 
 Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
 
-=== Rollback and Redelivery
+== Rollback and Redelivery
 
 The rollback for Google PubSub relies on the idea of the Acknowledgement Deadline - the time period where Google PubSub expects to receive the acknowledgement.
 If the acknowledgement has not been received, the message is redelivered.

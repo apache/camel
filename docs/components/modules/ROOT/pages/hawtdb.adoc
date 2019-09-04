@@ -1,5 +1,6 @@
 [[HawtDB-HawtDB]]
-== HawtDB (deprecated)
+= HawtDB (deprecated)
+:page-source: components/camel-hawtdb/src/main/docs/hawtdb.adoc
 
 *Available as of Camel 2.3*
 
@@ -37,7 +38,7 @@ for this component:
 
 
 [[HawtDB-UsingHawtDBAggregationRepository]]
-=== Using HawtDBAggregationRepository
+== Using HawtDBAggregationRepository
 
 `HawtDBAggregationRepository` is an `AggregationRepository` which on the
 fly persists the aggregated messages. This ensures that you will not
@@ -102,7 +103,7 @@ The `repositoryName` option must be provided. Then either the
 `persistentFileName` or the `hawtDBFile` must be provided.
 
 [[HawtDB-Whatispreservedwhenpersisting]]
-==== What is preserved when persisting
+=== What is preserved when persisting
 
 `HawtDBAggregationRepository` will only preserve any `Serializable`
 compatible data types. If a data type is not such a type its dropped and
@@ -110,7 +111,7 @@ a `WARN` is logged. And it only persists the `Message` body and the
 `Message` headers. The `Exchange` properties are *not* persisted.
 
 [[HawtDB-Recovery]]
-==== Recovery
+=== Recovery
 
 The `HawtDBAggregationRepository` will by default recover any failed
 Exchange. It does this by having a background tasks

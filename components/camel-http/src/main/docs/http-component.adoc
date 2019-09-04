@@ -3,8 +3,6 @@
 
 *Available as of Camel version 1.0*
 
-*Available as of Camel version 1.0*
-
 
 The HTTP component provides HTTP based endpoints
 for calling external HTTP resources (as a client to call external
@@ -260,7 +258,8 @@ and will throw a `HttpOperationFailedException` with the information.
 *throwExceptionOnFailure*
 The option, `throwExceptionOnFailure`, can be set to `false` to prevent
 the `HttpOperationFailedException` from being thrown for failed response
-codes. This allows you to get any response from the remote server. +
+codes. This allows you to get any response from the remote server.
+
 There is a sample below demonstrating this.
 
 == Exceptions
@@ -275,18 +274,25 @@ response
 
 == Which HTTP method will be used
 
-The following algorithm is used to determine what HTTP method should be used: +
- 1. Use method provided as endpoint configuration (`httpMethod`). +
- 2. Use method provided in header (`Exchange.HTTP_METHOD`). +
- 3. `GET` if query string is provided in header. +
- 4. `GET` if endpoint is configured with a query string. +
- 5. `POST` if there is data to send (body is not `null`). +
+The following algorithm is used to determine what HTTP method should be used:
+
+ 1. Use method provided as endpoint configuration (`httpMethod`).
+
+ 2. Use method provided in header (`Exchange.HTTP_METHOD`).
+
+ 3. `GET` if query string is provided in header.
+
+ 4. `GET` if endpoint is configured with a query string.
+
+ 5. `POST` if there is data to send (body is not `null`).
+
  6. `GET` otherwise.
 
 == How to get access to HttpServletRequest and HttpServletResponse
 
 You can get access to these two using the Camel type converter system
-using +
+using
+
  *NOTE* You can get the request and response not just from the processor
 after the camel-jetty or camel-cxf endpoint.
 
@@ -331,7 +337,8 @@ from("direct:start")
 -----------------------------------------------------------
 
 In the sample above Camel will call the http://newhost despite the
-endpoint is configured with http://oldhost. +
+endpoint is configured with http://oldhost.
+
 If the http endpoint is working in bridge mode, it will ignore the
 message header of `Exchange.HTTP_URI`.
 
@@ -414,7 +421,8 @@ There is also support for proxy authentication via the
 === Using proxy settings outside of URI
 
 To avoid System properties conflicts, you can set proxy configuration
-only from the CamelContext or URI. +
+only from the CamelContext or URI.
+
  Java DSL :
 
 [source,java]
@@ -436,7 +444,8 @@ Spring XML
 ----------------------------------------------------------------
 
 Camel will first set the settings from Java System or CamelContext
-Properties and then the endpoint proxy options if provided. +
+Properties and then the endpoint proxy options if provided.
+
  So you can override the system properties with the endpoint options.
 
 There is also a `http.proxyScheme` property you
@@ -511,7 +520,8 @@ int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
 == Disabling Cookies
 
 To disable cookies you can set the HTTP Client to ignore cookies by
-adding this URI option: +
+adding this URI option:
+
  `httpClient.cookieSpec=ignoreCookies`
 
 == Advanced Usage
@@ -580,7 +590,8 @@ Please refer to
 http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d4e537[SSL/TLS
 customization] for details or have a look into the
 `org.apache.camel.component.http.HttpsServerTestSupport` unit test base
-class. +
+class.
+
  You can also implement a custom
 `org.apache.camel.component.http.HttpClientConfigurer` to do some
 configuration on the http client if you need full control of it.

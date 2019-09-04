@@ -7,7 +7,8 @@
 
 The *apns* component is used for sending notifications to iOS devices.
 The apns components use https://github.com/notnoop/java-apns[javapns]
-library. +
+library.
+
  The component supports sending notifications to Apple Push Notification
 Servers (APNS) and consuming feedback from the servers.
 
@@ -335,4 +336,3 @@ from("apns:consumer?initialDelay=10&delay=3600&timeUnit=SECONDS")
     .to("log:com.apache.camel.component.apns?showAll=true&multiline=true")
     .to("mock:result");
 --------------------------------------------------------------------------
-

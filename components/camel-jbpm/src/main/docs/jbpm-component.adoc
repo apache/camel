@@ -36,7 +36,7 @@ jBPM Consumer allows to attach routes to
 jbpm::events:type:[classifier][?options]
 ---------------------------------------------
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -301,4 +301,3 @@ from("direct:start")
         .to("jbpm:http://localhost:8080/kie-server/services/rest/server?userName=wbadmin&password=wbadmin
         &deploymentId=evaluation");
 ----------------------------------------------------------------------------------------------
-

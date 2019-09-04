@@ -8,7 +8,7 @@
 The *mina2:* component is a transport for working with
 http://mina.apache.org/[Apache MINA 2.x]
 
-TIP: Favor using <<netty-component,Netty>> as Netty is a much more active
+TIP: Favor using xref:netty-component.adoc[Netty] as Netty is a much more active
 maintained and popular project than Apache Mina currently is
 
 INFO: Be careful with sync=false on consumer endpoints. Since camel-mina2 all
@@ -52,7 +52,8 @@ A Mina producer has a default timeout value of 30 seconds, while it
 waits for a response from the remote server.
 
 In normal use, `camel-mina` only supports marshalling the body
-content—message headers and exchange properties are not sent. +
+content—message headers and exchange properties are not sent.
+
  However, the option, *transferExchange*, does allow you to transfer the
 exchange itself over the wire. See options below.
 
@@ -207,7 +208,7 @@ See the Mina how to write your own codec. To use your custom codec with
 `camel-mina`, you should register your codec in the
 Registry; for example, by creating a bean in the
 Spring XML file. Then use the `codec` option to specify the bean ID of
-your codec. See <<hl7-dataformat,HL7>> that has a custom codec.
+your codec. See xref:hl7-dataformat.adoc[HL7] that has a custom codec.
 
 == Sample with sync=false
 
@@ -263,7 +264,7 @@ assertEquals("Bye World", response);
 
 == Sample with Spring DSL
 
-Spring DSL can, of course, also be used for <<mina2-component,MINA>>. In the
+Spring DSL can, of course, also be used for xref:mina2-component.adoc[Mina 2]. In the
 sample below we expose a TCP server on port 5555:
 
 [source,xml]
@@ -322,4 +323,3 @@ can also implement some customized filters. Please note that `codec` and
 `logger` are also implemented as Mina filters of type, `IoFilter`. Any
 filters you may define are appended to the end of the filter chain; that
 is, after `codec` and `logger`.
-

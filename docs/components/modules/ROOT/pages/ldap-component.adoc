@@ -6,7 +6,8 @@
 
 
 The *ldap* component allows you to perform searches in LDAP servers
-using filters as the message payload. +
+using filters as the message payload.
+
  This component uses standard JNDI (`javax.naming` package) to access
 the server.
 
@@ -369,4 +370,3 @@ public class CustomSocketFactory extends SSLSocketFactory {
 -----------------------------------------------------------------------------------------------------
 
  
-

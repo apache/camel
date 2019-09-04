@@ -15,7 +15,7 @@ onwards.
 
 *Namespace prefix mapping*
 
-See <<jaxb-dataformat,JAXB>> for details how you can control namespace
+See xref:jaxb-dataformat.adoc[JAXB] for details how you can control namespace
 prefix mappings when marshalling using SOAP data format.
 
 == SOAP Options
@@ -124,7 +124,7 @@ from("direct:start")
 -------------------------------------------------------------------------------------------------------------------------------------
 
 TIP: *See also*
-As the SOAP dataformat inherits from the <<jaxb-dataformat,JAXB>> dataformat
+As the SOAP dataformat inherits from the xref:jaxb-dataformat.adoc[JAXB] dataformat
 most settings apply here as well
 
 

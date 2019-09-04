@@ -1,20 +1,18 @@
 [[el-language]]
 = EL Language (deprecated)
-[[EL-EL]]
-*Available as of Camel version 1.1.0*
+
 *Available as of Camel version 1.1*
 
-
-EL
+== EL
 ~~
 
 Camel supports the unified JSP and JSF Expression Language via the
 http://juel.sourceforge.net/[JUEL] to allow an
 Expression or Predicate to be
-used in the DSL or link:xml-configuration.html[Xml
+used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
 Configuration].
 
-For example you could use EL inside a link:message-filter.html[Message
+For example you could use EL inside a xref:latest@manual::filter-eip.adoc[Message
 Filter] in XML
 
 [source,xml]

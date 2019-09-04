@@ -18,7 +18,8 @@ encryption formats. Additional formats can be easily added later as
 needed. This capability allows Camel users to encrypt/decrypt payloads
 while being dispatched or received along a route.
 
-*Available as of Camel 2.9* +
+*Available as of Camel 2.9*
+
  The XMLSecurity Data Format supports asymmetric key encryption. In this
 encryption model a symmetric key is generated and used to perform XML
 content encryption or decryption. This "content encryption key" is then

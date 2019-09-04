@@ -124,7 +124,8 @@ And the sample using Java DSL:
 *Available as of Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
-such as `"classpath:"`, `"file:"`, or `"http:"`. +
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+
  This is done using the following syntax: `"resource:scheme:location"`,
 eg to refer to a file on the classpath you can do:
 

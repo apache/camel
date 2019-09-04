@@ -202,4 +202,3 @@ String indexId = template.requestBody("direct:index", map, String.class);
 http://www.elastic.co[Elastic Main Site]
 
 https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-api.html[ElasticSearch Java API]
-

@@ -1,5 +1,6 @@
 [[ScalaDSL-SupportedLanguages]]
-== Scala DSL Supported Languages
+= Scala DSL Supported Languages
+:page-source: components/camel-scala/src/main/docs/scala-supported-languages.adoc
 
 Support for other languages inside the Scala DSL
 routes is delivered through traits. The
@@ -11,7 +12,7 @@ You can use any of the supported Camel Languages in
 the Scala DSL; see below for a couple of examples:
 
 [[ScalaDSL-Supportedlanguages-Using]]
-=== Using XPath
+== Using XPath
 
 With the XPath trait, you have an additional method available on an
 `Exchange` to do XPath queries against the message. Just look at this
@@ -19,7 +20,7 @@ Splitter example, where the `xpath` method is used in a
 `Exchange ⇒ Any*` function literal
 
 [[ScalaDSL-Supportedlanguages-Using.1]]
-=== Using JXPath
+== Using JXPath
 
 With the `org.apache.camel.scala.dsl.languages.JXPath` trait, you can an
 additional `jxpath` method on the `Exchange`. In the Recipient List

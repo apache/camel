@@ -11,8 +11,9 @@ http://ibatis.apache.org/[Apache iBATIS].
 *Prefer MyBatis*
 
 The Apache iBatis project is no longer active. The project is moved
-outside Apache and is now know as the MyBatis project. +
-Therefore we encourage users to use <<mybatis-component,MyBatis>> instead.
+outside Apache and is now know as the MyBatis project.
+
+Therefore we encourage users to use xref:mybatis-component.adoc[MyBatis] instead.
 This camel-ibatis component will be removed in Camel 3.0.
 
 iBatis do not support Spring 4.x. So you can only use Spring 3.x or
@@ -46,9 +47,11 @@ You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
 This component will by default load the iBatis SqlMapConfig file from
-the root of the classpath and expected named as `SqlMapConfig.xml`. +
+the root of the classpath and expected named as `SqlMapConfig.xml`.
+
  It uses Spring resource loading so you can define it using `classpath`,
-`file` or `http` as prefix to load resources with those schemes. +
+`file` or `http` as prefix to load resources with those schemes.
+
  In Camel 2.2 you can configure this on the iBatisComponent with the
 `setSqlMapConfig(String)` method.
 
@@ -216,10 +219,10 @@ body to iBatis:
 
 Since this component does not support scheduled polling, you need to use
 another mechanism for triggering the scheduled polls, such as the
-<<timer-component,Timer>> or <<timer-component,Quartz>> components.
+`timer` or xref:quartz-component.adoc[Quartz] components.
 
 In the sample below we poll the database, every 30 seconds using the
-<<timer-component,Timer>> component and send the data to the JMS queue:
+`timer` component and send the data to the JMS queue:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------
@@ -249,4 +252,3 @@ data is processed. This allows us to change the status of the row in the
 database to processed, so we avoid consuming it twice or more.
 
 And the statements in the sqlmap file:
-

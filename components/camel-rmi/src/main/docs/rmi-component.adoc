@@ -4,9 +4,6 @@
 *Available as of Camel version 1.0*
 
 
-*Available as of Camel version 1.0*
-
-
 The *rmi:* component binds Exchanges to the RMI
 protocol (JRMP).
 
@@ -154,4 +151,3 @@ In XML DSL you can do as follows from *Camel 2.7* onwards:
         <to uri="bean:helloServiceBean"/>
     </camel:route>
 ------------------------------------------------------------------------------------------------------------------------
-

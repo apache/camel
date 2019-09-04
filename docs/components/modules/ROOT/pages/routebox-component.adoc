@@ -9,9 +9,9 @@
 
 The Routebox component will be revisited in upcoming releases to see if
 it can be further simplified, be more intuitive and user friendly. The
-related <<context-component,Context>> component may be regardes as the
+related xref:context-component.adoc[Context] component may be regardes as the
 simpler component. This component may be @deprecated in favor of
-<<context-component,Context>>.
+xref:context-component.adoc[Context].
 
 The *routebox* component enables the creation of specialized endpoints
 that offer encapsulation and a strategy based indirection service to a

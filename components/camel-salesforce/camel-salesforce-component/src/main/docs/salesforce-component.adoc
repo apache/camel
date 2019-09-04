@@ -5,7 +5,8 @@
 
 
 This component supports producer and consumer endpoints to communicate
-with Salesforce using Java DTOs.  +
+with Salesforce using Java DTOs. 
+
  There is a companion maven plugin Camel Salesforce Plugin that
 generates these DTOs (see further below).
 
@@ -26,7 +27,7 @@ NOTE: Developers wishing to contribute to the component are instructed
 to look at the https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-component/README.md[README.md] file on instructions on how to get started and
 setup your environment for running integration tests.
 
-=== Authenticating to Salesforce
+== Authenticating to Salesforce
 
 The component supports three OAuth authentication flows:
 
@@ -57,7 +58,7 @@ NOTE: The certificate used in JWT Bearer Token Flow can be a selfsigned
 certificate. The KeyStore holding the certificate and the private key
 must contain only single certificate-private key entry.
 
-=== URI format
+== URI format
 
 When used as a consumer, receiving streaming events, the URI scheme is:
 
@@ -77,7 +78,7 @@ salesforce:operationName?options
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Passing in Salesforce headers and fetching Salesforce response headers
+== Passing in Salesforce headers and fetching Salesforce response headers
 
 With Camel 2.21 there is support to pass https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/headers.htm[Salesforce headers]
 via inbound message headers, header names that start with `Sforce` or
@@ -105,14 +106,14 @@ class MyProcessor implements Processor {
 }
 ----
 
-=== Supported Salesforce APIs
+== Supported Salesforce APIs
 
 The component supports the following Salesforce APIs
 
 Producer endpoints can use the following APIs. Most of the APIs process
 one record at a time, the Query API can retrieve multiple Records.
 
-==== Rest API
+=== Rest API
 
 You can use the following for `operationName`:
 
@@ -159,13 +160,15 @@ list of errors while creating the new object.
 ...to("salesforce:upsertSObject?sObjectIdName=Name")...
 ----
 
-==== Rest Bulk API
+=== Rest Bulk API
 
 Producer endpoints can use the following APIs. All Job data formats,
-i.e. xml, csv, zip/xml, and zip/csv are supported.  +
+i.e. xml, csv, zip/xml, and zip/csv are supported. 
+
  The request and response have to be marshalled/unmarshalled by the
 route. Usually the request will be some stream source like a CSV file,
- +
+
+
  and the response may also be saved to a file to be correlated with the
 request.
 
@@ -203,7 +206,7 @@ error.
 ...to("salesforce:createBatchJob")..
 ----
 
-==== Rest Streaming API
+=== Rest Streaming API
 
 Consumer endpoints can use the following syntax for streaming endpoints
 to receive Salesforce notifications on create/update.
@@ -222,7 +225,7 @@ To subscribe to an existing topic
 from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
 ----
 
-==== Platform events
+=== Platform events
 
 To emit a platform event use `createSObject` operation. And set the
 message body can be JSON string or InputStream with key-value data --
@@ -278,9 +281,9 @@ For example, in the simplest form to consume one event:
 PlatformEvent event = consumer.receiveBody("salesforce:event/Order_Event__e", PlatformEvent.class);
 ----
 
-=== Examples
+== Examples
 
-==== Uploading a document to a ContentWorkspace
+=== Uploading a document to a ContentWorkspace
 
 Create the ContentVersion in Java, using a Processor instance:
 
@@ -320,7 +323,7 @@ from("file:///home/camel/library")
     .to("salesforce:createSObject"); 
 ----
 
-=== Using Salesforce Limits API
+== Using Salesforce Limits API
 
 With `salesforce:limits` operation you can fetch of API limits from Salesforce and then act upon that data received.
 The result of `salesforce:limits` operation is mapped to `org.apache.camel.component.salesforce.api.dto.Limits`
@@ -330,7 +333,7 @@ For instance, consider that you need to limit the API usage of Salesforce so tha
 other routes. The body of output message contains an instance of
 `org.apache.camel.component.salesforce.api.dto.Limits` object that can be used in conjunction with
 Content Based Router and Content Based Router and 
-<<spel-language,Spring Expression Language (SpEL)>> to choose when to perform queries.
+xref:spel-language.adoc[Spring Expression Language (SpEL)] to choose when to perform queries.
 
 Notice how multiplying `1.0` with the integer value held in `body.dailyApiRequests.remaining` makes the expression
 evaluate as with floating point arithmetic, without it - it would end up making integral division which would result
@@ -348,7 +351,7 @@ from("direct:querySalesforce")
     .endChoice()
 ----
 
-=== Working with approvals
+== Working with approvals
 
 All the properties are named exactly the same as in the Salesforce REST API prefixed with `approval.`. You can set
 approval properties by setting `approval.PropertyName` of the Endpoint these will be used as template -- meaning
@@ -393,7 +396,7 @@ body.put("nextApproverIds", userId);
 final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
 ----
 
-=== Using Salesforce Recent Items API
+== Using Salesforce Recent Items API
 
 To fetch the recent items use `salesforce:recent` operation. This operation returns an `java.util.List` of
 `org.apache.camel.component.salesforce.api.dto.RecentItem` objects (`List<RecentItem>`) that in turn contain
@@ -408,7 +411,7 @@ from("direct:fetchRecentItems")
             .log("${body.name} at ${body.attributes.url}");
 ----
 
-=== Using Salesforce Composite API to submit SObject tree
+== Using Salesforce Composite API to submit SObject tree
 
 To create up to 200 records including parent-child relationships use `salesforce:composite-tree` operation. This
 requires an instance of `org.apache.camel.component.salesforce.api.dto.composite.SObjectTree` in the input 
@@ -450,7 +453,7 @@ final List<SObjectNode> succeeded = result.get(false);
 final String firstId = succeeded.get(0).getId();
 ----
 
-=== Using Salesforce Composite API to submit multiple requests in a batch
+== Using Salesforce Composite API to submit multiple requests in a batch
 The Composite API batch operation (`composite-batch`) allows you to accumulate multiple requests in a batch and then
 submit them in one go, saving the round trip cost of multiple individual requests. Each response is then received in a
 list of responses with the order preserved, so that the n-th requests response is in the n-th place of the response.
@@ -506,7 +509,7 @@ final int updateStatus = deleteResult.getStatusCode(); // probably 204
 final Object updateResultData = deleteResult.getResult(); // probably null
 ----
 
-=== Using Salesforce Composite API to submit multiple chained requests
+== Using Salesforce Composite API to submit multiple chained requests
 The `composite` operation allows submitting up to 25 requests that can be chained together, for instance identifier
 generated in previous request can be used in subsequent request. Individual requests and responses are linked with the
 provided _reference_.
@@ -553,7 +556,7 @@ final Map<String, ?> accountUpdateBody = accountUpdateResult.getBody();
 final SObjectCompositeResult contactCreationResult = results.stream().filter(r -> "JunctionRecord".equals(r.getReferenceId())).findFirst().get()
 ----
 
-=== Generating SOQL query strings
+== Generating SOQL query strings
 
 `org.apache.camel.component.salesforce.api.utils.QueryHelper` contains helper
 methods to generate SOQL queries. For instance to fetch all custom fields from
@@ -564,7 +567,7 @@ _Account_ SObject you can simply generate the SOQL SELECT by invoking:
 String allCustomFieldsQuery = QueryHelper.queryToFetchFilteredFieldsOf(new Account(), SObjectField::isCustom);
 ----
 
-=== Camel Salesforce Maven Plugin
+== Camel Salesforce Maven Plugin
 
 This Maven plugin generates DTOs for the Camel. 
 
@@ -588,7 +591,7 @@ Please refer to
 https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-maven-plugin[README.md]
 for details on how to generated the DTO.
 
-=== Options
+== Options
 
 
 

@@ -1,5 +1,6 @@
 [[BAM-BusinessActivityMonitoring]]
-== Business Activity Monitoring
+= Business Activity Monitoring
+:page-source: components/camel-bam/src/main/docs/bam.adoc
 
 The *Camel BAM* module provides a Business Activity Monitoring (BAM)
 framework for testing business processes across multiple message
@@ -11,10 +12,9 @@ want to test that, for a given Purchase Order, you receive a matching
 Invoice from system B within a specific time period.
 
 [[BAM-HowCamelBAMWorks]]
-How Camel BAM Works
-^^^^^^^^^^^^^^^^^^^
+== How Camel BAM Works
 
-Camel BAM uses a link:correlation-identifier.html[Correlation
+Camel BAM uses a xref:manual::correlation-identifier.adoc[Correlation
 Identifier] on an input message to determine the _Process Instance_ to
 which it belongs. The process instance is an entity bean which can
 maintain state for each _Activity_ (where an activity typically maps to
@@ -26,8 +26,7 @@ activity - such as to set time expectations or perform real time
 reconciliation of values across activities.
 
 [[BAM-SimpleExample]]
-Simple Example
-^^^^^^^^^^^^^^
+== Simple Example
 
 The following example shows how to perform some time based rules on a
 simple business process of 2 activities - A and B - which correspond
@@ -64,16 +63,14 @@ ProcessBuilder is a RouteBuilder and can be
 added to any CamelContext.
 
 [[BAM-CompleteExample]]
-Complete Example
-^^^^^^^^^^^^^^^^
+== Complete Example
 
-For a complete example please see the link:examples/bam-example.html[BAM
+For a complete example please see the xref:bam-example.adoc[BAM
 Example], which is part of the standard Camel
 Examples
 
 [[BAM-UseCases]]
-Use Cases
-^^^^^^^^^
+== Use Cases
 
 In the world of finance, a common requirement is tracking trades. Often
 a trader will submit a Front Office Trade which then flows through the

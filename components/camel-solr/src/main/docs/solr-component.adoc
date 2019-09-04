@@ -220,7 +220,7 @@ delete routes and then call the commit route.
 == Querying Solr
 
 Currently, this component doesn't support querying data natively (may be
-added later). For now, you can query Solr using <<http-component,HTTP>> as
+added later). For now, you can query Solr using xref:http-component.adoc[HTTP] as
 follows:
 
 [source,java]
@@ -240,4 +240,3 @@ http://lucene.apache.org/solr/tutorial.html#Querying+Data[Solr Query
 Tutorial]
 
 http://wiki.apache.org/solr/SolrQuerySyntax[Solr Query Syntax]
-

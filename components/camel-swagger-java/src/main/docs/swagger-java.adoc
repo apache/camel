@@ -1,4 +1,4 @@
-== Swagger Java Component
+= Swagger Java Component
 
 *Available as of Camel 2.16*
 
@@ -23,7 +23,7 @@ The camel-swagger-java module can be used from
 the REST components (without the need for servlet)
 
 
-=== Using Swagger in rest-dsl
+== Using Swagger in rest-dsl
 
 You can enable the swagger api from the rest-dsl by configuring the
 `apiContextPath` dsl as shown below:
@@ -62,7 +62,7 @@ public class UserRouteBuilder extends RouteBuilder {
 ----
  
 
-=== Options
+== Options
 
 The swagger module can be configured using the following options. To
 configure using a servlet you use the init-param as shown above. When
@@ -131,7 +131,7 @@ wildcard. Its the same pattern matching as used by
 Intercept
 |===
 
-=== Adding Security Definitions in API doc
+== Adding Security Definitions in API doc
 
 *Available as of Camel 2.22.0*
 
@@ -173,7 +173,7 @@ is using OAuth security with permitted scopes of read and write pets.
 
 
 
-=== ContextIdListing enabled
+== ContextIdListing enabled
 
 When contextIdListing is enabled then its detecting all the running
 CamelContexts in the same JVM. These contexts are listed in the root
@@ -182,7 +182,7 @@ the swagger documentation then the context-path must be appended with
 the Camel context id, such as `api-docs/myCamel`. The
 option apiContextIdPattern can be used to filter the names in this list.
 
-=== JSon or Yaml
+== JSon or Yaml
 
 *Available as of Camel 2.17*
 
@@ -193,7 +193,7 @@ the HTTP Accept header is used to detect if json or yaml can be
 accepted. If either both is accepted or none was set as accepted then
 json is returned as the default format.
 
-=== Examples
+== Examples
 
 In the Apache Camel distribution we ship
 the `camel-example-swagger-cdi` and `camel-example-swagger-java` which

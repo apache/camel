@@ -21,7 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI format
+== URI format
 
 [source,text]
 ----
@@ -57,7 +57,7 @@ synchronous=true as option on the endpoint uris, Or set it on the
 RestletComponent as a global option so all endpoints inherit this
 option.
 
-=== Options
+== Options
 
 
 
@@ -198,7 +198,7 @@ The component supports 24 options, which are listed below.
 
 
 
-=== Message Headers
+== Message Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
@@ -248,15 +248,15 @@ create responses using the API from Restlet. See examples below.
 the List of CacheDirective of Restlet from the camel message header.
 |===
 
-=== Message Body
+== Message Body
 
 Camel will store the restlet response from the external server on the
 OUT body. All headers from the IN message will be copied to the OUT
 message, so that headers are preserved during routing.
 
-=== Samples
+== Samples
 
-==== Restlet Endpoint with Authentication
+=== Restlet Endpoint with Authentication
 
 The following route starts a `restlet` consumer endpoint that listens
 for `POST` requests on http://localhost:8080. The processor creates a
@@ -294,7 +294,7 @@ The sample client gets a response like the following:
 received [<order foo='1'/>] as an order id = 89531
 ----
 
-==== Single restlet endpoint to service multiple methods and URI templates (deprecated)
+=== Single restlet endpoint to service multiple methods and URI templates (deprecated)
 
 This functionality is *deprecated* so do NOT use!
 
@@ -321,7 +321,7 @@ The `restletUriPatterns=#uriTemplates` option references the
 </util:list>
 ----
 
-==== Using Restlet API to populate response
+=== Using Restlet API to populate response
 
 *Available as of Camel 2.8*
 
@@ -332,7 +332,7 @@ the response from an inlined Camel Processor:
 
 *Generating response using Restlet Response API*
 
-==== Configuring max threads on component
+=== Configuring max threads on component
 
 To configure the max threads options you must do this on the component,
 such as:
@@ -344,9 +344,10 @@ such as:
 </bean>
 ----
 
-==== Using the Restlet servlet within a webapp
+=== Using the Restlet servlet within a webapp
 
-*Available as of Camel 2.8* +
+*Available as of Camel 2.8*
+
  There are
 http://www.restlet.org/documentation/2.0/jee/ext/org/restlet/ext/servlet/ServerServlet.html[three
 possible ways] to configure a Restlet application within a servlet
@@ -404,8 +405,10 @@ And add this to your web.xml;
 You will then be able to access the deployed route at
 `http://localhost:8080/mywebapp/rs/demo/1234` where;
 
-`localhost:8080` is the server and port of your servlet container +
- `mywebapp` is the name of your deployed webapp +
+`localhost:8080` is the server and port of your servlet container
+
+ `mywebapp` is the name of your deployed webapp
+
  Your browser will then show the following content;
 
 [source,text]

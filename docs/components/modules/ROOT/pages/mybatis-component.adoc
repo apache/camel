@@ -37,7 +37,8 @@ You can append query options to the URI in the following format,
 
 This component will by default load the MyBatis SqlMapConfig file from
 the root of the classpath with the expected name of
-`SqlMapConfig.xml`. +
+`SqlMapConfig.xml`.
+
  If the file is located in another location, you will need to configure
 the `configurationUri` option on the `MyBatisComponent` component.
 
@@ -299,7 +300,8 @@ from("direct:start")
 === Notice on InsertList, UpdateList and DeleteList StatementTypes
 
 Parameter of any type (List, Map, etc.) can be passed to mybatis and an
-end user is responsible for handling it as required +
+end user is responsible for handling it as required
+
  with the help of http://www.mybatis.org/mybatis-3/dynamic-sql.html[mybatis
 dynamic queries] capabilities.
 

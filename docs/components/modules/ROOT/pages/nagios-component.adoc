@@ -30,7 +30,8 @@ nagios://host[:port][?Options]
 
 Camel provides two abilities with the xref:nagios-component.adoc[Nagios]
 component. You can send passive check messages by sending a message to
-its endpoint. +
+its endpoint.
+
  Camel also provides a EventNotifer which allows
 you to send notifications to Nagios.
 

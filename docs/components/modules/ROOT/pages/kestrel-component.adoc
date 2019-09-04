@@ -305,4 +305,3 @@ assertions. If you're using this component in a Maven test environment,
 you may need to set `enableAssertions` to `false`. Please refer to the
 http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html[surefire:test
 reference] for details.
-

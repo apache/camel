@@ -184,4 +184,3 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoi
 implements the Polling Consumer pattern for
 consuming message exchanges from the endpoint via a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
-

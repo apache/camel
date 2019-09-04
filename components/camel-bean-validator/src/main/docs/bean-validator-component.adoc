@@ -38,7 +38,8 @@ or
 bean-validator://label[?options]
 --------------------------------
 
-Where *label* is an arbitrary text value describing the endpoint. +
+Where *label* is an arbitrary text value describing the endpoint.
+
  You can append query options to the URI in the following format,
 ?option=value&option=value&...
 
@@ -303,6 +304,3 @@ Note that the body should include an instance of a class to validate.
     </camelContext>
 </beans>
 ----------------------------------------------------------------------------------------------------
-
-
-

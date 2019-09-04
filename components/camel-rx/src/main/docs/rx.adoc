@@ -1,5 +1,5 @@
 [[RX-CamelRX]]
-== Camel RX (deprecated)
+= Camel RX (deprecated)
 
 *Available as of Camel 2.11*
 
@@ -18,8 +18,7 @@ the Camel transports and protocols from within the
 http://netflix.github.com/RxJava/javadoc/[RxJava API]
 
 [[RX-BackgroundonRX]]
-Background on RX
-~~~~~~~~~~~~~~~~
+== Background on RX
 
 For a more in depth background on RX check out
 http://reactivex.io/documentation/observable.html[the RxJava wiki on
@@ -54,8 +53,7 @@ event streams]
 methods]
 
 [[RX-ObservingeventsonCamelendpoints]]
-Observing events on Camel endpoints
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+== Observing events on Camel endpoints
 
 You can create an Observable<Message> from any endpoint using the
 ReactiveCamel helper class and the *toObservable()* method.
@@ -95,8 +93,7 @@ Observable<String> largeOrderIds = observable.filter(new Func1<Order, Boolean>()
 ----
 
 [[RX-SendingObservableEventstoCamelendpoints]]
-Sending Observable<T> events to Camel endpoints
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+== Sending Observable<T> events to Camel endpoints
 
 If you have an
 http://netflix.github.com/RxJava/javadoc/rx/Observable.html[Observable<T>]
@@ -118,8 +115,7 @@ rx.sendTo(observable, "activemq:MyQueue");
 ----
 
 [[RX-EmbeddingsomeRxJavaprocessinginsideaCamelroute]]
-Embedding some RxJava processing inside a Camel route
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+== Embedding some RxJava processing inside a Camel route
 
 Sometimes you may wish to use a Camel route to consume messages, perform
 content based routing, transformation, deal with data format marshalling

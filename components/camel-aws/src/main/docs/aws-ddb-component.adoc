@@ -246,13 +246,13 @@ processed with the current response.
 |=======================================================================
 |Header |Type |Description
 
-|`CamelAwsDdbProvisionedThroughput` |{{ProvisionedThroughputDescription}} |The value of the ProvisionedThroughput property for this table
+|`CamelAwsDdbProvisionedThroughput` |{\{ProvisionedThroughputDescription\}} |The value of the ProvisionedThroughput property for this table
 
 |`CamelAwsDdbCreationDate` |`Date` |Creation DateTime of this table.
 
 |`CamelAwsDdbTableItemCount` |`Long` |Item count for this table.
 
-|`CamelAwsDdbKeySchema` |{{KeySchema}} |The KeySchema that identifies the primary key for this table.
+|`CamelAwsDdbKeySchema` |{\{KeySchema\}} |The KeySchema that identifies the primary key for this table.
 *From Camel 2.16.0 the type of this header is List<KeySchemaElement> and
 not KeySchema*
 
@@ -377,6 +377,5 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
+where `$\{camel-version\}` must be replaced by the actual version of Camel
 (2.10 or higher).
-

@@ -28,14 +28,14 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source]
 ----
 yammer:[function]?[options]
 ----
 
-=== Component options
+== Component options
 
 The Yammer component can be configured with the Yammer account settings
 which are mandatory to configure before using.
@@ -64,7 +64,7 @@ The Yammer component supports 5 options, which are listed below.
 
 You can also configure these options directly in the endpoint.
 
-=== Endpoint options
+== Endpoint options
 
 
 
@@ -169,7 +169,7 @@ The component supports 18 options, which are listed below.
 
 
 
-=== Consuming messages
+== Consuming messages
 
 The Yammer component provides several endpoints for consuming
 messages:
@@ -200,7 +200,7 @@ and topics that the user is following.
 |=======================================================================
 
 
-==== Message format
+=== Message format
 
 All messages by default are converted to a POJO model provided in the
 `org.apache.camel.component.yammer.model` package. The original message
@@ -309,7 +309,7 @@ That said, marshaling this data into POJOs is not free so if you need
 you can switch back to using pure JSON by adding the `useJson=false`
 option to your URI.
 
-=== Creating messages
+== Creating messages
 
 To create a new message in the account of the current user, you can use
 the following URI:
@@ -355,7 +355,7 @@ assertEquals("Hi from Camel!", messages.getMessages().get(0).getBody().getPlain(
 ----
 
 
-=== Retrieving users
+== Retrieving users
 
 The Yammer component provides several endpoints for retrieving
 users:
@@ -370,7 +370,7 @@ users:
 |=====================================================
 
 
-=== Using an enricher
+== Using an enricher
 
 It is helpful sometimes (or maybe always in the case of users
 to use an enricher pattern rather than a route

@@ -555,7 +555,8 @@ messages:
 ** is replaced by _DOT_ and the reverse replacement when Camel consumes
 the message.
 ** is replaced by _HYPHEN_ and the reverse replacement when Camel
-consumes the message. +
+consumes the message.
+
 See also the option `jmsKeyFormatStrategy`, which allows use of your own
 custom strategy for formatting keys.
 

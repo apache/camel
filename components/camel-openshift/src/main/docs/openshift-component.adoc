@@ -198,4 +198,3 @@ following headers is included.
 
 |CamelOpenShiftEventNewState |No |The new state, for any of the event types
 |=======================================================================
-

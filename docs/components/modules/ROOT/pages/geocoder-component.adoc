@@ -116,7 +116,8 @@ The component supports 2 options, which are listed below.
 == Exchange data format
 
 Camel will deliver the body as a
-`com.google.code.geocoder.model.GeocodeResponse` type. +
+`com.google.code.geocoder.model.GeocodeResponse` type.
+
  And if the address is `"current"` then the response is a String type
 with a JSON representation of the current location.
 

@@ -181,7 +181,8 @@ workflow, or terminate and cancel it.
 |=======================================================================
 |Header |Type |Description
 
-|`CamelSWFOperation` |`String` |The operation to perform on the workflow. Supported operations are:  +
+|`CamelSWFOperation` |`String` |The operation to perform on the workflow. Supported operations are: 
+
  SIGNAL, CANCEL, TERMINATE, GET_STATE, START, DESCRIBE, GET_HISTORY.
 
 |`CamelSWFWorkflowId` |`String` |A workflow ID to use.
@@ -297,6 +298,5 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
+where `$\{camel-version\}` must be replaced by the actual version of Camel
 (2.13 or higher).
-

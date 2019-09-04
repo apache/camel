@@ -845,5 +845,3 @@ a Camel CDI Maven project, e.g.:
 ----
 mvn archetype:generate -DarchetypeGroupId=org.apache.camel.archetypes -DarchetypeArtifactId=camel-archetype-cdi
 ----
-
-

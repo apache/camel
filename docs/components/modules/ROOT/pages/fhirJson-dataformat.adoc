@@ -1,18 +1,14 @@
 [[fhirJson-dataformat]]
 = FHIR JSon DataFormat
 :page-source: components/camel-fhir/camel-fhir-component/src/main/docs/fhirJson-dataformat.adoc
+
 *Available as of Camel version 2.21*
-*Available as of Camel version 2.21*
-
-
-
-
 
 The FHIR-JSON Data Format leverages
 link:https://github.com/jamesagnew/hapi-fhir/blob/master/hapi-fhir-base/src/main/java/ca/uhn/fhir/parser/JsonParser.java[HAPI-FHIR's]
 JSON parser to parse to/from JSON format to/from a HAPI-FHIR's `IBaseResource`.
 
-=== FHIR JSON Format Options
+== FHIR JSON Format Options
 
 // dataformat options: START
 The FHIR JSon dataformat supports 14 options, which are listed below.

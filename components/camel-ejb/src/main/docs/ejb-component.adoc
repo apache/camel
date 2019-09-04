@@ -4,9 +4,6 @@
 *Available as of Camel version 2.4*
 
 
-*Available as of Camel version 2.4*
-
-
 The *ejb:* component binds EJBs to Camel message exchanges.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -139,7 +136,7 @@ public class GreaterImpl implements GreaterLocal {
 
 In this example we want to invoke the `hello` method on the EJB. Since
 this example is based on an unit test using Apache OpenEJB we have to
-set a `JndiContext` on the <<ejb-component,EJB>> component with the OpenEJB
+set a `JndiContext` on the xref:ejb-component.adoc[EJB] component with the OpenEJB
 settings.
 
 [source,java]
@@ -177,10 +174,10 @@ from("direct:start")
 *In a real application server*
 
 In a real application server you most likely do not have to setup a
-`JndiContext` on the <<ejb-component,EJB>> component as it will create a
+`JndiContext` on the xref:ejb-component.adoc[EJB] component as it will create a
 default `JndiContext` on the same JVM as the application server, which
 usually allows it to access the JNDI registry and lookup the
-<<ejb-component,EJB>>s. However if you need to access a application server on a remote JVM or
+xref:ejb-component.adoc[EJB]s. However if you need to access a application server on a remote JVM or
 the likes, you have to prepare the properties beforehand.
 
 === Using Spring XML
@@ -188,7 +185,7 @@ the likes, you have to prepare the properties beforehand.
 And this is the same example using Spring XML instead:
 
 Again since this is based on an unit test we need to setup the
-<<ejb-component,EJB>> component:
+xref:ejb-component.adoc[EJB] component:
 
 [source,XML]
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -203,7 +200,7 @@ Again since this is based on an unit test we need to setup the
 </p:properties>
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Before we are ready to use <<ejb-component,EJB>> in the Camel routes:
+Before we are ready to use xref:ejb-component.adoc[EJB] in the Camel routes:
 
 [source,XML]
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -215,4 +212,3 @@ Before we are ready to use <<ejb-component,EJB>> in the Camel routes:
     </route>
 </camelContext>
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
-

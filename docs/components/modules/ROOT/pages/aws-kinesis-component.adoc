@@ -21,7 +21,8 @@ at http://aws.amazon.com/kinesis/[AWS Kinesis]
 aws-kinesis://stream-name[?options]
 -----------------------------------
 
-The stream needs to be created prior to it being used. +
+The stream needs to be created prior to it being used.
+
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
@@ -262,6 +263,5 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
+where `$\{camel-version\}` must be replaced by the actual version of Camel
 (2.17 or higher).
-

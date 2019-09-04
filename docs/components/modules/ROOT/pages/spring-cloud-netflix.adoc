@@ -1,4 +1,5 @@
-=== Spring Cloud Netflix
+= Spring Cloud Netflix
+:page-source: components/camel-spring-cloud-netflix/src/main/docs/spring-cloud-netflix.adoc
 
 *Available as of Camel 2.19*
 
@@ -27,20 +28,4 @@ camel.cloud.netflix = true
 
 # Enable/Disable the integration with Ribbon, default true
 camel.cloud.netflix.ribbon = true
-----
-
-=== Spring Cloud Netflix Starter
-
-*Available as of Camel 2.19*
-
-To use the starter, add the following to your spring boot pom.xml file:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-spring-cloud-netflix-starter</artifactId>
-    <version>${camel.version}</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
 ----

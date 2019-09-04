@@ -266,7 +266,7 @@ Search Splunk for tweets
 == Other comments
 
 Splunk comes with a variety of options for leveraging machine generated
-data with prebuilt apps for analyzing and displaying this.  +
+data with prebuilt apps for analyzing and displaying this. 
+
  For example the jmx app. could be used to publish jmx attributes, eg.
 route and jvm metrics to Splunk, and displaying this on a dashboard.
-

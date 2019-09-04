@@ -145,4 +145,3 @@ VertxComponent vertxComponent = new VertxComponent();
 vertxComponent.setVertx(vertx);
 camelContext.addComponent("vertx", vertxComponent);
 -----------------------------------------------------
-

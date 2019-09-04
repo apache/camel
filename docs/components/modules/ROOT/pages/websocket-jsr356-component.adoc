@@ -1,11 +1,6 @@
 [[websocket-jsr356-component]]
 = Javax Websocket Component
 :page-source: components/camel-websocket-jsr356/src/main/docs/websocket-jsr356-component.adoc
-*Available as of Camel version 2.23*
-*Available as of Camel version 2.23*
-
-
-
 
 *Available as of Camel version 2.23*
 

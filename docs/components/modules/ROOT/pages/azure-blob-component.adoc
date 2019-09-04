@@ -20,7 +20,8 @@ https://docs.microsoft.com/azure/[Azure Documentation Portal].
 azure-blob://accountName/containerName[/blobName][?options]
 ------------------------------
 
-In most cases a blobName is required and the blob will be created if it does not already exist. +
+In most cases a blobName is required and the blob will be created if it does not already exist.
+
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
@@ -254,6 +255,5 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
+where `$\{camel-version\}` must be replaced by the actual version of Camel
 (2.19.0 or higher).
-

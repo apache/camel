@@ -9,7 +9,7 @@ CamelContext with a number of routes which is then treated as a black
 box, allowing you to refer to the local endpoints within the component
 from other CamelContexts.
 
-It is similar to the <<routebox-component,Routebox>> component in idea,
+It is similar to the xref:routebox-component.adoc[Routebox] component in idea,
 though the Context component tries to be really simple for end users;
 just a simple convention over configuration approach to refer to local
 endpoints inside the CamelContext Component.

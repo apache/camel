@@ -1,4 +1,4 @@
-== Ignite endpoints Component
+= Ignite endpoints Component
 
 *Available as of Camel version 2.17*
 
@@ -8,13 +8,13 @@ image:apache-ignite.png[]
 
 This component offers seven endpoints to cover much of Ignite's functionality:
 
-* <<ignite-cache-component,Ignite Cache>>.
-* <<ignite-compute-component,Ignite Compute>>.
-* <<ignite-messaging-component,Ignite Messaging>>.
-* <<ignite-events-component,Ignite Events>>.
-* <<ignite-set-component,Ignite Sets>>.
-* <<ignite-queue-component,Ignite Queues>>.
-* <<ignite-idgen-component,Ignite ID Generator>>.
+* xref:ignite-cache-component.adoc[Ignite Cache].
+* xref:ignite-compute-component.adoc[Ignite Compute].
+* xref:ignite-messaging-component.adoc[Ignite Messaging].
+* xref:ignite-events-component.adoc[Ignite Events].
+* xref:ignite-set-component.adoc[Ignite Sets].
+* xref:ignite-queue-component.adoc[Ignite Queues].
+* xref:ignite-idgen-component.adoc[Ignite ID Generator].
 
 To use this component, add the following dependency to your pom.xml:
 
@@ -34,7 +34,7 @@ If running in an OSGi container, please don't miss the <<Ignite-OsgiSupport,OSGi
 
 
 
-=== Initializing the Ignite component
+== Initializing the Ignite component
 
 Each instance of the Ignite component is associated with an underlying org.apache.ignite.Ignite instance. You can interact with two Ignite clusters by initializing two instances of the Ignite component and binding them to different IgniteConfigurations. There are 3 ways to initialize the Ignite component:
 
@@ -79,7 +79,7 @@ Additionally, if using Camel programmatically, there are several convenience sta
 
 You may use those methods to quickly create an IgniteComponent with your chosen configuration technique.
 
-=== General options
+== General options
 
 All endpoints share the following options:
 [width="100%",cols="1,1,1,4,1,1",options="header"]
@@ -93,7 +93,7 @@ Some Ignite operations can deal with multiple elements at once, if passed a Coll
 |=======================================================================
 
 [[Ignite-OsgiSupport]]
-=== OSGi Support
+== OSGi Support
 
 TIP: Apache Ignite supports OSGi from version 1.5.0.final onwards.
 
@@ -103,4 +103,3 @@ When installing on Apache Karaf:
 2. You must have exported from the JRE (system bundle) some low-level, non-standard packages that Ignite requires.
 
 Please refer to the OSGi section in the Ignite documentation for more information.
-

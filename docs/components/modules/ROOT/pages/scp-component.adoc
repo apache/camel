@@ -8,7 +8,7 @@
 The *camel-jsch* component supports the
 http://en.wikipedia.org/wiki/Secure_copy[SCP protocol] using the Client
 API of the http://www.jcraft.com/jsch/[Jsch] project. Jsch is already
-used in camel by the <<ftp-component,FTP>> component for the *sftp:*
+used in camel by the xref:ftp-component.adoc[FTP component] component for the *sftp:*
 protocol.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -153,4 +153,3 @@ The component supports 3 options, which are listed below.
 Currently camel-jsch only supports a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
 (i.e. copy files to another host). 
-

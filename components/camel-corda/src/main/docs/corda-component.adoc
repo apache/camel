@@ -20,14 +20,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI Format
+== URI Format
 
 [source,text]
 ----
 corda://<host:port>[?options]
 ----
 
-=== Corda Options
+== Corda Options
 
 
 // component options: START

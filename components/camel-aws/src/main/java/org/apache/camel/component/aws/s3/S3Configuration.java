@@ -138,8 +138,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Reference to a `com.amazonaws.services.sqs.AmazonS3` in the
-     * link:registry.html[Registry].
+     * Reference to a `com.amazonaws.services.sqs.AmazonS3` in the registry.
      */
     public void setAmazonS3Client(AmazonS3 amazonS3Client) {
         this.amazonS3Client = amazonS3Client;

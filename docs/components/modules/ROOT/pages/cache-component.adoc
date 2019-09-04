@@ -172,7 +172,8 @@ The component supports 17 options, which are listed below.
 * ADD
 * UPDATE
 * DELETE
-* DELETEALL +
+* DELETEALL
+
  `GET` and `CHECK` requires *Camel 2.3* onwards.
 
 |`CACHE_KEY` |The cache key used to store the Message in the cache. The cache key is
@@ -260,15 +261,24 @@ lookups and selectively replace payload content at the
 
 [source,java]
 -------------------------------------------------
-from("cache://MyApplicationCache" +
-          "?maxElementsInMemory=1000" +
-          "&memoryStoreEvictionPolicy=" +
-              "MemoryStoreEvictionPolicy.LFU" +
-          "&overflowToDisk=true" +
-          "&eternal=true" +
-          "&timeToLiveSeconds=300" +
-          "&timeToIdleSeconds=true" +
-          "&diskPersistent=true" +
+from("cache://MyApplicationCache"
+
+          "?maxElementsInMemory=1000"
+
+          "&memoryStoreEvictionPolicy="
+
+              "MemoryStoreEvictionPolicy.LFU"
+
+          "&overflowToDisk=true"
+
+          "&eternal=true"
+
+          "&timeToLiveSeconds=300"
+
+          "&timeToIdleSeconds=true"
+
+          "&diskPersistent=true"
+
           "&diskExpiryThreadIntervalSeconds=300")
 -------------------------------------------------
 
@@ -485,10 +495,3 @@ phase.
 *Note*: It might be useful to read the http://ehcache.org/documentation[EHCache
 manual] to get a better understanding of the Camel Cache replication
 mechanism.
-
-=== Example: JMS cache replication
-
-JMS replication is the most powerful and secured replication method.
-Used together with Camel Cache replication makes it also rather
-simple. An example is available on link:cachereplicationjmsexample.html[a
-separate page].

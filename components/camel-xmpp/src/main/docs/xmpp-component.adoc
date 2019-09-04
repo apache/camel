@@ -27,7 +27,8 @@ xmpp://[login@]hostname[:port][/participant][?Options]
 ------------------------------------------------------
 
 The component supports both room based and private person-person
-conversations. +
+conversations.
+
  The component supports both producer and consumer (you can get messages
 from XMPP or send messages to XMPP). Consumer mode supports rooms
 starting.
@@ -191,4 +192,3 @@ from("direct:start").
 ---------------------------------------------------------------------------------------------------------
 
  
-

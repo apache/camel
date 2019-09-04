@@ -137,4 +137,3 @@ integration channel.
 This example uses the following namespaces:
 
 You can bind your source or target to a Camel endpoint as follows:
-

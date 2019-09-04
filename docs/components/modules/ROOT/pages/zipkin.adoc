@@ -25,7 +25,8 @@ To match all Camel messages you can use * in the pattern and configure
 that to the same service name.
 
 If no mapping has been configured, Camel will fallback and use
-endpoint uri's as service names.  +
+endpoint uri's as service names. 
+
 However, it's recommended to configure service mappings so you can use
 human-readable names instead of Camel endpoint uris in the names.
 

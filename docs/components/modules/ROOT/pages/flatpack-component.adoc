@@ -6,7 +6,8 @@
 
 
 The Flatpack component supports fixed width and delimited file parsing
-via the http://flatpack.sourceforge.net[FlatPack library]. +
+via the http://flatpack.sourceforge.net[FlatPack library].
+
  *Notice:* This component only supports consuming from flatpack files to
 Object model. You can not (yet) write from Object model to flatpack
 format.
@@ -164,10 +165,12 @@ number of rows.
 
 The component delivers the data in the IN message as a
 `org.apache.camel.component.flatpack.DataSetList` object that has
-converters for `java.util.Map` or `java.util.List`. +
+converters for `java.util.Map` or `java.util.List`.
+
  Usually you want the `Map` if you process one row at a time
 (`splitRows=true`). Use `List` for the entire content
-(`splitRows=false`), where each element in the list is a `Map`. +
+(`splitRows=false`), where each element in the list is a `Map`.
+
  Each `Map` contains the key for the column name and its corresponding
 value.
 
@@ -245,7 +248,7 @@ easy Bean Integration
 
 == Flatpack DataFormat
 
-The <<flatpack-component,Flatpack>> component ships with the Flatpack data
+The xref:flatpack-component.adoc[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
 messages to a `List` of rows as `Map`.
 
@@ -253,7 +256,8 @@ messages to a `List` of rows as `Map`.
 converted to `String`)
 * unmarshal = from `java.io.InputStream` (such as a `File` or `String`)
 to a `java.util.List` as an
-`org.apache.camel.component.flatpack.DataSetList` instance. +
+`org.apache.camel.component.flatpack.DataSetList` instance.
+
  The result of the operation will contain all the data. If you need to
 process each row one by one you can split the exchange, using
 Splitter.
@@ -342,4 +346,3 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 -----------------------------------------
-

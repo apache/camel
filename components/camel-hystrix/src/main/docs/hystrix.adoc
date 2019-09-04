@@ -1,4 +1,4 @@
-== Hystrix Component
+= Hystrix Component
 
 *Available as of Camel version 2.18*
 

@@ -2,9 +2,7 @@
 = Metrics Component
 :page-source: components/camel-metrics/src/main/docs/metrics-component.adoc
 ifdef::env-github[]
-*Available as of Camel version 2.14.0*
 *Available as of Camel version 2.14*
-
 
 :caution-caption: :boom:
 :important-caption: :exclamation:
@@ -531,7 +529,8 @@ following options:
 |=======================================================================
 |Name |Default |Description
 |useJmx |false |Whether to report fine grained statistics to JMX by
-using the `com.codahale.metrics.JmxReporter`. +
+using the `com.codahale.metrics.JmxReporter`.
+
 Notice that if JMX is enabled on CamelContext
 then a `MetricsRegistryService` mbean is enlisted under the services
 type in the JMX tree. That mbean has a single operation to output the
@@ -607,7 +606,8 @@ The following options is supported on the factory:
 |=======================================================================
 |Name |Default |Description
 |useJmx |false |Whether to report fine grained statistics to JMX by
-using the `com.codahale.metrics.JmxReporter`. +
+using the `com.codahale.metrics.JmxReporter`.
+
 Notice that if JMX is enabled on CamelContext
 then a `MetricsRegistryService` mbean is enlisted under the services
 type in the JMX tree. That mbean has a single operation to output the
@@ -659,5 +659,3 @@ with `name=MetricsMessageHistoryService`.
 This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
 which collects information from inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
-
-

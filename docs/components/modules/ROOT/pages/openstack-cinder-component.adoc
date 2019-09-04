@@ -22,7 +22,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel.
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
 
 == URI Format
@@ -197,4 +197,3 @@ If you need more precise volume settings you can create new object of the type *
 |=========================================================================
 
 If you need more precise server settings you can create new object of the type *org.openstack4j.model.storage.block.VolumeSnapshot* and send in the message body.
-

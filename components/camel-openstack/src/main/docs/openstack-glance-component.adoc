@@ -21,7 +21,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel.
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
 
 == URI Format
@@ -156,4 +156,3 @@ The component supports 2 options, which are listed below.
 
 |`properties` | `Map` | Image properties.
 |=========================================================================
-

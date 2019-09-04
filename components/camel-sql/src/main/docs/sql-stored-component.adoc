@@ -6,7 +6,7 @@
 
 The *sql-stored:* component allows you to work with databases using JDBC
 Stored Procedure queries. This component is an extension to
-the link:sql-component.adoc[SQL Component] but specialized for calling
+the xref:sql-component.adoc[SQL Component] but specialized for calling
 stored procedures.
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
@@ -25,7 +25,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 The SQL component uses the following endpoint URI notation:
 
@@ -61,7 +61,7 @@ SUBNUMBERS(
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 
@@ -146,7 +146,7 @@ The component supports 3 options, which are listed below.
 
 
 
-=== Declaring the stored procedure template
+== Declaring the stored procedure template
 
 The template is declared using a syntax that would be similar to a Java
 method signature. The name of the stored procedure, and then the
@@ -171,7 +171,7 @@ In SQL term the stored procedure could be declared as:
 CREATE PROCEDURE STOREDSAMPLE(VALUE1 INTEGER, VALUE2 INTEGER, INOUT RESULT1 INTEGER, OUT RESULT2 INTEGER)
 ----
 
-==== IN Parameters
+=== IN Parameters
 
 IN parameters take four parts separated by a space: parameter name, SQL type (with scale), type name and value source.
 
@@ -207,7 +207,7 @@ URI is identical to previous on except SQL-type is 100 and type name is "mytypen
 
 Actual call will be done using org.springframework.jdbc.core.SqlParameter.
 
-==== OUT Parameters
+=== OUT Parameters
 
 OUT parameters work similarly IN parameters and contain three parts: SQL type(with scale), type name and output parameter name.
 
@@ -233,7 +233,7 @@ This is identical to previous one but type name will be "mytype".
 
 Actual call will be done using `org.springframework.jdbc.core.SqlOutParameter`.
 
-==== INOUT Parameters
+=== INOUT Parameters
 
 INOUT parameters are a combination of all of the above.  They receive a value from the exchange, as well as store a
 result as a message header.  The only caveat is that the IN parameter's "name" is skipped.  Instead, the OUT
@@ -246,7 +246,7 @@ parameter's "name" defines both the SQL parameter name, as well as the result he
 
 Actual call will be done using org.springframework.jdbc.core.SqlInOutParameter.
 
-=== Camel SQL Starter
+== Camel SQL Starter
 
 A starter module is available to spring-boot users. When using the starter,
 the `DataSource` can be directly configured using spring-boot properties.
@@ -278,4 +278,3 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 ----
 
 You should also include the specific database driver, if needed.
-

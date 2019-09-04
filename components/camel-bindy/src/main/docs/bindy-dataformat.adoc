@@ -3,11 +3,10 @@
 
 *Available as of Camel version 2.0*
 
-*Available as of Camel version 2.0*
-
 
 The goal of this component is to allow the parsing/binding of
-non-structured data (or to be more precise non-XML data) +
+non-structured data (or to be more precise non-XML data)
+
  to/from Java Beans that have binding mappings defined with annotations.
 Using Bindy, you can bind data from sources such as :
 
@@ -56,7 +55,7 @@ From *Camel 2.16* onwards this is no longer the case, as you can safely
 have multiple models in the same package, as you configure bindy using
 class names instead of package names now.
 
-=== Options
+== Options
 
 // dataformat options: START
 The Bindy dataformat supports 5 options, which are listed below.
@@ -120,7 +119,7 @@ ND
 
 
 
-=== Annotations
+== Annotations
 
 The annotations created allow to map different concept of your model to
 the POJO like :
@@ -138,7 +137,7 @@ financial messages),
 
 This section will describe them :
 
-=== 1. CsvRecord
+== 1. CsvRecord
 
 The CsvRecord annotation is used to identified the root class of the
 model. It represents a record = a line of a CSV file and can be linked
@@ -246,11 +245,14 @@ public Class Order {
 *Applies for Camel 2.8.2 or older*
 
 When the field to be parsed of the CSV record contains ',' or ';' which
-is also used as separator, we whould find another strategy +
+is also used as separator, we whould find another strategy
+
  to tell camel bindy how to handle this case. To define the field
-containing the data with a comma, you will use simple or double quotes +
+containing the data with a comma, you will use simple or double quotes
+
  as delimiter (e.g : '10', 'Street 10, NY', 'USA' or "10", "Street 10,
-NY", "USA"). +
+NY", "USA").
+
  Remark : In this case, the first and last character of the line which
 are a simple or double quotes will removed by bindy
 
@@ -333,7 +335,8 @@ As a result, Bindy during the unmarshaling process will generate CSV
 like this :
 
 order id, client id, first name, last name, isin code, instrument name,
-quantity, currency, date +
+quantity, currency, date
+
 
 ----
 10, J, Pauline, M, XD12345678, Fortis Dynamic 15/15, 2500, USD,08-01-2009
@@ -391,7 +394,7 @@ public Class Order {
 Remark : pos is used to parse the file, stream while positions is used
 to generate the CSV
 
-=== 2. Link
+== 2. Link
 
 The link annotation will allow to link objects together.
 
@@ -443,7 +446,7 @@ public class Client {
 }
 ----
 
-=== 3. DataField
+== 3. DataField
 
 The DataField annotation defines the property of the field. Each
 datafield is identified by its position in the record, a type (string,
@@ -737,13 +740,14 @@ public class Order {
 
 This attribute is only applicable to optional fields.
 
-=== 4. FixedLengthRecord
+== 4. FixedLengthRecord
 
 The FixedLengthRecord annotation is used to identified the root class of
 the model. It represents a record = a line of a file/message containing
 data fixed length formatted and can be linked to several children model
 classes. This format is a bit particular beause data of a field can be
-aligned to the right or to the left. +
+aligned to the right or to the left.
+
  When the size of the data does not fill completely the length of the
 field, we can then add 'padd' characters.
 
@@ -1181,7 +1185,7 @@ public static class Order {
 }
 ----
 
-=== 5. Message
+== 5. Message
 
 The Message annotation is used to identified the class of your model who
 will contain key value pairs fields. This kind of format is used mainly
@@ -1262,7 +1266,7 @@ message looks like (src\test\data\fix\fix.txt) and the Order, Trailer,
 Header classes
 (src\test\java\org\apache\camel\dataformat\bindy\model\fix\simple\Order.java)
 
-=== 6. KeyValuePairField
+== 6. KeyValuePairField
 
 The KeyValuePairField annotation defines the property of a key value
 pair field. Each KeyValuePairField is identified by a tag (= key) and
@@ -1358,7 +1362,7 @@ public class Order {
 }
 ----
 
-=== 7. Section
+== 7. Section
 
 In FIX message of fixed length records, it is common to have different
 sections in the representation of the information : header, body and
@@ -1440,7 +1444,7 @@ public class Trailer {
     }
 ----
 
-=== 8. OneToMany
+== 8. OneToMany
 
 The purpose of the annotation @OneToMany is to allow to work with a
 `List<?>` field defined a POJO class or from a record containing
@@ -1574,7 +1578,7 @@ public class Security {
 }
 ----
 
-=== 9. BindyConverter
+== 9. BindyConverter
 
 The purpose of the annotation @BindyConverter is define a converter
 to be used on field level. The provided class must implement the
@@ -1602,7 +1606,7 @@ public static class CustomConverter implements Format<String> {
 }
 ----
 
-=== 10. FormatFactories
+== 10. FormatFactories
 
 The purpose of the annotation @FormatFactories is to define a set of converters
 at record-level. The provided classes must implement the FormatFactoryInterface interface.
@@ -1653,7 +1657,7 @@ public static class OrderNumberFormatFactory extends AbstractFormatFactory {
 }
 ----
 
-=== Supported Datatypes
+== Supported Datatypes
 
 The DefaultFormatFactory makes formatting of the following datatype available by
 returning an instance of the interface FormatFactoryInterface based on the provided
@@ -1679,7 +1683,7 @@ FormattingOptions:
 The DefaultFormatFactory can be overridden by providing an instance of
 FactoryRegistry in the registry in use (e.g. spring or JNDI).
 
-=== Using the Java DSL
+== Using the Java DSL
 
 The next step consists in instantiating the DataFormat _bindy_ class
 associated with this record type and providing Java package name(s) as
@@ -1700,7 +1704,7 @@ DataFormat bindy = new BindyCsvDataFormat("com.acme.model");
 DataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 ----
 
-==== Setting locale
+=== Setting locale
 
 Bindy supports configuring the locale on the dataformat, such as 
 
@@ -1739,7 +1743,7 @@ BindyCsvDataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 bindy.setLocale(Locale.getDefault().getISO3Country());
 ----
 
-==== Unmarshaling
+=== Unmarshaling
 
 [source,java]
 ----
@@ -1760,7 +1764,8 @@ from("file://inbox")
 ----
 
 The Camel route will pick-up files in the inbox directory, unmarshall
-CSV records into a collection of model objects and send the collection +
+CSV records into a collection of model objects and send the collection
+
  to the route referenced by 'handleOrders'.
 
 The collection returned is a *List of Map* objects. Each Map within the
@@ -1823,7 +1828,7 @@ from("file://inbox?charset=Cp922")
   .to("direct:handleOrders");
 ----
 
-==== Marshaling
+=== Marshaling
 
 To generate CSV records from a collection of model objects, you create
 the following route :
@@ -1835,7 +1840,7 @@ from("direct:handleOrders")
    .to("file://outbox")
 ----
 
-=== Using Spring XML
+== Using Spring XML
 
 This is really easy to use Spring as your favorite DSL language to
 declare the routes to be used for camel-bindy. The following example
@@ -1890,7 +1895,7 @@ is for using Camel 2.16 onwards.
 NOTE: Please verify that your model classes implements serializable otherwise
 the queue manager will raise an error
 
-=== Dependencies
+== Dependencies
 
 To use Bindy in your camel routes you need to add the a dependency on
 *camel-bindy* which implements this data format.

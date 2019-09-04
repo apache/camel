@@ -6,21 +6,21 @@ The *Kubernetes* components integrate your application with Kubernetes standalo
 
 The camel-kubernetes consists of 13 components:
 
-* <<kubernetes-config-maps-component,Kubernetes ConfigMap>>
-* <<kubernetes-namespaces-component,Kubernetes Namespace>>
-* <<kubernetes-nodes-component,Kubernetes Node>>
-* <<kubernetes-persistent-volumes-component,Kubernetes Persistent Volume>>
-* <<kubernetes-persistent-volumes-claims-component,Kubernetes Persistent Volume Claim>>
-* <<kubernetes-pods-component,Kubernetes Pod>>
-* <<kubernetes-replication-controllers-component,Kubernetes Replication Controller>>
-* <<kubernetes-resources-quota-component,Kubernetes Resource Quota>>
-* <<kubernetes-secrets-component,Kubernetes Secrets>>
-* <<kubernetes-service-accounts-component,Kubernetes Service Account>>
-* <<kubernetes-services-component,Kubernetes Service>>
+* xref:kubernetes-config-maps-component.adoc[Kubernetes ConfigMap]
+* xref:kubernetes-namespaces-component.adoc[Kubernetes Namespace]
+* xref:kubernetes-nodes-component.adoc[Kubernetes Node]
+* xref:kubernetes-persistent-volumes-component.adoc[Kubernetes Persistent Volume]
+* xref:kubernetes-persistent-volumes-claims-component.adoc[Kubernetes Persistent Volume Claim]
+* xref:kubernetes-pods-component.adoc[Kubernetes Pod]
+* xref:kubernetes-replication-controllers-component.adoc[Kubernetes Replication Controller]
+* xref:kubernetes-resources-quota-component.adoc[Kubernetes Resource Quota]
+* xref:kubernetes-secrets-component.adoc[Kubernetes Secrets]
+* xref:kubernetes-service-accounts-component.adoc[Kubernetes Service Account]
+* xref:kubernetes-services-component.adoc[Kubernetes Service]
 
 In OpenShift, also:
 
-* <<openshift-build-configs-component,Kubernetes Build Config>>
+* xref:openshift-build-configs-component.adoc[Kubernetes Build Config]
 * Kubernetes Build
 
 

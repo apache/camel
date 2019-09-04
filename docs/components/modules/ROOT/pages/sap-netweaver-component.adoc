@@ -213,4 +213,3 @@ Departure airport: JFK
 Destination city: SAN FRANCISCO
 Destination airport: SFO
 -------------------------------
-

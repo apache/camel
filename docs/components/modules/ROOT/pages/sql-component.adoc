@@ -6,7 +6,7 @@
 
 
 The *sql:* component allows you to work with databases using JDBC
-queries. The difference between this component and <<jdbc-component,JDBC>>
+queries. The difference between this component and xref:jdbc-component.adoc[JDBC]
 component is that in case of SQL the query is a property of the endpoint
 and it uses message payload as parameters passed to the query.
 
@@ -34,7 +34,7 @@ further below.
 * a JDBC based repository for the Aggregator EIP
 pattern. See further below.
 
-=== URI format
+== URI format
 
 WARNING:From Camel 2.11 onwards this component can create both consumer (e.g.
 `from()`) and producer endpoints (e.g. `to()`).
@@ -59,8 +59,10 @@ sql:select * from table where id=:#myId order by name[?options]
 ----
 
 When using named parameters, Camel will lookup the names from, in the
-given precedence: +
- 1. from message body if its a `java.util.Map` +
+given precedence:
+
+ 1. from message body if its a `java.util.Map`
+
  2. from message headers
 
 If a named parameter cannot be resolved, then an exception is thrown.
@@ -105,7 +107,7 @@ also use comments such as the – dash line.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 
@@ -230,7 +232,7 @@ The component supports 4 options, which are listed below.
 
 
 
-=== Treatment of the message body
+== Treatment of the message body
 
 The SQL component tries to convert the message body to an object of
 `java.util.Iterator` type and then uses this iterator to fill the query
@@ -255,7 +257,7 @@ parameters must be provided in a header with the
 key SqlConstants.SQL_PARAMETERS. This allows the SQL component to work
 more dynamic as the SQL query is from the message body.
 
-=== Result of the query
+== Result of the query
 
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
@@ -277,7 +279,7 @@ from("jms:order.inbox")
     .to("jms:order.booking");
 ----
 
-=== Using StreamList
+== Using StreamList
 
 From*Camel 2.18* onwards the producer supports outputType=StreamList
 that uses an iterator to stream the output of the query. This allows to
@@ -297,7 +299,7 @@ from("direct:withSplitModel")
 ----
  
 
-=== Header values
+== Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
@@ -332,13 +334,14 @@ message headers (*Available as of Camel 2.12.4, 2.13.1*):
 |CamelSqlGeneratedKeyRows |Rows that contains the generated keys (a list of maps of keys).
 |===
 
-=== Generated keys
+== Generated keys
 
 *Available as of Camel 2.12.4, 2.13.1 and 2.14 *
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
 generated keys. You can instruct the SQL producer to return the
-generated keys in headers. +
+generated keys in headers.
+
  To do that set the header `CamelSqlRetrieveGeneratedKeys=true`. Then
 the generated keys will be provided as headers with the keys listed in
 the table above.
@@ -346,7 +349,7 @@ the table above.
 You can see more details in this
 https://gitbox.apache.org/repos/asf?p=camel.git;a=blob;f=components/camel-sql/src/test/java/org/apache/camel/component/sql/SqlGeneratedKeysTest.java;h=54c19b7332bb0aa81ee24ff3d3a66885a6b9e9aa;hb=HEAD[unit test].
 
-=== DataSource
+== DataSource
 
 You can now set a reference to a `DataSource` in the URI directly:
 
@@ -355,16 +358,18 @@ You can now set a reference to a `DataSource` in the URI directly:
 sql:select * from table where id=# order by name?dataSource=myDS
 ----
 
-=== Using named parameters
+== Using named parameters
 
 *Available as of Camel 2.11*
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :#lic and
-:#min. +
+:#min.
+
  Camel will then lookup for these parameters from the message body or
 message headers. Notice in the example above we set two headers with
-constant value +
+constant value
+
  for the named parameters:
 
 [source,java]
@@ -384,7 +389,7 @@ parameters will be taken from the body.
      .to("sql:select * from projects where license = :#lic and id > :#min order by id")
 ----
 
-=== Using expression parameters in producers
+== Using expression parameters in producers
 
 *Available as of Camel 2.14*
 
@@ -400,7 +405,7 @@ from("direct:projects")
   .to("sql:select * from projects where license = :#${body} and id > :#${property.min} order by id")
 ----
 
-==== Using expression parameters in consumers
+=== Using expression parameters in consumers
 
 *Available as of Camel 2.23*
 
@@ -432,7 +437,7 @@ Notice that there is no existing `Exchange` with message body and headers, so
 the simple expression you can use in the consumer are most useable for calling
 bean methods as in this example.
 
-=== Using IN queries with dynamic values
+== Using IN queries with dynamic values
 
 *Available as of Camel 2.17*
 
@@ -498,7 +503,7 @@ from("direct:query")
 ----
  
 
-=== Using the JDBC based idempotent repository
+== Using the JDBC based idempotent repository
 
 *Available as of Camel 2.7*: In this section we will use the JDBC based
 idempotent repository.
@@ -568,7 +573,7 @@ It takes two parameter. This first one is the processor name (`String`) and
 the second one is the message id (`String`).
 |===
 
-=== Using the JDBC based aggregation repository
+== Using the JDBC based aggregation repository
 
 *Available as of Camel 2.6*
 
@@ -600,7 +605,7 @@ You can see some examples in the unit tests of camel-sql, for example
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-sql/src/test/java/org/apache/camel/processor/aggregate/jdbc/JdbcAggregateRecoverDeadLetterChannelTest.java[this
 test].
 
-==== Database
+=== Database
 
 To be operational, each aggregator uses two table: the aggregation and
 completed one. By convention the completed has the same name as the
@@ -610,9 +615,11 @@ following example aggregation will be used.
 
 The table structure definition of both table are identical: in both case
 a String value is used as key (*id*) whereas a Blob contains the
-exchange serialized in byte array. +
+exchange serialized in byte array.
+
  However one difference should be remembered: the *id* field does not
-have the same content depending on the table. +
+have the same content depending on the table.
+
  In the aggregation table *id* holds the correlation Id used by the
 component to aggregate the messages. In the completed table, *id* holds
 the id of the exchange stored in corresponding the blob field.
@@ -635,7 +642,7 @@ CREATE TABLE aggregation_completed (
 -----
 
 
-=== Storing body and headers as text
+== Storing body and headers as text
 
 *Available as of Camel 2.11*
 
@@ -685,7 +692,7 @@ below:
 </bean>
 ----
 
-==== Codec (Serialization)
+=== Codec (Serialization)
 
 Since they can contain any type of payload, Exchanges are not
 serializable by design. It is converted into a byte array to be stored
@@ -700,18 +707,18 @@ the `currentThread` one. The benefit is to be able to load classes
 exposed by other bundles. This allows the exchange body and headers to
 have custom types object references.
 
-==== Transaction
+=== Transaction
 
 A Spring `PlatformTransactionManager` is required to orchestrate
 transaction.
 
-===== Service (Start/Stop)
+==== Service (Start/Stop)
 
 The `start` method verify the connection of the database and the
 presence of the required tables. If anything is wrong it will fail
 during starting.
 
-==== Aggregator configuration
+=== Aggregator configuration
 
 Depending on the targeted environment, the aggregator might need some
 configuration. As you already know, each aggregator should have its own
@@ -738,7 +745,7 @@ Here is the declaration for Oracle:
 </bean>
 ----
  
-==== Optimistic locking
+=== Optimistic locking
 
 From *Camel 2.12* onwards you can turn on `optimisticLocking` and use
 this JDBC based aggregation repository in a clustered environment where
@@ -794,13 +801,13 @@ class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
 </bean>
 -----
 
-=== Camel Sql Starter
+== Camel Sql Starter
 
 A starter module is available to spring-boot users. When using the starter,
 the `DataSource` can be directly configured using spring-boot properties.
 
 [source,text]
------
+----
 # Example for a mysql datasource
 spring.datasource.url=jdbc:mysql://localhost/test
 spring.datasource.username=dbuser

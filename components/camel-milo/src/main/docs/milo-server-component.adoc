@@ -65,14 +65,14 @@ The OPC UA Server component supports 20 options, which are listed below.
 
 
 
-=== URI format
+== URI format
 
 [source,java]
 ------------------------
 milo-server:itemId[?options]
 ------------------------
 
-=== URI options
+== URI options
 
 
 
@@ -153,10 +153,3 @@ The component supports 21 options, which are listed below.
 | *camel.component.milo-server.username-security-policy-uri* | Set the UserTokenPolicy used when |  | SecurityPolicy
 |===
 // spring-boot-auto-configure options: END
-
-
-
-
-
-
-

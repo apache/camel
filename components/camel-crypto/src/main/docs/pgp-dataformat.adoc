@@ -264,7 +264,8 @@ from("direct:start")
 
 == Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
 
-Since *Camel 2.12.3. +
+Since *Camel 2.12.3.
+
 *An https://tools.ietf.org/html/rfc4880#section-12.1[OpenPGP V4 key] can
 have a primary key and sub-keys. The usage of the keys is indicated by
 the so called https://tools.ietf.org/html/rfc4880#section-5.2.3.21[Key
@@ -279,7 +280,8 @@ primary key and its sub-keys have the same User IDs.
 
 == Support of Custom Key Accessors
 
-Since *Camel 2.13.0. +
+Since *Camel 2.13.0.
+
 *You can implement custom key accessors for encryption/signing. The
 above PGPDataFormat class selects in a certain predefined way the keys
 which should be used for signing/encryption or verifying/decryption. If
@@ -315,4 +317,3 @@ need to add the following dependency to your pom.
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
-

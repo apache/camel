@@ -6,13 +6,15 @@
 
 This component allows interaction with cloud provider key-value engines
 (blobstores) and compute services. The component uses
-http://code.google.com/p/jclouds[jclouds] which is +
+http://code.google.com/p/jclouds[jclouds] which is
+
  a library that provides abstractions for blobstores and compute
 services.
 
 *ComputeService* simplifies the task of managing machines in the cloud.
 For example, you can use ComputeService to start 5 machines and install
-your software on them. +
+your software on them.
+
  *BlobStore* simplifies dealing with key-value providers such as Amazon
 S3. For example, BlobStore can give you a simple Map view of a
 container.
@@ -203,9 +205,12 @@ using the jclouds component.
 [source,java]
 ------------------------------------
 from("direct:start")
-    .to("jclouds:blobstore:aws-s3" +
-        "?operation=PUT" +
-        "&container=mycontainer" +
+    .to("jclouds:blobstore:aws-s3"
+
+        "?operation=PUT"
+
+        "&container=mycontainer"
+
         "&blobName=myblob");
 ------------------------------------
 
@@ -230,9 +235,12 @@ the jclouds component.
 [source,java]
 ------------------------------------
 from("direct:start")
-    .to("jclouds:blobstore:aws-s3" +
-        "?operation=GET" +
-        "&container=mycontainer" +
+    .to("jclouds:blobstore:aws-s3"
+
+        "?operation=GET"
+
+        "&container=mycontainer"
+
         "&blobName=myblob");
 ------------------------------------
 
@@ -257,7 +265,8 @@ as body.
 
 [source,java]
 -------------------------------------
-    from("jclouds:blobstore:aws-s3" +
+    from("jclouds:blobstore:aws-s3"
+
         "?container=mycontainer")
         .to("direct:next");
 -------------------------------------
@@ -288,7 +297,8 @@ producer in java dsl and spring/blueprint xml.
 
 [source,java]
 --------------------------------------------
-    from("jclouds:compute:aws-ec2" +
+    from("jclouds:compute:aws-ec2"
+
         "&operation=CamelJCloudsListImages")
         .to("direct:next");
 --------------------------------------------
@@ -309,10 +319,14 @@ its body. You can also do the same using xml.
 [source,java]
 ---------------------------------------------
     from("direct:start").
-    to("jclouds:compute:aws-ec2" +
-        "?operation=CamelJcloudsCreateNode" +
-        "&imageId=AMI_XXXXX" +
-        "&locationId=XXXXX" +
+    to("jclouds:compute:aws-ec2"
+
+        "?operation=CamelJcloudsCreateNode"
+
+        "&imageId=AMI_XXXXX"
+
+        "&locationId=XXXXX"
+
         "&group=myGroup");
 ---------------------------------------------
 
@@ -334,9 +348,12 @@ spring xml.
 [source,java]
 --------------------------------------------
     from("direct:start").
-    to("jclouds:compute:aws-ec2" +
-        "?operation=CamelJcloudsRunScript" +
-        "?nodeId=10" +
+    to("jclouds:compute:aws-ec2"
+
+        "?operation=CamelJcloudsRunScript"
+
+        "?nodeId=10"
+
         "&user=ubuntu");
 --------------------------------------------
 
@@ -361,14 +378,3 @@ Here is the same using spring xml.
     <to uri="jclouds:compute:aws-ec2?operation=CamelJcloudsListNodes&?nodeId=10&user=ubuntu"/>
 </route>
 ----------------------------------------------------------------------------------------------
-
-=== See also
-
-If you want to find out more about jclouds here is list of interesting
-resources 
-
-http://jclouds.incubator.apache.org/documentation/userguide/blobstore-guide/[Jclouds
-Blobstore wiki] 
-
-http://jclouds.incubator.apache.org/documentation/userguide/compute/[Jclouds
-Compute wiki]

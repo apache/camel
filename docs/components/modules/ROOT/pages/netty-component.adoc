@@ -4,14 +4,14 @@
 
 *Available as of Camel version 2.3*
 
-*Available as of Camel version 2.3*
-
 
 The Netty component in Camel is a socket communication component,
-based on the http://netty.io/[Netty] project version 4. +
+based on the http://netty.io/[Netty] project version 4.
+
  Netty is a NIO client server framework which enables quick and easy
 development of networkServerInitializerFactory applications such as
-protocol servers and clients. +
+protocol servers and clients.
+
  Netty greatly simplifies and streamlines network programming such as
 TCP and UDP socket server.
 
@@ -602,14 +602,17 @@ or via XML.
 == Closing Channel When Complete
 
 When acting as a server you sometimes want to close the channel when,
-for example, a client conversion is finished. +
+for example, a client conversion is finished.
+
  You can do this by simply setting the endpoint option
 `disconnect=true`.
 
-However you can also instruct Camel on a per message basis as follows. +
+However you can also instruct Camel on a per message basis as follows.
+
  To instruct Camel to close the channel, you should add a header with
 the key `CamelNettyCloseChannelWhenComplete` set to a boolean `true`
-value. +
+value.
+
  For instance, the example below will close the channel after it has
 written the bye message back to the client:
 

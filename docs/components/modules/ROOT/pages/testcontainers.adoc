@@ -78,8 +78,8 @@ You may need to wait for some condition to be satisfied before starting your tes
 
 Camel Testcontainer provides a PropertiesFunction implementation that can be used to:
 
-- retrieve the container host with the following syntax `container:host:${container-name}`
-- retrieve the port mapping with the following syntax `container:port:${exposed-port}@${container-name}`
+- retrieve the container host with the following syntax `container:host:$\{container-name\}`
+- retrieve the port mapping with the following syntax `container:port:$\{exposed-port\}@$\{container-name\}`
 
 [source,java]
 .Example

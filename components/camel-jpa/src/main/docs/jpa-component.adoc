@@ -82,7 +82,7 @@ jpa:entityClassName[?options]
 -----------------------------
 
 For sending to the endpoint, the _entityClassName_ is optional. If
-specified, it helps the link:http://camel.apache.org/type-converter.html[Type Converter] to
+specified, it helps the xref:latest@manual::type-converter.adoc[Type Converter] to
 ensure the body is of the correct type.
 
 For consuming, the _entityClassName_ is mandatory.
@@ -398,12 +398,12 @@ the message body.
 
 == Example
 
-See link:http://camel.apache.org/tracer-example.html[Tracer Example] for an example using
-<<jpa-component,JPA>> to store traced messages into a database.
+See https://github.com/apache/camel/tree/camel-2.x/examples/camel-example-tracer[Tracer Example] for an example using
+xref:jpa-component.adoc[JPA] to store traced messages into a database.
 
 == Using the JPA-Based Idempotent Repository
 
-The Idempotent Consumer from the http://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
+The Idempotent Consumer from the xref:latest@manual::enterprise-integration-patterns.adoc[EIP patterns] is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
 
 To use the JPA based idempotent repository.
 
@@ -472,6 +472,3 @@ argument to the JVM:
  
 -javaagent:<path_to_your_local_m2_cache>/org/apache/openjpa/openjpa/2.2.1/openjpa-2.2.1.jar
 -------------------------------------------------------------------------------------------
-
-
-

@@ -5,8 +5,8 @@
 *Available as of Camel version 2.14*
 
 
-The *netty4-http* component is an extension to <<netty4-component,Netty4>>
-component to facilitiate HTTP transport with <<netty4-component,Netty4>>.
+The *netty4-http* component is an extension to xref:netty4-component.adoc[Netty4]
+component to facilitiate HTTP transport with xref:netty4-component.adoc[Netty4].
 
 This camel component supports both producer and consumer endpoints.
 
@@ -67,9 +67,10 @@ at the endpoint URI definition level (like `to` or `from` DSL elements).
 
 
 INFO: *A lot more options*. *Important:* This component inherits all the options from
-<<netty4-component,Netty4>>. So make sure to look at
-the <<netty4-component,Netty4>> documentation as well. +
- Notice that some options from <<netty4-component,Netty4>> is not
+xref:netty4-component.adoc[Netty4]. So make sure to look at
+the xref:netty4-component.adoc[Netty4] documentation as well.
+
+ Notice that some options from xref:netty4-component.adoc[Netty4] is not
 applicable when using this Netty4 HTTP component, such as options
 related to UDP transport.
 
@@ -393,7 +394,8 @@ from("netty4-http:http://0.0.0.0:8123/foo").to("mock:foo");
 -----------------------------------------------------------
 
 In the route above Netty4 HTTP will only match if the uri is an exact
-match, so it will match if you enter +
+match, so it will match if you enter
+
  `http://0.0.0.0:8123/foo` but not match if you do
 `http://0.0.0.0:8123/foo/bar`.
 
@@ -581,4 +583,3 @@ below:
    ...
 </route>
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-

@@ -7,7 +7,8 @@
 
 This documentation page covers the https://flink.apache.org[Apache Flink]
 component for the Apache Camel. The *camel-flink* component provides a
-bridge between Camel connectors and Flink tasks. +
+bridge between Camel connectors and Flink tasks.
+
 This Camel Flink connector provides a way to route message from various
 transports, dynamically choosing a flink task to execute, use incoming
 message as input data for the task and finally deliver the results back to
@@ -186,4 +187,3 @@ try {
         camelContext.stop();
     }
 -----------------------------------
-

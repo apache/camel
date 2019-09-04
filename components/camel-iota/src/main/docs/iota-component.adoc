@@ -19,14 +19,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI format
+== URI format
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------
 iota:name?url=nodeurl[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
-=== Options
+== Options
 
 // component options: START
 The IOTA component has no options.
@@ -98,7 +98,7 @@ The component supports 2 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Sample route
+== Sample route
 
 The following route defined in Spring XML send a message to tangle
 
@@ -171,8 +171,3 @@ The following route defined in Spring XML retrieve transfers data
   <to uri="direct:result" />
 </route>
 ---------------------------------------------------------------------------------------------------------------------------
-
-=== See also
-
-* https://www.iota.org/[IOTA website]
-* https://github.com/iotaledger/iota.lib.java[IOTA java lib]

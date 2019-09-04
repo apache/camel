@@ -464,7 +464,7 @@ settings for both sessions.
 
 [source,xml]
 ----
-include::../../test/resources/org/apache/camel/component/quickfixj/QuickfixjSpringTest-context.xml[tags=e1]
+include::{examplesdir}/components/camel-quickfix/src/test/resources/org/apache/camel/component/quickfixj/QuickfixjSpringTest-context.xml[tags=e1]
 ----
 
 == Exception handling
@@ -589,7 +589,7 @@ initially as a collection of key value pairs data. You can use this
 object or you can use the method 'toString' to retrieve the original FIX
 message.
 
-*Note:* Alternatively, you can use <<bindy-dataformat,camel bindy dataformat>> to transform the FIX message into your own java POJO
+*Note:* Alternatively, you can use xref:bindy-dataformat.adoc[camel bindy dataformat] to transform the FIX message into your own java POJO
 
 When a message must be send to QuickFix, then you must create a
 QuickFix.Message instance.
@@ -625,4 +625,3 @@ Direction : from FIX gateway
   <to uri="uri="activemq:queue:fix"/>"
 </route>
 ----
-

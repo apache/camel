@@ -15,7 +15,7 @@ In order to ensure that data is not lost if the system performing the
 processing fails, it is typically consumed within a transaction from the
 queue, and once aggregated stored in a persistent
 `AggregationRepository`, such as the one found in the
-<<jdbc-component,JDBC Component>>.
+xref:jdbc-component.adoc[JDBC].
 
 The behavior of the aggregator pattern involves fetching data from the
 `AggregationRepository` before an incoming message is aggregated, and
@@ -102,7 +102,7 @@ Topic consumption is not supported, as there is no advantage to using
 batch consumption within that context. Topic messages are usually
 non-persistent, and loss is acceptable. If consumed within a transaction
 that fails, a topic message will likely not be redelivered by the
-broker. A plain <<sjms-component,SJMS>> consumer endpoint can be used in
+broker. A plain xref:sjms-component.adoc[SJMS] consumer endpoint can be used in
 conjunction with a regular non-persistence backed
 aggregator in this scenario.
 

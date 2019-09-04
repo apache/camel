@@ -1,10 +1,7 @@
 [[terser-language]]
 = HL7 Terser Language
 == Terser language
-*Available as of Camel version 2.11.0*
 *Available as of Camel version 2.11*
-
-
 
 http://hl7api.sourceforge.net[HAPI] provides a
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]

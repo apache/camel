@@ -53,21 +53,21 @@ the Camel Components
 correlate together the purchase order and invoice messages which can be
 any Expression via any of the
 Languages Supported. In this case we are
-using <<xpath-language,XPath>>.
+using XPath.
 
 Then the final line of code defines the temporal rules to use; namely
 that it is considered to be an error if an invoice is not received
 within 2 seconds of a purchase order being received. When a failure
-occurs in this example we just send it to the <<log-component,Log>>
+occurs in this example we just send it to the log component
 component to log out an error level message to commons-logging / log4j.
 You could change this to use some of the other
 Components such as ActiveMQ,
-<<jms-component,JMS>>, <<jms-component,IRC>>, <<jms-component,Mail>>,
-<<xmpp-component,XMPP>> etc.
+xref:jms-component.adoc[JMS], xref:irc-component.adoc[IRC], xref:mail-component.adoc[Mail],
+xref:xmpp-component.adoc[XMPP] etc.
 
 == Running the example
 
-To run the example we use the link:camel-maven-plugin.html[Camel Maven
+To run the example we use the xref:manual::camel-maven-plugin.adoc[Camel Maven
 Plugin]. For example from the source or binary distribution the
 following should work
 

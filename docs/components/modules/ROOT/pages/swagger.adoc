@@ -1,5 +1,6 @@
 [[Swagger-SwaggerScalaComponent]]
-== Swagger Scala Component (deprecated)
+= Swagger Scala Component (deprecated)
+:page-source: components/camel-swagger/src/main/docs/swagger.adoc
 
 *Available as of Camel 2.14*
 
@@ -27,8 +28,7 @@ a future release.
 ------------------------------------------------------------
 
 [[Swagger-UsingwithCamel2.15.x]]
-Using with Camel 2.15.x
-^^^^^^^^^^^^^^^^^^^^^^^
+== Using with Camel 2.15.x
 
 The default servlet supports any environment using JMX to discover the
 CamelContext(s) to use.
@@ -37,8 +37,7 @@ The name of the servlet
 is `org.apache.camel.component.swagger.DefaultCamelSwaggerServlet`.
 
 [[Swagger-UsingwithCamel2.14.x]]
-Using with Camel 2.14.x
-^^^^^^^^^^^^^^^^^^^^^^^
+== Using with Camel 2.14.x
 
 The Swagger servlet is integrated with Spring
 or ServletListener Component. 
@@ -127,8 +126,7 @@ kind of environment.
 ------------------------------------------------------------------------------------------------------------------------
 
 [[Swagger-Options]]
-Options
-^^^^^^^
+== Options
 
 The `org.apache.camel.component.swagger.RestSwaggerApiDeclarationServlet `and
 `org.apache.camel.component.swagger.DefaultCamelSwaggerServlet` supports
@@ -176,8 +174,7 @@ So using relative paths is much easier. See above for an example.
 |=======================================================================
 
 [[Swagger-CorsFilter]]
-CorsFilter
-^^^^^^^^^^
+== CorsFilter
 
 If you use the swagger ui to view the REST api then you likely need to
 enable support for CORS. This is needed if the swagger ui is hosted and
@@ -221,8 +218,7 @@ sophisticated filter to set the header values differently for a given
 client. Or block certain clients etc.
 
 [[Swagger-MultipleCamelContexts]]
-Multiple CamelContexts
-^^^^^^^^^^^^^^^^^^^^^^
+== Multiple CamelContexts
 
 *Available as of Camel 2.16*
 
@@ -233,15 +229,8 @@ json format. To access the swagger documentation then the context-path
 must be appended with the Camel context id, such as `api-docs/myCamel`.
 
 [[Swagger-Examples]]
-Examples
-^^^^^^^^
+== Examples
 
 In the Apache Camel distribution we ship
 the `camel-example-servlet-rest-tomcat` which demonstrates using this
 Swagger component.
-
-[[Swagger-SeeAlso]]
-See Also
-^^^^^^^^
-
-* Swagger Java

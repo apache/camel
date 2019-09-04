@@ -1,9 +1,7 @@
 [[jmx-component]]
 = JMX Component
 ifdef::env-github[]
-*Available as of Camel version 2.6.0*
 *Available as of Camel version 2.6*
-
 
 :caution-caption: :boom:
 :important-caption: :exclamation:
@@ -12,17 +10,17 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-=== Camel JMX
+== Camel JMX
 
 Apache Camel has extensive support for JMX to allow you to monitor and
 control the Camel managed objects with a JMX client.
 
-Camel also provides a <<jmx-component,JMX>> component that allows you to
+Camel also provides a xref:jmx-component.adoc[JMX] component that allows you to
 subscribe to MBean notifications. This page is about how to manage and
 monitor Camel using JMX.
 
 
-=== Options
+== Options
 
 // component options: START
 The JMX component has no options.
@@ -445,7 +443,8 @@ in Camel 1.5)
 </camel:camelContext>
 ----
 
-. Alter your JBoss instance to use the Platform `MBeanServer`. +
+. Alter your JBoss instance to use the Platform `MBeanServer`.
+
 Add the following property to your `JAVA_OPTS` by editing `run.sh` or
 `run.conf` `-Djboss.platform.mbeanserver`. See
 http://wiki.jboss.org/wiki/JBossMBeansInJConsole
@@ -707,7 +706,8 @@ image:jconsole_trace_notifications.png[image]
 
 ==== Registering your own Managed Endpoints
 
-*Available as of Camel 2.0* +
+*Available as of Camel 2.0*
+
 You can decorate your own endpoints with Spring managed annotations
 `@ManagedResource` to allow to register them in the Camel `MBeanServer`
 and thus access your custom MBeans using JMX.
@@ -1088,4 +1088,3 @@ declared that the `EndpointUri` JMX attribute is masked:
 @ManagedAttribute(description = "Endpoint URI", mask = true)
 String getEndpointUri();
 ----
-

@@ -103,4 +103,3 @@ Camel provide the following ServiceRegistry implementations:
 - camel-consul
 - camel-zookeeper
 - camel-spring-cloud
-

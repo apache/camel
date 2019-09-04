@@ -26,7 +26,8 @@ git://localRepositoryPath[?options]
 
 == URI Options
 
-The producer allows to do operations on a specific repository. +
+The producer allows to do operations on a specific repository.
+
 The consumer allows consuming commits, tags and branches on a specific
 repository.
 

@@ -469,7 +469,8 @@ map.put("Subject", "Camel is cool");
 == JavaMail API (ex SUN JavaMail)
 
 https://java.net/projects/javamail/pages/Home[JavaMail API] is used
-under the hood for consuming and producing mails. +
+under the hood for consuming and producing mails.
+
  We encourage end-users to consult these references when using either
 POP3 or IMAP protocol. Note particularly that POP3 has a much more
 limited set of features than IMAP.
@@ -542,7 +543,8 @@ from("imaps://imap.gmail.com?username=YOUR_USERNAME@gmail.com&password=YOUR_PASS
 
 The preceding route polls the Google mail inbox for new mails once every
 minute and logs the received messages to the `newmail` logger
-category. +
+category.
+
  Running the sample with `DEBUG` logging enabled, we can monitor the
 progress in the logs:
 
@@ -665,7 +667,8 @@ you can do as follows:
 
 Notice we use the `"searchTerm.subjectOrBody"` as parameter key to
 indicate that we want to search on mail subject or body, to contain the
-word "Camel". +
+word "Camel".
+
  The class `org.apache.camel.component.mail.SimpleSearchTerm` has a
 number of options you can configure:
 

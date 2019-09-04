@@ -129,12 +129,14 @@ implementation and might change if you use different vendor than RI.
 
 == Partial marshalling/unmarshalling
 
-*This feature is new to Camel 2.2.0.* +
+*This feature is new to Camel 2.2.0.*
+
  JAXB 2 supports marshalling and unmarshalling XML tree fragments. By
 default JAXB looks for `@XmlRootElement` annotation on given class to
 operate on whole XML tree. This is useful but not always - sometimes
 generated code does not have @XmlRootElement annotation, sometimes you
-need unmarshall only part of tree. +
+need unmarshall only part of tree.
+
  In that case you can use partial unmarshalling. To enable this
 behaviours you need set property `partClass`. Camel will pass this class
 to JAXB's unmarshaler. If `JaxbConstants.JAXB_PART_CLASS` is set as
@@ -158,7 +160,8 @@ note that you need to specify its value {[namespaceUri]}[localPart]
 
 == Fragment
 
-*This feature is new to Camel 2.8.0.* +
+*This feature is new to Camel 2.8.0.*
+
  JaxbDataFormat has new property fragment which can set the the
 `Marshaller.JAXB_FRAGMENT` encoding property on the JAXB Marshaller. If
 you don't want the JAXB Marshaller to generate the XML declaration, you
@@ -167,7 +170,8 @@ false.
 
 == Ignoring the NonXML Character
 
-*This feature is new to Camel 2.2.0.* +
+*This feature is new to Camel 2.2.0.*
+
  JaxbDataFromat supports to ignore the
 http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char[NonXML Character],
 you just need to set the filterNonXmlChars property to be true,
@@ -189,7 +193,8 @@ the Exchange property
 This feature has been tested with Woodstox 3.2.9 and Sun JDK 1.6 StAX
 implementation.
 
-*New for Camel 2.12.1* +
+*New for Camel 2.12.1*
+
  JaxbDataFormat now allows you to customize the XMLStreamWriter used to
 marshal the stream to XML. Using this configuration, you can add your
 own stream writer to completely remove, escape, or replace non-xml
@@ -218,7 +223,8 @@ http://java.sun.com/javase/6/docs/api/javax/xml/bind/JAXBElement.html[JAXBElemen
 to hold the reference of the schema and element instance value,
 jaxbDataformat will ignore the JAXBElement by default and you will get
 the element instance value instead of the JAXBElement object form the
-unmarshaled message body.  +
+unmarshaled message body. 
+
  If you want to get the JAXBElement object form the unmarshaled message
 body, you need to set the JaxbDataFormat object's ignoreJAXBElement
 property to be false.
@@ -226,7 +232,8 @@ property to be false.
 == Setting encoding
 
 You can set the *encoding* option to use when marshalling. Its the
-`Marshaller.JAXB_ENCODING` encoding property on the JAXB Marshaller. +
+`Marshaller.JAXB_ENCODING` encoding property on the JAXB Marshaller.
+
  You can setup which encoding to use when you declare the JAXB data
 format. You can also provide the encoding in the
 Exchange property `Exchange.CHARSET_NAME`. This
@@ -238,7 +245,7 @@ In this Spring DSL we have defined to use `iso-8859-1` as the encoding:
 
 *Available as of Camel 2.11*
 
-When marshalling using <<jaxb-dataformat,JAXB>> or <<jaxb-dataformat,SOAP>> then
+When marshalling using xref:jaxb-dataformat.adoc[JAXB] or xref:soapjaxb-dataformat.adoc[SOAP] then
 the JAXB implementation will automatic assign namespace prefixes, such
 as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer
 to a map which contains the desired mapping.
@@ -260,7 +267,7 @@ namespace "http://www.mycompany.com/foo/2" is not using any prefix.
   </util:map>
 -----------------------------------------------------------------------
 
-To use this in <<jaxb-dataformat,JAXB>> or <<jaxb-dataformat,SOAP>> you refer to
+To use this in xref:jaxb-dataformat.adoc[JAXB] or xref:soapjaxb-dataformat.adoc[SOAP] you refer to
 this map, using the `namespacePrefixRef` attribute as shown below. Then
 Camel will lookup in the Registry a `java.util.Map`
 with the id "myMap", which was what we defined above.
@@ -309,7 +316,8 @@ You can do the same using the XML DSL:
 
 Camel will create and pool the underling `SchemaFactory` instances on
 the fly, because the `SchemaFactory` shipped with the JDK is not thread
-safe. +
+safe.
+
  However, if you have a `SchemaFactory` implementation which is thread
 safe, you can configure the JAXB data format to use this one:
 

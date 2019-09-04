@@ -5,9 +5,6 @@
 *Available as of Camel version 2.18*
 
 
-*Available as of Camel version 2.18*
-
-
 The camel chronicle-engine component let you leverage the power of OpenHFT's Chronicle-Engine
 
 == URI Format

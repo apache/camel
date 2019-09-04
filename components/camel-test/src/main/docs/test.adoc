@@ -1,24 +1,24 @@
 [[Test-TestComponent]]
-== Test Component
+= Test Component
 
 Testing of distributed and asynchronous processing is
-notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
-and <<dataset-component,DataSet>> endpoints work great with the
+notoriously difficult. The Mock, Test
+and DataSet endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
-link:enterprise-integration-patterns.html[Enterprise Integration
+xref:latest@manual::enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's large range of Components
 together with the powerful Bean Integration.
 
-The *test* component extends the <<mock-component,Mock>> component to
+The *test* component extends the Mock component to
 support pulling messages from another endpoint on startup to set the
-expected message bodies on the underlying <<mock-component,Mock>> endpoint.
+expected message bodies on the underlying Mock endpoint.
 That is, you use the test endpoint in a route and messages arriving on
 it will be implicitly compared to some expected messages extracted from
 some other location.
 
 So you can use, for example, an expected set of message bodies as files.
-This will then set up a properly configured <<mock-component,Mock>>
+This will then set up a properly configured Mock
 endpoint, which is only valid if the received messages match the number
 of expected messages and their message payloads are equal.
 
@@ -28,19 +28,18 @@ for this component when using *Camel 2.8* or older:
 [source,xml]
 ------------------------------------------------------------
 <dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-spring</artifactId>
-    <version>x.x.x</version>
-    <!-- use the same version as your Camel core version -->
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-spring</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
 
-From Camel 2.9 onwards the <<test-component,Test>> component is provided
+From Camel 2.9 onwards the Test component is provided
 directly in the camel-core.
 
 [[Test-URIformat]]
-URI format
-^^^^^^^^^^
+== URI format
 
 [source,java]
 --------------------------------
@@ -52,8 +51,7 @@ Component URI that the expected message bodies are
 pulled from before starting the test.
 
 [[Test-URIOptions]]
-URI Options
-^^^^^^^^^^^
+== URI Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -67,7 +65,8 @@ order or can be in any order.
 
 |split |false |*Camel 2.17:* If enabled the messages loaded from the test endpoint
 will be split using \n\r delimiters (new lines) so each line is an
-expected message. +
+expected message.
+
 For example to use a file endpoint to load a file where each line is an
 expected message. 
 
@@ -77,8 +76,7 @@ expression.
 |=======================================================================
 
 [[Test-Example]]
-Example
-^^^^^^^
+== Example
 
 For example, you could write a test case as follows:
 
@@ -93,16 +91,5 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/compon
 method], your test case will perform the necessary assertions.
 
 To see how you can set other expectations on the test endpoint, see the
-<<mock-component,Mock>> component.
-
-[[Test-SeeAlso]]
-See Also
-^^^^^^^^
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* Spring Testing
+Mock component.
 

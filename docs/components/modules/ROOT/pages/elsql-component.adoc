@@ -215,7 +215,8 @@ projects table. Notice the SQL query has 2 named parameters, :#lic and
 
 Camel will then lookup for these parameters from the message body or
 message headers. Notice in the example above we set two headers with
-constant value +
+constant value
+
  for the named parameters:
 
 [source,java]

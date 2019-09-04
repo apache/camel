@@ -385,7 +385,8 @@ attachments.
 If you need to provide your custom processing of either headers or
 attachments, extend existing BasicMessageFilter and override the
 appropriate methods or write a brand new implementation of the
-MessageFilter interface. +
+MessageFilter interface.
+
  To use your custom filter, add this into your spring context:
 
 You can specify either a global a or a local message filter as
@@ -626,4 +627,3 @@ to POJO's and marshal the response message back to XML:
 from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointMapping").unmarshal(jaxb)
 .to("mock:example").marshal(jaxb);
 --------------------------------------------------------------------------------------------------------
-

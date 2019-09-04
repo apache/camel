@@ -8,7 +8,8 @@ WARNING: The producer is deprecated - do not use. We only recommend using jetty 
 
 The *jetty* component provides HTTP-based endpoints
 for consuming and producing HTTP requests. That is, the Jetty component
-behaves as a simple Web server. +
+behaves as a simple Web server.
+
  Jetty can also be used as a http client which mean you can also use it
 with Camel as a producer.
 
@@ -17,7 +18,8 @@ with Camel as a producer.
 The `assert` call appears in this example, because the code is part of
 an unit test.Jetty is stream based, which means the input it receives is
 submitted to Camel as a stream. That means you will only be able to read
-the content of the stream *once*. +
+the content of the stream *once*.
+
 If you find a situation where the message body appears to be empty or
 you need to access the Exchange.HTTP_RESPONSE_CODE data multiple times
 (e.g.: doing multicasting, or redelivery error handling), you should use
@@ -37,7 +39,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source,text]
 ----
@@ -47,7 +49,7 @@ jetty:http://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 
@@ -251,7 +253,7 @@ The component supports 34 options, which are listed below.
 
 === Message Headers
 
-Camel uses the same message headers as the <<http-component,HTTP>>
+Camel uses the same message headers as the xref:http-component.adoc[HTTP]
 component. 
 From Camel 2.2, it also uses (Exchange.HTTP_CHUNKED,CamelHttpChunked)
 header to turn on or turn off the chuched encoding on the camel-jetty
@@ -269,7 +271,7 @@ message header not only from Get Method, but also other HTTP method.
 
 The Jetty component supports both consumer and producer endpoints.
 Another option for producing to other HTTP endpoints, is to use the
-<<http-component,HTTP Component>>
+xref:http-component.adoc[HTTP]
 
 === Producer Example
 
@@ -313,16 +315,17 @@ If you need to expose a Jetty endpoint on all network interfaces, the
 `0.0.0.0` address should be used.
 
 To listen across an entire URI prefix, see
-link:how-do-i-let-jetty-match-wildcards.html[How do I let Jetty match
+xref:latest@manual::faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match
 wildcards].
 
 If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the
-https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=46339[Servlet
+xref:servlet-component.adoc[Servlet
 Transport].
 
 Our business logic is implemented in the `MyBookService` class, which
-accesses the HTTP request contents and then returns a response. +
+accesses the HTTP request contents and then returns a response.
+
  *Note:* The `assert` call appears in this example, because the code is
 part of an unit test.
 
@@ -335,8 +338,8 @@ Jetty component will copy the HTTP request parameter, `one` to the
 exchange's `in.header`. We can then use the `simple` language to route
 exchanges that contain this header to a specific endpoint and all others
 to another. If we used a language more powerful than
-<<simple-language,Simple>> (such as <<el-language,EL>> or
-<<ognl-language,OGNL>>) we could also test for the parameter value and do
+xref:latest@manual::simple-language.adoc[Simple] (such as xref:el-language.adoc[EL] or
+xref:ognl-language.adoc[OGNL]) we could also test for the parameter value and do
 routing based on the header value as well.
 
 === Session Support
@@ -378,7 +381,7 @@ public void process(Exchange exchange) throws Exception {
 Using the JSSE Configuration Utility
 
 As of Camel 2.8, the Jetty component supports SSL/TLS configuration
-through the link:camel-configuration-utilities.html[Camel JSSE
+through the xref:latest@manual::camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how
@@ -638,7 +641,8 @@ The default behavior of HTTP status codes is defined by the
 handles how a response is written and also sets the HTTP status code.
 
 If the exchange was processed successfully, the 200 HTTP status code is
-returned. +
+returned.
+
  If the exchange failed with an exception, the 500 HTTP status code is
 returned, and the stacktrace is returned in the body. If you want to
 specify which HTTP status code to return, set the code in the
@@ -746,8 +750,9 @@ comma-separated list of bean IDs.
 === How to return a custom HTTP 500 reply message
 
 You may want to return a custom reply message when something goes wrong,
-instead of the default reply message Camel <<jetty-component,Jetty>>
-replies with. +
+instead of the default reply message Camel xref:jetty-component.adoc[Jetty]
+replies with.
+
  You could use a custom `HttpBinding` to be in control of the message
 mapping, but often it may be easier to use Camel's
 Exception Clause to construct the custom

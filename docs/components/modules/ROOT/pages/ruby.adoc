@@ -1,11 +1,11 @@
 [[Ruby-Ruby]]
-Ruby
-~~~~
+= Ruby
+:page-source: components/camel-ruby/src/main/docs/ruby.adoc
 
 Camel supports http://www.ruby-lang.org/en/[Ruby] among other
 Scripting Languages to allow an
 Expression or Predicate to be
-used in the DSL or link:xml-configuration.html[Xml
+used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
 Configuration].
 
 To use a Ruby expression use the following Java code
@@ -16,13 +16,12 @@ To use a Ruby expression use the following Java code
 -----------------------------------
 
 For example you could use the *ruby* function to create an
-Predicate in a link:message-filter.html[Message
+Predicate in a xref:latest@manual::filter-eip.adoc[Message
 Filter] or as an Expression for a
 Recipient List
 
 [[Ruby-Example]]
-Example
-^^^^^^^
+== Example
 
 In the sample below we use Ruby to create a
 Predicate use in the route path, to route exchanges
@@ -56,8 +55,7 @@ And a Spring DSL sample as well:
 ----------------------------------------------------------------
 
 [[Ruby-ScriptContext]]
-ScriptContext
-^^^^^^^^^^^^^
+== ScriptContext
 
 The JSR-223 scripting languages ScriptContext is pre configured with the
 following attributes all set at `ENGINE_SCOPE`:
@@ -78,7 +76,7 @@ following attributes all set at `ENGINE_SCOPE`:
 IN message instead.
 
 |properties |`org.apache.camel.builder.script.PropertiesFunction` |*Camel 2.9:* Function with a `resolve` method to make it easier to use
-Camels <<properties-component,Properties>> component from scripts. See
+Camels Properties component from scripts. See
 further below for example.
 |=======================================================================
 
@@ -86,22 +84,21 @@ See Scripting Languages for the list of
 languages with explicit DSL support.
 
 [[Ruby-AdditionalargumentstoScriptingEngine]]
-Additional arguments to ScriptingEngine
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+== Additional arguments to ScriptingEngine
 
 *Available as of Camel 2.8*
 
 You can provide additional arguments to the `ScriptingEngine` using a
-header on the Camel message with the key `CamelScriptArguments`. +
+header on the Camel message with the key `CamelScriptArguments`.
+
  See this example:
 
 [[Ruby-Usingpropertiesfunction]]
-Using properties function
-^^^^^^^^^^^^^^^^^^^^^^^^^
+== Using properties function
 
 *Available as of Camel 2.9*
 
-If you need to use the <<properties-component,Properties>> component from a
+If you need to use the Properties component from a
 script to lookup property placeholders, then its a bit cumbersome to do
 so. For example to set a header name myHeader with a value from a property
 placeholder, which key is provided in a header named "foo".
@@ -120,13 +117,13 @@ same example is simpler:
 -------------------------------------------------------------------------------
 
 [[Ruby-Loadingscriptfromexternalresource]]
-Loading script from external resource
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+== Loading script from external resource
 
 *Available as of Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
-such as `"classpath:"`, `"file:"`, or `"http:"`. +
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+
  This is done using the following syntax: `"resource:scheme:location"`,
 eg to refer to a file on the classpath you can do:
 
@@ -136,8 +133,7 @@ eg to refer to a file on the classpath you can do:
 -------------------------------------------------------------------
 
 [[Ruby-Howtogettheresultfrommultiplestatementsscript]]
-How to get the result from multiple statements script
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+== How to get the result from multiple statements script
 
 *Available as of Camel 2.14*
 
@@ -156,8 +152,7 @@ result = body * 2 + 1
 -------------------------------------------------------------
 
 [[Ruby-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+== Dependencies
 
 To use scripting languages in your camel routes you need to add the a
 dependency on *camel-script* which integrates the JSR-223 scripting

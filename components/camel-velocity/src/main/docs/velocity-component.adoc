@@ -31,7 +31,7 @@ velocity:templateName[?options]
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (eg:
-file://folder/myfile.vm[file://folder/myfile.vm]).
+`\file://folder/myfile.vm`).
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
@@ -134,7 +134,8 @@ support):
 
 |`CamelVelocitySupplementalContext` |*Camel 2.16:* To add additional information to the used VelocityContext.
 The value of this header should be a `Map` with key/values that will
-added (override any existing key with the same name). +
+added (override any existing key with the same name).
+
 This can be used to pre setup some common key/values you want to reuse
 in your velocity endpoints.
 |=======================================================================
@@ -202,7 +203,8 @@ when the resource never changes.
 
 == Dynamic templates
 
-*Available as of Camel 2.1* +
+*Available as of Camel 2.1*
+
  Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
 headers is set then Camel uses this over the endpoint configured
@@ -296,4 +298,3 @@ ${body}
 ----------------------------------------------
 
 And the java code:
-

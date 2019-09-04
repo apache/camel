@@ -2,9 +2,7 @@
 = JMS Component
 :page-source: components/camel-jms/src/main/docs/jms-component.adoc
 ifdef::env-github[]
-*Available as of Camel version 1.0.0*
 *Available as of Camel version 1.0*
-
 
 :caution-caption: :boom:
 :important-caption: :exclamation:
@@ -89,7 +87,8 @@ jms:queue:FOO.BAR
 -----------------
 
 To connect to a topic, you _must_ include the `topic:` prefix. For
-example, to +
+example, to
+
  connect to the topic, `Stocks.Prices`, use:
 
 -----------------------
@@ -858,9 +857,11 @@ For the `exchange.in.header` the following rules apply for the header
 * `exchange.in.headers` keys must be literals and all be valid Java
 identifiers (do not use dots in the key name).
 * Camel replaces dots & hyphens and the reverse when when consuming JMS
-messages: +
+messages:
+
  `.` is replaced by `_DOT_` and the reverse replacement when Camel
-consumes the message. +
+consumes the message.
+
  `-` is replaced by `_HYPHEN_` and the reverse replacement when Camel
 consumes the message.
 * See also the option `jmsKeyFormatStrategy`, which allows use of your
@@ -992,7 +993,8 @@ So pay attention to the message exchange pattern set on your exchanges.
 
 If you send a message to a JMS destination in the middle of your route
 you can specify the exchange pattern to use, see more at
-Request Reply. +
+Request Reply.
+
  This is useful if you want to send an `InOnly` message to a JMS topic:
 
 [source,java]
@@ -1204,9 +1206,11 @@ queue, but you can use the `replyTo` option on the endpoint to specify a
 fixed reply queue (see more below about fixed reply queue).
 
 Camel will automatic setup a consumer which listen on the reply queue,
-so you should *not* do anything. +
+so you should *not* do anything.
+
  This consumer is a Spring `DefaultMessageListenerContainer` which
-listen for replies. However it's fixed to 1 concurrent consumer. +
+listen for replies. However it's fixed to 1 concurrent consumer.
+
  That means replies will be processed in sequence as there are only 1
 thread to process the replies. You can configure the listener to use
 concurrent threads using the `concurrentConsumers` and
@@ -1255,7 +1259,8 @@ from(xxx)
 ----------------------------------------------------------------
 
 Notice this will cause the Camel to send pull requests to the message
-broker more frequent, and thus require more network traffic. +
+broker more frequent, and thus require more network traffic.
+
  It is generally recommended to use temporary queues if possible.
 
 === Request-reply over JMS and using an exclusive fixed reply queue
@@ -1272,7 +1277,8 @@ in theory the reply messages could take up till about 1 sec to be
 detected. On the other hand if the fixed reply queue is exclusive to the
 Camel reply consumer, then we can avoid using the JMS selectors, and
 thus be more performant. In fact as fast as using temporary queues. There is
-the `ReplyToType` option which you can configure to `Exclusive` +
+the `ReplyToType` option which you can configure to `Exclusive`
+
  to tell Camel that the reply queue is exclusive as shown in the example
 below:
 

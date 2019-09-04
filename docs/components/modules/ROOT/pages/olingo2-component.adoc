@@ -207,7 +207,7 @@ org.apache.olingo.odata2.api.commons.HttpStatusCodes for other OData resources
 |update |data, resourcePath, endpointHttpHeaders |PUT |org.apache.olingo.odata2.api.commons.HttpStatusCodes
 |=======================================================================
 
-== Endpoint HTTP Headers (Since 2.20)
+== Endpoint HTTP Headers
 The component level configuration property **httpHeaders** supplies static HTTP header information. 
 However, some systems requires dynamic header information to be passed to and received from the endpoint.
 A sample use case would be systems that require dynamic security tokens.  The **endpointHttpHeaders** 

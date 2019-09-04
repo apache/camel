@@ -270,4 +270,3 @@ XML file as well:
 ----
 
 == Using the Infinispan based route policy
-

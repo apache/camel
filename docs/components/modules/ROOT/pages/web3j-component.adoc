@@ -22,14 +22,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI Format
+== URI Format
 
 [source,text]
 ----
 web3j://<local/remote host:port or local IPC path>[?options]
 ----
 
-=== Web3j Options
+== Web3j Options
 
 
 // component options: START

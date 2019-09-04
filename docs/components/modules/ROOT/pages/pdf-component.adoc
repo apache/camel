@@ -126,4 +126,3 @@ If specified then PDF document will be encrypted with it.
 ishttps://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial].
 *Mandatory* header if PDF document is encrypted.
 |=======================================================================
-

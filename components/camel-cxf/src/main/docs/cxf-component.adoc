@@ -4,8 +4,8 @@
 *Available as of Camel version 1.0*
 
 
-NOTE: When using Apache CXF as a consumer, the link:cxf-bean-component.html[CXF Bean
-Component] allows you to factor out how message payloads are received
+NOTE: When using Apache CXF as a consumer, the `cxfbean` component
+allows you to factor out how message payloads are received
 from their processing as a RESTful or SOAP web service. This has the
 potential of using a multitude of transports to consume web services.
 The bean component's configuration is also simpler and provides the
@@ -18,50 +18,29 @@ The *cxf:* component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to http://cxf.apache.org/docs/jax-ws.html[JAX-WS] services
 hosted in CXF.
 
-* link:#CXF-CXFComponent[CXF Component]
-** link:#CXF-URIformat[URI format]
-** link:#CXF-Options[Options]
-*** link:#CXF-Descriptionsofthedataformats[Descriptions of the
-dataformats]
-**** link:#CXF-HowtoenableCXFLoggingOutInterceptorinMESSAGEmode[How to
-enable CXF's LoggingOutInterceptor in MESSAGE mode]
-*** link:#CXF-DescriptionofrelayHeadersoption[Description of
-relayHeaders option]
-**** link:#CXF-AvailableonlyinPOJOmode[Available only in POJO mode]
-**** link:#CXF-ChangessinceRelease2.0[Changes since Release 2.0]
-** link:#CXF-ConfiguretheCXFendpointswithSpring[Configure the CXF
-endpoints with Spring]
-** link:#CXF-ConfiguringtheCXFEndpointswithApacheAriesBlueprint.[Configuring
-the CXF Endpoints with Apache Aries Blueprint.]
-** link:#CXF-Howtomakethecamel-cxfcomponentuselog4jinsteadofjava.util.logging[How
-to make the camel-cxf component use log4j instead of java.util.logging]
-** link:#CXF-Howtoletcamel-cxfresponsemessagewithxmlstartdocument[How to
-let camel-cxf response message with xml start document]
-** link:#CXF-HowtooverridetheCXFproduceraddressfrommessageheader[How to
-override the CXF producer address from message header]
-** link:#CXF-Howtoconsumeamessagefromacamel-cxfendpointinPOJOdataformat[How
-to consume a message from a camel-cxf endpoint in POJO data format]
-** link:#CXF-Howtopreparethemessageforthecamel-cxfendpointinPOJOdataformat[How
-to prepare the message for the camel-cxf endpoint in POJO data format]
-** link:#CXF-Howtodealwiththemessageforacamel-cxfendpointinPAYLOADdataformat[How
-to deal with the message for a camel-cxf endpoint in PAYLOAD data
-format]
-** link:#CXF-HowtogetandsetSOAPheadersinPOJOmode[How to get and set SOAP
-headers in POJO mode]
-** link:#CXF-HowtogetandsetSOAPheadersinPAYLOADmode[How to get and set
-SOAP headers in PAYLOAD mode]
-** link:#CXF-SOAPheadersarenotavailableinMESSAGEmode[SOAP headers are
-not available in MESSAGE mode]
-** link:#CXF-HowtothrowaSOAPFaultfromCamel[How to throw a SOAP Fault
-from Camel]
-** link:#CXF-Howtopropagateacamel-cxfendpointrequestandresponsecontext[How
-to propagate a camel-cxf endpoint's request and response context]
-** link:#CXF-AttachmentSupport[Attachment Support]
-** link:#CXF-StreamingSupportinPAYLOADmode[Streaming Support in PAYLOAD
-mode]
-** link:#CXF-UsingthegenericCXFDispatchmode[Using the generic CXF
-Dispatch mode]
-** link:#CXF-SeeAlso[See Also]
+* <<URI format>>
+* <<Options>>
+** <<Descriptions of the dataformats>>
+*** <<cxf-loggingout-interceptor-in-message-mode,How to enable CXF's LoggingOutInterceptor in MESSAGE mode>>
+** <<Description of relayHeaders option>>
+*** <<Available only in POJO mode>>
+*** Changes since Release 2.0
+* <<Configure the CXF endpoints with Spring>>
+* <<Configuring the CXF Endpoints with Apache Aries Blueprint>>
+* <<How to make the camel-cxf component use log4j instead of java.util.logging>>
+* <<How to let camel-cxf response message with xml start document>>
+* <<How to override the CXF producer address from message header>>
+* <<How to consume a message from a camel-cxf endpoint in POJO data format>>
+* <<How to prepare the message for the camel-cxf endpoint in POJO data format>>
+* <<How to deal with the message for a camel-cxf endpoint in PAYLOAD data format>>
+* <<How to get and set SOAP headers in POJO mode>>
+* <<How to get and set SOAP headers in PAYLOAD mode>>
+* <<SOAP headers are not available in MESSAGE mode>>
+* <<How to throw a SOAP Fault from Camel>>
+* <<propagate-request-response-context,How to propagate a camel-cxf endpoint's request and response context>>
+* <<Attachment Support>>
+* <<Streaming Support in PAYLOAD mode>>
+* <<Using the generic CXF Dispatch mode>>
 
 Maven users must add the following dependency to their `pom.xml`
 for this component:
@@ -262,8 +241,8 @@ exchange property, `CamelCXFDataFormat`. The exchange key constant is
 defined in
 `org.apache.camel.component.cxf.CxfConstants.DATA_FORMAT_PROPERTY`.
 
-[[CXF-HowtoenableCXFLoggingOutInterceptorinMESSAGEmode]]
-How to enable CXF's LoggingOutInterceptor in MESSAGE mode
+[#cxf-loggingout-interceptor-in-message-mode]
+=== How to enable CXF's LoggingOutInterceptor in MESSAGE mode
 
 CXF's `LoggingOutInterceptor` outputs outbound message that goes on the
 wire to logging system (Java Util Logging). Since the
@@ -308,8 +287,7 @@ on-the-wire headers, such as SOAP headers, be relayed along the route to
 be consumed say by another JAXWS endpoint, then `relayHeaders` should be
 set to `true`, which is the default value.
 
-[[CXF-AvailableonlyinPOJOmode]]
-Available only in POJO mode
+=== Available only in POJO mode
 
 The `relayHeaders=true` express an intent to relay the headers. The
 actual decision on whether a given header is relayed is delegated to a
@@ -354,8 +332,7 @@ headers here:
 
 https://github.com/apache/camel/blob/master/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java[https://github.com/apache/camel/blob/master/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java]
 
-[[CXF-ChangessinceRelease2.0]]
-Changes since Camel Release  2.0
+=== Changes since Camel Release  2.0
 
 * `POJO` and `PAYLOAD` modes are supported. In `POJO` mode, only
 out-of-band message headers are available for filtering as the in-band
@@ -470,7 +447,7 @@ which operation you are calling.
 Be sure to include the JAX-WS `schemaLocation` attribute specified on
 the root beans element. This allows CXF to validate the file and is
 required. Also note the namespace declarations at the end of the
-`<cxf:cxfEndpoint/>` tag. These declarations are required because the combined `{namespace}localName` syntax is presently not supported for this tag's
+`<cxf:cxfEndpoint/>` tag. These declarations are required because the combined `\{namespace}localName` syntax is presently not supported for this tag's
 attribute values.
 
 The `cxf:cxfEndpoint` element supports many additional attributes:
@@ -782,9 +759,11 @@ skipped.
 == How to throw a SOAP Fault from Camel
 
 If you are using a `camel-cxf` endpoint to consume the SOAP request, you
-may need to throw the SOAP Fault from the camel context. +
+may need to throw the SOAP Fault from the camel context.
+
  Basically, you can use the `throwFault` DSL to do that; it works for
-`POJO`, `PAYLOAD` and `MESSAGE` data format. +
+`POJO`, `PAYLOAD` and `MESSAGE` data format.
+
  You can define the soap fault like this
 
 Then throw it as you like
@@ -796,6 +775,7 @@ code in the message header.
 Same for using POJO data format. You can set the SOAPFault on the out
 body and also indicate it's a fault by calling Message.setFault(true):
 
+[#propagate-request-response-context]
 == How to propagate a camel-cxf endpoint's request and response context
 
 https://github.com/apache/cxf/blob/master/core/src/main/java/org/apache/cxf/endpoint/Client.java[CXF
@@ -925,4 +905,3 @@ a specific SOAPAction value, it is supplied in the Camel header using
 the key SOAPAction (case-insensitive).
 
  
-

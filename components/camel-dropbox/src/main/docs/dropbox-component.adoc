@@ -28,7 +28,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -38,7 +38,7 @@ dropbox://[operation]?[options]
 Where *operation* is the specific action (typically is a CRUD action) to
 perform on Dropbox remote folder.
 
-=== Operations
+== Operations
 
 [width="100%",cols="40%,60%",options="header",]
 |===
@@ -58,10 +58,11 @@ perform on Dropbox remote folder.
 *Operations* require additional options to work, some are mandatory for
 the specific operation.
 
-=== Options
+== Options
 
 In order to work with Dropbox API you need to obtain an *accessToken*
-and a *clientIdentifier.* +
+and a *clientIdentifier.*
+
 You can refer to the
 https://www.dropbox.com/developers/core/start/java[Dropbox
 documentation] that explains how to get them.  
@@ -138,7 +139,7 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Del operation
+== Del operation
 
 Delete files on Dropbox.
 
@@ -153,7 +154,7 @@ Below are listed the options for this operation:
 |`remotePath` |`true` |Folder or file to delete on Dropbox
 |===
 
-==== Samples
+=== Samples
 
 [source,java]
 ----
@@ -166,7 +167,7 @@ from("direct:start")
   .to("mock:result");
 ----
 
-==== Result Message Headers
+=== Result Message Headers
 
 The following headers are set on message result:
 
@@ -177,7 +178,7 @@ The following headers are set on message result:
 |`DELETED_PATH` |name of the path deleted on dropbox
 |===
 
-==== Result Message Body
+=== Result Message Body
 
 The following objects are set on message body result:
 
@@ -188,7 +189,7 @@ The following objects are set on message body result:
 |`String` |name of the path deleted on dropbox
 |===
 
-=== Get (download) operation
+== Get (download) operation
 
 Download files from Dropbox.
 
@@ -203,7 +204,7 @@ Below are listed the options for this operation:
 |`remotePath` |`true` |Folder or file to download from Dropbox
 |===
 
-==== Samples
+=== Samples
 
 [source,java]
 ----
@@ -219,7 +220,7 @@ from("dropbox://get?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder
   .to("file:///home/kermit/");
 ----
 
-==== Result Message Headers
+=== Result Message Headers
 
 The following headers are set on message result:
 
@@ -232,7 +233,7 @@ The following headers are set on message result:
 |`DOWNLOADED_FILES` |in case of multiple files download, path of the remote files downloaded
 |===
 
-==== Result Message Body
+=== Result Message Body
 
 The following objects are set on message body result:
 
@@ -247,7 +248,7 @@ remote file downloaded and as value the stream representing the file
 downloaded
 |===
 
-=== Move operation
+== Move operation
 
 Move files on Dropbox between one folder to another.
 
@@ -264,7 +265,7 @@ Below are listed the options for this operation:
 |`newRemotePath` |`true` |Destination file or folder
 |===
 
-==== Samples
+=== Samples
 
 [source,java]
 ----
@@ -273,7 +274,7 @@ from("direct:start")
   .to("mock:result");
 ----
 
-==== Result Message Headers
+=== Result Message Headers
 
 The following headers are set on message result:
 
@@ -284,7 +285,7 @@ The following headers are set on message result:
 |`MOVED_PATH` |name of the path moved on dropbox
 |===
 
-==== Result Message Body
+=== Result Message Body
 
 The following objects are set on message body result:
 
@@ -295,7 +296,7 @@ The following objects are set on message body result:
 |`String` |name of the path moved on dropbox
 |===
 
-=== Put (upload) operation
+== Put (upload) operation
 
 Upload files on Dropbox.
 
@@ -320,13 +321,16 @@ file with content from the Camel message body (message body is converted into a 
 will upload the file on a remote path equal to the local path. With Windows or without an absolute 
 localPath you may run into an exception like the following:
 
-Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "C:/My/File" +
-OR +
-Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "MyFile" +
+Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "C:/My/File"
+
+OR
+
+Caused by: java.lang.IllegalArgumentException: 'path': bad path: must start with "/": "MyFile"
+
 	
 |===
 
-==== Samples
+=== Samples
 
 [source,java]
 ----
@@ -351,7 +355,7 @@ The name of the file can be provided in the header `DropboxConstants.HEADER_PUT_
 or `Exchange.FILE_NAME` in that order of precedence. If no header has been provided then the message id (uuid) is
 used as the file name.
 
-==== Result Message Headers
+=== Result Message Headers
 
 The following headers are set on message result:
 
@@ -364,7 +368,7 @@ The following headers are set on message result:
 |`UPLOADED_FILES` |in case of multiple files upload, string with the remote paths uploaded
 |===
 
-==== Result Message Body
+=== Result Message Body
 
 The following objects are set on message body result:
 
@@ -379,7 +383,7 @@ remote file uploaded and as value the result of the upload operation, OK
 or KO
 |===
 
-=== Search operation
+== Search operation
 
 Search inside a remote Dropbox folder including its sub directories.
 
@@ -399,7 +403,7 @@ will be matched. The query is required to be provided in either the endpoint con
 or as a header `CamelDropboxQuery` on the Camel message.
 |===
 
-==== Samples
+=== Samples
 
 [source,java]
 ----
@@ -412,7 +416,7 @@ from("direct:start")
   .to("mock:result");
 ----
 
-==== Result Message Headers
+=== Result Message Headers
 
 The following headers are set on message result:
 
@@ -423,7 +427,7 @@ The following headers are set on message result:
 |`FOUNDED_FILES` |list of file path founded
 |===
 
-==== Result Message Body
+=== Result Message Body
 
 The following objects are set on message body result:
 
@@ -434,7 +438,3 @@ The following objects are set on message body result:
 |`List<DbxEntry>` |list of file path founded. For more information on this object refer to
 Dropbox documentation,
 |===
-
-
-
- 

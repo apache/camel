@@ -442,5 +442,3 @@ To use the starter, add the following to your spring boot pom.xml file:
     <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------
-
-

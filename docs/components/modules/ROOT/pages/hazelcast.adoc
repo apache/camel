@@ -32,17 +32,17 @@ for this component:
 
 == Hazelcast components
 See followings for each component usage:
-* <<hazelcast-map-component,map>>
-* <<hazelcast-multimap-component,multimap>>
-* <<hazelcast-queue-component,queue>>
-* <<hazelcast-topic-component,topic>>
-* <<hazelcast-list-component,list>>
-* <<hazelcast-seda-component,seda>>
-* <<hazelcast-set-component,set>>
-* <<hazelcast-atomicvalue-component,atomic number>>
-* <<hazelcast-instance-component,cluster support (instance)>>
-* <<hazelcast-replicatedmap-component,replicatedmap>> 
-* <<hazelcast-ringbuffer-component,ringbuffer>> 
+* xref:hazelcast-map-component.adoc[map]
+* xref:hazelcast-multimap-component.adoc[multimap]
+* xref:hazelcast-queue-component.adoc[queue]
+* xref:hazelcast-topic-component.adoc[topic]
+* xref:hazelcast-list-component.adoc[list]
+* xref:hazelcast-seda-component.adoc[seda]
+* xref:hazelcast-set-component.adoc[set]
+* xref:hazelcast-atomicvalue-component.adoc[atomic number]
+* xref:hazelcast-instance-component.adoc[cluster support (instance)]
+* xref:hazelcast-replicatedmap-component.adoc[replicatedmap] 
+* xref:hazelcast-ringbuffer-component.adoc[ringbuffer] 
 
 
 

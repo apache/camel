@@ -6,7 +6,8 @@
 
 
 The *optaplanner:* component solves the planning problem contained in a
-message with http://www.optaplanner.org/[OptaPlanner]. +
+message with http://www.optaplanner.org/[OptaPlanner].
+
  For example: feed it an unsolved Vehicle Routing problem and it solves
 it.
 
@@ -174,4 +175,3 @@ Expose OptaPlanner as a REST service:
 from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
   .to("optaplanner:/org/foo/barSolverConfig.xml");
 -------------------------------------------------------
-

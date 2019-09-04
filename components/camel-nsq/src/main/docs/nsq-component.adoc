@@ -4,9 +4,6 @@
 *Available as of Camel version 2.23*
 
 
-*Available as of Camel version 2.23*
-
-
 
 http://nsq.io/[NSQ] is a realtime distributed messaging platform.
 

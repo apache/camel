@@ -22,7 +22,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel.
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
 
 == URI Format
@@ -275,5 +275,3 @@ If you need more precise subnet settings you can create new object of the type *
 
 |`tenantId` | `String` | Tenant ID.
 |=========================================================================
-
-

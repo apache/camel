@@ -5,10 +5,11 @@
 *Available as of Camel version 1.0*
 
 
+
 *Deprecated*
 
 WARNING: This component is deprecated as the Apache Mina 1.x project is EOL.
-Instead use <<mina2-component,MINA2>> or <<mina2-component,Netty>> instead.
+Instead use xref:mina2-component.adoc[Mina 2] or xref:mina2-component.adoc[Mina 2] instead.
 
 The *mina:* component is a transport for working with
 http://mina.apache.org/[Apache MINA]
@@ -53,7 +54,8 @@ A Mina producer has a default timeout value of 30 seconds, while it
 waits for a response from the remote server.
 
 In normal use, `camel-mina` only supports marshalling the body
-content—message headers and exchange properties are not sent. +
+content—message headers and exchange properties are not sent.
+
  However, the option, *transferExchange*, does allow you to transfer the
 exchange itself over the wire. See options below.
 
@@ -147,7 +149,7 @@ documentation] how to write your own codec. To use your custom codec
 with `camel-mina`, you should register your codec in the
 Registry; for example, by creating a bean in the
 Spring XML file. Then use the `codec` option to specify the bean ID of
-your codec. See <<hl7-dataformat,HL7>> that has a custom codec.
+your codec. See xref:hl7-dataformat.adoc[HL7] that has a custom codec.
 
 == Sample with sync=false
 
@@ -172,7 +174,7 @@ fact, something we have dynamically set in our processor code logic.
 
 == Sample with Spring DSL
 
-Spring DSL can, of course, also be used for <<mina-component,MINA>>. In the
+Spring DSL can, of course, also be used for xref:mina-component.adoc[Mina]. In the
 sample below we expose a TCP server on port 5555:
 
 [source,xml]
@@ -333,4 +335,3 @@ Then, you can configure your endpoint using Spring DSL:
     </constructor-arg>
 </bean>
 ----------------------------------------------------------------------------------
-

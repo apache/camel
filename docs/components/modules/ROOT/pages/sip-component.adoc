@@ -182,7 +182,8 @@ The component supports 2 options, which are listed below.
 === Creating a Camel SIP Publisher
 
 In the example below, a SIP Publisher is created to send SIP Event
-publications to  +
+publications to 
+
  a user "agent@localhost:5152". This is the address of the SIP Presence
 Agent which acts as a broker between the SIP Publisher and Subscriber
 
@@ -206,7 +207,8 @@ producerTemplate.sendBodyAndHeader(
 === Creating a Camel SIP Subscriber
 
 In the example below, a SIP Subscriber is created to receive SIP Event
-publications sent to  +
+publications sent to 
+
  a user "johndoe@localhost:5154"
 
 * using a SIP Stack named Subscriber

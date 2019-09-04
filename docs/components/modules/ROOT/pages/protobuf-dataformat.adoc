@@ -2,9 +2,7 @@
 = Protobuf DataFormat
 :page-source: components/camel-protobuf/src/main/docs/protobuf-dataformat.adoc
 [[Protobuf-Protobuf-ProtocolBuffers]]
-*Available as of Camel version 2.2.0*
 *Available as of Camel version 2.2*
-
 
 Protobuf - Protocol Buffers
 ---------------------------
@@ -19,8 +17,10 @@ Protocol Buffer is language-neutral and
 platform-neutral, so messages produced by your Camel routes may be
 consumed by other language implementations.
 
-https://developers.google.com/protocol-buffers/docs/reference/java/[API Site] +
-https://github.com/google/protobuf[Protobuf Implementation] +
+https://developers.google.com/protocol-buffers/docs/reference/java/[API Site]
+
+https://github.com/google/protobuf[Protobuf Implementation]
+
 
 https://developers.google.com/protocol-buffers/docs/javatutorial[Protobuf Java Tutorial]
 
@@ -70,7 +70,7 @@ The component supports 4 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-== Content type format (starting from *Camel 2.19*)
+== Content type format
 
 It's possible to parse JSON message to convert it to the protobuf format and unparse it back using native util converter.
 To use this option, set contentTypeFormat value to 'json' or call protobuf with second parameter.

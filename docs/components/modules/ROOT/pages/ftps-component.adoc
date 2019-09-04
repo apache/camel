@@ -21,7 +21,7 @@ for this component:
 </dependency>
 -----------------------------------------------------------------------
 
-For more information you can look at <<ftp-component,FTP component>>
+For more information you can look at xref:ftp-component.adoc[FTP component]
 
 == URI Options
 

@@ -38,7 +38,7 @@ for this component:
 </dependency>
 ---------------------------------------------------------
 
-=== MLLP Options
+== MLLP Options
 
 
 
@@ -184,7 +184,7 @@ The component supports 31 options, which are listed below.
 
 
 
-=== MLLP Consumer
+== MLLP Consumer
 
 The MLLP Consumer supports receiving MLLP-framed messages and sending
 HL7 Acknowledgements.  The MLLP Consumer can automatically generate the
@@ -194,7 +194,7 @@ the CamelMllpAcknowledgement exchange property.  Additionally, the type
 of acknowledgement that will be generated can be controlled by setting
 the CamelMllpAcknowledgementType exchange property.
 
-=== *Message Headers*
+== *Message Headers*
 
 The MLLP Consumer adds these headers on the Camel message:
 
@@ -221,7 +221,7 @@ The MLLP Consumer adds these headers on the Camel message:
 All headers are String types. If a header value is missing, its value
 is null.
 
-=== *Exchange Properties*
+== *Exchange Properties*
 
 The type of acknowledgment the MLLP Consumer generates and state of the TCP Socket can be controlled
 by these properties on the Camel exchange:
@@ -244,7 +244,7 @@ by these properties on the Camel exchange:
 // REVISIT - Empty section is bad for AsciiDoc build
 //=== Consumer Configuration
 
-=== MLLP Producer
+== MLLP Producer
 
 The MLLP Producer supports sending MLLP-framed messages and receiving
 HL7 Acknowledgements.  The MLLP Producer interrogates the HL7
@@ -252,7 +252,7 @@ Acknowledgments and raises exceptions if a negative acknowledgement is
 received.  The received acknowledgement is interrogated and an exception
 is raised in the event of a negative acknowledgement.
 
-=== *Message Headers*
+== *Message Headers*
 
 The MLLP Producer adds these headers on the Camel message:
 
@@ -266,7 +266,7 @@ The MLLP Producer adds these headers on the Camel message:
 |CamelMllpAcknowledgementType | The HL7 acknowledgement type (AA, AE, AR, etc)
 |===================================
 
-=== *Exchange Properties*
+== *Exchange Properties*
 
 The state of the TCP Socket can be controlled by these properties on the Camel exchange:
 

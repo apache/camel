@@ -38,7 +38,7 @@ The IEC 60870 Client component supports 2 options, which are listed below.
 
 
 
-=== URI format
+== URI format
 
 The URI syntax of the endpoint is: 
 
@@ -51,7 +51,7 @@ The information object address is encoded in the path in the syntax shows above.
 note that always the full, 5 octet address format is being used. Unused octets have to be filled
 with zero.
 
-=== URI options
+== URI options
 
 
 // endpoint options: START

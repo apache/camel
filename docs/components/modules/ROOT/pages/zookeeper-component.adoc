@@ -203,7 +203,7 @@ endpoint await its creation:
 from("zookeeper://localhost:39913/somepath/somenode?awaitCreation=true").to("mock:result");
 ----
 
-=== Reading from a _znode_ (additional Camel 2.10 onwards)
+=== Reading from a _znode_
 
 When data is read due to a `WatchedEvent` received from the ZooKeeper
 ensemble, the `CamelZookeeperEventType` header holds ZooKeeper's
@@ -364,5 +364,3 @@ There are currently 3 policies defined in the component, with different SLAs:
 
 *MultiMasterCuratorLeaderRoutePolicy* support multiple active nodes, and it's bound to the same lifecycle method as `CuratorLeaderRoutePolicy`; this Policy kicks in before any route or consumer is started
  thus you can be sure that no even is processed before the Policy takes its decision.
-
-

@@ -49,7 +49,8 @@ a Number, a serialized Java object or just binary data.
 To overcome these challenges, camel-hbase makes use of the message
 headers to specify the mapping of the message to HBase columns. It also
 provides the ability to use some camel-hbase provided classes that model
-HBase data and can be easily convert to and from xml/json etc. +
+HBase data and can be easily convert to and from xml/json etc.
+
  Finally it provides the ability to the user to implement and use his
 own mapping strategy.
 
@@ -321,11 +322,13 @@ to objects you can use either uri options or headers.
 In this case its probable that you also also need to specify a list of
 filters for limiting the results. You can specify a list of filters as
 part of the uri and camel will return only the rows that satisfy *ALL*
-the filters.  +
+the filters. 
+
  To have a filter that will be aware of the information that is part of
 the message, camel defines the ModelAwareFilter. This will allow your
 filter to take into consideration the model that is defined by the
-message and the mapping strategy. +
+message and the mapping strategy.
+
  When using a ModelAwareFilter camel-hbase will apply the selected
 mapping strategy to the in message, will create an object that models
 the mapping and will pass that object to the Filter.
@@ -430,7 +433,8 @@ from("direct:in")
 == HBase Mapping
 
 It was mentioned above that you the default mapping strategies are
-*header* and *body* mapping. +
+*header* and *body* mapping.
+
  Below you can find some detailed examples of how each mapping strategy
 works.
 
@@ -524,12 +528,8 @@ data.addRows().add(row);
 
 The object above can be used for example in a put operation and will
 result in creating or updating the row with id myRowId and add the value
-myvalue to the column myfamily:myqualifier. +
+myvalue to the column myfamily:myqualifier.
+
  The body mapping strategy might not seem very appealing at first. The
 advantage it has over the header mapping strategy is that the HBaseData
 object can be easily converted to or from xml/json.
-
-== See also
-
-* Polling Consumer
-* http://hbase.apache.org[Apache HBase]

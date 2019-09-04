@@ -201,4 +201,3 @@ public static class FilterBean {
            SyndEntry firstEntry = (SyndEntry) feed.getEntries().get(0);
 return firstEntry.getTitle().contains("Camel");
 ----
-

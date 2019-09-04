@@ -21,7 +21,7 @@ for this component.
 ------------------------------------------------------------
 
 
-=== URI format
+== URI format
 
 [source,java]
 ---------------------------
@@ -30,7 +30,7 @@ kafka:topic[?options]
 ---------------------------
 
 
-=== Options
+== Options
 
 
 // component options: START
@@ -303,9 +303,9 @@ For more information about Producer/Consumer configuration:
 http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
 http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.org/documentation.html#producerconfigs]
 
-=== Message headers
+== Message headers
 
-==== Consumer headers
+=== Consumer headers
 
 The following headers are available when consuming messages from Kafka.
 [width="100%",cols="2m,2m,1m,5",options="header"]
@@ -320,7 +320,7 @@ The following headers are available when consuming messages from Kafka.
 | KafkaConstants.MANUAL_COMMIT             | "CamelKafkaManualCommit"          | KafkaManualCommit | Can be used for forcing manual offset commit when using Kafka consumer. |
 |===
 
-==== Producer headers
+=== Producer headers
 
 Before sending a message to Kafka you can configure the following headers.
 [width="100%",cols="2m,2m,1m,5",options="header"]
@@ -339,9 +339,9 @@ After the message is sent to Kafka, the following headers are available
 |===
 
 
-=== Samples
+== Samples
 
-==== Consuming messages from Kafka
+=== Consuming messages from Kafka
 
 Here is the minimal route you need in order to read messages from Kafka.
 
@@ -386,11 +386,14 @@ DefaultCamelContext camelContext = new DefaultCamelContext(registry);
 camelContext.addRoutes(new RouteBuilder() {
     @Override
     public void configure() throws Exception {
-        from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
+        from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}"
+
                      // Setup the topic and broker address
-                     "&groupId=A" +
+                     "&groupId=A"
+
                      // The consumer processor group ID
-                     "&autoOffsetReset=earliest" +
+                     "&autoOffsetReset=earliest"
+
                      // Ask to start from the beginning if we have unknown offset
                      "&offsetRepository=#offsetRepo")
                      // Keep the offsets in the previously configured repository
@@ -400,7 +403,7 @@ camelContext.addRoutes(new RouteBuilder() {
 ----
  
 
-==== Producing messages to Kafka
+=== Producing messages to Kafka
 
 Here is the minimal route you need in order to write messages to Kafka.
 
@@ -412,7 +415,7 @@ from("direct:start")
     .to("kafka:test?brokers=localhost:9092");
 ----
 
-=== SSL configuration
+== SSL configuration
 
 You have 2 different ways to configure the SSL communication on the Kafka` component.
 
@@ -420,11 +423,16 @@ The first way is through the many SSL endpoint parameters
 
 [source,java]
 ----
-from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
-             "&groupId=A" +
-             "&sslKeystoreLocation=/path/to/keystore.jks" +
-             "&sslKeystorePassword=changeit" +
-             "&sslKeyPassword=changeit" +
+from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}"
+
+             "&groupId=A"
+
+             "&sslKeystoreLocation=/path/to/keystore.jks"
+
+             "&sslKeystorePassword=changeit"
+
+             "&sslKeyPassword=changeit"
+
              "&securityProtocol=SSL")
         .to("mock:result");
 ----
@@ -452,11 +460,14 @@ DefaultCamelContext camelContext = new DefaultCamelContext(registry);
 camelContext.addRoutes(new RouteBuilder() {
     @Override
     public void configure() throws Exception {
-        from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
+        from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}"
+
                      // Setup the topic and broker address
-                     "&groupId=A" +
+                     "&groupId=A"
+
                      // The consumer processor group ID
-                     "&sslContextParameters=#ssl" +
+                     "&sslContextParameters=#ssl"
+
                      // The security protocol
                      "&securityProtocol=SSL)
                      // Reference the SSL configuration
@@ -465,7 +476,7 @@ camelContext.addRoutes(new RouteBuilder() {
 });
 ----
 
-=== Using the Kafka idempotent repository
+== Using the Kafka idempotent repository
 *Available from Camel 2.19*
 
 The `camel-kafka` library provides a Kafka topic-based idempotent repository. This repository stores broadcasts all changes to idempotent state (add/remove) in a Kafka topic, and populates a local in-memory cache for each repository's process instance through event sourcing.
@@ -485,7 +496,8 @@ A `KafkaIdempotentRepository` has the following properties:
 | producerConfig | Sets the properties that will be used by the Kafka producer that broadcasts changes. Overrides `bootstrapServers`, so must define the Kafka `bootstrap.servers` property itself
 | consumerConfig | Sets the properties that will be used by the Kafka consumer that populates the cache from the topic. Overrides `bootstrapServers`, so must define the Kafka `bootstrap.servers` property itself
 | maxCacheSize | How many of the most recently used keys should be stored in memory (default 1000).
-| pollDurationMs | The poll duration of the Kafka consumer. The local caches are updated immediately. This value will affect how far behind other peers that update their caches from the topic are relative to the idempotent consumer instance that sent the cache action message. The default value of this is 100 ms. +
+| pollDurationMs | The poll duration of the Kafka consumer. The local caches are updated immediately. This value will affect how far behind other peers that update their caches from the topic are relative to the idempotent consumer instance that sent the cache action message. The default value of this is 100 ms.
+
 If setting this value explicitly, be aware that there is a tradeoff between the remote cache liveness and the volume of network traffic between this repository's consumer and the Kafka brokers. The cache warmup process also depends on there being one poll that fetches nothing - this indicates that the stream has been consumed up to the current point. If the poll duration is excessively long for the rate at which messages are sent on the topic, there exists a possibility that the cache cannot be warmed up and will operate in an inconsistent state relative to its peers until it catches up.
 |===
 
@@ -539,7 +551,7 @@ In XML:
 </bean>
 ----
 
-=== Using manual commit with Kafka consumer
+== Using manual commit with Kafka consumer
 *Available as of Camel 2.21*
 
 By default the Kafka consumer will use auto commit, where the offset will be committed automatically in the background using a given interval.
@@ -571,7 +583,7 @@ This will force a synchronous commit which will block until the commit is acknow
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
 
-=== Kafka Headers propagation
+== Kafka Headers propagation
 *Available as of Camel 2.22*
 
 When consuming messages from Kafka, headers will be propagated to camel exchange headers automatically.

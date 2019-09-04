@@ -8,13 +8,13 @@
 The SQL support is added by http://josql.sourceforge.net/[JoSQL] and is
 primarily used for performing SQL queries on in-memory objects. If you
 prefer to perform actual database queries then check out the
-<<jpa-component,JPA>> component.
+xref:jpa-component.adoc[JPA] component.
 
 *Looking for the SQL component*
 
-Camel has both a <<sql-component,SQL>> language and a
-<<sql-component,SQL Component>>. This page is about the SQL
-language. Click on <<sql-component,SQL Component>> if you are
+Camel has both a xref:sql-component.adoc[SQL] language and a
+xref:sql-component.adoc[SQL Component]. This page is about the SQL
+language. Click on xref:sql-component.adoc[SQL Component] if you are
 looking for the component instead.
 
 To use SQL in your camel routes you need to add the a dependency on
@@ -36,9 +36,9 @@ the download page for the latest versions).
 
 Camel supports http://en.wikipedia.org/wiki/SQL[SQL] to allow an
 Expression or Predicate to be
-used in the DSL or link:xml-configuration.html[Xml
+used in the DSL or xref:latest@manual::xml-configuration.adoc[Xml
 Configuration]. For example you could use SQL to create an
-Predicate in a link:message-filter.html[Message
+Predicate in a xref:latest@manual::filter-eip.adoc[Message
 Filter] or as an Expression for a
 Recipient List.
 
@@ -105,7 +105,8 @@ The component supports 2 options, which are listed below.
 *Available as of Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
-such as `"classpath:"`, `"file:"`, or `"http:"`. +
+such as `"classpath:"`, `"file:"`, or `"http:"`.
+
  This is done using the following syntax: `"resource:scheme:location"`,
 eg to refer to a file on the classpath you can do:
 

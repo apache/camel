@@ -143,4 +143,3 @@ from("direct:start")
 ------------------------------------------------------------------------------------
 
 For more information, see these resources...
-

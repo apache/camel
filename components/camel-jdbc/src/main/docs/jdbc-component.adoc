@@ -169,7 +169,8 @@ type.
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
 generated keys. You can instruct the xref:jdbc-component.adoc[JDBC] producer to
-return the generated keys in headers. +
+return the generated keys in headers.
+
  To do that set the header `CamelRetrieveGeneratedKeys=true`. Then the
 generated keys will be provided as headers with the keys listed in the
 table above.
@@ -186,7 +187,8 @@ Using generated keys does not work with together with named parameters.
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :?lic and
-:?min. +
+:?min.
+
  Camel will then lookup these parameters from the message headers.
 Notice in the example above we set two headers with constant value
  for the named parameters:

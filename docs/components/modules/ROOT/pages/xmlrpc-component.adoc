@@ -5,9 +5,6 @@
 *Available as of Camel version 2.11*
 
 
-*Available as of Camel version 2.11*
-
-
 This component provides a dataformat for xml, which allows serialization
 and deserialization of request messages and response message using
 Apache XmlRpc's binary dataformat. You can also invoke the XMLRPC

@@ -214,7 +214,8 @@ Or from XML DSL you configure this as
 == Unmarshalling from XML to POJO with dynamic class name
 
 If you use jackson to unmarshal XML to POJO, then you can now specify a
-header in the message that indicate which class name to unmarshal to. +
+header in the message that indicate which class name to unmarshal to.
+
 The header has key `CamelJacksonUnmarshalType` if that header is present
 in the message, then Jackson will use that as FQN for the POJO class to
 unmarshal the XML payload as.

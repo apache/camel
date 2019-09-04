@@ -5,7 +5,7 @@
 *Available as of Camel version 2.17*
 
 
-The *Kubernetes Replication Controller* component is one of <<kubernetes-component,Kubernetes Components>> which
+The *Kubernetes Replication Controller* component is one of xref:kubernetes-component.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes replication controller operations and a consumer to
 consume kubernetes replication controller events.
 
