@@ -84,7 +84,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             client = endpoint.createClient();
         }
         Conduit conduit = client.getConduit();
-        if (conduit.getClass().getName().endsWith("JMSConduit")) {
+        if (conduit != null && conduit.getClass().getName().endsWith("JMSConduit")) {
             java.lang.reflect.Method getJmsConfig = conduit.getClass().getMethod("getJmsConfig");
             Object jmsConfig = getJmsConfig.invoke(conduit);
             java.lang.reflect.Method getMessageType = jmsConfig.getClass().getMethod("getMessageType");
