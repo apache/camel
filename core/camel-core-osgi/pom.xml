@@ -52,7 +52,7 @@
         <!-- core required: org.apache.camel.impl, org.apache.camel.impl.converter -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-engine</artifactId>
+            <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -66,11 +66,6 @@
         </dependency>
 
         <!-- for testing -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-file</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
