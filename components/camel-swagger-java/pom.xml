@@ -47,7 +47,7 @@
         <!-- requires camel-core to have access to the camel model -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-core-engine</artifactId>
         </dependency>
 
         <!-- json -->

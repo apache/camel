@@ -44,7 +44,7 @@
         <!-- requires camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-core-engine</artifactId>
         </dependency>
 
         <!-- spring-core -->
