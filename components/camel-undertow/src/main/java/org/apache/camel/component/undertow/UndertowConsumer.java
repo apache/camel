@@ -148,13 +148,14 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
         createUoW(camelExchange);
         try {
             getProcessor().process(camelExchange);
+            sendResponse(httpExchange, camelExchange);
         } catch (Exception e) {
             getExceptionHandler().handleException(e);
         } finally {
             doneUoW(camelExchange);
         }
 
-        sendResponse(httpExchange, camelExchange);
+        
     }
 
     private void sendResponse(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException, NoTypeConversionAvailableException {
