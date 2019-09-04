@@ -1,5 +1,6 @@
 [[convertBodyTo-eip]]
 = Convert Body To EIP
+:page-source: core/camel-core/src/main/docs/eips/convertBodyTo-eip.adoc
 
 The ConvertBodyTo EIP allows you to transform your body to a different type.
 

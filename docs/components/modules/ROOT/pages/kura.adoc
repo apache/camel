@@ -1,5 +1,6 @@
 [[Kura-EclipseKuracomponent]]
 = Eclipse Kura component
+:page-source: components/camel-kura/src/main/docs/kura.adoc
 
 *Available as of Camel 2.15*
 

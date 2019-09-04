@@ -94,7 +94,7 @@ public class SqsComponent extends DefaultComponent {
         }
 
         SqsEndpoint sqsEndpoint = new SqsEndpoint(uri, this, configuration);
-        sqsEndpoint.setConsumerProperties(parameters);
+        setProperties(sqsEndpoint, parameters);
         return sqsEndpoint;
     }
 

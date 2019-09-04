@@ -1,5 +1,6 @@
 [[step-eip]]
 = Step EIP
+:page-source: core/camel-core/src/main/docs/eips/step-eip.adoc
 
 Camel supports the http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the https://github.com/apache/camel/blob/master/docs/user-manual/en/enterprise-integration-patterns.adoc[EIP patterns] in various ways.
 

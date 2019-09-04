@@ -1,5 +1,6 @@
 [[paxlogging-component]]
 = OSGi PAX Logging Component
+:page-source: components/camel-paxlogging/src/main/docs/paxlogging-component.adoc
 
 *Available as of Camel version 2.6*
 

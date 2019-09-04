@@ -1,5 +1,6 @@
 [[kubernetes-deployments-component]]
 = Kubernetes Deployments Component
+:page-source: components/camel-kubernetes/src/main/docs/kubernetes-deployments-component.adoc
 
 *Available as of Camel version 2.20*
 

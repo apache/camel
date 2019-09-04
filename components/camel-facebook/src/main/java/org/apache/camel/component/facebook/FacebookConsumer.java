@@ -73,7 +73,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
 
         // get endpoint properties in a map
         final HashMap<String, Object> properties = new HashMap<>();
-        FacebookPropertiesHelper.getEndpointProperties(endpoint.getConfiguration(), properties);
+        FacebookPropertiesHelper.getEndpointProperties(endpoint.getCamelContext(), endpoint.getConfiguration(), properties);
 
         // skip since and until fields?
         final Reading reading = (Reading) properties.get(READING_PROPERTY);
@@ -113,7 +113,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         FacebookMethodsType result;
         // find one that takes the largest subset of endpoint parameters
         final Set<String> argNames = new HashSet<>();
-        argNames.addAll(FacebookPropertiesHelper.getEndpointPropertyNames(endpoint.getConfiguration()));
+        argNames.addAll(FacebookPropertiesHelper.getEndpointPropertyNames(endpoint.getCamelContext(), endpoint.getConfiguration()));
 
         // add reading property for polling, if it doesn't already exist!
         argNames.add(READING_PROPERTY);

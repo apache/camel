@@ -38,7 +38,7 @@ public class TarSplitterRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // Untar file and Split it according to FileEntry
-                from("file:src/test/resources/org/apache/camel/dataformat/tarfile/data?consumer.delay=1000&noop=true")
+                from("file:src/test/resources/org/apache/camel/dataformat/tarfile/data?delay=1000&noop=true")
                     .log("Start processing big file: ${header.CamelFileName}")
                     .split(new TarSplitter()).streaming()
                         .convertBodyTo(String.class).to("mock:processTarEntry")

@@ -1,5 +1,6 @@
 [[groovy-language]]
 = Groovy Language
+:page-source: components/camel-groovy/src/main/docs/groovy-language.adoc
 
 *Available as of Camel version 1.3*
 

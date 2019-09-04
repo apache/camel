@@ -1,5 +1,6 @@
 [[mina-component]]
 = Mina Component
+:page-source: components/camel-mina/src/main/docs/mina-component.adoc
 
 *Available as of Camel version 2.10*
 

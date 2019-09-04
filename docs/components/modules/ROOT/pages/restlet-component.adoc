@@ -1,5 +1,6 @@
 [[restlet-component]]
 = Restlet Component
+:page-source: components/camel-restlet/src/main/docs/restlet-component.adoc
 
 *Available as of Camel version 2.0*
 

@@ -215,16 +215,8 @@ public class RuntimeCamelCatalogTest {
         result = catalog.validateEndpointProperties("timer://foo?fixedRate=#fixed&delay=#myDelay");
         assertTrue(result.isSuccess());
 
-        // optional consumer. prefix
-        result = catalog.validateEndpointProperties("file:inbox?consumer.delay=5000&consumer.greedy=true");
-        assertTrue(result.isSuccess());
-
         // optional without consumer. prefix
         result = catalog.validateEndpointProperties("file:inbox?delay=5000&greedy=true");
-        assertTrue(result.isSuccess());
-
-        // mixed optional without consumer. prefix
-        result = catalog.validateEndpointProperties("file:inbox?delay=5000&consumer.greedy=true");
         assertTrue(result.isSuccess());
 
         // prefix

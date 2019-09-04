@@ -27,13 +27,14 @@ import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.reifier.ProcessorReifier;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
@@ -215,7 +216,7 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
-        loadProperties(properties, Suppliers.firstNotNull(
+        loadProperties(camelContext, properties, Suppliers.firstNotNull(
             () -> camelContext.getExtension(Model.class).getHystrixConfiguration(null),
             () -> lookup(camelContext, HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class))
         );
@@ -225,17 +226,18 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
         if (definition.getHystrixConfigurationRef() != null) {
             final String ref = definition.getHystrixConfigurationRef();
 
-            loadProperties(properties, Suppliers.firstNotNull(
+            loadProperties(camelContext, properties, Suppliers.firstNotNull(
                 () -> camelContext.getExtension(Model.class).getHystrixConfiguration(ref),
                 () -> mandatoryLookup(camelContext, ref, HystrixConfigurationDefinition.class))
             );
         }
 
         // Extract properties from local configuration
-        loadProperties(properties, Optional.ofNullable(definition.getHystrixConfiguration()));
+        loadProperties(camelContext, properties, Optional.ofNullable(definition.getHystrixConfiguration()));
 
         // Extract properties from definition
-        IntrospectionSupport.getProperties(definition, properties, null, false);
+        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        beanIntrospection.getProperties(definition, properties, null, false);
 
         HystrixConfigurationDefinition config = new HystrixConfigurationDefinition();
 
@@ -245,8 +247,9 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
         return config;
     }
 
-    private void loadProperties(Map<String, Object> properties, Optional<?> optional) {
-        optional.ifPresent(bean -> IntrospectionSupport.getProperties(bean, properties, null, false));
+    private void loadProperties(CamelContext camelContext, Map<String, Object> properties, Optional<?> optional) {
+        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        optional.ifPresent(bean -> beanIntrospection.getProperties(bean, properties, null, false));
     }
 
 }

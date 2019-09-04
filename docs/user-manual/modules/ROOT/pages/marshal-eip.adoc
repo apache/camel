@@ -1,5 +1,6 @@
 [[marshal-eip]]
 = Marshal EIP
+:page-source: core/camel-core/src/main/docs/eips/marshal-eip.adoc
 
 Marshalling is the opposite of unmarshalling, where a bean is marshalled into some binary or textual format for transmission over some transport via a Camel https://github.com/apache/camel/tree/master/components[Components]. Marshalling is used in the same way as unmarshalling above; in the https://github.com/apache/camel/blob/master/docs/user-manual/en/dsl.adoc[DSL] you can use a DataFormat instance, you can configure the DataFormat dynamically using the DSL or you can refer to a named instance of the format in the https://github.com/apache/camel/blob/master/docs/user-manual/en/registry.adoc[Registry].
 

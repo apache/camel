@@ -1,5 +1,6 @@
 [[zipdeflater-dataformat]]
 = Zip Deflate Compression DataFormat
+:page-source: components/camel-zip-deflater/src/main/docs/zipdeflater-dataformat.adoc
 
 *Available as of Camel version 2.12*
 

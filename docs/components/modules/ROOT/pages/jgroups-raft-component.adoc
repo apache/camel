@@ -1,5 +1,6 @@
 [[jgroups-raft-component]]
 = JGroups raft Component
+:page-source: components/camel-jgroups-raft/src/main/docs/jgroups-raft-component.adoc
 
 *Available as of Camel version 2.24*
 

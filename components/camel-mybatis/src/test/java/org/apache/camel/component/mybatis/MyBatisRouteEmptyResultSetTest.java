@@ -39,7 +39,7 @@ public class MyBatisRouteEmptyResultSetTest extends MyBatisTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mybatis:selectAllAccounts?consumer.useIterator=false&consumer.routeEmptyResultSet=true").to("mock:results");
+                from("mybatis:selectAllAccounts?useIterator=false&routeEmptyResultSet=true").to("mock:results");
             }
         };
     }

@@ -111,7 +111,7 @@ public class MailSortTermTwoTest extends CamelTestSupport {
             public void configure() throws Exception {
                 context.setAutoStartup(false);
 
-                from("pop3://bill@localhost?password=secret&sortTerm=#sortDescendingDate&consumer.initialDelay=100&consumer.delay=100").to("mock:resultDescending");
+                from("pop3://bill@localhost?password=secret&sortTerm=#sortDescendingDate&initialDelay=100&delay=100").to("mock:resultDescending");
             }
         };
     }

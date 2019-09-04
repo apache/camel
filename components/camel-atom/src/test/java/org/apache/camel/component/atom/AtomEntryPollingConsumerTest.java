@@ -60,11 +60,11 @@ public class AtomEntryPollingConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&consumer.delay=500").to("mock:result1");
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=500").to("mock:result1");
 
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=false&consumer.delay=500").to("mock:result2");
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=false&delay=500").to("mock:result2");
 
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=true&lastUpdate=#myDate&consumer.delay=500").to("mock:result3");
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=true&lastUpdate=#myDate&delay=500").to("mock:result3");
             }
         };
     }

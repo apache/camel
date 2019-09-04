@@ -55,7 +55,7 @@ public class MailSubjectTest extends CamelTestSupport {
                 from("direct:a").setHeader("subject", constant(subject)).to("smtp://james2@localhost");
                 // END SNIPPET: e1
 
-                from("pop3://localhost?username=james2&password=secret&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
+                from("pop3://localhost?username=james2&password=secret&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

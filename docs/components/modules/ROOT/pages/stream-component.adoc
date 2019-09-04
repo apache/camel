@@ -1,5 +1,6 @@
 [[stream-component]]
 = Stream Component
+:page-source: components/camel-stream/src/main/docs/stream-component.adoc
 
 *Available as of Camel version 1.3*
 

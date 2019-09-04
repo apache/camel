@@ -22,7 +22,7 @@ public class FromFilePercentSignInPasswordUserInfoTest extends FromFilePercentSi
     protected String getFtpUrl() {
         // the user info is not encoded, but we should be forgiving and allow the user to use
         // the user name and password out of the box as is
-        return "ftp://us@r:t%st@localhost:" + getPort() + "/tmp3/camel?consumer.initialDelay=3000";
+        return "ftp://us@r:t%st@localhost:" + getPort() + "/tmp3/camel?initialDelay=3000";
     }
 
 }

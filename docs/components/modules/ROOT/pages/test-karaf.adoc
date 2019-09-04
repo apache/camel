@@ -1,4 +1,5 @@
 = Test Karaf
+:page-source: components/camel-test-karaf/src/main/docs/test-karaf.adoc
 
 *Available since Camel 2.18*
 

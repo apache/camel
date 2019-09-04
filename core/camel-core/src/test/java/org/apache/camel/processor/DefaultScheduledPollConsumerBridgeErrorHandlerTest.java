@@ -62,7 +62,7 @@ public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextT
                 // handler,
                 // so the above error handler will trigger if exceptions also
                 // occurs inside the consumer
-                from("my:foo?consumer.bridgeErrorHandler=true").to("log:foo").to("mock:result");
+                from("my:foo?bridgeErrorHandler=true").to("log:foo").to("mock:result");
             }
         };
         // END SNIPPET: e1

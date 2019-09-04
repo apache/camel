@@ -1,5 +1,6 @@
 [[spring-redis-component]]
 = Spring Redis Component
+:page-source: components/camel-spring-redis/src/main/docs/spring-redis-component.adoc
 
 *Available as of Camel version 2.11*
 

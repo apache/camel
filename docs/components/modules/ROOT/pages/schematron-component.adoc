@@ -1,5 +1,6 @@
 [[schematron-component]]
 = Schematron Component
+:page-source: components/camel-schematron/src/main/docs/schematron-component.adoc
 
 *Available as of Camel version 2.15*
 

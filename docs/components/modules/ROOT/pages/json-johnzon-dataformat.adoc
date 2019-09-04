@@ -1,5 +1,6 @@
 [[json-johnzon-dataformat]]
 = JSon Johnzon DataFormat
+:page-source: components/camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc
 
 *Available as of Camel version 2.18*
 

@@ -1,5 +1,6 @@
 [[dataset-test-component]]
 = DataSet Test Component
+:page-source: components/camel-dataset/src/main/docs/dataset-test-component.adoc
 
 *Available as of Camel version 1.3*
 

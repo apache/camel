@@ -1,5 +1,6 @@
 [[ContentFilter-eip]]
 = Content Filter
+:page-source: core/camel-core/src/main/docs/eips/content-filter-eip.adoc
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/ContentFilter.html[Content

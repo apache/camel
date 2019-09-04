@@ -1,5 +1,6 @@
 [[json-xstream-dataformat]]
 = JSon XStream DataFormat
+:page-source: components/camel-xstream/src/main/docs/json-xstream-dataformat.adoc
 
 *Available as of Camel version 2.0*
 

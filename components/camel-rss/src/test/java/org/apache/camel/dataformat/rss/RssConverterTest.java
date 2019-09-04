@@ -27,9 +27,9 @@ public class RssConverterTest extends RssDataFormatTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: ex
-                from("rss:file:src/test/data/rss20.xml?splitEntries=false&consumer.delay=1000").convertBodyTo(String.class).to("mock:marshal");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1000").convertBodyTo(String.class).to("mock:marshal");
                 // END SNIPPET: ex
-                from("rss:file:src/test/data/rss20.xml?splitEntries=false&consumer.delay=1500").convertBodyTo(String.class).convertBodyTo(SyndFeed.class).to("mock:unmarshal");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1500").convertBodyTo(String.class).convertBodyTo(SyndFeed.class).to("mock:unmarshal");
             }
         };
     }

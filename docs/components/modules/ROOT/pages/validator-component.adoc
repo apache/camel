@@ -1,5 +1,6 @@
 [[validator-component]]
 = Validator Component
+:page-source: components/camel-validator/src/main/docs/validator-component.adoc
 
 *Available as of Camel version 1.1*
 

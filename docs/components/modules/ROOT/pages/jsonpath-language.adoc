@@ -1,5 +1,6 @@
 [[jsonpath-language]]
 = JsonPath Language
+:page-source: components/camel-jsonpath/src/main/docs/jsonpath-language.adoc
 
 *Available as of Camel version 2.13*
 

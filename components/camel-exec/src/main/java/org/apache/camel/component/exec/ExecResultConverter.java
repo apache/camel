@@ -38,7 +38,7 @@ import static org.apache.camel.TypeConverter.MISS_VALUE;
  * href="http://camel.apache.org/type-converter.html">the Camel docs for type
  * converters.</a>
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class ExecResultConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExecResultConverter.class);

@@ -1,5 +1,6 @@
 [[google-mail-stream-component]]
 = Google Mail Stream Component
+:page-source: components/camel-google-mail/src/main/docs/google-mail-stream-component.adoc
 
 *Available as of Camel version 2.22*
 

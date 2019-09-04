@@ -41,7 +41,7 @@ public class MailConsumerIdleMessageTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://james@localhost?password=foo&consumer.initialDelay=100&consumer.delay=100&sendEmptyMessageWhenIdle=true")
+                from("pop3://james@localhost?password=foo&initialDelay=100&delay=100&sendEmptyMessageWhenIdle=true")
                     .to("mock:result");
             }
         };

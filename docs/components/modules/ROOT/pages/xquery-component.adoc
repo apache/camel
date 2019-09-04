@@ -1,5 +1,6 @@
 [[xquery-component]]
 = XQuery Component
+:page-source: components/camel-saxon/src/main/docs/xquery-component.adoc
 
 *Available as of Camel version 1.0*
 

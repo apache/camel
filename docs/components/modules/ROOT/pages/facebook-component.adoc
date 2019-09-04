@@ -1,5 +1,6 @@
 [[facebook-component]]
 = Facebook Component
+:page-source: components/camel-facebook/src/main/docs/facebook-component.adoc
 
 *Available as of Camel version 2.14*
 
@@ -351,7 +352,7 @@ your home feed:
 
 [source,java]
 -----------------------------------------------
-    from("facebook://home?consumer.delay=5000")
+    from("facebook://home?delay=5000")
         .to("bean:blah");
 -----------------------------------------------
 

@@ -1,5 +1,6 @@
 [[validate-eip]]
 = Validate EIP
+:page-source: core/camel-core/src/main/docs/eips/validate-eip.adoc
 *Available as of Camel 2.3* +
 
 Validate uses an expression or predicates to validate the contents of a message.

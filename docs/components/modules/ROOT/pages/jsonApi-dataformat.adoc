@@ -1,5 +1,6 @@
 [[jsonApi-dataformat]]
 = jsonApi DataFormat
+:page-source: components/camel-jsonapi/src/main/docs/jsonApi-dataformat.adoc
 
 *Available as of Camel version 3.0*
 

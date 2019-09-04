@@ -1,5 +1,6 @@
 [[setProperty-eip]]
 = Set Property EIP
+:page-source: core/camel-core/src/main/docs/eips/setProperty-eip.adoc
 
 The SetProperty EIP allows you to set a property on your exchange.
 

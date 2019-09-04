@@ -351,7 +351,7 @@ your home feed:
 
 [source,java]
 -----------------------------------------------
-    from("facebook://home?consumer.delay=5000")
+    from("facebook://home?delay=5000")
         .to("bean:blah");
 -----------------------------------------------
 

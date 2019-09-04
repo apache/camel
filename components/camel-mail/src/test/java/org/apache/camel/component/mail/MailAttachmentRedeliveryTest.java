@@ -100,7 +100,7 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0);
 
-                from("pop3://james@mymailserver.com?password=secret&consumer.initialDelay=100&consumer.delay=100")
+                from("pop3://james@mymailserver.com?password=secret&initialDelay=100&delay=100")
                         .process(new Processor() {
                             private int counter;
                             @Override

@@ -1,5 +1,6 @@
 [[azure-queue-component]]
 = Azure Storage Queue Service Component
+:page-source: components/camel-azure/src/main/docs/azure-queue-component.adoc
 
 *Available as of Camel version 2.19*
 

@@ -41,7 +41,7 @@ public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("atom:file:src/test/data/empty-feed.atom?splitEntries=true&consumer.delay=50&consumer.initialDelay=0"
+                from("atom:file:src/test/data/empty-feed.atom?splitEntries=true&delay=50&initialDelay=0"
                         + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
                         .to("mock:result");
             }

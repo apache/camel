@@ -38,7 +38,7 @@ import org.apache.camel.Exchange;
 /**
  * A set of converter methods for working with Netty types
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class NettyConverter {
 
     private NettyConverter() {

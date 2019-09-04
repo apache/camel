@@ -1,5 +1,6 @@
 [[sjms2-component]]
 = Simple JMS2 Component
+:page-source: components/camel-sjms2/src/main/docs/sjms2-component.adoc
 
 *Available as of Camel version 2.19*
 

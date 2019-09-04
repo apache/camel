@@ -1,5 +1,6 @@
 [[spel-language]]
 = SpEL Language
+:page-source: components/camel-spring/src/main/docs/spel-language.adoc
 
 *Available as of Camel version 2.7*
 

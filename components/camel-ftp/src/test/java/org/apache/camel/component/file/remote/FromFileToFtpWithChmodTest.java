@@ -23,7 +23,7 @@ import org.junit.Test;
 public class FromFileToFtpWithChmodTest extends FtpServerTestSupport {
     
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=3000&chmod=777";
+        return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&initialDelay=3000&chmod=777";
     }
 
     @Test
@@ -39,7 +39,7 @@ public class FromFileToFtpWithChmodTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(getFtpUrl()).to("mock:result");
-                from("file:src/main/data?noop=true&consumer.delay=3000").to(getFtpUrl());
+                from("file:src/main/data?noop=true&delay=3000").to(getFtpUrl());
             }
         };
     }

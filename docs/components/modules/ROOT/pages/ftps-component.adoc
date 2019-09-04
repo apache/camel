@@ -1,5 +1,6 @@
 [[ftps-component]]
 = FTPS Component
+:page-source: components/camel-ftp/src/main/docs/ftps-component.adoc
 
 *Available as of Camel version 2.2*
 

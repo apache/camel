@@ -84,7 +84,7 @@ public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects where id = :#${bean:myIdGenerator.nextId}?consumer.initialDelay=0&consumer.delay=50")
+                from("sql:select * from projects where id = :#${bean:myIdGenerator.nextId}?initialDelay=0&delay=50")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }

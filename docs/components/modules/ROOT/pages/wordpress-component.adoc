@@ -1,5 +1,6 @@
 [[wordpress-component]]
 = Wordpress Component
+:page-source: components/camel-wordpress/src/main/docs/wordpress-component.adoc
 
 *Available as of Camel version 2.21*
 

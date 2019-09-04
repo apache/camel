@@ -54,7 +54,7 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100").
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100").
                         filter().method("myBean", "isAfterDate").to("mock:result");
             }
         };

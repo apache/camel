@@ -75,7 +75,7 @@ public class TypeConverterLoaderGenerator extends AbstractTypeConverterGenerator
     private static boolean isLoaderEnabled(Element element) {
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
             for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
-                if ("loader".equals(entry.getKey().getSimpleName().toString())) {
+                if ("generateLoader".equals(entry.getKey().getSimpleName().toString())) {
                     return (Boolean) entry.getValue().getValue();
                 }
             }

@@ -76,7 +76,7 @@ public class MyBatisQueueTest extends MyBatisTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("mybatis:selectUnprocessedAccounts?consumer.onConsume=consumeAccount").to("mock:results");
+                from("mybatis:selectUnprocessedAccounts?onConsume=consumeAccount").to("mock:results");
                 // END SNIPPET: e1
 
                 from("direct:start").to("mybatis:insertAccount?statementType=Insert");

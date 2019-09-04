@@ -1,5 +1,6 @@
 [[kubernetes-persistent-volumes-component]]
 = Kubernetes Persistent Volume Component
+:page-source: components/camel-kubernetes/src/main/docs/kubernetes-persistent-volumes-component.adoc
 
 *Available as of Camel version 2.17*
 

@@ -162,7 +162,7 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
      * Whether to load custom type converters by scanning classpath.
      * This is used for backwards compatibility with Camel 2.x.
      * Its recommended to migrate to use fast type converter loading
-     * by setting <tt>@Converter(loader = true)</tt> on your custom
+     * by setting <tt>@Converter(generateLoader = true)</tt> on your custom
      * type converter classes.
      */
     private boolean loadTypeConverters = true;

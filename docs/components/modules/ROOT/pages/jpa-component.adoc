@@ -1,5 +1,6 @@
 [[jpa-component]]
 = JPA Component
+:page-source: components/camel-jpa/src/main/docs/jpa-component.adoc
 
 *Available as of Camel version 1.0*
 

@@ -1,4 +1,5 @@
 = Using OSGi blueprint with Camel
+:page-source: components/camel-blueprint/src/main/docs/blueprint.adoc
 
 A custom XML namespace for Blueprint has been created to let you leverage the nice XML dialect.
 Given Blueprint custom namespaces are not standardized yet, this namespace can only be used on the Apache Aries Blueprint

@@ -1,5 +1,6 @@
 [[loop-eip]]
 = Loop EIP
+:page-source: core/camel-core/src/main/docs/eips/loop-eip.adoc
 
 The Loop allows for processing a message a number of times, possibly in a different way for each iteration. Useful mostly during testing.
 

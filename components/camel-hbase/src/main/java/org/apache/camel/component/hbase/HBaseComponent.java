@@ -24,7 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Connection;
@@ -78,7 +78,7 @@ public class HBaseComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         HBaseEndpoint endpoint = new HBaseEndpoint(uri, this, connection, remaining);
-        Map<String, Object> mapping = IntrospectionSupport.extractProperties(parameters, "row.");
+        Map<String, Object> mapping = PropertiesHelper.extractProperties(parameters, "row.");
         endpoint.setRowMapping(mapping);
         setProperties(endpoint, parameters);
         return endpoint;

@@ -66,8 +66,10 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -82,7 +84,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * with some routes along with a {@link org.apache.camel.ProducerTemplate} for
  * use in the test case Do <tt>not</tt> use this class for Spring Boot testing.
  */
-public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCallback, BeforeTestExecutionCallback, AfterTestExecutionCallback {
+public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCallback, BeforeAllCallback, BeforeTestExecutionCallback, AfterTestExecutionCallback {
 
     /**
      * JVM system property which can be set to true to turn on dumping route
@@ -112,6 +114,7 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
     private static final ThreadLocal<AtomicInteger> TESTS = new ThreadLocal<>();
     private static final ThreadLocal<CamelTestSupport> INSTANCE = new ThreadLocal<>();
     private String currentTestName;
+    private boolean isCreateCamelContextPerClass = false;
     private CamelRouteCoverageDumper routeCoverageDumper = new CamelRouteCoverageDumper();
     // CHECKSTYLE:ON
 
@@ -132,6 +135,11 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
         currentTestName = context.getDisplayName();
+    }
+
+    @Override
+    public void beforeAll(ExtensionContext context) {
+        isCreateCamelContextPerClass = context.getTestInstanceLifecycle().filter(lc -> lc.equals(Lifecycle.PER_CLASS)).isPresent();
     }
 
     @Override
@@ -197,12 +205,11 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
     }
 
     /**
-     * Override to control whether {@link CamelContext} should be setup per test
-     * or per class.
+     * Tells whether {@link CamelContext} should be setup per test or per class.
      * <p/>
-     * By default it will be setup/teardown per test (per test method). If you
-     * want to re-use {@link CamelContext} between test methods you can override
-     * this method and return <tt>true</tt>
+     * By default it will be setup/teardown per test method. This method returns
+     * <code>true</code> when the camel test class is annotated
+     * with @TestInstance(TestInstance.Lifecycle.PER_CLASS).
      * <p/>
      * <b>Important:</b> Use this with care as the {@link CamelContext} will
      * carry over state from previous tests, such as endpoints, components etc.
@@ -214,8 +221,8 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
      *
      * @return <tt>true</tt> per class, <tt>false</tt> per test.
      */
-    public boolean isCreateCamelContextPerClass() {
-        return false;
+    public final boolean isCreateCamelContextPerClass() {
+        return isCreateCamelContextPerClass;
     }
 
     /**
@@ -539,7 +546,7 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
         LOG.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
-            // will tear down test specially in CamelTearDownRule
+            // will tear down test specially in afterAll callback
         } else {
             LOG.debug("tearDown()");
             doStopTemplates(consumer, template, fluentTemplate);

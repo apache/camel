@@ -75,7 +75,7 @@ public class ElSqlConsumerDynamicParameterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("elsql:projectsByIdBean:elsql/projects.elsql?dataSource=#dataSource&consumer.initialDelay=0&consumer.delay=50").routeId("foo").noAutoStartup()
+                from("elsql:projectsByIdBean:elsql/projects.elsql?dataSource=#dataSource&initialDelay=0&delay=50").routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
         };

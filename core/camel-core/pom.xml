@@ -40,6 +40,7 @@
             org.apache.camel.spring.pollingconsumer;${camel.osgi.import.strict.version},
             org.apache.camel.processor.interceptor.jpa;${camel.osgi.import.strict.version},
             org.apache.camel.pollconsumer.quartz;${camel.osgi.import.strict.version},
+            org.apache.camel.component.caffeine;${camel.osgi.import.strict.version},
             net.sf.saxon
         </camel.osgi.dynamic>
     </properties>

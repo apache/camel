@@ -1,5 +1,6 @@
 [[kubernetes-services-component]]
 = Kubernetes Services Component
+:page-source: components/camel-kubernetes/src/main/docs/kubernetes-services-component.adoc
 
 *Available as of Camel version 2.17*
 

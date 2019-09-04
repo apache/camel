@@ -82,7 +82,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
      * Read entity set of the People object and filter already seen items on
      * subsequent exchanges Use a delay since the mock endpoint does not always
      * get the correct number of exchanges before being satisfied. Note: -
-     * consumer.splitResults is set to false since this ensures the first
+     * splitResults is set to false since this ensures the first
      * returned message contains all the results. This is preferred for the
      * purposes of this test. The default will mean the first n messages contain
      * the results (where n is the result total) then subsequent messages will
@@ -97,7 +97,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + PEOPLE + "?consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false&filterAlreadySeen=true")
+                from("olingo4://read/" + PEOPLE + "?delay=2&sendEmptyMessageWhenIdle=true&splitResult=false&filterAlreadySeen=true")
                     .to("mock:consumer-alreadyseen");
             };
         };
@@ -129,9 +129,9 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
      * Read entity set of the People object and filter already seen items on
      * subsequent exchanges Use a delay since the mock endpoint does not always
      * get the correct number of exchanges before being satisfied. Note: -
-     * consumer.splitResults is set to false since this ensures the first
+     * splitResults is set to false since this ensures the first
      * returned message contains all the results. -
-     * consumer.sendEmptyMessageWhenIdle is set to false so only 1 message
+     * sendEmptyMessageWhenIdle is set to false so only 1 message
      * should even be returned.
      */
     @Test
@@ -148,7 +148,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + PEOPLE + "?consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&consumer.splitResult=false&filterAlreadySeen=true")
+                from("olingo4://read/" + PEOPLE + "?delay=2&sendEmptyMessageWhenIdle=false&splitResult=false&filterAlreadySeen=true")
                     .to("mock:consumer-alreadyseen");
             };
         };
@@ -174,7 +174,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
     /**
      * WithPredicate in address FilterAlreadySeen: true SplitResults: true
-     * consumer.sendEmptyMessageWhenIdle: true
+     * sendEmptyMessageWhenIdle: true
      *
      * @throws Exception
      */
@@ -186,8 +186,8 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&"
-                     + "consumer.splitResult=true").to("mock:consumer-splitresult-kp-airport");
+                from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=true&"
+                     + "splitResult=true").to("mock:consumer-splitresult-kp-airport");
             };
         };
         addRouteAndStartContext(builder);
@@ -218,7 +218,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
     /**
      * WithPredicate in address FilterAlreadySeen: true SplitResults: true
-     * consumer.sendEmptyMessageWhenIdle: false
+     * sendEmptyMessageWhenIdle: false
      *
      * @throws Exception
      */
@@ -236,8 +236,8 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=false&"
-                     + "consumer.splitResult=true").to("mock:consumer-splitresult-kp-airport");
+                from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=false&"
+                     + "splitResult=true").to("mock:consumer-splitresult-kp-airport");
             };
         };
         addRouteAndStartContext(builder);
@@ -274,7 +274,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + PEOPLE + "?consumer.splitResult=true").to("mock:consumer-splitresult");
+                from("olingo4://read/" + PEOPLE + "?splitResult=true").to("mock:consumer-splitresult");
             };
         };
         addRouteAndStartContext(builder);
@@ -317,7 +317,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + TEST_PEOPLE + "/FavoriteFeature?consumer.splitResult=true").to("mock:consumer-splitresult-value");
+                from("olingo4://read/" + TEST_PEOPLE + "/FavoriteFeature?splitResult=true").to("mock:consumer-splitresult-value");
             };
         };
         addRouteAndStartContext(builder);
@@ -343,7 +343,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?consumer.splitResult=true").to("mock:consumer-splitresult-collection-value");
+                from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?splitResult=true").to("mock:consumer-splitresult-collection-value");
             };
         };
         addRouteAndStartContext(builder);
@@ -369,7 +369,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?consumer.splitResult=false").to("mock:consumer-nosplitresult-colleciton-value");
+                from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?splitResult=false").to("mock:consumer-nosplitresult-colleciton-value");
             };
         };
         addRouteAndStartContext(builder);

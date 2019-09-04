@@ -1,3 +1,4 @@
 = Spring Cloud Consul
+:page-source: components/camel-spring-cloud-consul/src/main/docs/spring-cloud-consul.adoc
 
 *Available as of Camel 2.22*

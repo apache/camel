@@ -1,5 +1,6 @@
 [[DynamicRouter-DynamicRouter]]
 = Dynamic Router
+:page-source: core/camel-core/src/main/docs/eips/dynamic-router.adoc
 
 The
 http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic

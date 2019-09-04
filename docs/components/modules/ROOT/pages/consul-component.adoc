@@ -1,5 +1,6 @@
 [[consul-component]]
 = Consul Component
+:page-source: components/camel-consul/src/main/docs/consul-component.adoc
 
 *Available as of Camel version 2.18*
 

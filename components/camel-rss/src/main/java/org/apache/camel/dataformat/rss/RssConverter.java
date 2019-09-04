@@ -25,7 +25,7 @@ import com.rometools.rome.io.SyndFeedOutput;
 
 import org.apache.camel.Converter;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class RssConverter {
     private RssConverter() {
     }

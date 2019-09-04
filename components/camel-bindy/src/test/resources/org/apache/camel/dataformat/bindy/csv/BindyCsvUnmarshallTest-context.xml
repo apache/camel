@@ -27,8 +27,8 @@
      
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="file://src/test/data?noop=true&amp;consumer.initialDelay=2000" />
-			<to uri="test:file://src/test/data?noop=true&amp;consumer.initialDelay=2000" />
+			<from uri="file://src/test/data?noop=true&amp;initialDelay=2000" />
+			<to uri="test:file://src/test/data?noop=true&amp;initialDelay=2000" />
 		</route>
 	</camelContext>
 </beans>

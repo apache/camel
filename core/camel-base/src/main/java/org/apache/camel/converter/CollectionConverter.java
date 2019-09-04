@@ -35,7 +35,7 @@ import org.apache.camel.Converter;
  * Some core java.util Collection based
  * <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class CollectionConverter {
 
     /**

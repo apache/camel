@@ -1,5 +1,6 @@
 [[snmp-component]]
 = SNMP Component
+:page-source: components/camel-snmp/src/main/docs/snmp-component.adoc
 
 *Available as of Camel version 2.1*
 

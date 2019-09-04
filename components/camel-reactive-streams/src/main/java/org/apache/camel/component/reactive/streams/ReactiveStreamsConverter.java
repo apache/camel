@@ -25,7 +25,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.reactivestreams.Publisher;
 
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class ReactiveStreamsConverter implements CamelContextAware {
 
     private CamelContext camelContext;

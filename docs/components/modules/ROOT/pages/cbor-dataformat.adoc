@@ -1,5 +1,6 @@
 [[cbor-dataformat]]
 = CBOR DataFormat
+:page-source: components/camel-cbor/src/main/docs/cbor-dataformat.adoc
 
 *Available as of Camel version 3.0*
 

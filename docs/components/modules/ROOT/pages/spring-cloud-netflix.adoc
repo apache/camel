@@ -1,4 +1,5 @@
 = Spring Cloud Netflix
+:page-source: components/camel-spring-cloud-netflix/src/main/docs/spring-cloud-netflix.adoc
 
 *Available as of Camel 2.19*
 

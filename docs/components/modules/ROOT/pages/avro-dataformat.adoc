@@ -1,5 +1,6 @@
 [[avro-dataformat]]
 = Avro DataFormat
+:page-source: components/camel-avro/src/main/docs/avro-dataformat.adoc
 
 *Available as of Camel version 2.14*
 

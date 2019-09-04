@@ -1,5 +1,6 @@
 [[mock-component]]
 = Mock Component
+:page-source: components/camel-mock/src/main/docs/mock-component.adoc
 
 *Available as of Camel version 1.0*
 
@@ -133,7 +134,33 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
 
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-mock-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mock.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.mock.enabled* | Whether to enable auto configuration of the mock component. This is enabled by default. |  | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 == Simple Example
 

@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.Customer;
+import org.apache.camel.examples.MultiSteps;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.service.ServiceHelper;
@@ -76,7 +77,7 @@ public class JpaWithNamedQueryAndParametersTest extends Assert {
         assertEquals("Should have no results: " + results, 0, results.size());
 
         // lets produce some objects
-        template.send(endpoint, new Processor() {
+        template.send("jpa://" + Customer.class.getName(), new Processor() {
             public void process(Exchange exchange) {
                 Customer customer = new Customer();
                 customer.setName("Willem");
@@ -142,7 +143,7 @@ public class JpaWithNamedQueryAndParametersTest extends Assert {
     }
 
     protected String getEndpointUri() {
-        return "jpa://" + Customer.class.getName() + "?consumer.namedQuery=findAllCustomersWithName&consumer.parameters=#params";
+        return "jpa://" + Customer.class.getName() + "?namedQuery=findAllCustomersWithName&parameters=#params";
     }
 
     @After

@@ -1,4 +1,5 @@
 = Swagger Java Component
+:page-source: components/camel-swagger-java/src/main/docs/swagger-java.adoc
 
 *Available as of Camel 2.16*
 

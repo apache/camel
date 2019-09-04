@@ -1,5 +1,6 @@
 [[jcr-component]]
 = JCR Component
+:page-source: components/camel-jcr/src/main/docs/jcr-component.adoc
 
 *Available as of Camel version 1.3*
 

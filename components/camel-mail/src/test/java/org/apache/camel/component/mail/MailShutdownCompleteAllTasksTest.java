@@ -53,7 +53,7 @@ public class MailShutdownCompleteAllTasksTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100").routeId("route1")
+                from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100").routeId("route1")
                         // let it complete all tasks during shutdown
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
                         .delay(500).to("mock:bar");

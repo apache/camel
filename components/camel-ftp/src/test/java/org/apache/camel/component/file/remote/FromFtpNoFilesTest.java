@@ -26,7 +26,7 @@ import org.junit.Test;
 public class FromFtpNoFilesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin&binary=false&readLock=rename&consumer.delay=2000";
+        return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin&binary=false&readLock=rename&delay=2000";
     }
 
     @Test
