@@ -31,11 +31,13 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
 
     private String fileUrl = "file://target/tempandrename/?tempFileName=inprogress-${file:name.noext}.tmp";
     private String parentFileUrl = "file://target/tempandrename/?tempFileName=../work/${file:name.noext}.tmp";
+    private String childFileUrl = "file://target/tempandrename/?tempFileName=work/${file:name.noext}.tmp";
 
     @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/tempandrename");
+        deleteDirectory("target/work");
         super.setUp();
     }
 
@@ -66,7 +68,23 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("target/tempandrename/hello.txt");
-        assertEquals("The generated file should exists: " + file, true, file.exists());
+        assertEquals("The generated file should exist: " + file, true, file.exists());
+    }
+
+    @Test
+    public void testParentTempFileName() throws Exception {
+        template.sendBodyAndHeader("direct:b", "Hello World", Exchange.FILE_NAME, "hello.txt");
+
+        File file = new File("target/work");
+        assertEquals("The generated temp directory should exist: " + file, true, file.exists());
+    }
+
+    @Test
+    public void testChildTempFileName() throws Exception {
+        template.sendBodyAndHeader("direct:c", "Hello World", Exchange.FILE_NAME, "hello.txt");
+
+        File file = new File("target/tempandrename/work");
+        assertEquals("The generated temp directory should exist: " + file, true, file.exists());
     }
 
     @Test
@@ -84,6 +102,8 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:a").to(fileUrl);
+                from("direct:b").to(parentFileUrl);
+                from("direct:c").to(childFileUrl);
             }
         };
     }
