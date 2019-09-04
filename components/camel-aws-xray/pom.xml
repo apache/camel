@@ -58,7 +58,11 @@
         <!-- core required: org.apache.camel.component.bean, org.apache.camel.model -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-core-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-bean</artifactId>
         </dependency>
 
         <!-- AWS XRay -->
