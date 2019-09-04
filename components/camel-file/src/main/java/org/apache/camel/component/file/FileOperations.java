@@ -158,7 +158,7 @@ public class FileOperations implements GenericFileOperations<File> {
         File target = new File(directory);
 
         // check if directory is a path
-        boolean isPath = Math.max(directory.lastIndexOf("/"), directory.lastIndexOf("\\")) != -1;
+        boolean isPath = directory.contains("/") || directory.contains("\\");
 
         File path;
         if (absolute) {
