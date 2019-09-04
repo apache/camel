@@ -51,7 +51,6 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
     private Scheduler quartzScheduler;
     private CamelContext camelContext;
     private String routeId;
-    private Consumer consumer;
     private Runnable runnable;
     private String cron;
     private String triggerId;
@@ -63,7 +62,6 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
     @Override
     public void onInit(Consumer consumer) {
-        this.consumer = consumer;
         // find the route of the consumer
         for (Route route : consumer.getEndpoint().getCamelContext().getRoutes()) {
             if (route.getConsumer() == consumer) {
