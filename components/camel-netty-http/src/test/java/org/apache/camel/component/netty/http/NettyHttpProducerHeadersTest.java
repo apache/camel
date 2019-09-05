@@ -20,12 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class NettyHttpProducerHeadersTest extends CamelTestSupport {
