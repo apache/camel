@@ -268,7 +268,7 @@
         <htmlunit-bundle-version>2.24_1</htmlunit-bundle-version>
         <htrace-version>3.1.0-incubating</htrace-version>
         <httpunit-version>1.7</httpunit-version>
-        <httpcore4-version>4.4.11</httpcore4-version>
+        <httpcore4-version>4.4.12</httpcore4-version>
         <httpclient4-version>4.5.9</httpclient4-version>
         <httpasyncclient-version>4.1.4</httpasyncclient-version>
         <httpclient-version>3.1</httpclient-version>
