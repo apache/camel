@@ -49,7 +49,7 @@ To edit the documentation:
    - Create a commit and raise a Pull Request
 - If you want to add more documentation check for .adoc in codebase 
 
-For more information see [How does the website work](https://github.com/apache/camel/blob/master/docs/user-manual/en/faq/how-does-the-website-work.adoc) or [How do I edit the website for more details](https://github.com/apache/camel/blob/master/docs/user-manual/en/faq/how-do-i-edit-the-website.adoc).
+For more information see https://camel.apache.org/manual/latest/faq/how-does-the-website-work.html[How does the website work] or https://camel.apache.org/manual/latest/faq/how-do-i-edit-the-website.html[How do I edit the website for more details].
 
 ## If you find a bug or problem
 
