@@ -41,8 +41,7 @@ public enum ElasticsearchOperation {
     DeleteIndex("DeleteIndex"),
     Search("Search"),
     Exists("Exists"),
-    Ping("Ping"),
-    Info("Info");
+    Ping("Ping");
 
     private final String text;
 
