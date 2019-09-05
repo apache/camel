@@ -410,7 +410,7 @@ public class KafkaConsumer extends DefaultConsumer {
                 if (unsubscribing) {
                     getExceptionHandler().handleException("Error unsubscribing " + threadId + " from kafka topic " + topicName, e);
                 } else {
-                    log.warn("KafkaException consuming {} from topic {}. Will attempt to re-connect on next run", threadId, topicName);
+                    log.debug("KafkaException consuming {} from topic {} causedby {}. Will attempt to re-connect on next run", threadId, topicName, e.getMessage());
                     reConnect = true;
                 }
             } catch (Exception e) {
