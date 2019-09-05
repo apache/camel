@@ -1,0 +1,79 @@
+= Camel Kafka example
+
+=== Introduction
+
+An example which shows how to integrate Camel with Kafka avro  to make use of avro serialize/deserializer
+
+start confluent schema registry but before this kafka server should be started:
+./bin/schema-registry-start etc/schema-registry/schema-registry.properties
+
+register_schema.py is simple custom python script to register the employee.avsc schema in confluent schema registry
+python3.6 src/main/resources/register_schema.py http://localhost:8081 employees-avro src/main/resources/avro/employee.avsc
+Schema Registry URL: http://localhost:8081
+Topic: employees-avro
+Schema file: src/main/resources/avro/employee.avsc
+Success
+
+
+[camel-example-kafka-avro]$ curl --noproxy '*' http://localhost:8081/subjects/employees-avro-value/versions/1
+{"subject":"employees-avro-value","version":1,"id":2,"schema":"{\"type\":\"record\",\"name\":\"Employee\",\"namespace\":\"com.example.kafkatutorials\",\"fields\":[{\"name\":\"firstName\",\"type\":\"string\"},{\"name\":\"lastName\",\"type\":\"string\"},{\"name\":\"birthDate\",\"type\":\"long\"}]}"}
+
+To delete:
+curl -X DELETE http://localhost:8081/subjects/topic-value/versions/version-no
+
+=== Preparing Kafka
+
+This example requires that Kafka Server is up and running.
+
+    $ ${KAFKA}/bin/zookeeper-server-start.sh ${KAFKA}/config/zookeeper.properties
+
+    $ ${KAFKA}/bin/kafka-server-start.sh ${KAFKA}/config/server.properties
+
+You will need to create following topics before you run the examples.
+
+On windows run
+
+    
+    $ ${KAFKA}/bin/kafka-topics.bat --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 1 --topic employees-avro
+
+On linux run
+
+    
+    $ ${KAFKA}/bin/kafka-topics.sh --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 1 --topic employees-avro
+
+
+=== Build
+
+You will need to compile this example first:
+
+    $ mvn compile
+
+=== Run
+
+Run the consumer first in separate shell 
+
+    $ mvn spring-boot:run
+
+
+camel-context.xml file has both kafka-producer and kafka-consumer routes defined to produce/consume messages to topic my-topic.
+
+Press `Ctrl-C` to exit.
+
+=== Configuration
+
+You can configure the details in the file:
+  `src/main/resources/application.properties`
+
+You can enable verbose logging by adjusting the `src/main/resources/log4j2.properties`
+  file as documented in the file.
+
+=== Forum, Help, etc
+
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
+
+Please help us make Apache Camel better - we appreciate any feedback you may
+have.  Enjoy!
+
+
+The Camel riders!

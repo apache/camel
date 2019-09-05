@@ -355,8 +355,7 @@ public interface ElasticsearchEndpointBuilderFactory {
         DeleteIndex,
         Search,
         Exists,
-        Ping,
-        Info;
+        Ping;
     }
     /**
      * Elastichsearch Rest (camel-elasticsearch-rest)
