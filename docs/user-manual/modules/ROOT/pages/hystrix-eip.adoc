@@ -96,7 +96,7 @@ And in XML DSL:
 </camelContext>
 ----
 
-See https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/onFallback-eip.adoc[onFallback]
+See xref:onFallback-eip.adoc[onFallback].
 
 == Other examples
 
