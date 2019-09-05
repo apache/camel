@@ -24,5 +24,5 @@ implementations.
 [[messageEndpoint-Example]]
 == Samples
 
-See first example in https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/to-eip.adoc[To EIP]
+See first example in xref:to-eip.adoc[To EIP]
 
