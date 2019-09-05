@@ -17,7 +17,7 @@
 package org.apache.camel.component.elasticsearch;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.elasticsearch.action.main.MainResponse;
+import org.elasticsearch.client.core.MainResponse;
 import org.junit.Test;
 
 public class ElasticsearchInfoTest extends ElasticsearchBaseTest {
