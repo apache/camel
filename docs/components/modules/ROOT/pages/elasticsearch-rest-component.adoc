@@ -179,7 +179,6 @@ indexId in the body.
 
 |Ping |None  |Pings the remote Elasticsearch cluster and returns true if the ping succeeded, false otherwise
 
-|Info |None  |Get the info of the Elasticsearch cluster and returns them as MainResponse class instance
 |===
 
 == Configure the component and enable basic authentication

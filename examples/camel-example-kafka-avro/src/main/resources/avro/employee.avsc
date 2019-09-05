@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "Employee",
+  "namespace": "com.example.kafkatutorials",
+  "fields": [
+    {
+      "name": "firstName",
+      "type": "string"
+    },
+    {
+      "name": "lastName",
+      "type": "string"
+    },
+    {
+      "name": "birthDate",
+      "type": "long"
+    }
+  ]
+}
