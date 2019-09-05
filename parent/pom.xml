@@ -89,8 +89,8 @@
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.2.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
-        <azure-storage-java-sdk-version>8.3.0</azure-storage-java-sdk-version>
-        <azure-storage-java-sdk-bundle-version>8.3.0_1</azure-storage-java-sdk-bundle-version>
+        <azure-storage-java-sdk-version>8.4.0</azure-storage-java-sdk-version>
+        <azure-storage-java-sdk-bundle-version>8.4.0_1</azure-storage-java-sdk-bundle-version>
         <azure-guava-version>20.0</azure-guava-version>
         <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
         <bcel-bundle-version>5.2_4</bcel-bundle-version>
