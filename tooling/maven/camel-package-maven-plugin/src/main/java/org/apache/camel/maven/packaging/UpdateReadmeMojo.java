@@ -506,7 +506,12 @@ public class UpdateReadmeMojo extends AbstractMojo {
             // copy over to all new lines
             newLines.addAll(Arrays.asList(lines));
 
-            // check the first four lines
+            // check first if it is a standard documentation file, we expect at least five lines
+            if (lines.length < 5) {
+                return false;
+            }
+
+            // check the first four lines (ignoring the first line)
             boolean title = lines[1].startsWith("#") || lines[1].startsWith("=");
             boolean empty = lines[2].trim().isEmpty();
             boolean availableFrom = lines[3].trim().contains("Available as of") || lines[3].trim().contains("Available in");
