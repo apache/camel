@@ -191,8 +191,13 @@ from("debezium:mysql?name=dbz-test-1&offsetStorageFileName=/usr/offset-file-1.da
     .log("    the previous value is ${headers.CamelDebeziumBefore}")
 ----
 
-You can query the body as normal `Map` since this component contains a https://camel.apache.org/manual/latest/type-converter.html[Type Converter] that converts from
-from default output type of https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] to `Map`. However, sometimes you may want to access the schema of the value, especially if you will perform special data conversion (to protobuf, avro .. etc), you can obtain https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Schema.html[`Schema`] type from `Struct` like this:
+By default, the component will emit the events in the body and `CamelDebeziumBefore` header as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] data type, the reasoning behind this, is to perceive the schema information in case is needed.
+However, the component as well contains a https://camel.apache.org/manual/latest/type-converter.html[Type Converter] that converts from
+from default output type of https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] to `Map` in order to leverage Camel's rich https://camel.apache.org/manual/latest/data-format.html[Data Format] types which many of them work out of box with `Map` data type.
+To use it, you can either add `Map.class` type when you access the message e.g: `exchange.getIn().getBody(Map.class)`, or you can convert the body always to `Map` from the route builder by adding `.convertBodyTo(Map.class)` to your Camel Route DSL after `from` statement.
+
+We mentioned above about the schema, which can be used in case you need to perform advance data transformation and the schema is needed for that. If you choose not to convert your body to `Map`,
+you can obtain the schema information as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Schema.html[`Schema`] type from `Struct` like this:
 [source,java]
 ----
 from("debezium:[connectorType]?[options]])
@@ -203,8 +208,10 @@ from("debezium:[connectorType]?[options]])
         log.info("Body value is :" + bodyValue);
         log.info("With Schema : " + schemaValue);
         log.info("And fields of :" + schemaValue.fields());
+        log.info("Field name has `" + schemaValue.field("name").schema() + "` type");
     });
 ----
+
 
 
 *Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/docs/embedded/#handling_failures[handling failures].
