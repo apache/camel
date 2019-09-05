@@ -80,6 +80,7 @@
         <module>camel-example-jms-file</module>
         <module>camel-example-jooq</module>
         <module>camel-example-kafka</module>
+        <module>camel-example-kafka-avro</module>
         <module>camel-example-kafka-offsetrepository</module>
         <module>camel-example-kotlin</module>
         <module>camel-example-loadbalancing</module>

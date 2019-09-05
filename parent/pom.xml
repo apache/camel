@@ -79,6 +79,7 @@
         <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
         <avalon-version>4.3.1</avalon-version>
         <avro-version>1.9.0</avro-version>
+        <kafka-avro-serializer-version>5.2.2</kafka-avro-serializer-version>
         <avro-ipc-jetty-version>1.9.0</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.9.0</avro-ipc-netty-version>
         <!-- these two avro bundles relates to camel-hdfs karaf feature -->
