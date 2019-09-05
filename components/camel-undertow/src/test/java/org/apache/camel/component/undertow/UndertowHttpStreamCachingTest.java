@@ -47,7 +47,6 @@ public class UndertowHttpStreamCachingTest extends BaseUndertowTest {
 
                 
 
-                //from("undertow:http://localhost:8080/client?useStreaming=true")
                 from("undertow:http://localhost:{{port}}/client")
                     .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.POST))
                     .to("http://localhost:{{port}}/server?bridgeEndpoint=true").to("log:lgName?showBody=true")
