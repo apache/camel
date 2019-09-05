@@ -25,23 +25,23 @@ new Maven project for Camel routes in the Java Container using CDI to
 configure components, endpoints and beans
 
 |camel-archetype-[line-through]*component-scala*
-|[line-through]**Deprecated. Camel 2.10:* This archetype is used for
+|[line-through]*Deprecated. Camel 2.10:* This archetype is used for
 creating a new Maven project for Camel xref:components::index.adoc[Components]
 using Scala. Use this if there is a component missing in Camel that you
-want to create yourself. Deprecated to be removed in Camel 2.16
-onwards.*
+want to create yourself. Removed from Camel 2.16
+onwards.
 
 |[line-through]*camel-archetype-cxf-code-first-blueprint*
-|[line-through]**Deprecated. Camel 2.12.2:* This archetype is used
+|[line-through]*Deprecated. Camel 2.12.2:* This archetype is used
 creating a new Maven project for Camel with xref:components::cxf-component.adoc[CXF] exposing
 a web service using code-first style. This project is for OSGi Blueprint
-containers. **Removed** from Camel 2.18 onwards.*
+containers. Removed from Camel 2.18 onwards.
 
 |[line-through]*camel-archetype-cxf-contract-first-blueprint*
-|[line-through]**Deprecated. Camel 2.12.1:* This archetype is used
+|[line-through]*Deprecated. Camel 2.12.1:* This archetype is used
 creating a new Maven project for Camel with xref:components::cxf-component.adoc[CXF] exposing
 a web service using contract-first style. This project is for OSGi
-Blueprint containers. *Removed* from Camel 2.18 onwards.*
+Blueprint containers. Removed from Camel 2.18 onwards.
 
 |camel-archetype-dataformat |*Camel 2.9:* This archetype is used for
 creating a new Maven project for Camel xref:data-format.adoc[Data
