@@ -731,7 +731,7 @@
   <feature name='camel-corda' version='${project.version}' start-level='50'>
     <feature prerequisite='true'>wrap</feature>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:io.reactivex/rxjava/1.2.4</bundle>
+    <bundle dependency='true'>mvn:io.reactivex/rxjava/${rxjava-version}</bundle>
     <bundle dependency='true'>wrap:mvn:net.corda/corda-core/${corda-version}</bundle>
     <bundle dependency='true'>wrap:mvn:net.corda/corda-node-api/${corda-version}</bundle>
     <bundle dependency='true'>wrap:mvn:net.corda/corda-rpc/${corda-version}</bundle>
