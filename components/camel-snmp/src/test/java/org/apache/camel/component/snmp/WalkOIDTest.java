@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class WalkOIDTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(PollOIDTest.class);
 
@@ -55,7 +56,8 @@ public class WalkOIDTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("snmp:10.211.55.6:161?protocol=udp&type=GET_NEXT&oids=1.3.6.1.2.1.2.2.1.2,1.3.6.1.2.1.25.3.3.1.2").transform(body().convertToString()).to("mock:result");
+                from("timer:foo?repeatCount=1")
+                    .to("snmp:10.211.55.6:161?protocol=udp&type=GET_NEXT&oids=1.3.6.1.2.1.2.2.1.2,1.3.6.1.2.1.25.3.3.1.2").transform(body().convertToString()).to("mock:result");
                 // END SNIPPET: e1
             }
         };
