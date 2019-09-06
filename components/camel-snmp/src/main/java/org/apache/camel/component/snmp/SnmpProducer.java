@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.snmp;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Exchange;
@@ -42,19 +45,21 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
  * A snmp producer
  */
 public class SnmpProducer extends DefaultProducer {
-   
+
     private SnmpEndpoint endpoint;
-    
+
     private Address targetAddress;
     private USM usm;
     private CommunityTarget target;
+    private SnmpActionType actionType;
     private PDU pdu;
-    
-    public SnmpProducer(SnmpEndpoint endpoint) {
+
+    public SnmpProducer(SnmpEndpoint endpoint, SnmpActionType actionType) {
         super(endpoint);
         this.endpoint = endpoint;
+        this.actionType = actionType;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -64,7 +69,7 @@ public class SnmpProducer extends DefaultProducer {
 
         this.usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
         SecurityModels.getInstance().addSecurityModel(this.usm);
-        
+
         // setting up target
         this.target = new CommunityTarget();
         this.target.setCommunity(new OctetString(endpoint.getSnmpCommunity()));
@@ -84,13 +89,13 @@ public class SnmpProducer extends DefaultProducer {
         this.pdu.setErrorStatus(0);
         this.pdu.setMaxRepetitions(0);
         // support POLL and GET_NEXT
-        if (this.actionType == SnmpActionType.GET_NEXT)
-          this.pdu.setType(PDU.GETNEXT);
-        else
-          this.pdu.setType(PDU.GET); 
-        
+        if (this.actionType == SnmpActionType.GET_NEXT) {
+            this.pdu.setType(PDU.GETNEXT);
+        } else {
+            this.pdu.setType(PDU.GET);
+        }
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
@@ -104,7 +109,7 @@ public class SnmpProducer extends DefaultProducer {
             this.pdu = null;
         }
     }
-    
+
     @Override
     public void process(final Exchange exchange) throws Exception {
         // load connection data only if the endpoint is enabled
@@ -113,7 +118,7 @@ public class SnmpProducer extends DefaultProducer {
 
         try {
             log.debug("Starting SNMP producer on {}", this.endpoint.getAddress());
-            
+
             // either tcp or udp
             if ("tcp".equals(this.endpoint.getProtocol())) {
                 transport = new DefaultTcpTransportMapping();
@@ -122,13 +127,13 @@ public class SnmpProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("Unknown protocol: " + this.endpoint.getProtocol());
             }
-    
+
             snmp = new Snmp(transport);
-            
+
             log.debug("Snmp: i am sending");
-    
+
             snmp.listen();
-            
+
             if (this.actionType == SnmpActionType.GET_NEXT) {
                 // snmp walk
                 List<SnmpMessage> smLst = new ArrayList<>();
@@ -147,7 +152,6 @@ public class SnmpProducer extends DefaultProducer {
                         Vector<? extends VariableBinding> variableBindings = response.getVariableBindings();
                         for (int i = 0; i < variableBindings.size(); i++) {
                             VariableBinding variableBinding = variableBindings.elementAt(i);
-                            Variable variable = variableBinding.getVariable();
                             nextOid = variableBinding.getOid().toDottedString();
                             if (!nextOid.startsWith(oid.toDottedString())) {
                                 matched = false;
@@ -163,7 +167,7 @@ public class SnmpProducer extends DefaultProducer {
                     }
                 }
                 exchange.getIn().setBody(smLst);
-              } else {
+            } else {
                 // snmp get
                 ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
 
@@ -174,14 +178,16 @@ public class SnmpProducer extends DefaultProducer {
                 } else {
                     throw new TimeoutException("SNMP Producer Timeout");
                 }
-              }
+            }
         } finally {
             try {
-                transport.close(); 
-            } catch (Exception e) { }
+                transport.close();
+            } catch (Exception e) {
+            }
             try {
-                snmp.close(); 
-            } catch (Exception e) { }
+                snmp.close();
+            } catch (Exception e) {
+            }
         }
     } //end process
 }

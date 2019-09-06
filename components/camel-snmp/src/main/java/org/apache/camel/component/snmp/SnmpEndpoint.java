@@ -35,7 +35,7 @@ import org.snmp4j.security.SecurityLevel;
 /**
  * The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";
@@ -119,7 +119,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         }
     }
 
-/**
+    /**
      * creates an exchange for the given message
      *
      * @param pdu the pdu
