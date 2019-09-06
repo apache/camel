@@ -1,5 +1,5 @@
 [[elasticsearch-rest-component]]
-= Elastichsearch Rest Component
+= Elasticsearch Rest Component
 :page-source: components/camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc
 
 *Available as of Camel version 2.21*
@@ -32,7 +32,7 @@ elasticsearch-rest://clusterName[?options]
 == Endpoint Options
 
 // component options: START
-The Elastichsearch Rest component supports 12 options, which are listed below.
+The Elasticsearch Rest component supports 12 options, which are listed below.
 
 
 

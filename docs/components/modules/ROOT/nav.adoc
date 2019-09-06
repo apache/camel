@@ -96,7 +96,7 @@
 * xref:drill-component.adoc[Drill Component]
 * xref:dropbox-component.adoc[Dropbox Component]
 * xref:ehcache-component.adoc[Ehcache Component]
-* xref:elasticsearch-rest-component.adoc[Elastichsearch Rest Component]
+* xref:elasticsearch-rest-component.adoc[Elasticsearch Rest Component]
 * xref:elsql-component.adoc[ElSQL Component]
 * xref:etcd-component.adoc[etcd Component]
 * xref:eventadmin-component.adoc[OSGi EventAdmin Component]
