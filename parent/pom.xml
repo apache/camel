@@ -45,7 +45,7 @@
         <activemq-version>5.15.10</activemq-version>
         <activemq-artemis-version>2.10.0</activemq-artemis-version>
         <aether-version>1.0.2.v20150114</aether-version>
-        <ahc-version>2.10.1</ahc-version>
+        <ahc-version>2.10.2</ahc-version>
         <ant-bundle-version>1.7.0_6</ant-bundle-version>
         <antlr-bundle-version>3.5.2_1</antlr-bundle-version>
         <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
