@@ -123,7 +123,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
@@ -133,7 +133,6 @@ The component supports 10 options, which are listed below.
 | *camel.component.xj.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.xj.content-cache* | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | Boolean
 | *camel.component.xj.enabled* | Whether to enable auto configuration of the xj component. This is enabled by default. |  | Boolean
-| *camel.component.xj.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.xj.saxon* | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath. | false | Boolean
 | *camel.component.xj.saxon-configuration* | To use a custom Saxon configuration. The option is a java.lang.Object type. |  | String
 | *camel.component.xj.saxon-configuration-properties* | To set custom Saxon configuration properties |  | Map
