@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -73,6 +74,9 @@ public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTe
         result.expectedBodiesReceivedInAnyOrder("message-6", "message-8", "message-9");
 
         result.assertIsSatisfied(5000);
+
+        // to give the local state some buffer
+        TimeUnit.MILLISECONDS.sleep(500);
 
         assertEquals("partition-0", "4", stateRepository.getState(TOPIC + "/0"));
         assertEquals("partition-1", "4", stateRepository.getState(TOPIC + "/1"));
