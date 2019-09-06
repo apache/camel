@@ -3,9 +3,9 @@
 
 *Available as of Camel version 3.0*
 
-The Debezium component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/docs/embedded/[Debezium Embedded], which enabled Change Data Capture from various databases without the need of Kafka or Kafka Connect.
+The Debezium component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enabled Change Data Capture from various databases without the need of Kafka or Kafka Connect.
 
-*Note on handling failures:* Per https://debezium.io/docs/embedded/#handling_failures[Debezium Embedded Engine] documentation, the engines is actively recording source offsets and periodically flushes these offsets to a persistent storage, so when the application is restarted or crashed, the engine will resume from the last recorded offset.
+*Note on handling failures:* Per https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[Debezium Embedded Engine] documentation, the engines is actively recording source offsets and periodically flushes these offsets to a persistent storage, so when the application is restarted or crashed, the engine will resume from the last recorded offset.
 Thus, at normal operation, your downstream routes will receive each event exactly once, however in case of an application crash (not having a graceful shutdown), the application will resume from the last recorded offset,
 which may result in receiving duplicate events immediately after the restart. Therefore, your downstream routes should be tolerant enough of such case and deduplicate events if needed.
 
@@ -31,7 +31,9 @@ debezium:connector-type[?options]
 ---------------------------
 
 == Supported Debezium Connectors
-- https://debezium.io/docs/connectors/mysql/[MySql].
+- https://debezium.io/documentation/reference/0.9/connectors/mysql.html[MySql].
+
+*Note:* Other Debezium connectors are _not_ supported at the moment.
 
 
 == Options
@@ -66,7 +68,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectorType* | *Required* The Debezium connector type that is supported by Camel Debezium component. |  | String
+| *connectorType* | *Required* The Debezium connector type that is supported by Camel Debezium component. Allowed values: `mysql`. |  | String
 |===
 
 
@@ -155,8 +157,8 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 For more information about configuration:
-https://debezium.io/docs/embedded/#engine-properties[https://debezium.io/docs/embedded/#engine-properties]
-https://debezium.io/docs/connectors/mysql/#connector-properties[https://debezium.io/docs/connectors/mysql/#connector-properties]
+https://debezium.io/documentation/reference/0.9/operations/embedded.html#engine-properties[https://debezium.io/documentation/reference/0.9/operations/embedded.html#engine-properties]
+https://debezium.io/documentation/reference/0.9/connectors/mysql.html#connector-properties[https://debezium.io/documentation/reference/0.9/connectors/mysql.html#connector-properties]
 
 == Message headers
 
@@ -169,7 +171,7 @@ The following headers are available when consuming change events from Debezium.
 | DebeziumConstants.HEADER_IDENTIFIER       | "CamelDebeziumIdentifier"                      | String      | The identifier of the connector, normally is this format "{server-name}.{database-name}.{table-name}".
 | DebeziumConstants.HEADER_KEY              | "CamelDebeziumKey"                             | Object      | The key of the event, normally is the table Primary Key.
 | DebeziumConstants.HEADER_SOURCE_METADATA  | "CamelDebeziumSourceMetadata"                  | Map         | The metadata about the source event, for example `table` name, database `name`, log position, etc, please refer to the Debezium documentation for more info.
-| DebeziumConstants.HEADER_OPERATION        | "CamelDebeziumOperation"                       | String      | If presents, the type of event operation. Values for the connector are c for create (or insert), u for update, d for delete.
+| DebeziumConstants.HEADER_OPERATION        | "CamelDebeziumOperation"                       | String      | If presents, the type of event operation. Values for the connector are `c` for create (or insert), `u` for update, `d` for delete or `r` in case of a snapshot event.
 | DebeziumConstants.HEADER_TIMESTAMP        | "CamelDebeziumTimestamp"                       | Long        | If presents, the time (using the system clock in the JVM) at which the connector processed the event.
 | DebeziumConstants.HEADER_BEFORE           | "CamelDebeziumBefore"                          | Map/Struct  | If presents, contains the state of the row before the event occurred.
 |===
@@ -214,4 +216,4 @@ from("debezium:[connectorType]?[options]])
 
 
 
-*Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/docs/embedded/#handling_failures[handling failures].
+*Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[handling failures].
