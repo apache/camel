@@ -194,7 +194,7 @@
       <dependency>
         <groupId>net.corda</groupId>
         <artifactId>corda-rpc</artifactId>
-        <version>3.3-corda</version>
+        <version>4.0</version>
         <exclusions>
           <exclusion>
             <groupId>co.paralleluniverse</groupId>
