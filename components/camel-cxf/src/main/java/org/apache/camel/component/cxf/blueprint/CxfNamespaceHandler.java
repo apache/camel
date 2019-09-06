@@ -31,8 +31,6 @@ import org.osgi.service.blueprint.reflect.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 public class CxfNamespaceHandler extends BaseNamespaceHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CxfNamespaceHandler.class);
 
