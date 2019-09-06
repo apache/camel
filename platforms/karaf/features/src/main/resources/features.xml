@@ -2583,6 +2583,7 @@
     <bundle dependency='true'>mvn:org.jboss.xnio/xnio-api/${jboss-xnio-version}</bundle>
     <bundle dependency='true'>mvn:org.jboss.xnio/xnio-nio/${jboss-xnio-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-undertow/${project.version}</bundle>
