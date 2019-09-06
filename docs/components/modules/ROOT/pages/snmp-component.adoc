@@ -77,28 +77,29 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (36 parameters):
+=== Query Parameters (37 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *oids* (common) | Defines which values you are interested in. Please have a look at the Wikipedia to get a better understanding. You may provide a single OID or a coma separated list of OIDs. Example: oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1 |  | OIDList
+| *protocol* (common) | Here you can select which protocol to use. You can use either udp or tcp. | udp | String
+| *retries* (common) | Defines how often a retry is made before canceling the request. | 2 | int
+| *snmpCommunity* (common) | Sets the community octet string for the snmp request. | public | String
+| *snmpContextEngineId* (common) | Sets the context engine ID field of the scoped PDU. |  | String
+| *snmpContextName* (common) | Sets the context name field of this scoped PDU. |  | String
+| *snmpVersion* (common) | Sets the snmp version for the request. The value 0 means SNMPv1, 1 means SNMPv2c, and the value 3 means SNMPv3 | 0 | int
+| *timeout* (common) | Sets the timeout value for the request in millis. | 1500 | int
+| *type* (common) | Which operation to perform such as poll, trap, etc. |  | SnmpActionType
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *delay* (consumer) | Sets update rate in seconds | 60000 | long
-| *oids* (consumer) | Defines which values you are interested in. Please have a look at the Wikipedia to get a better understanding. You may provide a single OID or a coma separated list of OIDs. Example: oids=1.3.6.1.2.1.1.3.0,1.3.6.1.2.1.25.3.2.1.5.1,1.3.6.1.2.1.25.3.5.1.1.1,1.3.6.1.2.1.43.5.1.1.11.1 |  | OIDList
-| *protocol* (consumer) | Here you can select which protocol to use. You can use either udp or tcp. | udp | String
-| *retries* (consumer) | Defines how often a retry is made before canceling the request. | 2 | int
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
-| *snmpCommunity* (consumer) | Sets the community octet string for the snmp request. | public | String
-| *snmpContextEngineId* (consumer) | Sets the context engine ID field of the scoped PDU. |  | String
-| *snmpContextName* (consumer) | Sets the context name field of this scoped PDU. |  | String
-| *snmpVersion* (consumer) | Sets the snmp version for the request. The value 0 means SNMPv1, 1 means SNMPv2c, and the value 3 means SNMPv3 | 0 | int
-| *timeout* (consumer) | Sets the timeout value for the request in millis. | 1500 | int
 | *treeList* (consumer) | Sets the flag whether the scoped PDU will be displayed as the list if it has child elements in its tree | false | boolean
-| *type* (consumer) | Which operation to perform such as poll, trap, etc. |  | SnmpActionType
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
