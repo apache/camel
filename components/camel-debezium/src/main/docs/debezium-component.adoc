@@ -7,7 +7,7 @@ The Debezium component is wrapper around https://debezium.io/[Debezium] using ht
 
 *Note on handling failures:* Per https://debezium.io/docs/embedded/#handling_failures[Debezium Embedded Engine] documentation, the engines is actively recording source offsets and periodically flushes these offsets to a persistent storage, so when the application is restarted or crashed, the engine will resume from the last recorded offset.
 Thus, at normal operation, your downstream routes will receive each event exactly once, however in case of an application crash (not having a graceful shutdown), the application will resume from the last recorded offset,
-which may result of receiving duplicate events immediately after the restart. Therefore, your downstream routes should be tolerant enough of such case and deduplicate events if needed.
+which may result in receiving duplicate events immediately after the restart. Therefore, your downstream routes should be tolerant enough of such case and deduplicate events if needed.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component.
