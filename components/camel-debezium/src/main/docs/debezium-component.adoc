@@ -162,7 +162,7 @@ https://debezium.io/docs/connectors/mysql/#connector-properties[https://debezium
 
 === Consumer headers
 
-The following headers are available when consuming messages from Kafka.
+The following headers are available when consuming change events from Debezium.
 [width="100%",cols="2m,2m,1m,5",options="header"]
 |===
 | Header constant                           | Header value                                   | Type        | Description
