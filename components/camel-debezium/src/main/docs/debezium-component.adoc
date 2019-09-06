@@ -192,7 +192,7 @@ from("debezium:mysql?name=dbz-test-1&offsetStorageFileName=/usr/offset-file-1.da
 ----
 
 By default, the component will emit the events in the body and `CamelDebeziumBefore` header as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] data type, the reasoning behind this, is to perceive the schema information in case is needed.
-However, the component as well contains a https://camel.apache.org/manual/latest/type-converter.html[Type Converter] that converts from
+However, the component as well contains a xref:manual::type-converter.adoc[Type Converter] that converts from
 from default output type of https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] to `Map` in order to leverage Camel's rich https://camel.apache.org/manual/latest/data-format.html[Data Format] types which many of them work out of box with `Map` data type.
 To use it, you can either add `Map.class` type when you access the message e.g: `exchange.getIn().getBody(Map.class)`, or you can convert the body always to `Map` from the route builder by adding `.convertBodyTo(Map.class)` to your Camel Route DSL after `from` statement.
 
