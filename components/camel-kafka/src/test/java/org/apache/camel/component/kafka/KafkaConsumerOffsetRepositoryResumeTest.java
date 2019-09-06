@@ -28,6 +28,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.After;
 import org.junit.Test;
 
+import static org.awaitility.Awaitility.await;
+
 public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC = "offset-resume";
 
@@ -76,7 +78,7 @@ public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTe
         result.assertIsSatisfied(5000);
 
         // to give the local state some buffer
-        TimeUnit.MILLISECONDS.sleep(500);
+        await().atMost(1, TimeUnit.SECONDS).until(stateRepository::isStarted);
 
         assertEquals("partition-0", "4", stateRepository.getState(TOPIC + "/0"));
         assertEquals("partition-1", "4", stateRepository.getState(TOPIC + "/1"));
