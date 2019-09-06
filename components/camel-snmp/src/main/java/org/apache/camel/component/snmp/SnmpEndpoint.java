@@ -114,7 +114,8 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         if (this.type == SnmpActionType.TRAP) {
             return new SnmpTrapProducer(this);
         } else {
-            return new SnmpProducer(this);
+            // add the support: snmp walk (use snmp4j GET_NEXT)
+            return new SnmpProducer(this, this.type);
         }
     }
 
