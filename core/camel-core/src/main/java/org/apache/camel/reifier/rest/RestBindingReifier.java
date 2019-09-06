@@ -90,29 +90,7 @@ public class RestBindingReifier {
             outJson = context.resolveDataFormat(name);
 
             if (json != null) {
-                Class<?> clazz = null;
-                String type = definition.getType();
-                if (type != null) {
-                    String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-                    clazz = context.getClassResolver().resolveMandatoryClass(typeName);
-                }
-                if (clazz != null) {
-                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, json, "unmarshalType", clazz);
-                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, json, "useList", type.endsWith("[]"));
-                }
-                setAdditionalConfiguration(config, context, json, "json.in.");
-
-                Class<?> outClazz = null;
-                String outType = definition.getOutType();
-                if (outType != null) {
-                    String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-                    outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
-                }
-                if (outClazz != null) {
-                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJson, "unmarshalType", outClazz);
-                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJson, "useList", outType.endsWith("[]"));
-                }
-                setAdditionalConfiguration(config, context, outJson, "json.out.");
+                setupJson(context, config, definition.getType(), definition.getOutType(), json, outJson);
             }
         }
 
@@ -141,39 +119,65 @@ public class RestBindingReifier {
             }
 
             if (jaxb != null) {
-                Class<?> clazz = null;
-                String type = definition.getType();
-                if (type != null) {
-                    String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
-                    clazz = context.getClassResolver().resolveMandatoryClass(typeName);
-                }
-                if (clazz != null) {
-                    JAXBContext jc = JAXBContext.newInstance(clazz);
-                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, jaxb, "context", jc);
-                }
-                setAdditionalConfiguration(config, context, jaxb, "xml.in.");
-
-                Class<?> outClazz = null;
-                String outType = definition.getOutType();
-                if (outType != null) {
-                    String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
-                    outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
-                }
-                if (outClazz != null) {
-                    JAXBContext jc = JAXBContext.newInstance(outClazz);
-                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJaxb, "context", jc);
-                } else if (clazz != null) {
-                    // fallback and use the context from the input
-                    JAXBContext jc = JAXBContext.newInstance(clazz);
-                    context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJaxb, "context", jc);
-                }
-                setAdditionalConfiguration(config, context, outJaxb, "xml.out.");
+                setupJaxb(context, config, definition.getType(), definition.getOutType(), jaxb, outJaxb);
             }
         }
 
         return new RestBindingAdvice(context, json, jaxb, outJson, outJaxb, definition.getConsumes(), definition.getProduces(), mode, skip, validation, cors, corsHeaders,
                                      definition.getDefaultValues(), definition.getRequiredBody() != null ? definition.getRequiredBody() : false,
                                      definition.getRequiredQueryParameters(), definition.getRequiredHeaders());
+    }
+
+    protected void setupJson(CamelContext context, RestConfiguration config, String type, String outType, DataFormat json, DataFormat outJson) throws Exception {
+        Class<?> clazz = null;
+        if (type != null) {
+            String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+            clazz = context.getClassResolver().resolveMandatoryClass(typeName);
+        }
+        if (clazz != null) {
+            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, json, "unmarshalType", clazz);
+            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, json, "useList", type.endsWith("[]"));
+        }
+        setAdditionalConfiguration(config, context, json, "json.in.");
+
+        Class<?> outClazz = null;
+        if (outType != null) {
+            String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
+            outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
+        }
+        if (outClazz != null) {
+            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJson, "unmarshalType", outClazz);
+            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJson, "useList", outType.endsWith("[]"));
+        }
+        setAdditionalConfiguration(config, context, outJson, "json.out.");
+    }
+
+    protected void setupJaxb(CamelContext context, RestConfiguration config, String type, String outType, DataFormat jaxb, DataFormat outJaxb) throws Exception {
+        Class<?> clazz = null;
+        if (type != null) {
+            String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+            clazz = context.getClassResolver().resolveMandatoryClass(typeName);
+        }
+        if (clazz != null) {
+            JAXBContext jc = JAXBContext.newInstance(clazz);
+            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, jaxb, "context", jc);
+        }
+        setAdditionalConfiguration(config, context, jaxb, "xml.in.");
+
+        Class<?> outClazz = null;
+        if (outType != null) {
+            String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
+            outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
+        }
+        if (outClazz != null) {
+            JAXBContext jc = JAXBContext.newInstance(outClazz);
+            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJaxb, "context", jc);
+        } else if (clazz != null) {
+            // fallback and use the context from the input
+            JAXBContext jc = JAXBContext.newInstance(clazz);
+            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, outJaxb, "context", jc);
+        }
+        setAdditionalConfiguration(config, context, outJaxb, "xml.out.");
     }
 
     private void setAdditionalConfiguration(RestConfiguration config, CamelContext context, DataFormat dataFormat, String prefix) throws Exception {
