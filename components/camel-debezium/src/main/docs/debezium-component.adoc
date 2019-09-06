@@ -178,7 +178,7 @@ The following headers are available when consuming change events from Debezium.
 
 === Consuming events
 
-Here is a very simple route that you can use in order to listen to Debezium events from MySql connector.
+Here is a very simple route that you can use in order to listen to Debezium events from MySQL connector.
 [source,java]
 ----
 from("debezium:mysql?name=dbz-test-1&offsetStorageFileName=/usr/offset-file-1.dat&databaseHostName=localhost&databaseUser=debezium&databasePassword=dbz&databaseServerName=my-app-connector&databaseHistoryFileName=/usr/history-file-1.dat")
