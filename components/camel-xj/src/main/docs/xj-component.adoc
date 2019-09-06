@@ -42,7 +42,7 @@ In contrary to the xslt component, the *templateName* parameter is optional. If 
 == Component options
 
 // component options: START
-The XJ component supports 9 options, which are listed below.
+The XJ component supports 8 options, which are listed below.
 
 
 
@@ -56,7 +56,6 @@ The XJ component supports 9 options, which are listed below.
 | *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
 | *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Object
 | *saxonConfiguration Properties* (advanced) | To set custom Saxon configuration properties |  | Map
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
