@@ -333,7 +333,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Correlation field in the incoming record which is of increasing
          * nature and will be used to position the tailing cursor every time it
          * is generated. The cursor will be (re)created with a query of type:
-         * tailTrackIncreasingField lastValue (possibly recovered from
+         * tailTrackIncreasingField > lastValue (possibly recovered from
          * persistent tail tracking). Can be of type Integer, Date, String, etc.
          * NOTE: No support for dot notation at the current time, so the field
          * should be at the top level of the document.
