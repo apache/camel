@@ -18,6 +18,8 @@ package org.apache.camel.component.properties;
 
 import java.util.Iterator;
 
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PropertiesSource;
 
 /**
@@ -33,11 +35,23 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
 
     @Override
     public String lookup(String name) {
+        try {
+            return doLookup(name);
+        } catch (NoTypeConversionAvailableException e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
+    private String doLookup(String name) throws NoTypeConversionAvailableException {
         String answer = null;
 
         // override takes precedence
         if (component.getOverrideProperties() != null) {
-            answer = component.getOverrideProperties().getProperty(name);
+            // use get as the value can potentially be stored as a non string value
+            Object value = component.getOverrideProperties().get(name);
+            if (value != null) {
+                answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
+            }
         }
         if (answer == null) {
             // try till first found source
@@ -48,7 +62,11 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
         }
         // initial properties are last
         if (answer == null && component.getInitialProperties() != null) {
-            answer = component.getInitialProperties().getProperty(name);
+            // use get as the value can potentially be stored as a non string value
+            Object value = component.getInitialProperties().get(name);
+            if (value != null) {
+                answer = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, value);
+            }
         }
 
         return answer;
