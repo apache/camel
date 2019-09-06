@@ -49,7 +49,7 @@ public interface XJEndpointBuilderFactory {
          */
         default XJEndpointBuilder transformDirection(
                 TransformDirection transformDirection) {
-            setProperty("transformDirection", transformDirection);
+            doSetProperty("transformDirection", transformDirection);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder transformDirection(String transformDirection) {
-            setProperty("transformDirection", transformDirection);
+            doSetProperty("transformDirection", transformDirection);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder allowStAX(boolean allowStAX) {
-            setProperty("allowStAX", allowStAX);
+            doSetProperty("allowStAX", allowStAX);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder allowStAX(String allowStAX) {
-            setProperty("allowStAX", allowStAX);
+            doSetProperty("allowStAX", allowStAX);
             return this;
         }
         /**
@@ -99,7 +99,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -128,7 +128,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder deleteOutputFile(boolean deleteOutputFile) {
-            setProperty("deleteOutputFile", deleteOutputFile);
+            doSetProperty("deleteOutputFile", deleteOutputFile);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder deleteOutputFile(String deleteOutputFile) {
-            setProperty("deleteOutputFile", deleteOutputFile);
+            doSetProperty("deleteOutputFile", deleteOutputFile);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder failOnNullBody(boolean failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -164,7 +164,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder failOnNullBody(String failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder output(XsltOutput output) {
-            setProperty("output", output);
+            doSetProperty("output", output);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder output(String output) {
-            setProperty("output", output);
+            doSetProperty("output", output);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder saxon(boolean saxon) {
-            setProperty("saxon", saxon);
+            doSetProperty("saxon", saxon);
             return this;
         }
         /**
@@ -226,7 +226,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder saxon(String saxon) {
-            setProperty("saxon", saxon);
+            doSetProperty("saxon", saxon);
             return this;
         }
         /**
@@ -238,7 +238,7 @@ public interface XJEndpointBuilderFactory {
          * Group: producer
          */
         default XJEndpointBuilder transformerCacheSize(int transformerCacheSize) {
-            setProperty("transformerCacheSize", transformerCacheSize);
+            doSetProperty("transformerCacheSize", transformerCacheSize);
             return this;
         }
         /**
@@ -251,7 +251,7 @@ public interface XJEndpointBuilderFactory {
          */
         default XJEndpointBuilder transformerCacheSize(
                 String transformerCacheSize) {
-            setProperty("transformerCacheSize", transformerCacheSize);
+            doSetProperty("transformerCacheSize", transformerCacheSize);
             return this;
         }
     }
@@ -275,7 +275,7 @@ public interface XJEndpointBuilderFactory {
          */
         default AdvancedXJEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public interface XJEndpointBuilderFactory {
          */
         default AdvancedXJEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface XJEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder entityResolver(Object entityResolver) {
-            setProperty("entityResolver", entityResolver);
+            doSetProperty("entityResolver", entityResolver);
             return this;
         }
         /**
@@ -313,7 +313,7 @@ public interface XJEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder entityResolver(String entityResolver) {
-            setProperty("entityResolver", entityResolver);
+            doSetProperty("entityResolver", entityResolver);
             return this;
         }
         /**
@@ -328,7 +328,7 @@ public interface XJEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder errorListener(Object errorListener) {
-            setProperty("errorListener", errorListener);
+            doSetProperty("errorListener", errorListener);
             return this;
         }
         /**
@@ -344,7 +344,7 @@ public interface XJEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder errorListener(String errorListener) {
-            setProperty("errorListener", errorListener);
+            doSetProperty("errorListener", errorListener);
             return this;
         }
         /**
@@ -360,7 +360,7 @@ public interface XJEndpointBuilderFactory {
          */
         default AdvancedXJEndpointBuilder resultHandlerFactory(
                 Object resultHandlerFactory) {
-            setProperty("resultHandlerFactory", resultHandlerFactory);
+            doSetProperty("resultHandlerFactory", resultHandlerFactory);
             return this;
         }
         /**
@@ -376,7 +376,7 @@ public interface XJEndpointBuilderFactory {
          */
         default AdvancedXJEndpointBuilder resultHandlerFactory(
                 String resultHandlerFactory) {
-            setProperty("resultHandlerFactory", resultHandlerFactory);
+            doSetProperty("resultHandlerFactory", resultHandlerFactory);
             return this;
         }
         /**
@@ -388,7 +388,7 @@ public interface XJEndpointBuilderFactory {
          */
         default AdvancedXJEndpointBuilder saxonConfiguration(
                 Object saxonConfiguration) {
-            setProperty("saxonConfiguration", saxonConfiguration);
+            doSetProperty("saxonConfiguration", saxonConfiguration);
             return this;
         }
         /**
@@ -400,7 +400,7 @@ public interface XJEndpointBuilderFactory {
          */
         default AdvancedXJEndpointBuilder saxonConfiguration(
                 String saxonConfiguration) {
-            setProperty("saxonConfiguration", saxonConfiguration);
+            doSetProperty("saxonConfiguration", saxonConfiguration);
             return this;
         }
         /**
@@ -416,7 +416,7 @@ public interface XJEndpointBuilderFactory {
          */
         default AdvancedXJEndpointBuilder saxonExtensionFunctions(
                 List<Object> saxonExtensionFunctions) {
-            setProperty("saxonExtensionFunctions", saxonExtensionFunctions);
+            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
             return this;
         }
         /**
@@ -432,7 +432,7 @@ public interface XJEndpointBuilderFactory {
          */
         default AdvancedXJEndpointBuilder saxonExtensionFunctions(
                 String saxonExtensionFunctions) {
-            setProperty("saxonExtensionFunctions", saxonExtensionFunctions);
+            doSetProperty("saxonExtensionFunctions", saxonExtensionFunctions);
             return this;
         }
         /**
@@ -444,7 +444,7 @@ public interface XJEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -456,7 +456,7 @@ public interface XJEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -469,7 +469,7 @@ public interface XJEndpointBuilderFactory {
          */
         default AdvancedXJEndpointBuilder transformerFactory(
                 Object transformerFactory) {
-            setProperty("transformerFactory", transformerFactory);
+            doSetProperty("transformerFactory", transformerFactory);
             return this;
         }
         /**
@@ -482,7 +482,7 @@ public interface XJEndpointBuilderFactory {
          */
         default AdvancedXJEndpointBuilder transformerFactory(
                 String transformerFactory) {
-            setProperty("transformerFactory", transformerFactory);
+            doSetProperty("transformerFactory", transformerFactory);
             return this;
         }
         /**
@@ -495,7 +495,7 @@ public interface XJEndpointBuilderFactory {
          */
         default AdvancedXJEndpointBuilder transformerFactoryClass(
                 String transformerFactoryClass) {
-            setProperty("transformerFactoryClass", transformerFactoryClass);
+            doSetProperty("transformerFactoryClass", transformerFactoryClass);
             return this;
         }
         /**
@@ -506,7 +506,7 @@ public interface XJEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder uriResolver(Object uriResolver) {
-            setProperty("uriResolver", uriResolver);
+            doSetProperty("uriResolver", uriResolver);
             return this;
         }
         /**
@@ -518,7 +518,7 @@ public interface XJEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder uriResolver(String uriResolver) {
-            setProperty("uriResolver", uriResolver);
+            doSetProperty("uriResolver", uriResolver);
             return this;
         }
     }
@@ -560,7 +560,7 @@ public interface XJEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod
      */
-    default XJEndpointBuilder xJ(String path) {
+    default XJEndpointBuilder xj(String path) {
         class XJEndpointBuilderImpl extends AbstractEndpointBuilder implements XJEndpointBuilder, AdvancedXJEndpointBuilder {
             public XJEndpointBuilderImpl(String path) {
                 super("xj", path);
