@@ -74,13 +74,20 @@ public class SnmpProducer extends DefaultProducer {
         this.target.setVersion(this.endpoint.getSnmpVersion());
 
         this.pdu = new PDU();
-        for (OID oid : this.endpoint.getOids()) {
-            this.pdu.add(new VariableBinding(oid));
+        // in here,only POLL do set the oids
+        if (this.actionType == SnmpActionType.POLL) {
+            for (OID oid : this.endpoint.getOids()) {
+                this.pdu.add(new VariableBinding(oid));
+            }
         }
         this.pdu.setErrorIndex(0);
         this.pdu.setErrorStatus(0);
         this.pdu.setMaxRepetitions(0);
-        this.pdu.setType(PDU.GET);
+        // support POLL and GET_NEXT
+        if (this.actionType == SnmpActionType.GET_NEXT)
+          this.pdu.setType(PDU.GETNEXT);
+        else
+          this.pdu.setType(PDU.GET); 
         
     }
     
@@ -121,15 +128,53 @@ public class SnmpProducer extends DefaultProducer {
             log.debug("Snmp: i am sending");
     
             snmp.listen();
-            ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
             
-            log.debug("Snmp: sended");
-    
-            if (responseEvent.getResponse() != null) {
-                exchange.getIn().setBody(new SnmpMessage(getEndpoint().getCamelContext(), responseEvent.getResponse()));
-            } else {
-                throw new TimeoutException("SNMP Producer Timeout");
-            }
+            if (this.actionType == SnmpActionType.GET_NEXT) {
+                // snmp walk
+                List<SnmpMessage> smLst = new ArrayList<>();
+                for (OID oid : this.endpoint.getOids()) {
+                    this.pdu.clear();
+                    this.pdu.add(new VariableBinding(oid));
+
+                    boolean matched = true;
+                    while (matched) {
+                        ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
+                        if (responseEvent == null || responseEvent.getResponse() == null) {
+                            break;
+                        }
+                        PDU response = responseEvent.getResponse();
+                        String nextOid = null;
+                        Vector<? extends VariableBinding> variableBindings = response.getVariableBindings();
+                        for (int i = 0; i < variableBindings.size(); i++) {
+                            VariableBinding variableBinding = variableBindings.elementAt(i);
+                            Variable variable = variableBinding.getVariable();
+                            nextOid = variableBinding.getOid().toDottedString();
+                            if (!nextOid.startsWith(oid.toDottedString())) {
+                                matched = false;
+                                break;
+                            }
+                        }
+                        if (!matched) {
+                            break;
+                        }
+                        this.pdu.clear();
+                        pdu.add(new VariableBinding(new OID(nextOid)));
+                        smLst.add(new SnmpMessage(getEndpoint().getCamelContext(), response));
+                    }
+                }
+                exchange.getIn().setBody(smLst);
+              } else {
+                // snmp get
+                ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
+
+                log.debug("Snmp: sended");
+
+                if (responseEvent.getResponse() != null) {
+                    exchange.getIn().setBody(new SnmpMessage(getEndpoint().getCamelContext(), responseEvent.getResponse()));
+                } else {
+                    throw new TimeoutException("SNMP Producer Timeout");
+                }
+              }
         } finally {
             try {
                 transport.close(); 
