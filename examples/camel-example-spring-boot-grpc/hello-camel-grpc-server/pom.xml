@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel.example</groupId>
     <artifactId>camel-example-spring-boot-grpc</artifactId>
-    <version>2.24.2</version>
+    <version>2.24.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-example-hello-grpc-server</artifactId>
