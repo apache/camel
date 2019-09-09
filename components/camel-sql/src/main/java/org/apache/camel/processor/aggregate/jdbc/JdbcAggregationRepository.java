@@ -34,6 +34,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Constants;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -44,6 +45,7 @@ import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -57,10 +59,13 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class JdbcAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
 
+
     private static final Logger LOG = LoggerFactory.getLogger(JdbcAggregationRepository.class);
     private static final String ID = "id";
     private static final String EXCHANGE = "exchange";
     private static final String BODY = "body";
+    private static final Constants PROPAGATION_CONSTANTS = new Constants(TransactionDefinition.class);
+
     private JdbcOptimisticLockingExceptionMapper jdbcOptimisticLockingExceptionMapper = new DefaultJdbcOptimisticLockingExceptionMapper();
     private PlatformTransactionManager transactionManager;
     private DataSource dataSource;
@@ -104,13 +109,6 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
 
     public final void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
-
-        transactionTemplate = new TransactionTemplate(transactionManager);
-        transactionTemplate.setPropagationBehavior(propagationBehavior);
-
-        transactionTemplateReadOnly = new TransactionTemplate(transactionManager);
-        transactionTemplateReadOnly.setPropagationBehavior(propagationBehavior);
-        transactionTemplateReadOnly.setReadOnly(true);
     }
 
     /**
@@ -476,11 +474,24 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     /**
-     * Sets propagation behavior to use with spring transaction template which are used for database access.
+     * Sets propagation behavior to use with spring transaction templates which are used for database access.
      * The default is TransactionDefinition.PROPAGATION_REQUIRED.
      */
     public void setPropagationBehavior(int propagationBehavior) {
         this.propagationBehavior = propagationBehavior;
+    }
+
+    /**
+     * Sets propagation behavior to use with spring transaction templates which are used for database access.
+     * The default is TransactionDefinition.PROPAGATION_REQUIRED. This setter accepts names of the constants, like
+     * "PROPAGATION_REQUIRED".
+     * @param propagationBehaviorName
+     */
+    public void setPropagationBehaviorName(String propagationBehaviorName) {
+        if (!propagationBehaviorName.startsWith(DefaultTransactionDefinition.PREFIX_PROPAGATION)) {
+            throw new IllegalArgumentException("Only propagation constants allowed");
+        }
+        setPropagationBehavior(PROPAGATION_CONSTANTS.asNumber(propagationBehaviorName).intValue());
     }
 
     public LobHandler getLobHandler() {
@@ -515,6 +526,13 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         ObjectHelper.notNull(repositoryName, "RepositoryName");
         ObjectHelper.notNull(transactionManager, "TransactionManager");
         ObjectHelper.notNull(dataSource, "DataSource");
+
+        transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.setPropagationBehavior(propagationBehavior);
+
+        transactionTemplateReadOnly = new TransactionTemplate(transactionManager);
+        transactionTemplateReadOnly.setPropagationBehavior(propagationBehavior);
+        transactionTemplateReadOnly.setReadOnly(true);
 
         // log number of existing exchanges
         int current = getKeys().size();

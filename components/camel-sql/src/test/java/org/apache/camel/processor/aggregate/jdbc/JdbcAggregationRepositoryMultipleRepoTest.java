@@ -26,12 +26,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class JdbcAggregationRepositoryMultipleRepoTest extends CamelSpringTestSupport {
 
     @Test
-    public void testMultipeRepo() {
+    public void testMultipeRepo() throws Exception {
         JdbcAggregationRepository repo1 = applicationContext.getBean("repo1", JdbcAggregationRepository.class);
         repo1.setReturnOldExchange(true);
+        repo1.start();
 
         JdbcAggregationRepository repo2 = applicationContext.getBean("repo2", JdbcAggregationRepository.class);
         repo2.setReturnOldExchange(true);
+        repo2.start();
 
         // Can't get something we have not put in...
         Exchange actual = repo1.get(context, "missing");
@@ -76,10 +78,12 @@ public class JdbcAggregationRepositoryMultipleRepoTest extends CamelSpringTestSu
     }
 
     @Test
-    public void testMultipeRepoSameKeyDifferentContent() {
+    public void testMultipeRepoSameKeyDifferentContent() throws Exception {
         JdbcAggregationRepository repo1 = applicationContext.getBean("repo1", JdbcAggregationRepository.class);
+        repo1.start();
 
         JdbcAggregationRepository repo2 = applicationContext.getBean("repo2", JdbcAggregationRepository.class);
+        repo2.start();
 
         Exchange exchange1 = new DefaultExchange(context);
         exchange1.getIn().setBody("Hello World");
