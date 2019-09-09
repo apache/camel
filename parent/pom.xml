@@ -399,8 +399,7 @@
         <kafka-version>2.3.0</kafka-version>
         <kafka-bundle-version>2.3.0_1</kafka-bundle-version>
         <karaf4-version>4.2.6</karaf4-version>
-        <!-- Avoid upgrading to newer version for the moment: see https://issues.apache.org/jira/browse/CAMEL-13654 -->
-        <kie-version>7.22.0.Final</kie-version>
+        <kie-version>7.26.0.Final</kie-version>
         <kubernetes-client-version>4.1.1</kubernetes-client-version>
         <kubernetes-model-version>4.1.1</kubernetes-model-version>
         <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
