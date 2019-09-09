@@ -35,8 +35,12 @@ public class CamelJbpmTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelJbpmTest.class))
-                .dependency("org.drools:drools-core:7.22.0.Final")
-                .dependency("org.drools:drools-compiler:7.22.0.Final")
+                .dependency("org.kie:kie-api:7.26.0.Final")
+                .dependency("org.kie:kie-dmn-api:7.26.0.Final")
+                .dependency("org.kie:kie-dmn-model:7.26.0.Final")
+                .dependency("org.kie:kie-internal:7.26.0.Final")
+                .dependency("org.drools:drools-compiler:7.26.0.Final")
+                .dependency("org.drools:drools-core:7.26.0.Final")
                 .unitTestExpectedNumber(0)
                 .build();
     }
