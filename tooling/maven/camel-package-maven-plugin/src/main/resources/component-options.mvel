@@ -6,8 +6,8 @@ The @{title} component supports @{componentOptions.size()} options, which are li
 
 @if{!componentOptions.isEmpty()}
 [width="100%",cols="2,5,^1,2",options="header"]
-|===
+|===@comment{ Render table cells. If description contains newline, prefix cell with `a`, so the content is rendered with formatting. }
 | Name | Description | Default | Type
-@foreach{row : componentOptions}| *@{row.getShortName(25)}* (@{row.shortGroup}) | @{util.escape(row.description)} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
+@foreach{row : componentOptions}| *@{row.getShortName(25)}* (@{row.shortGroup}) @{row.description.?contains("\n") ? "a" : ""}| @{util.escape(row.description)} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
 @end{}|===
 @end{}

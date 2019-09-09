@@ -803,41 +803,47 @@ public interface FileEndpointBuilderFactory {
          * Used by consumer, to only poll the files if it has exclusive
          * read-lock on the file (i.e. the file is not in-progress or being
          * written). Camel will wait until the file lock is granted. This option
-         * provides the build in strategies: none - No read lock is in use
-         * markerFile - Camel creates a marker file (fileName.camelLock) and
+         * provides the build in strategies:
+         * 
+         * - none - No read lock is in use
+         * - markerFile - Camel creates a marker file (fileName.camelLock) and
          * then holds a lock on it. This option is not available for the FTP
-         * component changed - Changed is using file length/modification
-         * timestamp to detect whether the file is currently being copied or
-         * not. Will at least use 1 sec to determine this, so this option cannot
-         * consume files as fast as the others, but can be more reliable as the
-         * JDK IO API cannot always determine whether a file is currently being
-         * used by another process. The option readLockCheckInterval can be used
-         * to set the check frequency. fileLock - is for using
-         * java.nio.channels.FileLock. This option is not avail for Windows OS
-         * and the FTP component. This approach should be avoided when accessing
-         * a remote file system via a mount/share unless that file system
-         * supports distributed file locks. rename - rename is for using a try
-         * to rename the file as a test if we can get exclusive read-lock.
-         * idempotent - (only for file component) idempotent is for using a
+         * component
+         * - changed - Changed is using file length/modification timestamp to
+         * detect whether the file is currently being copied or not. Will at
+         * least use 1 sec to determine this, so this option cannot consume
+         * files as fast as the others, but can be more reliable as the JDK IO
+         * API cannot always determine whether a file is currently being used by
+         * another process. The option readLockCheckInterval can be used to set
+         * the check frequency.
+         * - fileLock - is for using java.nio.channels.FileLock. This option is
+         * not avail for Windows OS and the FTP component. This approach should
+         * be avoided when accessing a remote file system via a mount/share
+         * unless that file system supports distributed file locks.
+         * - rename - rename is for using a try to rename the file as a test if
+         * we can get exclusive read-lock.
+         * - idempotent - (only for file component) idempotent is for using a
          * idempotentRepository as the read-lock. This allows to use read locks
          * that supports clustering if the idempotent repository implementation
-         * supports that. idempotent-changed - (only for file component)
-         * idempotent-changed is for using a idempotentRepository and changed as
-         * the combined read-lock. This allows to use read locks that supports
-         * clustering if the idempotent repository implementation supports that.
-         * idempotent-rename - (only for file component) idempotent-rename is
+         * supports that.
+         * - idempotent-changed - (only for file component) idempotent-changed
+         * is for using a idempotentRepository and changed as the combined
+         * read-lock. This allows to use read locks that supports clustering if
+         * the idempotent repository implementation supports that.
+         * - idempotent-rename - (only for file component) idempotent-rename is
          * for using a idempotentRepository and rename as the combined
          * read-lock. This allows to use read locks that supports clustering if
-         * the idempotent repository implementation supports that. Notice: The
-         * various read locks is not all suited to work in clustered mode, where
-         * concurrent consumers on different nodes is competing for the same
-         * files on a shared file system. The markerFile using a close to atomic
-         * operation to create the empty marker file, but its not guaranteed to
-         * work in a cluster. The fileLock may work better but then the file
-         * system need to support distributed file locks, and so on. Using the
-         * idempotent read lock can support clustering if the idempotent
-         * repository supports clustering, such as Hazelcast Component or
-         * Infinispan.
+         * the idempotent repository implementation supports that.
+         * 
+         * Notice: The various read locks is not all suited to work in clustered
+         * mode, where concurrent consumers on different nodes is competing for
+         * the same files on a shared file system. The markerFile using a close
+         * to atomic operation to create the empty marker file, but its not
+         * guaranteed to work in a cluster. The fileLock may work better but
+         * then the file system need to support distributed file locks, and so
+         * on. Using the idempotent read lock can support clustering if the
+         * idempotent repository supports clustering, such as Hazelcast
+         * Component or Infinispan.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2344,20 +2350,22 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * What to do if a file already exists with the same name. Override,
-         * which is the default, replaces the existing file. Append - adds
-         * content to the existing file. Fail - throws a
-         * GenericFileOperationException, indicating that there is already an
-         * existing file. Ignore - silently ignores the problem and does not
-         * override the existing file, but assumes everything is okay. Move -
-         * option requires to use the moveExisting option to be configured as
-         * well. The option eagerDeleteTargetFile can be used to control what to
-         * do if an moving the file, and there exists already an existing file,
-         * otherwise causing the move operation to fail. The Move option will
-         * move any existing files, before writing the target file. TryRename is
-         * only applicable if tempFileName option is in use. This allows to try
-         * renaming the file from the temporary name to the actual name, without
-         * doing any exists check. This check may be faster on some file systems
-         * and especially FTP servers.
+         * which is the default, replaces the existing file.
+         * 
+         * - Append - adds content to the existing file.
+         * - Fail - throws a GenericFileOperationException, indicating that
+         * there is already an existing file.
+         * - Ignore - silently ignores the problem and does not override the
+         * existing file, but assumes everything is okay.
+         * - Move - option requires to use the moveExisting option to be
+         * configured as well. The option eagerDeleteTargetFile can be used to
+         * control what to do if an moving the file, and there exists already an
+         * existing file, otherwise causing the move operation to fail. The Move
+         * option will move any existing files, before writing the target file.
+         * - TryRename is only applicable if tempFileName option is in use. This
+         * allows to try renaming the file from the temporary name to the actual
+         * name, without doing any exists check. This check may be faster on
+         * some file systems and especially FTP servers.
          * 
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
@@ -2370,20 +2378,22 @@ public interface FileEndpointBuilderFactory {
         }
         /**
          * What to do if a file already exists with the same name. Override,
-         * which is the default, replaces the existing file. Append - adds
-         * content to the existing file. Fail - throws a
-         * GenericFileOperationException, indicating that there is already an
-         * existing file. Ignore - silently ignores the problem and does not
-         * override the existing file, but assumes everything is okay. Move -
-         * option requires to use the moveExisting option to be configured as
-         * well. The option eagerDeleteTargetFile can be used to control what to
-         * do if an moving the file, and there exists already an existing file,
-         * otherwise causing the move operation to fail. The Move option will
-         * move any existing files, before writing the target file. TryRename is
-         * only applicable if tempFileName option is in use. This allows to try
-         * renaming the file from the temporary name to the actual name, without
-         * doing any exists check. This check may be faster on some file systems
-         * and especially FTP servers.
+         * which is the default, replaces the existing file.
+         * 
+         * - Append - adds content to the existing file.
+         * - Fail - throws a GenericFileOperationException, indicating that
+         * there is already an existing file.
+         * - Ignore - silently ignores the problem and does not override the
+         * existing file, but assumes everything is okay.
+         * - Move - option requires to use the moveExisting option to be
+         * configured as well. The option eagerDeleteTargetFile can be used to
+         * control what to do if an moving the file, and there exists already an
+         * existing file, otherwise causing the move operation to fail. The Move
+         * option will move any existing files, before writing the target file.
+         * - TryRename is only applicable if tempFileName option is in use. This
+         * allows to try renaming the file from the temporary name to the actual
+         * name, without doing any exists check. This check may be faster on
+         * some file systems and especially FTP servers.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
