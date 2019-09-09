@@ -170,8 +170,7 @@
         <docker-java-bundle-version>3.1.5_1</docker-java-bundle-version>
         <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
         <dozer-version>6.4.1</dozer-version>
-        <!-- Avoid upgrading to newer version for the moment: see https://issues.apache.org/jira/browse/CAMEL-13654 -->
-        <drools-version>7.22.0.Final</drools-version>
+        <drools-version>7.26.0.Final</drools-version>
         <dropbox-version>3.1.1</dropbox-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
