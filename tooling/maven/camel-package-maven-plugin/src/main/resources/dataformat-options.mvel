@@ -6,8 +6,8 @@ The @{title} dataformat supports @{dataFormatOptions.size()} options, which are 
 
 @if{!dataFormatOptions.isEmpty()}
 [width="100%",cols="2s,1m,1m,6",options="header"]
-|===
+|===@comment{ Render table cells. If description contains newline, prefix cell with `a`, so the content is rendered with formatting. }
 | Name | Default | Java Type | Description
-@foreach{row : dataFormatOptions}| @{row.name} | @{row.defaultValue} | @{row.shortJavaType} | @{util.escape(row.description)}
+@foreach{row : dataFormatOptions}| @{row.name} | @{row.defaultValue} | @{row.shortJavaType} @{row.description.?contains("\n") ? "a" : ""}| @{util.escape(row.description)}
 @end{}|===
 @end{}
