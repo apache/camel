@@ -765,9 +765,9 @@ JDBC vendor.
 <bean id="repo"
 class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
   <property name="transactionManager" ref="transactionManager"/>
-  <propertyname="repositoryName" value="aggregation"/>
+  <property name="repositoryName" value="aggregation"/>
   <property name="dataSource" ref="dataSource"/>
-  <property name"jdbcOptimisticLockingExceptionMapper" ref="myExceptionMapper"/>
+  <property name="jdbcOptimisticLockingExceptionMapper" ref="myExceptionMapper"/>
 </bean>
 <!-- use the default mapper with extraFQN class names from our JDBC driver -->
 <bean id="myExceptionMapper" class="org.apache.camel.processor.aggregate.jdbc.DefaultJdbcOptimisticLockingExceptionMapper">
@@ -779,6 +779,50 @@ class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
   </property>
 </bean>
 -----
+
+=== Propagation behavior
+
+`JdbcAggregationRepository` uses two distinct _transaction templates_ from Spring-TX. One is read-only
+and one is used for read-write operations.
+
+However, when using `JdbcAggregationRepository` within a route that itself uses `<transacted />` and there's
+common `PlatformTransactionManager` used, there may be a need to configure _propagation behavior_ used by
+transaction templates inside `JdbcAggregationRepository`.
+
+Here's a way to do it:
+[source,xml]
+----
+<bean id="repo"
+class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
+  <property name="propagationBehaviorName" value="PROPAGATION_NESTED" />
+</bean>
+----
+
+Propagation is specified by constants of `org.springframework.transaction.TransactionDefinition` interface,
+so `propagationBehaviorName` is convenient setter that allows to use names of the constants.
+
+=== PostgreSQL case
+
+There's special database that may cause problems with optimistic locking used by `JdbcAggregationRepository`.
+PostgreSQL marks connection as invalid in case of data integrity violation exception (the one with SQLState 23505).
+This makes the connection effectively unusable within nested transaction.
+Details can be found
+https://www.postgresql.org/message-id/200609241203.59292.ralf.wiebicke%40exedio.com[in this document].
+
+`org.apache.camel.processor.aggregate.jdbc.PostgresAggregationRepository` extends `JdbcAggregationRepository` and
+uses special `INSERT .. ON CONFLICT ..` statement to provide optimistic locking behavior.
+
+This statement is (with default aggregation table definition):
+[source,sql]
+----
+INSERT INTO aggregation (id, exchange) values (?, ?) ON CONFLICT DO NOTHING
+----
+
+Details can be found https://www.postgresql.org/docs/9.5/sql-insert.html[in PostgreSQL documentation].
+
+When this clause is used, `java.sql.PreparedStatement.executeUpdate()` call returns `0` instead of throwing
+SQLException with SQLState=23505. Further handling is exactly the same as with generic `JdbcAggregationRepository`,
+but without marking PostgreSQL connection as invalid.
 
 === Camel Sql Starter
 
