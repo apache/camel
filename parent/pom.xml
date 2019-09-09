@@ -500,8 +500,7 @@
         <opentracing-version>0.33.0</opentracing-version>
         <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
         <ops4j-base-version>1.5.0</ops4j-base-version>
-        <!-- Avoid upgrading to newer version for the moment: see https://issues.apache.org/jira/browse/CAMEL-13654 -->
-        <optaplanner-version>7.22.0.Final</optaplanner-version>
+        <optaplanner-version>7.26.0.Final</optaplanner-version>
         <oro-bundle-version>2.0.8_6</oro-bundle-version>
         <os-maven-plugin-version>1.6.0</os-maven-plugin-version>
         <oscache-bundle-version>2.4_5</oscache-bundle-version>
