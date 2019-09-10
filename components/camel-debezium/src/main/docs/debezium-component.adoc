@@ -68,7 +68,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectorType* | *Required* The Debezium connector type that is supported by Camel Debezium component. Allowed values: `mysql`. |  | String
+| *connectorType* | *Required* The Debezium connector type that is supported by Camel Debezium component. |  | String
 |===
 
 
