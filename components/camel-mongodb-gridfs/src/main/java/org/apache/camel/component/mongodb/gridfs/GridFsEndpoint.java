@@ -150,7 +150,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Name of {@link com.mongodb.Mongo} to use.
+     * Name of {@link com.mongodb.MongoClient} to use.
      */
     public void setConnectionBean(String connectionBean) {
         this.connectionBean = connectionBean;
