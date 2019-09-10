@@ -1,5 +1,6 @@
 [[debezium-component]]
 = Debezium Component
+:page-source: components/camel-debezium/src/main/docs/debezium-component.adoc
 
 *Available as of Camel version 3.0*
 
