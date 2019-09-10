@@ -34,7 +34,6 @@ import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
