@@ -56,7 +56,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionBean* | *Required* Name of com.mongodb.Mongo to use. |  | String
+| *connectionBean* | *Required* Name of com.mongodb.MongoClient to use. |  | String
 |===
 
 
