@@ -77,7 +77,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     private String fileAttributeName = "camel-processed";
 
 
-    private Mongo mongoConnection;
+    private MongoClient mongoConnection;
     private DB db;
     private GridFS gridFs;
     private DBCollection filesCollection;
@@ -156,7 +156,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
         this.connectionBean = connectionBean;
     }
 
-    public Mongo getMongoConnection() {
+    public MongoClient getMongoConnection() {
         return mongoConnection;
     }
 
@@ -165,7 +165,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
      *
      * @param mongoConnection the connection to the database
      */
-    public void setMongoConnection(Mongo mongoConnection) {
+    public void setMongoConnection(MongoClient mongoConnection) {
         this.mongoConnection = mongoConnection;
     }
 
