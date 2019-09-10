@@ -104,7 +104,14 @@ public class FileWatchComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new FileWatchEndpoint(uri, remaining, this);
+        FileWatchEndpoint endpoint = new FileWatchEndpoint(uri, remaining, this);
+
+        // CAMEL-13954: Due to the auto generated property configurator, this intends to set it manually instead of relying on the auto generated property configurator
+        if (parameters.containsKey("events")) {
+            endpoint.setEvents(parameters.get("events").toString());
+            parameters.remove("events");
+        }
+
         setProperties(endpoint, parameters);
         return endpoint;
     }
