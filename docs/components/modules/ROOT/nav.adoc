@@ -86,6 +86,7 @@
 * xref:dataformat-component.adoc[Data Format Component]
 * xref:dataset-component.adoc[Dataset Component]
 * xref:dataset-test-component.adoc[DataSet Test Component]
+* xref:debezium-component.adoc[Debezium Component]
 * xref:digitalocean-component.adoc[DigitalOcean Component]
 * xref:direct-component.adoc[Direct Component]
 * xref:direct-vm-component.adoc[Direct VM Component]

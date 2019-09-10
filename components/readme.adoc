@@ -1,7 +1,7 @@
 = Components
 
 // components: START
-Number of Components: 298 in 236 JAR artifacts (0 deprecated)
+Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -216,6 +216,9 @@ Number of Components: 298 in 236 JAR artifacts (0 deprecated)
 
 | link:camel-dataset/src/main/docs/dataset-test-component.adoc[DataSet Test] (camel-dataset) +
 `dataset-test:name` | 1.3 | The dataset-test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
+
+| link:camel-debezium/src/main/docs/debezium-component.adoc[Debezium] (camel-debezium) +
+`debezium:connectorType` | 3.0 | Represents a Debezium endpoint which is used for interacting with Debezium embedded engine.
 
 | link:camel-digitalocean/src/main/docs/digitalocean-component.adoc[DigitalOcean] (camel-digitalocean) +
 `digitalocean:operation` | 2.19 | The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud.
