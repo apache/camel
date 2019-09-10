@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.watch;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -25,7 +24,6 @@ import java.util.UUID;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -36,13 +34,7 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
     private File springTestFile;
     private File springTestCustomHasherFile;
 
-    @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
-
-        createTestFiles();
-    }
-
+    @Before
     public void createTestFiles() throws Exception {
         Files.createDirectories(Paths.get("target/fileWatchSpringTest"));
         Files.createDirectories(Paths.get("target/fileWatchSpringTestCustomHasher"));
@@ -50,19 +42,6 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
         springTestCustomHasherFile = new File("target/fileWatchSpringTestCustomHasher", UUID.randomUUID().toString());
         springTestFile.createNewFile();
         springTestCustomHasherFile.createNewFile();
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-        cleanTestFiles();
-    }
-
-    public void cleanTestFiles() throws IOException {
-        Files.delete(springTestFile.toPath());
-        Files.delete(springTestCustomHasherFile.toPath());
     }
 
     @Test
@@ -73,7 +52,7 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
         Thread.sleep(50);
         Files.write(springTestFile.toPath(), "modification 2".getBytes(), StandardOpenOption.SYNC);
         MockEndpoint mock = getMockEndpoint("mock:springTest");
-        mock.setExpectedCount(1); // The same with testCustomHasher, that second MODIFY event is discarded
+        mock.setExpectedCount(2); // two MODIFY events
         mock.setResultWaitTime(1000);
         mock.assertIsSatisfied();
 
