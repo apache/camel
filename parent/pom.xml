@@ -449,7 +449,7 @@
         <maven-surefire-report-plugin-version>2.22.1</maven-surefire-report-plugin-version>
         <maven-war-plugin-version>3.2.3</maven-war-plugin-version>
         <metrics-version>3.2.6</metrics-version>
-        <micrometer-version>1.2.0</micrometer-version>
+        <micrometer-version>1.2.1</micrometer-version>
         <microprofile-config-version>1.3</microprofile-config-version>
         <microprofile-metrics-version>2.0.0</microprofile-metrics-version>
         <milo-version>0.2.5</milo-version>
