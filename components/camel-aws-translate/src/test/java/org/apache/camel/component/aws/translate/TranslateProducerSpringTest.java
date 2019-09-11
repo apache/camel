@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws.translate;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

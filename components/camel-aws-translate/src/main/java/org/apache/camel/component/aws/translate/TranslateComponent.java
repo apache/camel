@@ -82,7 +82,7 @@ public class TranslateComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS EKS default configuration
+     * The AWS Translate default configuration
      */
     public void setConfiguration(TranslateConfiguration configuration) {
         this.configuration = configuration;
@@ -115,7 +115,7 @@ public class TranslateComponent extends DefaultComponent {
     }
 
     /**
-     * The region in which EKS client needs to work
+     * The region in which Translate client needs to work
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
