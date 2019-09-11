@@ -152,8 +152,7 @@ public class ComponentOptionModel {
     }
 
     public String getShortJavaType() {
-        // TODO: use watermark in the others
-        return getShortJavaType(40);
+        return StringHelper.getClassShortName(javaType);
     }
 
     public String getShortJavaType(int watermark) {
