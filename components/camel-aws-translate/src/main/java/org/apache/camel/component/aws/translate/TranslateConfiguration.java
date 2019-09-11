@@ -37,8 +37,8 @@ public class TranslateConfiguration implements Cloneable {
     @UriParam(label = "producer", secret = true)
     private String secretKey;
     @UriParam(label = "producer")
-    @Metadata(required = true)
-    private TranslateOperations operation;
+    @Metadata(required = true, defaultValue = "translateText")
+    private TranslateOperations operation = TranslateOperations.translateText;
     @UriParam(label = "producer")
     private String proxyHost;
     @UriParam(label = "producer")
