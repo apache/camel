@@ -161,7 +161,7 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
 
         @Override
         protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-            if (size() >= maximumCacheSize) {
+            if (size() > maximumCacheSize) {
                 V value = eldest.getValue();
                 evict.accept(value);
                 return true;
