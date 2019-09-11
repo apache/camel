@@ -235,3 +235,4 @@
  ** xref:faq/why-do-camel-throw-so-many-noclassdeffoundexception-on-startup.adoc[Why do Camel throw so many NoClassDefFoundException on startup?]
  ** xref:faq/why-does-camel-use-too-many-threads-with-producertemplate.adoc[Why does Camel use too many threads with ProducerTemplate?]
  ** xref:faq/why-does-maven-not-download-dependencies.adoc[Why does maven not download dependencies?]
+* xref:camel-3-migration-guide.adoc[Camel 3 Migration Guide]
