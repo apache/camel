@@ -43,7 +43,7 @@ public class ScrapeRouteBuilder extends RouteBuilder {
         from("netty-http:http://0.0.0.0:8088/metrics")
                 .routeId("netty-http:scrape")
                 .log(LoggingLevel.INFO, "Scraping metrics")
-                .transform().method(prometheusMeterRegistry, "scrape");
+                .transform().method(prometheusMeterRegistry, "scrape()");
 
     }
 }
