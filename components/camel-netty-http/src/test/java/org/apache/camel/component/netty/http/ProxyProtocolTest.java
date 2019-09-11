@@ -31,6 +31,8 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import io.netty.buffer.ByteBuf;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -131,14 +133,17 @@ public class ProxyProtocolTest {
     @Parameters
     public static Iterable<Object[]> routeOptions() {
         final Function<RouteBuilder, RouteDefinition> single = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
+            .process(ProxyProtocolTest::uppercase)
             .to("netty-http:http://localhost:" + ORIGIN_PORT)
             .process(ProxyProtocolTest::uppercase);
 
         final Function<RouteBuilder, RouteDefinition> dynamicPath = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
+            .process(ProxyProtocolTest::uppercase)
             .toD("netty-http:http://localhost:" + ORIGIN_PORT + "/${headers." + Exchange.HTTP_PATH + "}")
             .process(ProxyProtocolTest::uppercase);
 
         final Function<RouteBuilder, RouteDefinition> dynamicUrl = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
+            .process(ProxyProtocolTest::uppercase)
             .toD("netty-http:"
                 + "${headers." + Exchange.HTTP_SCHEME + "}://"
                 + "${headers." + Exchange.HTTP_HOST + "}:"
@@ -157,6 +162,12 @@ public class ProxyProtocolTest {
 
         final String q = message.getHeader("q", String.class);
         final String body = message.getBody(String.class);
+
+        if ("text/plain".equals(message.getHeader(Exchange.CONTENT_TYPE))) {
+            // when we send text/plain message we're using the route with
+            // uppercase processor before the netty-http producer
+            assertThat(body).isUpperCase();
+        }
 
         if (ObjectHelper.isEmpty(q) && ObjectHelper.isEmpty(body)) {
             message.setBody("origin server");
@@ -201,8 +212,11 @@ public class ProxyProtocolTest {
 
     private static void uppercase(final Exchange exchange) {
         final Message message = exchange.getMessage();
-        final String body = message.getBody(String.class);
+        final ByteBuf body = message.getBody(ByteBuf.class);
 
-        message.setBody(body.toUpperCase(Locale.US));
+        if (body.capacity() != 0) {
+            // only if we received a payload we'll uppercase it
+            message.setBody(body.toString(StandardCharsets.US_ASCII).toUpperCase(Locale.US));
+        }
     }
 }
