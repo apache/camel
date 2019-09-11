@@ -25,26 +25,11 @@
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="direct:listClusters"/>
-            <to uri="aws-eks://test?eksClient=#amazonEksClient&amp;operation=listClusters"/>
-            <to uri="mock:result"/>
-        </route>
-        <route>
-            <from uri="direct:createCluster"/>
-            <to uri="aws-eks://test?eksClient=#amazonEksClient&amp;operation=createCluster"/>
-            <to uri="mock:result"/>
-        </route>
-        <route>
-            <from uri="direct:deleteCluster"/>
-            <to uri="aws-eks://test?eksClient=#amazonEksClient&amp;operation=deleteCluster"/>
-            <to uri="mock:result"/>
-        </route>
-        <route>
-            <from uri="direct:describeCluster"/>
-            <to uri="aws-eks://test?eksClient=#amazonEksClient&amp;operation=describeCluster"/>
+            <from uri="direct:translateText"/>
+            <to uri="aws-translate://test?translateClient=#amazonTranslateClient&amp;operation=translateText"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>
 
-    <bean id="amazonEksClient" class="org.apache.camel.component.aws.eks.AmazonEKSClientMock"/>
+    <bean id="amazonTranslateClient" class="org.apache.camel.component.aws.translate.AmazonAWSTranslateMock"/>
 </beans>
