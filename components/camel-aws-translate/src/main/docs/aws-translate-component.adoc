@@ -90,7 +90,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-aws-eks-starter</artifactId>
+  <artifactId>camel-aws-translate-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -104,18 +104,18 @@ The component supports 12 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.aws-eks.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-eks.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.aws-eks.configuration.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-eks.configuration.eks-client* | To use a existing configured AWS EKS as client |  | AmazonEKS
-| *camel.component.aws-eks.configuration.operation* | The operation to perform |  | EKSOperations
-| *camel.component.aws-eks.configuration.proxy-host* | To define a proxy host when instantiating the EKS client |  | String
-| *camel.component.aws-eks.configuration.proxy-port* | To define a proxy port when instantiating the EKS client |  | Integer
-| *camel.component.aws-eks.configuration.region* | The region in which EKS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
-| *camel.component.aws-eks.configuration.secret-key* | Amazon AWS Secret Key |  | String
-| *camel.component.aws-eks.enabled* | Whether to enable auto configuration of the aws-eks component. This is enabled by default. |  | Boolean
-| *camel.component.aws-eks.region* | The region in which EKS client needs to work |  | String
-| *camel.component.aws-eks.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-translate.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-translate.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.aws-translate.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-translate.configuration.operation* | The operation to perform |  | TranslateOperations
+| *camel.component.aws-translate.configuration.proxy-host* | To define a proxy host when instantiating the Translate client |  | String
+| *camel.component.aws-translate.configuration.proxy-port* | To define a proxy port when instantiating the Translate client |  | Integer
+| *camel.component.aws-translate.configuration.region* | The region in which Translate client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *camel.component.aws-translate.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-translate.configuration.translate-client* | To use a existing configured AWS Translate as client |  | AmazonTranslate
+| *camel.component.aws-translate.enabled* | Whether to enable auto configuration of the aws-translate component. This is enabled by default. |  | Boolean
+| *camel.component.aws-translate.region* | The region in which Translate client needs to work |  | String
+| *camel.component.aws-translate.secret-key* | Amazon AWS Secret Key |  | String
 |===
 // spring-boot-auto-configure options: END
 
