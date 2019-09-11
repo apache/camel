@@ -530,22 +530,15 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             httpMethod = HttpMethod.valueOf(headerMethod);
         }
 
-        final Exchange exchange = message.getExchange();
-        final Object proxyRequest;
-        if (exchange != null) {
-            proxyRequest = exchange.getProperty(NettyHttpConstants.PROXY_REQUEST);
-        } else {
-            proxyRequest = null;
-        }
-
         HttpRequest request = null;
         if (message instanceof NettyHttpMessage) {
             // if the request is already given we should set the values
             // from message headers and pass on the same request
             final FullHttpRequest givenRequest = ((NettyHttpMessage) message).getHttpRequest();
             // we need to make sure that the givenRequest is the original
-            // request received by the proxy
-            if (givenRequest != null && proxyRequest == givenRequest) {
+            // request received by the proxy, only when the body wasn't
+            // modified by a processor on route
+            if (givenRequest != null && givenRequest.content() == body) {
                 request = givenRequest
                         .setProtocolVersion(protocol)
                         .setMethod(httpMethod)

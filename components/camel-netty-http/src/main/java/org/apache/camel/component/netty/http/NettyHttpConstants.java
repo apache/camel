@@ -28,7 +28,6 @@ public final class NettyHttpConstants {
     @Deprecated
     public static final String HTTP_RESPONSE_TEXT = Exchange.HTTP_RESPONSE_TEXT;
     public static final String HTTP_AUTHENTICATION = "CamelHttpAuthentication";
-    public static final String PROXY_REQUEST = "NettyHttpProxyRequest";
 
     private NettyHttpConstants() {
     }
