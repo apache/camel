@@ -79,7 +79,7 @@
     <avro-version>1.8.2</avro-version>
     <avro-bundle-version>1.8.2_1</avro-bundle-version>
     <avro-ipc-bundle-version>1.8.2_1</avro-ipc-bundle-version>
-    <awaitility-version>3.1.5</awaitility-version>
+    <awaitility-version>4.0.1</awaitility-version>
     <aws-java-sdk-bundle-version>1.11.461_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.11.461</aws-java-sdk-version>
     <aws-xray-version>2.1.0</aws-xray-version>
