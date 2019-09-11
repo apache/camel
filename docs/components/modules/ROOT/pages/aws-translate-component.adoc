@@ -1,0 +1,175 @@
+[[aws-translate-component]]
+= AWS Translate Component
+:page-source: components/camel-aws-translate/src/main/docs/aws-translate-component.adoc
+
+*Available as of Camel version 3.0*
+
+The Translate component supports translate a text in multiple languages.
+https://aws.amazon.com/translate/[AWS Translate] clusters instances.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Translate. More information is available at
+https://aws.amazon.com/translate/[Amazon Translate].
+
+== URI Format
+
+[source,java]
+-------------------------
+aws-translate://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+== URI Options
+
+
+// component options: START
+The AWS Translate component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS Translate default configuration |  | TranslateConfiguration
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *region* (producer) | The region in which Translate client needs to work |  | String
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS Translate endpoint is configured using URI syntax:
+
+----
+aws-translate:label
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *label* | *Required* Logical name |  | String
+|===
+
+
+=== Query Parameters (10 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | *Required* The operation to perform |  | TranslateOperations
+| *proxyHost* (producer) | To define a proxy host when instantiating the Translate client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the Translate client |  | Integer
+| *region* (producer) | The region in which Translate client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *translateClient* (producer) | To use a existing configured AWS Translate as client |  | AmazonTranslate
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-aws-translate-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 12 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-translate.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-translate.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.aws-translate.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-translate.configuration.operation* | The operation to perform |  | TranslateOperations
+| *camel.component.aws-translate.configuration.proxy-host* | To define a proxy host when instantiating the Translate client |  | String
+| *camel.component.aws-translate.configuration.proxy-port* | To define a proxy port when instantiating the Translate client |  | Integer
+| *camel.component.aws-translate.configuration.region* | The region in which Translate client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
+| *camel.component.aws-translate.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-translate.configuration.translate-client* | To use a existing configured AWS Translate as client |  | AmazonTranslate
+| *camel.component.aws-translate.enabled* | Whether to enable auto configuration of the aws-translate component. This is enabled by default. |  | Boolean
+| *camel.component.aws-translate.region* | The region in which Translate client needs to work |  | String
+| *camel.component.aws-translate.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+Required EKS component options
+
+You have to provide the amazonTranslateClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/translate/[Amazon Translate] service.
+
+== Usage
+
+=== Message headers evaluated by the Translate producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsTranslateSourceLanguage` |`String` |The text source language
+
+|`CamelAwsTranslateTargetLanguage` |`String` |The text target language
+
+|`CamelAwsTranslateOperation` |`String` |The operation to perform
+|=======================================================================
+
+=== Translate Producer operations
+
+Camel-AWS Translate component provides the following operation on the producer side:
+
+- translateText
+
+== Automatic detection of AmazonTranslate client in registry
+
+The component is capable of detecting the presence of an AmazonTranslate bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
+This may be really useful for smarter configuration of the endpoint.
+
+Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws-translate</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
+
