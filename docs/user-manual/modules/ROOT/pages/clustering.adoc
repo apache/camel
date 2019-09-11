@@ -52,7 +52,7 @@ Out of the box camel provides the following implementations:
 |zookeeper  |camel-zookeeper  | org.apache.camel.component.zookeeper.cluster.ZooKeeperClusterService
 |====
 
-On Spring/Bluepring all the _Cluster Service_ instances are automatically added to the camel context.
+On Spring/Blueprint all the _Cluster Service_ instances are automatically added to the camel context.
 
 Configuration examples:
 
