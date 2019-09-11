@@ -1,7 +1,7 @@
 = Components
 
 // components: START
-Number of Components: 299 in 237 JAR artifacts (0 deprecated)
+Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -123,6 +123,9 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | link:camel-aws-sdb/src/main/docs/aws-sdb-component.adoc[AWS SimpleDB] (camel-aws-sdb) +
 `aws-sdb:domainName` | 2.9 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
+
+| link:camel-aws-translate/src/main/docs/aws-translate-component.adoc[AWS Translate] (camel-aws-translate) +
+`aws-translate:label` | 3.0 | The aws-kms is used for managing Amazon Translate
 
 | link:camel-azure/src/main/docs/azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) +
 `azure-blob:containerOrBlobUri` | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
