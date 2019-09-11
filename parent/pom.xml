@@ -252,7 +252,7 @@
         <hadoop2-bundle-version>2.7.2_1</hadoop2-bundle-version>
         <hadoop2-version>2.7.4</hadoop2-version>
         <hadoop2-protobuf-version>2.5.0</hadoop2-protobuf-version>
-        <hamcrest-version>2.0.0.0</hamcrest-version>
+        <hamcrest-version>2.1</hamcrest-version>
         <hapi-version>2.3</hapi-version>
         <hapi-fhir-version>3.7.0</hapi-fhir-version>
         <hawtbuf-version>1.11</hawtbuf-version>
@@ -4843,7 +4843,7 @@
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
-                <artifactId>java-hamcrest</artifactId>
+                <artifactId>hamcrest</artifactId>
                 <version>${hamcrest-version}</version>
             </dependency>
             <dependency>
