@@ -16,4 +16,4 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.aws.eks.springboot.TranslateComponentAutoConfiguration
+org.apache.camel.component.aws.translate.springboot.TranslateComponentAutoConfiguration
