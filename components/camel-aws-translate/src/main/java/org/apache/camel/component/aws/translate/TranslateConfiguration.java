@@ -95,7 +95,7 @@ public class TranslateConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy host when instantiating the EKS client
+     * To define a proxy host when instantiating the Translate client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -106,7 +106,7 @@ public class TranslateConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the EKS client
+     * To define a proxy port when instantiating the Translate client
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -117,7 +117,7 @@ public class TranslateConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which EKS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
+     * The region in which Translate client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
      * You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {

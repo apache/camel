@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws.translate;
 
 /**
- * Constants used in Camel AWS EKS module
+ * Constants used in Camel AWS Translate module
  */
 public interface TranslateConstants {
     String SOURCE_LANGUAGE                = "CamelAwsTranslateSourceLanguage";

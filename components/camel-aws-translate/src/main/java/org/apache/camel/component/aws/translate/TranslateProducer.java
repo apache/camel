@@ -29,12 +29,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * A Producer which sends messages to the Amazon EKS Service
- * <a href="http://aws.amazon.com/eks/">AWS EKS</a>
+ * A Producer which sends messages to the Amazon Translate Service
+ * <a href="http://aws.amazon.com/translate/">AWS Translate</a>
  */
 public class TranslateProducer extends DefaultProducer {
 
-    private transient String eksProducerToString;
+    private transient String translateProducerToString;
 
     public TranslateProducer(Endpoint endpoint) {
         super(endpoint);
@@ -65,10 +65,10 @@ public class TranslateProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (eksProducerToString == null) {
-            eksProducerToString = "EKSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (translateProducerToString == null) {
+            translateProducerToString = "TranslateProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
-        return eksProducerToString;
+        return translateProducerToString;
     }
 
     @Override
