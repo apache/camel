@@ -322,6 +322,7 @@
         <include>org.apache.camel:camel-test-blueprint</include>
         <include>org.apache.camel:camel-test-cdi</include>
         <include>org.apache.camel:camel-test-junit5</include>
+        <include>org.apache.camel:camel-test-spring-junit5</include>
         <include>org.apache.camel:camel-test-karaf</include>
         <include>org.apache.camel:camel-test-spring</include>
         <include>org.apache.camel:camel-testcontainers</include>
