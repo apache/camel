@@ -30,9 +30,11 @@ public class HttpMessage extends DefaultMessage {
     private final HttpServletRequest request;
     private final HttpServletResponse response;
     private final HttpCommonEndpoint endpoint;
+    private boolean requestRead;
 
     public HttpMessage(Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) {
         super(exchange);
+        this.requestRead = false;
         this.endpoint = endpoint;
 
         this.request = request;
@@ -52,11 +54,13 @@ public class HttpMessage extends DefaultMessage {
         endpoint.getHttpBinding().readRequest(request, this);
     }
 
-    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange, HttpCommonEndpoint endpoint) {
+    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange, HttpCommonEndpoint endpoint,
+                        boolean requestRead) {
         super(exchange);
         this.request = request;
         this.response = response;
         this.endpoint = endpoint;
+        this.requestRead = requestRead;
     }
 
     public HttpServletRequest getRequest() {
@@ -69,16 +73,23 @@ public class HttpMessage extends DefaultMessage {
 
     @Override
     protected Object createBody() {
+        // HTTP request may be read only once
+        if (requestRead) {
+            return null;
+        }
+
         try {
             return endpoint.getHttpBinding().parseBody(this);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
+        } finally {
+            requestRead = true;
         }
     }
 
     @Override
     public HttpMessage newInstance() {
-        return new HttpMessage(request, response, getExchange(), endpoint);
+        return new HttpMessage(request, response, getExchange(), endpoint, requestRead);
     }
 
     @Override
