@@ -9,9 +9,9 @@ Camel empowers you to define routing and mediation rules in a variety of
 domain-specific languages, including a Java-based xref:dsl.adoc[Fluent
 API], xref:spring.adoc[Spring] or
 xref:using-osgi-blueprint-with-camel.adoc[Blueprint]
-xref:xml-configuration.adoc[XML Configuration] files, and a
-xref:scala-dsl.adoc[Scala DSL]. This means you get smart completion of
-routing rules in your IDE, whether in a Java, Scala or XML editor.
+xref:xml-configuration.adoc[XML Configuration] files.
+This means you get smart completion of
+routing rules in your IDE, whether in a Java or XML editor.
 
 Apache Camel uses xref:uris.adoc[URIs] to work directly with any kind of
 xref:transport.adoc[Transport] or messaging model such as

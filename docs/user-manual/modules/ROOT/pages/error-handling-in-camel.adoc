@@ -98,7 +98,7 @@ Camel supports 2 scopes that is determined by the DSL in use:
 |DSL |Scope 1 |Scope 2 |Note
 |XML DSL |CamelContext |route |Scope 2 takes precedence over scope 1
 
-|Java/Scala DSL |RouteBuilder |route |Scope 2 takes precedence over
+|Java DSL |RouteBuilder |route |Scope 2 takes precedence over
 scope 1
 |=======================================================================
 
