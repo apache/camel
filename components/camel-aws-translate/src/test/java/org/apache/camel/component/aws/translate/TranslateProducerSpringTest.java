@@ -37,8 +37,8 @@ public class TranslateProducerSpringTest extends CamelSpringTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(TranslateConstants.OPERATION, TranslateOperations.translateText);
-                exchange.getIn().setHeader(TranslateConstants.SOURCE_LANGUAGE, "it");
-                exchange.getIn().setHeader(TranslateConstants.TARGET_LANGUAGE, "en");
+                exchange.getIn().setHeader(TranslateConstants.SOURCE_LANGUAGE, TranslateLanguageEnum.ITALIAN);
+                exchange.getIn().setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.ENGLISH);
                 exchange.getIn().setBody("ciao");
             }
         });
