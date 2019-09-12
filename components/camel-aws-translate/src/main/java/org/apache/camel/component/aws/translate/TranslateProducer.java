@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.aws.translate;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.translate.AmazonTranslate;
+import com.amazonaws.services.translate.model.TranslateTextRequest;
+import com.amazonaws.services.translate.model.TranslateTextResult;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.translate.AmazonTranslate;
-import com.amazonaws.services.translate.model.TranslateTextRequest;
-import com.amazonaws.services.translate.model.TranslateTextResult;
 
 /**
  * A Producer which sends messages to the Amazon Translate Service
