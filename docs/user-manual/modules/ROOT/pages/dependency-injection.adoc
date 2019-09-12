@@ -8,9 +8,8 @@ popular Dependency Injection libraries available at the time of writing
 are
 
 * Spring
-* Guice
 * CDI
 
 Camel is developed such that any Dependency Injection framework can be
 used easily - though we've tried hard to optimise Camel for both
-Spring,CDI and Guice
+Spring and CDI.

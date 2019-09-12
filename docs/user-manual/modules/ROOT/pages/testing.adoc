@@ -36,10 +36,9 @@ The following mechanisms are supported
 |Name |Component |Description
 |Camel Test |camel-test |Is a standalone Java
 library letting you easily create Camel test cases using a single Java
-class for all your configuration and routing without using CDI,
-Spring or Guice for
+class for all your configuration and routing without using CDI or Spring for
 Dependency Injection which does not
-require an in-depth knowledge of CDI, Spring + Spring Test or Guice.
+require an in-depth knowledge of CDI or Spring + Spring Test.
 Supports JUnit 3.x (deprecated) and JUnit 4.x based tests.
 
 |CDI Testing |camel-test-cdi | Provides a JUnit 4
@@ -85,7 +84,7 @@ include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/
 ----
 
 Notice how it derives from the Camel helper class `CamelTestSupport` but
-has no CDI, Spring or Guice dependency injection configuration but instead
+has no CDI or Spring dependency injection configuration but instead
 overrides the `createRouteBuilder()` method.
 
 [[Testing-CdiTestExample]]
