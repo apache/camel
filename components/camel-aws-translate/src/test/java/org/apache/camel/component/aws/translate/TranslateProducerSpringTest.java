@@ -25,10 +25,10 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class TranslateProducerSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void translateTextTest() throws Exception {
 
@@ -44,12 +44,12 @@ public class TranslateProducerSpringTest extends CamelSpringTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         String resultGet = exchange.getIn().getBody(String.class);
         assertEquals("Hello", resultGet);
 
     }
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/aws/translate/TranslateComponentSpringTest-context.xml");

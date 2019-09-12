@@ -44,7 +44,7 @@ public class TranslateProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
         case translateText:
-        	translateText(getEndpoint().getTranslateClient(), exchange);
+            translateText(getEndpoint().getTranslateClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -81,7 +81,7 @@ public class TranslateProducer extends DefaultProducer {
         String source = exchange.getIn().getHeader(TranslateConstants.SOURCE_LANGUAGE, String.class);
         String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
         if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-        	 throw new IllegalArgumentException("Source and target language must be specified");
+            throw new IllegalArgumentException("Source and target language must be specified");
         }
         request.setSourceLanguageCode(source);
         request.setTargetLanguageCode(target);
@@ -96,7 +96,7 @@ public class TranslateProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result.getTranslatedText());
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
             Message out = exchange.getOut();

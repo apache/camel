@@ -21,7 +21,7 @@ import com.amazonaws.services.translate.model.TranslateTextRequest;
 import com.amazonaws.services.translate.model.TranslateTextResult;
 
 public class AmazonAWSTranslateMock extends AbstractAmazonTranslate {
-	
+
     @Override
     public TranslateTextResult translateText(TranslateTextRequest request) {
         TranslateTextResult result = new TranslateTextResult();

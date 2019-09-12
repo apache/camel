@@ -26,13 +26,13 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class TranslateProducerTest extends CamelTestSupport {
-    
+
     @BindToRegistry("amazonTranslateClient")
     AmazonAWSTranslateMock clientMock = new AmazonAWSTranslateMock();
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void translateTextTest() throws Exception {
 
@@ -48,20 +48,18 @@ public class TranslateProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         String resultGet = exchange.getIn().getBody(String.class);
         assertEquals("Hello", resultGet);
 
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:translateText")
-                    .to("aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText")
-                    .to("mock:result");
+                from("direct:translateText").to("aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText").to("mock:result");
             }
         };
     }
