@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.translate.TranslateConstants;
+import org.apache.camel.component.aws.translate.TranslateLanguageEnum;
 import org.apache.camel.component.aws.translate.TranslateOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -41,8 +42,8 @@ public class TranslateProducerIntegrationTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(TranslateConstants.OPERATION, TranslateOperations.translateText);
-                exchange.getIn().setHeader(TranslateConstants.SOURCE_LANGUAGE, "it");
-                exchange.getIn().setHeader(TranslateConstants.TARGET_LANGUAGE, "de");
+                exchange.getIn().setHeader(TranslateConstants.SOURCE_LANGUAGE, TranslateLanguageEnum.ITALIAN);
+                exchange.getIn().setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.GERMAN);
                 exchange.getIn().setBody("Ciao Signorina");
             }
         });
