@@ -41,9 +41,6 @@ creating a new Maven project for Camel xref:data-format.adoc[Data
 Format]s. Use this if there is a data format missing in Camel that you
 want to create yourself.
 
-|camel-archetype-groovy |*Camel 2.11:* This archetype is used to create
-a new Maven project for Camel using Groovy DSL.
-
 |camel-archetype-java |This archetype is used to create a new Maven
 project for Camel routes using Java DSL.
 
