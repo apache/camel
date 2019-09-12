@@ -127,7 +127,6 @@ camel routes without them knowing
 * xref:using-osgi-blueprint-with-camel.adoc[Blueprint DSL]
 * xref:rest-dsl.adoc[Rest DSL]
 * xref:groovy-dsl.adoc[Groovy DSL]
-* xref:scala-dsl.adoc[Scala DSL]
 * xref:bean-integration.adoc[Annotation DSL]
 * Kotlin DSL
 

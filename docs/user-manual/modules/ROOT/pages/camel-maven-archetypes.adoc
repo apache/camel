@@ -24,13 +24,6 @@ there is a component missing in Camel that you want to create yourself.
 new Maven project for Camel routes in the Java Container using CDI to
 configure components, endpoints and beans
 
-|camel-archetype-[line-through]*component-scala*
-|[line-through]*Deprecated. Camel 2.10:* This archetype is used for
-creating a new Maven project for Camel xref:components::index.adoc[Components]
-using Scala. Use this if there is a component missing in Camel that you
-want to create yourself. Removed from Camel 2.16
-onwards.
-
 |[line-through]*camel-archetype-cxf-code-first-blueprint*
 |[line-through]*Deprecated. Camel 2.12.2:* This archetype is used
 creating a new Maven project for Camel with xref:components::cxf-component.adoc[CXF] exposing
@@ -53,10 +46,6 @@ a new Maven project for Camel using Groovy DSL.
 
 |camel-archetype-java |This archetype is used to create a new Maven
 project for Camel routes using Java DSL.
-
-|camel-archetype-scala |This archetype is used to create a new Maven
-projects for building Camel routes in the xref:scala-dsl.adoc[Scala
-DSL].
 
 |camel-archetype-scr |This archetype is used to create a new Maven
 project for building Camel routes using OSGI SCR Declarative Services

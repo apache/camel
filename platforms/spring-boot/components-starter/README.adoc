@@ -20,7 +20,6 @@ The following components do not have a starter because of compatibility issues:
 * **camel-eventadmin** (intended for OSGi only)
 * **camel-ibatis** (`camel-mybatis-starter` is included)
 * **camel-paxlogging** (intended for OSGi only)
-* **camel-scala**
 * **camel-scr** (intended for OSGi only)
 * **camel-spark-rest**
 * **camel-swagger** (`camel-swagger-java-starter` is included)

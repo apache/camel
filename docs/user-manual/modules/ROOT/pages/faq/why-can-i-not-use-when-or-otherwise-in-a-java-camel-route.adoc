@@ -56,7 +56,7 @@ from("direct:start")
 But the code will still not compile. The reason is we have stretched how
 far we can take the good old Java language in terms of
 xref:dsl.adoc[DSL]. In a more modern language such as
-xref:scala-dsl.adoc[Scala] or xref:groovy-dsl.adoc[Groovy] you would be able
+Scala or xref:groovy-dsl.adoc[Groovy] you would be able
 to let it be stack based, so the `.end()` will pop the last type of the
 stack, and you would return back to the scope of the
 xref:content-based-router-eip.adoc[Content Based Router]. However that's not

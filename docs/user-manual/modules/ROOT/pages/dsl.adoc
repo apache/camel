@@ -15,8 +15,6 @@ DSL in OSGi Blueprint XML files
 REST style in either Java or XML.
 * xref:groovy-dsl.adoc[Groovy DSL] - A Groovy based DSL using Groovy
 programming language
-* xref:scala-dsl.adoc[Scala DSL] - A Scala based DSL using Scala
-programming language
 * xref:bean-integration.adoc[Annotation DSL] - Use annotations in Java
 beans.
 * https://github.com/koolio/kool/tree/master/kool-camel[Kotlin DSL] -
