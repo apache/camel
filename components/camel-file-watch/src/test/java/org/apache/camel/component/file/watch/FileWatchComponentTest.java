@@ -37,6 +37,7 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         MockEndpoint watchModify = getMockEndpoint("mock:watchModify");
         MockEndpoint watchDelete = getMockEndpoint("mock:watchDelete");
         MockEndpoint watchDeleteOrCreate = getMockEndpoint("mock:watchDeleteOrCreate");
+        MockEndpoint watchDeleteOrModify = getMockEndpoint("mock:watchDeleteOrModify");
 
         File newFile = createFile(testPath(), UUID.randomUUID().toString());
 
@@ -52,13 +53,17 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         watchDeleteOrCreate.setAssertPeriod(1000);
         watchDeleteOrCreate.assertIsSatisfied();
 
-        watchModify.expectedMessageCount(1);
+        watchModify.expectedMessageCount(0);
         watchModify.setAssertPeriod(1000);
         watchModify.assertIsSatisfied();
 
-        watchDelete.expectedMessageCount(1);
+        watchDelete.expectedMessageCount(0);
         watchDelete.setAssertPeriod(1000);
         watchDelete.assertIsSatisfied();
+
+        watchDeleteOrModify.expectedMessageCount(0);
+        watchDeleteOrModify.setAssertPeriod(1000);
+        watchDeleteOrModify.assertIsSatisfied();
 
         assertFileEvent(newFile.getName(), FileEventEnum.CREATE, watchAll.getExchanges().get(0));
         assertFileEvent(newFile.getName(), FileEventEnum.CREATE, watchCreate.getExchanges().get(0));
@@ -167,6 +172,9 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
 
                 from("file-watch://" + testPath() + "?events=DELETE,CREATE")
                     .to("mock:watchDeleteOrCreate");
+
+                from("file-watch://" + testPath() + "?events=DELETE,MODIFY")
+                    .to("mock:watchDeleteOrModify");
             }
         };
     }

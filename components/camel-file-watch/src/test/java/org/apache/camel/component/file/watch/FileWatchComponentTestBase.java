@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import org.junit.rules.TemporaryFolder;
 public class FileWatchComponentTestBase extends CamelTestSupport {
 
     @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    public TemporaryFolder folder = new TemporaryFolder(Paths.get("target").toAbsolutePath().toFile());
 
     protected List<Path> testFiles = new ArrayList<>();
 
