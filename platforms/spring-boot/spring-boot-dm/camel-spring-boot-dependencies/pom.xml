@@ -4219,11 +4219,6 @@
         <version>2.3.12</version>
       </dependency>
       <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>6.14.2</version>
-      </dependency>
-      <dependency>
         <groupId>rhino</groupId>
         <artifactId>js</artifactId>
         <version>1.7R2</version>
