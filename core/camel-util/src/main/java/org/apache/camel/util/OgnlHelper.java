@@ -280,7 +280,7 @@ public final class OgnlHelper {
         }
 
         String last = methods.isEmpty() ? null : methods.get(methods.size() - 1);
-        if (parenthesisBracketCnt>0 && last != null) {
+        if (parenthesisBracketCnt > 0 && last != null) {
             // there is an unclosed parenthesis bracket on the last method, so it should end with a parenthesis
             if (last.contains("(") && !last.endsWith(")")) {
                 throw new IllegalArgumentException("Method should end with parenthesis, was " + last);
