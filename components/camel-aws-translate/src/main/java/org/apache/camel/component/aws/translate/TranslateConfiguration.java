@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.aws.translate;
 
+import com.amazonaws.services.translate.AmazonTranslate;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
-import com.amazonaws.services.translate.AmazonTranslate;
 
 @UriParams
 public class TranslateConfiguration implements Cloneable {
@@ -117,13 +117,15 @@ public class TranslateConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which Translate client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which Translate client needs to work. When using this
+     * parameter, the configuration will expect the capitalized name of the
+     * region (for example AP_EAST_1) You'll need to use the name
+     * Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     // *************************************************
     //
     // *************************************************

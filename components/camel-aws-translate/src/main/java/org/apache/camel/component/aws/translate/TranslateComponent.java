@@ -19,14 +19,14 @@ package org.apache.camel.component.aws.translate;
 import java.util.Map;
 import java.util.Set;
 
+import com.amazonaws.services.translate.AmazonTranslate;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
-
-import com.amazonaws.services.translate.AmazonTranslate;
 
 /**
  * For working with Amazon Translate.
@@ -40,16 +40,16 @@ public class TranslateComponent extends DefaultComponent {
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private TranslateConfiguration configuration;
-    
+
     public TranslateComponent() {
         this(null);
     }
-    
+
     public TranslateComponent(CamelContext context) {
         super(context);
-        
+
         this.configuration = new TranslateConfiguration();
         registerExtension(new TranslateComponentVerifierExtension());
     }
@@ -72,11 +72,11 @@ public class TranslateComponent extends DefaultComponent {
         if (configuration.getTranslateClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon translate client or accessKey and secretKey must be specified");
         }
-        
+
         TranslateEndpoint endpoint = new TranslateEndpoint(uri, this, configuration);
         return endpoint;
     }
-    
+
     public TranslateConfiguration getConfiguration() {
         return configuration;
     }
@@ -109,7 +109,7 @@ public class TranslateComponent extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         configuration.setSecretKey(secretKey);
     }
-    
+
     public String getRegion() {
         return configuration.getRegion();
     }

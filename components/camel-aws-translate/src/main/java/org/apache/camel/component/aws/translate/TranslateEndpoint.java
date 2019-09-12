@@ -66,12 +66,12 @@ public class TranslateEndpoint extends ScheduledPollEndpoint {
 
         translateClient = configuration.getTranslateClient() != null ? configuration.getTranslateClient() : createTranslateClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getTranslateClient())) {
             if (translateClient != null) {
-            	translateClient.shutdown();
+                translateClient.shutdown();
             }
         }
         super.doStop();
@@ -86,7 +86,7 @@ public class TranslateEndpoint extends ScheduledPollEndpoint {
     }
 
     AmazonTranslate createTranslateClient() {
-    	AmazonTranslate client = null;
+        AmazonTranslate client = null;
         ClientConfiguration clientConfiguration = null;
         AmazonTranslateClientBuilder clientBuilder = null;
         boolean isClientConfigFound = false;
