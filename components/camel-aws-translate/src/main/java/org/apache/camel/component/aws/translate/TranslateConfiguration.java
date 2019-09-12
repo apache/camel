@@ -45,6 +45,8 @@ public class TranslateConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean autodetectSourceLanguage = false;
 
     public AmazonTranslate getTranslateClient() {
         return translateClient;
@@ -124,6 +126,17 @@ public class TranslateConfiguration implements Cloneable {
      */
     public void setRegion(String region) {
         this.region = region;
+    }
+    
+    public boolean isAutodetectSourceLanguage() {
+        return autodetectSourceLanguage;
+    }
+
+    /**
+     * Being able to autodetect the source language
+     */
+    public void setAutodetectSourceLanguage(boolean autodetectSourceLanguage) {
+        this.autodetectSourceLanguage = autodetectSourceLanguage;
     }
 
     // *************************************************

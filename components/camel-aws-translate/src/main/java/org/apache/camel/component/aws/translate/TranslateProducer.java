@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.aws.translate;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.translate.AmazonTranslate;
-import com.amazonaws.services.translate.model.TranslateTextRequest;
-import com.amazonaws.services.translate.model.TranslateTextResult;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.translate.AmazonTranslate;
+import com.amazonaws.services.translate.model.TranslateTextRequest;
+import com.amazonaws.services.translate.model.TranslateTextResult;
 
 /**
  * A Producer which sends messages to the Amazon Translate Service
@@ -78,13 +78,23 @@ public class TranslateProducer extends DefaultProducer {
 
     private void translateText(AmazonTranslate translateClient, Exchange exchange) {
         TranslateTextRequest request = new TranslateTextRequest();
-        String source = exchange.getIn().getHeader(TranslateConstants.SOURCE_LANGUAGE, String.class);
-        String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
-        if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-            throw new IllegalArgumentException("Source and target language must be specified");
+        if (!getConfiguration().isAutodetectSourceLanguage()) {
+            String source = exchange.getIn().getHeader(TranslateConstants.SOURCE_LANGUAGE, String.class);
+            String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
+            if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
+                throw new IllegalArgumentException("Source and target language must be specified");
+            }
+            request.setSourceLanguageCode(source);
+            request.setTargetLanguageCode(target);
+        } else {
+            String source = "auto";
+            String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
+            if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
+                throw new IllegalArgumentException("Target language must be specified when autodetection of source language is enabled");
+            }
+            request.setSourceLanguageCode(source);
+            request.setTargetLanguageCode(target);
         }
-        request.setSourceLanguageCode(source);
-        request.setTargetLanguageCode(target);
         request.setText(exchange.getMessage().getBody(String.class));
         TranslateTextResult result;
         try {
