@@ -46,7 +46,7 @@ public class TranslateConfiguration implements Cloneable {
     @UriParam
     private String region;
     @UriParam(label = "producer", defaultValue = "false")
-    private boolean autodetectSourceLanguage = false;
+    private boolean autodetectSourceLanguage;
 
     public AmazonTranslate getTranslateClient() {
         return translateClient;
