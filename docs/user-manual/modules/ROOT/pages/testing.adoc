@@ -22,7 +22,7 @@ for things to go wrong! {icon-frown}. Testing is the crucial weapon to ensure
 that things work as you would expect {icon-smile}.
 
 Camel is a Java library so you can easily wire up tests in whatever unit
-testing framework you use (JUnit 3.x (deprecated), 4.x, or TestNG).
+testing framework you use (JUnit 3.x (deprecated) or 4.x).
 However the Camel project has tried to make the testing of Camel as easy
 and powerful as possible so we have introduced the following features.
 
@@ -67,17 +67,6 @@ Spring Testing.
 |*Camel 2.10:* Provides the ability to do unit testing on blueprint
 configurations
 
-|Guice |camel-guice |Uses Guice to
-dependency inject your test classes
-
-|Camel TestNG |camel-testng |Supports plain TestNG based tests with or
-without CDI, Spring or Guice
-for Dependency Injection which does not
-require an in-depth knowledge of CDI, Spring + Spring Test or Guice.
-Also from *Camel 2.10* onwards, this component supports Spring Test based tests
-that use the declarative style of test configuration and injection common
-in Spring Test and described in more detail under
-Spring Testing.
 |=======================================================================
 
 In all approaches the test classes look pretty much the same in that
