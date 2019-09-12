@@ -204,8 +204,9 @@ public final class OgnlHelper {
         StringBuilder sb = new StringBuilder();
 
         int j = 0; // j is used as counter per method
-        boolean squareBracket = false; // special to keep track if we are inside a square bracket block, eg: [foo]
-        boolean parenthesisBracket = false; // special to keep track if we are inside a parenthesis block, eg: bar(${body}, ${header.foo})
+        int squareBracketCnt = 0; // special to keep track if and how deep we are inside a square bracket block, eg: [foo]
+        int parenthesisBracketCnt = 0; // special to keep track if and how deep we are inside a parenthesis block, eg: bar(${body}, ${header.foo})
+
         for (int i = 0; i < ognl.length(); i++) {
             char ch = ognl.charAt(i);
             // special for starting a new method
@@ -213,16 +214,16 @@ public final class OgnlHelper {
                     || (ch != '.' && ch != '?' && ch != ']')) {
                 sb.append(ch);
                 // special if we are doing square bracket
-                if (ch == '[' && !parenthesisBracket) {
-                    squareBracket = true;
+                if (ch == '[' && parenthesisBracketCnt == 0) {
+                    squareBracketCnt++;
                 } else if (ch == '(') {
-                    parenthesisBracket = true;
+                    parenthesisBracketCnt++;
                 } else if (ch == ')') {
-                    parenthesisBracket = false;
+                    parenthesisBracketCnt--;
                 }
                 j++; // advance
             } else {
-                if (ch == '.' && !squareBracket && !parenthesisBracket) {
+                if (ch == '.' && squareBracketCnt == 0 && parenthesisBracketCnt == 0) {
                     // only treat dot as a method separator if not inside a square bracket block
                     // as dots can be used in key names when accessing maps
 
@@ -243,7 +244,7 @@ public final class OgnlHelper {
 
                     // reset j to begin a new method
                     j = 0;
-                } else if (ch == ']' && !parenthesisBracket) {
+                } else if (ch == ']' && parenthesisBracketCnt == 0) {
                     // append ending ] to method name
                     sb.append(ch);
                     String s = sb.toString();
@@ -258,11 +259,11 @@ public final class OgnlHelper {
                     j = 0;
 
                     // no more square bracket
-                    squareBracket = false;
+                    squareBracketCnt--;
                 }
 
                 // and don't lose the char if its not an ] end marker (as we already added that)
-                if (ch != ']' || parenthesisBracket) {
+                if (ch != ']' || parenthesisBracketCnt > 0) {
                     sb.append(ch);
                 }
 
@@ -279,7 +280,7 @@ public final class OgnlHelper {
         }
 
         String last = methods.isEmpty() ? null : methods.get(methods.size() - 1);
-        if (parenthesisBracket && last != null) {
+        if (parenthesisBracketCnt>0 && last != null) {
             // there is an unclosed parenthesis bracket on the last method, so it should end with a parenthesis
             if (last.contains("(") && !last.endsWith(")")) {
                 throw new IllegalArgumentException("Method should end with parenthesis, was " + last);
