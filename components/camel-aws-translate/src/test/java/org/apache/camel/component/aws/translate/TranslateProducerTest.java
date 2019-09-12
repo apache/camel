@@ -40,7 +40,6 @@ public class TranslateProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:translateText", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(TranslateConstants.OPERATION, TranslateOperations.translateText);
                 exchange.getIn().setHeader(TranslateConstants.SOURCE_LANGUAGE, TranslateLanguageEnum.ITALIAN);
                 exchange.getIn().setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.ENGLISH);
                 exchange.getIn().setBody("ciao");
