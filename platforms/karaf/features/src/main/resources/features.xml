@@ -272,6 +272,7 @@
      <feature version='${project.version}'>camel-aws-sns</feature>
      <feature version='${project.version}'>camel-aws-sqs</feature>
      <feature version='${project.version}'>camel-aws-swf</feature>
+     <feature version='${project.version}'>camel-aws-translate</feature>
   </feature>
   <feature name='camel-aws-s3' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -527,6 +528,21 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-cbor/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aws-java-sdk/${aws-java-sdk-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-aws-swf/${project.version}</bundle>
+  </feature>
+  <feature name='camel-aws-translate' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-databind-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-cbor/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aws-java-sdk/${aws-java-sdk-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-aws-translate/${project.version}</bundle>
   </feature>
   <feature name='camel-aws-xray' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
