@@ -156,6 +156,18 @@ The component is capable of detecting the presence of an AmazonTranslate bean in
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
+== Translate Text example
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(TranslateConstants.SOURCE_LANGUAGE, TranslateLanguageEnum.ITALIAN)
+  .setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.GERMAN)
+  .setBody("Ciao")
+  .to("aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing the translated text.
+
 Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
