@@ -103,7 +103,6 @@ Questions on using Apache Camel
 * xref:faq/how-to-switch-the-cxf-consumer-between-http-and-https-without-touching-the-spring-configuration.adoc[How to switch the CXF consumer between HTTP and HTTPS without touching the Spring configuration?]
 * xref:faq/how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in to()?]
 * xref:faq/how-to-use-extra-camel-componets-in-servicemix-camel.adoc[How to use extra Camel componets in servicemix-camel?]
-* xref:faq/how-to-validate-the-camel-1x-context-xml-from-apache-camel-web-site.adoc[How to validate the camel 1.x context xml from Apache Camel web site?]
 * xref:faq/is-there-an-ide.adoc[Is there an IDE?]
 * xref:faq/should-i-deploy-camel-inside-the-activemq-broker-or-in-another-application.adoc[Should I deploy Camel inside the ActiveMQ broker or in another application?]
 * xref:faq/using-camel-core-testsjar.adoc[Using camel-core-tests.jar]
