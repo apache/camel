@@ -49,7 +49,6 @@
  ** xref:dsl.adoc[Camel Domain Specific Language]
  ** xref:java-dsl.adoc[Java DSL]
  ** xref:spring.adoc[Spring support]
- ** xref:groovy-dsl.adoc[Groovy DSL]
 * xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 * Supported expression languages
  ** xref:constant-language.adoc[Constant Language]

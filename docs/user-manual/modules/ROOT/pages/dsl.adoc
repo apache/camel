@@ -13,8 +13,6 @@ builder style.
 DSL in OSGi Blueprint XML files
 * Rest DSL - A DSL to define REST services using a
 REST style in either Java or XML.
-* xref:groovy-dsl.adoc[Groovy DSL] - A Groovy based DSL using Groovy
-programming language
 * xref:bean-integration.adoc[Annotation DSL] - Use annotations in Java
 beans.
 * https://github.com/koolio/kool/tree/master/kool-camel[Kotlin DSL] -
