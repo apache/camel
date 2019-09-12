@@ -134,6 +134,10 @@ public class TranslateComponentConfiguration
          * Regions.EU_WEST_1.name()
          */
         private String region;
+        /**
+         * Being able to autodetect the source language
+         */
+        private Boolean autodetectSourceLanguage = false;
 
         public AmazonTranslate getTranslateClient() {
             return translateClient;
@@ -189,6 +193,14 @@ public class TranslateComponentConfiguration
 
         public void setRegion(String region) {
             this.region = region;
+        }
+
+        public Boolean getAutodetectSourceLanguage() {
+            return autodetectSourceLanguage;
+        }
+
+        public void setAutodetectSourceLanguage(Boolean autodetectSourceLanguage) {
+            this.autodetectSourceLanguage = autodetectSourceLanguage;
         }
     }
 }
