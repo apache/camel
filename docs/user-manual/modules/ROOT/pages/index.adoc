@@ -36,7 +36,6 @@
 * xref:camel-boot.adoc[Camel Boot]
 * xref:components::cdi.adoc[Working with Camel and CDI]
 * xref:spring.adoc[Working with Camel and Spring]
-* xref:guice.adoc[Working with Camel and Guice]
 * xref:karaf.adoc[Working with Camel and Karaf]
 * xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
 * xref:bean-integration.adoc[Bean Integration]
@@ -55,7 +54,6 @@ asynchronous
 * [Using CamelProxy] for how to use proxies for clients to easily invoke
 camel routes without them knowing
 * [Camel Maven Plugin] for running Camel from a Maven goal
-* [Guice Maven Plugin] for working with xref:guice.adoc[Guice]
 * [Camel Maven Archetypes]
 * [Creating a new Spring based Camel Route]
 * [Camel JMX]

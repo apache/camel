@@ -37,8 +37,8 @@ For example camel-core has no dependencies on anything other than
 commons-logging; camel-spring contains all the xref:components::spring.adoc[Spring]
 integration, etc.
 
-We hope to have closer integration to other IoC containers, particularly
-with Guice. The current mechanism for hooking into other IoC containers
+We hope to have closer integration to other IoC containers.
+The current mechanism for hooking into other IoC containers
 are:
 
 * xref:injector.adoc[Injector] is used to perform dependency injection
