@@ -6,5 +6,5 @@ JAR is only used internally by Camel itself when it tests the same unit
 tests using different DSL such as Spring XML, Blueprint XML, Scala DSL,
 etc.
 
-End users who need a test kit should use `camel-test` or `camel-testng`
+End users who need a test kit should use `camel-test`
 JARs instead. See more here xref:testing.adoc[Testing].
