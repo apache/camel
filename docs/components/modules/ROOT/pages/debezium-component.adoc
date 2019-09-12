@@ -4,7 +4,7 @@
 
 *Available as of Camel version 3.0*
 
-The Debezium component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enabled Change Data Capture from various databases without the need of Kafka or Kafka Connect.
+The Debezium component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from various databases using Debezium without the need for Kafka or Kafka Connect.
 
 *Note on handling failures:* Per https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[Debezium Embedded Engine] documentation, the engines is actively recording source offsets and periodically flushes these offsets to a persistent storage, so when the application is restarted or crashed, the engine will resume from the last recorded offset.
 Thus, at normal operation, your downstream routes will receive each event exactly once, however in case of an application crash (not having a graceful shutdown), the application will resume from the last recorded offset,
@@ -32,7 +32,7 @@ debezium:connector-type[?options]
 ---------------------------
 
 == Supported Debezium Connectors
-- https://debezium.io/documentation/reference/0.9/connectors/mysql.html[MySql].
+- https://debezium.io/documentation/reference/0.9/connectors/mysql.html[MySQL].
 
 *Note:* Other Debezium connectors are _not_ supported at the moment.
 
@@ -177,6 +177,9 @@ The following headers are available when consuming change events from Debezium.
 | DebeziumConstants.HEADER_BEFORE           | "CamelDebeziumBefore"                          | Map/Struct  | If presents, contains the state of the row before the event occurred.
 |===
 
+== Message body
+The message body if is not `null` (in case of tombstones), it contains the state of the row after the event occurred as `Struct` format or `Map` format if you use the included Type Converter from `Struct` to `Map` (please look below for more explanation).
+
 == Samples
 
 === Consuming events
@@ -195,7 +198,7 @@ from("debezium:mysql?name=dbz-test-1&offsetStorageFileName=/usr/offset-file-1.da
 ----
 
 By default, the component will emit the events in the body and `CamelDebeziumBefore` header as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] data type, the reasoning behind this, is to perceive the schema information in case is needed.
-However, the component as well contains a xref:manual::type-converter.adoc[Type Converter] that converts from
+However, the component as well contains a xref:manual::type-converter.adoc[Type Converter] that converts
 from default output type of https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] to `Map` in order to leverage Camel's rich xref:manual::data-format.adoc[Data Format] types which many of them work out of box with `Map` data type.
 To use it, you can either add `Map.class` type when you access the message e.g: `exchange.getIn().getBody(Map.class)`, or you can convert the body always to `Map` from the route builder by adding `.convertBodyTo(Map.class)` to your Camel Route DSL after `from` statement.
 

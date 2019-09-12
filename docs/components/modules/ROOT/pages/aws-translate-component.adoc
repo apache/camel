@@ -64,13 +64,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (10 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *autodetectSourceLanguage* (producer) | Being able to autodetect the source language | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | *Required* The operation to perform |  | TranslateOperations
 | *proxyHost* (producer) | To define a proxy host when instantiating the Translate client |  | String
@@ -98,7 +99,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 12 options, which are listed below.
+The component supports 13 options, which are listed below.
 
 
 
@@ -108,6 +109,7 @@ The component supports 12 options, which are listed below.
 | *camel.component.aws-translate.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-translate.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.aws-translate.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-translate.configuration.autodetect-source-language* | Being able to autodetect the source language | false | Boolean
 | *camel.component.aws-translate.configuration.operation* | The operation to perform |  | TranslateOperations
 | *camel.component.aws-translate.configuration.proxy-host* | To define a proxy host when instantiating the Translate client |  | String
 | *camel.component.aws-translate.configuration.proxy-port* | To define a proxy port when instantiating the Translate client |  | Integer
@@ -155,6 +157,18 @@ Camel-AWS Translate component provides the following operation on the producer s
 The component is capable of detecting the presence of an AmazonTranslate bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
+
+== Translate Text example
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(TranslateConstants.SOURCE_LANGUAGE, TranslateLanguageEnum.ITALIAN)
+  .setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.GERMAN)
+  .setBody("Ciao")
+  .to("aws-translate://test?translateClient=#amazonTranslateClient&operation=translateText");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing the translated text.
 
 Dependencies
 

@@ -311,20 +311,20 @@ like this:
 [source,xml]
 -------------------------------------------------------------------------
 <web-app>
-  <servlet>
+    <servlet>
         <servlet-name>CamelServlet</servlet-name>
         <servlet-class>
             org.apache.camel.component.servlet.CamelHttpTransportServlet
         </servlet-class>
         <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet>
+    </servlet>
+    <servlet>
         <servlet-name>SpringApplicationContext</servlet-name>
         <servlet-class>
             org.springframework.web.context.ContextLoaderServlet
         </servlet-class>
         <load-on-startup>2</load-on-startup>
-  </servlet>
+    </servlet>
 <web-app>
 -------------------------------------------------------------------------
 
