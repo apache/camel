@@ -46,6 +46,7 @@ public class CamelAwsTest extends BaseKarafTest {
         testComponent(COMPONENT, "aws-sns");
         testComponent(COMPONENT, "aws-sqs");
         testComponent(COMPONENT, "aws-swf");
+        testComponent(COMPONENT, "aws-translate");
     }
 
 }
