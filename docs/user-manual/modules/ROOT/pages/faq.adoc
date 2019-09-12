@@ -16,7 +16,6 @@ so please join in and help us make the documentation better!
 General questions about Camel
 
 * xref:faq/can-i-get-commercial-support.adoc[Can I get commercial support?]
-* xref:faq/can-i-use-camel-on-java-14.adoc[Can I use Camel on Java 1.4?]
 * xref:faq/does-camel-work-on-ibms-jdk.adoc[Does Camel work on IBM's JDK?]
 * xref:support.adoc[How can I get help?]
 * xref:faq/how-can-i-get-the-source-code.adoc[How can I get the source code?]
