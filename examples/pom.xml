@@ -67,6 +67,7 @@
         <module>camel-example-cxf-tomcat</module>
         <module>camel-example-cxf-ws-security-signature</module>
         <module>camel-example-console</module>
+        <module>camel-example-debezium</module>
         <module>camel-example-ehcache-blueprint</module>
         <module>camel-example-ftp</module>
         <module>camel-example-google-pubsub</module>

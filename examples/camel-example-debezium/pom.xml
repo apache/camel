@@ -33,7 +33,7 @@
     <description>An example for Debezium Component</description>
 
     <properties>
-        <category>Change Data Capture</category>
+        <category>Database</category>
     </properties>
 
     <dependencies>
