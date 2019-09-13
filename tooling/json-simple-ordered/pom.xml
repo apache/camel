@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>tooling</artifactId>
-    <version>2.24.2-SNAPSHOT</version>
+    <version>2.24.3-SNAPSHOT</version>
   </parent>
 
   <!-- should not be OSGi bundle as we shade this component into camel-core and camel-catalog -->
