@@ -42,7 +42,7 @@ public final class DebeziumMySqlConsumerToKinesis {
 
     public static void main(String[] args) throws Exception {
 
-        LOG.info("About to run Debezium integration...");
+        LOG.debug("About to run Debezium integration...");
 
         final CamelContext camelContext = new DefaultCamelContext();
 
