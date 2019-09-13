@@ -203,15 +203,11 @@ public final class EntityParser {
             ContentType entityContentType = null;
             String entityContentTransferEncoding = null;
             for (Header header : headers) {
-                switch (header.getName()) {
-                case AS2Header.CONTENT_TYPE:
+                if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TYPE)) {
                     entityContentType = ContentType.parse(header.getValue());
-                    break;
-                case AS2Header.CONTENT_TRANSFER_ENCODING:
+                }
+                else if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TRANSFER_ENCODING)) {
                     entityContentTransferEncoding = header.getValue();
-                    break;
-                default:
-                    continue;
                 }
             }
             if (entityContentType == null) {
@@ -517,15 +513,11 @@ public final class EntityParser {
             ContentType signedEntityContentType = null;
             String signedEntityContentTransferEncoding = null;
             for (Header header : headers) {
-                switch (header.getName()) {
-                case AS2Header.CONTENT_TYPE:
+                if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TYPE)) {
                     signedEntityContentType = ContentType.parse(header.getValue());
-                    break;
-                case AS2Header.CONTENT_TRANSFER_ENCODING:
+                }
+                else if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TRANSFER_ENCODING)) {
                     signedEntityContentTransferEncoding = header.getValue();
-                    break;
-                default:
-                    continue;
                 }
             }
             if (signedEntityContentType == null) {
@@ -552,15 +544,11 @@ public final class EntityParser {
             ContentType signatureContentType = null;
             String signatureContentTransferEncoding = null;
             for (Header header : headers) {
-                switch (header.getName()) {
-                case AS2Header.CONTENT_TYPE:
+                if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TYPE)) {
                     signatureContentType = ContentType.parse(header.getValue());
-                    break;
-                case AS2Header.CONTENT_TRANSFER_ENCODING:
+                }
+                else if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TRANSFER_ENCODING)) {
                     signatureContentTransferEncoding = header.getValue();
-                    break;
-                default:
-                    continue;
                 }
             }
             if (signatureContentType == null) {
@@ -631,15 +619,11 @@ public final class EntityParser {
             ContentType textReportContentType = null;
             String textReportContentTransferEncoding = null;
             for (Header header : headers) {
-                switch (header.getName()) {
-                case AS2Header.CONTENT_TYPE:
+                if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TYPE)) {
                     textReportContentType = ContentType.parse(header.getValue());
-                    break;
-                case AS2Header.CONTENT_TRANSFER_ENCODING:
+                }
+                else if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TRANSFER_ENCODING)) {
                     textReportContentTransferEncoding = header.getValue();
-                    break;
-                default:
-                    continue;
                 }
             }
             if (textReportContentType == null) {
@@ -670,15 +654,11 @@ public final class EntityParser {
             ContentType dispositionNotificationContentType = null;
             String dispositionNotificationContentTransferEncoding = null;
             for (Header header : headers) {
-                switch (header.getName()) {
-                case AS2Header.CONTENT_TYPE:
+                if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TYPE)) {
                     dispositionNotificationContentType = ContentType.parse(header.getValue());
-                    break;
-                case AS2Header.CONTENT_TRANSFER_ENCODING:
+                }
+                else if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TRANSFER_ENCODING)) {
                     dispositionNotificationContentTransferEncoding = header.getValue();
-                    break;
-                default:
-                    continue;
                 }
             }
             if (dispositionNotificationContentType == null) {
