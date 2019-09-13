@@ -16,13 +16,40 @@
  */
 package org.apache.camel.component.as2.api.protocol;
 
-import org.apache.camel.component.as2.api.*;
-import org.apache.camel.component.as2.api.entity.*;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
+import org.apache.camel.component.as2.api.AS2Charset;
+import org.apache.camel.component.as2.api.AS2Constants;
+import org.apache.camel.component.as2.api.AS2Header;
+import org.apache.camel.component.as2.api.AS2ServerManager;
+import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
+import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
+import org.apache.camel.component.as2.api.AS2TransferEncoding;
+import org.apache.camel.component.as2.api.InvalidAS2NameException;
+import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
+import org.apache.camel.component.as2.api.entity.AS2DispositionType;
+import org.apache.camel.component.as2.api.entity.DispositionMode;
+import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
+import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
+import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
+import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.velocity.VelocityContext;
@@ -32,14 +59,6 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 public class ResponseMDN implements HttpResponseInterceptor {
 
