@@ -40,7 +40,7 @@ public final class KinesisProducerToCassandra {
 
     public static void main(String[] args) throws Exception {
 
-        LOG.info("About to run Kinesis to Cassandra integration...");
+        LOG.debug("About to run Kinesis to Cassandra integration...");
 
         final CamelContext camelContext = new DefaultCamelContext();
 
