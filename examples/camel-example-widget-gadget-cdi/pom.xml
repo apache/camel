@@ -54,6 +54,21 @@
             <artifactId>camel-cdi</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-file</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-log</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xpath</artifactId>
+        </dependency>
+
         <!-- Camel JMS and ActiveMQ -->
         <dependency>
             <groupId>org.apache.camel</groupId>

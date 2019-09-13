@@ -51,6 +51,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jooq</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-timer</artifactId>
+        </dependency>
 
         <!-- logging -->
         <dependency>

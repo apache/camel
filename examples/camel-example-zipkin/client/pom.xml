@@ -68,6 +68,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-timer</artifactId>
+        </dependency>
 
         <!-- logging -->
 
