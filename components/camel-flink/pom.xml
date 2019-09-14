@@ -30,8 +30,8 @@
 
     <artifactId>camel-flink</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Apache Flink</name>
-    <description>Camel Apache Flink support</description>
+    <name>Camel :: Flink</name>
+    <description>Camel Flink support</description>
 
     <properties>
     </properties>
