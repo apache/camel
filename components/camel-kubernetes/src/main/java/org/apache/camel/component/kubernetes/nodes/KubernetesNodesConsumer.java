@@ -48,7 +48,7 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -82,13 +82,13 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
     }
 
     class NodesConsumerTask implements Runnable {
-        
+
         private Watch watch;
-        
+
         @Override
         public void run() {
             NonNamespaceOperation<Node, NodeList, DoneableNode, Resource<Node, DoneableNode>> w = getEndpoint().getKubernetesClient().nodes();
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey()) 
+            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
                 && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
                 w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(), getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
@@ -98,8 +98,7 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
             watch = w.watch(new Watcher<Node>() {
 
                 @Override
-                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
-                    Node resource) {
+                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Node resource) {
                     NodeEvent ne = new NodeEvent(action, resource);
                     Exchange exchange = getEndpoint().createExchange();
                     exchange.getIn().setBody(ne.getNode());
@@ -121,13 +120,13 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
                 }
             });
         }
-       
+
         public Watch getWatch() {
             return watch;
         }
 
         public void setWatch(Watch watch) {
             this.watch = watch;
-        } 
+        }
     }
 }

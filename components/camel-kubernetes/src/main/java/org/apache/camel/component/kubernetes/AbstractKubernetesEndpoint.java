@@ -60,7 +60,7 @@ public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint {
             client.close();
         }
     }
-    
+
     public ExecutorService createExecutor() {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KubernetesConsumer", configuration.getPoolSize());
     }
@@ -75,6 +75,5 @@ public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint {
     public KubernetesConfiguration getKubernetesConfiguration() {
         return configuration;
     }
-
 
 }

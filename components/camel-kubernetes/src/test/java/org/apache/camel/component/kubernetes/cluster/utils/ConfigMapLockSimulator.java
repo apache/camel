@@ -64,11 +64,7 @@ public class ConfigMapLockSimulator {
             }
         }
 
-        this.currentMap = new ConfigMapBuilder(map)
-                .editOrNewMetadata()
-                .withResourceVersion(String.valueOf(++versionCounter))
-                .endMetadata()
-                .build();
+        this.currentMap = new ConfigMapBuilder(map).editOrNewMetadata().withResourceVersion(String.valueOf(++versionCounter)).endMetadata().build();
         return true;
     }
 

@@ -26,11 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Namespaces component provides a producer to execute kubernetes namespace operations
- * and a consumer to consume namespace events.
+ * The Kubernetes Namespaces component provides a producer to execute kubernetes
+ * namespace operations and a consumer to consume namespace events.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-namespaces", title = "Kubernetes Namespaces",
-    syntax = "kubernetes-namespaces:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-namespaces", title = "Kubernetes Namespaces", syntax = "kubernetes-namespaces:masterUrl", label = "container,cloud,paas")
 public class KubernetesNamespacesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesNamespacesEndpoint(String uri, KubernetesNamespacesComponent component, KubernetesConfiguration config) {

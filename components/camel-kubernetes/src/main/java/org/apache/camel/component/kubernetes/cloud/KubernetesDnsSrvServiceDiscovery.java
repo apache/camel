@@ -75,7 +75,6 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
 
     /**
      * Compute the query string to lookup SRV records.
-     *
      * https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#supported-dns-schema
      * https://github.com/kubernetes/dns/blob/master/docs/specification.md
      *
@@ -84,13 +83,7 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
      */
     protected String computeQueryString(String serviceName) {
         // _<port_name>._<port_proto>.<serviceName>.<namespace>.svc.<zone>.
-        return String.format("_%s._%s.%s.%s.svc.%s",
-            this.portName,
-            this.portProtocol,
-            serviceName,
-            this.namespace,
-            this.zone
-        );
+        return String.format("_%s._%s.%s.%s.svc.%s", this.portName, this.portProtocol, serviceName, this.namespace, this.zone);
     }
 
     @Override
@@ -135,11 +128,7 @@ public class KubernetesDnsSrvServiceDiscovery extends KubernetesServiceDiscovery
 
     @Override
     public String toString() {
-        return "KubernetesDnsSrvServiceDiscovery{"
-            + "namespace='" + namespace + '\''
-            + ", portName='" + portName + '\''
-            + ", portProtocol='" + portProtocol + '\''
-            + ", zone='" + zone + '\''
-            + '}';
+        return "KubernetesDnsSrvServiceDiscovery{" + "namespace='" + namespace + '\'' + ", portName='" + portName + '\'' + ", portProtocol='" + portProtocol + '\'' + ", zone='"
+               + zone + '\'' + '}';
     }
 }

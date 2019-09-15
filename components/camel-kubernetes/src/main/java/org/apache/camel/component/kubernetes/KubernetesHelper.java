@@ -51,9 +51,7 @@ public final class KubernetesHelper {
 
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());
-        if ((ObjectHelper.isNotEmpty(configuration.getUsername())
-                && ObjectHelper.isNotEmpty(configuration.getPassword()))
-                && ObjectHelper.isEmpty(configuration.getOauthToken())) {
+        if ((ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword())) && ObjectHelper.isEmpty(configuration.getOauthToken())) {
             builder.withUsername(configuration.getUsername());
             builder.withPassword(configuration.getPassword());
         }

@@ -26,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Resources Quota component provides a producer to execute kubernetes resources quota operations.
+ * The Kubernetes Resources Quota component provides a producer to execute
+ * kubernetes resources quota operations.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-resources-quota", title = "Kubernetes Resources Quota",
-    syntax = "kubernetes-resources-quota:masterUrl", producerOnly = true, label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-resources-quota", title = "Kubernetes Resources Quota", syntax = "kubernetes-resources-quota:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesResourcesQuotaEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesResourcesQuotaEndpoint(String uri, KubernetesResourcesQuotaComponent component, KubernetesConfiguration config) {

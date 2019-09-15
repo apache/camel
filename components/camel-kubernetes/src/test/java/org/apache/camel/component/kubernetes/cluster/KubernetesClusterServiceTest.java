@@ -101,10 +101,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
 
     @Test
     public void testSimpleLeaderElectionWithExistingConfigMap() throws Exception {
-        lockSimulator.setConfigMap(new ConfigMapBuilder()
-                .withNewMetadata()
-                .withName("leaders")
-                .and().build(), true);
+        lockSimulator.setConfigMap(new ConfigMapBuilder().withNewMetadata().withName("leaders").and().build(), true);
 
         LeaderRecorder mypod1 = addMember("mypod1");
         LeaderRecorder mypod2 = addMember("mypod2");
@@ -144,7 +141,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         Long lossTimestamp = formerLeaderRecorder.getLastTimeOf(l -> l == null);
         Long gainTimestamp = formerLoserRecorder.getLastTimeOf(secondLeader::equals);
 
-        assertTrue("At least half distance must elapse from leadership loss and regain (see renewDeadlineSeconds)", gainTimestamp >= lossTimestamp + (LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2);
+        assertTrue("At least half distance must elapse from leadership loss and regain (see renewDeadlineSeconds)",
+                   gainTimestamp >= lossTimestamp + (LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2);
         checkLeadershipChangeDistance((LEASE_TIME_MILLIS - RENEW_DEADLINE_MILLIS) / 2, TimeUnit.MILLISECONDS, mypod1, mypod2);
     }
 
@@ -239,10 +237,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
     }
 
     private void checkLeadershipChangeDistance(long minimum, TimeUnit unit, LeaderRecorder... recorders) {
-        List<LeaderRecorder.LeadershipInfo> infos = Arrays.stream(recorders)
-                .flatMap(lr -> lr.getLeadershipInfo().stream())
-                .sorted((li1, li2) -> Long.compare(li1.getChangeTimestamp(), li2.getChangeTimestamp()))
-                .collect(Collectors.toList());
+        List<LeaderRecorder.LeadershipInfo> infos = Arrays.stream(recorders).flatMap(lr -> lr.getLeadershipInfo().stream())
+            .sorted((li1, li2) -> Long.compare(li1.getChangeTimestamp(), li2.getChangeTimestamp())).collect(Collectors.toList());
 
         LeaderRecorder.LeadershipInfo currentLeaderLastSeen = null;
         for (LeaderRecorder.LeadershipInfo info : infos) {
@@ -254,8 +250,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
                 } else if (info.getLeader() != null && !info.getLeader().equals(currentLeaderLastSeen.getLeader())) {
                     // switch
                     long delay = info.getChangeTimestamp() - currentLeaderLastSeen.getChangeTimestamp();
-                    assertTrue("Lease time not elapsed between switch, minimum=" + TimeUnit.MILLISECONDS.convert(minimum, unit) + ", found=" + delay, delay >= TimeUnit.MILLISECONDS.convert(minimum,
-                            unit));
+                    assertTrue("Lease time not elapsed between switch, minimum=" + TimeUnit.MILLISECONDS.convert(minimum, unit) + ", found=" + delay,
+                               delay >= TimeUnit.MILLISECONDS.convert(minimum, unit));
                     currentLeaderLastSeen = info;
                 }
             }

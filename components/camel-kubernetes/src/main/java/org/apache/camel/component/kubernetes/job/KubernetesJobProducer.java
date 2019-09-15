@@ -96,8 +96,7 @@ public class KubernetesJobProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get Job by labels require specify a labels set");
         }
 
-        FilterWatchListMultiDeletable<Job, JobList, Boolean, Watch, Watcher<Job>> jobs = getEndpoint()
-            .getKubernetesClient().batch().jobs();
+        FilterWatchListMultiDeletable<Job, JobList, Boolean, Watch, Watcher<Job>> jobs = getEndpoint().getKubernetesClient().batch().jobs();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             jobs.withLabel(entry.getKey(), entry.getValue());
         }

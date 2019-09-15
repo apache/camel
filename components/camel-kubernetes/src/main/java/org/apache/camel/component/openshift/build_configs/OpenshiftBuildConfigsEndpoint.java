@@ -26,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Build Config component provides a producer to execute kubernetes build config operations.
+ * The Kubernetes Build Config component provides a producer to execute
+ * kubernetes build config operations.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "openshift-build-configs", title = "Openshift Build Config",
-    syntax = "openshift-build-configs:masterUrl", producerOnly = true, label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "openshift-build-configs", title = "Openshift Build Config", syntax = "openshift-build-configs:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class OpenshiftBuildConfigsEndpoint extends AbstractKubernetesEndpoint {
 
     public OpenshiftBuildConfigsEndpoint(String uri, OpenshiftBuildConfigsComponent component, KubernetesConfiguration config) {

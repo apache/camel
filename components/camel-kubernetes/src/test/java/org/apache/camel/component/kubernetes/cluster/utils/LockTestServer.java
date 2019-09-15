@@ -58,10 +58,10 @@ public class LockTestServer extends KubernetesMockServer {
         this.pods = new TreeSet<>(initialPods);
 
         expect().get().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName()).andReply(new ResponseProvider<Object>() {
-            ThreadLocal<Integer> responseCode =  ThreadLocal.withInitial(() -> 1);
+            ThreadLocal<Integer> responseCode = ThreadLocal.withInitial(() -> 1);
 
             private Headers headers = new Headers.Builder().build();
-            
+
             @Override
             public int getStatusCode() {
                 return responseCode.get();
@@ -98,7 +98,7 @@ public class LockTestServer extends KubernetesMockServer {
 
         expect().post().withPath("/api/v1/namespaces/test/configmaps").andReply(new ResponseProvider<Object>() {
             ThreadLocal<Integer> responseCode = ThreadLocal.withInitial(() -> 1);
-            
+
             private Headers headers = new Headers.Builder().build();
 
             @Override
@@ -142,7 +142,7 @@ public class LockTestServer extends KubernetesMockServer {
 
         expect().put().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName()).andReply(new ResponseProvider<Object>() {
             ThreadLocal<Integer> responseCode = ThreadLocal.withInitial(() -> 1);
-            
+
             private Headers headers = new Headers.Builder().build();
 
             @Override
@@ -184,8 +184,8 @@ public class LockTestServer extends KubernetesMockServer {
         // Other resources
         expect().get().withPath("/api/v1/namespaces/test/pods")
             .andReply(200,
-            request -> new PodListBuilder().withNewMetadata().withResourceVersion("1").and().withItems(getCurrentPods()
-            .stream().map(name -> new PodBuilder().withNewMetadata().withName(name).and().build()).collect(Collectors.toList())).build())
+            request -> new PodListBuilder().withNewMetadata().withResourceVersion("1").and()
+            .withItems(getCurrentPods().stream().map(name -> new PodBuilder().withNewMetadata().withName(name).and().build()).collect(Collectors.toList())).build())
             .always();
     }
 

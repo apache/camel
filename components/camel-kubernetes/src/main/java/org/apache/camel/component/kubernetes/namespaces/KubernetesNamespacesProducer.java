@@ -37,8 +37,7 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesNamespacesProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(KubernetesNamespacesProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesNamespacesProducer.class);
 
     public KubernetesNamespacesProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -46,20 +45,17 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         String operation;
 
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration()
-                .getOperation())) {
-            operation = exchange.getIn().getHeader(
-                    KubernetesConstants.KUBERNETES_OPERATION, String.class);
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
+            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
         } else {
-            operation = getEndpoint().getKubernetesConfiguration()
-                    .getOperation();
+            operation = getEndpoint().getKubernetesConfiguration().getOperation();
         }
 
         switch (operation) {
@@ -85,83 +81,67 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
             break;
 
         default:
-            throw new IllegalArgumentException("Unsupported operation "
-                    + operation);
+            throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        NamespaceList namespacesList = getEndpoint().getKubernetesClient()
-                .namespaces().list();
-        
+        NamespaceList namespacesList = getEndpoint().getKubernetesClient().namespaces().list();
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(namespacesList.getItems());
     }
 
     protected void doListNamespaceByLabel(Exchange exchange, String operation) {
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
         if (ObjectHelper.isEmpty(labels)) {
             LOG.error("Get a specific namespace by labels require specify a labels set");
-            throw new IllegalArgumentException(
-                    "Get a specific namespace by labels require specify a labels set");
+            throw new IllegalArgumentException("Get a specific namespace by labels require specify a labels set");
         }
         NonNamespaceOperation<Namespace, NamespaceList, DoneableNamespace, Resource<Namespace, DoneableNamespace>> namespaces = getEndpoint().getKubernetesClient().namespaces();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             namespaces.withLabel(entry.getKey(), entry.getValue());
         }
         NamespaceList namespace = namespaces.list();
-        
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(namespace.getItems());
     }
 
     protected void doGetNamespace(Exchange exchange, String operation) {
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Get a specific namespace require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Get a specific namespace require specify a namespace name");
+            throw new IllegalArgumentException("Get a specific namespace require specify a namespace name");
         }
-        Namespace namespace = getEndpoint().getKubernetesClient().namespaces()
-                .withName(namespaceName).get();
-        
+        Namespace namespace = getEndpoint().getKubernetesClient().namespaces().withName(namespaceName).get();
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(namespace);
     }
 
     protected void doCreateNamespace(Exchange exchange, String operation) {
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Create a specific namespace require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Create a specific namespace require specify a namespace name");
+            throw new IllegalArgumentException("Create a specific namespace require specify a namespace name");
         }
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
-        Namespace ns = new NamespaceBuilder().withNewMetadata()
-                .withName(namespaceName).withLabels(labels).endMetadata()
-                .build();
-        Namespace namespace = getEndpoint().getKubernetesClient().namespaces()
-                .create(ns);
-        
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
+        Namespace ns = new NamespaceBuilder().withNewMetadata().withName(namespaceName).withLabels(labels).endMetadata().build();
+        Namespace namespace = getEndpoint().getKubernetesClient().namespaces().create(ns);
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(namespace);
     }
 
     protected void doDeleteNamespace(Exchange exchange, String operation) {
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Delete a specific namespace require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Delete a specific namespace require specify a namespace name");
+            throw new IllegalArgumentException("Delete a specific namespace require specify a namespace name");
         }
-        Boolean namespace = getEndpoint().getKubernetesClient().namespaces()
-                .withName(namespaceName).delete();
-        
+        Boolean namespace = getEndpoint().getKubernetesClient().namespaces().withName(namespaceName).delete();
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(namespace);
     }

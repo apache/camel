@@ -26,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
+ * The Kubernetes Configmaps component provides a producer to execute kubernetes
+ * configmap operations.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-config-maps", title = "Kubernetes ConfigMap",
-    syntax = "kubernetes-config-maps:masterUrl", producerOnly = true, label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-config-maps", title = "Kubernetes ConfigMap", syntax = "kubernetes-config-maps:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesConfigMapsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesConfigMapsEndpoint(String uri, KubernetesConfigMapsComponent component, KubernetesConfiguration config) {

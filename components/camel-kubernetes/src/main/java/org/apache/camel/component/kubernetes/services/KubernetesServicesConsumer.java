@@ -48,7 +48,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -57,7 +57,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
         executor = getEndpoint().createExecutor();
 
         servicesWatcher = new ServicesConsumerTask();
-        executor.submit(servicesWatcher);       
+        executor.submit(servicesWatcher);
 
     }
 
@@ -80,18 +80,18 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
         }
         executor = null;
     }
-    
+
     class ServicesConsumerTask implements Runnable {
-        
+
         private Watch watch;
-        
+
         @Override
         public void run() {
             MixedOperation<Service, ServiceList, DoneableService, ServiceResource<Service, DoneableService>> w = getEndpoint().getKubernetesClient().services();
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
                 w.inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace());
             }
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey()) 
+            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
                 && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
                 w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(), getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
@@ -101,8 +101,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
             watch = w.watch(new Watcher<Service>() {
 
                 @Override
-                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
-                    Service resource) {
+                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Service resource) {
                     ServiceEvent se = new ServiceEvent(action, resource);
                     Exchange exchange = getEndpoint().createExchange();
                     exchange.getIn().setBody(se.getService());
@@ -124,14 +123,14 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
                 }
 
             });
-        } 
-        
+        }
+
         public Watch getWatch() {
             return watch;
         }
 
         public void setWatch(Watch watch) {
             this.watch = watch;
-        } 
+        }
     }
 }

@@ -41,8 +41,7 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesServicesProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(KubernetesServicesProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesServicesProducer.class);
 
     public KubernetesServicesProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -50,20 +49,17 @@ public class KubernetesServicesProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         String operation;
 
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration()
-                .getOperation())) {
-            operation = exchange.getIn().getHeader(
-                    KubernetesConstants.KUBERNETES_OPERATION, String.class);
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
+            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
         } else {
-            operation = getEndpoint().getKubernetesConfiguration()
-                    .getOperation();
+            operation = getEndpoint().getKubernetesConfiguration().getOperation();
         }
 
         switch (operation) {
@@ -89,43 +85,35 @@ public class KubernetesServicesProducer extends DefaultProducer {
             break;
 
         default:
-            throw new IllegalArgumentException("Unsupported operation "
-                    + operation);
+            throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
         ServiceList servicesList = null;
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            servicesList = getEndpoint().getKubernetesClient().services()
-                    .inNamespace(namespaceName).list();
+            servicesList = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).list();
         } else {
-            servicesList = getEndpoint().getKubernetesClient().services().inAnyNamespace()
-                    .list();
+            servicesList = getEndpoint().getKubernetesClient().services().inAnyNamespace().list();
         }
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(servicesList.getItems());
     }
 
-    protected void doListServiceByLabels(Exchange exchange, String operation)
-            throws Exception {
+    protected void doListServiceByLabels(Exchange exchange, String operation) throws Exception {
         ServiceList servicesList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<Service, ServiceList, DoneableService, ServiceResource<Service, DoneableService>> services; 
-            services = getEndpoint().getKubernetesClient().services()
-                    .inNamespace(namespaceName);
+            NonNamespaceOperation<Service, ServiceList, DoneableService, ServiceResource<Service, DoneableService>> services;
+            services = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 services.withLabel(entry.getKey(), entry.getValue());
             }
             servicesList = services.list();
         } else {
-            FilterWatchListMultiDeletable<Service, ServiceList, Boolean, Watch, Watcher<Service>> services; 
+            FilterWatchListMultiDeletable<Service, ServiceList, Boolean, Watch, Watcher<Service>> services;
             services = getEndpoint().getKubernetesClient().services().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 services.withLabel(entry.getKey(), entry.getValue());
@@ -136,82 +124,59 @@ public class KubernetesServicesProducer extends DefaultProducer {
         exchange.getOut().setBody(servicesList.getItems());
     }
 
-    protected void doGetService(Exchange exchange, String operation)
-            throws Exception {
+    protected void doGetService(Exchange exchange, String operation) throws Exception {
         Service service = null;
-        String serviceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(serviceName)) {
             LOG.error("Get a specific service require specify a service name");
-            throw new IllegalArgumentException(
-                    "Get a specific service require specify a service name");
+            throw new IllegalArgumentException("Get a specific service require specify a service name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Get a specific service require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Get a specific service require specify a namespace name");
+            throw new IllegalArgumentException("Get a specific service require specify a namespace name");
         }
-        service = getEndpoint().getKubernetesClient().services()
-                .inNamespace(namespaceName).withName(serviceName).get();
+        service = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).get();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(service);
     }
 
-    protected void doCreateService(Exchange exchange, String operation)
-            throws Exception {
+    protected void doCreateService(Exchange exchange, String operation) throws Exception {
         Service service = null;
-        String serviceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        ServiceSpec serviceSpec = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SERVICE_SPEC, ServiceSpec.class);
+        String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        ServiceSpec serviceSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_SPEC, ServiceSpec.class);
         if (ObjectHelper.isEmpty(serviceName)) {
             LOG.error("Create a specific service require specify a service name");
-            throw new IllegalArgumentException(
-                    "Create a specific service require specify a service name");
+            throw new IllegalArgumentException("Create a specific service require specify a service name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Create a specific service require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Create a specific service require specify a namespace name");
+            throw new IllegalArgumentException("Create a specific service require specify a namespace name");
         }
         if (ObjectHelper.isEmpty(serviceSpec)) {
             LOG.error("Create a specific service require specify a service spec bean");
-            throw new IllegalArgumentException(
-                    "Create a specific service require specify a service spec bean");
+            throw new IllegalArgumentException("Create a specific service require specify a service spec bean");
         }
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
-        Service serviceCreating = new ServiceBuilder()
-                .withNewMetadata().withName(serviceName).withLabels(labels)
-                .endMetadata().withSpec(serviceSpec).build();
-        service = getEndpoint().getKubernetesClient().services()
-                .inNamespace(namespaceName).create(serviceCreating);
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
+        Service serviceCreating = new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labels).endMetadata().withSpec(serviceSpec).build();
+        service = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).create(serviceCreating);
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(service);
     }
 
-    protected void doDeleteService(Exchange exchange, String operation)
-            throws Exception {
-        String serviceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+    protected void doDeleteService(Exchange exchange, String operation) throws Exception {
+        String serviceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(serviceName)) {
             LOG.error("Delete a specific service require specify a service name");
-            throw new IllegalArgumentException(
-                    "Delete a specific service require specify a service name");
+            throw new IllegalArgumentException("Delete a specific service require specify a service name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Delete a specific service require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Delete a specific service require specify a namespace name");
+            throw new IllegalArgumentException("Delete a specific service require specify a namespace name");
         }
-        boolean serviceDeleted = getEndpoint().getKubernetesClient().services()
-                .inNamespace(namespaceName).withName(serviceName).delete();
+        boolean serviceDeleted = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).delete();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(serviceDeleted);
     }

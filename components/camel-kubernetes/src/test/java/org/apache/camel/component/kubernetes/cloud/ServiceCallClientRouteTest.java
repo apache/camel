@@ -53,10 +53,7 @@ public class ServiceCallClientRouteTest extends CamelTestSupport {
                 // register configuration
                 context.setServiceCallConfiguration(config);
 
-                from("direct:start")
-                    .serviceCall("cdi-camel-jetty")
-                    .serviceCall("cdi-camel-jetty")
-                    .to("mock:result");
+                from("direct:start").serviceCall("cdi-camel-jetty").serviceCall("cdi-camel-jetty").to("mock:result");
             }
         };
     }

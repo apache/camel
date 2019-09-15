@@ -40,7 +40,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange, String operation) throws Exception {
         NodeList nodeList = getEndpoint().getKubernetesClient().nodes().list();
-        
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(nodeList.getItems());
     }
@@ -87,7 +87,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
             nodes.withLabel(entry.getKey(), entry.getValue());
         }
         nodeList = nodes.list();
-        
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(nodeList.getItems());
     }

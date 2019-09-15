@@ -43,22 +43,14 @@ public final class ConfigMapLockUtils {
     }
 
     public static ConfigMap createNewConfigMap(String configMapName, LeaderInfo leaderInfo) {
-        return new ConfigMapBuilder().
-                withNewMetadata()
-                    .withName(configMapName)
-                    .addToLabels("provider", "camel")
-                    .addToLabels("kind", "locks").
-                endMetadata()
-                .addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
-                .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp()))
-                .build();
+        return new ConfigMapBuilder().withNewMetadata().withName(configMapName).addToLabels("provider", "camel").addToLabels("kind", "locks").endMetadata()
+            .addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
+            .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp())).build();
     }
 
     public static ConfigMap getConfigMapWithNewLeader(ConfigMap configMap, LeaderInfo leaderInfo) {
-        return new ConfigMapBuilder(configMap)
-                .addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
-                .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp()))
-                .build();
+        return new ConfigMapBuilder(configMap).addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
+            .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp())).build();
     }
 
     public static LeaderInfo getLeaderInfo(ConfigMap configMap, Set<String> members, String group) {

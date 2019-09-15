@@ -41,52 +41,28 @@ public class LockTestServerTest {
 
         assertNull(client.configMaps().withName("xxx").get());
 
-        client.configMaps().withName("xxx").createNew()
-                .withNewMetadata()
-                .withName("xxx")
-                .and().done();
+        client.configMaps().withName("xxx").createNew().withNewMetadata().withName("xxx").and().done();
 
         try {
-            client.configMaps().withName("xxx").createNew()
-                    .withNewMetadata()
-                    .withName("xxx")
-                    .and().done();
+            client.configMaps().withName("xxx").createNew().withNewMetadata().withName("xxx").and().done();
             Assert.fail("Should have failed for duplicate insert");
         } catch (Exception e) {
         }
 
-        client.configMaps().withName("xxx")
-                .createOrReplaceWithNew()
-                .editOrNewMetadata()
-                .withName("xxx")
-                .addToLabels("a", "b")
-                .and().done();
+        client.configMaps().withName("xxx").createOrReplaceWithNew().editOrNewMetadata().withName("xxx").addToLabels("a", "b").and().done();
 
         ConfigMap map = client.configMaps().withName("xxx").get();
         assertEquals("b", map.getMetadata().getLabels().get("a"));
 
-
-        client.configMaps().withName("xxx")
-                .lockResourceVersion(map.getMetadata().getResourceVersion())
-                .replace(new ConfigMapBuilder(map)
-                        .editOrNewMetadata()
-                        .withName("xxx")
-                        .addToLabels("c", "d")
-                        .and()
-                        .build());
+        client.configMaps().withName("xxx").lockResourceVersion(map.getMetadata().getResourceVersion())
+            .replace(new ConfigMapBuilder(map).editOrNewMetadata().withName("xxx").addToLabels("c", "d").and().build());
 
         ConfigMap newMap = client.configMaps().withName("xxx").get();
         assertEquals("d", newMap.getMetadata().getLabels().get("c"));
 
         try {
-            client.configMaps().withName("xxx")
-                    .lockResourceVersion(map.getMetadata().getResourceVersion())
-                    .replace(new ConfigMapBuilder(map)
-                            .editOrNewMetadata()
-                            .withName("xxx")
-                            .addToLabels("e", "f")
-                            .and()
-                            .build());
+            client.configMaps().withName("xxx").lockResourceVersion(map.getMetadata().getResourceVersion())
+                .replace(new ConfigMapBuilder(map).editOrNewMetadata().withName("xxx").addToLabels("e", "f").and().build());
             Assert.fail("Should have failed for wrong version");
         } catch (Exception ex) {
         }

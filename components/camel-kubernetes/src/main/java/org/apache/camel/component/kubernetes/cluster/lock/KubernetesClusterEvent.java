@@ -28,7 +28,8 @@ public interface KubernetesClusterEvent {
     Object getData();
 
     /**
-     * Event signalling that the list of members of the Kubernetes cluster has changed.
+     * Event signalling that the list of members of the Kubernetes cluster has
+     * changed.
      */
     interface KubernetesClusterMemberListChangedEvent extends KubernetesClusterEvent {
         @Override
