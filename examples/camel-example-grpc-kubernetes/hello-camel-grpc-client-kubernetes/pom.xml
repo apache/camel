@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel.example</groupId>
     <artifactId>camel-example-grpc-kubernetes</artifactId>
-    <version>2.23.4-SNAPSHOT</version>
+    <version>2.23.4</version>
   </parent>
 
   <artifactId>camel-example-hello-grpc-client-kubernetes</artifactId>
