@@ -58,7 +58,7 @@ public class LockTestServer extends KubernetesMockServer {
         this.pods = new TreeSet<>(initialPods);
 
         expect().get().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName()).andReply(new ResponseProvider<Object>() {
-            ThreadLocal<Integer> responseCode = new ThreadLocal<>();
+            ThreadLocal<Integer> responseCode =  ThreadLocal.withInitial(() -> 1);
 
             private Headers headers = new Headers.Builder().build();
             
@@ -97,7 +97,7 @@ public class LockTestServer extends KubernetesMockServer {
         }).always();
 
         expect().post().withPath("/api/v1/namespaces/test/configmaps").andReply(new ResponseProvider<Object>() {
-            ThreadLocal<Integer> responseCode = new ThreadLocal<>();
+            ThreadLocal<Integer> responseCode = ThreadLocal.withInitial(() -> 1);
             
             private Headers headers = new Headers.Builder().build();
 
@@ -141,7 +141,7 @@ public class LockTestServer extends KubernetesMockServer {
         }).always();
 
         expect().put().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName()).andReply(new ResponseProvider<Object>() {
-            ThreadLocal<Integer> responseCode = new ThreadLocal<>();
+            ThreadLocal<Integer> responseCode = ThreadLocal.withInitial(() -> 1);
             
             private Headers headers = new Headers.Builder().build();
 

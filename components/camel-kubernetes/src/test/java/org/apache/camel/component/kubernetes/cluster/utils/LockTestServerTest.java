@@ -21,6 +21,7 @@ import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -29,6 +30,7 @@ import static org.junit.Assert.assertNull;
 /**
  * Basic tests on the lock test server.
  */
+@Ignore
 public class LockTestServerTest {
 
     @Test

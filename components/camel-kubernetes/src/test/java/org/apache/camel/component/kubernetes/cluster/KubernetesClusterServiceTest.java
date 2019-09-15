@@ -74,8 +74,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         LeaderRecorder mypod2 = addMember("mypod2");
         context.start();
 
-        mypod1.waitForAnyLeader(2, TimeUnit.SECONDS);
-        mypod2.waitForAnyLeader(2, TimeUnit.SECONDS);
+        mypod1.waitForAnyLeader(5, TimeUnit.SECONDS);
+        mypod2.waitForAnyLeader(5, TimeUnit.SECONDS);
 
         String leader = mypod1.getCurrentLeader();
         assertNotNull(leader);
@@ -90,7 +90,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         context.start();
 
         for (LeaderRecorder member : members) {
-            member.waitForAnyLeader(2, TimeUnit.SECONDS);
+            member.waitForAnyLeader(5, TimeUnit.SECONDS);
         }
 
         Set<String> leaders = members.stream().map(LeaderRecorder::getCurrentLeader).collect(Collectors.toSet());
@@ -110,8 +110,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         LeaderRecorder mypod2 = addMember("mypod2");
         context.start();
 
-        mypod1.waitForAnyLeader(2, TimeUnit.SECONDS);
-        mypod2.waitForAnyLeader(2, TimeUnit.SECONDS);
+        mypod1.waitForAnyLeader(10, TimeUnit.SECONDS);
+        mypod2.waitForAnyLeader(10, TimeUnit.SECONDS);
 
         String leader = mypod1.getCurrentLeader();
         assertTrue(leader.startsWith("mypod"));
@@ -124,8 +124,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         LeaderRecorder mypod2 = addMember("mypod2");
         context.start();
 
-        mypod1.waitForAnyLeader(2, TimeUnit.SECONDS);
-        mypod2.waitForAnyLeader(2, TimeUnit.SECONDS);
+        mypod1.waitForAnyLeader(5, TimeUnit.SECONDS);
+        mypod2.waitForAnyLeader(5, TimeUnit.SECONDS);
 
         String firstLeader = mypod1.getCurrentLeader();
 
@@ -154,8 +154,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         LeaderRecorder mypod2 = addMember("mypod2");
         context.start();
 
-        mypod1.waitForAnyLeader(2, TimeUnit.SECONDS);
-        mypod2.waitForAnyLeader(2, TimeUnit.SECONDS);
+        mypod1.waitForAnyLeader(5, TimeUnit.SECONDS);
+        mypod2.waitForAnyLeader(5, TimeUnit.SECONDS);
 
         String firstLeader = mypod1.getCurrentLeader();
 
@@ -175,8 +175,8 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         LeaderRecorder mypod2 = addMember("mypod2");
         context.start();
 
-        mypod1.waitForAnyLeader(2, TimeUnit.SECONDS);
-        mypod2.waitForAnyLeader(2, TimeUnit.SECONDS);
+        mypod1.waitForAnyLeader(5, TimeUnit.SECONDS);
+        mypod2.waitForAnyLeader(5, TimeUnit.SECONDS);
 
         String firstLeader = mypod1.getCurrentLeader();
 
@@ -199,10 +199,10 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
         LeaderRecorder b2 = addMember("b2", "app2");
         context.start();
 
-        a1.waitForAnyLeader(2, TimeUnit.SECONDS);
-        a2.waitForAnyLeader(2, TimeUnit.SECONDS);
-        b1.waitForAnyLeader(2, TimeUnit.SECONDS);
-        b2.waitForAnyLeader(2, TimeUnit.SECONDS);
+        a1.waitForAnyLeader(5, TimeUnit.SECONDS);
+        a2.waitForAnyLeader(5, TimeUnit.SECONDS);
+        b1.waitForAnyLeader(5, TimeUnit.SECONDS);
+        b2.waitForAnyLeader(5, TimeUnit.SECONDS);
 
         assertNotNull(a1.getCurrentLeader());
         assertTrue(a1.getCurrentLeader().startsWith("a"));
