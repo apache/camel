@@ -39,8 +39,7 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesSecretsProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(KubernetesSecretsProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesSecretsProducer.class);
 
     public KubernetesSecretsProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -48,20 +47,17 @@ public class KubernetesSecretsProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         String operation;
 
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration()
-                .getOperation())) {
-            operation = exchange.getIn().getHeader(
-                    KubernetesConstants.KUBERNETES_OPERATION, String.class);
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
+            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
         } else {
-            operation = getEndpoint().getKubernetesConfiguration()
-                    .getOperation();
+            operation = getEndpoint().getKubernetesConfiguration().getOperation();
         }
 
         switch (operation) {
@@ -87,113 +83,89 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             break;
 
         default:
-            throw new IllegalArgumentException("Unsupported operation "
-                    + operation);
+            throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        SecretList secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace()
-                .list();
+        SecretList secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace().list();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secretsList.getItems());
     }
 
-    protected void doListSecretsByLabels(Exchange exchange, String operation)
-            throws Exception {
+    protected void doListSecretsByLabels(Exchange exchange, String operation) throws Exception {
         SecretList secretsList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<Secret, SecretList, DoneableSecret, Resource<Secret, DoneableSecret>> secrets; 
-            secrets = getEndpoint().getKubernetesClient().secrets()
-                    .inNamespace(namespaceName);
+            NonNamespaceOperation<Secret, SecretList, DoneableSecret, Resource<Secret, DoneableSecret>> secrets;
+            secrets = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 secrets.withLabel(entry.getKey(), entry.getValue());
             }
             secretsList = secrets.list();
         } else {
-            FilterWatchListMultiDeletable<Secret, SecretList, Boolean, Watch, Watcher<Secret>> secrets; 
+            FilterWatchListMultiDeletable<Secret, SecretList, Boolean, Watch, Watcher<Secret>> secrets;
             secrets = getEndpoint().getKubernetesClient().secrets().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 secrets.withLabel(entry.getKey(), entry.getValue());
             }
             secretsList = secrets.list();
         }
-        
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secretsList.getItems());
     }
 
-    protected void doGetSecret(Exchange exchange, String operation)
-            throws Exception {
+    protected void doGetSecret(Exchange exchange, String operation) throws Exception {
         Secret secret = null;
-        String secretName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SECRET_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String secretName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(secretName)) {
             LOG.error("Get a specific Secret require specify a Secret name");
-            throw new IllegalArgumentException(
-                    "Get a specific Secret require specify a Secret name");
+            throw new IllegalArgumentException("Get a specific Secret require specify a Secret name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Get a specific Secret require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Get a specific Secret require specify a namespace name");
+            throw new IllegalArgumentException("Get a specific Secret require specify a namespace name");
         }
-        secret = getEndpoint().getKubernetesClient().secrets()
-                .inNamespace(namespaceName).withName(secretName).get();
-        
+        secret = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).get();
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secret);
     }
 
-    protected void doCreateSecret(Exchange exchange, String operation)
-            throws Exception {
+    protected void doCreateSecret(Exchange exchange, String operation) throws Exception {
         Secret secret = null;
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        Secret secretToCreate = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SECRET, Secret.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        Secret secretToCreate = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET, Secret.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Create a specific secret require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Create a specific secret require specify a namespace name");
+            throw new IllegalArgumentException("Create a specific secret require specify a namespace name");
         }
         if (ObjectHelper.isEmpty(secretToCreate)) {
             LOG.error("Create a specific secret require specify a secret bean");
-            throw new IllegalArgumentException(
-                    "Create a specific secret require specify a secret bean");
+            throw new IllegalArgumentException("Create a specific secret require specify a secret bean");
         }
-        secret = getEndpoint().getKubernetesClient().secrets()
-                .inNamespace(namespaceName).create(secretToCreate);
-        
+        secret = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).create(secretToCreate);
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secret);
     }
 
-    protected void doDeleteSecret(Exchange exchange, String operation)
-            throws Exception {
-        String secretName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_SECRET_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+    protected void doDeleteSecret(Exchange exchange, String operation) throws Exception {
+        String secretName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(secretName)) {
             LOG.error("Delete a specific secret require specify a secret name");
-            throw new IllegalArgumentException(
-                    "Delete a specific secret require specify a secret name");
+            throw new IllegalArgumentException("Delete a specific secret require specify a secret name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Delete a specific secret require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Delete a specific secret require specify a namespace name");
+            throw new IllegalArgumentException("Delete a specific secret require specify a namespace name");
         }
-        boolean secretDeleted = getEndpoint().getKubernetesClient().secrets()
-                .inNamespace(namespaceName).withName(secretName).delete();
-        
+        boolean secretDeleted = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).delete();
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secretDeleted);
     }

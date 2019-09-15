@@ -26,11 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Nodes component provides a producer to execute kubernetes node operations
- * and a consumer to consume node events.
+ * The Kubernetes Nodes component provides a producer to execute kubernetes node
+ * operations and a consumer to consume node events.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-nodes", title = "Kubernetes Nodes",
-    syntax = "kubernetes-nodes:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-nodes", title = "Kubernetes Nodes", syntax = "kubernetes-nodes:masterUrl", label = "container,cloud,paas")
 public class KubernetesNodesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesNodesEndpoint(String uri, KubernetesNodesComponent component, KubernetesConfiguration config) {

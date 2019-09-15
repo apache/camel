@@ -26,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Persistent Volumes component provides a producer to execute kubernetes persistent volume operations.
+ * The Kubernetes Persistent Volumes component provides a producer to execute
+ * kubernetes persistent volume operations.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-persistent-volumes", title = "Kubernetes Persistent Volume",
-    syntax = "kubernetes-persistent-volumes:masterUrl", producerOnly = true, label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-persistent-volumes", title = "Kubernetes Persistent Volume", syntax = "kubernetes-persistent-volumes:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesPersistentVolumesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesPersistentVolumesEndpoint(String uri, KubernetesPersistentVolumesComponent component, KubernetesConfiguration config) {

@@ -38,8 +38,9 @@ import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The cluster view on a specific Camel cluster namespace (not to be confused with Kubernetes namespaces).
- * Namespaces are represented as keys in a Kubernetes ConfigMap (values are the current leader pods).
+ * The cluster view on a specific Camel cluster namespace (not to be confused
+ * with Kubernetes namespaces). Namespaces are represented as keys in a
+ * Kubernetes ConfigMap (values are the current leader pods).
  */
 public class KubernetesClusterView extends AbstractCamelClusterView {
 
@@ -61,7 +62,8 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
 
     private KubernetesLeadershipController controller;
 
-    public KubernetesClusterView(CamelContext camelContext, KubernetesClusterService cluster, KubernetesConfiguration configuration, KubernetesLockConfiguration lockConfiguration) {
+    public KubernetesClusterView(CamelContext camelContext, KubernetesClusterService cluster, KubernetesConfiguration configuration,
+                                 KubernetesLockConfiguration lockConfiguration) {
         super(cluster, lockConfiguration.getGroupName());
         this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
         this.configuration = ObjectHelper.notNull(configuration, "configuration");

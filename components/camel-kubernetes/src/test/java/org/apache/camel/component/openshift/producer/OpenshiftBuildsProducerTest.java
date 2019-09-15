@@ -42,20 +42,12 @@ public class OpenshiftBuildsProducerTest extends KubernetesTestSupport {
 
     @BindToRegistry("client")
     public OpenShiftClient loadClient() throws Exception {
-    	server.expect().withPath("/apis/build.openshift.io/v1/builds").andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/apis/build.openshift.io/v1/builds").andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
         server.expect().withPath("/apis/build.openshift.io/v1/builds?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-        .andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
- 	    server.expect().withPath("/apis").andReturn(200, new APIGroupListBuilder()
-     	      .addNewGroup()
-     	      .withApiVersion("v1")
-     	      .withName("autoscaling.k8s.io")
-     	      .endGroup()
-     	      .addNewGroup()
-     	      .withApiVersion("v1")
-     	      .withName("security.openshift.io")
-     	      .endGroup()
-     	      .build()).always();
-    	return server.getOpenshiftClient();
+            .andReturn(200, new BuildListBuilder().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/apis").andReturn(200, new APIGroupListBuilder().addNewGroup().withApiVersion("v1").withName("autoscaling.k8s.io").endGroup().addNewGroup()
+            .withApiVersion("v1").withName("security.openshift.io").endGroup().build()).always();
+        return server.getOpenshiftClient();
     }
 
     @Test

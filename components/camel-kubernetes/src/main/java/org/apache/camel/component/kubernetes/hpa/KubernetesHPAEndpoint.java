@@ -26,11 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes HPA component provides a producer to execute kubernetes hpa operations
- * and a consumer to consume HPA events.
+ * The Kubernetes HPA component provides a producer to execute kubernetes hpa
+ * operations and a consumer to consume HPA events.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-hpa", title = "Kubernetes HPA",
-    syntax = "kubernetes-hpa:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-hpa", title = "Kubernetes HPA", syntax = "kubernetes-hpa:masterUrl", label = "container,cloud,paas")
 public class KubernetesHPAEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesHPAEndpoint(String uri, KubernetesHPAComponent component, KubernetesConfiguration config) {

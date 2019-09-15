@@ -48,8 +48,7 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
             return;
         }
 
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
-                "DELETED", "MODIFIED", "MODIFIED", "MODIFIED");
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "DELETED", "MODIFIED", "MODIFIED", "MODIFIED");
         Exchange ex = template.request("direct:createReplicationController", new Processor() {
 
             @Override
@@ -62,10 +61,8 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
                 ReplicationControllerSpec rcSpec = new ReplicationControllerSpec();
                 rcSpec.setReplicas(2);
                 PodTemplateSpecBuilder builder = new PodTemplateSpecBuilder();
-                PodTemplateSpec t = builder.withNewMetadata().withName("nginx-template")
-                        .addToLabels("server", "nginx").endMetadata().withNewSpec().addNewContainer()
-                        .withName("wildfly").withImage("jboss/wildfly").addNewPort().withContainerPort(80).endPort()
-                        .endContainer().endSpec().build();
+                PodTemplateSpec t = builder.withNewMetadata().withName("nginx-template").addToLabels("server", "nginx").endMetadata().withNewSpec().addNewContainer()
+                    .withName("wildfly").withImage("jboss/wildfly").addNewPort().withContainerPort(80).endPort().endContainer().endSpec().build();
                 rcSpec.setTemplate(t);
                 Map<String, String> selectorMap = new HashMap<>();
                 selectorMap.put("server", "nginx");
@@ -101,23 +98,12 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").toF(
-                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllers",
-                        host, authToken);
-                from("direct:listByLabels").toF(
-                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllersByLabels",
-                        host, authToken);
-                from("direct:getReplicationController").toF(
-                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=getReplicationController",
-                        host, authToken);
-                from("direct:createReplicationController").toF(
-                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=createReplicationController",
-                        host, authToken);
-                from("direct:deleteReplicationController").toF(
-                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=deleteReplicationController",
-                        host, authToken);
-                fromF("kubernetes-replication-controllers://%s?oauthToken=%s&resourceName=wildfly", host, authToken)
-                        .process(new KubernertesProcessor()).to(mockResultEndpoint);
+                from("direct:list").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllers", host, authToken);
+                from("direct:listByLabels").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllersByLabels", host, authToken);
+                from("direct:getReplicationController").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=getReplicationController", host, authToken);
+                from("direct:createReplicationController").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=createReplicationController", host, authToken);
+                from("direct:deleteReplicationController").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=deleteReplicationController", host, authToken);
+                fromF("kubernetes-replication-controllers://%s?oauthToken=%s&resourceName=wildfly", host, authToken).process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };
     }
@@ -126,8 +112,7 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            log.info("Got event with body: " + in.getBody() + " and action "
-                    + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with body: " + in.getBody() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

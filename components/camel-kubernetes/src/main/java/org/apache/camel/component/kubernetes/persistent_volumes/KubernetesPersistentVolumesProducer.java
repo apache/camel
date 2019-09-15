@@ -36,8 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesPersistentVolumesProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(KubernetesPersistentVolumesProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesPersistentVolumesProducer.class);
 
     public KubernetesPersistentVolumesProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -45,20 +44,17 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         String operation;
 
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration()
-                .getOperation())) {
-            operation = exchange.getIn().getHeader(
-                    KubernetesConstants.KUBERNETES_OPERATION, String.class);
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
+            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
         } else {
-            operation = getEndpoint().getKubernetesConfiguration()
-                    .getOperation();
+            operation = getEndpoint().getKubernetesConfiguration().getOperation();
         }
 
         switch (operation) {
@@ -76,49 +72,40 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
             break;
 
         default:
-            throw new IllegalArgumentException("Unsupported operation "
-                    + operation);
+            throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        PersistentVolumeList persistentVolumeList = getEndpoint()
-                .getKubernetesClient().persistentVolumes().list();
-        
+        PersistentVolumeList persistentVolumeList = getEndpoint().getKubernetesClient().persistentVolumes().list();
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(persistentVolumeList.getItems());
     }
 
-    protected void doListPersistentVolumesByLabels(Exchange exchange,
-            String operation) throws Exception {
+    protected void doListPersistentVolumesByLabels(Exchange exchange, String operation) throws Exception {
         PersistentVolumeList pvList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS,
-                Map.class);
-        NonNamespaceOperation<PersistentVolume, PersistentVolumeList, DoneablePersistentVolume, Resource<PersistentVolume, DoneablePersistentVolume>> pvs; 
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, Map.class);
+        NonNamespaceOperation<PersistentVolume, PersistentVolumeList, DoneablePersistentVolume, Resource<PersistentVolume, DoneablePersistentVolume>> pvs;
         pvs = getEndpoint().getKubernetesClient().persistentVolumes();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             pvs.withLabel(entry.getKey(), entry.getValue());
         }
         pvList = pvs.list();
-        
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pvList.getItems());
     }
 
-    protected void doGetPersistentVolume(Exchange exchange, String operation)
-            throws Exception {
+    protected void doGetPersistentVolume(Exchange exchange, String operation) throws Exception {
         PersistentVolume pv = null;
-        String pvName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_NAME,
-                String.class);
+        String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
             LOG.error("Get a specific Persistent Volume require specify a Persistent Volume name");
-            throw new IllegalArgumentException(
-                    "Get a specific Persistent Volume require specify a Persistent Volume name");
+            throw new IllegalArgumentException("Get a specific Persistent Volume require specify a Persistent Volume name");
         }
         pv = getEndpoint().getKubernetesClient().persistentVolumes().withName(pvName).get();
-        
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pv);
     }

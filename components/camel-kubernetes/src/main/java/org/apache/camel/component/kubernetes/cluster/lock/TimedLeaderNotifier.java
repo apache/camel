@@ -31,7 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Receives information about the current leader and handles expiration automatically.
+ * Receives information about the current leader and handles expiration
+ * automatically.
  */
 public class TimedLeaderNotifier implements Service {
 

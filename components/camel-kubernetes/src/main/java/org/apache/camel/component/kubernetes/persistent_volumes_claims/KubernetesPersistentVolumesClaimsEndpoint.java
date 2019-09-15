@@ -26,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Persistent Volumes Claims component provides a producer to execute kubernetes persistent volume claim operations.
+ * The Kubernetes Persistent Volumes Claims component provides a producer to
+ * execute kubernetes persistent volume claim operations.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-persistent-volumes-claims", title = "Kubernetes Persistent Volume Claim",
-    syntax = "kubernetes-persistent-volumes-claims:masterUrl", producerOnly = true, label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-persistent-volumes-claims", title = "Kubernetes Persistent Volume Claim", syntax = "kubernetes-persistent-volumes-claims:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesPersistentVolumesClaimsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesPersistentVolumesClaimsEndpoint(String uri, KubernetesPersistentVolumesClaimsComponent component, KubernetesConfiguration config) {

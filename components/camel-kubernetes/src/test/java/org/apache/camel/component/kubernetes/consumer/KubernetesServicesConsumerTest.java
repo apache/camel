@@ -51,8 +51,7 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
         }
 
         mockResultEndpoint.expectedMessageCount(2);
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
-                "DELETED");
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "DELETED");
         Exchange ex = template.request("direct:createService", new Processor() {
 
             @Override
@@ -104,19 +103,12 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").toF("kubernetes-services://%s?oauthToken=%s&operation=listServices", host,
-                        authToken);
-                from("direct:listByLabels").toF(
-                        "kubernetes-services://%s?oauthToken=%s&operation=listServicesByLabels", host,
-                        authToken);
-                from("direct:getServices").toF("kubernetes-services://%s?oauthToken=%s&operation=getService",
-                        host, authToken);
-                from("direct:createService").toF(
-                        "kubernetes-services://%s?oauthToken=%s&operation=createService", host, authToken);
-                from("direct:deleteService").toF(
-                        "kubernetes-services://%s?oauthToken=%s&operation=deleteService", host, authToken);
-                fromF("kubernetes-services://%s?oauthToken=%s&labelKey=this&labelValue=rocks", host, authToken)
-                        .process(new KubernertesProcessor()).to(mockResultEndpoint);
+                from("direct:list").toF("kubernetes-services://%s?oauthToken=%s&operation=listServices", host, authToken);
+                from("direct:listByLabels").toF("kubernetes-services://%s?oauthToken=%s&operation=listServicesByLabels", host, authToken);
+                from("direct:getServices").toF("kubernetes-services://%s?oauthToken=%s&operation=getService", host, authToken);
+                from("direct:createService").toF("kubernetes-services://%s?oauthToken=%s&operation=createService", host, authToken);
+                from("direct:deleteService").toF("kubernetes-services://%s?oauthToken=%s&operation=deleteService", host, authToken);
+                fromF("kubernetes-services://%s?oauthToken=%s&labelKey=this&labelValue=rocks", host, authToken).process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };
     }
@@ -125,8 +117,7 @@ public class KubernetesServicesConsumerTest extends KubernetesTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            log.info("Got event with body: " + in.getBody() + " and action "
-                    + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with body: " + in.getBody() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

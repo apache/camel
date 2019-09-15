@@ -39,8 +39,7 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesResourcesQuotaProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(KubernetesResourcesQuotaProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesResourcesQuotaProducer.class);
 
     public KubernetesResourcesQuotaProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -48,20 +47,17 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         String operation;
 
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration()
-                .getOperation())) {
-            operation = exchange.getIn().getHeader(
-                    KubernetesConstants.KUBERNETES_OPERATION, String.class);
+        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getOperation())) {
+            operation = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_OPERATION, String.class);
         } else {
-            operation = getEndpoint().getKubernetesConfiguration()
-                    .getOperation();
+            operation = getEndpoint().getKubernetesConfiguration().getOperation();
         }
 
         switch (operation) {
@@ -87,133 +83,97 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
             break;
 
         default:
-            throw new IllegalArgumentException("Unsupported operation "
-                    + operation);
+            throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        ResourceQuotaList resList = getEndpoint().getKubernetesClient()
-                .resourceQuotas().inAnyNamespace().list();
-        
+        ResourceQuotaList resList = getEndpoint().getKubernetesClient().resourceQuotas().inAnyNamespace().list();
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resList.getItems());
     }
 
-    protected void doListResourceQuotasByLabels(Exchange exchange,
-            String operation) throws Exception {
+    protected void doListResourceQuotasByLabels(Exchange exchange, String operation) throws Exception {
         ResourceQuotaList resList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS,
-                Map.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, Resource<ResourceQuota, DoneableResourceQuota>> resQuota; 
-            resQuota = getEndpoint().getKubernetesClient().resourceQuotas()
-                    .inNamespace(namespaceName);
+            NonNamespaceOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, Resource<ResourceQuota, DoneableResourceQuota>> resQuota;
+            resQuota = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 resQuota.withLabel(entry.getKey(), entry.getValue());
             }
             resList = resQuota.list();
         } else {
-            MixedOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, Resource<ResourceQuota, DoneableResourceQuota>> resQuota; 
+            MixedOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, Resource<ResourceQuota, DoneableResourceQuota>> resQuota;
             resQuota = getEndpoint().getKubernetesClient().resourceQuotas();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 resQuota.withLabel(entry.getKey(), entry.getValue());
             }
             resList = resQuota.list();
         }
-        
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resList.getItems());
     }
 
-    protected void doGetResourceQuota(Exchange exchange, String operation)
-            throws Exception {
+    protected void doGetResourceQuota(Exchange exchange, String operation) throws Exception {
         ResourceQuota rq = null;
-        String rqName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME,
-                String.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(rqName)) {
             LOG.error("Get a specific Resource Quota require specify a Resource Quota name");
-            throw new IllegalArgumentException(
-                    "Get a specific Resource Quota require specify a Resource Quota name");
+            throw new IllegalArgumentException("Get a specific Resource Quota require specify a Resource Quota name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Get a specific Resource Quota require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Get a specific Resource Quota require specify a namespace name");
+            throw new IllegalArgumentException("Get a specific Resource Quota require specify a namespace name");
         }
-        rq = getEndpoint().getKubernetesClient().resourceQuotas()
-                .inNamespace(namespaceName).withName(rqName).get();
-        
+        rq = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).withName(rqName).get();
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rq);
     }
 
-    protected void doCreateResourceQuota(Exchange exchange, String operation)
-            throws Exception {
+    protected void doCreateResourceQuota(Exchange exchange, String operation) throws Exception {
         ResourceQuota rq = null;
-        String rqName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME,
-                String.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        ResourceQuotaSpec rqSpec = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_RESOURCE_QUOTA_SPEC,
-                ResourceQuotaSpec.class);
+        String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        ResourceQuotaSpec rqSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCE_QUOTA_SPEC, ResourceQuotaSpec.class);
         if (ObjectHelper.isEmpty(rqName)) {
             LOG.error("Create a specific resource quota require specify a resource quota name");
-            throw new IllegalArgumentException(
-                    "Create a specific resource quota require specify a resource quota name");
+            throw new IllegalArgumentException("Create a specific resource quota require specify a resource quota name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Create a specific resource quota require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Create a specific resource quota require specify a namespace name");
+            throw new IllegalArgumentException("Create a specific resource quota require specify a namespace name");
         }
         if (ObjectHelper.isEmpty(rqSpec)) {
             LOG.error("Create a specific resource quota require specify a resource quota spec bean");
-            throw new IllegalArgumentException(
-                    "Create a specific resource quota require specify a resource quota spec bean");
+            throw new IllegalArgumentException("Create a specific resource quota require specify a resource quota spec bean");
         }
-        Map<String, String> labels = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS,
-                Map.class);
-        ResourceQuota rqCreating = new ResourceQuotaBuilder()
-                .withNewMetadata().withName(rqName).withLabels(labels)
-                .endMetadata().withSpec(rqSpec).build();
-        rq = getEndpoint().getKubernetesClient().resourceQuotas()
-                .inNamespace(namespaceName).create(rqCreating);
-        
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, Map.class);
+        ResourceQuota rqCreating = new ResourceQuotaBuilder().withNewMetadata().withName(rqName).withLabels(labels).endMetadata().withSpec(rqSpec).build();
+        rq = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).create(rqCreating);
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rq);
     }
 
-    protected void doDeleteResourceQuota(Exchange exchange, String operation)
-            throws Exception {
-        String rqName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME,
-                String.class);
-        String namespaceName = exchange.getIn().getHeader(
-                KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+    protected void doDeleteResourceQuota(Exchange exchange, String operation) throws Exception {
+        String rqName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, String.class);
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(rqName)) {
             LOG.error("Delete a specific resource quota require specify a resource quota name");
-            throw new IllegalArgumentException(
-                    "Delete a specific resource quota require specify a resource quota name");
+            throw new IllegalArgumentException("Delete a specific resource quota require specify a resource quota name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Delete a specific resource quota require specify a namespace name");
-            throw new IllegalArgumentException(
-                    "Delete a specific resource quota require specify a namespace name");
+            throw new IllegalArgumentException("Delete a specific resource quota require specify a namespace name");
         }
-        boolean rqDeleted = getEndpoint().getKubernetesClient()
-                .resourceQuotas().inNamespace(namespaceName).withName(rqName)
-                .delete();
-        
+        boolean rqDeleted = getEndpoint().getKubernetesClient().resourceQuotas().inNamespace(namespaceName).withName(rqName).delete();
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rqDeleted);
     }

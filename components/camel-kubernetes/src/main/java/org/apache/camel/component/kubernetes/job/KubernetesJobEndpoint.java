@@ -26,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Jobs component provides a producer to execute kubernetes job operations
+ * The Kubernetes Jobs component provides a producer to execute kubernetes job
+ * operations
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-job", title = "Kubernetes Job",
-    syntax = "kubernetes-job:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "kubernetes-job", title = "Kubernetes Job", syntax = "kubernetes-job:masterUrl", label = "container,cloud,paas")
 public class KubernetesJobEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesJobEndpoint(String uri, KubernetesJobComponent component, KubernetesConfiguration config) {

@@ -49,7 +49,7 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -83,13 +83,14 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
     }
 
     class DeploymentsConsumerTask implements Runnable {
-        
+
         private Watch watch;
-        
+
         @Override
         public void run() {
-            NonNamespaceOperation<Deployment, DeploymentList, DoneableDeployment, RollableScalableResource<Deployment, DoneableDeployment>> w = getEndpoint().getKubernetesClient().apps().deployments();
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey()) 
+            NonNamespaceOperation<Deployment, DeploymentList, DoneableDeployment, RollableScalableResource<Deployment, DoneableDeployment>> w = getEndpoint().getKubernetesClient()
+                .apps().deployments();
+            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
                 && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
                 w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(), getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
@@ -99,8 +100,7 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
             watch = w.watch(new Watcher<Deployment>() {
 
                 @Override
-                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
-                    Deployment resource) {
+                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Deployment resource) {
                     DeploymentEvent de = new DeploymentEvent(action, resource);
                     Exchange exchange = getEndpoint().createExchange();
                     exchange.getIn().setBody(de.getDeployment());
@@ -122,13 +122,13 @@ public class KubernetesDeploymentsConsumer extends DefaultConsumer {
                 }
             });
         }
-       
+
         public Watch getWatch() {
             return watch;
         }
 
         public void setWatch(Watch watch) {
             this.watch = watch;
-        } 
+        }
     }
 }

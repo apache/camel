@@ -26,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Service Accounts component provides a producer to execute service account operations.
+ * The Kubernetes Service Accounts component provides a producer to execute
+ * service account operations.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-service-accounts", title = "Kubernetes Service Account",
-    syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true, label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-service-accounts", title = "Kubernetes Service Account", syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesServiceAccountsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesServiceAccountsEndpoint(String uri, KubernetesServiceAccountsComponent component, KubernetesConfiguration config) {
