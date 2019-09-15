@@ -20,8 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.APIGroupListBuilder;
 import io.fabric8.openshift.api.model.BuildConfig;
 import io.fabric8.openshift.api.model.BuildConfigListBuilder;
+import io.fabric8.openshift.client.NamespacedOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.server.mock.OpenShiftServer;
 
@@ -40,36 +42,38 @@ public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
     public OpenShiftServer server = new OpenShiftServer();
 
     @BindToRegistry("client")
-    public OpenShiftClient loadClient() throws Exception {
-        return server.getKubernetesClient().adapt(OpenShiftClient.class);
+    public NamespacedOpenShiftClient loadClient() throws Exception {
+    	   server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs").andReturn(200, new BuildConfigListBuilder().build()).once();
+
+    	   server.expect().withPath("/apis").andReturn(200, new APIGroupListBuilder()
+    	      .addNewGroup()
+    	      .withApiVersion("v1")
+    	      .withName("autoscaling.k8s.io")
+    	      .endGroup()
+    	      .addNewGroup()
+    	      .withApiVersion("v1")
+    	      .withName("security.openshift.io")
+    	      .endGroup()
+    	      .build()).always();
+
+    	   server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs").andReturn(200, new BuildConfigListBuilder()
+    	      .addNewItem().and()
+    	      .addNewItem().and().build()).once();
+
+    	   server.expect().withPath("/apis/build.openshift.io/v1/buildconfigs").andReturn(200, new BuildConfigListBuilder()
+    	      .addNewItem().and()
+    	      .addNewItem().and()
+    	      .addNewItem()
+    	      .and().build()).once();
+    	   
+    	return server.getOpenshiftClient();
     }
 
     @Test
     public void listTest() throws Exception {
-        server.expect().withPath("/oapi/v1/buildconfigs").andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().build()).once();
         List<BuildConfig> result = template.requestBody("direct:list", "", List.class);
 
-        assertEquals(2, result.size());
-    }
-
-    @Test
-    public void listByLabelsTest() throws Exception {
-        server.expect().withPath("/oapi/v1/buildconfigs?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-            .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().build()).once();
-        Exchange ex = template.request("direct:listByLabels", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS, labels);
-            }
-        });
-
-        List<BuildConfig> result = ex.getOut().getBody(List.class);
-
-        assertEquals(2, result.size());
+        assertEquals(3, result.size());
     }
 
     @Override

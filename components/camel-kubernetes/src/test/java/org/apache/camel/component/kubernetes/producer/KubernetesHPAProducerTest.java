@@ -48,7 +48,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listTest() throws Exception {
-        server.expect().withPath("/apis/autoscaling/v2beta1/namespaces/test/horizontalpodautoscalers")
+        server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers")
             .andReturn(200, new HorizontalPodAutoscalerListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         List<HorizontalPodAutoscaler> result = template.requestBody("direct:list", "", List.class);
 
@@ -57,7 +57,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
 
     @Test
     public void listByLabelsTest() throws Exception {
-        server.expect().withPath("/apis/autoscaling/v2beta1/namespaces/test/horizontalpodautoscalers?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
+        server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
             .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", new Processor() {
 
@@ -80,8 +80,8 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
         HorizontalPodAutoscaler hpa1 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1").withNamespace("test").and().build();
         HorizontalPodAutoscaler hpa2 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa2").withNamespace("ns1").and().build();
 
-        server.expect().withPath("/apis/autoscaling/v2beta1/namespaces/test/horizontalpodautoscalers/hpa1").andReturn(200, hpa1).once();
-        server.expect().withPath("/apis/autoscaling/v2beta1/namespaces/ns1/horizontalpodautoscalers/hpa2").andReturn(200, hpa2).once();
+        server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers/hpa1").andReturn(200, hpa1).once();
+        server.expect().withPath("/apis/autoscaling/v1/namespaces/ns1/horizontalpodautoscalers/hpa2").andReturn(200, hpa2).once();
         Exchange ex = template.request("direct:getHPA", new Processor() {
 
             @Override
@@ -99,7 +99,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
     @Test
     public void deleteHPATest() throws Exception {
         HorizontalPodAutoscaler hpa1 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1").withNamespace("test").and().build();
-        server.expect().withPath("/apis/autoscaling/v2beta1/namespaces/test/horizontalpodautoscalers/hpa1").andReturn(200, hpa1).once();
+        server.expect().withPath("/apis/autoscaling/v1/namespaces/test/horizontalpodautoscalers/hpa1").andReturn(200, hpa1).once();
 
         Exchange ex = template.request("direct:deleteHPA", new Processor() {
 

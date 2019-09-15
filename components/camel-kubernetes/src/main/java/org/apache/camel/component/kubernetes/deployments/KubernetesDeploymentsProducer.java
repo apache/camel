@@ -24,6 +24,7 @@ import io.fabric8.kubernetes.api.model.apps.DeploymentList;
 import io.fabric8.kubernetes.api.model.apps.DeploymentSpec;
 import io.fabric8.kubernetes.api.model.apps.DoneableDeployment;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
 import io.fabric8.kubernetes.client.dsl.ScalableResource;
 
 import org.apache.camel.Exchange;
@@ -96,7 +97,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
     protected void doListDeploymentsByLabels(Exchange exchange, String operation) throws Exception {
         DeploymentList deploymentList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
-        NonNamespaceOperation<Deployment, DeploymentList, DoneableDeployment, ScalableResource<Deployment, DoneableDeployment>> deployments = getEndpoint().getKubernetesClient()
+        NonNamespaceOperation<Deployment, DeploymentList, DoneableDeployment, RollableScalableResource<Deployment, DoneableDeployment>> deployments = getEndpoint().getKubernetesClient()
             .apps().deployments();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             deployments.withLabel(entry.getKey(), entry.getValue());
