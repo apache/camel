@@ -61,6 +61,19 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, configMapData);
             }
         });
+        
+        ex = template.request("direct:createConfigmap", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+            	exchange.getIn().removeHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS);
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test1");
+                HashMap<String, String> configMapData = new HashMap<>();
+                configMapData.put("test", "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, configMapData);
+            }
+        });
 
         ex = template.request("direct:deleteConfigmap", new Processor() {
 
@@ -70,6 +83,16 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test");
             }
         });
+        
+        ex = template.request("direct:deleteConfigmap", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test1");
+            }
+        });
+
 
         boolean cmDeleted = ex.getOut().getBody(Boolean.class);
 
@@ -87,7 +110,7 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
             public void configure() throws Exception {
                 from("direct:createConfigmap").toF("kubernetes-config-maps://%s?oauthToken=%s&operation=createConfigMap", host, authToken);
                 from("direct:deleteConfigmap").toF("kubernetes-config-maps://%s?oauthToken=%s&operation=deleteConfigMap", host, authToken);
-                fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=default&labelKey=this&labelValue=rocks", host, authToken).process(new KubernertesProcessor())
+                fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor())
                     .to(mockResultEndpoint);
             }
         };
@@ -98,7 +121,7 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             ConfigMap cm = exchange.getIn().getBody(ConfigMap.class);
-            log.info("Got event with configmap name: " + cm.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            System.err.println("Got event with configmap name: " + cm.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }
