@@ -62,7 +62,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (13 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,8 +72,9 @@ with the following path and query parameters:
 | *counterIncrement* (producer) | The amount to increment to use when using the Counter metric type |  | Long
 | *description* (producer) | Sets a description within the metric metadata |  | String
 | *displayName* (producer) | Sets a display name within the metric metadata |  | String
-| *gaugeDecrement* (producer) | Decrements a counter when using the ConcurrentGauge metric type |  | Boolean
-| *gaugeIncrement* (producer) | Increments a counter when using the ConcurrentGauge metric type |  | Boolean
+| *gaugeDecrement* (producer) | Decrements a gauge value when using the ConcurrentGauge metric type |  | Boolean
+| *gaugeIncrement* (producer) | Increments a gauge value when using the ConcurrentGauge metric type |  | Boolean
+| *gaugeValue* (producer) | Sets the gauge value when using the Gauge metric type |  | Number
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *mark* (producer) | The mark value to set when using the Meter metric type |  | Long
 | *metricUnit* (producer) | Sets a metric unit within the metric metadata |  | String
@@ -210,6 +211,51 @@ from("direct:in")
 from("direct:in")
     .setHeader(MicroProfileMetricsConstants.HEADER_GAUGE_DECREMENT, constant(true))
     .to("microprofile-metrics:concurrent gauge:simple.gauge")
+    .to("direct:out");
+----
+
+== [[MicroProfileMetrics-Gauge]]Gauge
+
+[source]
+----
+microprofile-metrics:gauge:name[?options]
+----
+
+=== Options
+
+[width="100%",options="header"]
+|=====================================================
+|Name |Default |Description
+|gaugeValue  |false |Value to set the gauge to
+|=====================================================
+
+If `gaugeValue` is not defined then no action is performed on the gauge.
+
+[source,java]
+----
+// Set gauge simple.gauge value to 10
+from("direct:in")
+    .to("microprofile-metrics:gauge:simple.gauge?gaugeValue=10")
+    .to("direct:out");
+----
+
+=== Headers
+
+Message headers can be used to override the
+`gaugeValue` value specified on the `microprofile-metrics` endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|====================================================================
+|Name |Description |Expected type
+|CamelMicroProfileMetricsGaugeValue  |Override gaugeValue value from the URI |Number
+|====================================================================
+
+[source,java]
+----
+// Set gauge simple.gauge value to 10
+from("direct:in")
+    .setHeader(MicroProfileMetricsConstants.HEADER_GAUGE_VALUE, constant(10))
+    .to("microprofile-metrics:gauge:simple.gauge")
     .to("direct:out");
 ----
 

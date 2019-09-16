@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.microprofile.metrics;
 
-import java.util.Collections;
-
 import org.apache.camel.Producer;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.junit.Test;
@@ -35,13 +33,16 @@ public class MicroProfileMetricsEndpointTest {
     }
 
     @Test
+    public void testCreateConcurrentGaugeProducer() throws Exception {
+        MicroProfileMetricsEndpoint endpoint = createEndpoint(MetricType.CONCURRENT_GAUGE);
+        Producer producer = endpoint.createProducer();
+        assertThat(producer, is(instanceOf(MicroProfileMetricsConcurrentGaugeProducer.class)));
+    }
+
+    @Test
     public void testCreateGaugeProducer() throws Exception {
         MicroProfileMetricsEndpoint endpoint = createEndpoint(MetricType.GAUGE);
         Producer producer = endpoint.createProducer();
-        assertThat(producer, is(instanceOf(MicroProfileMetricsGaugeProducer.class)));
-
-        endpoint = createEndpoint(MetricType.CONCURRENT_GAUGE);
-        producer = endpoint.createProducer();
         assertThat(producer, is(instanceOf(MicroProfileMetricsGaugeProducer.class)));
     }
 

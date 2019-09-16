@@ -23,6 +23,7 @@ public final class MicroProfileMetricsConstants {
     public static final String HEADER_COUNTER_INCREMENT = HEADER_PREFIX + "CounterIncrement";
     public static final String HEADER_GAUGE_INCREMENT = HEADER_PREFIX + "GaugeIncrement";
     public static final String HEADER_GAUGE_DECREMENT = HEADER_PREFIX + "GaugeDecrement";
+    public static final String HEADER_GAUGE_VALUE = HEADER_PREFIX + "GaugeValue";
     public static final String HEADER_HISTOGRAM_VALUE = HEADER_PREFIX + "HistogramValue";
     public static final String HEADER_METER_MARK = HEADER_PREFIX + "MeterMark";
     public static final String HEADER_METRIC_DESCRIPTION = HEADER_PREFIX + "Description";

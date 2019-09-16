@@ -123,6 +123,11 @@ public abstract class AbstractMicroProfileMetricsProducer<T extends Metric> exte
         return ObjectHelper.isNotEmpty(headerValue) ? headerValue : defaultValue;
     }
 
+    protected Number getNumericHeader(Message in, String header, Number defaultValue) {
+        Number headerValue = in.getHeader(header, Number.class);
+        return ObjectHelper.isNotEmpty(headerValue) ? headerValue : defaultValue;
+    }
+
     protected void clearMetricsHeaders(Message in) {
         in.removeHeaders(HEADER_PATTERN);
     }

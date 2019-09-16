@@ -99,7 +99,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Decrements a counter when using the ConcurrentGauge metric type.
+         * Decrements a gauge value when using the ConcurrentGauge metric type.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -111,7 +111,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Decrements a counter when using the ConcurrentGauge metric type.
+         * Decrements a gauge value when using the ConcurrentGauge metric type.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -124,7 +124,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Increments a counter when using the ConcurrentGauge metric type.
+         * Increments a gauge value when using the ConcurrentGauge metric type.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
@@ -136,7 +136,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Increments a counter when using the ConcurrentGauge metric type.
+         * Increments a gauge value when using the ConcurrentGauge metric type.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
@@ -146,6 +146,28 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
         default MicroProfileMetricsEndpointBuilder gaugeIncrement(
                 String gaugeIncrement) {
             doSetProperty("gaugeIncrement", gaugeIncrement);
+            return this;
+        }
+        /**
+         * Sets the gauge value when using the Gauge metric type.
+         * 
+         * The option is a: <code>java.lang.Number</code> type.
+         * 
+         * Group: producer
+         */
+        default MicroProfileMetricsEndpointBuilder gaugeValue(Number gaugeValue) {
+            doSetProperty("gaugeValue", gaugeValue);
+            return this;
+        }
+        /**
+         * Sets the gauge value when using the Gauge metric type.
+         * 
+         * The option will be converted to a <code>java.lang.Number</code> type.
+         * 
+         * Group: producer
+         */
+        default MicroProfileMetricsEndpointBuilder gaugeValue(String gaugeValue) {
+            doSetProperty("gaugeValue", gaugeValue);
             return this;
         }
         /**
