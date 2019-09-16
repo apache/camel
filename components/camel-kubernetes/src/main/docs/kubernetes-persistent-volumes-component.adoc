@@ -1,7 +1,8 @@
-[[kubernetes-persistent-volumes-component]]
-= Kubernetes Persistent Volume Component
+== Kubernetes Persistent Volume Component
 
 *Available as of Camel version 2.17*
+*Available as of Camel version 2.17*
+
 
 
 The *Kubernetes Persistent Volume* component is one of xref:kubernetes-component.adoc[Kubernetes Components] which
@@ -27,7 +28,7 @@ kubernetes-persistent-volumes:masterUrl
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+==== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -37,7 +38,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (20 parameters):
+==== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

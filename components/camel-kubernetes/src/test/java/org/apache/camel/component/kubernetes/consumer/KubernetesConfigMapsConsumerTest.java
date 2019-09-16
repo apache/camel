@@ -36,7 +36,7 @@ import org.junit.Test;
 @Ignore("Requires a running Kubernetes Cluster")
 public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
 
-    @EndpointInject("mock:result")
+    @EndpointInject(uri = "mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test
