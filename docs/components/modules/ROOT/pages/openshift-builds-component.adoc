@@ -1,3 +1,4 @@
+[[openshift-builds-component]]
 == Openshift Builds Component
 
 *Available as of Camel version 2.17*
