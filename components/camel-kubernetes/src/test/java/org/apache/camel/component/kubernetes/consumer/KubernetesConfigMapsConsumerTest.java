@@ -19,6 +19,8 @@ package org.apache.camel.component.kubernetes.consumer;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.ConfigMap;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -30,8 +32,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import io.fabric8.kubernetes.api.model.ConfigMap;
 
 @Ignore("Requires a running Kubernetes Cluster")
 public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
