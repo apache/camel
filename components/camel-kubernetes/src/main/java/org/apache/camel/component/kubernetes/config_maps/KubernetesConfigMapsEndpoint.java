@@ -45,7 +45,7 @@ public class KubernetesConfigMapsEndpoint extends AbstractKubernetesEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new IllegalArgumentException("The kubernetes-configmaps doesn't support consumer");
+        return new KubernetesConfigMapsConsumer(this, processor);
     }
 
 }
