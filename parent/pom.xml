@@ -5407,6 +5407,8 @@
                         <target>${jdk.version}</target>
                         <maxmem>512M</maxmem>
                         <fork>${compiler.fork}</fork>
+                        <showDeprecation>true</showDeprecation>
+                        <showWarnings>true</showWarnings>
                         <compilerArgs>
                             <!-- SB2 actuator endpoint requires MethodParameter metadata -->
                             <arg>-parameters</arg>
