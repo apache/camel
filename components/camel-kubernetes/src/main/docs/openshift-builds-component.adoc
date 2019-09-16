@@ -1,10 +1,7 @@
 [[openshift-builds-component]]
-== Openshift Builds Component
+= Openshift Builds Component
 
 *Available as of Camel version 2.17*
-*Available as of Camel version 2.17*
-
-
 
 The *Kubernetes Builds* component is one of xref:kubernetes-component.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes build operations.
@@ -28,7 +25,7 @@ openshift-builds:masterUrl
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -38,7 +35,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (20 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

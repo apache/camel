@@ -1,10 +1,7 @@
 [[kubernetes-job-component]]
-== Kubernetes Job Component
+= Kubernetes Job Component
 
 *Available as of Camel version 2.23*
-*Available as of Camel version 2.23*
-
-
 
 The *Kubernetes Job* component is one of xref:kubernetes-component.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes job operations.
@@ -29,7 +26,7 @@ kubernetes-job:masterUrl
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -39,7 +36,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (28 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
