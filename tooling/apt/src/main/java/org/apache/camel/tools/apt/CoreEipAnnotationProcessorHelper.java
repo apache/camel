@@ -34,6 +34,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -131,6 +132,7 @@ public class CoreEipAnnotationProcessorHelper {
         // if last then generate source code for helper that contains all the generated property placeholder providers
         // (this allows fast property placeholders at runtime without reflection overhead)
         if (last) {
+            processingEnv.getMessager().printMessage(Kind.WARNING, String.format("Generating placeholder definitions helper for %d definitions", propertyPlaceholderDefinitions.size()));
             generatePropertyPlaceholderDefinitionsHelper(processingEnv, roundEnv, propertyPlaceholderDefinitions);
         }
     }

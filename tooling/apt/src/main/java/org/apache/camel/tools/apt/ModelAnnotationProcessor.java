@@ -16,17 +16,18 @@
  */
 package org.apache.camel.tools.apt;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
@@ -44,6 +45,10 @@ public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
     protected void doProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) throws Exception {
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(XmlRootElement.class);
 
+        final Messager messager = processingEnv.getMessager();
+
+        messager.printMessage(Kind.WARNING, String.format("Found %d elements annotated with XmlRootElement", elements.size()));
+
         Set<? extends Element> coreElements = elements.stream()
                 .filter(new Predicate<Element>() {
                     @Override
@@ -57,6 +62,8 @@ public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
                         return false;
                     }
                 }).collect(Collectors.toSet());
+
+        messager.printMessage(Kind.WARNING, String.format("Found %d core elements", coreElements.size()));
 
         Set<? extends Element> springElements = elements.stream()
                 .filter(new Predicate<Element>() {
@@ -72,10 +79,12 @@ public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
                     }
                 }).collect(Collectors.toSet());
 
+        messager.printMessage(Kind.WARNING, String.format("Found %d spring elements", springElements.size()));
+
         // we want them to be sorted
         Set<String> propertyPlaceholderDefinitions = new TreeSet<>(String::compareToIgnoreCase);
 
-        Iterator it = coreElements.iterator();
+        Iterator<? extends Element> it = coreElements.iterator();
         while (it.hasNext()) {
             TypeElement classElement = (TypeElement) it.next();
             coreProcessor.processModelClass(processingEnv, roundEnv, classElement, propertyPlaceholderDefinitions, !it.hasNext());
