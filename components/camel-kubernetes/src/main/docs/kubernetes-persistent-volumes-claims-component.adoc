@@ -1,3 +1,4 @@
+[[kubernetes-persistent-volumes-claims-component]]
 == Kubernetes Persistent Volume Claim Component
 
 *Available as of Camel version 2.17*

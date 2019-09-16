@@ -1,3 +1,4 @@
+[[kubernetes-hpa-component]]
 == Kubernetes HPA Component
 
 *Available as of Camel version 2.23*

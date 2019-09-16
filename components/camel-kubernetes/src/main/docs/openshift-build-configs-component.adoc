@@ -1,3 +1,4 @@
+[[openshift-build-configs-component]]
 == Openshift Build Config Component
 
 *Available as of Camel version 2.17*
