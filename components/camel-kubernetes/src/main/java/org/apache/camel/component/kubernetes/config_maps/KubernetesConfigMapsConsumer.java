@@ -18,14 +18,6 @@ package org.apache.camel.component.kubernetes.config_maps;
 
 import java.util.concurrent.ExecutorService;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
-import org.apache.camel.component.kubernetes.KubernetesConstants;
-import org.apache.camel.component.kubernetes.consumer.common.ConfigMapEvent;
-import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.util.ObjectHelper;
-
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapList;
 import io.fabric8.kubernetes.api.model.DoneableConfigMap;
@@ -34,6 +26,14 @@ import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
+import org.apache.camel.component.kubernetes.KubernetesConstants;
+import org.apache.camel.component.kubernetes.consumer.common.ConfigMapEvent;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
 
 public class KubernetesConfigMapsConsumer extends DefaultConsumer {
 
