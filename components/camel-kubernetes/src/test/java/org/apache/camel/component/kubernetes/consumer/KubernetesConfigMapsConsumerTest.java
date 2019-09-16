@@ -61,12 +61,12 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_DATA, configMapData);
             }
         });
-        
+
         ex = template.request("direct:createConfigmap", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-            	exchange.getIn().removeHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS);
+                exchange.getIn().removeHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS);
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test1");
                 HashMap<String, String> configMapData = new HashMap<>();
@@ -83,7 +83,7 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test");
             }
         });
-        
+
         ex = template.request("direct:deleteConfigmap", new Processor() {
 
             @Override
@@ -92,7 +92,6 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test1");
             }
         });
-
 
         boolean cmDeleted = ex.getOut().getBody(Boolean.class);
 
@@ -110,8 +109,7 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
             public void configure() throws Exception {
                 from("direct:createConfigmap").toF("kubernetes-config-maps://%s?oauthToken=%s&operation=createConfigMap", host, authToken);
                 from("direct:deleteConfigmap").toF("kubernetes-config-maps://%s?oauthToken=%s&operation=deleteConfigMap", host, authToken);
-                fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor())
-                    .to(mockResultEndpoint);
+                fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };
     }
