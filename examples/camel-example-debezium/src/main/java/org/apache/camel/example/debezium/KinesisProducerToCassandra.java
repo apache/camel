@@ -20,10 +20,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.main.Main;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +34,9 @@ public final class KinesisProducerToCassandra {
 
     private static final Logger LOG = LoggerFactory.getLogger(KinesisProducerToCassandra.class);
 
+    // use Camel Main to setup and run Camel
+    private static Main main = new Main();
+
     private KinesisProducerToCassandra() {
     }
 
@@ -42,9 +44,8 @@ public final class KinesisProducerToCassandra {
 
         LOG.debug("About to run Kinesis to Cassandra integration...");
 
-        final CamelContext camelContext = new DefaultCamelContext();
-
-        camelContext.addRoutes(new RouteBuilder() {
+        // add route
+        main.addRouteBuilder(new RouteBuilder() {
             public void configure() {
                 final PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
                 pc.setLocation("classpath:application.properties");
@@ -101,10 +102,9 @@ public final class KinesisProducerToCassandra {
                         .end();
             }
         });
-        camelContext.start();
 
-        // We block the thread here
-        Thread.sleep(Long.MAX_VALUE);
+        // start and run Camel (block)
+        main.run();
     }
 
 }
