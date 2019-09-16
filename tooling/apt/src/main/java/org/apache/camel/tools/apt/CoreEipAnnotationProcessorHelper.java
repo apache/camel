@@ -54,7 +54,6 @@ import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeEleme
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.hasSuperClass;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.implementsInterface;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.processFile;
-import static org.apache.camel.tools.apt.PropertyPlaceholderGenerator.generatePropertyPlaceholderDefinitionsHelper;
 import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
@@ -89,7 +88,7 @@ public class CoreEipAnnotationProcessorHelper {
     private boolean skipUnwanted = true;
 
     protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv,
-                                     final TypeElement classElement, Set<String> propertyPlaceholderDefinitions, final boolean last) {
+                                     final TypeElement classElement, Set<String> propertyPlaceholderDefinitions) {
         final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf("."));
 
@@ -128,13 +127,6 @@ public class CoreEipAnnotationProcessorHelper {
         // write json schema and property placeholder provider
         processFile(processingEnv, packageName, fileName, writer -> writeJSonSchemeAndPropertyPlaceholderProvider(processingEnv, writer,
                 roundEnv, classElement, rootElement, javaTypeName, name, propertyPlaceholderDefinitions));
-
-        // if last then generate source code for helper that contains all the generated property placeholder providers
-        // (this allows fast property placeholders at runtime without reflection overhead)
-        if (last) {
-            processingEnv.getMessager().printMessage(Kind.WARNING, String.format("Generating placeholder definitions helper for %d definitions", propertyPlaceholderDefinitions.size()));
-            generatePropertyPlaceholderDefinitionsHelper(processingEnv, roundEnv, propertyPlaceholderDefinitions);
-        }
     }
 
     protected void writeJSonSchemeAndPropertyPlaceholderProvider(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
