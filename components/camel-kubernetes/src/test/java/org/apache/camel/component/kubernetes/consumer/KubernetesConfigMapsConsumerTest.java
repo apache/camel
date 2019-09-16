@@ -87,7 +87,7 @@ public class KubernetesConfigMapsConsumerTest extends KubernetesTestSupport {
             public void configure() throws Exception {
                 from("direct:createConfigmap").toF("kubernetes-config-maps://%s?oauthToken=%s&operation=createConfigMap", host, authToken);
                 from("direct:deleteConfigmap").toF("kubernetes-config-maps://%s?oauthToken=%s&operation=deleteConfigMap", host, authToken);
-                fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=myproject&labelKey=this&labelValue=rocks", host, authToken).process(new KubernertesProcessor())
+                fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=default&labelKey=this&labelValue=rocks", host, authToken).process(new KubernertesProcessor())
                     .to(mockResultEndpoint);
             }
         };
