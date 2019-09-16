@@ -47,9 +47,6 @@ public final class KinesisProducerToCassandra {
         // add route
         main.addRouteBuilder(new RouteBuilder() {
             public void configure() {
-                final PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
-                pc.setLocation("classpath:application.properties");
-
                 // We set the CQL templates we need, note that an UPDATE in Cassandra means an UPSERT which is what we need
                 final String cqlUpdate = "update products set name = ?, description = ?, weight = ? where id = ?";
                 final String cqlDelete = "delete from products where id = ?";
