@@ -87,14 +87,17 @@ public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
         Iterator<? extends Element> it = coreElements.iterator();
         while (it.hasNext()) {
             TypeElement classElement = (TypeElement) it.next();
-            coreProcessor.processModelClass(processingEnv, roundEnv, classElement, propertyPlaceholderDefinitions, !it.hasNext());
+            coreProcessor.processModelClass(processingEnv, roundEnv, classElement, propertyPlaceholderDefinitions);
         }
 
         it = springElements.iterator();
         while (it.hasNext()) {
             TypeElement classElement = (TypeElement) it.next();
-            springProcessor.processModelClass(processingEnv, roundEnv, classElement, !it.hasNext());
+            springProcessor.processModelClass(processingEnv, roundEnv, classElement);
         }
+
+        messager.printMessage(Kind.WARNING, String.format("Generating placeholder definitions helper for %d definitions", propertyPlaceholderDefinitions.size()));
+        PropertyPlaceholderGenerator.generatePropertyPlaceholderDefinitionsHelper(processingEnv, roundEnv, propertyPlaceholderDefinitions);
     }
 
 }
