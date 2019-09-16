@@ -18,45 +18,30 @@ package org.apache.camel.component.microprofile.metrics;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.eclipse.microprofile.metrics.ConcurrentGauge;
 import org.junit.Test;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_DECREMENT;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_INCREMENT;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_VALUE;
 
 public class MicroProfileMetricsGaugeTest extends MicroProfileMetricsTestSupport {
 
     @Test
     public void testGaugeMetric() {
-        template.sendBody("direct:gaugeIncrement", null);
-        ConcurrentGauge gauge = getConcurrentGauge("test-gauge");
-        assertEquals(1, gauge.getCount());
-        template.sendBody("direct:gaugeDecrement", null);
-        assertEquals(0, gauge.getCount());
+        template.sendBody("direct:gaugeValue", null);
+        MicroProfileMetricsCamelGauge gauge = getGauge("test-gauge");
+        assertEquals(10, gauge.getValue().intValue());
     }
 
     @Test
-    public void testGaugeMetricHeaderIncrementDecrement() {
-        template.sendBody("direct:gaugeIncrementHeader", null);
-        ConcurrentGauge gauge = getConcurrentGauge("test-gauge-header");
-        assertEquals(1, gauge.getCount());
-        template.sendBody("direct:gaugeDecrementHeader", null);
-        assertEquals(0, gauge.getCount());
+    public void testGaugeMetricHeaderValue() {
+        template.sendBody("direct:gaugeValueHeader", null);
+        MicroProfileMetricsCamelGauge gauge = getGauge("test-gauge-header");
+        assertEquals(20, gauge.getValue().intValue());
     }
 
     @Test
-    public void testCounterMetricHeaderOverrideIncrement() {
-        template.sendBodyAndHeader("direct:gaugeIncrement", null, HEADER_GAUGE_INCREMENT, false);
-        ConcurrentGauge gauge = getConcurrentGauge("test-gauge");
-        assertEquals(0, gauge.getCount());
-    }
-
-    @Test
-    public void testCounterMetricHeaderOverrideDecrement() {
-        template.sendBody("direct:gaugeIncrement", null);
-        ConcurrentGauge gauge = getConcurrentGauge("test-gauge");
-        assertEquals(1, gauge.getCount());
-        template.sendBodyAndHeader("direct:gaugeDecrement", null, HEADER_GAUGE_DECREMENT, false);
-        assertEquals(1, gauge.getCount());
+    public void testGaugeMetricHeaderOverrideValue() {
+        template.sendBodyAndHeader("direct:gaugeValue", null, HEADER_GAUGE_VALUE, 20);
+        MicroProfileMetricsCamelGauge gauge = getGauge("test-gauge");
+        assertEquals(20, gauge.getValue().intValue());
     }
 
     @Override
@@ -64,19 +49,12 @@ public class MicroProfileMetricsGaugeTest extends MicroProfileMetricsTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:gaugeIncrement")
-                    .to("microprofile-metrics:concurrent gauge:test-gauge?gaugeIncrement=true");
+                from("direct:gaugeValue")
+                    .to("microprofile-metrics:gauge:test-gauge?gaugeValue=10");
 
-                from("direct:gaugeDecrement")
-                    .to("microprofile-metrics:concurrent gauge:test-gauge?gaugeDecrement=true");
-
-                from("direct:gaugeIncrementHeader")
-                    .setHeader(HEADER_GAUGE_INCREMENT, constant(true))
-                    .to("microprofile-metrics:concurrent gauge:test-gauge-header");
-
-                from("direct:gaugeDecrementHeader")
-                    .setHeader(HEADER_GAUGE_DECREMENT, constant(true))
-                    .to("microprofile-metrics:concurrent gauge:test-gauge-header");
+                from("direct:gaugeValueHeader")
+                    .setHeader(HEADER_GAUGE_VALUE, constant(20))
+                    .to("microprofile-metrics:gauge:test-gauge-header");
             }
         };
     }

@@ -53,6 +53,8 @@ public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
     private Boolean gaugeIncrement = false;
     @UriParam(description = "Decrement metric value when using concurrent gauge type")
     private Boolean gaugeDecrement = false;
+    @UriParam(description = "Decrement metric value when using concurrent gauge type")
+    private Number gaugeValue;
     @UriParam(description = "Metric description")
     private String description;
     @UriParam(description = "Metric display name")
@@ -71,7 +73,9 @@ public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         if (metricType.equals(MetricType.COUNTER)) {
             return new MicroProfileMetricsCounterProducer(this);
-        } else if (metricType.equals(MetricType.GAUGE) || metricType.equals(MetricType.CONCURRENT_GAUGE)) {
+        } else if (metricType.equals(MetricType.CONCURRENT_GAUGE)) {
+            return new MicroProfileMetricsConcurrentGaugeProducer(this);
+        } else if (metricType.equals(MetricType.GAUGE)) {
             return new MicroProfileMetricsGaugeProducer(this);
         } else if (metricType.equals(MetricType.HISTOGRAM)) {
             return new MicroProfileMetricsHistogramProducer(this);
@@ -158,7 +162,7 @@ public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Increments a counter when using the ConcurrentGauge metric type
+     * Increments a gauge value when using the ConcurrentGauge metric type
      */
     public void setGaugeIncrement(Boolean gaugeIncrement) {
         this.gaugeIncrement = gaugeIncrement;
@@ -169,10 +173,21 @@ public class MicroProfileMetricsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Decrements a counter when using the ConcurrentGauge metric type
+     * Decrements a gauge value when using the ConcurrentGauge metric type
      */
     public void setGaugeDecrement(Boolean gaugeDecrement) {
         this.gaugeDecrement = gaugeDecrement;
+    }
+
+    public Number getGaugeValue() {
+        return gaugeValue;
+    }
+
+    /**
+     * Sets the gauge value when using the Gauge metric type
+     */
+    public void setGaugeValue(Number gaugeValue) {
+        this.gaugeValue = gaugeValue;
     }
 
     public String getDescription() {

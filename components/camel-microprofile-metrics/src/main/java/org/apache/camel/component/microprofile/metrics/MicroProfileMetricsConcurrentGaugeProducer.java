@@ -21,29 +21,33 @@ import java.util.function.Function;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.eclipse.microprofile.metrics.ConcurrentGauge;
 import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_VALUE;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_DECREMENT;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_INCREMENT;
 
-public class MicroProfileMetricsGaugeProducer extends AbstractMicroProfileMetricsProducer<MicroProfileMetricsCamelGauge> {
+public class MicroProfileMetricsConcurrentGaugeProducer extends AbstractMicroProfileMetricsProducer<ConcurrentGauge> {
 
-    public MicroProfileMetricsGaugeProducer(MicroProfileMetricsEndpoint endpoint) {
+    public MicroProfileMetricsConcurrentGaugeProducer(MicroProfileMetricsEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    protected void doProcess(Exchange exchange, MicroProfileMetricsEndpoint endpoint, MicroProfileMetricsCamelGauge gauge) {
+    protected void doProcess(Exchange exchange, MicroProfileMetricsEndpoint endpoint, ConcurrentGauge gauge) {
         Message in = exchange.getIn();
-        Number finalGaugeValue = getNumericHeader(in, HEADER_GAUGE_VALUE, endpoint.getGaugeValue());
-
-        if (finalGaugeValue != null) {
-            gauge.setValue(finalGaugeValue);
+        Boolean finalIncrement = getBooleanHeader(in, HEADER_GAUGE_INCREMENT, endpoint.getGaugeIncrement());
+        Boolean finalDecrement = getBooleanHeader(in, HEADER_GAUGE_DECREMENT, endpoint.getGaugeDecrement());
+        if (finalIncrement && !finalDecrement) {
+            gauge.inc();
+        } else if (finalDecrement) {
+            gauge.dec();
         }
     }
 
     @Override
-    protected Function<MetricRegistry, MicroProfileMetricsCamelGauge> registerMetric(Metadata metadata, List<Tag> tags) {
-        return metricRegistry -> metricRegistry.register(metadata, new MicroProfileMetricsCamelGauge(), tags.toArray(new Tag[0]));
+    protected Function<MetricRegistry, ConcurrentGauge> registerMetric(Metadata metadata, List<Tag> tags) {
+        return metricRegistry -> metricRegistry.concurrentGauge(metadata, tags.toArray(new Tag[0]));
     }
 }

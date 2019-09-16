@@ -63,6 +63,10 @@ public class MicroProfileMetricsTestSupport extends CamelTestSupport {
         return findMetric(metricRegistry, metricName, ConcurrentGauge.class);
     }
 
+    protected MicroProfileMetricsCamelGauge getGauge(String metricName) {
+        return findMetric(metricRegistry, metricName, MicroProfileMetricsCamelGauge.class);
+    }
+
     protected Histogram getHistogram(String metricName) {
         return findMetric(metricRegistry, metricName, Histogram.class);
     }
