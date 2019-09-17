@@ -116,7 +116,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-management-impl</artifactId>
+            <artifactId>camel-management</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -127,7 +127,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-management-impl</artifactId>
+            <artifactId>camel-management</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

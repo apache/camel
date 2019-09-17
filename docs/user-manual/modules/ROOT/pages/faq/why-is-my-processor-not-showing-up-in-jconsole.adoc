@@ -22,7 +22,7 @@ The same applies when using beans in your routes.
 
 [source,java]
 ----
-include::{examplesdir}/core/camel-management-impl/src/test/java/org/apache/camel/management/ManagedCustomProcessorTest.java[tags=e1]
+include::{examplesdir}/core/camel-management/src/test/java/org/apache/camel/management/ManagedCustomProcessorTest.java[tags=e1]
 ----
 
 Camel 2.9 onwards provides Camel's own JMX annotations

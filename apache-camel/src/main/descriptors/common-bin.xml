@@ -30,7 +30,7 @@
         <include>org.apache.camel:camel-api</include>
         <include>org.apache.camel:camel-util</include>
         <include>org.apache.camel:camel-management-api</include>
-        <include>org.apache.camel:camel-management-impl</include>
+        <include>org.apache.camel:camel-management</include>
         <include>org.apache.camel:camel-base</include>
         <include>org.apache.camel:camel-support</include>
         <include>org.apache.camel:camel-core</include>
