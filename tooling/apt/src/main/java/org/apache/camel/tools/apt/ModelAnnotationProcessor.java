@@ -96,7 +96,7 @@ public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
             springProcessor.processModelClass(processingEnv, roundEnv, classElement);
         }
 
-        if (! propertyPlaceholderDefinitions.isEmpty()) {
+        if (!propertyPlaceholderDefinitions.isEmpty()) {
             messager.printMessage(Kind.WARNING, String.format("Generating placeholder definitions helper for %d definitions", propertyPlaceholderDefinitions.size()));
             PropertyPlaceholderGenerator.generatePropertyPlaceholderDefinitionsHelper(processingEnv, roundEnv, propertyPlaceholderDefinitions);
         }
