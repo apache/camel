@@ -20,7 +20,7 @@ In Camel 2.x camel-core was one JAR file, it has now been split up into many JAR
 - camel-jaxp
 - camel-main
 - camel-management-api
-- camel-management-impl
+- camel-management
 - camel-support
 - camel-util
 - camel-util-json
@@ -247,7 +247,7 @@ to
 
 === JMX
 
-If you run Camel standalone with just `camel-core` as a dependency, and you want JMX enabled out of the box, then you need to add `camel-management-impl` as a dependency.
+If you run Camel standalone with just `camel-core` as a dependency, and you want JMX enabled out of the box, then you need to add `camel-management` as a dependency.
 
 For using `ManagedCamelContext` you now need to get this an extension from `CamelContext` as follows:
 

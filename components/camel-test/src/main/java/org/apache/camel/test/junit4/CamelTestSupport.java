@@ -500,7 +500,7 @@ public abstract class CamelTestSupport extends TestSupport {
             ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
             if (managedCamelContext == null) {
                 log.warn("Cannot dump route coverage to file as JMX is not enabled. "
-                        + "Add camel-management-impl JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
+                        + "Add camel-management JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
             } else {
                 logCoverageSummary(managedCamelContext);
 

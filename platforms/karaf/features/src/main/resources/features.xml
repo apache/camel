@@ -51,7 +51,7 @@
     <bundle>mvn:org.apache.camel/camel-util/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-support/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-base/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-management-impl/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-management/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cloud/${project.version}</bundle>

@@ -28,7 +28,7 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>camel-management-impl</artifactId>
+    <artifactId>camel-management</artifactId>
     <packaging>jar</packaging>
 
     <name>Camel :: Management Implementation</name>
