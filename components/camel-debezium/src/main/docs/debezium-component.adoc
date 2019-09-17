@@ -47,7 +47,7 @@ The Debezium component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (consumer) | Allow pre-configured Configurations to be set, you will need to extend EmbeddedDebeziumConfiguration in order to create the configuration for the component |  | EmbeddedDebezium Configuration
+| *configuration* (consumer) | Allow pre-configured Configurations to be set, you will need to extend EmbeddedDebeziumConfiguration in order to create the configuration for the component |  | EmbeddedDebeziumConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END

@@ -112,7 +112,7 @@ with the following path and query parameters:
 | *dateTimeFormat* (advanced) | The date-time format used for Json serialization/deserialization | yyyy-MM-dd HH:mm:ss | String
 | *httpClientPolicy* (advanced) | To configure http-client |  | HTTPClientPolicy
 | *mapper* (advanced) | Sets Jackson's ObjectMapper to use for request/reply |  | ObjectMapper
-| *proxyAuthorizationPolicy* (advanced) | To configure proxy authentication |  | ProxyAuthorization Policy
+| *proxyAuthorizationPolicy* (advanced) | To configure proxy authentication |  | ProxyAuthorizationPolicy
 | *retrieveTargetRecordOn Import* (advanced) | Set this parameter to true to retrieve the target record when using import set api. The import set result is then replaced by the target record | false | Boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *timeFormat* (advanced) | The time format used for Json serialization/deserialization | HH:mm:ss | String
@@ -177,7 +177,7 @@ The component supports 57 options, which are listed below.
 | *camel.component.servicenow.configuration.oauth-token-url* | OAuth token Url |  | String
 | *camel.component.servicenow.configuration.password* | ServiceNow account password, MUST be provided |  | String
 | *camel.component.servicenow.configuration.per-page* | Enter the maximum number of scorecards each query can return. By default this value is 10, and the maximum is 100. | 10 | Integer
-| *camel.component.servicenow.configuration.proxy-authorization-policy* | To configure proxy authentication |  | ProxyAuthorization Policy
+| *camel.component.servicenow.configuration.proxy-authorization-policy* | To configure proxy authentication |  | ProxyAuthorizationPolicy
 | *camel.component.servicenow.configuration.proxy-host* | The proxy host name |  | String
 | *camel.component.servicenow.configuration.proxy-password* | Password for proxy authentication |  | String
 | *camel.component.servicenow.configuration.proxy-port* | The proxy port number |  | Integer

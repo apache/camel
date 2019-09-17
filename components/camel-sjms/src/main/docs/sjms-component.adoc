@@ -95,8 +95,8 @@ The Simple JMS component supports 15 options, which are listed below.
 | *connectionResource* (advanced) | A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory. See Plugable Connection Resource Management for further details. |  | ConnectionResource
 | *connectionCount* (common) | The maximum number of connections available to endpoints started under this component | 1 | Integer
 | *jmsKeyFormatStrategy* (advanced) | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -). Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation. |  | JmsKeyFormatStrategy
-| *transactionCommit Strategy* (transaction) | To configure which kind of commit strategy to use. Camel provides two implementations out of the box, default and batch. |  | TransactionCommit Strategy
-| *destinationCreation Strategy* (advanced) | To use a custom DestinationCreationStrategy. |  | DestinationCreation Strategy
+| *transactionCommit Strategy* (transaction) | To configure which kind of commit strategy to use. Camel provides two implementations out of the box, default and batch. |  | TransactionCommitStrategy
+| *destinationCreation Strategy* (advanced) | To use a custom DestinationCreationStrategy. |  | DestinationCreationStrategy
 | *timedTaskManager* (advanced) | To use a custom TimedTaskManager |  | TimedTaskManager
 | *messageCreatedStrategy* (advanced) | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message. |  | MessageCreatedStrategy
 | *connectionTestOnBorrow* (advanced) | When using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should each javax.jms.Connection be tested (calling start) before returned from the pool. | true | boolean
@@ -142,7 +142,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *acknowledgementMode* (common) | The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE | AUTO_ ACKNOWLEDGE | SessionAcknowledgement Type
+| *acknowledgementMode* (common) | The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE | AUTO_ ACKNOWLEDGE | SessionAcknowledgementType
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *consumerCount* (consumer) | Sets the number of consumer listeners used for this endpoint. | 1 | int
 | *durableSubscriptionId* (consumer) | Sets the durable subscription Id required for durable topics. |  | String
@@ -164,7 +164,7 @@ with the following path and query parameters:
 | *connectionCount* (advanced) | The maximum number of connections available to this endpoint |  | Integer
 | *connectionFactory* (advanced) | Initializes the connectionFactory for the endpoint, which takes precedence over the component's connectionFactory, if any |  | ConnectionFactory
 | *connectionResource* (advanced) | Initializes the connectionResource for the endpoint, which takes precedence over the component's connectionResource, if any |  | ConnectionResource
-| *destinationCreationStrategy* (advanced) | To use a custom DestinationCreationStrategy. |  | DestinationCreation Strategy
+| *destinationCreationStrategy* (advanced) | To use a custom DestinationCreationStrategy. |  | DestinationCreationStrategy
 | *exceptionListener* (advanced) | Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions. |  | ExceptionListener
 | *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *includeAllJMSXProperties* (advanced) | Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply. | false | boolean
@@ -176,7 +176,7 @@ with the following path and query parameters:
 | *transacted* (transaction) | Specifies whether to use transacted mode | false | boolean
 | *transactionBatchCount* (transaction) | If transacted sets the number of messages to process before committing a transaction. | -1 | int
 | *transactionBatchTimeout* (transaction) | Sets timeout (in millis) for batch transactions, the value should be 1000 or higher. | 5000 | long
-| *transactionCommitStrategy* (transaction) | Sets the commit strategy. |  | TransactionCommit Strategy
+| *transactionCommitStrategy* (transaction) | Sets the commit strategy. |  | TransactionCommitStrategy
 | *sharedJMSSession* (transaction) | Specifies whether to share JMS session with other SJMS endpoints. Turn this off if your route is accessing to multiple JMS providers. If you need transaction against multiple JMS providers, use jms component to leverage XA transaction. | true | boolean
 |===
 // endpoint options: END

@@ -60,7 +60,7 @@ with the following path and query parameters:
 | *oneExchangePerUpdate* (consumer) | Whether to pack each update in an individual Exchange, even if multiple updates are received in one batch. Only used by the Continuous Query Consumer. | true | boolean
 | *pageSize* (consumer) | The page size. Only used by the Continuous Query Consumer. | 1 | int
 | *query* (consumer) | The Query to execute, only needed for operations that require it, and for the Continuous Query Consumer. |  | Query
-| *remoteFilter* (consumer) | The remote filter, only used by the Continuous Query Consumer. |  | CacheEntryEvent SerializableFilter
+| *remoteFilter* (consumer) | The remote filter, only used by the Continuous Query Consumer. |  | CacheEntryEventSerializableFilter
 | *timeInterval* (consumer) | The time interval for the Continuous Query Consumer. | 0 | long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern

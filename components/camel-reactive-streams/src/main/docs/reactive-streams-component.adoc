@@ -52,8 +52,8 @@ The Reactive Streams component supports 4 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *internalEngine Configuration* (advanced) | Configures the internal engine for Reactive Streams. |  | ReactiveStreamsEngine Configuration
-| *backpressureStrategy* (producer) | The backpressure strategy to use when pushing events to a slow subscriber. | BUFFER | ReactiveStreams BackpressureStrategy
+| *internalEngine Configuration* (advanced) | Configures the internal engine for Reactive Streams. |  | ReactiveStreamsEngineConfiguration
+| *backpressureStrategy* (producer) | The backpressure strategy to use when pushing events to a slow subscriber. | BUFFER | ReactiveStreamsBackpressureStrategy
 | *serviceType* (advanced) | Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the registry or using a ServiceLoader, the default implementation is DefaultCamelReactiveStreamsService |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
@@ -96,7 +96,7 @@ with the following path and query parameters:
 | *maxInflightExchanges* (consumer) | Maximum number of exchanges concurrently being processed by Camel. This parameter controls backpressure on the stream. Setting a non-positive value will disable backpressure. | 128 | Integer
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *backpressureStrategy* (producer) | The backpressure strategy to use when pushing events to a slow subscriber. |  | ReactiveStreams BackpressureStrategy
+| *backpressureStrategy* (producer) | The backpressure strategy to use when pushing events to a slow subscriber. |  | ReactiveStreamsBackpressureStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -125,7 +125,7 @@ The component supports 7 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.reactive-streams.backpressure-strategy* | The backpressure strategy to use when pushing events to a slow subscriber. |  | ReactiveStreams BackpressureStrategy
+| *camel.component.reactive-streams.backpressure-strategy* | The backpressure strategy to use when pushing events to a slow subscriber. |  | ReactiveStreamsBackpressureStrategy
 | *camel.component.reactive-streams.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.reactive-streams.enabled* | Enable reactive-streams component | true | Boolean
 | *camel.component.reactive-streams.internal-engine-configuration.thread-pool-max-size* | The maximum number of threads used by the reactive streams internal engine. |  | Integer

@@ -32,7 +32,7 @@ The Atomix MultiMap component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (consumer) | The shared component configuration |  | AtomixMultiMap Configuration
+| *configuration* (consumer) | The shared component configuration |  | AtomixMultiMapConfiguration
 | *atomix* (consumer) | The shared AtomixClient instance |  | AtomixClient
 | *nodes* (consumer) | The nodes the AtomixClient should connect to |  | List
 | *configurationUri* (consumer) | The path to the AtomixClient configuration |  | String
