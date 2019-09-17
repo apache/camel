@@ -60,9 +60,10 @@ public class SpringBootAutoConfigureOptionModel {
     }
 
     public String getShortJavaType() {
-        return getShortJavaType(40);
+        return StringHelper.getClassShortName(javaType);
     }
 
+    @Deprecated
     public String getShortJavaType(int watermark) {
 
         String text = StringHelper.getClassShortName(javaType);

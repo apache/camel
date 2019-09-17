@@ -156,6 +156,7 @@ public class ComponentOptionModel {
         return getShortJavaType(40);
     }
 
+    @Deprecated
     public String getShortJavaType(int watermark) {
 
         String text = StringHelper.getClassShortName(javaType);

@@ -188,10 +188,10 @@ public class EndpointOptionModel {
     }
 
     public String getShortJavaType() {
-        // TODO: use watermark in the others
-        return getShortJavaType(40);
+        return StringHelper.getClassShortName(javaType);
     }
 
+    @Deprecated
     public String getShortJavaType(int watermark) {
 
         String text = StringHelper.getClassShortName(javaType);
