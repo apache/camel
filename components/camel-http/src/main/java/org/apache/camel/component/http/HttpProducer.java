@@ -439,14 +439,6 @@ public class HttpProducer extends DefaultProducer {
         // get the url from the uri
         url = uri.toASCIIString();
 
-        // execute any custom url rewrite
-        String rewriteUrl = HttpHelper.urlRewrite(exchange, url, getEndpoint(), this);
-        if (rewriteUrl != null) {
-            // update url and query string from the rewritten url
-            url = rewriteUrl;
-            uri = new URI(url);
-        }
-
         // create http holder objects for the request
         HttpEntity requestEntity = createRequestEntity(exchange);
         HttpMethods methodToUse = HttpMethodHelper.createMethod(exchange, getEndpoint(), requestEntity != null);

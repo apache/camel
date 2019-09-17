@@ -49,7 +49,6 @@ import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.http.common.HttpRestServletResolveConsumerStrategy;
-import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
@@ -179,7 +178,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         List<Filter> filters = resolveAndRemoveReferenceListParameter(parameters, "filters", Filter.class);
         Boolean enableCors = getAndRemoveParameter(parameters, "enableCORS", Boolean.class, false);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
-        UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
         SSLContextParameters ssl = sslContextParameters != null ? sslContextParameters : this.sslContextParameters;
         ssl = ssl != null ? ssl : retrieveGlobalSslContextParameters();
@@ -217,12 +215,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (proxyHost != null) {
             endpoint.setProxyHost(proxyHost);
             endpoint.setProxyPort(proxyPort);
-        }
-        if (urlRewrite != null) {
-            // let CamelContext deal with the lifecycle of the url rewrite
-            // this ensures its being shutdown when Camel shutdown etc.
-            getCamelContext().addService(urlRewrite);
-            endpoint.setUrlRewrite(urlRewrite);
         }
         if (!filterInitParameters.isEmpty()) {
             endpoint.setFilterInitParameters(filterInitParameters);

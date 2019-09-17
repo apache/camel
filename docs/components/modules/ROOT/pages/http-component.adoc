@@ -102,7 +102,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (51 parameters):
+=== Query Parameters (50 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -127,7 +127,6 @@ with the following path and query parameters:
 | *transferException* (producer) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included. | 200-299 | String
-| *urlRewrite* (producer) | *Deprecated* Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at \http://camel.apache.org/urlrewrite.html |  | UrlRewrite
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientBuilder* (advanced) | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint. |  | HttpClientBuilder
 | *clientConnectionManager* (advanced) | To use a custom HttpClientConnectionManager to manage connections |  | HttpClientConnectionManager

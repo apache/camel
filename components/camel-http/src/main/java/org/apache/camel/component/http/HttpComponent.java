@@ -36,7 +36,6 @@ import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
-import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
@@ -234,7 +233,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
 
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
-        UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
 
         boolean secure = HttpHelper.isSecureConnection(uri) || sslContextParameters != null;
 
@@ -283,13 +281,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
             beanIntrospection.getProperties(getHttpConfiguration(), properties, null);
             setProperties(endpoint, properties);
-        }
-
-        if (urlRewrite != null) {
-            // let CamelContext deal with the lifecycle of the url rewrite
-            // this ensures its being shutdown when Camel shutdown etc.
-            getCamelContext().addService(urlRewrite);
-            endpoint.setUrlRewrite(urlRewrite);
         }
 
         // configure the endpoint
