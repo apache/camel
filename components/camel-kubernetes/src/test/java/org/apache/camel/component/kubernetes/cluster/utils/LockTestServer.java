@@ -58,31 +58,30 @@ public class LockTestServer extends KubernetesMockServer {
         this.pods = new TreeSet<>(initialPods);
 
         expect().get().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName()).andReply(new ResponseProvider<Object>() {
-            ThreadLocal<Integer> responseCode = ThreadLocal.withInitial(() -> 1);
 
             private Headers headers = new Headers.Builder().build();
 
             @Override
             public int getStatusCode(RecordedRequest request) {
-                return responseCode.get();
+                if (refuseRequests) {
+                    return 500;
+                }
+
+                if (lockSimulator.getConfigMap() != null) {
+                    return 200;
+                }
+
+                return 404;
             }
 
             @Override
             public Object getBody(RecordedRequest recordedRequest) {
                 delayIfNecessary();
-                if (refuseRequests) {
-                    responseCode.set(500);
-                    return "";
-                }
-
                 ConfigMap map = lockSimulator.getConfigMap();
                 if (map != null) {
-                    responseCode.set(200);
                     return map;
-                } else {
-                    responseCode.set(404);
-                    return "";
                 }
+                return "";
             }
 
             @Override
@@ -97,36 +96,37 @@ public class LockTestServer extends KubernetesMockServer {
         }).always();
 
         expect().post().withPath("/api/v1/namespaces/test/configmaps").andReply(new ResponseProvider<Object>() {
-            ThreadLocal<Integer> responseCode = ThreadLocal.withInitial(() -> 1);
 
             private Headers headers = new Headers.Builder().build();
 
             @Override
             public int getStatusCode(RecordedRequest request) {
-                return responseCode.get();
-            }
-
-            @Override
-            public Object getBody(RecordedRequest recordedRequest) {
-                delayIfNecessary();
                 if (refuseRequests) {
-                    responseCode.set(500);
-                    return "";
+                    return 500;
                 }
 
-                ConfigMap map = convert(recordedRequest);
+                ConfigMap map = convert(request);
                 if (map == null || map.getMetadata() == null || !lockSimulator.getConfigMapName().equals(map.getMetadata().getName())) {
                     throw new IllegalArgumentException("Illegal configMap received");
                 }
 
                 boolean done = lockSimulator.setConfigMap(map, true);
                 if (done) {
-                    responseCode.set(201);
-                    return lockSimulator.getConfigMap();
-                } else {
-                    responseCode.set(500);
-                    return "";
+                    return 201;
                 }
+                return 500;
+            }
+
+            @Override
+            public Object getBody(RecordedRequest recordedRequest) {
+                delayIfNecessary();
+
+                ConfigMap map = lockSimulator.getConfigMap();
+                if (map != null) {
+                    return map;
+                }
+
+                return "";
             }
 
             @Override
@@ -141,33 +141,33 @@ public class LockTestServer extends KubernetesMockServer {
         }).always();
 
         expect().put().withPath("/api/v1/namespaces/test/configmaps/" + lockSimulator.getConfigMapName()).andReply(new ResponseProvider<Object>() {
-            ThreadLocal<Integer> responseCode = ThreadLocal.withInitial(() -> 1);
 
             private Headers headers = new Headers.Builder().build();
 
             @Override
             public int getStatusCode(RecordedRequest request) {
-                return responseCode.get();
+                if (refuseRequests) {
+                    return 500;
+                }
+
+                ConfigMap map = convert(request);
+
+                boolean done = lockSimulator.setConfigMap(map, false);
+                if (done) {
+                    return 200;
+                }
+                return 409;
             }
 
             @Override
             public Object getBody(RecordedRequest recordedRequest) {
                 delayIfNecessary();
-                if (refuseRequests) {
-                    responseCode.set(500);
-                    return "";
+                ConfigMap map = lockSimulator.getConfigMap();
+                if (map != null) {
+                    return map;
                 }
 
-                ConfigMap map = convert(recordedRequest);
-
-                boolean done = lockSimulator.setConfigMap(map, false);
-                if (done) {
-                    responseCode.set(200);
-                    return lockSimulator.getConfigMap();
-                } else {
-                    responseCode.set(409);
-                    return "";
-                }
+                return "";
             }
 
             @Override
