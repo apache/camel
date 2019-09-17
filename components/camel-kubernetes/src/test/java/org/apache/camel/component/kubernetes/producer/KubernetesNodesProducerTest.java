@@ -26,6 +26,8 @@ import io.fabric8.kubernetes.api.model.NodeListBuilder;
 import io.fabric8.kubernetes.api.model.NodeSpec;
 import io.fabric8.kubernetes.api.model.NodeSpecBuilder;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 
@@ -105,6 +107,24 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
 
         assertEquals("test", result.getMetadata().getName());
     }
+    
+    @Test
+    public void deleteNode() throws Exception {
+        Node node1 = new NodeBuilder().withNewMetadata().withName("node1").withNamespace("test").and().build();
+        server.expect().withPath("/api/v1/nodes/node1").andReturn(200, node1).once();
+
+        Exchange ex = template.request("direct:deleteNode", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODE_NAME, "node1");
+            }
+        });
+
+        boolean nodeDeleted = ex.getOut().getBody(Boolean.class);
+
+        assertTrue(nodeDeleted);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -114,6 +134,7 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
                 from("direct:list").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodes");
                 from("direct:listByLabels").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels");
                 from("direct:createNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=createNode");
+                from("direct:deleteNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=deleteNode");
             }
         };
     }

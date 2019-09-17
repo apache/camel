@@ -79,6 +79,10 @@ public class KubernetesNodesProducer extends DefaultProducer {
         case KubernetesOperations.CREATE_NODE_OPERATION:
             doCreateNode(exchange, operation);
             break;
+            
+        case KubernetesOperations.DELETE_NODE_OPERATION:
+            doDeleteNode(exchange, operation);
+            break;
 
         default:
             throw new IllegalArgumentException("Unsupported operation " + operation);
@@ -136,5 +140,17 @@ public class KubernetesNodesProducer extends DefaultProducer {
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(node);
+    }
+    
+    protected void doDeleteNode(Exchange exchange, String operation) throws Exception {
+        String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
+        if (ObjectHelper.isEmpty(nodeName)) {
+            log.error("Deleting a specific Node require specify a Node name");
+            throw new IllegalArgumentException("Deleting a specific Node require specify a Node name");
+        }
+        boolean nodeDeleted = getEndpoint().getKubernetesClient().nodes().withName(nodeName).delete();
+
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
+        exchange.getOut().setBody(nodeDeleted);
     }
 }
