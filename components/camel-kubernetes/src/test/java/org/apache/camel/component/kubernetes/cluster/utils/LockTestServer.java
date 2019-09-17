@@ -62,10 +62,10 @@ public class LockTestServer extends KubernetesMockServer {
 
             private Headers headers = new Headers.Builder().build();
 
-			@Override
-			public int getStatusCode(RecordedRequest request) {
-				return responseCode.get();
-			}
+            @Override
+            public int getStatusCode(RecordedRequest request) {
+                return responseCode.get();
+            }
 
             @Override
             public Object getBody(RecordedRequest recordedRequest) {
@@ -101,10 +101,10 @@ public class LockTestServer extends KubernetesMockServer {
 
             private Headers headers = new Headers.Builder().build();
 
-			@Override
-			public int getStatusCode(RecordedRequest request) {
-				return responseCode.get();
-			}
+            @Override
+            public int getStatusCode(RecordedRequest request) {
+                return responseCode.get();
+            }
 
             @Override
             public Object getBody(RecordedRequest recordedRequest) {
@@ -145,10 +145,10 @@ public class LockTestServer extends KubernetesMockServer {
 
             private Headers headers = new Headers.Builder().build();
 
-			@Override
-			public int getStatusCode(RecordedRequest request) {
-				return responseCode.get();
-			}
+            @Override
+            public int getStatusCode(RecordedRequest request) {
+                return responseCode.get();
+            }
 
             @Override
             public Object getBody(RecordedRequest recordedRequest) {
