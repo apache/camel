@@ -19,8 +19,13 @@ package org.apache.camel.component.kubernetes.nodes;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.DoneableNode;
+import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
+import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerBuilder;
+import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerSpec;
 import io.fabric8.kubernetes.api.model.Node;
+import io.fabric8.kubernetes.api.model.NodeBuilder;
 import io.fabric8.kubernetes.api.model.NodeList;
+import io.fabric8.kubernetes.api.model.NodeSpec;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
 
@@ -66,6 +71,10 @@ public class KubernetesNodesProducer extends DefaultProducer {
         case KubernetesOperations.GET_NODE_OPERATION:
             doGetNode(exchange, operation);
             break;
+            
+        case KubernetesOperations.CREATE_NODE_OPERATION:
+            doCreateNode(exchange, operation);
+            break;
 
         default:
             throw new IllegalArgumentException("Unsupported operation " + operation);
@@ -100,6 +109,27 @@ public class KubernetesNodesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get a specific Node require specify a Node name");
         }
         node = getEndpoint().getKubernetesClient().nodes().withName(pvName).get();
+
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
+        exchange.getOut().setBody(node);
+    }
+    
+    protected void doCreateNode(Exchange exchange, String operation) throws Exception {
+        Node node = null;
+        String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
+        NodeSpec nodeSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_SPEC, NodeSpec.class);
+        if (ObjectHelper.isEmpty(nodeName)) {
+            log.error("Create a specific node require specify a node name");
+            throw new IllegalArgumentException("Create a specific node require specify a node name");
+        }
+        if (ObjectHelper.isEmpty(nodeSpec)) {
+            log.error("Create a specific node require specify a node spec bean");
+            throw new IllegalArgumentException("Create a specific node require specify a node spec bean");
+        }
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
+        Node nodeCreating = new NodeBuilder().withNewMetadata().withName(nodeName).withLabels(labels).endMetadata().withSpec(nodeSpec).build();
+        node = getEndpoint().getKubernetesClient().nodes().create(nodeCreating);
+        System.err.println(node.toString());
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(node);

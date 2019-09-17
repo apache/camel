@@ -84,6 +84,7 @@ public interface KubernetesOperations {
     String LIST_NODES = "listNodes";
     String LIST_NODES_BY_LABELS_OPERATION = "listNodesByLabels";
     String GET_NODE_OPERATION = "getNode";
+    String CREATE_NODE_OPERATION = "createNode";
 
     // HPA
     String LIST_HPA = "listHPA";
