@@ -34,7 +34,7 @@ The AWS Kinesis Firehose component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | The AWS Kinesis Firehose default configuration |  | KinesisFirehose Configuration
+| *configuration* (advanced) | The AWS Kinesis Firehose default configuration |  | KinesisFirehoseConfiguration
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *region* (producer) | Amazon AWS Region |  | String

@@ -47,7 +47,7 @@ The Validator component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resourceResolverFactory* (advanced) | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI |  | ValidatorResource ResolverFactory
+| *resourceResolverFactory* (advanced) | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI |  | ValidatorResourceResolverFactory
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -85,7 +85,7 @@ with the following path and query parameters:
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *errorHandler* (advanced) | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | ValidatorErrorHandler
 | *resourceResolver* (advanced) | To use a custom LSResourceResolver. See also setResourceResolverFactory(ValidatorResourceResolverFactory) |  | LSResourceResolver
-| *resourceResolverFactory* (advanced) | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used |  | ValidatorResource ResolverFactory
+| *resourceResolverFactory* (advanced) | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used |  | ValidatorResourceResolverFactory
 | *schemaFactory* (advanced) | To use a custom javax.xml.validation.SchemaFactory |  | SchemaFactory
 | *schemaLanguage* (advanced) | Configures the W3C XML Schema Namespace URI. | http://www.w3.org/2001/XMLSchema | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

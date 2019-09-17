@@ -86,10 +86,10 @@ with the following path and query parameters:
 | *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *activityList* (activity) | The list name to consume activities from. |  | String
-| *activitySchedulingOptions* (activity) | Activity scheduling options |  | ActivityScheduling Options
+| *activitySchedulingOptions* (activity) | Activity scheduling options |  | ActivitySchedulingOptions
 | *activityThreadPoolSize* (activity) | Maximum number of threads in work pool for activity. | 100 | int
-| *activityTypeExecution Options* (activity) | Activity execution options |  | ActivityTypeExecution Options
-| *activityTypeRegistration Options* (activity) | Activity registration options |  | ActivityType RegistrationOptions
+| *activityTypeExecution Options* (activity) | Activity execution options |  | ActivityTypeExecutionOptions
+| *activityTypeRegistration Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
 | *childPolicy* (workflow) | The policy to use on child workflows when terminating a workflow. |  | String
 | *executionStartToClose Timeout* (workflow) | Set the execution start to close timeout. | 3600 | String
 | *operation* (workflow) | Workflow operation | START | String
@@ -99,7 +99,7 @@ with the following path and query parameters:
 | *terminationDetails* (workflow) | Details for terminating a workflow. |  | String
 | *terminationReason* (workflow) | The reason for terminating a workflow. |  | String
 | *workflowList* (workflow) | The list name to consume workflows from. |  | String
-| *workflowTypeRegistration Options* (workflow) | Workflow registration options |  | WorkflowType RegistrationOptions
+| *workflowTypeRegistration Options* (workflow) | Workflow registration options |  | WorkflowTypeRegistrationOptions
 | *accessKey* (security) | Amazon AWS Access Key. |  | String
 | *secretKey* (security) | Amazon AWS Secret Key. |  | String
 |===
@@ -131,10 +131,10 @@ The component supports 32 options, which are listed below.
 | *camel.component.aws-swf.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.aws-swf.configuration.access-key* | Amazon AWS Access Key. |  | String
 | *camel.component.aws-swf.configuration.activity-list* | The list name to consume activities from. |  | String
-| *camel.component.aws-swf.configuration.activity-scheduling-options* | Activity scheduling options |  | ActivityScheduling Options
+| *camel.component.aws-swf.configuration.activity-scheduling-options* | Activity scheduling options |  | ActivitySchedulingOptions
 | *camel.component.aws-swf.configuration.activity-thread-pool-size* | Maximum number of threads in work pool for activity. | 100 | Integer
-| *camel.component.aws-swf.configuration.activity-type-execution-options* | Activity execution options |  | ActivityTypeExecution Options
-| *camel.component.aws-swf.configuration.activity-type-registration-options* | Activity registration options |  | ActivityType RegistrationOptions
+| *camel.component.aws-swf.configuration.activity-type-execution-options* | Activity execution options |  | ActivityTypeExecutionOptions
+| *camel.component.aws-swf.configuration.activity-type-registration-options* | Activity registration options |  | ActivityTypeRegistrationOptions
 | *camel.component.aws-swf.configuration.amazon-s-w-client* | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow
 | *camel.component.aws-swf.configuration.child-policy* | The policy to use on child workflows when terminating a workflow. |  | String
 | *camel.component.aws-swf.configuration.client-configuration-parameters* | To configure the ClientConfiguration using the key/values from the Map. |  | Map
@@ -155,7 +155,7 @@ The component supports 32 options, which are listed below.
 | *camel.component.aws-swf.configuration.type* | Activity or workflow |  | String
 | *camel.component.aws-swf.configuration.version* | The workflow or activity event version to use. |  | String
 | *camel.component.aws-swf.configuration.workflow-list* | The list name to consume workflows from. |  | String
-| *camel.component.aws-swf.configuration.workflow-type-registration-options* | Workflow registration options |  | WorkflowType RegistrationOptions
+| *camel.component.aws-swf.configuration.workflow-type-registration-options* | Workflow registration options |  | WorkflowTypeRegistrationOptions
 | *camel.component.aws-swf.enabled* | Whether to enable auto configuration of the aws-swf component. This is enabled by default. |  | Boolean
 | *camel.component.aws-swf.region* | Amazon AWS Region. |  | String
 | *camel.component.aws-swf.secret-key* | Amazon AWS Secret Key. |  | String

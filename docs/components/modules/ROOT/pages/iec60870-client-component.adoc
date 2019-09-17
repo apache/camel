@@ -88,8 +88,8 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *acknowledgeWindow* (connection) | Parameter W - Acknowledgment window. | 10 | short
 | *adsuAddressType* (connection) | The common ASDU address size. May be either SIZE_1 or SIZE_2. |  | ASDUAddressType
-| *causeOfTransmissionType* (connection) | The cause of transmission type. May be either SIZE_1 or SIZE_2. |  | CauseOfTransmission Type
-| *informationObjectAddress Type* (connection) | The information address size. May be either SIZE_1, SIZE_2 or SIZE_3. |  | InformationObject AddressType
+| *causeOfTransmissionType* (connection) | The cause of transmission type. May be either SIZE_1 or SIZE_2. |  | CauseOfTransmissionType
+| *informationObjectAddress Type* (connection) | The information address size. May be either SIZE_1, SIZE_2 or SIZE_3. |  | InformationObjectAddressType
 | *maxUnacknowledged* (connection) | Parameter K - Maximum number of un-acknowledged messages. | 15 | short
 | *timeout1* (connection) | Timeout T1 in milliseconds. | 15000 | int
 | *timeout2* (connection) | Timeout T2 in milliseconds. | 10000 | int

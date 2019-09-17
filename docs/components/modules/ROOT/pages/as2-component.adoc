@@ -83,7 +83,7 @@ with the following path and query parameters:
 | *as2To* (common) | The value of the AS2To header of AS2 message. |  | String
 | *as2Version* (common) | The version of the AS2 protocol. | 1.1 | String
 | *clientFqdn* (common) | The Client Fully Qualified Domain Name (FQDN). Used in message ids sent by endpoint. | camel.apache.org | String
-| *compressionAlgorithm* (common) | The algorithm used to compress EDI message. |  | AS2Compression Algorithm
+| *compressionAlgorithm* (common) | The algorithm used to compress EDI message. |  | AS2CompressionAlgorithm
 | *decryptingPrivateKey* (common) | The key used to encrypt the EDI message. |  | PrivateKey
 | *dispositionNotificationTo* (common) | The value of the Disposition-Notification-To header. Assigning a value to this parameter requests a message disposition notification (MDN) for the AS2 message. |  | String
 | *ediMessageTransferEncoding* (common) | The transfer encoding of EDI message. |  | String
@@ -109,7 +109,7 @@ with the following path and query parameters:
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -120,7 +120,7 @@ with the following path and query parameters:
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
 | *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
 | *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
@@ -158,7 +158,7 @@ The component supports 30 options, which are listed below.
 | *camel.component.as2.configuration.as2-to* | The value of the AS2To header of AS2 message. |  | String
 | *camel.component.as2.configuration.as2-version* | The version of the AS2 protocol. | 1.1 | String
 | *camel.component.as2.configuration.client-fqdn* | The Client Fully Qualified Domain Name (FQDN). Used in message ids sent by endpoint. | camel.apache.org | String
-| *camel.component.as2.configuration.compression-algorithm* | The algorithm used to compress EDI message. |  | AS2Compression Algorithm
+| *camel.component.as2.configuration.compression-algorithm* | The algorithm used to compress EDI message. |  | AS2CompressionAlgorithm
 | *camel.component.as2.configuration.decrypting-private-key* | The key used to encrypt the EDI message. |  | PrivateKey
 | *camel.component.as2.configuration.disposition-notification-to* | The value of the Disposition-Notification-To header. Assigning a value to this parameter requests a message disposition notification (MDN) for the AS2 message. |  | String
 | *camel.component.as2.configuration.edi-message-transfer-encoding* | The transfer encoding of EDI message. |  | String

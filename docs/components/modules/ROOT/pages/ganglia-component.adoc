@@ -140,7 +140,7 @@ The component supports 16 options, which are listed below.
 | *camel.component.ganglia.configuration.group-name* | The group that the metric belongs to. | java | String
 | *camel.component.ganglia.configuration.host* | Host name for Ganglia server | 239.2.11.71 | String
 | *camel.component.ganglia.configuration.metric-name* | The name to use for the metric. | metric | String
-| *camel.component.ganglia.configuration.mode* | Send the UDP metric packets using MULTICAST or UNICAST |  | GMetric$UDP AddressingMode
+| *camel.component.ganglia.configuration.mode* | Send the UDP metric packets using MULTICAST or UNICAST |  | GMetric$UDPAddressingMode
 | *camel.component.ganglia.configuration.port* | Port for Ganglia server | 8649 | Integer
 | *camel.component.ganglia.configuration.prefix* | Prefix the metric name with this string and an underscore. |  | String
 | *camel.component.ganglia.configuration.slope* | The slope |  | GMetricSlope

@@ -54,7 +54,7 @@ The HTTP component supports 18 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *httpClientConfigurer* (advanced) | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used. |  | HttpClientConfigurer
-| *clientConnectionManager* (advanced) | To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then this is always used for all endpoints created by this component. |  | HttpClientConnection Manager
+| *clientConnectionManager* (advanced) | To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then this is always used for all endpoints created by this component. |  | HttpClientConnectionManager
 | *httpContext* (advanced) | To use a custom org.apache.http.protocol.HttpContext when executing requests. |  | HttpContext
 | *sslContextParameters* (security) | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
@@ -130,7 +130,7 @@ with the following path and query parameters:
 | *urlRewrite* (producer) | *Deprecated* Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at \http://camel.apache.org/urlrewrite.html |  | UrlRewrite
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientBuilder* (advanced) | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint. |  | HttpClientBuilder
-| *clientConnectionManager* (advanced) | To use a custom HttpClientConnectionManager to manage connections |  | HttpClientConnection Manager
+| *clientConnectionManager* (advanced) | To use a custom HttpClientConnectionManager to manage connections |  | HttpClientConnectionManager
 | *connectionsPerRoute* (advanced) | The maximum number of connections per route. | 20 | int
 | *httpClient* (advanced) | Sets a custom HttpClient to be used by the producer |  | HttpClient
 | *httpClientConfigurer* (advanced) | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc |  | HttpClientConfigurer

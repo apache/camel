@@ -43,7 +43,7 @@ The Google Pubsub component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionFactory* (common) | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair |  | GooglePubsubConnection Factory
+| *connectionFactory* (common) | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair |  | GooglePubsubConnectionFactory
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -76,7 +76,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *ackMode* (common) | AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly | AUTO | AckMode
 | *concurrentConsumers* (common) | The number of parallel streams consuming from the subscription | 1 | Integer
-| *connectionFactory* (common) | ConnectionFactory to obtain connection to PubSub Service. If non provided the default will be used. |  | GooglePubsubConnection Factory
+| *connectionFactory* (common) | ConnectionFactory to obtain connection to PubSub Service. If non provided the default will be used. |  | GooglePubsubConnectionFactory
 | *loggerId* (common) | Logger ID to use when a match to the parent route required |  | String
 | *maxMessagesPerPoll* (common) | The max number of messages to receive from the server in a single API call | 1 | Integer
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean

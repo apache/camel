@@ -99,7 +99,7 @@ The Netty HTTP component supports 9 options, which are listed below.
 | *nettyHttpBinding* (advanced) | To use a custom org.apache.camel.component.netty.http.NettyHttpBinding for binding to/from Netty and Camel Message API. |  | NettyHttpBinding
 | *configuration* (common) | To use the NettyConfiguration as configuration when creating endpoints. |  | NettyHttpConfiguration
 | *headerFilterStrategy* (advanced) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers. |  | HeaderFilterStrategy
-| *securityConfiguration* (security) | Refers to a org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for configuring secure web resources. |  | NettyHttpSecurity Configuration
+| *securityConfiguration* (security) | Refers to a org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for configuring secure web resources. |  | NettyHttpSecurityConfiguration
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *maximumPoolSize* (advanced) | The thread pool size for the EventExecutorGroup if its in use. The default value is 16. | 16 | int
 | *executorService* (advanced) | To use the given EventExecutorGroup. |  | EventExecutorGroup
@@ -163,12 +163,12 @@ with the following path and query parameters:
 | *httpMethodRestrict* (consumer) | To disable HTTP methods on the Netty HTTP consumer. You can specify multiple separated by comma. |  | String
 | *mapHeaders* (consumer) | If this option is enabled, then during binding from Netty to Camel Message then the headers will be mapped as well (eg added as header to the Camel Message as well). You can turn off this option to disable this. The headers can still be accessed from the org.apache.camel.component.netty.http.NettyHttpMessage message with the method getHttpRequest() that returns the Netty HTTP request io.netty.handler.codec.http.HttpRequest instance. | true | boolean
 | *maxHeaderSize* (consumer) | The maximum length of all headers. If the sum of the length of each header exceeds this value, a io.netty.handler.codec.TooLongFrameException will be raised. | 8192 | int
-| *nettyServerBootstrapFactory* (consumer) | To use a custom NettyServerBootstrapFactory |  | NettyServerBootstrap Factory
+| *nettyServerBootstrapFactory* (consumer) | To use a custom NettyServerBootstrapFactory |  | NettyServerBootstrapFactory
 | *nettySharedHttpServer* (consumer) | To use a shared Netty HTTP server. See Netty HTTP Server Example for more details. |  | NettySharedHttpServer
 | *noReplyLogLevel* (consumer) | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back. | WARN | LoggingLevel
 | *serverClosedChannel ExceptionCaughtLogLevel* (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. | DEBUG | LoggingLevel
 | *serverExceptionCaughtLog Level* (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. | WARN | LoggingLevel
-| *serverInitializerFactory* (consumer) | To use a custom ServerInitializerFactory |  | ServerInitializer Factory
+| *serverInitializerFactory* (consumer) | To use a custom ServerInitializerFactory |  | ServerInitializerFactory
 | *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Netty HTTP consumer. By default TRACE is turned off. | false | boolean
 | *urlDecodeHeaders* (consumer) | If this option is enabled, then during binding from Netty to Camel Message then the header values will be URL decoded (eg %20 will be a space character. Notice this option is used by the default org.apache.camel.component.netty.http.NettyHttpBinding and therefore if you implement a custom org.apache.camel.component.netty.http.NettyHttpBinding then you would need to decode the headers accordingly to this option. | false | boolean
 | *usingExecutorService* (consumer) | Whether to use ordered thread pool, to ensure events are processed orderly on the same channel. | true | boolean
@@ -176,7 +176,7 @@ with the following path and query parameters:
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *requestTimeout* (producer) | Allows to use a timeout for the Netty producer when calling a remote server. By default no timeout is in use. The value is in milli seconds, so eg 30000 is 30 seconds. The requestTimeout is using Netty's ReadTimeoutHandler to trigger the timeout. |  | long
 | *throwExceptionOnFailure* (producer) | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | boolean
-| *clientInitializerFactory* (producer) | To use a custom ClientInitializerFactory |  | ClientInitializer Factory
+| *clientInitializerFactory* (producer) | To use a custom ClientInitializerFactory |  | ClientInitializerFactory
 | *lazyChannelCreation* (producer) | Channels can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started. | true | boolean
 | *okStatusCodeRange* (producer) | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included. The default range is 200-299 | 200-299 | String
 | *producerPoolEnabled* (producer) | Whether producer pool is enabled or not. Important: If you turn this off then a single shared connection is used for the producer, also if you are doing request/reply. That means there is a potential issue with interleaved responses if replies comes back out-of-order. Therefore you need to have a correlation id in both the request and reply messages so you can properly correlate the replies to the Camel callback that is responsible for continue processing the message in Camel. To do this you need to implement NettyCamelStateCorrelationManager as correlation manager and configure it via the correlationManager option. See also the correlationManager option for more details. | true | boolean
@@ -208,7 +208,7 @@ with the following path and query parameters:
 | *keyStoreResource* (security) | Client side certificate keystore to be used for encryption. Is loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
 | *needClientAuth* (security) | Configures whether the server needs client authentication when using SSL. | false | boolean
 | *passphrase* (security) | Password setting to use in order to encrypt/decrypt payloads sent using SSH |  | String
-| *securityConfiguration* (security) | Refers to a org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for configuring secure web resources. |  | NettyHttpSecurity Configuration
+| *securityConfiguration* (security) | Refers to a org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for configuring secure web resources. |  | NettyHttpSecurityConfiguration
 | *securityOptions* (security) | To configure NettyHttpSecurityConfiguration using key/value pairs from the map |  | Map
 | *securityProvider* (security) | Security provider to be used for payload encryption. Defaults to SunX509 if not set. |  | String
 | *ssl* (security) | Setting to specify whether SSL encryption is applied to this endpoint | false | boolean
