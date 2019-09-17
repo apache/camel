@@ -98,7 +98,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *clusteredListener* (consumer) | If true, the listener will be installed for the entire cluster | false | boolean
 | *command* (consumer) | *Deprecated* The operation to perform. | PUT | String
-| *customListener* (consumer) | Returns the custom listener in use, if provided |  | InfinispanCustom Listener
+| *customListener* (consumer) | Returns the custom listener in use, if provided |  | InfinispanCustomListener
 | *eventTypes* (consumer) | Specifies the set of event types to register by the consumer. Multiple event can be separated by comma. The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED, TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED |  | String
 | *sync* (consumer) | If true, the consumer will receive notifications synchronously | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -146,7 +146,7 @@ The component supports 22 options, which are listed below.
 | *camel.component.infinispan.configuration.clustered-listener* | If true, the listener will be installed for the entire cluster | false | Boolean
 | *camel.component.infinispan.configuration.configuration-properties* | Implementation specific properties for the CacheManager |  | Map
 | *camel.component.infinispan.configuration.configuration-uri* | An implementation specific URI for the CacheManager |  | String
-| *camel.component.infinispan.configuration.custom-listener* | Returns the custom listener in use, if provided |  | InfinispanCustom Listener
+| *camel.component.infinispan.configuration.custom-listener* | Returns the custom listener in use, if provided |  | InfinispanCustomListener
 | *camel.component.infinispan.configuration.event-types* | Specifies the set of event types to register by the consumer. Multiple event can be separated by comma. <p/> The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED, TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED |  | Set
 | *camel.component.infinispan.configuration.flags* | A comma separated list of Flag to be applied by default on each cache invocation, not applicable to remote caches. |  | Flag[]
 | *camel.component.infinispan.configuration.hosts* | Specifies the host of the cache on Infinispan instance |  | String

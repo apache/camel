@@ -17,7 +17,7 @@ The Wordpress component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | Wordpress component configuration |  | WordpressComponent Configuration
+| *configuration* (advanced) | Wordpress component configuration |  | WordpressComponentConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END

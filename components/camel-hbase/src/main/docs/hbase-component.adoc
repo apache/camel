@@ -145,7 +145,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *cellMappingStrategyFactory* (common) | To use a custom CellMappingStrategyFactory that is responsible for mapping cells. |  | CellMappingStrategy Factory
+| *cellMappingStrategyFactory* (common) | To use a custom CellMappingStrategyFactory that is responsible for mapping cells. |  | CellMappingStrategyFactory
 | *filters* (common) | A list of filters to use. |  | List
 | *mappingStrategyClassName* (common) | The class name of a custom mapping strategy implementation. |  | String
 | *mappingStrategyName* (common) | The strategy to use for mapping Camel messages to HBase columns. Supported values: header, or body. |  | String

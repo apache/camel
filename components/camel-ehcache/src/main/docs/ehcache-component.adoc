@@ -146,7 +146,7 @@ The component supports 25 options, which are listed below.
 | *camel.component.ehcache.configuration.key-type* | The cache key type, default "java.lang.Object" |  | String
 | *camel.component.ehcache.configuration.value-type* | The cache value type, default "java.lang.Object" |  | String
 | *camel.component.ehcache.customizer.cache-configuration.enabled* | Enable or disable the cache-configuration customizer. | true | Boolean
-| *camel.component.ehcache.customizer.cache-configuration.mode* | Configure if the cache configurations have be added or they have to replace those already configured on the component. |  | CacheConfiguration CustomizerConfiguration$ Mode
+| *camel.component.ehcache.customizer.cache-configuration.mode* | Configure if the cache configurations have be added or they have to replace those already configured on the component. |  | CacheConfigurationCustomizerConfiguration$Mode
 | *camel.component.ehcache.customizer.cache-manager.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
 | *camel.component.ehcache.customizer.cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
 | *camel.component.ehcache.enabled* | Enable ehcache component | true | Boolean
