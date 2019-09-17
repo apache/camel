@@ -133,7 +133,6 @@ public class KubernetesNodesProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
         Node nodeCreating = new NodeBuilder().withNewMetadata().withName(nodeName).withLabels(labels).endMetadata().withSpec(nodeSpec).build();
         node = getEndpoint().getKubernetesClient().nodes().create(nodeCreating);
-        System.err.println(node.toString());
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(node);
