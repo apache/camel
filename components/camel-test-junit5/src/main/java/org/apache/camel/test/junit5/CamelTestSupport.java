@@ -538,7 +538,7 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
             ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
             if (managedCamelContext == null) {
                 LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "
-                         + "Add camel-management-impl JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
+                         + "Add camel-management JAR as dependency and/or override useJmx() method to enable JMX in the unit test classes.");
             } else {
                 routeCoverageDumper.dump(managedCamelContext, context, dir, name, getClass().getName(), currentTestName, timeTaken());
             }
