@@ -648,7 +648,7 @@ The Salesforce component supports 31 options, which are listed below.
 | *userName* (security) | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. |  | String
 | *password* (security) | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
 | *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
-| *config* (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpoint Config
+| *config* (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpointConfig
 | *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | *longPollingTransport Properties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
 | *sslContextParameters* (security) | SSL parameters to use, see SSLContextParameters class for all available options. |  | SSLContextParameters
@@ -726,7 +726,7 @@ with the following path and query parameters:
 | *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
 | *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
 | *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0) |  | NotifyForOperations Enum
+| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0) |  | NotifyForOperationsEnum
 | *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
 | *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
 | *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
@@ -810,7 +810,7 @@ The component supports 86 options, which are listed below.
 | *camel.component.salesforce.config.notify-for-operation-delete* | Notify for delete operation, defaults to false (API version >= 29.0) |  | Boolean
 | *camel.component.salesforce.config.notify-for-operation-undelete* | Notify for un-delete operation, defaults to false (API version >= 29.0) |  | Boolean
 | *camel.component.salesforce.config.notify-for-operation-update* | Notify for update operation, defaults to false (API version >= 29.0) |  | Boolean
-| *camel.component.salesforce.config.notify-for-operations* | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version < 29.0) |  | NotifyForOperations Enum
+| *camel.component.salesforce.config.notify-for-operations* | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version < 29.0) |  | NotifyForOperationsEnum
 | *camel.component.salesforce.config.object-mapper* | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
 | *camel.component.salesforce.config.raw-payload* | Use raw payload {@link String} for request and response (either JSON or XML depending on {@code format}), instead of DTOs, false by default | false | Boolean
 | *camel.component.salesforce.config.report-id* | Salesforce1 Analytics report Id |  | String

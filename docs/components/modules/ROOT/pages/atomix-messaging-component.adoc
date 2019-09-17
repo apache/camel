@@ -33,7 +33,7 @@ The Atomix Messaging component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (common) | The shared component configuration |  | AtomixMessaging Configuration
+| *configuration* (common) | The shared component configuration |  | AtomixMessagingConfiguration
 | *atomix* (common) | The shared AtomixClient instance |  | AtomixClient
 | *nodes* (common) | The nodes the AtomixClient should connect to |  | List
 | *configurationUri* (common) | The path to the AtomixClient configuration |  | String
@@ -115,7 +115,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.atomix-messaging.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient type. |  | String
 | *camel.component.atomix-messaging.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.atomix-messaging.configuration-uri* | The path to the AtomixClient configuration |  | String
-| *camel.component.atomix-messaging.configuration.broadcast-type* | The broadcast type. |  | AtomixMessaging$ BroadcastType
+| *camel.component.atomix-messaging.configuration.broadcast-type* | The broadcast type. |  | AtomixMessaging$BroadcastType
 | *camel.component.atomix-messaging.configuration.channel-name* | The messaging channel name |  | String
 | *camel.component.atomix-messaging.configuration.default-action* | The default action. |  | AtomixMessaging$Action
 | *camel.component.atomix-messaging.configuration.member-name* | The Atomix Group member name |  | String

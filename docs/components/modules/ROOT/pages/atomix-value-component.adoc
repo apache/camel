@@ -33,7 +33,7 @@ The Atomix Value component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (common) | The shared component configuration |  | AtomixValue Configuration
+| *configuration* (common) | The shared component configuration |  | AtomixValueConfiguration
 | *atomix* (common) | The shared AtomixClient instance |  | AtomixClient
 | *nodes* (common) | The nodes the AtomixClient should connect to |  | List
 | *configurationUri* (common) | The path to the AtomixClient configuration |  | String

@@ -154,8 +154,8 @@ with the following path and query parameters:
 | *folderName* (consumer) | The folder to poll. | INBOX | String
 | *mailUidGenerator* (consumer) | A pluggable MailUidGenerator that allows to use custom logic to generate UUID of the mail message. |  | MailUidGenerator
 | *mapMailMessage* (consumer) | Specifies whether Camel should map the received mail message to Camel body/headers/attachments. If set to true, the body of the mail message is mapped to the body of the Camel IN message, the mail headers are mapped to IN headers, and the attachments to Camel IN attachment message. If this option is set to false then the IN message contains a raw javax.mail.Message. You can retrieve this raw message by calling exchange.getIn().getBody(javax.mail.Message.class). | true | boolean
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
-| *postProcessAction* (consumer) | Refers to an MailBoxPostProcessAction for doing post processing tasks on the mailbox once the normal processing ended. |  | MailBoxPostProcess Action
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
+| *postProcessAction* (consumer) | Refers to an MailBoxPostProcessAction for doing post processing tasks on the mailbox once the normal processing ended. |  | MailBoxPostProcessAction
 | *bcc* (producer) | Sets the BCC email address. Separate multiple email addresses with comma. |  | String
 | *cc* (producer) | Sets the CC email address. Separate multiple email addresses with comma. |  | String
 | *from* (producer) | The from email address | camel@localhost | String
@@ -166,7 +166,7 @@ with the following path and query parameters:
 | *javaMailSender* (producer) | To use a custom org.apache.camel.component.mail.JavaMailSender for sending emails. |  | JavaMailSender
 | *additionalJavaMail Properties* (advanced) | Sets additional java mail properties, that will append/override any default properties that is set based on all the other options. This is useful if you need to add some special options but want to keep the others as is. |  | Properties
 | *alternativeBodyHeader* (advanced) | Specifies the key to an IN message header that contains an alternative email body. For example, if you send emails in text/html format and want to provide an alternative mail body for non-HTML email clients, set the alternative mail body with this key as a header. | CamelMailAlternativeBody | String
-| *attachmentsContentTransfer EncodingResolver* (advanced) | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments. |  | AttachmentsContent TransferEncoding Resolver
+| *attachmentsContentTransfer EncodingResolver* (advanced) | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments. |  | AttachmentsContentTransferEncodingResolver
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *binding* (advanced) | Sets the binding used to convert from a Camel message to and from a Mail message |  | MailBinding
 | *connectionTimeout* (advanced) | The connection timeout in milliseconds. | 30000 | int
@@ -189,7 +189,7 @@ with the following path and query parameters:
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
 | *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
 | *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
@@ -227,7 +227,7 @@ The component supports 48 options, which are listed below.
 | *camel.component.mail.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.mail.configuration.additional-java-mail-properties* | Sets additional java mail properties, that will append/override any default properties that is set based on all the other options. This is useful if you need to add some special options but want to keep the others as is. |  | Properties
 | *camel.component.mail.configuration.alternative-body-header* | Specifies the key to an IN message header that contains an alternative email body. For example, if you send emails in text/html format and want to provide an alternative mail body for non-HTML email clients, set the alternative mail body with this key as a header. | CamelMailAlternativeBody | String
-| *camel.component.mail.configuration.attachments-content-transfer-encoding-resolver* | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments. |  | AttachmentsContent TransferEncoding Resolver
+| *camel.component.mail.configuration.attachments-content-transfer-encoding-resolver* | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments. |  | AttachmentsContentTransferEncodingResolver
 | *camel.component.mail.configuration.bcc* | Sets the BCC email address. Separate multiple email addresses with comma. |  | String
 | *camel.component.mail.configuration.cc* | Sets the CC email address. Separate multiple email addresses with comma. |  | String
 | *camel.component.mail.configuration.close-folder* | Whether the consumer should close the folder after polling. Setting this option to false and having disconnect=false as well, then the consumer keep the folder open between polls. | true | Boolean
