@@ -44,6 +44,8 @@ public @interface UriEndpoint {
      * For example to associate <tt>http</tt> and <tt>https</tt> to the same endpoint implementation.
      * <p/>
      * The order of the scheme names here should be the same order as in {@link #extendsScheme()} so their are paired.
+     * <p/>
+     * The schema name must be lowercase, it may contain dashes as well. For example: robot-framework.
      */
     String scheme();
 
