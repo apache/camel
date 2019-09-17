@@ -34,6 +34,7 @@ import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
@@ -161,19 +162,11 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         // the transacted error handler could have been configured on the route
         // so we should use that one
         if (!isErrorHandlerFactoryConfigured(ref)) {
-            // see if there has been configured a route builder on the route
+            // see if there has been configured a error handler builder on the route
+            // TODO: Avoid using RouteDefinition - tests should pass: https://issues.apache.org/jira/browse/CAMEL-13984
             RouteDefinition route = (RouteDefinition)routeContext.getRoute();
             answer = route.getErrorHandlerFactory();
-            if (answer == null && route.getErrorHandlerRef() != null) {
-                answer = routeContext.lookup(route.getErrorHandlerRef(), ErrorHandlerBuilder.class);
-            }
-            if (answer == null) {
-                // fallback to the default error handler if none configured on
-                // the route
-                answer = new DefaultErrorHandlerBuilder();
-            }
-            // check if its also a ref with no error handler configuration like
-            // me
+            // check if its also a ref with no error handler configuration like me
             if (answer instanceof ErrorHandlerBuilderRef) {
                 ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef)answer;
                 String otherRef = other.getRef();
