@@ -122,11 +122,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "The status codes which are considered a success response. The values are inclusive. Multiple ranges can be"
                     + " defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
-    @UriParam(label = "producer,advanced",
-            description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
-                    + " See more details at http://camel.apache.org/urlrewrite.html")
-    @Deprecated
-    private UrlRewrite urlRewrite;
     @UriParam(label = "consumer", defaultValue = "false",
             description = "Configure the consumer to work in async mode")
     private boolean async;
@@ -439,20 +434,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
-    }
-
-    @Deprecated
-    public UrlRewrite getUrlRewrite() {
-        return urlRewrite;
-    }
-
-    /**
-     * Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints.
-     * See more details at http://camel.apache.org/urlrewrite.html
-     */
-    @Deprecated
-    public void setUrlRewrite(UrlRewrite urlRewrite) {
-        this.urlRewrite = urlRewrite;
     }
 
     public Integer getResponseBufferSize() {
