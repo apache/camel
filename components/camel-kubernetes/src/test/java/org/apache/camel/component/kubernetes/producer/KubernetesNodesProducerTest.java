@@ -81,13 +81,12 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
         
         assertEquals(3, result.size());
     }
-    
+
     @Test
     public void createNodeTest() throws Exception {
-    	ObjectMeta meta = new ObjectMeta();
-    	meta.setName("test");
-        server.expect().withPath("/api/v1/nodes")
-            .andReturn(200, new NodeBuilder().withMetadata(meta).build()).once();
+        ObjectMeta meta = new ObjectMeta();
+        meta.setName("test");
+        server.expect().withPath("/api/v1/nodes").andReturn(200, new NodeBuilder().withMetadata(meta).build()).once();
         Exchange ex = template.request("direct:createNode", new Processor() {
 
             @Override

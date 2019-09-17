@@ -75,7 +75,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         case KubernetesOperations.GET_NODE_OPERATION:
             doGetNode(exchange, operation);
             break;
-            
+
         case KubernetesOperations.CREATE_NODE_OPERATION:
             doCreateNode(exchange, operation);
             break;
@@ -117,7 +117,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(node);
     }
-    
+
     protected void doCreateNode(Exchange exchange, String operation) throws Exception {
         Node node = null;
         String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
