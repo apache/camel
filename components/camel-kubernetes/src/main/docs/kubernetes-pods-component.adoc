@@ -110,3 +110,11 @@ The component supports 2 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
+== Supported producer operation
+
+- listPods
+- listPodsByLabels
+- getPod
+- createPod
+- deletePod
+
