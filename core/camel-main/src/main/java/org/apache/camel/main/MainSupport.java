@@ -524,6 +524,20 @@ public abstract class MainSupport extends ServiceSupport {
         this.initialProperties = initialProperties;
     }
 
+    /**
+     * Adds a initial property for the properties component,
+     * which will be used before any locations are resolved.
+     *
+     * @param key    the property key
+     * @param value  the property value
+     */
+    public void addInitialProperty(String key, String value) {
+        if (initialProperties == null) {
+            initialProperties = new OrderedProperties();
+        }
+        initialProperties.setProperty(key, value);
+    }
+
     public Properties getOverrideProperties() {
         return overrideProperties;
     }
@@ -534,6 +548,20 @@ public abstract class MainSupport extends ServiceSupport {
      */
     public void setOverrideProperties(Properties overrideProperties) {
         this.overrideProperties = overrideProperties;
+    }
+
+    /**
+     * Adds an override property that take precedence
+     * and will use first, if a property exist.
+     *
+     * @param key    the property key
+     * @param value  the property value
+     */
+    public void addOverrideProperty(String key, String value) {
+        if (overrideProperties == null) {
+            overrideProperties = new OrderedProperties();
+        }
+        overrideProperties.setProperty(key, value);
     }
 
     public boolean isTrace() {

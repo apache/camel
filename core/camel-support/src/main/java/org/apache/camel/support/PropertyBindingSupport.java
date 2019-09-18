@@ -33,6 +33,7 @@ import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.util.StringHelper;
 
+import static org.apache.camel.util.ObjectHelper.cast;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
@@ -471,9 +472,17 @@ public final class PropertyBindingSupport {
                     // property configurer does not support nested names so skip if the name has a dot
                     valid = key.indexOf('.') == -1;
                 }
-                if (valid && removeParameter && gen.configure(camelContext, target, key, value, ignoreCase)) {
-                    iter.remove();
-                    rc = true;
+                if (valid) {
+                    try {
+                        value = resolveValue(camelContext, target, key, value, ignoreCase, fluentBuilder, allowPrivateSetter);
+                    } catch (Exception e) {
+                        throw new PropertyBindingException(target, e);
+                    }
+                    boolean hit = gen.configure(camelContext, target, key, value, ignoreCase);
+                    if (removeParameter && hit) {
+                        iter.remove();
+                        rc = true;
+                    }
                 }
             }
         }
@@ -526,6 +535,62 @@ public final class PropertyBindingSupport {
         }
 
         return false;
+    }
+
+    private static Object resolveValue(CamelContext context, Object target, String name, Object value,
+                                       boolean ignoreCase, boolean fluentBuilder, boolean allowPrivateSetter) throws Exception {
+        if (value instanceof String) {
+            if (value.toString().startsWith("#class:")) {
+                // its a new class to be created
+                String className = value.toString().substring(7);
+                String factoryMethod = null;
+                if (className.indexOf('#') != -1) {
+                    factoryMethod = StringHelper.after(className, "#");
+                    className = StringHelper.before(className, "#");
+                }
+                Class<?> type = context.getClassResolver().resolveMandatoryClass(className);
+                if (factoryMethod != null) {
+                    value = context.getInjector().newInstance(type, factoryMethod);
+                } else {
+                    value = context.getInjector().newInstance(type);
+                }
+                if (value == null) {
+                    throw new IllegalStateException("Cannot create instance of class: " + className);
+                }
+            } else if (value.toString().startsWith("#type:")) {
+                // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
+                String typeName = value.toString().substring(6);
+                Class<?> type = context.getClassResolver().resolveMandatoryClass(typeName);
+                Set<?> types = context.getRegistry().findByType(type);
+                if (types.size() == 1) {
+                    value = types.iterator().next();
+                } else if (types.size() > 1) {
+                    throw new IllegalStateException("Cannot select single type: " + typeName + " as there are " + types.size() + " beans in the registry with this type");
+                } else {
+                    throw new IllegalStateException("Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
+                }
+            } else if (value.toString().equals("#autowired")) {
+                // we should get the type from the setter
+                Method method = findBestSetterMethod(context, target.getClass(), name, fluentBuilder, allowPrivateSetter, ignoreCase);
+                if (method != null) {
+                    Class<?> parameterType = method.getParameterTypes()[0];
+                    Set<?> types = context.getRegistry().findByType(parameterType);
+                    if (types.size() == 1) {
+                        value = types.iterator().next();
+                    } else if (types.size() > 1) {
+                        throw new IllegalStateException("Cannot select single type: " + parameterType + " as there are " + types.size() + " beans in the registry with this type");
+                    } else {
+                        throw new IllegalStateException("Cannot select single type: " + parameterType + " as there are no beans in the registry with this type");
+                    }
+                } else {
+                    throw new IllegalStateException("Cannot find setter method with name: " + name + " on class: " + target.getClass().getName() + " to use for autowiring");
+                }
+            } else if (value.toString().equals("#bean:")) {
+                String key = value.toString().substring(6);
+                value = context.getRegistry().lookupByName(key);
+            }
+        }
+        return value;
     }
 
     private static boolean setProperty(CamelContext context, Object target, String name, Object value, boolean mandatory,
@@ -592,58 +657,14 @@ public final class PropertyBindingSupport {
         }
 
         if (reference && value instanceof String) {
-            if (value.toString().startsWith("#class:")) {
-                // its a new class to be created
-                String className = value.toString().substring(7);
-                String factoryMethod = null;
-                if (className.indexOf('#') != -1) {
-                    factoryMethod = StringHelper.after(className, "#");
-                    className = StringHelper.before(className, "#");
-                }
-                Class<?> type = context.getClassResolver().resolveMandatoryClass(className);
-                if (factoryMethod != null) {
-                    value = context.getInjector().newInstance(type, factoryMethod);
-                } else {
-                    value = context.getInjector().newInstance(type);
-                }
-                if (value == null) {
-                    throw new IllegalStateException("Cannot create instance of class: " + className);
-                }
-            } else if (value.toString().startsWith("#type:")) {
-                // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
-                String typeName = value.toString().substring(6);
-                Class<?> type = context.getClassResolver().resolveMandatoryClass(typeName);
-                Set<?> types = context.getRegistry().findByType(type);
-                if (types.size() == 1) {
-                    value = types.iterator().next();
-                } else if (types.size() > 1) {
-                    throw new IllegalStateException("Cannot select single type: " + typeName + " as there are " + types.size() + " beans in the registry with this type");
-                } else {
-                    throw new IllegalStateException("Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
-                }
-            } else if (value.toString().equals("#autowired")) {
-                // we should get the type from the setter
-                Method method = findBestSetterMethod(context, target.getClass(), name, fluentBuilder, allowPrivateSetter, ignoreCase);
-                if (method != null) {
-                    Class<?> parameterType = method.getParameterTypes()[0];
-                    Set<?> types = context.getRegistry().findByType(parameterType);
-                    if (types.size() == 1) {
-                        value = types.iterator().next();
-                    } else if (types.size() > 1) {
-                        throw new IllegalStateException("Cannot select single type: " + parameterType + " as there are " + types.size() + " beans in the registry with this type");
-                    } else {
-                        throw new IllegalStateException("Cannot select single type: " + parameterType + " as there are no beans in the registry with this type");
-                    }
-                } else {
-                    throw new IllegalStateException("Cannot find setter method with name: " + name + " on class: " + target.getClass().getName() + " to use for autowiring");
-                }
-            } else if (value.toString().startsWith("#bean:")) {
+            if (value.toString().startsWith("#bean:")) {
                 // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport
                 refName = "#" + ((String) value).substring(6);
                 value = null;
+            } else {
+                value = resolveValue(context, target, name, value, ignoreCase, fluentBuilder, allowPrivateSetter);
             }
         }
-
         boolean hit = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context, context.getTypeConverter(), target, name, value, refName, fluentBuilder, allowPrivateSetter, ignoreCase);
         if (!hit && mandatory) {
             // there is no setter with this given name, so lets report this as a problem
