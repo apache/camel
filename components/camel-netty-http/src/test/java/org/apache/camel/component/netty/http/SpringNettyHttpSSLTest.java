@@ -56,7 +56,7 @@ public class SpringNettyHttpSSLTest extends Assert {
     public static void setUpJSSE() throws Exception {
         // ensure JSSE clients can validate the self signed dummy localhost cert,
         // use the server keystore as the trust store for these tests
-        URL trustStoreUrl = NettyHttpSSLTest.class.getClassLoader().getResource("jsse/localhost.ks");
+        URL trustStoreUrl = NettyHttpSSLTest.class.getClassLoader().getResource("jsse/localhost.p12");
         System.setProperty("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
         System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
     }

@@ -40,7 +40,7 @@ public class RestletHttpsWithGlobalSSLContextParametersTest extends RestletTestS
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").getPath().toString());
+        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").getPath().toString());
         ksp.setPassword("changeit");
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -85,7 +85,7 @@ public class RestletHttpsWithGlobalSSLContextParametersTest extends RestletTestS
     private void postRequestMessage(String message) throws Exception {
         // ensure jsse clients can validate the self signed dummy localhost cert, 
         // use the server keystore as the trust store for these tests
-        URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
+        URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
         System.setProperty("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
         
         HttpPost post = new HttpPost("https://localhost:" + portNum + "/users/");

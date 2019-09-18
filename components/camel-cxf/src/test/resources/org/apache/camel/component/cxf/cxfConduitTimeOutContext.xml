@@ -37,7 +37,7 @@
         <keyManagers
                 keyPassword="changeit">
             <keyStore
-                    resource="/localhost.ks"
+                    resource="/localhost.p12"
                     password="changeit"/>
         </keyManagers>
     </sslContextParameters>

@@ -35,7 +35,7 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
     // START SNIPPET: e2
     private Connector createSslSocketConnector(CamelContext context, int port) throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
+        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(pwd);
         
         KeyManagersParameters kmp = new KeyManagersParameters();

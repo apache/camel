@@ -39,7 +39,7 @@ public class IrcsWithSslContextParamsRouteTest extends IrcRouteTest {
     @BindToRegistry("sslContextParameters")
     protected SSLContextParameters loadSslContextParams() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("localhost.ks");
+        ksp.setResource("localhost.p12");
         ksp.setPassword("changeit");
         
         TrustManagersParameters tmp = new TrustManagersParameters();

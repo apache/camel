@@ -31,7 +31,7 @@ public class ExcludeCipherSuitesTest extends BaseJettyTest {
 
     private SSLContextParameters createSslContextParameters() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
+        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(pwd);
         
         KeyManagersParameters kmp = new KeyManagersParameters();

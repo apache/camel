@@ -34,7 +34,7 @@ public class HttpsRouteAliasTest extends HttpsRouteTest {
                 JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
                 
                 KeyStoreParameters ksp = new KeyStoreParameters();
-                ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost-alias.ks").toString());
+                ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost-alias.p12").toString());
                 ksp.setPassword(pwd);
                 
                 KeyManagersParameters kmp = new KeyManagersParameters();

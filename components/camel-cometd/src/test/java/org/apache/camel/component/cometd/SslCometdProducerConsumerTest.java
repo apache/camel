@@ -67,7 +67,7 @@ public class SslCometdProducerConsumerTest extends CamelTestSupport {
                 CometdComponent component = (CometdComponent) context.getComponent("cometds");
                 component.setSslPassword(pwd);
                 component.setSslKeyPassword(pwd);
-                URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
+                URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
                 component.setSslKeystore(keyStoreUrl.getPath());
 
                 from("direct:input").to(uri);

@@ -32,7 +32,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
 
-        ksp.setResource("org/apache/camel/support/jsse/localhost.ks");
+        ksp.setResource("org/apache/camel/support/jsse/localhost.p12");
         ksp.setPassword("changeit");
 
         return ksp;

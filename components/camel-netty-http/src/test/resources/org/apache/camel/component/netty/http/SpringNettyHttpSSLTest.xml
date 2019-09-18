@@ -36,10 +36,10 @@
 
   <camel:sslContextParameters id="mySsl">
     <camel:keyManagers keyPassword="changeit">
-      <camel:keyStore resource="jsse/localhost.ks" password="changeit"/>
+      <camel:keyStore resource="jsse/localhost.p12" password="changeit"/>
     </camel:keyManagers>
     <camel:trustManagers>
-      <camel:keyStore resource="jsse/localhost.ks" password="changeit"/>
+      <camel:keyStore resource="jsse/localhost.p12" password="changeit"/>
     </camel:trustManagers>
   </camel:sslContextParameters>
 

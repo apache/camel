@@ -29,7 +29,7 @@ public final class MailTestHelper {
 
     public static SSLContextParameters createSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(MailTestHelper.class.getClassLoader().getResource("jsse/localhost.ks").toString());
+        ksp.setResource(MailTestHelper.class.getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(KEY_STORE_PASSWORD);
 
         KeyManagersParameters kmp = new KeyManagersParameters();

@@ -33,7 +33,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
 
-        ksp.setResource("org/apache/camel/support/jsse/localhost.ks");
+        ksp.setResource("org/apache/camel/support/jsse/localhost.p12");
         ksp.setPassword("changeit");
 
         return ksp;
@@ -53,7 +53,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         ksp.setPassword("{{keyStoreParamerers.password}}");
 
         KeyStore ks = ksp.createKeyStore();
-        assertNotNull(ks.getCertificate("server"));
+        assertNotNull(ks.getCertificate("localhost"));
     }
 
     @Test
@@ -61,18 +61,18 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
 
         KeyStore ks = ksp.createKeyStore();
-        assertNotNull(ks.getCertificate("server"));
+        assertNotNull(ks.getCertificate("localhost"));
 
-        URL resourceUrl = this.getClass().getResource("/org/apache/camel/support/jsse/localhost.ks");
+        URL resourceUrl = this.getClass().getResource("/org/apache/camel/support/jsse/localhost.p12");
         ksp.setResource(resourceUrl.toExternalForm());
         ks = ksp.createKeyStore();
-        assertNotNull(ks.getCertificate("server"));
+        assertNotNull(ks.getCertificate("localhost"));
 
-        resourceUrl = this.getClass().getResource("/org/apache/camel/support/jsse/localhost.ks");
+        resourceUrl = this.getClass().getResource("/org/apache/camel/support/jsse/localhost.p12");
         File file = new File(resourceUrl.toURI());
         ksp.setResource(file.getAbsolutePath());
         ks = ksp.createKeyStore();
-        assertNotNull(ks.getCertificate("server"));
+        assertNotNull(ks.getCertificate("localhost"));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         ksp.setType("jks");
 
         KeyStore ks = ksp.createKeyStore();
-        assertNotNull(ks.getCertificate("server"));
+        assertNotNull(ks.getCertificate("localhost"));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         ksp.setProvider(ksp.createKeyStore().getProvider().getName());
 
         KeyStore ks = ksp.createKeyStore();
-        assertNotNull(ks.getCertificate("server"));
+        assertNotNull(ks.getCertificate("localhost"));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         }
 
         ksp = this.createMinimalKeyStoreParameters();
-        ksp.setType("pkcs12");
+        ksp.setType("JCEKS");
 
         try {
             ksp.createKeyStore();

@@ -59,7 +59,7 @@ public class RestletProducerSSLTest extends RestletTestSupport {
 
     protected SSLContextParameters createSSLContext() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(new File("src/test/resources/jsse/localhost.ks").getAbsolutePath());
+        ksp.setResource(new File("src/test/resources/jsse/localhost.p12").getAbsolutePath());
         ksp.setPassword("changeit");
 
         KeyManagersParameters kmp = new KeyManagersParameters();
