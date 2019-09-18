@@ -258,8 +258,9 @@ more dynamic as the SQL query is from the message body.
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
 http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/jdbc/core/JdbcTemplate.html#queryForList(java.lang.String,%20java.lang.Object%91%93)[JdbcTemplate.queryForList()]
-method. For `update` operations, the result is the number of updated
-rows, returned as an `Integer`.
+method. For `update` operations, a `NULL` body is returned as the `update` operation is only set as a header and never as a body.
+
+NOTE: See <<sql-component-header-values, Header values>> for more information on the `update` operation.
 
 By default, the result is placed in the message body.  If the
 outputHeader parameter is set, the result is placed in the header.  This
@@ -294,13 +295,13 @@ from("direct:withSplitModel")
         .end();
 ----
  
-
+[[sql-component-header-values]]
 == Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
 
-[width="100%",cols="10%,90%",options="header",]
+[cols="1,3"]
 |===
 |Header |Description
 
@@ -321,7 +322,7 @@ When performing `insert` operations, the SQL Component stores the rows
 with the generated keys and number of these rown in the following
 message headers:
 
-[width="100%",cols="10%,90%",options="header",]
+[cols="1,3"]
 |===
 |Header |Description
 
@@ -543,7 +544,7 @@ You have a few options to tune the
 `org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository` for
 your needs:
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[cols="1,1,2"]
 |===
 |Parameter |Default Value |Description
 
