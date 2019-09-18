@@ -37,8 +37,9 @@ public class RestletHttpsWithSSLContextParametersTest extends RestletTestSupport
     @BindToRegistry("mySSLContextParameters")
     public SSLContextParameters loadSSLContextParams() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").getPath().toString());
+        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").getPath().toString());
         ksp.setPassword("changeit");
+        ksp.setType("PKCS12");
 
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setKeyPassword("changeit");
@@ -78,8 +79,9 @@ public class RestletHttpsWithSSLContextParametersTest extends RestletTestSupport
         // ensure jsse clients can validate the self signed dummy localhost
         // cert,
         // use the server keystore as the trust store for these tests
-        URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
+        URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
         System.setProperty("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
+        
 
         HttpPost post = new HttpPost("https://localhost:" + portNum + "/users/");
         post.addHeader(Exchange.CONTENT_TYPE, "application/xml");

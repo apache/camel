@@ -69,7 +69,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     @Override
     protected Registry createCamelRegistry() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("jsse/localhost.ks");
+        ksp.setResource("jsse/localhost.p12");
         ksp.setPassword(pwd);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -104,7 +104,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
-        truststoreParameters.setResource("jsse/localhost.ks");
+        truststoreParameters.setResource("jsse/localhost.p12");
         truststoreParameters.setPassword(pwd);
 
         TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();

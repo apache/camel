@@ -57,7 +57,7 @@ public class WssProducerTest extends WsProducerTestBase {
     private static SSLContextParameters defineSSLContextServerParameters() {
 
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("jsse/localhost.ks");
+        ksp.setResource("jsse/localhost.p12");
         ksp.setPassword(PW);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -82,7 +82,7 @@ public class WssProducerTest extends WsProducerTestBase {
 
     private static SSLContextParameters defineSSLContextClientParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("jsse/localhost.ks");
+        ksp.setResource("jsse/localhost.p12");
         ksp.setPassword(PW);
 
         TrustManagersParameters tmp = new TrustManagersParameters();

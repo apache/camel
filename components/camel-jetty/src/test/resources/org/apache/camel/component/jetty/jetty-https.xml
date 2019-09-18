@@ -26,7 +26,7 @@
     <bean id="jetty" class="org.apache.camel.component.jetty9.JettyHttpComponent9">
         <property name="sslPassword" value="changeit"/>
         <property name="sslKeyPassword" value="changeit"/>
-        <property name="keystore" value="src/test/resources/jsse/localhost.ks"/>
+        <property name="keystore" value="src/test/resources/jsse/localhost.p12"/>
         <property name="sslSocketConnectorProperties">
             <map>
                 <entry key="protocol" value="TLSv1.2"/>

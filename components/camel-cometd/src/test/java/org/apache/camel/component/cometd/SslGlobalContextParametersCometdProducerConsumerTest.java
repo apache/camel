@@ -80,7 +80,7 @@ public class SslGlobalContextParametersCometdProducerConsumerTest extends CamelT
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("jsse/localhost.ks");
+        ksp.setResource("jsse/localhost.p12");
         ksp.setPassword("changeit");
 
         KeyManagersParameters kmp = new KeyManagersParameters();

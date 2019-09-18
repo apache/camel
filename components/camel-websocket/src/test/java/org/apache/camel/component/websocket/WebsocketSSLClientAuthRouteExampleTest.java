@@ -73,7 +73,7 @@ public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
-        truststoreParameters.setResource("jsse/localhost.ks");
+        truststoreParameters.setResource("jsse/localhost.p12");
         truststoreParameters.setPassword(pwd);
 
         TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();
@@ -81,7 +81,7 @@ public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
         sslContextParameters.setTrustManagers(clientSSLTrustManagers);
 
         KeyStoreParameters keystoreParameters = new KeyStoreParameters();
-        keystoreParameters.setResource("jsse/localhost.ks");
+        keystoreParameters.setResource("jsse/localhost.p12");
         keystoreParameters.setPassword(pwd);
         KeyManagersParameters clientAuthClientSSLKeyManagers = new KeyManagersParameters();
         clientAuthClientSSLKeyManagers.setKeyPassword(pwd);
@@ -101,7 +101,7 @@ public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
     protected SSLContextParameters defineSSLContextParameters() {
 
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("jsse/localhost.ks");
+        ksp.setResource("jsse/localhost.p12");
         ksp.setPassword(pwd);
 
         KeyManagersParameters kmp = new KeyManagersParameters();

@@ -70,7 +70,7 @@ public class WebsocketSSLContextGlobalRouteExampleTest extends CamelTestSupport 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("jsse/localhost.ks");
+        ksp.setResource("jsse/localhost.p12");
         ksp.setPassword(pwd);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -105,7 +105,7 @@ public class WebsocketSSLContextGlobalRouteExampleTest extends CamelTestSupport 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
-        truststoreParameters.setResource("jsse/localhost.ks");
+        truststoreParameters.setResource("jsse/localhost.p12");
         truststoreParameters.setPassword(pwd);
 
         TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();

@@ -17,7 +17,8 @@
 package org.apache.camel.component.http;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.security.KeyStore;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -28,16 +29,15 @@ import org.junit.Before;
 
 public abstract class HttpsServerTestSupport extends HttpServerTestSupport {
 
-    protected static final String KEYSTORE_PATH = "./src/test/resources/localhost.ks";
-    protected static final File KEYSTORE = new File(KEYSTORE_PATH);
-    protected static final String SECURE_SOCKET_PROTOCOL = "TLSv1.2";
-    protected static final String PASSWORD = "changeit";
+    private static final String KEYSTORE = "/localhost.p12";
+    private static final String PASSWORD = "changeit";
 
     @Before
     @Override
     public void setUp() throws Exception {
         System.setProperty("javax.net.ssl.trustStorePassword", PASSWORD);
-        System.setProperty("javax.net.ssl.trustStore", KEYSTORE_PATH);
+        final URL keystoreResourceUrl = HttpsServerTestSupport.class.getResource(KEYSTORE);
+        System.setProperty("javax.net.ssl.trustStore", new File(keystoreResourceUrl.toURI()).getAbsolutePath());
 
         super.setUp();
     }
@@ -54,18 +54,22 @@ public abstract class HttpsServerTestSupport extends HttpServerTestSupport {
     @Override
     protected SSLContext getSSLContext() throws Exception {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        keyStore.load(new FileInputStream(KEYSTORE), PASSWORD.toCharArray());
+        try (InputStream is = HttpsServerTestSupport.class.getResourceAsStream(KEYSTORE)) {
+            keyStore.load(is, PASSWORD.toCharArray());
+        }
 
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         keyManagerFactory.init(keyStore, PASSWORD.toCharArray());
 
         KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        trustStore.load(new FileInputStream(KEYSTORE), PASSWORD.toCharArray());
+        try (InputStream is = HttpsServerTestSupport.class.getResourceAsStream(KEYSTORE)) {
+            keyStore.load(is, PASSWORD.toCharArray());
+        }
 
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init(trustStore);
 
-        SSLContext sslcontext = SSLContext.getInstance(SECURE_SOCKET_PROTOCOL);
+        SSLContext sslcontext = SSLContext.getInstance("TLS");
         sslcontext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
 
         return sslcontext;

@@ -32,8 +32,9 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
 
-        ksp.setResource("org/apache/camel/support/jsse/localhost.ks");
+        ksp.setResource("org/apache/camel/support/jsse/localhost.p12");
         ksp.setPassword("changeit");
+        ksp.setType("PKCS12");
 
         return ksp;
     }
@@ -144,15 +145,15 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
         assertEquals(1, kms.length);
         assertTrue(kms[0] instanceof X509KeyManager);
 
-        kms[0] = new AliasedX509ExtendedKeyManager("server", (X509KeyManager)kms[0]);
+        kms[0] = new AliasedX509ExtendedKeyManager("localhost", (X509KeyManager)kms[0]);
         AliasedX509ExtendedKeyManager km = (AliasedX509ExtendedKeyManager)kms[0];
-        assertNotNull(km.getPrivateKey("server"));
+        assertNotNull(km.getPrivateKey("localhost"));
     }
 
     protected void validateKeyManagers(KeyManager[] kms) {
         assertEquals(1, kms.length);
         assertTrue(kms[0] instanceof X509KeyManager);
         X509KeyManager km = (X509KeyManager)kms[0];
-        assertNotNull(km.getPrivateKey("server"));
+        assertNotNull(km.getPrivateKey("localhost"));
     }
 }

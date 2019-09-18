@@ -70,7 +70,7 @@ public abstract class HttpsTest extends CamelTestSupport {
     public static WireMockRule petstore = new WireMockRule(
         wireMockConfig().httpServerFactory(new Jetty94ServerFactory()).containerThreads(13).dynamicPort()
             .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
-            .keystorePassword("password"));
+            .keystorePassword("changeit"));
 
     static final Object NO_BODY = null;
 
