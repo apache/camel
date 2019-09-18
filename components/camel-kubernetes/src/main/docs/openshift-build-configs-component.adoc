@@ -73,3 +73,9 @@ with the following path and query parameters:
 | *username* (security) | Username to connect to Kubernetes |  | String
 |===
 // endpoint options: END
+
+== Supported producer operation
+
+- listBuildConfigs
+- listBuildConfigsByLabels
+- getBuildConfig
