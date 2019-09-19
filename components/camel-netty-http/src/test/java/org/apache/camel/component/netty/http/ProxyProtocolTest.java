@@ -27,11 +27,14 @@ import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.util.ResourceLeakDetector;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -42,11 +45,16 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.core.LogEvent;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,6 +64,8 @@ public class ProxyProtocolTest {
     private static final int ORIGIN_PORT = AvailablePortFinder.getNextAvailable();
 
     private static final int PROXY_PORT = AvailablePortFinder.getNextAvailable();
+
+    protected static final Logger LOG = LoggerFactory.getLogger(ProxyProtocolTest.class);
 
     private final DefaultCamelContext context;
 
@@ -128,6 +138,8 @@ public class ProxyProtocolTest {
         shutdownStrategy.setTimeout(100);
         shutdownStrategy.setTimeUnit(TimeUnit.MILLISECONDS);
         shutdownStrategy.shutdownForced(context, context.getRouteStartupOrder());
+
+        context.stop();
     }
 
     @Parameters
@@ -155,6 +167,31 @@ public class ProxyProtocolTest {
             new Object[] {single, "http://test/path"},
             new Object[] {dynamicPath, "http://test/path"},
             new Object[] {dynamicUrl, "http://localhost:" + ORIGIN_PORT + "/path"});
+    }
+
+    @BeforeClass
+    public static void startLeakDetection() {
+        System.setProperty("io.netty.leakDetection.maxRecords", "100");
+        System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+    }
+
+    @AfterClass
+    public static void verifyNoLeaks() throws Exception {
+        // Force GC to bring up leaks
+        System.gc();
+        // Kick leak detection logging
+        ByteBufAllocator.DEFAULT.buffer(1).release();
+        final Collection<LogEvent> events = LogCaptureAppender.getEvents();
+        if (!events.isEmpty()) {
+            final String message = "Leaks detected while running tests: " + events;
+            // Just write the message into log to help debug
+            for (final LogEvent event : events) {
+                LOG.info(event.getMessage().getFormattedMessage());
+            }
+            LogCaptureAppender.reset();
+            throw new AssertionError(message);
+        }
     }
 
     private static void origin(final Exchange exchange) {
@@ -218,5 +255,6 @@ public class ProxyProtocolTest {
             // only if we received a payload we'll uppercase it
             message.setBody(body.toString(StandardCharsets.US_ASCII).toUpperCase(Locale.US));
         }
+        body.release();
     }
 }
