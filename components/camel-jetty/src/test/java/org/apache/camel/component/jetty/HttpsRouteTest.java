@@ -202,7 +202,7 @@ public class HttpsRouteTest extends BaseJettyTest {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        sslContextFactory.setTrustStoreType("JKS");
+        sslContextFactory.setTrustStoreType("PKCS12");
         sslContextFactory.setProtocol("TLSv1.2");
     }
     
