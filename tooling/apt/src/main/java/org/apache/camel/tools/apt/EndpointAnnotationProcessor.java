@@ -127,7 +127,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
     private void validateSchemaName(final String schemaName, final TypeElement classElement) {
         // our schema name has to be in lowercase
         if (!schemaName.equals(schemaName.toLowerCase())) {
-            processingEnv.getMessager().printMessage(Kind.ERROR, String.format("Schema name '%s' in '%s' must be lowercase!", schemaName, classElement.getQualifiedName()));
+            processingEnv.getMessager().printMessage(Kind.WARNING, String.format("Mixed case schema name in '%s' with value '%s' has been deprecated. Please use lowercase only!", classElement.getQualifiedName(), schemaName));
         }
     }
 
