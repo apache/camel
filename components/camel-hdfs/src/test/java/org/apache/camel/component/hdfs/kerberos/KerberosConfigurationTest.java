@@ -53,24 +53,23 @@ public class KerberosConfigurationTest {
         /* exception was thrown */
     }
 
-//    @Test
-//    public void loginWithKeytab() {
-//        // given
-//        List<String> namedNodes;
-//        String kerberosConfigFileLocation;
-//        int replicationFactor;
-//
-//        String username;
-//        String keyTabFileLocation;
-//
-//        underTest = new KerberosConfiguration(namedNodes, kerberosConfigFileLocation, replicationFactor);
-//
-//        // when
-//        underTest.loginWithKeytab(username, keyTabFileLocation);
-//
-//        // then
-//
-//    }
+    @Test
+    public void loginWithKeytab() throws IOException {
+        // given
+        List<String> namedNodes = Arrays.asList("kerb_node_01.example.com:8021", "kerb_node_02.example.com:8022");
+        String kerberosConfigFileLocation = pwd() + "/src/test/resources/kerberos/test-kerb5.conf";
+        int replicationFactor = 3;
+        underTest = new KerberosConfiguration(namedNodes, kerberosConfigFileLocation, replicationFactor);
+
+        String username = "test_user";
+        String keyTabFileLocation = pwd() + "/src/test/resources/kerberos/test-keytab.bin";
+
+        // when
+        underTest.loginWithKeytab(username, keyTabFileLocation);
+
+        // then
+
+    }
 
     private String pwd() {
         return new File(".").getAbsolutePath();
