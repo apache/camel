@@ -28,8 +28,8 @@ public class MainSedaTest extends Assert {
     public void testSedaMain() throws Exception {
         Main main = new Main();
         main.addRouteBuilder(new MyRouteBuilder());
-        main.addInitialProperty("camel.component.seda.defaultQueueFactory", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
-        main.addInitialProperty("camel.component.seda.defaultQueueFactory.counter", "123");
+        main.addProperty("camel.component.seda.defaultQueueFactory", "#class:org.apache.camel.main.MySedaBlockingQueueFactory");
+        main.addProperty("camel.component.seda.defaultQueueFactory.counter", "123");
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
