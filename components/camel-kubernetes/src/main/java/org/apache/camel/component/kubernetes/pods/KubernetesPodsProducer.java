@@ -97,7 +97,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(namespaceName)) {
             podList = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).list();
         } else {
-        	podList = getEndpoint().getKubernetesClient().pods().inAnyNamespace().list();
+            podList = getEndpoint().getKubernetesClient().pods().inAnyNamespace().list();
         }
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(podList.getItems());
