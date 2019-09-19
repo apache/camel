@@ -24,12 +24,23 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
+import org.apache.camel.component.microprofile.metrics.gauge.AtomicIntegerGauge;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.Snapshot;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
 import org.junit.Test;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTE_POLICY_PROCESSING_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_COMPLETED_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_FAILED_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_FAILURES_HANDLED_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_INFLIGHT_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_TOTAL_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ROUTE_ID_TAG;
 
 public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestSupport {
 
@@ -40,19 +51,19 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
     public void testMetricsRoutePolicy() throws Exception {
         int count = 10;
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(count);
+        mockEndpoint.expectedMessageCount(7);
 
         for (int i = 0; i < count; i++) {
             if (i % 2 == 0) {
-                template.sendBody("direct:foo", "Hello " + i);
+                template.sendBody("direct:foo", i);
             } else {
-                template.sendBody("direct:bar", "Hello " + i);
+                template.sendBody("direct:bar", i);
             }
         }
 
         assertMockEndpointsSatisfied();
 
-        Timer fooTimer = getTimer(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME);
+        Timer fooTimer = getTimer(DEFAULT_CAMEL_ROUTE_POLICY_PROCESSING_METRIC_NAME);
         assertEquals(count / 2, fooTimer.getCount());
 
         Snapshot fooSnapshot = fooTimer.getSnapshot();
@@ -60,15 +71,43 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
         assertTrue(fooSnapshot.getMax() > DELAY_FOO);
 
         String contextTag = "camelContext=" + context.getName();
-        String[] tagStrings = new String[] {contextTag, "failed=false", "routeId=foo", "serviceName=MicroProfileMetricsRoutePolicyService"};
+        String[] tagStrings = new String[] {contextTag, "routeId=foo"};
         Tag[] tags = TagsUtils.parseTagsAsArray(tagStrings);
 
-        Timer barTimer = MicroProfileMetricsHelper.findMetric(metricRegistry, DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME, Timer.class, Arrays.asList(tags));
+        Timer barTimer = MicroProfileMetricsHelper.findMetric(metricRegistry, DEFAULT_CAMEL_ROUTE_POLICY_PROCESSING_METRIC_NAME, Timer.class, Arrays.asList(tags));
         assertEquals(count / 2, barTimer.getCount());
 
         Snapshot barSnapshot = fooTimer.getSnapshot();
         assertTrue(barSnapshot.getMean() > DELAY_FOO);
         assertTrue(barSnapshot.getMax() > DELAY_FOO);
+
+        assertRouteExchangeMetrics("foo", 2);
+        assertRouteExchangeMetrics("bar", 1);
+    }
+
+    private void assertRouteExchangeMetrics(String routeId, int expectedFailuresHandled) {
+        Tag[] tags = new Tag[] {
+            new Tag(CAMEL_CONTEXT_TAG, context.getName()),
+            new Tag(ROUTE_ID_TAG, routeId)
+        };
+
+        Counter exchangesCompleted = getCounter(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_COMPLETED_METRIC_NAME, tags);
+        assertEquals(5, exchangesCompleted.getCount());
+
+        Counter exchangesFailed = getCounter(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_FAILED_METRIC_NAME, tags);
+        assertEquals(0, exchangesFailed.getCount());
+
+        Counter exchangesTotal = getCounter(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_TOTAL_METRIC_NAME, tags);
+        assertEquals(5, exchangesTotal.getCount());
+
+        AtomicIntegerGauge exchangesInflight = getAtomicIntegerGauge(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_INFLIGHT_METRIC_NAME, tags);
+        assertEquals(0, exchangesInflight.getValue().intValue());
+
+        Counter externalRedeliveries = getCounter(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME, tags);
+        assertEquals(0, externalRedeliveries.getCount());
+
+        Counter failuresHandled = getCounter(DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME + EXCHANGES_FAILURES_HANDLED_METRIC_NAME, tags);
+        assertEquals(expectedFailuresHandled, failuresHandled.getCount());
     }
 
     @Override
@@ -76,9 +115,26 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo").delay(DELAY_FOO).to("mock:result");
+                onException(IllegalStateException.class)
+                    .handled(true);
 
-                from("direct:bar").routeId("bar").delay(DELAY_BAR).to("mock:result");
+                from("direct:foo").routeId("foo")
+                    .process(exchange -> {
+                        Integer count = exchange.getIn().getBody(Integer.class);
+                        if (count % 3 == 0) {
+                            throw new IllegalStateException("Invalid count");
+                        }
+                    })
+                    .delay(DELAY_FOO).to("mock:result");
+
+                from("direct:bar").routeId("bar")
+                    .process(exchange -> {
+                        Integer count = exchange.getIn().getBody(Integer.class);
+                        if (count % 5 == 0) {
+                            throw new IllegalStateException("Invalid count");
+                        }
+                    })
+                    .delay(DELAY_BAR).to("mock:result");
             }
         };
     }

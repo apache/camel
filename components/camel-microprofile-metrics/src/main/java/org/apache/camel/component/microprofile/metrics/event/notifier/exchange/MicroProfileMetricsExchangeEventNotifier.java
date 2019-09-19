@@ -19,21 +19,28 @@ package org.apache.camel.component.microprofile.metrics.event.notifier.exchange;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsExchangeRecorder;
 import org.apache.camel.component.microprofile.metrics.event.notifier.AbstractMicroProfileMetricsEventNotifier;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
+import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
 import org.eclipse.microprofile.metrics.Timer.Context;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.PROCESSING_METRICS_SUFFIX;
 
 public class MicroProfileMetricsExchangeEventNotifier extends AbstractMicroProfileMetricsEventNotifier<ExchangeEvent> {
 
     private Predicate<Exchange> ignoreExchanges = exchange -> false;
     private MicroProfileMetricsExchangeEventNotifierNamingStrategy namingStrategy = MicroProfileMetricsExchangeEventNotifierNamingStrategy.DEFAULT;
+    private MicroProfileMetricsExchangeRecorder exchangeRecorder;
 
     public MicroProfileMetricsExchangeEventNotifier() {
         super(ExchangeEvent.class);
@@ -52,6 +59,16 @@ public class MicroProfileMetricsExchangeEventNotifier extends AbstractMicroProfi
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        CamelContext camelContext = getCamelContext();
+        MetricRegistry metricRegistry = getMetricRegistry();
+        Tag tag = new Tag(CAMEL_CONTEXT_TAG, camelContext.getName());
+        exchangeRecorder = new MicroProfileMetricsExchangeRecorder(metricRegistry, CAMEL_CONTEXT_METRIC_NAME, tag);
+    }
+
+    @Override
     public void notify(CamelEvent event) throws Exception {
         if (!(getIgnoreExchanges().test(((ExchangeEvent) event).getExchange()))) {
             if (event instanceof ExchangeSentEvent) {
@@ -67,9 +84,10 @@ public class MicroProfileMetricsExchangeEventNotifier extends AbstractMicroProfi
     protected void handleCreatedEvent(ExchangeCreatedEvent createdEvent) {
         String name = namingStrategy.getName(createdEvent.getExchange(), createdEvent.getExchange().getFromEndpoint());
         Tag[] tags = namingStrategy.getTags(createdEvent, createdEvent.getExchange().getFromEndpoint());
-        Timer timer = getMetricRegistry().timer(name, tags);
+        Timer timer = getMetricRegistry().timer(name + PROCESSING_METRICS_SUFFIX, tags);
         createdEvent.getExchange().setProperty("eventTimer:" + name, timer);
         createdEvent.getExchange().setProperty("eventTimerContext:" + name, timer.time());
+        exchangeRecorder.recordExchangeBegin();
     }
 
     protected void handleSentEvent(ExchangeSentEvent sentEvent) {
@@ -77,18 +95,20 @@ public class MicroProfileMetricsExchangeEventNotifier extends AbstractMicroProfi
         Timer timer = sentEvent.getExchange().getProperty("eventTimer:" + name, Timer.class);
         if (timer == null) {
             Tag[] tags = namingStrategy.getTags(sentEvent, sentEvent.getEndpoint());
-            timer = getMetricRegistry().timer(name, tags);
+            timer = getMetricRegistry().timer(name + PROCESSING_METRICS_SUFFIX, tags);
             sentEvent.getExchange().setProperty("eventTimer:" + name, timer);
         }
         timer.update(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS);
     }
 
     protected void handleDoneEvent(ExchangeEvent doneEvent) {
-        String name = namingStrategy.getName(doneEvent.getExchange(), doneEvent.getExchange().getFromEndpoint());
-        doneEvent.getExchange().removeProperty("eventTimer:" + name);
-        Context context = (Context) doneEvent.getExchange().removeProperty("eventTimerContext:" + name);
+        Exchange exchange = doneEvent.getExchange();
+        String name = namingStrategy.getName(exchange, exchange.getFromEndpoint());
+        exchange.removeProperty("eventTimer:" + name);
+        Context context = (Context) exchange.removeProperty("eventTimerContext:" + name);
         if (context != null) {
             context.stop();
         }
+        exchangeRecorder.recordExchangeComplete(exchange);
     }
 }

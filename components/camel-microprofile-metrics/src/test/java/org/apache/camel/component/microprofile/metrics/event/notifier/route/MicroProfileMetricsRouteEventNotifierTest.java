@@ -20,20 +20,21 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
-import org.eclipse.microprofile.metrics.ConcurrentGauge;
+import org.eclipse.microprofile.metrics.Gauge;
 import org.junit.Test;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTES_ADDED_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTES_RUNNING_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper.findMetric;
 
 public class MicroProfileMetricsRouteEventNotifierTest extends MicroProfileMetricsTestSupport {
 
     @Test
     public void testMicroProfileMetricsEventNotifier() throws Exception {
-        ConcurrentGauge routesAdded = getConcurrentGauge(DEFAULT_CAMEL_ROUTES_ADDED_METRIC_NAME);
-        ConcurrentGauge routesRunning = getConcurrentGauge(DEFAULT_CAMEL_ROUTES_RUNNING_METRIC_NAME);
+        Gauge routesAdded = findMetric(metricRegistry, DEFAULT_CAMEL_ROUTES_ADDED_METRIC_NAME, Gauge.class);
+        Gauge routesRunning = findMetric(metricRegistry, DEFAULT_CAMEL_ROUTES_RUNNING_METRIC_NAME, Gauge.class);
 
-        assertEquals(1, routesAdded.getCount());
-        assertEquals(1, routesRunning.getCount());
+        assertEquals(1, routesAdded.getValue());
+        assertEquals(1, routesRunning.getValue());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -43,16 +44,16 @@ public class MicroProfileMetricsRouteEventNotifierTest extends MicroProfileMetri
             }
         });
 
-        assertEquals(2, routesAdded.getCount());
-        assertEquals(2, routesRunning.getCount());
+        assertEquals(2, routesAdded.getValue());
+        assertEquals(2, routesRunning.getValue());
 
         context.getRouteController().stopRoute("test");
-        assertEquals(2, routesAdded.getCount());
-        assertEquals(1, routesRunning.getCount());
+        assertEquals(2, routesAdded.getValue());
+        assertEquals(1, routesRunning.getValue());
 
         context.removeRoute("test");
-        assertEquals(1, routesAdded.getCount());
-        assertEquals(1, routesRunning.getCount());
+        assertEquals(1, routesAdded.getValue());
+        assertEquals(1, routesRunning.getValue());
     }
 
     @Override

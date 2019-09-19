@@ -14,34 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.microprofile.metrics.event.notifier.route;
+package org.apache.camel.component.microprofile.metrics.event.notifier.context;
 
 import org.apache.camel.CamelContext;
 import org.eclipse.microprofile.metrics.Tag;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_STATUS_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTES_ADDED_METRIC_NAME;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTES_RUNNING_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_UPTIME_METRIC_NAME;
 
-public interface MicroProfileMetricsRouteEventNotifierNamingStrategy {
+public interface MicroProfileMetricsCamelContextEventNotifierNamingStrategy {
 
-    MicroProfileMetricsRouteEventNotifierNamingStrategy DEFAULT = new MicroProfileMetricsRouteEventNotifierNamingStrategy() {
+    MicroProfileMetricsCamelContextEventNotifierNamingStrategy DEFAULT = new MicroProfileMetricsCamelContextEventNotifierNamingStrategy() {
         @Override
-        public String getRouteAddedName() {
-            return DEFAULT_CAMEL_ROUTES_ADDED_METRIC_NAME;
+        public String getCamelContextUptimeName() {
+            return CAMEL_CONTEXT_UPTIME_METRIC_NAME;
         }
 
         @Override
-        public String getRouteRunningName() {
-            return DEFAULT_CAMEL_ROUTES_RUNNING_METRIC_NAME;
+        public String getCamelContextStatusName() {
+            return CAMEL_CONTEXT_STATUS_METRIC_NAME;
         }
     };
 
-    String getRouteAddedName();
-    String getRouteRunningName();
+    String getCamelContextUptimeName();
+    String getCamelContextStatusName();
 
     default Tag[] getTags(CamelContext camelContext) {
         return new Tag[] {
-            new Tag(CAMEL_CONTEXT_TAG, camelContext.getName())
+            new Tag(CAMEL_CONTEXT_TAG, camelContext.getName()),
         };
     }
 }
