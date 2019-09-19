@@ -111,6 +111,13 @@ system integration services as well as support for Apache Camel and
 Apache Servicemix. Their developers were involved in camel-activiti
 development.
 
+[[CommercialCamelOfferings-Yupiik]]
+== https://www.yupiik.com[Yupiik]
+
+https://www.yupiik.com[Yupiik] contributes and commits to the Apache Camel project. Provides consulting,
+training and support for Apache Camel and related projects like Apache Karaf, Apache ActiveMQ, Apache Kafka,
+Apache Unomi.
+
 [[CommercialCamelOfferings-Policyforadditionstothispage]]
 == Policy for additions to this page
 
