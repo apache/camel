@@ -525,6 +525,20 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
+     * Adds a property (initial) for the properties component,
+     * which will be used before any locations are resolved.
+     *
+     * @param key    the property key
+     * @param value  the property value
+     *
+     * @see #addInitialProperty(String, String)
+     * @see #addOverrideProperty(String, String)
+     */
+    public void addProperty(String key, String value) {
+        addInitialProperty(key, value);
+    }
+
+    /**
      * Adds a initial property for the properties component,
      * which will be used before any locations are resolved.
      *
