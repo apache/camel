@@ -37,23 +37,10 @@ public class HdfsComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * To use the given configuration for security with JAAS. The option is a
-     * javax.security.auth.login.Configuration type.
-     */
-    private String jAASConfiguration;
-    /**
      * Whether the component should use basic property binding (Camel 2.x) or
      * the newer property binding with additional capabilities
      */
     private Boolean basicPropertyBinding = false;
-
-    public String getJAASConfiguration() {
-        return jAASConfiguration;
-    }
-
-    public void setJAASConfiguration(String jAASConfiguration) {
-        this.jAASConfiguration = jAASConfiguration;
-    }
 
     public Boolean getBasicPropertyBinding() {
         return basicPropertyBinding;

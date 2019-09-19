@@ -35,6 +35,8 @@ public class HdfsInputStream implements Closeable {
     private final AtomicLong numOfReadBytes = new AtomicLong(0L);
     private final AtomicLong numOfReadMessages = new AtomicLong(0L);
 
+    private HdfsConfiguration config;
+
     protected HdfsInputStream() {
     }
 
@@ -45,13 +47,14 @@ public class HdfsInputStream implements Closeable {
         ret.suffixedPath = ret.actualPath + '.' + configuration.getOpenedSuffix();
         ret.suffixedReadPath = ret.actualPath + '.' + configuration.getReadSuffix();
         ret.chunkSize = configuration.getChunkSize();
-        HdfsInfo info = HdfsInfoFactory.newHdfsInfo(ret.actualPath);
+        HdfsInfo info = HdfsInfoFactory.newHdfsInfo(ret.actualPath, configuration);
         if (info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath))) {
             ret.in = ret.fileType.createInputStream(ret.suffixedPath, configuration);
             ret.opened = true;
         } else {
             ret.opened = false;
         }
+        ret.config = configuration;
         return ret;
     }
 
@@ -59,7 +62,7 @@ public class HdfsInputStream implements Closeable {
     public final void close() throws IOException {
         if (opened) {
             IOUtils.closeStream(in);
-            HdfsInfo info = HdfsInfoFactory.newHdfsInfo(actualPath);
+            HdfsInfo info = HdfsInfoFactory.newHdfsInfo(actualPath, config);
             info.getFileSystem().rename(new Path(suffixedPath), new Path(suffixedReadPath));
             opened = false;
         }
