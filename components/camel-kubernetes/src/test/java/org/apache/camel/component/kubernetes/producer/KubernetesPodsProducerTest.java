@@ -48,9 +48,20 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
     @Test
     public void listTest() throws Exception {
         server.expect().withPath("/api/v1/pods").andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/api/v1/namespaces/test/pods").andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().build()).once();
         List<Pod> result = template.requestBody("direct:list", "", List.class);
-
         assertEquals(3, result.size());
+        
+        Exchange ex = template.request("direct:list", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            }
+        });
+        List<Pod> resultNamespaced = ex.getOut().getBody(List.class);
+
+        assertEquals(2, resultNamespaced.size());
     }
 
     @Test

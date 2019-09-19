@@ -87,8 +87,13 @@ public class KubernetesPodsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        PodList podList = getEndpoint().getKubernetesClient().pods().inAnyNamespace().list();
-
+        PodList podList;
+        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        if (ObjectHelper.isNotEmpty(namespaceName)) {
+            podList = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).list();
+        } else {
+        	podList = getEndpoint().getKubernetesClient().pods().inAnyNamespace().list();
+        }
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(podList.getItems());
     }
