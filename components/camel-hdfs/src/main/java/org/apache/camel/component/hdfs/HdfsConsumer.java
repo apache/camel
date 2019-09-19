@@ -17,6 +17,7 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -25,7 +26,6 @@ import javax.security.auth.login.Configuration;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.lang.StringUtils;
@@ -41,7 +41,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     private final StringBuilder hdfsPath;
     private final Processor processor;
     private final ReadWriteLock rwlock = new ReentrantReadWriteLock();
-    private volatile HdfsInputStream istream;
+    private volatile HdfsInputStream inputStream;
 
     public HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration config) {
         super(endpoint, processor);
@@ -77,7 +77,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         }
 
         // hadoop will cache the connection by default so its faster to get in the poll method
-        HdfsInfo answer = HdfsInfoFactory.newHdfsInfo(this.hdfsPath.toString());
+        HdfsInfo answer = HdfsInfoFactory.newHdfsInfo(this.hdfsPath.toString(), config);
 
         if (onStartup) {
             log.info("Connected to hdfs file-system {}:{}/{}", config.getHostName(), config.getPort(), hdfsPath);
@@ -92,11 +92,11 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     @Override
     protected int poll() throws Exception {
         // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
-        Configuration auth = HdfsComponent.getJAASConfiguration();
+        Configuration auth = config.getJAASConfiguration();
         try {
             return doPoll();
         } finally {
-            HdfsComponent.setJAASConfiguration(auth);
+            config.setJAASConfiguration(auth);
         }
     }
 
@@ -111,13 +111,15 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         int numMessages = 0;
 
         HdfsInfo info = setupHdfs(false);
-        FileStatus fileStatuses[];
+        FileStatus[] fileStatuses;
         if (info.getFileSystem().isFile(info.getPath())) {
             fileStatuses = info.getFileSystem().globStatus(info.getPath());
         } else {
             Path pattern = info.getPath().suffix("/" + this.config.getPattern());
             fileStatuses = info.getFileSystem().globStatus(pattern, new ExcludePathFilter());
         }
+
+        fileStatuses = Optional.ofNullable(fileStatuses).orElse(new FileStatus[0]);
 
         for (FileStatus status : fileStatuses) {
 
@@ -137,8 +139,8 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
 
             try {
                 this.rwlock.writeLock().lock();
-                this.istream = HdfsInputStream.createInputStream(status.getPath().toString(), this.config);
-                if (!this.istream.isOpened()) {
+                this.inputStream = HdfsInputStream.createInputStream(status.getPath().toString(), this.config);
+                if (!this.inputStream.isOpened()) {
                     if (log.isDebugEnabled()) {
                         log.debug("Skipping file: {} because it doesn't exist anymore", status.getPath());
                     }
@@ -151,16 +153,15 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             try {
                 Holder<Object> key = new Holder<>();
                 Holder<Object> value = new Holder<>();
-                while (this.istream.next(key, value) >= 0) {
+                while (this.inputStream.next(key, value) >= 0) {
                     Exchange exchange = this.getEndpoint().createExchange();
-                    Message message = new DefaultMessage(this.getEndpoint().getCamelContext());
+                    Message message = exchange.getIn();
                     String fileName = StringUtils.substringAfterLast(status.getPath().toString(), "/");
                     message.setHeader(Exchange.FILE_NAME, fileName);
                     if (key.value != null) {
                         message.setHeader(HdfsHeader.KEY.name(), key.value);
                     }
                     message.setBody(value.value);
-                    exchange.setIn(message);
 
                     log.debug("Processing file {}", fileName);
                     try {
@@ -177,7 +178,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
                     numMessages++;
                 }
             } finally {
-                IOHelper.close(istream, "input stream", log);
+                IOHelper.close(inputStream, "input stream", log);
             }
         }
 

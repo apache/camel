@@ -53,31 +53,4 @@ public class HdfsComponent extends DefaultComponent {
         }
     }
 
-    static Configuration getJAASConfiguration() {
-        Configuration auth = null;
-        try {
-            auth = Configuration.getConfiguration();
-            LOG.trace("Existing JAAS Configuration {}", auth);
-        } catch (SecurityException e) {
-            LOG.trace("Cannot load existing JAAS configuration", e);
-        }
-        return auth;
-    }
-
-    /**
-     * To use the given configuration for security with JAAS.
-     */
-    static void setJAASConfiguration(Configuration auth) {
-        if (auth != null) {
-            LOG.trace("Restoring existing JAAS Configuration {}", auth);
-            try {
-                Configuration.setConfiguration(auth);
-            } catch (SecurityException e) {
-                LOG.trace("Cannot restore JAAS Configuration. This exception is ignored.", e);
-            }
-        } else {
-            LOG.trace("No JAAS Configuration to restore");
-        }
-    }
-
 }
