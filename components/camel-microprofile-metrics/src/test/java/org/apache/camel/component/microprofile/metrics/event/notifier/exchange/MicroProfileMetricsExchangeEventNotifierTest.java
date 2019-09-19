@@ -22,10 +22,22 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
+import org.apache.camel.component.microprofile.metrics.gauge.AtomicIntegerGauge;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExpressionAdapter;
+import org.eclipse.microprofile.metrics.Counter;
+import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
 import org.junit.Test;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_COMPLETED_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_FAILED_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_FAILURES_HANDLED_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_INFLIGHT_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_TOTAL_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.PROCESSING_METRICS_SUFFIX;
 
 public class MicroProfileMetricsExchangeEventNotifierTest extends MicroProfileMetricsTestSupport {
 
@@ -50,12 +62,36 @@ public class MicroProfileMetricsExchangeEventNotifierTest extends MicroProfileMe
         mockEndpoint.expectedMessageCount(count);
 
         for (int i = 0; i < count; i++) {
-            template.sendBody("direct:start", null);
+            try {
+                template.sendBody("direct:start", i);
+            } catch (Exception e) {
+                // Expected
+            }
         }
 
-        Timer timer = getTimer("mock://result");
-        assertEquals(count, timer.getCount());
+        Timer timer = getTimer("mock://result" + PROCESSING_METRICS_SUFFIX);
+        assertEquals(5, timer.getCount());
         assertTrue(timer.getSnapshot().getMean() > delay.doubleValue());
+
+        Tag[] tags = new Tag[] {new Tag(CAMEL_CONTEXT_TAG, context.getName())};
+
+        Counter exchangesCompleted = getCounter(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_COMPLETED_METRIC_NAME, tags);
+        assertEquals(count, exchangesCompleted.getCount());
+
+        Counter exchangesFailed = getCounter(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_FAILED_METRIC_NAME, tags);
+        assertEquals(0, exchangesFailed.getCount());
+
+        Counter exchangesTotal = getCounter(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_TOTAL_METRIC_NAME, tags);
+        assertEquals(count, exchangesTotal.getCount());
+
+        AtomicIntegerGauge exchangesInflight = getAtomicIntegerGauge(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_INFLIGHT_METRIC_NAME, tags);
+        assertEquals(0, exchangesInflight.getValue().intValue());
+
+        Counter externalRedeliveries = getCounter(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME, tags);
+        assertEquals(0, externalRedeliveries.getCount());
+
+        Counter failuresHandled = getCounter(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_FAILURES_HANDLED_METRIC_NAME, tags);
+        assertEquals(5, failuresHandled.getCount());
     }
 
     @Override
@@ -74,8 +110,19 @@ public class MicroProfileMetricsExchangeEventNotifierTest extends MicroProfileMe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                onException(IllegalStateException.class)
+                    .handled(true);
+
                 from("direct:start").routeId("test")
-                        .to("mock:result");
+                    .process(exchange -> {
+                        Integer count = exchange.getIn().getBody(Integer.class);
+
+                        IllegalStateException foo = new IllegalStateException("Invalid count");
+                        if (count % 2 == 0) {
+                            throw foo;
+                        }
+                    })
+                    .to("mock:result");
             }
         };
     }

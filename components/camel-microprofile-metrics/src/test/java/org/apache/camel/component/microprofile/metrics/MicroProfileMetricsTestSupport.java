@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.microprofile.metrics;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import io.smallrye.metrics.MetricRegistries;
+import io.smallrye.metrics.exporters.JsonExporter;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.component.microprofile.metrics.gauge.AtomicIntegerGauge;
+import org.apache.camel.component.microprofile.metrics.gauge.SimpleGauge;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.microprofile.metrics.ConcurrentGauge;
 import org.eclipse.microprofile.metrics.Counter;
@@ -59,12 +63,20 @@ public class MicroProfileMetricsTestSupport extends CamelTestSupport {
         return findMetric(metricRegistry, metricName, Counter.class);
     }
 
+    protected Counter getCounter(String metricName, Tag[] tags) {
+        return findMetric(metricRegistry, metricName, Counter.class, Arrays.asList(tags));
+    }
+
+    protected AtomicIntegerGauge getAtomicIntegerGauge(String metricName, Tag[] tags) {
+        return findMetric(metricRegistry, metricName, AtomicIntegerGauge.class, Arrays.asList(tags));
+    }
+
     protected ConcurrentGauge getConcurrentGauge(String metricName) {
         return findMetric(metricRegistry, metricName, ConcurrentGauge.class);
     }
 
-    protected MicroProfileMetricsCamelGauge getGauge(String metricName) {
-        return findMetric(metricRegistry, metricName, MicroProfileMetricsCamelGauge.class);
+    protected SimpleGauge getSimpleGauge(String metricName) {
+        return findMetric(metricRegistry, metricName, SimpleGauge.class);
     }
 
     protected Histogram getHistogram(String metricName) {
@@ -77,6 +89,10 @@ public class MicroProfileMetricsTestSupport extends CamelTestSupport {
 
     protected Timer getTimer(String metricName) {
         return findMetric(metricRegistry, metricName, Timer.class);
+    }
+
+    protected Timer getTimer(String metricName, Tag[] tags) {
+        return findMetric(metricRegistry, metricName, Timer.class, Arrays.asList(tags));
     }
 
     protected Metadata getMetricMetadata(String metricName) {
@@ -98,5 +114,9 @@ public class MicroProfileMetricsTestSupport extends CamelTestSupport {
             }
         }
         return Collections.emptyList();
+    }
+
+    protected void dumpMetrics() {
+        System.out.println(new JsonExporter().exportAllScopes());
     }
 }

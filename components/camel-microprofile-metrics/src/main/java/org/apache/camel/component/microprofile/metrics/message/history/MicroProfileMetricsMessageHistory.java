@@ -20,22 +20,26 @@ import org.apache.camel.Message;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.support.DefaultMessageHistory;
+import org.eclipse.microprofile.metrics.Metadata;
+import org.eclipse.microprofile.metrics.MetadataBuilder;
 import org.eclipse.microprofile.metrics.MetricRegistry;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.MESSAGE_HISTORY_DESCRIPTION;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.MESSAGE_HISTORY_DISPLAY_NAME;
 import static org.eclipse.microprofile.metrics.Timer.Context;
 
 public class MicroProfileMetricsMessageHistory extends DefaultMessageHistory {
-    private final Route route;
     private final Context context;
-    private final MetricRegistry metricRegistry;
-    private final MicroProfileMetricsMessageHistoryNamingStrategy namingStrategy;
 
     public MicroProfileMetricsMessageHistory(MetricRegistry metricRegistry, Route route, NamedNode namedNode,
             MicroProfileMetricsMessageHistoryNamingStrategy namingStrategy, long timestamp, Message message) {
         super(route.getId(), namedNode, timestamp, message);
-        this.metricRegistry = metricRegistry;
-        this.route = route;
-        this.namingStrategy = namingStrategy;
-        this.context = metricRegistry.timer(namingStrategy.getName(route, getNode()), namingStrategy.getTags(route, getNode())).time();
+
+        Metadata routeNodeMetadata = new MetadataBuilder()
+            .withName(namingStrategy.getName(route, getNode()))
+            .withDisplayName(MESSAGE_HISTORY_DISPLAY_NAME)
+            .withDescription(MESSAGE_HISTORY_DESCRIPTION)
+            .build();
+        this.context = metricRegistry.timer(routeNodeMetadata, namingStrategy.getTags(route, getNode())).time();
     }
 
     @Override

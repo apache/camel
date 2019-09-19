@@ -14,19 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.microprofile.metrics;
+package org.apache.camel.component.microprofile.metrics.gauge;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.microprofile.metrics.Gauge;
 
-class MicroProfileMetricsCamelGauge implements Gauge<Number> {
-    private Number value = 0;
+public class AtomicIntegerGauge implements Gauge<Integer> {
+    private final AtomicInteger gaugeValue = new AtomicInteger();
 
     @Override
-    public Number getValue() {
-        return this.value;
+    public Integer getValue() {
+        return gaugeValue.get();
     }
 
-    public void setValue(Number value) {
-        this.value = value;
+    public void increment() {
+        gaugeValue.incrementAndGet();
+    }
+
+    public void decrement() {
+        gaugeValue.decrementAndGet();
     }
 }
