@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hdfs;
 
-import org.apache.camel.component.hdfs.kerberos.HdfsKerberosConfigurationFactory;
 import org.apache.camel.component.hdfs.kerberos.KerberosConfiguration;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;

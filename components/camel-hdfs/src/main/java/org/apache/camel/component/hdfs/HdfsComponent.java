@@ -16,17 +16,15 @@
  */
 package org.apache.camel.component.hdfs;
 
-import java.net.URL;
-import java.util.Map;
-
-import javax.security.auth.login.Configuration;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.hadoop.fs.FsUrlStreamHandlerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URL;
+import java.util.Map;
 
 @Component("hdfs")
 public class HdfsComponent extends DefaultComponent {
