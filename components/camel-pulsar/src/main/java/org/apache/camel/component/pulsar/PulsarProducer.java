@@ -25,6 +25,7 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageUtils;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.ProducerBuilder;
 
@@ -73,8 +74,12 @@ public class PulsarProducer extends DefaultProducer {
                     .batchingMaxMessages(configuration.getMaxPendingMessages())
                     .enableBatching(configuration.isBatchingEnabled())
                     .initialSequenceId(configuration.getInitialSequenceId())
-                    .compressionType(configuration.getCompressionType())
-                    .messageRoutingMode(configuration.getMessageRoutingMode());
+                    .compressionType(configuration.getCompressionType());
+            if (ObjectHelper.isNotEmpty(configuration.getMessageRouter())) {
+                producerBuilder.messageRouter(configuration.getMessageRouter());
+            } else {
+            	producerBuilder.messageRoutingMode(configuration.getMessageRoutingMode());
+            }
             producer = producerBuilder.create();
         }
     }

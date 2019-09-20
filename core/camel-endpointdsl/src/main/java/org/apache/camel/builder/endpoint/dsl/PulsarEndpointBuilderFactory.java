@@ -667,6 +667,30 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a custom Message Router.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder messageRouter(Object messageRouter) {
+            doSetProperty("messageRouter", messageRouter);
+            return this;
+        }
+        /**
+         * Set a custom Message Router.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder messageRouter(String messageRouter) {
+            doSetProperty("messageRouter", messageRouter);
+            return this;
+        }
+        /**
          * Set the message routing mode for the producer.
          * 
          * The option is a:
