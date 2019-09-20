@@ -45,6 +45,17 @@ public class MicroProfileMetricsGaugeTest extends MicroProfileMetricsTestSupport
         assertEquals(20, gauge.getValue().intValue());
     }
 
+    @Test
+    public void testGaugeMetricReuse() {
+        template.sendBody("direct:gaugeValue", null);
+        SimpleGauge gauge = getSimpleGauge("test-gauge");
+        assertEquals(10, gauge.getValue().intValue());
+
+        template.sendBodyAndHeader("direct:gaugeValue", null, HEADER_GAUGE_VALUE, 20);
+        gauge = getSimpleGauge("test-gauge");
+        assertEquals(20, gauge.getValue().intValue());
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
