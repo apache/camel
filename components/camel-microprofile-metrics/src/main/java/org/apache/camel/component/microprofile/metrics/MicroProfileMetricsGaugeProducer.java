@@ -26,6 +26,7 @@ import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_VALUE;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper.findMetric;
 
 public class MicroProfileMetricsGaugeProducer extends AbstractMicroProfileMetricsProducer<SimpleGauge> {
 
@@ -45,6 +46,13 @@ public class MicroProfileMetricsGaugeProducer extends AbstractMicroProfileMetric
 
     @Override
     protected Function<MetricRegistry, SimpleGauge> registerMetric(Metadata metadata, List<Tag> tags) {
-        return metricRegistry -> metricRegistry.register(metadata, new SimpleGauge(), tags.toArray(new Tag[0]));
+        return metricRegistry -> {
+            Tag[] tagArray = tags.toArray(new Tag[0]);
+            SimpleGauge existing = findMetric(metricRegistry, metadata.getName(), SimpleGauge.class, tags);
+            if (existing == null) {
+                return metricRegistry.register(metadata, new SimpleGauge(), tagArray);
+            }
+            return existing;
+        };
     }
 }
