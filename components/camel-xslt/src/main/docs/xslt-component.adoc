@@ -84,7 +84,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *allowStAX* (producer) | Whether to allow using StAX as the javax.xml.transform.Source. | true | boolean
+| *allowStAX* (producer) | Whether to allow using StAX as the javax.xml.transform.Source. You can enable this if the XSLT library supports StAX such as the Saxon library (camel-saxon). The Xalan library (default in JVM) does not support StAXSource. | false | boolean
 | *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
 | *deleteOutputFile* (producer) | If you have output=file then this option dictates whether or not the output file should be deleted when the Exchange is done processing. For example suppose the output file is a temporary file, then it can be a good idea to delete it after use. | false | boolean
 | *failOnNullBody* (producer) | Whether or not to throw an exception if the input body is null. | true | boolean
