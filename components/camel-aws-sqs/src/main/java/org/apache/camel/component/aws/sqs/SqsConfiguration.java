@@ -101,6 +101,10 @@ public class SqsConfiguration implements Cloneable {
     @UriParam(label = "queue")
     private String redrivePolicy;
 
+    // Likely used only for testing
+    @UriParam(defaultValue = "https")
+    private String protocol = "https";
+
     /**
      * Whether or not the queue is a FIFO queue
      */
@@ -529,6 +533,17 @@ public class SqsConfiguration implements Cloneable {
      */
     public void setAutoCreateQueue(boolean autoCreateQueue) {
         this.autoCreateQueue = autoCreateQueue;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * The underlying protocol used to communicate with SQS
+     */
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     // *************************************************
