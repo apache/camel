@@ -112,7 +112,7 @@ The component supports 2 options, which are listed below.
 
 == Kubernetes ConfigMaps Producer Examples
 
-- listConfigMaps: this operation copy an object from one bucket to a different one
+- listConfigMaps: this operation list the configmaps
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ from("direct:list").
 
 This operation return a List of ConfigMaps from your cluster
 
-- listConfigMapsByLabels: this operation copy an object from one bucket to a different one
+- listConfigMapsByLabels: this operation list the configmaps selected by label
 
 [source,java]
 --------------------------------------------------------------------------------
