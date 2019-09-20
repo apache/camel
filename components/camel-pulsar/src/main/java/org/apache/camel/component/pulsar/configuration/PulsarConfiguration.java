@@ -23,6 +23,7 @@ import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.pulsar.client.api.CompressionType;
+import org.apache.pulsar.client.api.MessageRoutingMode;
 
 import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.EXCLUSIVE;
 
@@ -69,6 +70,8 @@ public class PulsarConfiguration {
     private long initialSequenceId = -1;
     @UriParam(label = "producer", description = "Compression type to use", defaultValue = "NONE")
     private CompressionType compressionType = CompressionType.NONE;
+    @UriParam(label = "producer", description = "MessageRoutingMode", defaultValue = "RoundRobinPartition")
+    private MessageRoutingMode messageRoutingMode = MessageRoutingMode.RoundRobinPartition;
 
     public String getSubscriptionName() {
         return subscriptionName;
@@ -305,4 +308,17 @@ public class PulsarConfiguration {
     public CompressionType getCompressionType() {
         return compressionType;
     }
+
+    /**
+     * Set the message routing mode for the producer.
+     */
+	public MessageRoutingMode getMessageRoutingMode() {
+		return messageRoutingMode;
+	}
+
+	public void setMessageRoutingMode(MessageRoutingMode messageRoutingMode) {
+		this.messageRoutingMode = messageRoutingMode;
+	}
+    
+
 }

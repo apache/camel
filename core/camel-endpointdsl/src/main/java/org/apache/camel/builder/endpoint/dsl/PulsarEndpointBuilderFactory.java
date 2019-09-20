@@ -667,6 +667,32 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the message routing mode for the producer.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder messageRoutingMode(
+                MessageRoutingMode messageRoutingMode) {
+            doSetProperty("messageRoutingMode", messageRoutingMode);
+            return this;
+        }
+        /**
+         * Set the message routing mode for the producer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder messageRoutingMode(
+                String messageRoutingMode) {
+            doSetProperty("messageRoutingMode", messageRoutingMode);
+            return this;
+        }
+        /**
          * Name of the producer.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -856,6 +882,16 @@ public interface PulsarEndpointBuilderFactory {
         ZLIB,
         ZSTD,
         SNAPPY;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> enum.
+     */
+    enum MessageRoutingMode {
+        SinglePartition,
+        RoundRobinPartition,
+        CustomPartition;
     }
     /**
      * Apache Pulsar (camel-pulsar)

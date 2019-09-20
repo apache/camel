@@ -73,7 +73,8 @@ public class PulsarProducer extends DefaultProducer {
                     .batchingMaxMessages(configuration.getMaxPendingMessages())
                     .enableBatching(configuration.isBatchingEnabled())
                     .initialSequenceId(configuration.getInitialSequenceId())
-                    .compressionType(configuration.getCompressionType());
+                    .compressionType(configuration.getCompressionType())
+                    .messageRoutingMode(configuration.getMessageRoutingMode());
             producer = producerBuilder.create();
         }
     }
