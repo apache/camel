@@ -86,8 +86,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private ErrorListener errorListener;
     @UriParam(label = "advanced")
     private URIResolver uriResolver;
-    @UriParam(defaultValue = "true", displayName = "Allow StAX")
-    private boolean allowStAX = true;
+    @UriParam(displayName = "Allow StAX")
+    private boolean allowStAX;
     @UriParam
     private boolean deleteOutputFile;
     @UriParam(label = "advanced")
@@ -336,6 +336,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
     /**
      * Whether to allow using StAX as the javax.xml.transform.Source.
+     * You can enable this if the XSLT library supports StAX such as the Saxon library (camel-saxon).
+     * The Xalan library (default in JVM) does not support StAXSource.
      */
     public void setAllowStAX(boolean allowStAX) {
         this.allowStAX = allowStAX;
