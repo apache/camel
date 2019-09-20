@@ -20,10 +20,12 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
@@ -107,6 +109,21 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         return sqsConsumer;
     }
 
+    /*
+     If using a different AWS host, do not assume specific parts of the AWS host
+     and, instead, just return whatever is provided as the host.
+     */
+    private String getFullyQualifiedAWSHost() {
+        String host = configuration.getAmazonAWSHost();
+        host = FileUtil.stripTrailingSeparator(host);
+
+        if (host.equals("amazonaws.com")) {
+            return "sqs." + Regions.valueOf(configuration.getRegion()).getName() + "." + host;
+        }
+
+        return host;
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -125,9 +142,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             // This allows accessing queues where you don't have permission to
             // list queues or query queues
             if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
-                String host = configuration.getAmazonAWSHost();
-                host = FileUtil.stripTrailingSeparator(host);
-                queueUrl = "https://sqs." + Regions.valueOf(configuration.getRegion()).getName() + "." + host + "/" + configuration.getQueueOwnerAWSAccountId() + "/"
+                String protocol = configuration.getProtocol();
+
+                queueUrl = protocol + "://" + getFullyQualifiedAWSHost() + "/" + configuration.getQueueOwnerAWSAccountId() + "/"
                            + configuration.getQueueName();
             } else if (configuration.getQueueOwnerAWSAccountId() != null) {
                 GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
@@ -318,6 +335,19 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             clientConfiguration.setProxyPort(configuration.getProxyPort());
             isClientConfigFound = true;
         }
+
+        final String protocol = configuration.getProtocol(); 
+
+        if (protocol.equals("http")) {
+            log.trace("Configuring AWS-SQS for HTTP protocol");
+            if (isClientConfigFound) {
+                clientConfiguration = clientConfiguration.withProtocol(Protocol.HTTP);
+            } else {
+                clientConfiguration = new ClientConfiguration().withProtocol(Protocol.HTTP);
+                isClientConfigFound = true;
+            }
+        }
+
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
@@ -333,9 +363,13 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
                 clientBuilder = AmazonSQSClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
         }
-        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
-        }
+
+        final String host = getFullyQualifiedAWSHost();
+        final String region = Regions.valueOf(configuration.getRegion()).getName();
+
+        log.debug("Creating endpoint for host {} on region {}", host, region);
+        clientBuilder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(host, region));
+
         client = clientBuilder.build();
         return client;
     }
