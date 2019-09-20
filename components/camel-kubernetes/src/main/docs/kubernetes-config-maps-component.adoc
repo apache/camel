@@ -142,3 +142,21 @@ from("direct:listByLabels").process(new Processor() {
 
 This operation return a List of ConfigMaps from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
+== Kubernetes ConfigMaps Consumer Example
+
+[source,java]
+--------------------------------------------------------------------------------
+fromF("kubernetes-config-maps://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
+
+    public class KubernertesProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Message in = exchange.getIn();
+            ConfigMap cm = exchange.getIn().getBody(ConfigMap.class);
+            log.info("Got event with configmap name: " + cm.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+        }
+    }
+--------------------------------------------------------------------------------
+
+This consumer will return a list of events on the namespace default for the config map test.
+
