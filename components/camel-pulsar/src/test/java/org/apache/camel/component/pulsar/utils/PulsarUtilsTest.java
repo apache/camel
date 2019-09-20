@@ -66,7 +66,7 @@ public class PulsarUtilsTest {
         doThrow(new PulsarClientException("A Pulsar Client exception occurred")).when(consumer).close();
 
         consumer.close();
-        
+
         verify(consumer).unsubscribe();
         verify(consumer).close();
     }

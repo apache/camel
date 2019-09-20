@@ -47,8 +47,7 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
 
         try {
             if (endpoint.getPulsarConfiguration().isAllowManualAcknowledgement()) {
-                exchange.getIn().setHeader(PulsarMessageHeaders.MESSAGE_RECEIPT,
-                        endpoint.getComponent().getPulsarMessageReceiptFactory().newInstance(exchange, message, consumer));
+                exchange.getIn().setHeader(PulsarMessageHeaders.MESSAGE_RECEIPT, endpoint.getComponent().getPulsarMessageReceiptFactory().newInstance(exchange, message, consumer));
                 processor.process(exchange);
             } else {
                 processor.process(exchange);
@@ -60,8 +59,7 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
     }
 
     private void handleProcessorException(final Exchange exchange, final Exception exception) {
-        final Exchange exchangeWithException = PulsarMessageUtils
-            .updateExchangeWithException(exception, exchange);
+        final Exchange exchangeWithException = PulsarMessageUtils.updateExchangeWithException(exception, exchange);
 
         exceptionHandler.handleException("An error occurred", exchangeWithException, exception);
     }

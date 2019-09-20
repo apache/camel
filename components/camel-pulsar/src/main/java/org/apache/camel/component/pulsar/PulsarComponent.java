@@ -108,9 +108,12 @@ public class PulsarComponent extends DefaultComponent {
     /**
      * Whether to allow manual message acknowledgements.
      * <p/>
-     * If this option is enabled, then messages are not immediately acknowledged after being consumed.
-     * Instead, an instance of {@link PulsarMessageReceipt} is stored as a header on the {@link org.apache.camel.Exchange}.
-     * Messages can then be acknowledged using {@link PulsarMessageReceipt} at any time before the ackTimeout occurs.
+     * If this option is enabled, then messages are not immediately acknowledged
+     * after being consumed. Instead, an instance of
+     * {@link PulsarMessageReceipt} is stored as a header on the
+     * {@link org.apache.camel.Exchange}. Messages can then be acknowledged
+     * using {@link PulsarMessageReceipt} at any time before the ackTimeout
+     * occurs.
      */
     public void setAllowManualAcknowledgement(boolean allowManualAcknowledgement) {
         this.allowManualAcknowledgement = allowManualAcknowledgement;
@@ -121,7 +124,8 @@ public class PulsarComponent extends DefaultComponent {
     }
 
     /**
-     * Provide a factory to create an alternate implementation of {@link PulsarMessageReceipt}.
+     * Provide a factory to create an alternate implementation of
+     * {@link PulsarMessageReceipt}.
      */
     public void setPulsarMessageReceiptFactory(PulsarMessageReceiptFactory pulsarMessageReceiptFactory) {
         this.pulsarMessageReceiptFactory = pulsarMessageReceiptFactory;

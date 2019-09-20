@@ -55,11 +55,10 @@ public class PulsarConfiguration {
     private int sendTimeoutMs = 30000;
     @UriParam(label = "producer", description = "Whether to block the producing thread if pending messages queue is full or to throw a ProducerQueueIsFullError", defaultValue = "false")
     private boolean blockIfQueueFull;
-    @UriParam(label = "producer", description = "Size of the pending massages queue. When the queue is full, by default, any further sends will fail unless blockIfQueueFull=true",
-            defaultValue = "1000")
+    @UriParam(label = "producer", description = "Size of the pending massages queue. When the queue is full, by default, any further sends will fail unless blockIfQueueFull=true", defaultValue = "1000")
     private int maxPendingMessages = 1000;
     @UriParam(label = "producer", description = "The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if "
-            + "(number of partitions * maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition.", defaultValue = "50000")
+                                                + "(number of partitions * maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition.", defaultValue = "50000")
     private int maxPendingMessagesAcrossPartitions = 50000;
     @UriParam(label = "producer", description = "The maximum time period within which the messages sent will be batched if batchingEnabled is true.", defaultValue = "1000")
     private long batchingMaxPublishDelayMicros = TimeUnit.MILLISECONDS.toMicros(1);
@@ -92,7 +91,8 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Type of the subscription [EXCLUSIVE|SHARED|FAILOVER], defaults to EXCLUSIVE
+     * Type of the subscription [EXCLUSIVE|SHARED|FAILOVER], defaults to
+     * EXCLUSIVE
      */
     public void setSubscriptionType(SubscriptionType subscriptionType) {
         this.subscriptionType = subscriptionType;
@@ -147,7 +147,8 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Prefix to add to consumer names when a SHARED or FAILOVER subscription is used
+     * Prefix to add to consumer names when a SHARED or FAILOVER subscription is
+     * used
      */
     public void setConsumerNamePrefix(String consumerNamePrefix) {
         this.consumerNamePrefix = consumerNamePrefix;
@@ -160,9 +161,12 @@ public class PulsarConfiguration {
     /**
      * Whether to allow manual message acknowledgements.
      * <p/>
-     * If this option is enabled, then messages are not immediately acknowledged after being consumed.
-     * Instead, an instance of {@link PulsarMessageReceipt} is stored as a header on the {@link org.apache.camel.Exchange}.
-     * Messages can then be acknowledged using {@link PulsarMessageReceipt} at any time before the ackTimeout occurs.
+     * If this option is enabled, then messages are not immediately acknowledged
+     * after being consumed. Instead, an instance of
+     * {@link PulsarMessageReceipt} is stored as a header on the
+     * {@link org.apache.camel.Exchange}. Messages can then be acknowledged
+     * using {@link PulsarMessageReceipt} at any time before the ackTimeout
+     * occurs.
      */
     public void setAllowManualAcknowledgement(boolean allowManualAcknowledgement) {
         this.allowManualAcknowledgement = allowManualAcknowledgement;
@@ -184,15 +188,15 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Group the consumer acknowledgments for the specified time in milliseconds - defaults to 100
+     * Group the consumer acknowledgments for the specified time in milliseconds
+     * - defaults to 100
      */
     public void setAckGroupTimeMillis(long ackGroupTimeMillis) {
         this.ackGroupTimeMillis = ackGroupTimeMillis;
     }
 
     /**
-      * Send timeout in milliseconds.
-      * Defaults to 30,000ms (30 seconds)
+     * Send timeout in milliseconds. Defaults to 30,000ms (30 seconds)
      */
     public void setSendTimeoutMs(int sendTimeoutMs) {
         this.sendTimeoutMs = sendTimeoutMs;
@@ -203,10 +207,10 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Set whether the send and asyncSend operations should block when the outgoing message queue is full.
-     * If set to false, send operations will immediately fail with ProducerQueueIsFullError when there is no space left
-     * in the pending queue.
-     * Default is false.
+     * Set whether the send and asyncSend operations should block when the
+     * outgoing message queue is full. If set to false, send operations will
+     * immediately fail with ProducerQueueIsFullError when there is no space
+     * left in the pending queue. Default is false.
      */
     public void setBlockIfQueueFull(boolean blockIfQueueFull) {
         this.blockIfQueueFull = blockIfQueueFull;
@@ -217,8 +221,8 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Set the max size of the queue holding the messages pending to receive an acknowledgment from the broker.
-     * Default is 1000.
+     * Set the max size of the queue holding the messages pending to receive an
+     * acknowledgment from the broker. Default is 1000.
      */
     public void setMaxPendingMessages(int maxPendingMessages) {
         this.maxPendingMessages = maxPendingMessages;
@@ -229,8 +233,8 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Set the number of max pending messages across all the partitions.
-     * Default is 50000.
+     * Set the number of max pending messages across all the partitions. Default
+     * is 50000.
      */
     public void setMaxPendingMessagesAcrossPartitions(int maxPendingMessagesAcrossPartitions) {
         this.maxPendingMessagesAcrossPartitions = maxPendingMessagesAcrossPartitions;
@@ -241,11 +245,12 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Set the time period within which the messages sent will be batched if batch messages are
-     * enabled. If set to a non zero value, messages will be queued until either:
+     * Set the time period within which the messages sent will be batched if
+     * batch messages are enabled. If set to a non zero value, messages will be
+     * queued until either:
      * <ul>
-     *  <li>this time interval expires</li>
-     *  <li>the max number of messages in a batch is reached
+     * <li>this time interval expires</li>
+     * <li>the max number of messages in a batch is reached
      * </ul>
      * Default is 1ms.
      */
@@ -258,8 +263,7 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Set the maximum number of messages permitted in a batch.
-     * Default 1,000.
+     * Set the maximum number of messages permitted in a batch. Default 1,000.
      */
     public void setBatchingMaxMessages(int batchingMaxMessages) {
         this.batchingMaxMessages = batchingMaxMessages;
@@ -270,8 +274,8 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Control whether automatic batching of messages is enabled for the producer.
-     * Default is true.
+     * Control whether automatic batching of messages is enabled for the
+     * producer. Default is true.
      */
     public void setBatchingEnabled(boolean batchingEnabled) {
         this.batchingEnabled = batchingEnabled;
@@ -282,9 +286,10 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Set the baseline for the sequence ids for messages published by the producer.
-     * First message will be using (initialSequenceId  1) as its sequence id and subsequent messages will be assigned
-     * incremental sequence ids, if not otherwise specified.
+     * Set the baseline for the sequence ids for messages published by the
+     * producer. First message will be using (initialSequenceId 1) as its
+     * sequence id and subsequent messages will be assigned incremental sequence
+     * ids, if not otherwise specified.
      */
     public void setInitialSequenceId(long initialSequenceId) {
         this.initialSequenceId = initialSequenceId;
@@ -315,24 +320,23 @@ public class PulsarConfiguration {
     /**
      * Set the message routing mode for the producer.
      */
-	public MessageRoutingMode getMessageRoutingMode() {
-		return messageRoutingMode;
-	}
+    public MessageRoutingMode getMessageRoutingMode() {
+        return messageRoutingMode;
+    }
 
-	public void setMessageRoutingMode(MessageRoutingMode messageRoutingMode) {
-		this.messageRoutingMode = messageRoutingMode;
-	}
+    public void setMessageRoutingMode(MessageRoutingMode messageRoutingMode) {
+        this.messageRoutingMode = messageRoutingMode;
+    }
 
     /**
      * Set a custom Message Router.
      */
-	public MessageRouter getMessageRouter() {
-		return messageRouter;
-	}
+    public MessageRouter getMessageRouter() {
+        return messageRouter;
+    }
 
-	public void setMessageRouter(MessageRouter messageRouter) {
-		this.messageRouter = messageRouter;
-	}
-    
+    public void setMessageRouter(MessageRouter messageRouter) {
+        this.messageRouter = messageRouter;
+    }
 
 }
