@@ -70,9 +70,9 @@ public class PulsarConfiguration {
     private long initialSequenceId = -1;
     @UriParam(label = "producer", description = "Compression type to use", defaultValue = "NONE")
     private CompressionType compressionType = CompressionType.NONE;
-    @UriParam(label = "producer", description = "MessageRoutingMode", defaultValue = "RoundRobinPartition")
+    @UriParam(label = "producer", description = "Message Routing Mode to use", defaultValue = "RoundRobinPartition")
     private MessageRoutingMode messageRoutingMode = MessageRoutingMode.RoundRobinPartition;
-    @UriParam(label = "producer", description = "Custom Message Router")
+    @UriParam(label = "producer", description = "Custom Message Router to use")
     private MessageRouter messageRouter;
 
     public String getSubscriptionName() {
