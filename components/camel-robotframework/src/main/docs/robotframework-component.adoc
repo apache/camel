@@ -3,9 +3,6 @@
 == Robotframework Component
 *Available as of Camel version 3.0*
 
-
-*Available as of Camel version 3.0*
-
 The *robotframework:* component allows for processing camel exchanges
 in acceptence test suites which are already implemented with its own DSL. 
 The depending keyword libraries that can be used inside test suites 
