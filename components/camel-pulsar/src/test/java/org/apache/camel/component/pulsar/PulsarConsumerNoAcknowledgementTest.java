@@ -36,11 +36,8 @@ public class PulsarConsumerNoAcknowledgementTest extends PulsarTestSupport {
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";
 
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI
-            + "?numberOfConsumers=1&subscriptionType=Exclusive"
-            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-            + "&ackTimeoutMillis=1000"
-    )
+    @EndpointInject(uri = "pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                          + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer" + "&ackTimeoutMillis=1000")
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")
@@ -74,26 +71,21 @@ public class PulsarConsumerNoAcknowledgementTest extends PulsarTestSupport {
         PulsarComponent comp = new PulsarComponent(context);
         comp.setAutoConfiguration(autoConfiguration);
         comp.setPulsarClient(pulsarClient);
-        comp.setAllowManualAcknowledgement(true); // Set to true here instead of the endpoint query parameter.
+        comp.setAllowManualAcknowledgement(true); // Set to true here instead of
+                                                  // the endpoint query
+                                                  // parameter.
         jndi.bind("pulsar", comp);
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl()
-                .serviceUrl(getPulsarBrokerUrl())
-                .ioThreads(1)
-                .listenerThreads(1)
-                .build();
+        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
     }
 
     @Test
     public void testAMessageIsConsumedMultipleTimes() throws Exception {
         to.expectedMinimumMessageCount(2);
 
-        Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING)
-                .producerName(PRODUCER)
-                .topic(TOPIC_URI)
-                .create();
+        Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
 
         producer.send("Hello World!");
 

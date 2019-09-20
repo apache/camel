@@ -43,10 +43,8 @@ public class PulsarConsumerInTest extends PulsarTestSupport {
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";
 
-    @EndpointInject("pulsar:" + TOPIC_URI
-        + "?numberOfConsumers=1&subscriptionType=Exclusive"
-        + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-    )
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -73,7 +71,7 @@ public class PulsarConsumerInTest extends PulsarTestSupport {
     @Override
     protected Registry createCamelRegistry() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        
+
         registerPulsarBeans(registry);
 
         return registry;
@@ -92,21 +90,14 @@ public class PulsarConsumerInTest extends PulsarTestSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl()
-            .serviceUrl(getPulsarBrokerUrl())
-            .ioThreads(1)
-            .listenerThreads(1)
-            .build();
+        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
     }
 
     @Test
     public void testAMessageToClusterIsConsumed() throws Exception {
         to.expectedMessageCount(1);
 
-        Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING)
-            .producerName(PRODUCER)
-            .topic(TOPIC_URI)
-            .create();
+        Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
 
         producer.send("Hello World!");
 

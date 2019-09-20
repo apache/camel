@@ -34,13 +34,17 @@ public class PulsarEndpoint extends DefaultEndpoint {
     private PulsarClient pulsarClient;
     private String uri;
 
-    @UriPath(enums = "persistent,non-persistent") @Metadata(required = true)
+    @UriPath(enums = "persistent,non-persistent")
+    @Metadata(required = true)
     private String persistence;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String tenant;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String namespace;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String topic;
     @UriParam
     private PulsarConfiguration pulsarConfiguration;
@@ -140,6 +144,6 @@ public class PulsarEndpoint extends DefaultEndpoint {
 
     @Override
     public PulsarComponent getComponent() {
-        return (PulsarComponent) super.getComponent();
+        return (PulsarComponent)super.getComponent();
     }
 }
