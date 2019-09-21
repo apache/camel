@@ -574,7 +574,8 @@ public class HdfsConfiguration {
     }
 
     /**
-     * A comma separated list of kerberos nodes (e.g. host01.example.com:8021,host02.example.com:8021,host03.example.com:8025)
+     * A comma separated list of kerberos nodes
+     * (e.g. srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
      */
     public void setKerberosNamedNodes(String kerberosNamedNodes) {
         this.kerberosNamedNodes = kerberosNamedNodes;
@@ -612,6 +613,7 @@ public class HdfsConfiguration {
 
     /**
      * The location of the keytab file used to authenticate with the kerberos nodes
+     * (contains pairs of kerberos principals and encrypted keys (which are derived from the Kerberos password))
      */
     public void setKerberosKeytabLocation(String kerberosKeytabLocation) {
         this.kerberosKeytabLocation = kerberosKeytabLocation;
