@@ -53,8 +53,8 @@ public class KerberosConfigurationTest {
         /* exception was thrown */
     }
 
-    @Test
-    public void loginWithKeytab() throws IOException {
+    @Test(expected = FileNotFoundException.class)
+    public void loginWithMissingKeytabFile() throws IOException {
         // given
         List<String> namedNodes = Arrays.asList("kerb_node_01.example.com:8021", "kerb_node_02.example.com:8022");
         String kerberosConfigFileLocation = pwd() + "/src/test/resources/kerberos/test-kerb5.conf";
@@ -62,13 +62,13 @@ public class KerberosConfigurationTest {
         underTest = new KerberosConfiguration(namedNodes, kerberosConfigFileLocation, replicationFactor);
 
         String username = "test_user";
-        String keyTabFileLocation = pwd() + "/src/test/resources/kerberos/test-keytab.bin";
+        String keyTabFileLocation = pwd() + "/src/test/resources/kerberos/missing.bin";
 
         // when
         underTest.loginWithKeytab(username, keyTabFileLocation);
 
         // then
-
+        /* exception was thrown */
     }
 
     private String pwd() {

@@ -45,13 +45,11 @@ public class HdfsConfiguration {
     private boolean wantAppend;
     private List<HdfsProducer.SplitStrategy> splitStrategies;
 
-    @UriPath
-    @Metadata(required = true)
+    @UriPath @Metadata(required = true)
     private String hostName;
     @UriPath(defaultValue = "" + HdfsConstants.DEFAULT_PORT)
     private int port = HdfsConstants.DEFAULT_PORT;
-    @UriPath
-    @Metadata(required = true)
+    @UriPath @Metadata(required = true)
     private String path;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean overwrite = true;
