@@ -23,7 +23,7 @@ public class HdfsKerberosConfigurationFactory {
         if (krb5Conf == null || !krb5Conf.isEmpty()) {
             System.setProperty(KERBEROS_5_SYS_ENV, kerberosConfigFileLocation);
         } else if (!krb5Conf.equalsIgnoreCase(kerberosConfigFileLocation)) {
-            LOGGER.warn("{} was already configured with: {}", KERBEROS_5_SYS_ENV, krb5Conf);
+            LOGGER.warn("[{}] was already configured with: [{}] config file", KERBEROS_5_SYS_ENV, krb5Conf);
         }
     }
 
