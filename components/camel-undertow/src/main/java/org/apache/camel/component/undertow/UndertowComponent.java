@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -59,7 +60,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
 
     private final Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<>();
-    private final Set<HttpHandlerRegistrationInfo> handlers = new HashSet<>();
+    private final Set<HttpHandlerRegistrationInfo> handlers = new LinkedHashSet<>();
 
     @Metadata(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
