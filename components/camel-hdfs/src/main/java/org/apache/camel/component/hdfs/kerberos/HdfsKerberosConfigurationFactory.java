@@ -8,11 +8,15 @@ import java.io.FileNotFoundException;
 
 import static java.lang.String.format;
 
-public class HdfsKerberosConfigurationFactory {
+public final class HdfsKerberosConfigurationFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HdfsKerberosConfigurationFactory.class);
 
     private static final String KERBEROS_5_SYS_ENV = "java.security.krb5.conf";
+
+    private HdfsKerberosConfigurationFactory() {
+        // factory class
+    }
 
     public static void setKerberosConfigFile(String kerberosConfigFileLocation) throws FileNotFoundException {
         if (!new File(kerberosConfigFileLocation).exists()) {
