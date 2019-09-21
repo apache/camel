@@ -146,7 +146,8 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The location of the keytab file used to authenticate with the
-         * kerberos nodes.
+         * kerberos nodes (contains pairs of kerberos principals and encrypted
+         * keys (which are derived from the Kerberos password)).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -159,7 +160,8 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * A comma separated list of kerberos nodes (e.g.
-         * host01.example.com:8021,host02.example.com:8021,host03.example.com:8025).
+         * srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file
+         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1130,7 +1132,8 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The location of the keytab file used to authenticate with the
-         * kerberos nodes.
+         * kerberos nodes (contains pairs of kerberos principals and encrypted
+         * keys (which are derived from the Kerberos password)).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1143,7 +1146,8 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * A comma separated list of kerberos nodes (e.g.
-         * host01.example.com:8021,host02.example.com:8021,host03.example.com:8025).
+         * srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file
+         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1706,7 +1710,8 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The location of the keytab file used to authenticate with the
-         * kerberos nodes.
+         * kerberos nodes (contains pairs of kerberos principals and encrypted
+         * keys (which are derived from the Kerberos password)).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1719,7 +1724,8 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * A comma separated list of kerberos nodes (e.g.
-         * host01.example.com:8021,host02.example.com:8021,host03.example.com:8025).
+         * srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file
+         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
