@@ -513,7 +513,7 @@
         <pax-exam-version>4.13.1</pax-exam-version>
         <pax-tiny-bundle-version>1.3.2</pax-tiny-bundle-version>
         <pax-logging-version>1.8.6</pax-logging-version>
-        <pdfbox-version>2.0.16</pdfbox-version>
+        <pdfbox-version>2.0.17</pdfbox-version>
         <perfmark-version>0.17.0</perfmark-version>
         <pgjdbc-driver-version>42.2.6</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.2</pgjdbc-ng-driver-version>
