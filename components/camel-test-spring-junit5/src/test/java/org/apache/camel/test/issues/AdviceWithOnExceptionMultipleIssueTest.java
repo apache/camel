@@ -39,22 +39,11 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Test
     public void testSimpleMultipleAdvice() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                interceptSendToEndpoint("mock:resultA").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                    }
-                });
-            }
+        AdviceWithRouteBuilder.adviceWith(context, "RouteA", a -> {
+            a.interceptSendToEndpoint("mock:resultA").process();
         });
 
-        RouteReifier.adviceWith(context.getRouteDefinition("RouteB"), context, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-            }
-        });
+        AdviceWithRouteBuilder.adviceWith(context, "RouteB", a -> { });
 
         context.start();
 
@@ -65,16 +54,10 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Test
     public void testMultipleAdviceWithExceptionThrown() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                interceptSendToEndpoint("mock:resultA").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        throw new Exception("my exception");
-                    }
-                });
-            }
+        AdviceWithRouteBuilder.adviceWith(context, "RouteA", a -> {
+            a.interceptSendToEndpoint("mock:resultA").process(e -> {
+                throw new Exception("my exception");
+            });
         });
 
         context.start();
