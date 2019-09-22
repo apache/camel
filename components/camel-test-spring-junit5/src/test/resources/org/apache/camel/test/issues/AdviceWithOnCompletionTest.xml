@@ -31,7 +31,7 @@
 			<to uri="mock:complete" />
 		</onCompletion>
 
-		<route>
+		<route id="advice-with-on-completion-test-route">
 			<from uri="file:start" />
 			<to uri="log:end" />
 		</route>

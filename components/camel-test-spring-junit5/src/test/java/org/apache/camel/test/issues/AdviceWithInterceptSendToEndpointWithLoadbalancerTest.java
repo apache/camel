@@ -16,9 +16,8 @@
  */
 package org.apache.camel.test.issues;
 
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -38,14 +37,8 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Camel
 
     @Test
     public void testSimpleMultipleAdvice() throws Exception {
-        RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new RouteBuilder() {
-            public void configure() throws Exception {
-                interceptSendToEndpoint("seda:end1")
-                    .skipSendToOriginalEndpoint()
-                        .to("mock:end");
-            }
-        });
+
+        AdviceWithRouteBuilder.adviceWith(context, "load-balancer-test-route", a -> a.interceptSendToEndpoint("seda:end1").skipSendToOriginalEndpoint().to("mock:end"));
 
         context.start();
 
@@ -61,6 +54,7 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Camel
         @Override
         public void configure() throws Exception {
             from("direct:start")
+                .routeId("load-balancer-test-route")
                 .loadBalance().failover()
                     .to("seda:end1", "seda:end2");
         }
