@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>org.apache.camel</groupId>
 		<artifactId>camel-as2-parent</artifactId>
-		<version>2.23.4-SNAPSHOT</version>
+		<version>2.23.5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>camel-as2-api</artifactId>
