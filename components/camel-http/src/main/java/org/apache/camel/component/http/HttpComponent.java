@@ -135,7 +135,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * Creates the HttpClientConfigurer based on the given parameters
      *
      * @param parameters the map of parameters
-     * @param secure whether the endpoint is secure (eg https4)
+     * @param secure whether the endpoint is secure (eg https)
      * @return the configurer
      * @throws Exception is thrown if error creating configurer
      */
