@@ -66,7 +66,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
                 Map<String, String> labels = new HashMap<>();
                 labels.put("key1", "value1");
                 labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, labels);
             }
         });
 
