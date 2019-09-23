@@ -280,6 +280,22 @@ without doing any service name mappings. However, when you have multiple
 systems across your infrastructure, then you should consider using human-readable service names, that you map to instead of using the camel endpoint
 uris.
 
+[[camel-zipkin-CustomTags]]
+== Custom Tags
+
+If you need to send custom tags to Zipkin server, add an exchange property with name "camel.custom.tags" and value as a Map of your custom tags. Refrain from adding too many custom tags in production environment.
+
+Following is one example of how custom tags can be added:
+
+[source,java]
+----
+Map<String, String> customTags = new HashMap<>();
+customTags.put("key1", "value1");
+customTags.put("key2", "value2");
+exchange.setProperty("camel.custom.tags", customTags);
+----
+
+
 [[camel-zipkin-camel-zipin-starter]]
 == camel-zipin-starter
 
