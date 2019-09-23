@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.hdfs.kerberos;
 
-import org.apache.hadoop.hdfs.DFSConfigKeys;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.hadoop.hdfs.DFSConfigKeys;
+import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class KerberosConfigurationTest {
 

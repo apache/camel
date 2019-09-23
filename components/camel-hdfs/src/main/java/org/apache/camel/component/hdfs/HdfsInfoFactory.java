@@ -27,11 +27,11 @@ public final class HdfsInfoFactory {
 
     public static HdfsInfo newHdfsInfo(String hdfsPath, HdfsConfiguration configuration) throws IOException {
         // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
-        Configuration auth = configuration.getJAASConfiguration();
+        Configuration auth = HdfsComponent.getJAASConfiguration();
         try {
             return new HdfsInfo(hdfsPath, configuration);
         } finally {
-            configuration.setJAASConfiguration(auth);
+            HdfsComponent.setJAASConfiguration(auth);
         }
     }
 

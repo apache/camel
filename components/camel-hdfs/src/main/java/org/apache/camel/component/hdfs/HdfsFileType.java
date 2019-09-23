@@ -16,6 +16,19 @@
  */
 package org.apache.camel.component.hdfs;
 
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.IOHelper;
@@ -42,19 +55,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.util.ReflectionUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
 
 public enum HdfsFileType {
 
@@ -101,11 +101,9 @@ public enum HdfsFileType {
                 HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 if (!configuration.isAppend()) {
                     rout = hdfsInfo.getFileSystem().create(hdfsInfo.getPath(), configuration.isOverwrite(), configuration.getBufferSize(),
-                            configuration.getReplication(), configuration.getBlockSize(), () -> {
-                            });
+                            configuration.getReplication(), configuration.getBlockSize(), () -> { });
                 } else {
-                    rout = hdfsInfo.getFileSystem().append(hdfsInfo.getPath(), configuration.getBufferSize(), () -> {
-                    });
+                    rout = hdfsInfo.getFileSystem().append(hdfsInfo.getPath(), configuration.getBufferSize(), () -> { });
                 }
                 return rout;
             } catch (IOException ex) {
@@ -412,8 +410,7 @@ public enum HdfsFileType {
                 HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = new ArrayFile.Writer(hdfsInfo.getConf(), hdfsInfo.getFileSystem(), hdfsPath, valueWritableClass,
-                        configuration.getCompressionType(), () -> {
-                        });
+                        configuration.getCompressionType(), () -> { });
                 return rout;
             } catch (IOException ex) {
                 throw new RuntimeCamelException(ex);
