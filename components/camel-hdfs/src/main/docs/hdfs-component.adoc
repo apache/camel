@@ -54,7 +54,7 @@ fileMode=Append to append each of the chunks together.
 
 
 // component options: START
-The HDFS component supports 2 options, which are listed below.
+The HDFS component supports 3 options, which are listed below.
 
 
 
@@ -62,6 +62,7 @@ The HDFS component supports 2 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *jAASConfiguration* (common) | To use the given configuration for security with JAAS. |  | Configuration
+| *kerberosConfigFile* (common) | To use kerberos authentication, set the value of the 'java.security.krb5.conf' environment variable to an existing file. If the environment variable is already set, warn if different than the specified parameter |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
