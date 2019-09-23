@@ -16,12 +16,13 @@
  */
 package org.apache.camel.dataformat.univocity;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This class tests the options of {@link org.apache.camel.dataformat.univocity.UniVocityFixedWidthDataFormat}.
@@ -227,14 +228,13 @@ public final class UniVocityFixedWidthDataFormatTest {
         dataFormat.createAndConfigureWriterSettings();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldNotAllowNoFieldLengths() {
         UniVocityFixedWidthDataFormat dataFormat = new UniVocityFixedWidthDataFormat();
-
-        dataFormat.createAndConfigureWriterSettings();
+        assertThrows(IllegalArgumentException.class, () -> dataFormat.createAndConfigureWriterSettings());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldNotAllowHeadersAndLengthsOfDifferentSize() {
         UniVocityFixedWidthDataFormat dataFormat = new UniVocityFixedWidthDataFormat()
                 .setFieldLengths(new int[]{1, 2, 3, 4})
@@ -243,10 +243,10 @@ public final class UniVocityFixedWidthDataFormatTest {
         assertArrayEquals(new int[]{1, 2, 3, 4}, dataFormat.getFieldLengths());
         assertArrayEquals(new String[]{"A", "B", "C"}, dataFormat.getHeaders());
 
-        dataFormat.createAndConfigureWriterSettings();
+        assertThrows(IllegalArgumentException.class, () -> dataFormat.createAndConfigureWriterSettings());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldNotAllowHeadersWithSameName() {
         UniVocityFixedWidthDataFormat dataFormat = new UniVocityFixedWidthDataFormat()
                 .setFieldLengths(new int[]{1, 2, 3})
@@ -255,6 +255,6 @@ public final class UniVocityFixedWidthDataFormatTest {
         assertArrayEquals(new int[]{1, 2, 3}, dataFormat.getFieldLengths());
         assertArrayEquals(new String[]{"A", "B", "A"}, dataFormat.getHeaders());
 
-        dataFormat.createAndConfigureWriterSettings();
+        assertThrows(IllegalArgumentException.class, () -> dataFormat.createAndConfigureWriterSettings());
     }
 }
