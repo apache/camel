@@ -22,8 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -31,15 +32,9 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.URISupport;
 import org.apache.hadoop.io.SequenceFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.security.auth.login.Configuration;
 
 @UriParams
 public class HdfsConfiguration {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HdfsConfiguration.class);
 
     private URI uri;
     private boolean wantAppend;
@@ -194,7 +189,7 @@ public class HdfsConfiguration {
 
         splitStrategy = getString(hdfsSettings, "splitStrategy", kerberosNamedNodes);
 
-        if (Objects.nonNull(splitStrategy)) {
+        if (nonNull(splitStrategy)) {
             String[] strstrategies = splitStrategy.split(",");
             for (String strstrategy : strstrategies) {
                 String[] tokens = strstrategy.split(":");
@@ -212,34 +207,6 @@ public class HdfsConfiguration {
     private List<String> getKerberosNamedNodeList(Map<String, Object> hdfsSettings) {
         kerberosNamedNodes = getString(hdfsSettings, "kerberosNamedNodes", kerberosNamedNodes);
         return Arrays.stream(kerberosNamedNodes.split(",")).distinct().collect(Collectors.toList());
-    }
-
-
-    Configuration getJAASConfiguration() {
-        Configuration auth = null;
-        try {
-            auth = Configuration.getConfiguration();
-            LOG.trace("Existing JAAS Configuration {}", auth);
-        } catch (SecurityException e) {
-            LOG.trace("Cannot load existing JAAS configuration", e);
-        }
-        return auth;
-    }
-
-    /**
-     * To use the given configuration for security with JAAS.
-     */
-    void setJAASConfiguration(Configuration auth) {
-        if (auth != null) {
-            LOG.trace("Restoring existing JAAS Configuration {}", auth);
-            try {
-                Configuration.setConfiguration(auth);
-            } catch (SecurityException e) {
-                LOG.trace("Cannot restore JAAS Configuration. This exception is ignored.", e);
-            }
-        } else {
-            LOG.trace("No JAAS Configuration to restore");
-        }
     }
 
     public void checkConsumerOptions() {
@@ -618,7 +585,14 @@ public class HdfsConfiguration {
     }
 
     public boolean isKerberosAuthentication() {
-        return Objects.nonNull(kerberosNamedNodes) && Objects.nonNull(kerberosConfigFileLocation) && Objects.nonNull(kerberosUsername) && Objects.nonNull(kerberosKeytabLocation)
-                && !kerberosNamedNodes.isEmpty() && !kerberosConfigFileLocation.isEmpty() && !kerberosUsername.isEmpty() && !kerberosKeytabLocation.isEmpty();
+        return nonNullKerberosProperties() && nonEmptyKerberosProperties();
+    }
+
+    private boolean nonNullKerberosProperties() {
+        return nonNull(kerberosNamedNodes) && nonNull(kerberosConfigFileLocation) && nonNull(kerberosUsername) && nonNull(kerberosKeytabLocation);
+    }
+
+    private boolean nonEmptyKerberosProperties() {
+        return !kerberosNamedNodes.isEmpty() && !kerberosConfigFileLocation.isEmpty() && !kerberosUsername.isEmpty() && !kerberosKeytabLocation.isEmpty();
     }
 }

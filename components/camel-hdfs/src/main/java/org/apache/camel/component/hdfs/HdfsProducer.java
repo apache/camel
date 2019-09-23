@@ -99,7 +99,7 @@ public class HdfsProducer extends DefaultProducer {
     @Override
     protected void doStart() {
         // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
-        Configuration auth = config.getJAASConfiguration();
+        Configuration auth = HdfsComponent.getJAASConfiguration();
         try {
             super.doStart();
 
@@ -122,10 +122,10 @@ public class HdfsProducer extends DefaultProducer {
             }
         } catch (Exception e) {
             LOG.warn("Failed to start the HDFS producer. Caused by: [{}]", e.getMessage());
-            LOG.trace("", e);
+            LOG.debug("", e);
             throw new RuntimeException(e);
         } finally {
-            config.setJAASConfiguration(auth);
+            HdfsComponent.setJAASConfiguration(auth);
         }
     }
 
@@ -177,11 +177,11 @@ public class HdfsProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
-        Configuration auth = config.getJAASConfiguration();
+        Configuration auth = HdfsComponent.getJAASConfiguration();
         try {
             doProcess(exchange);
         } finally {
-            config.setJAASConfiguration(auth);
+            HdfsComponent.setJAASConfiguration(auth);
         }
     }
 

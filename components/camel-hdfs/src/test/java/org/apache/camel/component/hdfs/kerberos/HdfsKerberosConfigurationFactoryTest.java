@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.hdfs.kerberos;
 
-import org.junit.Test;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import org.junit.Test;
 
 public class HdfsKerberosConfigurationFactoryTest {
 
