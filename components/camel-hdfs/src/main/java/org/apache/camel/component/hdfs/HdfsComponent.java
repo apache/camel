@@ -16,15 +16,17 @@
  */
 package org.apache.camel.component.hdfs;
 
+import java.net.URL;
+import java.util.Map;
+
+import javax.security.auth.login.Configuration;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.hadoop.fs.FsUrlStreamHandlerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URL;
-import java.util.Map;
 
 @Component("hdfs")
 public class HdfsComponent extends DefaultComponent {
@@ -48,6 +50,33 @@ public class HdfsComponent extends DefaultComponent {
         } catch (Throwable e) {
             // ignore as its most likely already set
             LOG.debug("Cannot set URLStreamHandlerFactory due " + e.getMessage() + ". This exception will be ignored.", e);
+        }
+    }
+
+    static Configuration getJAASConfiguration() {
+        Configuration auth = null;
+        try {
+            auth = Configuration.getConfiguration();
+            LOG.trace("Existing JAAS Configuration {}", auth);
+        } catch (SecurityException e) {
+            LOG.trace("Cannot load existing JAAS configuration", e);
+        }
+        return auth;
+    }
+
+    /**
+     * To use the given configuration for security with JAAS.
+     */
+    static void setJAASConfiguration(Configuration auth) {
+        if (auth != null) {
+            LOG.trace("Restoring existing JAAS Configuration {}", auth);
+            try {
+                Configuration.setConfiguration(auth);
+            } catch (SecurityException e) {
+                LOG.trace("Cannot restore JAAS Configuration. This exception is ignored.", e);
+            }
+        } else {
+            LOG.trace("No JAAS Configuration to restore");
         }
     }
 
