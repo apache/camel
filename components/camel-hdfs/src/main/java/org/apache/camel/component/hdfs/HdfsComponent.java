@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hdfs;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Map;
 
@@ -32,6 +33,8 @@ import org.slf4j.LoggerFactory;
 public class HdfsComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(HdfsComponent.class);
+
+    private static final String KERBEROS_5_SYS_ENV = "java.security.krb5.conf";
 
     public HdfsComponent() {
         initHdfs();
@@ -77,6 +80,26 @@ public class HdfsComponent extends DefaultComponent {
             }
         } else {
             LOG.trace("No JAAS Configuration to restore");
+        }
+    }
+
+    /**
+     * To use kerberos authentication, set the value of the 'java.security.krb5.conf' environment variable to an existing file.
+     * If the environment variable is already set, warn if different than the specified parameter
+     *
+     * @param kerberosConfigFileLocation - kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
+     */
+    public static void setKerberosConfigFile(String kerberosConfigFileLocation) {
+        if (!new File(kerberosConfigFileLocation).exists()) {
+            LOG.warn("Kerberos configuration file [{}}] could not be found.", kerberosConfigFileLocation);
+            return;
+        }
+
+        String krb5Conf = System.getProperty(KERBEROS_5_SYS_ENV);
+        if (krb5Conf == null || !krb5Conf.isEmpty()) {
+            System.setProperty(KERBEROS_5_SYS_ENV, kerberosConfigFileLocation);
+        } else if (!krb5Conf.equalsIgnoreCase(kerberosConfigFileLocation)) {
+            LOG.warn("[{}] was already configured with: [{}] config file", KERBEROS_5_SYS_ENV, krb5Conf);
         }
     }
 

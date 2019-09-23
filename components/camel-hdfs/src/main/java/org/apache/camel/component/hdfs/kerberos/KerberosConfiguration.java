@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
+import org.apache.camel.component.hdfs.HdfsComponent;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hdfs.DFSConfigKeys;
 import org.apache.hadoop.hdfs.DFSUtil;
@@ -62,7 +63,7 @@ public class KerberosConfiguration extends Configuration {
                                  String kerberosConfigFileLocation,
                                  int replicationFactor) throws IOException {
 
-        HdfsKerberosConfigurationFactory.setKerberosConfigFile(kerberosConfigFileLocation);
+        HdfsComponent.setKerberosConfigFile(kerberosConfigFileLocation);
         setupHdfsConfiguration(namedNodes, replicationFactor);
     }
 
