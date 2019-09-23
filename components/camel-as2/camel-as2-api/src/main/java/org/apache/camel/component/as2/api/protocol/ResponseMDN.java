@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.as2.api.protocol;
-
-import java.io.IOException;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
 
 import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
 import org.apache.camel.component.as2.api.AS2Charset;
@@ -48,6 +44,10 @@ import org.apache.http.protocol.HttpCoreContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+
 public class ResponseMDN implements HttpResponseInterceptor {
 
     public static final String BOUNDARY_PARAM_NAME = "boundary";
@@ -61,7 +61,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
     private PrivateKey signingPrivateKey;
     private PrivateKey decryptingPrivateKey;
 
-    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm, 
+    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm,
                        Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
@@ -73,7 +73,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     @Override
     public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
-        
+
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode < 200 || statusCode >= 300) {
             // RFC4130 - 7.6 - Status codes in the 200 range SHOULD also be used when an entity is returned
@@ -99,12 +99,19 @@ public class ResponseMDN implements HttpResponseInterceptor {
             return;
         }
 
-        // Return a Message Disposition Notification Receipt in response body
         String boundary = EntityUtils.createBoundaryValue();
-        DispositionNotificationMultipartReportEntity multipartReportEntity = new DispositionNotificationMultipartReportEntity(
-                request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey);
-
+        DispositionNotificationMultipartReportEntity multipartReportEntity;
+        if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) != null || HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) == AS2DispositionType.FAILED.getType()) {
+            // Return a failed Message Disposition Notification Receipt in response body
+            multipartReportEntity = new DispositionNotificationMultipartReportEntity(
+                    request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                    AS2DispositionType.FAILED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey);
+        } else {
+            // Return a processed Message Disposition Notification Receipt in response body
+            multipartReportEntity = new DispositionNotificationMultipartReportEntity(
+                    request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey);
+        }
         DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser
                 .parseDispositionNotificationOptions(
                         HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS), null);
@@ -115,7 +122,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
             coreContext.setAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS, receiptAddress);
             coreContext.setAttribute(AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN, multipartReportEntity);
-            
+
         } else {
             // Synchronous Delivery
 

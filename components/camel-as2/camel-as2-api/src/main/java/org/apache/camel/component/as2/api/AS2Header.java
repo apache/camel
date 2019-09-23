@@ -93,6 +93,10 @@ public interface AS2Header {
      */
     public static final String CONTENT_DESCRIPTION = "Content-Description";
     /**
+     * Message Header name for Disposition Type
+     */
+    public static final String DISPOSITION_TYPE = "Disposition-Type";
+    /**
      * Message Header name for Disposition Notification To
      */
     public static final String DISPOSITION_NOTIFICATION_TO = "Disposition-Notification-To";
