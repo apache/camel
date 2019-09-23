@@ -90,7 +90,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
     }
 
     protected void doListHPAByLabel(Exchange exchange, String operation) {
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, Map.class);
         if (ObjectHelper.isEmpty(labels)) {
             log.error("Get HPA by labels require specify a labels set");
             throw new IllegalArgumentException("Get HPA by labels require specify a labels set");
@@ -142,7 +142,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
             log.error("Create a specific hpa require specify a hpa spec bean");
             throw new IllegalArgumentException("Create a specific hpa require specify a hpa spec bean");
         }
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, Map.class);
         HorizontalPodAutoscaler hpaCreating = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName(hpaName).withLabels(labels).endMetadata().withSpec(hpaSpec).build();
         hpa = getEndpoint().getKubernetesClient().autoscaling().horizontalPodAutoscalers().inNamespace(namespaceName).create(hpaCreating);
 
