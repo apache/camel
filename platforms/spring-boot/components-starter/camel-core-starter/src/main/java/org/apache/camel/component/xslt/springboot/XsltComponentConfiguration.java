@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xslt.springboot;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerFactory;
@@ -82,10 +83,9 @@ public class XsltComponentConfiguration
      */
     private String saxonConfiguration;
     /**
-     * To set custom Saxon configuration properties. The option is a
-     * java.util.Map<java.lang.String,java.lang.Object> type.
+     * To set custom Saxon configuration properties
      */
-    private String saxonConfigurationProperties;
+    private Map<String, Object> saxonConfigurationProperties;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -149,12 +149,12 @@ public class XsltComponentConfiguration
         this.saxonConfiguration = saxonConfiguration;
     }
 
-    public String getSaxonConfigurationProperties() {
+    public Map<String, Object> getSaxonConfigurationProperties() {
         return saxonConfigurationProperties;
     }
 
     public void setSaxonConfigurationProperties(
-            String saxonConfigurationProperties) {
+            Map<String, Object> saxonConfigurationProperties) {
         this.saxonConfigurationProperties = saxonConfigurationProperties;
     }
 

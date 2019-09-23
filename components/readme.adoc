@@ -21,7 +21,7 @@ Number of Components: 311 in 211 JAR artifacts (24 deprecated)
 `flink:endpointType` | 2.18 | The flink component can be used to send DataSet jobs to Apache Flink cluster.
 
 | link:camel-pulsar/src/main/docs/pulsar-component.adoc[Apache Pulsar] (camel-pulsar) +
-`pulsar:persistence://tenant/namespace/topic` |  | Camel Apache Pulsar Component
+`pulsar:uri` | 2.24 | Camel Apache Pulsar Component
 
 | link:camel-spark/src/main/docs/spark-component.adoc[Apache Spark] (camel-spark) +
 `spark:endpointType` | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
@@ -949,7 +949,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 49 in 39 JAR artifacts (3 deprecated)
+Number of Data Formats: 49 in 39 JAR artifacts (5 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
