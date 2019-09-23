@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * A service pool is like a connection pool but can pool any kind of objects.
  * <p/>
  * Notice the capacity is <b>per key</b> which means that each key can contain at most
- * (the capacity) services. The pool can contain an unbounded number of keys.
+ * (the capacity) services. The pool will contain at most (the capacity) number of keys.
  * <p/>
  * By default the capacity is set to 100.
  */
@@ -56,7 +56,8 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
         void release(S s);
         int size();
         void stop();
-        void evict(S s);
+        // returns true if the pool is empty
+        boolean evict(S s);
     }
 
     static class Key<S> {
@@ -85,7 +86,9 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
         Endpoint e = getEndpoint.apply(s);
         Pool<S> p = pool.get(e);
         if (p != null) {
-            p.evict(s);
+            if (p.evict(s)) {
+                pool.remove(e);
+            }
         }
     }
 
@@ -249,13 +252,14 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
         }
 
         @Override
-        public void evict(S s) {
+        public boolean evict(S s) {
             synchronized (this) {
                 if (this.s == s) {
                     this.s = null;
                 }
             }
             doStop(s);
+            return true;
         }
 
         void doStop(S s) {
@@ -309,9 +313,10 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
         }
 
         @Override
-        public void evict(S s) {
+        public boolean evict(S s) {
             queue.remove(s);
             ServicePool.stop(s);
+            return queue.isEmpty();
         }
     }
 
