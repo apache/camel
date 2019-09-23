@@ -119,3 +119,55 @@ The component supports 2 options, which are listed below.
 - createNamespace
 - deleteNamespace
 
+== Kubernetes Namespaces Producer Examples
+
+- listNamespaces: this operation list the namespaces on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:list").
+    toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=listNamespaces").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of namespaces from your cluster
+
+- listNamespacesByLabels:  this operation list the namespaces by labels on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listByLabels").process(new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACES_LABELS, labels);
+            }
+        });
+    toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=listNamespacesByLabels").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of Namespaces from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+
+== Kubernetes Namespaces Consumer Example
+
+[source,java]
+--------------------------------------------------------------------------------
+fromF("kubernetes-namespaces://%s?oauthToken=%s&namespace=default", host, authToken).process(new KubernertesProcessor()).to("mock:result");
+
+    public class KubernertesProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Message in = exchange.getIn();
+            Namespace ns = exchange.getIn().getBody(Namespace.class);
+            log.info("Got event with configmap name: " + ns.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+        }
+    }
+--------------------------------------------------------------------------------
+
+This consumer will return a list of events on the namespace default.
+
+
