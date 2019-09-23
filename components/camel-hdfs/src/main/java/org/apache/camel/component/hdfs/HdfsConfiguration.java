@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.nonNull;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.URISupport;
 import org.apache.hadoop.io.SequenceFile;
+
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 @UriParams
 public class HdfsConfiguration {
@@ -189,7 +189,7 @@ public class HdfsConfiguration {
 
         splitStrategy = getString(hdfsSettings, "splitStrategy", kerberosNamedNodes);
 
-        if (nonNull(splitStrategy)) {
+        if (isNotEmpty(splitStrategy)) {
             String[] strstrategies = splitStrategy.split(",");
             for (String strstrategy : strstrategies) {
                 String[] tokens = strstrategy.split(":");
@@ -585,14 +585,7 @@ public class HdfsConfiguration {
     }
 
     public boolean isKerberosAuthentication() {
-        return nonNullKerberosProperties() && nonEmptyKerberosProperties();
+        return isNotEmpty(kerberosNamedNodes) && isNotEmpty(kerberosConfigFileLocation) && isNotEmpty(kerberosUsername) && isNotEmpty(kerberosKeytabLocation);
     }
 
-    private boolean nonNullKerberosProperties() {
-        return nonNull(kerberosNamedNodes) && nonNull(kerberosConfigFileLocation) && nonNull(kerberosUsername) && nonNull(kerberosKeytabLocation);
-    }
-
-    private boolean nonEmptyKerberosProperties() {
-        return !kerberosNamedNodes.isEmpty() && !kerberosConfigFileLocation.isEmpty() && !kerberosUsername.isEmpty() && !kerberosKeytabLocation.isEmpty();
-    }
 }
