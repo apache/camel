@@ -107,3 +107,36 @@ The component supports 2 options, which are listed below.
 - listPersistentVolumes
 - listPersistentVolumesByLabels
 - getPersistentVolume
+
+== Kubernetes Persistent Volumes Producer Examples
+
+- listPersistentVolumes: this operation list the pv on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:list").
+    toF("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumes").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of pv from your cluster
+
+- listPersistentVolumesByLabels:  this operation list the pv by labels on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listByLabels").process(new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, labels);
+            }
+        });
+    toF("kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesByLabels").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of pv from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
