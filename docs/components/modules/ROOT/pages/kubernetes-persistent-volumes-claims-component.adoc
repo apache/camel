@@ -111,3 +111,36 @@ The component supports 2 options, which are listed below.
 - createPersistentVolumeClaim
 - deletePersistentVolumeClaim
 
+== Kubernetes Persistent Volume Claims Producer Examples
+
+- listPersistentVolumesClaims: this operation list the pvc on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:list").
+    toF("kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaims").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of pvc from your cluster
+
+- listPersistentVolumesClaimsByLabels:  this operation list the pvc by labels on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listByLabels").process(new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS, labels);
+            }
+        });
+    toF("kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaimsByLabels").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of pvc from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+
