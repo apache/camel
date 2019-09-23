@@ -56,5 +56,15 @@ final class ZipkinClientRequestAdapter {
                 cache.reset();
             }
         }
+        
+        Object clientTagsObj = exchange.getProperty("camel.custom.tags");
+        if (clientTagsObj != null) {
+        	Map<String, String> clientTags = (Map)clientTagsObj;
+	        if (clientTags != null && !clientTags.isEmpty()) {
+	        	for (Map.Entry<String, String> tag: clientTags.entrySet()) {
+	        		span.tag("custom." + tag.getKey(), tag.getValue());
+	        	}
+	        }
+        }
     }
 }
