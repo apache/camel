@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.as2.api.protocol;
 
+import java.io.IOException;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+
 import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Constants;
@@ -43,10 +47,6 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
 
 public class ResponseMDN implements HttpResponseInterceptor {
 
@@ -101,7 +101,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
         String boundary = EntityUtils.createBoundaryValue();
         DispositionNotificationMultipartReportEntity multipartReportEntity;
-        if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) != null || HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) == AS2DispositionType.FAILED.getType()) {
+        if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) != null 
+            || HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) == AS2DispositionType.FAILED.getType()) {
             // Return a failed Message Disposition Notification Receipt in response body
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
