@@ -135,12 +135,10 @@ public enum HdfsFileType {
 
                 File outputDest;
                 try {
-
                     // First trying: Files.createTempFile
                     outputDest = Files.createTempFile(fname, ".hdfs").toFile();
 
                 } catch (Exception ex) {
-
                     // Now trying: File.createTempFile
                     outputDest = File.createTempFile(fname, ".hdfs");
                 }

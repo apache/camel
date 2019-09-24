@@ -17,7 +17,10 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -41,7 +44,6 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     private final StringBuilder hdfsPath;
     private final Processor processor;
     private final ReadWriteLock rwlock = new ReentrantReadWriteLock();
-    private volatile HdfsInputStream inputStream;
 
     public HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration config) {
         super(endpoint, processor);
@@ -100,15 +102,13 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         }
     }
 
-    protected int doPoll() throws Exception {
+    protected int doPoll() throws IOException {
         class ExcludePathFilter implements PathFilter {
             @Override
             public boolean accept(Path path) {
                 return !(path.toString().endsWith(config.getOpenedSuffix()) || path.toString().endsWith(config.getReadSuffix()));
             }
         }
-
-        int numMessages = 0;
 
         HdfsInfo info = setupHdfs(false);
         FileStatus[] fileStatuses;
@@ -121,76 +121,90 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
 
         fileStatuses = Optional.ofNullable(fileStatuses).orElse(new FileStatus[0]);
 
-        for (FileStatus status : fileStatuses) {
-
-            if (normalFileIsDirectoryNoSuccessFile(status, info)) {
-                continue;
-            }
-
-            // must match owner
-            if (config.getOwner() != null && !config.getOwner().equals(status.getOwner())) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Skipping file: {} as not matching owner: {}", status.getPath(), config.getOwner());
-                }
-                continue;
-            }
-
-            try {
-                this.rwlock.writeLock().lock();
-                this.inputStream = HdfsInputStream.createInputStream(status.getPath().toString(), this.config);
-                if (!this.inputStream.isOpened()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Skipping file: {} because it doesn't exist anymore", status.getPath());
-                    }
-                    continue;
-                }
-            } finally {
-                this.rwlock.writeLock().unlock();
-            }
-
-            try {
-                Holder<Object> key = new Holder<>();
-                Holder<Object> value = new Holder<>();
-                while (this.inputStream.next(key, value) >= 0) {
-                    Exchange exchange = this.getEndpoint().createExchange();
-                    Message message = exchange.getIn();
-                    String fileName = StringUtils.substringAfterLast(status.getPath().toString(), "/");
-                    message.setHeader(Exchange.FILE_NAME, fileName);
-                    if (key.value != null) {
-                        message.setHeader(HdfsHeader.KEY.name(), key.value);
-                    }
-                    message.setBody(value.value);
-
-                    log.debug("Processing file {}", fileName);
-                    try {
-                        processor.process(exchange);
-                    } catch (Exception e) {
-                        exchange.setException(e);
-                    }
-
-                    // in case of unhandled exceptions then let the exception handler handle them
-                    if (exchange.getException() != null) {
-                        getExceptionHandler().handleException(exchange.getException());
-                    }
-
-                    numMessages++;
-                }
-            } finally {
-                IOHelper.close(inputStream, "input stream", log);
-            }
-        }
-
-        return numMessages;
+        return processFileStatuses(info, fileStatuses);
     }
 
-    private boolean normalFileIsDirectoryNoSuccessFile(FileStatus status, HdfsInfo info) throws IOException {
-        if (config.getFileType().equals(HdfsFileType.NORMAL_FILE) && status.isDirectory()) {
-            Path successPath = new Path(status.getPath().toString() + "/_SUCCESS");
-            if (!info.getFileSystem().exists(successPath)) {
-                return true;
+    private int processFileStatuses(HdfsInfo info, FileStatus[] fileStatuses) {
+        final AtomicInteger messageCount = new AtomicInteger(0);
+
+        Arrays.stream(fileStatuses)
+                .filter(status -> normalFileIsDirectoryHasSuccessFile(status, info))
+                .filter(this::hasMatchingOwner)
+                .map(this::createInputStream)
+                .filter(Objects::nonNull)
+                .forEach(hdfsInputStream -> {
+                    try {
+                        processHdfsInputStream(hdfsInputStream, messageCount, fileStatuses.length);
+                    } finally {
+                        IOHelper.close(hdfsInputStream, "input stream", log);
+                    }
+                });
+
+        return messageCount.get();
+    }
+
+    private void processHdfsInputStream(HdfsInputStream inputStream, AtomicInteger messageCount, int totalFiles) {
+        Holder<Object> key = new Holder<>();
+        Holder<Object> value = new Holder<>();
+        while (inputStream.next(key, value) >= 0) {
+            Exchange exchange = this.getEndpoint().createExchange();
+            Message message = exchange.getIn();
+            String fileName = StringUtils.substringAfterLast(inputStream.getActualPath(), "/");
+            message.setHeader(Exchange.FILE_NAME, fileName);
+            if (key.value != null) {
+                message.setHeader(HdfsHeader.KEY.name(), key.value);
+            }
+            message.setBody(value.value);
+
+            log.debug("Processing file {}", fileName);
+            try {
+                processor.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+
+            // in case of unhandled exceptions then let the exception handler handle them
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException(exchange.getException());
+            }
+
+            int count = messageCount.incrementAndGet();
+            log.debug("Processed [{}] files out of [{}]", count, totalFiles);
+        }
+    }
+
+    private boolean normalFileIsDirectoryHasSuccessFile(FileStatus fileStatus, HdfsInfo info) {
+        if (config.getFileType().equals(HdfsFileType.NORMAL_FILE) && fileStatus.isDirectory()) {
+            try {
+                Path successPath = new Path(fileStatus.getPath().toString() + "/_SUCCESS");
+                if (!info.getFileSystem().exists(successPath)) {
+                    return false;
+                }
+            } catch (IOException e) {
+                throw new HdfsRuntimeException(e);
             }
         }
+        return true;
+    }
+
+    private boolean hasMatchingOwner(FileStatus fileStatus) {
+        if (config.getOwner() != null && !config.getOwner().equals(fileStatus.getOwner())) {
+            if (log.isDebugEnabled()) {
+                log.debug("Skipping file: {} as not matching owner: {}", fileStatus.getPath(), config.getOwner());
+            }
+            return true;
+        }
         return false;
+    }
+
+    private HdfsInputStream createInputStream(FileStatus fileStatus) {
+        try {
+            this.rwlock.writeLock().lock();
+
+            return HdfsInputStream.createInputStream(fileStatus.getPath().toString(), this.config);
+        } finally {
+            this.rwlock.writeLock().unlock();
+        }
     }
 
 }

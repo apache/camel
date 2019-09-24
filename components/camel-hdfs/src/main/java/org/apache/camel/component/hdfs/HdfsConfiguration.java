@@ -215,7 +215,7 @@ public class HdfsConfiguration {
 
     public void checkProducerOptions() {
         if (isAppend()) {
-            if (!getSplitStrategies().isEmpty()) {
+            if (hasSplitStrategies()) {
                 throw new IllegalArgumentException("Split Strategies incompatible with append=true");
             }
             if (getFileType() != HdfsFileType.NORMAL_FILE) {
@@ -484,6 +484,10 @@ public class HdfsConfiguration {
 
     public List<HdfsProducer.SplitStrategy> getSplitStrategies() {
         return splitStrategies;
+    }
+
+    public boolean hasSplitStrategies() {
+        return !splitStrategies.isEmpty();
     }
 
     public String getSplitStrategy() {
