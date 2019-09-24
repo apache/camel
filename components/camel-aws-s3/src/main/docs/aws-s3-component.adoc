@@ -27,7 +27,7 @@ For example in order to read file `hello.txt` from bucket `helloBucket`, use the
 
 [source,java]
 --------------------------------------------------------------------------------
-from("aws-s3:helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=hello.txt")
+from("aws-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=hello.txt")
   .to("file:/var/downloaded");
 --------------------------------------------------------------------------------
 
