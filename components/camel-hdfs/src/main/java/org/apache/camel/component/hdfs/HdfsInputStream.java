@@ -18,12 +18,17 @@ package org.apache.camel.component.hdfs;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HdfsInputStream implements Closeable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HdfsInputStream.class);
 
     private HdfsFileType fileType;
     private String actualPath;
@@ -40,21 +45,36 @@ public class HdfsInputStream implements Closeable {
     protected HdfsInputStream() {
     }
 
-    public static HdfsInputStream createInputStream(String hdfsPath, HdfsConfiguration configuration) throws IOException {
+    /**
+     *
+     * @param hdfsPath
+     * @param configuration
+     * @return
+     * @throws IOException
+     */
+    public static HdfsInputStream createInputStream(String hdfsPath, HdfsConfiguration configuration) {
         HdfsInputStream ret = new HdfsInputStream();
         ret.fileType = configuration.getFileType();
         ret.actualPath = hdfsPath;
         ret.suffixedPath = ret.actualPath + '.' + configuration.getOpenedSuffix();
         ret.suffixedReadPath = ret.actualPath + '.' + configuration.getReadSuffix();
         ret.chunkSize = configuration.getChunkSize();
-        HdfsInfo info = HdfsInfoFactory.newHdfsInfo(ret.actualPath, configuration);
-        if (info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath))) {
-            ret.in = ret.fileType.createInputStream(ret.suffixedPath, configuration);
-            ret.opened = true;
-        } else {
-            ret.opened = false;
+        try {
+            HdfsInfo info = HdfsInfoFactory.newHdfsInfo(ret.actualPath, configuration);
+            if (info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath))) {
+                ret.in = ret.fileType.createInputStream(ret.suffixedPath, configuration);
+                ret.opened = true;
+                ret.config = configuration;
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Failed to open file [{}] because it doesn't exist", hdfsPath);
+                }
+                ret = null;
+            }
+        } catch (IOException e) {
+            throw new HdfsRuntimeException(e);
         }
-        ret.config = configuration;
+
         return ret;
     }
 

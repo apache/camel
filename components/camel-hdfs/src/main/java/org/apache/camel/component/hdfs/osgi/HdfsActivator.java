@@ -24,6 +24,7 @@ public class HdfsActivator implements BundleActivator {
 
     @Override
     public void start(BundleContext context) throws Exception {
+        // no action needed
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.apache.camel.component.hdfs;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -108,34 +109,28 @@ public class HdfsProducer extends DefaultProducer {
                 ostream = setupHdfs(true);
             }
 
-            SplitStrategy idleStrategy = null;
-            for (SplitStrategy strategy : config.getSplitStrategies()) {
-                if (strategy.type == SplitStrategyType.IDLE) {
-                    idleStrategy = strategy;
-                    break;
-                }
-            }
-            if (idleStrategy != null) {
+            Optional<SplitStrategy> idleStrategy = tryFindIdleStrategy(config.getSplitStrategies());
+            if (idleStrategy.isPresent()) {
                 scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "HdfsIdleCheck");
                 log.debug("Creating IdleCheck task scheduled to run every {} millis", config.getCheckIdleInterval());
-                scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy), config.getCheckIdleInterval(), config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
+                scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy.get()), config.getCheckIdleInterval(), config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
             }
         } catch (Exception e) {
             LOG.warn("Failed to start the HDFS producer. Caused by: [{}]", e.getMessage());
             LOG.debug("", e);
-            throw new RuntimeException(e);
+            throw new HdfsRuntimeException(e);
         } finally {
             HdfsComponent.setJAASConfiguration(auth);
         }
     }
 
-    private synchronized HdfsOutputStream setupHdfs(boolean onStartup) throws Exception {
+    private synchronized HdfsOutputStream setupHdfs(boolean onStartup) throws IOException {
         if (ostream != null) {
             return ostream;
         }
 
         StringBuilder actualPath = new StringBuilder(hdfsPath);
-        if (config.getSplitStrategies().size() > 0) {
+        if (config.hasSplitStrategies()) {
             actualPath = newFileName();
         }
 
@@ -159,6 +154,15 @@ public class HdfsProducer extends DefaultProducer {
         }
 
         return answer;
+    }
+
+    private Optional<SplitStrategy> tryFindIdleStrategy(List<SplitStrategy> strategies) {
+        for (SplitStrategy strategy : strategies) {
+            if (strategy.type == SplitStrategyType.IDLE) {
+                return Optional.of(strategy);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -185,7 +189,7 @@ public class HdfsProducer extends DefaultProducer {
         }
     }
 
-    void doProcess(Exchange exchange) throws Exception {
+    void doProcess(Exchange exchange) throws IOException {
         Object body = exchange.getIn().getBody();
         Object key = exchange.getIn().getHeader(HdfsHeader.KEY.name());
 
@@ -201,13 +205,7 @@ public class HdfsProducer extends DefaultProducer {
             ostream = setupHdfs(false);
         }
 
-        boolean split = false;
-        List<SplitStrategy> strategies = config.getSplitStrategies();
-        for (SplitStrategy splitStrategy : strategies) {
-            split |= splitStrategy.getType().split(ostream, splitStrategy.value, this);
-        }
-
-        if (split) {
+        if (isSplitRequired(config.getSplitStrategies())) {
             if (ostream != null) {
                 IOHelper.close(ostream, "output stream", log);
             }
@@ -258,6 +256,14 @@ public class HdfsProducer extends DefaultProducer {
             fileName =  ((Expression) value).evaluate(exchange, String.class);
         }
         return actualPath.append(fileName);
+    }
+
+    private boolean isSplitRequired(List<SplitStrategy> strategies) {
+        boolean split = false;
+        for (SplitStrategy splitStrategy : strategies) {
+            split |= splitStrategy.getType().split(ostream, splitStrategy.value, this);
+        }
+        return split;
     }
 
     private StringBuilder newFileName() {

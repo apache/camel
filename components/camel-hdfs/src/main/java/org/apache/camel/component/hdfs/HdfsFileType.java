@@ -135,12 +135,10 @@ public enum HdfsFileType {
 
                 File outputDest;
                 try {
-
                     // First trying: Files.createTempFile
                     outputDest = Files.createTempFile(fname, ".hdfs").toFile();
 
                 } catch (Exception ex) {
-
                     // Now trying: File.createTempFile
                     outputDest = File.createTempFile(fname, ".hdfs");
                 }
@@ -181,7 +179,7 @@ public enum HdfsFileType {
                 Writer writer = (SequenceFile.Writer) hdfsostr.getOut();
                 writer.append(keyWritable, valueWritable);
                 writer.sync();
-                return keySize.value + valueSize.value;
+                return Long.sum(keySize.value, valueSize.value);
             } catch (Exception ex) {
                 throw new RuntimeCamelException(ex);
             }
@@ -198,7 +196,7 @@ public enum HdfsFileType {
                 if (reader.next(keyWritable, valueWritable)) {
                     key.value = getObject(keyWritable, keySize);
                     value.value = getObject(valueWritable, valueSize);
-                    return keySize.value + valueSize.value;
+                    return Long.sum(keySize.value, valueSize.value);
                 } else {
                     return 0;
                 }
@@ -248,7 +246,7 @@ public enum HdfsFileType {
                 Holder<Integer> valueSize = new Holder<>();
                 Writable valueWritable = getWritable(value, typeConverter, valueSize);
                 ((MapFile.Writer) hdfsostr.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
-                return keySize.value + valueSize.value;
+                return Long.sum(keySize.value, valueSize.value);
             } catch (Exception ex) {
                 throw new RuntimeCamelException(ex);
             }
@@ -265,7 +263,7 @@ public enum HdfsFileType {
                 if (reader.next(keyWritable, valueWritable)) {
                     key.value = getObject(keyWritable, keySize);
                     value.value = getObject(valueWritable, valueSize);
-                    return keySize.value + valueSize.value;
+                    return Long.sum(keySize.value, valueSize.value);
                 } else {
                     return 0;
                 }
@@ -314,7 +312,7 @@ public enum HdfsFileType {
                 Holder<Integer> valueSize = new Holder<>();
                 Writable valueWritable = getWritable(value, typeConverter, valueSize);
                 ((BloomMapFile.Writer) hdfsostr.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
-                return keySize.value + valueSize.value;
+                return Long.sum(keySize.value, valueSize.value);
             } catch (Exception ex) {
                 throw new RuntimeCamelException(ex);
             }
@@ -331,7 +329,7 @@ public enum HdfsFileType {
                 if (reader.next(keyWritable, valueWritable)) {
                     key.value = getObject(keyWritable, keySize);
                     value.value = getObject(valueWritable, valueSize);
-                    return keySize.value + valueSize.value;
+                    return Long.sum(keySize.value, valueSize.value);
                 } else {
                     return 0;
                 }
