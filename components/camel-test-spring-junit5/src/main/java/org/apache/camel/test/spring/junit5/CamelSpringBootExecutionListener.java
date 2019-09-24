@@ -29,6 +29,17 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelSpringBootExecutionListener.class);
 
+    /**
+     * Returns the precedence that is used by Spring to choose the appropriate
+     * execution order of test listeners.
+     * 
+     * See {@link SpringTestExecutionListenerSorter#getPrecedence(Class)} for more.
+     */
+    @Override
+    public int getOrder() {
+        return SpringTestExecutionListenerSorter.getPrecedence(getClass());
+    }
+
     @Override
     public void prepareTestInstance(TestContext testContext) throws Exception {
         LOG.info("CamelSpringBootExecutionListener preparing: {}", testContext.getTestClass());
@@ -45,9 +56,10 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         // not to start it just yet
         SpringCamelContext.setNoStart(true);
         System.setProperty("skipStartingCamelContext", "true");
-        ConfigurableApplicationContext context = (ConfigurableApplicationContext) testContext.getApplicationContext();
+        ConfigurableApplicationContext context = (ConfigurableApplicationContext)testContext.getApplicationContext();
 
-        // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
+        // Post CamelContext(s) instantiation but pre CamelContext(s) start
+        // setup
         CamelAnnotationsHandler.handleProvidesBreakpoint(context, testClass);
         CamelAnnotationsHandler.handleShutdownTimeout(context, testClass);
         CamelAnnotationsHandler.handleMockEndpoints(context, testClass);
@@ -65,7 +77,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         Class<?> testClass = testContext.getTestClass();
         String testName = testContext.getTestMethod().getName();
 
-        ConfigurableApplicationContext context = (ConfigurableApplicationContext) testContext.getApplicationContext();
+        ConfigurableApplicationContext context = (ConfigurableApplicationContext)testContext.getApplicationContext();
         threadApplicationContext.set(context);
 
         // mark Camel to be startable again and start Camel
@@ -87,8 +99,10 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
 
         ConfigurableApplicationContext context = threadApplicationContext.get();
         if (context != null && context.isRunning()) {
-            // dump route coverage for each test method so its accurate statistics
-            // even if spring application context is running (i.e. its not dirtied per test method)
+            // dump route coverage for each test method so its accurate
+            // statistics
+            // even if spring application context is running (i.e. its not
+            // dirtied per test method)
             CamelAnnotationsHandler.handleRouteCoverageDump(context, testClass, s -> testName);
         }
     }
