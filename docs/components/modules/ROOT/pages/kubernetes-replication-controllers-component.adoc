@@ -121,3 +121,54 @@ The component supports 2 options, which are listed below.
 - deleteReplicationController
 - scaleReplicationController
 
+== Kubernetes Replication Controllers Producer Examples
+
+- listReplicationControllers: this operation list the RCs on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:list").
+    toF("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllers").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of RCs from your cluster
+
+- listReplicationControllersByLabels:  this operation list the RCs by labels on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listByLabels").process(new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);
+            }
+        });
+    toF("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllersByLabels").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of RCs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+
+== Kubernetes Replication Controllers Consumer Example
+
+[source,java]
+--------------------------------------------------------------------------------
+fromF("kubernetes-replication-controllers://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
+
+    public class KubernertesProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Message in = exchange.getIn();
+            ReplicationController rc = exchange.getIn().getBody(ReplicationController.class);
+            log.info("Got event with configmap name: " + rc.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+        }
+    }
+--------------------------------------------------------------------------------
+
+This consumer will return a list of events on the namespace default for the rc test.
+
