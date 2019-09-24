@@ -66,7 +66,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         }
     }
 
-    private HdfsInfo setupHdfs(boolean onStartup) throws Exception {
+    private HdfsInfo setupHdfs(boolean onStartup) throws IOException {
         // if we are starting up then log at info level, and if runtime then log at debug level to not flood the log
         if (onStartup) {
             log.info("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", config.getHostName(), config.getPort(), hdfsPath);
@@ -127,14 +127,12 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
                 continue;
             }
 
-            if (config.getOwner() != null) {
-                // must match owner
-                if (!config.getOwner().equals(status.getOwner())) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Skipping file: {} as not matching owner: {}", status.getPath(), config.getOwner());
-                    }
-                    continue;
+            // must match owner
+            if (config.getOwner() != null && !config.getOwner().equals(status.getOwner())) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Skipping file: {} as not matching owner: {}", status.getPath(), config.getOwner());
                 }
+                continue;
             }
 
             try {
