@@ -333,7 +333,7 @@ Because of this, the config file must be set at startup, with a call like:
 [source,java]
 ------------------------------------------------------------------------------------------------------
 static {
-  HdfsKerberosConfigurationFactory.setKerberosConfigFile("/etc/security/kerb5.conf");
+  HdfsComponent.setKerberosConfigFile("/etc/security/kerb5.conf");
 }
 ------------------------------------------------------------------------------------------------------
 
