@@ -14,40 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot.routefilter;
+package org.apache.camel.spring.boot.example;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
-import org.apache.camel.test.spring.junit5.ExcludeRoutes;
+import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.context.SpringBootTest;
 
+/**
+ * This example is included in the spring-boot.adoc "Testing the JUnit 5 way" section.
+ */
 @CamelSpringBootTest
-@SpringBootApplication()
-@SpringBootTest(classes = FooTest.class)
-@ExcludeRoutes({BarRoute.class, DrinkRoute.class})
-public class FooExcludeRouteAnnotationTest {
+@SpringBootApplication
+@MockEndpoints("direct:end")
+public class MyApplicationTest {
 
     @Autowired
-    ProducerTemplate producerTemplate;
+    private ProducerTemplate template;
 
-    @Autowired
-    ModelCamelContext camelContext;
+    @EndpointInject("mock:direct:end")
+    private MockEndpoint mock;
 
     @Test
-    public void shouldSendToFoo() throws Exception {
-        // Given
-        MockEndpoint mock = camelContext.getEndpoint("mock:foo", MockEndpoint.class);
-        mock.expectedBodiesReceived("Hello Foo");
-
-        // When
-        producerTemplate.sendBody("direct:start", "Hello Foo");
-
-        // Then
+    public void testReceive() throws Exception {
+        mock.expectedBodiesReceived("Hello");
+        template.sendBody("direct:start", "Hello");
         mock.assertIsSatisfied();
     }
 
