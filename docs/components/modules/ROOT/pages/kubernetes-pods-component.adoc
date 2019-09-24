@@ -152,7 +152,7 @@ from("direct:listByLabels").process(new Processor() {
 
 This operation return a List of Pods from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 
-== Kubernetes Deployments Consumer Example
+== Kubernetes Pods Consumer Example
 
 [source,java]
 --------------------------------------------------------------------------------
