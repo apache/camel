@@ -126,6 +126,8 @@ public interface PropertiesComponent extends StaticService {
      * <p/>
      * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
      * as documented by {@link java.util.Properties#load(java.io.InputStream)}
+     * <p/>
+     * Important you must set encoding before setting locations.
      */
     void setEncoding(String encoding);
 
