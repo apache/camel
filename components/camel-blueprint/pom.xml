@@ -382,7 +382,7 @@
                                                 <include name="org/apache/camel/core/xml/*.java"/>
                                                 <include name="org/apache/camel/core/xml/util/**/*.java"/>
                                             </fileset>
-                                            <fileset dir="${basedir}/../../core/camel-core/src/main/java">
+                                            <fileset dir="${basedir}/../../core/camel-core-engine/src/main/java">
                                                 <include name="org/apache/camel/model/**/*.java"/>
                                                 <include name="org/apache/camel/ExchangePattern.java"/>
                                                 <include name="org/apache/camel/LoggingLevel.java"/>
