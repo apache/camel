@@ -1,6 +1,6 @@
 [[throttle-eip]]
 = Throttle EIP
-:page-source: core/camel-core/src/main/docs/eips/throttle-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/throttle-eip.adoc
 
 The Throttler Pattern allows you to ensure that a specific endpoint does not get overloaded, or that we don't exceed an agreed SLA with some external service.
 

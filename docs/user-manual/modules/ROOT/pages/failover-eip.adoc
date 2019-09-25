@@ -1,6 +1,6 @@
 [[failover-eip]]
 = Failover EIP
-:page-source: core/camel-core/src/main/docs/eips/failover-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/failover-eip.adoc
 
 Failover Load Balancer, with this policy in case of failures the exchange will be tried on the next endpoint.
 

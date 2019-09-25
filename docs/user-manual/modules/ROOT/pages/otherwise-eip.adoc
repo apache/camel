@@ -1,6 +1,6 @@
 [[otherwise-eip]]
 = Otherwise EIP
-:page-source: core/camel-core/src/main/docs/eips/otherwise-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/otherwise-eip.adoc
 
 The Otherwise EIP is related to http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
 Based Router] from the xref:enterprise-integration-patterns.adoc[EIP

@@ -1,6 +1,6 @@
 [[split-eip]]
 = Split EIP
-:page-source: core/camel-core/src/main/docs/eips/split-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/split-eip.adoc
 
 The http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html[Splitter] from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows you split a message into a number of pieces and process them individually.
 

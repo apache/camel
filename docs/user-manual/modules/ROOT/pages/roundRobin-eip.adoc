@@ -1,6 +1,6 @@
 [[roundRobin-eip]]
 = Round Robin EIP
-:page-source: core/camel-core/src/main/docs/eips/roundRobin-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/roundRobin-eip.adoc
 
 Round Robin Load Balancer. With this Load Balancing policy, a random endpoint is selected for each exchange.
 
