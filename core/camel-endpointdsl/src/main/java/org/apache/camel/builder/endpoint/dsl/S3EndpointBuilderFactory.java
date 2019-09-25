@@ -2208,7 +2208,7 @@ public interface S3EndpointBuilderFactory {
      * Available as of version: 2.8
      * Maven coordinates: org.apache.camel:camel-aws-s3
      * 
-     * Syntax: <code>aws-s3:bucketNameOrArn</code>
+     * Syntax: <code>aws-s3://bucketNameOrArn</code>
      * 
      * Path parameter: bucketNameOrArn (required)
      * Bucket name or ARN
