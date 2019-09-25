@@ -79,7 +79,7 @@ public class XPathFunctionsTest extends ContextTestSupport {
                     // here we use the simple language to evaluate the
                     // expression
                     // which at runtime will be evaluated to 'Donkey Kong'
-                    .when().xpath("//name = function:simple('Donkey ${properties:bar}')").to("mock:donkey").otherwise().to("mock:other").end();
+                    .when().xpath("//name = function:simple('Donkey {{bar}}')").to("mock:donkey").otherwise().to("mock:other").end();
                 // END SNIPPET: ex
             }
         };

@@ -50,7 +50,7 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setBody(simple("${properties:concat.property}")).to("mock:result");
+                from("direct:start").setBody(simple("{{concat.property}}")).to("mock:result");
             }
         });
         context.start();
@@ -67,7 +67,7 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setBody(simple("${properties:property.complete}")).to("mock:result");
+                from("direct:start").setBody(simple("{{property.complete}}")).to("mock:result");
             }
         });
         context.start();

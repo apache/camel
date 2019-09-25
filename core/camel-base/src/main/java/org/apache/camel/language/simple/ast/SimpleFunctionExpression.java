@@ -208,6 +208,21 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.beanExpression(remainder);
         }
 
+        // properties: prefix
+        remainder = ifStartsWithReturnRemainder("properties:", function);
+        if (remainder != null) {
+            String[] parts = remainder.split(":");
+            if (parts.length > 2) {
+                throw new SimpleParserException("Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
+            }
+            String defaultValue = null;
+            if (parts.length >= 2) {
+                defaultValue = parts[1];
+            }
+            String key = parts[0];
+            return ExpressionBuilder.propertiesComponentExpression(key, defaultValue);
+        }
+
         // ref: prefix
         remainder = ifStartsWithReturnRemainder("ref:", function);
         if (remainder != null) {

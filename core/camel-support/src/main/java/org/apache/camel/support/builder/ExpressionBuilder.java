@@ -1310,6 +1310,30 @@ public class ExpressionBuilder {
         return constantExpression(str);
     }
 
+    public static Expression propertiesComponentExpression(final String key, final String defaultValue) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String text = simpleExpression(key).evaluate(exchange, String.class);
+                try {
+                    PropertiesComponent pc = exchange.getContext().getPropertiesComponent();
+                    // enclose key with {{ }} to force parsing as key can be a nested expression too
+                    return pc.parseUri(PropertiesComponent.PREFIX_TOKEN + text + PropertiesComponent.SUFFIX_TOKEN);
+                } catch (Exception e) {
+                    // property with key not found, use default value if provided
+                    if (defaultValue != null) {
+                        return defaultValue;
+                    }
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "properties(" + key + ")";
+            }
+        };
+    }
+
     /**
      * Returns an {@link TokenPairExpressionIterator} expression
      */
