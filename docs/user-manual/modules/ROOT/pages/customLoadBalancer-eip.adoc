@@ -1,6 +1,6 @@
 [[customLoadBalancer-eip]]
 = Custom Load Balancer EIP
-:page-source: core/camel-core/src/main/docs/eips/customLoadBalancer-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/customLoadBalancer-eip.adoc
 
 This EIP allows you to use your own Load Balancer implementation
 

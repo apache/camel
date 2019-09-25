@@ -1,6 +1,6 @@
 [[random-eip]]
 = Random EIP
-:page-source: core/camel-core/src/main/docs/eips/random-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/random-eip.adoc
 
 
 // eip options: START

@@ -182,7 +182,7 @@ public final class PackageHelper {
     }
 
     public static File findCamelCoreDirectory(File dir) {
-        return findCamelDirectory(dir, "core/camel-core");
+        return findCamelDirectory(dir, "core/camel-core-engine");
     }
 
     public static File findCamelDirectory(File dir, String path) {

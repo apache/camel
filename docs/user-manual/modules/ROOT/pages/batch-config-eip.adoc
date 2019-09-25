@@ -1,6 +1,6 @@
 [[batch-config-eip]]
 = Batch-config EIP
-:page-source: core/camel-core/src/main/docs/eips/batch-config-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/batch-config-eip.adoc
 
 Batch-processing resequence EIP
 
