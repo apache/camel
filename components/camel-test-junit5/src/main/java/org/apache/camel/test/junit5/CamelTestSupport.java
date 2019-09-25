@@ -46,7 +46,6 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.Model;
@@ -57,6 +56,7 @@ import org.apache.camel.processor.interceptor.DefaultDebugger;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.test.CamelRouteCoverageDumper;
@@ -459,7 +459,7 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
         }
 
         // configure properties component (mandatory for testing)
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        PropertiesComponent pc = context.getPropertiesComponent();
         if (extra == null) {
             extra = useOverridePropertiesWithPropertiesComponent();
         }

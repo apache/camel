@@ -485,7 +485,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 public Object postProcessAfterInitialization(Object bean, String beanName) {
                     if (bean instanceof CamelContext) {
                         CamelContext camelContext = (CamelContext) bean;
-                        PropertiesComponent pc = camelContext.getPropertiesComponent(true);
+                        PropertiesComponent pc = camelContext.getPropertiesComponent();
                         LOG.info("Using {} properties to override any existing properties on the PropertiesComponent on CamelContext with name [{}].", extra.size(), camelContext.getName());
                         pc.setOverrideProperties(extra);
                     }
