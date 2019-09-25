@@ -554,15 +554,10 @@ public final class EntityParser {
             ContentType signatureContentType = null;
             String signatureContentTransferEncoding = null;
             for (Header header : headers) {
-                switch (header.getName()) {
-                case AS2Header.CONTENT_TYPE:
+                if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TYPE)) {
                     signatureContentType = ContentType.parse(header.getValue());
-                    break;
-                case AS2Header.CONTENT_TRANSFER_ENCODING:
+                } else if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TRANSFER_ENCODING)) {
                     signatureContentTransferEncoding = header.getValue();
-                    break;
-                default:
-                    continue;
                 }
             }
             if (signatureContentType == null) {

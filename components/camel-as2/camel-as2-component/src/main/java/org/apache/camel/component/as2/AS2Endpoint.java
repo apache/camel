@@ -151,4 +151,12 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         }
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        if(as2ClientConnection != null) {
+            as2ClientConnection.doShutdown();
+        }
+    }
+
 }
