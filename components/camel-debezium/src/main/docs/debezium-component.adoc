@@ -36,6 +36,17 @@ debezium:connector-type[?options]
 *Note:* Other Debezium connectors are _not_ supported at the moment.
 
 
+*Note:* Due to licensing issues, you will need to add the dependency for `mysql-conenctor-java` if you are using MySQL connector, just add the following to your POM file:
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.15</version>
+</dependency>
+------------------------------------------------------------
+
+
 == Options
 
 
