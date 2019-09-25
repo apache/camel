@@ -382,17 +382,20 @@
                                                 <include name="org/apache/camel/core/xml/*.java"/>
                                                 <include name="org/apache/camel/core/xml/util/**/*.java"/>
                                             </fileset>
-                                            <fileset dir="${basedir}/../../core/camel-core-engine/src/main/java">
-                                                <include name="org/apache/camel/model/**/*.java"/>
+                                            <fileset dir="${basedir}/../../core/camel-api/src/main/java">
                                                 <include name="org/apache/camel/ExchangePattern.java"/>
                                                 <include name="org/apache/camel/LoggingLevel.java"/>
                                                 <include name="org/apache/camel/ManagementStatisticsLevel.java"/>
-                                                <include name="**/package-info.java"/>
-                                                <exclude name="org/apache/camel/model/endpoint/*.java"/>
+                                                <include name="org/apache/camel/ShutdownRoute.java"/>
+                                                <include name="org/apache/camel/ShutdownRunningTask.java"/>
+                                                <include name="org/apache/camel/WaitForTaskToComplete.java"/>
+                                            </fileset>
+                                            <fileset dir="${basedir}/../../core/camel-core-engine/src/main/java">
+                                                <include name="org/apache/camel/model/**/*.java"/>
+                                                <include name="org/apache/camel/package-info.java"/>
                                             </fileset>
                                             <fileset dir="${basedir}/../../core/camel-util/src/main/java">
-                                                <include
-                                                        name="org/apache/camel/util/concurrent/ThreadPoolRejectedPolicy.java"/>
+                                                <include name="org/apache/camel/util/concurrent/ThreadPoolRejectedPolicy.java"/>
                                             </fileset>
                                         </copy>
                                     </target>
