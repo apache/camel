@@ -51,12 +51,12 @@
 
         <!-- to send to zipkin server -->
         <dependency>
-            <groupId>org.apache.zipkin.reporter2</groupId>
+            <groupId>io.zipkin.reporter2</groupId>
             <artifactId>zipkin-sender-libthrift</artifactId>
             <version>${zipkin-reporter-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.zipkin.reporter2</groupId>
+            <groupId>io.zipkin.reporter2</groupId>
             <artifactId>zipkin-sender-urlconnection</artifactId>
             <version>${zipkin-reporter-version}</version>
         </dependency>
