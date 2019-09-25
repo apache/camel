@@ -215,14 +215,12 @@ public class CamelAutoConfiguration {
     // (PropertiesComponent extends ServiceSupport) would be used for bean
     // destruction. And we want Camel to handle the lifecycle.
     @Bean(destroyMethod = "")
+    @Lazy
     PropertiesComponent properties(CamelContext camelContext, PropertiesParser parser) {
-        if (camelContext.hasComponent("properties") != null) {
-            return camelContext.getComponent("properties", PropertiesComponent.class);
-        } else {
-            PropertiesComponent pc = new PropertiesComponent();
-            pc.setPropertiesParser(parser);
-            return pc;
-        }
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setCamelContext(camelContext);
+        pc.setPropertiesParser(parser);
+        return pc;
     }
 
     /**

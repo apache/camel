@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.undertow;
+
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
@@ -51,7 +51,7 @@ public class BaseUndertowTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.addComponent("properties", new PropertiesComponent("ref:prop"));
+        context.getPropertiesComponent().setLocation("ref:prop");
         return context;
     }
 

@@ -23,6 +23,8 @@ import java.util.function.Predicate;
 
 import org.apache.camel.StaticService;
 
+// TODO: Rename to PropertiesService
+
 /**
  * Component for property placeholders and loading properties from sources
  * (such as .properties file from classpath or file system)
