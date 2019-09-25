@@ -179,10 +179,6 @@ Specifying a method name you must use dot as separator. We also support
 the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean]
 component.
 
-|`properties:key:default` |String |Lookup a property with the given key. If the key does
-not exists or has no value, then an optional default value can be
-specified.
-
 |routeId |String |Returns the id of the current route the
 Exchange is being routed.
 
@@ -778,15 +774,6 @@ In the code above we lookup the header with name `type` and regard it as
 a `java.util.Map` and we then lookup with the key `gold` and return the
 value. If the header is not convertible to Map an exception is thrown. If the
 header with name `type` does not exist `null` is returned.
-
-You can nest functions, such as shown below:
-
-[source,xml]
-----
-<setHeader name="myHeader">
-  <simple>${properties:${header.someKey}}</simple>
-</setHeader>
-----
 
 == Referring to constants or enums
 

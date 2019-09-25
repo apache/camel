@@ -654,7 +654,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
 
             // register the properties component
-            getContext().addComponent("properties", pc);
+            getContext().setPropertiesComponent(pc);
         }
     }
 
