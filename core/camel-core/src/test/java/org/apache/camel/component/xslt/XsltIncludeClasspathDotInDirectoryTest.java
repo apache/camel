@@ -24,11 +24,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  *
  */
+@Ignore
 public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
 
     @Override

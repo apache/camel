@@ -1,6 +1,6 @@
 [[hystrix-eip]]
 = Hystrix EIP
-:page-source: core/camel-core/src/main/docs/eips/hystrix-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/hystrix-eip.adoc
 
 *Available as of Camel 2.18*
 

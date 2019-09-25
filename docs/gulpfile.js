@@ -80,7 +80,7 @@ function deleteUserManualSymlinks() {
 }
 
 function createUserManualSymlinks() {
-    return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-core/src/main/docs/eips/*.adoc'])
+    return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-core-engine/src/main/docs/eips/*.adoc'])
         // Antora disabled symlinks, there is an issue open
         // https://gitlab.com/antora/antora/issues/188
         // to reinstate symlink support, until that's resolved
@@ -146,7 +146,7 @@ function createUserManualNav() {
                 return ` ** xref:${filepath}[${title}]`;
             }
         }))
-        .pipe(inject(src('../core/camel-core/src/main/docs/eips/*.adoc').pipe(sort()), {
+        .pipe(inject(src('../core/camel-core-engine/src/main/docs/eips/*.adoc').pipe(sort()), {
             removeTags: true,
             name: 'eips',
             transform: (filename, file) => {

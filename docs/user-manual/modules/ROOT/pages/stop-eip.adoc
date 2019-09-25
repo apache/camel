@@ -1,6 +1,6 @@
 [[stop-eip]]
 = Stop EIP
-:page-source: core/camel-core/src/main/docs/eips/stop-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/stop-eip.adoc
 The Stop EIP stops the processing of the current message
 
 == Options

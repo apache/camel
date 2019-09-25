@@ -1,6 +1,6 @@
 [[threads-eip]]
 = Threads EIP
-:page-source: core/camel-core/src/main/docs/eips/threads-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/threads-eip.adoc
 The Threads Pattern allows you to introduce a thread pool into a route.
 
 == Options

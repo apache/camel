@@ -1,6 +1,6 @@
 [[saga-eip]]
 = Saga EIP
-:page-source: core/camel-core/src/main/docs/eips/saga-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/saga-eip.adoc
 
 *Available as of Camel 2.21*
 
