@@ -49,6 +49,16 @@ USE dbzSink;
 
 === Build
 
+Due to licensing issues, you will need to add the dependency for `mysql-conenctor-java`, just add the following to your POM file:
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.15</version>
+</dependency>
+------------------------------------------------------------
+
 You will need to compile this example first:
 
     $ mvn clean compile
