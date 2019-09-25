@@ -69,11 +69,7 @@ public class PropertiesComponentRefTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocations(new String[] {"ref:myCoolProperties"});
-        context.addComponent("properties", pc);
-
+        context.getPropertiesComponent().setLocation("ref:myCoolProperties");
         return context;
     }
 

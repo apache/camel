@@ -258,9 +258,6 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     public Object getInjectionPropertyValue(Class<?> type, String propertyName, String propertyDefaultValue,
             String injectionPointName, Object bean, String beanName) {
         try {
-            // enforce a properties component to be created if none existed
-            getCamelContext().getPropertiesComponent(true);
-
             String key;
             String prefix = PropertiesComponent.PREFIX_TOKEN;
             String suffix = PropertiesComponent.SUFFIX_TOKEN;

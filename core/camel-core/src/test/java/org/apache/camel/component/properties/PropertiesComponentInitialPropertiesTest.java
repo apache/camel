@@ -21,6 +21,7 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.PropertiesComponent;
 import org.junit.Test;
 
 public class PropertiesComponentInitialPropertiesTest extends ContextTestSupport {
@@ -53,9 +54,8 @@ public class PropertiesComponentInitialPropertiesTest extends ContextTestSupport
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        PropertiesComponent pc = new PropertiesComponent();
+        PropertiesComponent pc = context.getPropertiesComponent();
         pc.setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
-        context.addComponent("properties", pc);
 
         Properties initial = new Properties();
         initial.put("first", "mock:first");

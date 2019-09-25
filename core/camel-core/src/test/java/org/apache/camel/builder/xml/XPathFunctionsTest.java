@@ -64,9 +64,7 @@ public class XPathFunctionsTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: ex
                 // setup properties component
-                PropertiesComponent properties = new PropertiesComponent();
-                properties.setLocation("classpath:org/apache/camel/builder/xml/myprop.properties");
-                context.addComponent("properties", properties);
+                context.getPropertiesComponent().setLocation("classpath:org/apache/camel/builder/xml/myprop.properties");
 
                 // myprop.properties contains the following properties
                 // foo=Camel

@@ -764,10 +764,6 @@ public final class ProcessorDefinitionHelper {
                 other.forEach((k, v) -> {
                     if (Constants.PLACEHOLDER_QNAME.equals(k.getNamespaceURI())) {
                         if (v instanceof String) {
-                            // enforce a properties component to be created if
-                            // none existed
-                            camelContext.getPropertiesComponent(true);
-
                             // value must be enclosed with placeholder tokens
                             String s = (String)v;
                             String prefixToken = PropertiesComponent.PREFIX_TOKEN;

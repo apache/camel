@@ -53,11 +53,7 @@ public class SimplePropertiesNestedTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocations(new String[] {"org/apache/camel/component/properties/bar.properties"});
-        context.addComponent("properties", pc);
-
+        context.getPropertiesComponent().setLocation("org/apache/camel/component/properties/bar.properties");
         return context;
     }
 

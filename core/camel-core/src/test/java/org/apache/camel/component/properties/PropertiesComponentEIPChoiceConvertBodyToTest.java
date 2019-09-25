@@ -60,11 +60,7 @@ public class PropertiesComponentEIPChoiceConvertBodyToTest extends ContextTestSu
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocations(new String[] {"classpath:org/apache/camel/component/properties/myproperties.properties"});
-        context.addComponent("properties", pc);
-
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
 

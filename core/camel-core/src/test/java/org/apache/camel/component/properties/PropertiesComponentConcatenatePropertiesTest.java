@@ -27,9 +27,7 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/component/properties/concatenation.properties");
-        context.addComponent("properties", pc);
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/concatenation.properties");
         return context;
     }
 

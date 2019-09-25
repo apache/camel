@@ -27,8 +27,8 @@ import java.util.Properties;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.StaticService;
@@ -38,23 +38,20 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertiesSource;
-import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
-import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/properties">Properties Component</a> allows you to use property placeholders when defining Endpoint URIs
  */
-@Component("properties")
 @ManagedResource(description = "Managed PropertiesComponent")
-public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent, StaticService {
+public class PropertiesComponent extends ServiceSupport implements org.apache.camel.spi.PropertiesComponent, StaticService, CamelContextAware {
 
     /**
      *  Never check system properties.
@@ -102,6 +99,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
 
+    private CamelContext camelContext;
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
@@ -155,17 +153,13 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String endpointUri = parseUri(remaining);
-        if (LOG.isDebugEnabled()) {
-            log.debug("Endpoint uri parsed as: {}", URISupport.sanitizeUri(endpointUri));
-        }
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
 
-        Endpoint delegate = getCamelContext().getEndpoint(endpointUri);
-        PropertiesEndpoint answer = new PropertiesEndpoint(uri, delegate, this);
-
-        setProperties(answer, parameters);
-        return answer;
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -371,6 +365,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
      * as documented by {@link java.util.Properties#load(java.io.InputStream)}
      */
+    @Override
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -576,6 +571,8 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+
         sources.sort(OrderedComparator.get());
         ServiceHelper.startService(sources);
 

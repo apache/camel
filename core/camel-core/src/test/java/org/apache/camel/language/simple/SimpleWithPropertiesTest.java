@@ -19,7 +19,6 @@ package org.apache.camel.language.simple;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.SimpleBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Assert;
@@ -39,9 +38,7 @@ public class SimpleWithPropertiesTest {
     @Test
     public void testProperty() throws Exception {
         System.setProperty("test", "testValue");
-        PropertiesComponent pc = new PropertiesComponent();
         CamelContext context = new DefaultCamelContext();
-        context.addComponent("properties", pc);
 
         // try to setup the property
         Exchange exchange = new DefaultExchange(context);

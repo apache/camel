@@ -34,9 +34,7 @@ public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
         properties.put("foo", "bar");
 
         camelContext.getRegistry().bind("myProp", properties);
-
-        PropertiesComponent pc = camelContext.getComponent("properties", PropertiesComponent.class);
-        pc.addLocation("ref:myProp");
+        camelContext.getPropertiesComponent().addLocation("ref:myProp");
 
         return camelContext;
     }

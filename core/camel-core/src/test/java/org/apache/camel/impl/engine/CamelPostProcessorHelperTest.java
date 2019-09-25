@@ -37,7 +37,6 @@ import org.apache.camel.PropertyInject;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.FooBar;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.DefaultExchange;
@@ -63,10 +62,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setLocation("ref:myProp");
-
+        context.getPropertiesComponent().setLocation("ref:myProp");
         return context;
     }
 
