@@ -22,6 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -35,13 +37,16 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Requires that the JMS broker is running, as well as CamelServer
  */
 public final class CamelClientEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelClientEndpoint.class);
+
     private CamelClientEndpoint() {
         //Helper class
     }
 
     // START SNIPPET: e1
     public static void main(final String[] args) throws Exception {
-        System.out.println("Notice this client requires that the CamelServer is already running!");
+        LOG.info("Notice this client requires that the CamelServer is already running!");
 
         AbstractApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
         CamelContext camel = context.getBean("camel-client", CamelContext.class);
@@ -62,12 +67,12 @@ public final class CamelClientEndpoint {
         producer.start();
 
         // let the producer process the exchange where it does all the work in this oneline of code
-        System.out.println("Invoking the multiply with 11");
+        LOG.info("Invoking the multiply with 11");
         producer.process(exchange);
 
         // get the response from the out body and cast it to an integer
-        int response = exchange.getOut().getBody(Integer.class);
-        System.out.println("... the result is: " + response);
+        int response = exchange.getMessage().getBody(int.class);
+        LOG.info("... the result is: {}", response);
 
         // stopping the JMS producer has the side effect of the "ReplyTo Queue" being properly
         // closed, making this client not to try any further reads for the replies from the server
