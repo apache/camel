@@ -672,7 +672,7 @@
         <xstream-bundle-version>1.4.11_1</xstream-bundle-version>
         <xstream-version>1.4.11</xstream-version>
         <zendesk-client-version>0.6.2</zendesk-client-version>
-        <zipkin-reporter-version>2.8.3</zipkin-reporter-version>
+        <zipkin-reporter-version>2.8.2</zipkin-reporter-version>
         <zipkin-version>2.14.0</zipkin-version>
         <zjsonpatch-version>0.3.0</zjsonpatch-version>
         <zookeeper-version>3.4.14</zookeeper-version>
