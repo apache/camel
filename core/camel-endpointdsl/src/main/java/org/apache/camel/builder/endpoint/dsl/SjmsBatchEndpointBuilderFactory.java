@@ -21,6 +21,7 @@ import javax.annotation.Generated;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.EndpointConsumerBuilder;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
