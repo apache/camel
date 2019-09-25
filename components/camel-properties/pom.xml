@@ -32,6 +32,10 @@
 
     <name>Camel :: Properties</name>
     <description>Camel Properties component</description>
+    <properties>
+        <firstVersion>2.3.0</firstVersion>
+        <label>core</label>
+    </properties>
 
     <dependencies>
 

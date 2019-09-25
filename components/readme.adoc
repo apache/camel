@@ -682,7 +682,7 @@ Number of Components: 301 in 239 JAR artifacts (0 deprecated)
 | link:camel-printer/src/main/docs/lpr-component.adoc[Printer] (camel-printer) +
 `lpr:hostname:port/printername` | 2.1 | The printer component is used for sending messages to printers as print jobs.
 
-| link:camel-properties/src/main/docs/properties-component.adoc[Properties] (camel-properties) +
+| link:@@@ARTIFACTID@@@/src/main/docs/properties-component.adoc[Properties] (@@@ARTIFACTID@@@) +
 `properties:key` | 2.3 | The properties component is used for using property placeholders in endpoint uris.
 
 | link:camel-pubnub/src/main/docs/pubnub-component.adoc[PubNub] (camel-pubnub) +
@@ -1065,7 +1065,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1092,6 +1092,8 @@ Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
 | link:camel-microprofile-config/src/main/docs/microprofile-config.adoc[Microprofile Config] (camel-microprofile-config) | 3.0 | Bridging Eclipse MicroProfile Config with Camel properties
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
+
+| link:camel-properties/src/main/docs/properties.adoc[Properties] (camel-properties) |  | Camel Properties component
 
 | link:camel-reactive-executor-vertx/src/main/docs/reactive-executor-vertx.adoc[Reactive Executor Vertx] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert X
 
