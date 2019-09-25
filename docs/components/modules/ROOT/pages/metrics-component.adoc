@@ -440,14 +440,14 @@ component URI.
 |=======================================================================
 |Name |Description |Expected type
 |CamelMetricsTimerAction |Override timer action in URI
-|`org.apache.camel.component.metrics.timer.TimerEndpoint.TimerAction`
+|`org.apache.camel.component.metrics.MetricsTimerAction`
 |=======================================================================
 
 [source,java]
 ----
 // sets timer action using header
 from("direct:in")
-    .setHeader(MetricsConstants.HEADER_TIMER_ACTION, TimerAction.start)
+    .setHeader(MetricsConstants.HEADER_TIMER_ACTION, MetricsTimerAction.start)
     .to("metrics:timer:simple.timer")
     .to("direct:out");
 ----
