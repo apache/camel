@@ -94,7 +94,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
     /**
      * The directory for camel-core
      */
-    @Parameter(defaultValue = "${project.directory}/../../../core/camel-core")
+    @Parameter(defaultValue = "${project.directory}/../../../core/camel-core-engine")
     protected File readmeCoreDir;
 
     /**

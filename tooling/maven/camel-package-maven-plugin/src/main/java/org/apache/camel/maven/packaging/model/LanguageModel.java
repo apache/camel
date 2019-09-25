@@ -168,7 +168,7 @@ public class LanguageModel {
 
     public String getDocLink() {
         if ("camel-core".equals(artifactId)) {
-            return coreOnly ? "src/main/docs" : "../core/camel-core/src/main/docs";
+            return coreOnly ? "src/main/docs" : "../core/camel-core-engine/src/main/docs";
         } else {
             return artifactId + "/src/main/docs";
         }
