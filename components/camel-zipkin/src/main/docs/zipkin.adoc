@@ -130,7 +130,7 @@ To enable camel-zipkin you need to configure first
 ----
 ZipkinTracer zipkin = new ZipkinTracer();
 // Configure a reporter, which controls how often spans are sent
-//   (the dependency is org.apache.zipkin.reporter2:zipkin-sender-okhttp3)
+//   (the dependency is io.zipkin.reporter2:zipkin-sender-okhttp3)
 sender = OkHttpSender.create("http://127.0.0.1:9411/api/v2/spans");
 zipkin.setSpanReporter(AsyncReporter.create(sender));
 // and then add zipkin to the CamelContext
@@ -146,7 +146,7 @@ zipkin tracer beans. Camel will automatically discover and use them.
 [source,xml]
 ----
   <!-- configure how to reporter spans to a Zipkin collector
-          (the dependency is org.apache.zipkin.reporter2:zipkin-reporter-spring-beans) -->
+          (the dependency is io.zipkin.reporter2:zipkin-reporter-spring-beans) -->
   <bean id="http" class="zipkin2.reporter.beans.AsyncReporterFactoryBean">
     <property name="sender">
       <bean id="sender" class="zipkin2.reporter.beans.OkHttpSenderFactoryBean">
