@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.Timer;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
-import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 
 /**

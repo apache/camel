@@ -24,7 +24,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
