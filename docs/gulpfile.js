@@ -35,7 +35,7 @@ function deleteComponentImageSymlinks() {
 }
 
 function createComponentSymlinks() {
-    return src('../components/{*,*/*}/src/main/docs/*.adoc')
+    return src(['../core/camel-base/src/main/docs/*-component.adoc', '../components/{*,*/*}/src/main/docs/*.adoc'])
         .pipe(map((file, done) => {
             // this flattens the output to just .../pages/....adoc
             // instead of .../pages/camel-.../src/main/docs/....adoc
@@ -122,7 +122,7 @@ function insertSourceAttribute() {
 function createComponentNav() {
     return src('component-nav.adoc.template')
         .pipe(insertGeneratedNotice())
-        .pipe(inject(src('../components/{*,*/*}/src/main/docs/*.adoc').pipe(sort()), {
+        .pipe(inject(src(['../core/camel-base/src/main/docs/*-component.adoc', '../components/{*,*/*}/src/main/docs/*.adoc']).pipe(sort()), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
