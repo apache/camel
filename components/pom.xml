@@ -367,6 +367,7 @@
                     <execution>
                         <id>generate</id>
                         <goals>
+                            <goal>jandex</goal>
                             <goal>prepare-components</goal>
                             <goal>generate-components-list</goal>
                         </goals>

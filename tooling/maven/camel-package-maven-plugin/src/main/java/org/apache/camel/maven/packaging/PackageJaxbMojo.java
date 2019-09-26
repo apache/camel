@@ -17,6 +17,7 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -47,6 +49,8 @@ import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
+import org.jboss.jandex.Index;
+import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.IndexView;
 import org.jboss.jandex.Indexer;
 
@@ -55,6 +59,12 @@ import org.jboss.jandex.Indexer;
  */
 @Mojo(name = "generate-jaxb-list", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class PackageJaxbMojo extends AbstractGeneratorMojo {
+
+    /**
+     * The name of the index file. Default's to 'target/classes/META-INF/jandex.idx'
+     */
+    @Parameter(defaultValue = "${project.build.directory}/META-INF/jandex.idx")
+    private File index;
 
     /**
      * The output directory for generated components file
@@ -123,6 +133,14 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
     }
 
     private IndexView createIndex(List<String> locations) throws MojoExecutionException {
+        if (index.exists()) {
+            try (InputStream is = new FileInputStream(index)) {
+                IndexReader r = new IndexReader(is);
+                return r.read();
+            } catch (IOException e) {
+                throw new MojoExecutionException("Error", e);
+            }
+        }
         try {
             Indexer indexer = new Indexer();
             locations.stream()
