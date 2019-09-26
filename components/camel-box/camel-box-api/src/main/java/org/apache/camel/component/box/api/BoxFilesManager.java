@@ -172,7 +172,7 @@ public class BoxFilesManager {
                 }
             }
 
-            if (uploadNewFile){
+            if (uploadNewFile) {
                 BoxFolder parentFolder = new BoxFolder(boxConnection, parentFolderId);
                 FileUploadParams uploadParams = new FileUploadParams();
                 uploadParams.setName(fileName);
