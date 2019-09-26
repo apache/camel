@@ -47,7 +47,6 @@
         <module>camel-language</module>
         <module>camel-log</module>
         <module>camel-mock</module>
-        <module>camel-properties</module>
         <module>camel-ref</module>
         <module>camel-rest</module>
         <module>camel-seda</module>
