@@ -54,6 +54,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new AnnotationConfigApplicationContext(EmbedMongoConfiguration.class);
         CamelContext ctx = new SpringCamelContext(applicationContext);
+        ctx.init();
         ctx.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
         return ctx;
     }
