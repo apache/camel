@@ -22,6 +22,7 @@ package org.apache.camel.component.irc;
 public final class IrcConstants {
     public static final String IRC_MESSAGE_TYPE = "irc.messageType";
     public static final String IRC_TARGET = "irc.target";
+    public static final String IRC_SEND_TO = "irc.sendTo";
     public static final String IRC_USER_KICKED = "irc.user.kicked";
     public static final String IRC_USER_HOST = "irc.user.host";
     public static final String IRC_USER_NICK = "irc.user.nick";

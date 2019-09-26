@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -46,7 +46,7 @@ public class IrcProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         final String msg = exchange.getIn().getBody(String.class);
-        final String targetChannel = exchange.getIn().getHeader(IrcConstants.IRC_TARGET, String.class);
+        final String sendTo = exchange.getIn().getHeader(IrcConstants.IRC_SEND_TO, String.class);
 
         if (!connection.isConnected()) {
             throw new RuntimeCamelException("Lost connection to " + connection.getHost());
@@ -56,9 +56,9 @@ public class IrcProducer extends DefaultProducer {
             if (isMessageACommand(msg)) {
                 LOG.debug("Sending command: {}", msg);
                 connection.send(msg);
-            } else if (targetChannel != null) {
-                LOG.debug("Sending to: {} message: {}", targetChannel, msg);
-                connection.doPrivmsg(targetChannel, msg);
+            } else if (sendTo != null) {
+                LOG.debug("Sending to: {} message: {}", sendTo, msg);
+                connection.doPrivmsg(sendTo, msg);
             } else {
                 for (IrcChannel channel : endpoint.getConfiguration().getChannels()) {
                     LOG.debug("Sending to: {} message: {}", channel, msg);
