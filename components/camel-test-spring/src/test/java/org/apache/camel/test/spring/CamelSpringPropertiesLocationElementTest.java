@@ -52,7 +52,7 @@ public class CamelSpringPropertiesLocationElementTest {
         mock.expectedHeaderReceived("property-2", "property-value-2");
         mock.expectedHeaderReceived("property-3", "property-value-3");
 
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
         assertNotNull("Properties component not defined", pc);
 
         List<String> locations = pc.getLocations();

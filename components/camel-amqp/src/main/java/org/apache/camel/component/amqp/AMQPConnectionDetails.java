@@ -62,7 +62,7 @@ public class AMQPConnectionDetails {
 
     public static AMQPConnectionDetails discoverAMQP(CamelContext camelContext) {
         try {
-            PropertiesComponent propertiesComponent = camelContext.getComponent("properties", PropertiesComponent.class);
+            PropertiesComponent propertiesComponent = camelContext.getPropertiesComponent();
 
             String host = property(propertiesComponent, AMQP_HOST, "localhost");
             int port = Integer.parseInt(property(propertiesComponent, AMQP_PORT, "5672"));

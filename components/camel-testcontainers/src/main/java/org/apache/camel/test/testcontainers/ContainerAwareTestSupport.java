@@ -57,7 +57,7 @@ public class ContainerAwareTestSupport extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
-        final PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        final PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
 
         pc.addFunction(new ContainerPropertiesFunction(containers));
 

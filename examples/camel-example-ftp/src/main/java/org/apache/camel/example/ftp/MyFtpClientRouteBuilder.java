@@ -17,7 +17,6 @@
 package org.apache.camel.example.ftp;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 
 /**
  * Client route
@@ -27,8 +26,7 @@ public class MyFtpClientRouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         // configure properties component
-        PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
-        pc.setLocation("classpath:ftp.properties");
+        getContext().getPropertiesComponent().setLocation("classpath:ftp.properties");
 
         // lets shutdown faster in case of in-flight messages stack up
         getContext().getShutdownStrategy().setTimeout(10);

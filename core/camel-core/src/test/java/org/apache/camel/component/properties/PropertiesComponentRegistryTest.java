@@ -48,9 +48,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         reg.bind("bar", bar);
         context.setRegistry(reg);
 
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
-        context.addComponent("properties", pc);
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
 
         return context;
     }

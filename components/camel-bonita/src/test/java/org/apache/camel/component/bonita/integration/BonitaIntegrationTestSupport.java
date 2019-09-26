@@ -17,7 +17,6 @@
 package org.apache.camel.component.bonita.integration;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class BonitaIntegrationTestSupport extends CamelTestSupport {
@@ -25,12 +24,7 @@ public class BonitaIntegrationTestSupport extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
-
-        PropertiesComponent component = new PropertiesComponent();
-        component.setLocation("classpath:test-options.properties");
-
-        context.addComponent("properties", component);
-
+        context.getPropertiesComponent().setLocation("classpath:test-options.properties");
         return context;
     }
 }

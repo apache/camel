@@ -57,10 +57,9 @@ public class PropertiesComponentDisableDefaultsTest extends ContextTestSupport {
         props.put("p:mockend", "end");
         props.put("p:message", "my message");
 
-        PropertiesComponent component = new PropertiesComponent();
-        component.setDefaultFallbackEnabled(false);
-        component.setInitialProperties(props);
-        context.addComponent("properties", component);
+        PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
+        pc.setDefaultFallbackEnabled(false);
+        pc.setInitialProperties(props);
 
         return context;
     }

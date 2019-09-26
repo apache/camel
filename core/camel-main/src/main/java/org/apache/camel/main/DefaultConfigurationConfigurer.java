@@ -51,6 +51,7 @@ import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteController;
@@ -180,6 +181,10 @@ public final class DefaultConfigurationConfigurer {
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
         final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
 
+        PropertiesComponent pc = getSingleBeanOfType(registry, PropertiesComponent.class);
+        if (pc != null) {
+            ecc.setPropertiesComponent(pc);
+        }
         BacklogTracer bt = getSingleBeanOfType(registry, BacklogTracer.class);
         if (bt != null) {
             ecc.setExtension(BacklogTracer.class, bt);

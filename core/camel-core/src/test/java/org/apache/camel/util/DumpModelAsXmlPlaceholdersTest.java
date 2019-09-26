@@ -50,9 +50,7 @@ public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        PropertiesComponent component = new PropertiesComponent();
-        component.setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
-        context.addComponent("properties", component);
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
         return context;
     }
 

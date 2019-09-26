@@ -784,11 +784,8 @@ public final class IntrospectionSupport {
 
     static boolean isPropertyPlaceholder(CamelContext context, Object value) {
         if (context != null) {
-            PropertiesComponent pc = context.getPropertiesComponent(false);
-            if (pc != null) {
-                String text = value.toString();
-                return text.contains(PropertiesComponent.PREFIX_TOKEN) && text.contains(PropertiesComponent.SUFFIX_TOKEN);
-            }
+            String text = value.toString();
+            return text.contains(PropertiesComponent.PREFIX_TOKEN) && text.contains(PropertiesComponent.SUFFIX_TOKEN);
         }
         return false;
     }

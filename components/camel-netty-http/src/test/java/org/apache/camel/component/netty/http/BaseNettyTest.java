@@ -15,15 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty.http;
+
 import java.util.Collection;
 import java.util.Properties;
 
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ResourceLeakDetector;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.logging.log4j.core.LogEvent;
@@ -73,7 +72,7 @@ public class BaseNettyTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.addComponent("properties", new PropertiesComponent("ref:prop"));
+        context.getPropertiesComponent().setLocation("ref:prop");
         return context;
     }
 

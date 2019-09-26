@@ -53,6 +53,7 @@ import org.apache.camel.impl.engine.DefaultUnitOfWorkFactory;
 import org.apache.camel.impl.engine.DefaultUuidGenerator;
 import org.apache.camel.impl.engine.EndpointKey;
 import org.apache.camel.impl.engine.HeadersMapFactoryResolver;
+import org.apache.camel.impl.engine.PropertiesComponentFactoryResolver;
 import org.apache.camel.impl.engine.ReactiveExecutorResolver;
 import org.apache.camel.impl.engine.RestRegistryFactoryResolver;
 import org.apache.camel.impl.engine.ServicePool;
@@ -84,6 +85,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestRegistryFactory;
@@ -177,6 +179,11 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     protected Injector createInjector() {
         FactoryFinder finder = getDefaultFactoryFinder();
         return finder.newInstance("Injector", Injector.class).orElse(new DefaultInjector(this));
+    }
+
+    @Override
+    protected PropertiesComponent createPropertiesComponent() {
+        return new PropertiesComponentFactoryResolver().resolve(this);
     }
 
     @Override

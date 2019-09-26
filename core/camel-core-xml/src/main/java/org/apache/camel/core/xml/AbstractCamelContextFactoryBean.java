@@ -175,6 +175,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().setTypeConverterRegistry(tcr);
         }
 
+        // then properties component
+        PropertiesComponent pc = getBeanForType(PropertiesComponent.class);
+        if (pc != null) {
+            LOG.debug("Using PropertiesComponent: {}", pc);
+            getContext().setPropertiesComponent(pc);
+        }
+
         // then set custom properties
         Map<String, String> mergedOptions = new HashMap<>();
         if (getGlobalOptions() != null) {
@@ -654,7 +661,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
 
             // register the properties component
-            getContext().addComponent("properties", pc);
+            getContext().setPropertiesComponent(pc);
         }
     }
 

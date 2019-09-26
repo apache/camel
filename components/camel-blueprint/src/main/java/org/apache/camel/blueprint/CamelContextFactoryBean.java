@@ -269,7 +269,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         // if blueprint property resolver is enabled on CamelContext then bridge PropertiesComponent to blueprint
         if (isUseBlueprintPropertyResolver()) {
             // lookup existing configured properties component
-            PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
+            PropertiesComponent pc = (PropertiesComponent) getContext().getPropertiesComponent();
 
             // any extra properties
             ServiceReference<?> ref = bundleContext.getServiceReference(PropertiesComponent.OVERRIDE_PROPERTIES);

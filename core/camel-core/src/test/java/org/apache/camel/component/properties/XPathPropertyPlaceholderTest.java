@@ -65,7 +65,7 @@ public class XPathPropertyPlaceholderTest extends ContextTestSupport {
                 prop.put("foo", "//greeting/text = 'Hello, world!'");
                 prop.put("bar", "//greeting/text = 'Bye, world!'");
 
-                PropertiesComponent pc = context.getPropertiesComponent(true);
+                PropertiesComponent pc = context.getPropertiesComponent();
                 pc.setInitialProperties(prop);
 
                 from("direct:filter").filter().xpath("{{foo}}").log("Passed filter!").to("mock:output-filter");

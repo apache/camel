@@ -71,7 +71,6 @@
     <bundle>mvn:org.apache.camel/camel-language/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-log/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mock/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-properties/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ref/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rest/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-saga/${project.version}</bundle>
