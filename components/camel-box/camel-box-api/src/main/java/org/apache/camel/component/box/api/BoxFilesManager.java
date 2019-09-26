@@ -29,21 +29,21 @@ import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxFile;
 import com.box.sdk.BoxFileVersion;
 import com.box.sdk.BoxFolder;
+import com.box.sdk.BoxItem;
 import com.box.sdk.BoxSharedLink;
 import com.box.sdk.FileUploadParams;
 import com.box.sdk.Metadata;
 import com.box.sdk.ProgressListener;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Box Files Manager
- * 
+ *
  * <p>
  * Provides operations to manage Box files.
- * 
- * 
+ *
+ *
  *
  */
 public class BoxFilesManager {
@@ -58,7 +58,7 @@ public class BoxFilesManager {
     /**
      * Create files manager to manage the files of Box connection's
      * authenticated user.
-     * 
+     *
      * @param boxConnection
      *            - Box connection to authenticated user account.
      */
@@ -68,7 +68,7 @@ public class BoxFilesManager {
 
     /**
      * Get file information.
-     * 
+     *
      * @param fileId
      *            - the id of file.
      * @param fields
@@ -98,7 +98,7 @@ public class BoxFilesManager {
 
     /**
      * Update file information.
-     * 
+     *
      * @param fileId
      *            - the id of file to update.
      * @param info
@@ -125,7 +125,7 @@ public class BoxFilesManager {
 
     /**
      * Upload a new file to parent folder.
-     * 
+     *
      * @param parentFolderId
      *            - the id of parent folder.
      * @param content
@@ -141,12 +141,14 @@ public class BoxFilesManager {
      * @param size
      *            - the size of the file's content used for monitoring the
      *            upload's progress.
+     * @param check
+     *            - if the file name is already used, call the uploadNewVersion instead.
      * @param listener
      *            - a listener for monitoring the upload's progress.
      * @return The uploaded file.
      */
     public BoxFile uploadFile(String parentFolderId, InputStream content, String fileName, Date created, Date modified,
-            Long size, ProgressListener listener) {
+            Long size, boolean check, ProgressListener listener) {
         try {
             LOG.debug("Uploading file with name '" + fileName + "' to parent_folder(id=" + parentFolderId + ")");
             if (parentFolderId == null) {
@@ -158,25 +160,39 @@ public class BoxFilesManager {
             if (fileName == null) {
                 throw new IllegalArgumentException("Paramerer 'fileName' can not be null");
             }
-            BoxFolder parentFolder = new BoxFolder(boxConnection, parentFolderId);
-
-            FileUploadParams uploadParams = new FileUploadParams();
-            uploadParams.setName(fileName);
-            uploadParams.setContent(content);
-            if (created != null) {
-                uploadParams.setCreated(created);
-            }
-            if (modified != null) {
-                uploadParams.setModified(modified);
-            }
-            if (size != null) {
-                uploadParams.setSize(size);
-            }
-            if (listener != null) {
-                uploadParams.setProgressListener(listener);
+            BoxFile boxFile = null;
+            boolean uploadNewFile = true;
+            if (check) {
+                BoxSearchManager bsm = new BoxSearchManager(boxConnection);
+                Collection<BoxItem> res = bsm.searchFolder(parentFolderId, fileName);
+                if (!res.isEmpty()) {
+                    BoxItem boxItem = res.iterator().next();
+                    boxFile = uploadNewFileVersion(boxItem.getID(), content, modified, size, listener);
+                    uploadNewFile = false;
+                }
             }
 
-            return parentFolder.uploadFile(uploadParams).getResource();
+            if (uploadNewFile){
+                BoxFolder parentFolder = new BoxFolder(boxConnection, parentFolderId);
+                FileUploadParams uploadParams = new FileUploadParams();
+                uploadParams.setName(fileName);
+                uploadParams.setContent(content);
+                if (created != null) {
+                    uploadParams.setCreated(created);
+                }
+                if (modified != null) {
+                    uploadParams.setModified(modified);
+                }
+                if (size != null) {
+                    uploadParams.setSize(size);
+                }
+                if (listener != null) {
+                    uploadParams.setProgressListener(listener);
+                }
+
+                boxFile = parentFolder.uploadFile(uploadParams).getResource();
+            }
+            return boxFile;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
                     String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
@@ -185,7 +201,7 @@ public class BoxFilesManager {
 
     /**
      * Upload a new version of file.
-     * 
+     *
      * @param fileId
      *            - the id of file.
      * @param fileContent
@@ -232,7 +248,7 @@ public class BoxFilesManager {
 
     /**
      * Get any previous versions of file.
-     * 
+     *
      * @param fileId
      *            - the id of file.
      * @return The list of previous file versions.
@@ -256,7 +272,7 @@ public class BoxFilesManager {
 
     /**
      * Download a file.
-     * 
+     *
      * @param fileId
      *            - the id of file.
      * @param output
@@ -309,7 +325,7 @@ public class BoxFilesManager {
 
     /**
      * Download a previous version of file.
-     * 
+     *
      * @param fileId
      *            - the id of file.
      * @param version
@@ -357,7 +373,7 @@ public class BoxFilesManager {
 
     /**
      * Promote a previous version of file.
-     * 
+     *
      * @param fileId
      *            - the id of file.
      * @param version
@@ -390,7 +406,7 @@ public class BoxFilesManager {
 
     /**
      * Copy file to destination folder while optionally giving it a new name.
-     * 
+     *
      * @param fileId
      *            - the id of file to copy.
      * @param destinationFolderId
@@ -426,7 +442,7 @@ public class BoxFilesManager {
 
     /**
      * Move file to destination folder while optionally giving it a new name.
-     * 
+     *
      * @param fileId
      *            - the id of file to move.
      * @param destinationFolderId
@@ -462,7 +478,7 @@ public class BoxFilesManager {
 
     /**
      * Rename file giving it the name <code>newName</code>
-     * 
+     *
      * @param fileId
      *            - the id of file to rename.
      * @param newFileName
@@ -489,7 +505,7 @@ public class BoxFilesManager {
 
     /**
      * Delete the file.
-     * 
+     *
      * @param fileId
      *            - the id of file to delete.
      */
@@ -509,7 +525,7 @@ public class BoxFilesManager {
 
     /**
      * Delete a file version.
-     * 
+     *
      * @param fileId
      *            - the id of file with version to delete.
      * @param version
@@ -540,7 +556,7 @@ public class BoxFilesManager {
 
     /**
      * Create a shared link to file.
-     * 
+     *
      * @param fileId
      *            - the id of the file to create shared link on.
      * @param access
@@ -582,7 +598,7 @@ public class BoxFilesManager {
      * Get an expiring URL for downloading a file directly from Box. This can be
      * user, for example, for sending as a redirect to a browser to cause the
      * browser to download the file directly from Box.
-     * 
+     *
      * @param fileId
      *            - the id of file.
      * @return The temporary download URL
@@ -608,7 +624,7 @@ public class BoxFilesManager {
      * Get an expiring URL for creating an embedded preview session. The URL
      * will expire after 60 seconds and the preview session will expire after 60
      * minutes.
-     * 
+     *
      * @param fileId
      *            - the id of the file to get preview link on.
      * @return The preview link.
@@ -633,7 +649,7 @@ public class BoxFilesManager {
      * Get an expiring URL for creating an embedded preview session. The URL
      * will expire after 60 seconds and the preview session will expire after 60
      * minutes.
-     * 
+     *
      * @param fileId
      *            - the id of the file to get preview link on.
      * @param fileType
@@ -684,7 +700,7 @@ public class BoxFilesManager {
     /**
      * Create metadata for file in either the global properties template or the
      * specified template type.
-     * 
+     *
      * @param fileId
      *            - the id of the file to create metadata for.
      * @param metadata
@@ -720,7 +736,7 @@ public class BoxFilesManager {
 
     /**
      * Gets the file properties metadata.
-     * 
+     *
      * @param fileId
      *            - the id of the file to retrieve metadata for.
      * @param typeName
@@ -752,7 +768,7 @@ public class BoxFilesManager {
 
     /**
      * Update the file properties metadata.
-     * 
+     *
      * @param fileId
      *            - the id of file to delete.
      * @param metadata
@@ -778,7 +794,7 @@ public class BoxFilesManager {
 
     /**
      * Delete the file properties metadata.
-     * 
+     *
      * @param fileId
      *            - the id of file to delete.
      */
@@ -793,6 +809,39 @@ public class BoxFilesManager {
         } catch (BoxAPIException e) {
             throw new RuntimeException(
                     String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+        }
+    }
+
+    /**
+     * Does a pre-verification before upload, to check if the filename already exists or if there is permission to upload.
+     * It will throw a BoxAPIResponseException if there is any problem in uploading the given file.
+     *
+     * @param parentFolderId
+     *            - the id of parent folder.
+     * @param fileName
+     *            the name to give the uploaded file.
+     * @param size
+     *            - the size of the file's content used for monitoring the upload's progress.
+     *
+     */
+    public void checkUpload(String fileName, String parentFolderId, Long size) {
+        try {
+            LOG.debug("Preflight check file with name '" + fileName + "' to parent_folder(id=" + parentFolderId + ")");
+            if (parentFolderId == null) {
+                throw new IllegalArgumentException("Parameter 'parentFolderId' can not be null");
+            }
+            if (fileName == null) {
+                throw new IllegalArgumentException("Parameter 'fileName' can not be null");
+            }
+            if (size == null) {
+                throw new IllegalArgumentException("Parameter 'size' can not be null");
+            }
+
+            BoxFolder parentFolder = new BoxFolder(boxConnection, parentFolderId);
+            parentFolder.canUpload(fileName, size);
+        } catch (BoxAPIException e) {
+            throw new RuntimeException(
+                String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 }
