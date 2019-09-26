@@ -139,3 +139,4 @@ Tips: It's possible to run JUnit 4 & JUnit 5 based Camel Spring tests side by si
 * Imports of `org.apache.camel.test.spring.\*` should be replaced with `org.apache.camel.test.spring.junit5.*`
 * Usage of `@RunWith(CamelSpringRunner.class)` should be replaced with `@CamelSpringTest`
 * Usage of `@BootstrapWith(CamelTestContextBootstrapper.class)` should be replaced with `@CamelSpringTest`
+* Usage of `@RunWith(CamelSpringBootRunner.class)` should be replaced with `@CamelSpringBootTest`
