@@ -358,9 +358,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             }
         } else {
             if (isClientConfigFound) {
-                clientBuilder = AmazonSQSClientBuilder.standard();
-            } else {
                 clientBuilder = AmazonSQSClientBuilder.standard().withClientConfiguration(clientConfiguration);
+            } else {
+                clientBuilder = AmazonSQSClientBuilder.standard();
             }
         }
 
