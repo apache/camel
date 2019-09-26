@@ -23,8 +23,6 @@ import java.util.function.Predicate;
 
 import org.apache.camel.StaticService;
 
-// TODO: Rename to PropertiesService
-
 /**
  * Component for property placeholders and loading properties from sources
  * (such as .properties file from classpath or file system)
@@ -40,12 +38,6 @@ public interface PropertiesComponent extends StaticService {
      * The suffix token.
      */
     String SUFFIX_TOKEN = "}}";
-
-    /**
-     * Has the component been created as a default by {@link org.apache.camel.CamelContext} during starting up Camel.
-     */
-    @Deprecated
-    String DEFAULT_CREATED = "PropertiesComponentDefaultCreated";
 
     /**
      * Parses the input text and resolve all property placeholders from within the text.
