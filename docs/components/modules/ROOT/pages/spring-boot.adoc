@@ -578,7 +578,7 @@ The Rest-DSL XML files should be Camel XML rests (not CamelContext) such as
 ----
 
 [[SpringBoot-Testing]]
-== Testing
+== Testing the JUnit 4 way
 For testing, Maven users will need to add the following dependencies to their `pom.xml`:
 
 [source,xml]
@@ -618,6 +618,56 @@ public class MyApplicationTest {
 
     @EndpointInject("mock:direct:end")
     MockEndpoint mock;
+
+    @Test
+    public void testReceive() throws Exception {
+        mock.expectedBodiesReceived("Hello");
+        template.sendBody("direct:start", "Hello");
+        mock.assertIsSatisfied();
+    }
+
+}
+----
+== Testing the JUnit 5 way
+For testing, Maven users will need to add the following dependencies to their `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <version>${spring-boot.version}</version> <!-- Use the same version as your Spring Boot version -->
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-spring-junit5</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+    <scope>test</scope>
+</dependency>
+----
+
+To test a Camel Spring Boot application, annotate your test class(es) with
+`@CamelSpringBootTest`. This brings Camel's Spring Test
+support to your application, so that you can write tests using
+https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html[Spring Boot test conventions].
+
+To get the `CamelContext` or `ProducerTemplate`, you can inject them into the class in the normal Spring manner, using `@Autowired`.
+
+You can also use xref:manual::spring-testing.adoc[Camel Spring test annotations] to configure tests declaratively. This example uses the `@MockEndpoints` annotation to auto-mock an endpoint:
+
+[source,java]
+----
+@CamelSpringBootTest
+@SpringBootApplication
+@MockEndpoints("direct:end")
+public class MyApplicationTest {
+
+    @Autowired
+    private ProducerTemplate template;
+
+    @EndpointInject("mock:direct:end")
+    private MockEndpoint mock;
 
     @Test
     public void testReceive() throws Exception {
