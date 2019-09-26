@@ -48,7 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The <a href="http://camel.apache.org/properties">Properties Component</a> allows you to use property placeholders when defining Endpoint URIs
+ * The properties component allows you to use property placeholders in Camel.
  */
 @ManagedResource(description = "Managed PropertiesComponent")
 public class PropertiesComponent extends ServiceSupport implements org.apache.camel.spi.PropertiesComponent, StaticService, CamelContextAware {
