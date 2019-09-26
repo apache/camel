@@ -206,7 +206,12 @@ public class HdfsConfiguration {
 
     private List<String> getKerberosNamedNodeList(Map<String, Object> hdfsSettings) {
         kerberosNamedNodes = getString(hdfsSettings, "kerberosNamedNodes", kerberosNamedNodes);
-        return Arrays.stream(kerberosNamedNodes.split(",")).distinct().collect(Collectors.toList());
+        
+        if (isNotEmpty(kerberosNamedNodes)) {
+            return Arrays.stream(kerberosNamedNodes.split(",")).distinct().collect(Collectors.toList());
+        }
+
+        return Collections.emptyList();
     }
 
     public void checkConsumerOptions() {
