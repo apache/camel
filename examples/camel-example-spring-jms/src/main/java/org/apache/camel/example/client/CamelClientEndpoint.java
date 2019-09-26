@@ -68,10 +68,12 @@ public final class CamelClientEndpoint {
 
         // let the producer process the exchange where it does all the work in this oneline of code
         LOG.info("Invoking the multiply with 11");
+
         producer.process(exchange);
 
         // get the response from the out body and cast it to an integer
         int response = exchange.getMessage().getBody(int.class);
+
         LOG.info("... the result is: {}", response);
 
         // stopping the JMS producer has the side effect of the "ReplyTo Queue" being properly

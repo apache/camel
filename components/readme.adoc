@@ -107,7 +107,7 @@ Number of Components: 301 in 239 JAR artifacts (0 deprecated)
 `aws-msk:label` | 3.0 | The aws-kms is used for managing Amazon KMS
 
 | link:camel-aws-s3/src/main/docs/aws-s3-component.adoc[AWS S3 Storage Service] (camel-aws-s3) +
-`aws-s3://bucketNameOrArn` | 2.8 | The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
+`aws-s3://bucketNameOrArn` | 2.8 | The aws-s3 component is used for storing and retrieving object from Amazon S3 Storage Service.
 
 | link:camel-aws-ses/src/main/docs/aws-ses-component.adoc[AWS Simple Email Service] (camel-aws-ses) +
 `aws-ses:from` | 2.9 | The aws-ses component is used for sending emails with Amazon's SES service.
