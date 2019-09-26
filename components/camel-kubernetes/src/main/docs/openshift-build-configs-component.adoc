@@ -82,3 +82,36 @@ with the following path and query parameters:
 - listBuildConfigs
 - listBuildConfigsByLabels
 - getBuildConfig
+
+== Openshift Build Configs Producer Examples
+
+- listBuilds: this operation list the Build Configs on an Openshift cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:list").
+    toF("openshift-build-configs:///?kubernetesClient=#kubernetesClient&operation=listBuildConfigs").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of Builds from your Openshift cluster
+
+- listBuildsByLabels: this operation list the build configs by labels on an Openshift cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listByLabels").process(new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS, labels);
+            }
+        });
+    toF("openshift-build-configs:///?kubernetesClient=#kubernetesClient&operation=listBuildConfigsByLabels").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of Build configs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
