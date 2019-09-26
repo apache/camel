@@ -61,7 +61,7 @@ public class KerberosConfiguration extends Configuration {
      */
     public KerberosConfiguration(List<String> namedNodes,
                                  String kerberosConfigFileLocation,
-                                 int replicationFactor) throws IOException {
+                                 int replicationFactor) {
 
         HdfsComponent.setKerberosConfigFile(kerberosConfigFileLocation);
         setupHdfsConfiguration(namedNodes, replicationFactor);

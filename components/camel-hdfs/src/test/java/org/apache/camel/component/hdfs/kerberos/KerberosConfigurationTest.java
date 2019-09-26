@@ -34,7 +34,7 @@ public class KerberosConfigurationTest {
     private KerberosConfiguration underTest;
 
     @Test
-    public void newKerberosConfiguration() throws IOException {
+    public void newKerberosConfiguration() {
         // given
         List<String> namedNodes = Arrays.asList("kerb_node_01.example.com:8021", "kerb_node_02.example.com:8022");
         String kerberosConfigFileLocation = pwd() + "/src/test/resources/kerberos/test-kerb5.conf";
@@ -56,7 +56,7 @@ public class KerberosConfigurationTest {
     }
 
     @Test(expected = FileNotFoundException.class)
-    public void newKerberosConfigurationWithMissingKerberosConfigFile() throws IOException {
+    public void newKerberosConfigurationWithMissingKerberosConfigFile() {
         // given
         List<String> namedNodes = Arrays.asList("kerb_node_01.example.com:8021", "kerb_node_02.example.com:8022");
         String kerberosConfigFileLocation = pwd() + "/src/test/resources/kerberos/missing.conf";
