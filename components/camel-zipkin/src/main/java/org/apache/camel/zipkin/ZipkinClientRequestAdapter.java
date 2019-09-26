@@ -17,6 +17,7 @@
 package org.apache.camel.zipkin;
 
 import java.util.Locale;
+import java.util.Map;
 
 import brave.SpanCustomizer;
 
@@ -57,14 +58,11 @@ final class ZipkinClientRequestAdapter {
             }
         }
         
-        Object clientTagsObj = exchange.getProperty("camel.custom.tags");
-        if (clientTagsObj != null) {
-        	Map<String, String> clientTags = (Map)clientTagsObj;
-	        if (clientTags != null && !clientTags.isEmpty()) {
-	        	for (Map.Entry<String, String> tag: clientTags.entrySet()) {
-	        		span.tag("custom." + tag.getKey(), tag.getValue());
-	        	}
-	        }
+        Map<String, String> clientTags = exchange.getProperty("camel.client.customtags", Map.class);
+        if (clientTags != null && !clientTags.isEmpty()) {
+            for (Map.Entry<String, String> tag : clientTags.entrySet()) {
+                span.tag("custom." + tag.getKey(), tag.getValue());
+            }
         }
     }
 }
