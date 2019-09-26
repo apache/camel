@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Factory resolver to find the {@link org.apache.camel.spi.PropertiesComponent} from the classpath in camel-properties.
+ * Factory resolver to find the {@link org.apache.camel.spi.PropertiesComponent} from the classpath.
  */
 public class PropertiesComponentFactoryResolver {
 
@@ -58,8 +58,8 @@ public class PropertiesComponentFactoryResolver {
             }
         }
 
-        LOG.debug("Cannot find PropertiesComponent. Make sure camel-properties is on the classpath.");
-        return null;
+        // use default component
+        return new org.apache.camel.component.properties.PropertiesComponent();
     }
 
     private Class<?> findFactory(String name, CamelContext context) throws IOException {
