@@ -47,8 +47,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.properties.ServiceHostPropertiesFunction;
-import org.apache.camel.component.properties.ServicePortPropertiesFunction;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
@@ -400,16 +398,16 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             } else {
                 // is there a zipkin service setup as ENV variable to auto
                 // register a span reporter
-                String host = new ServiceHostPropertiesFunction().apply(ZIPKIN_COLLECTOR_HTTP_SERVICE);
-                String port = new ServicePortPropertiesFunction().apply(ZIPKIN_COLLECTOR_HTTP_SERVICE);
+                String host = ServiceHostFunction.apply(ZIPKIN_COLLECTOR_HTTP_SERVICE);
+                String port = ServicePortFunction.apply(ZIPKIN_COLLECTOR_HTTP_SERVICE);
                 if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
                     LOG.info("Auto-configuring Zipkin URLConnectionSender using host: {} and port: {}", host, port);
                     int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);
                     String implicitEndpoint = "http://" + host + ":" + num + "/api/v2/spans";
                     spanReporter = AsyncReporter.create(URLConnectionSender.create(implicitEndpoint));
                 } else {
-                    host = new ServiceHostPropertiesFunction().apply(ZIPKIN_COLLECTOR_THRIFT_SERVICE);
-                    port = new ServicePortPropertiesFunction().apply(ZIPKIN_COLLECTOR_THRIFT_SERVICE);
+                    host = ServiceHostFunction.apply(ZIPKIN_COLLECTOR_THRIFT_SERVICE);
+                    port = ServicePortFunction.apply(ZIPKIN_COLLECTOR_THRIFT_SERVICE);
                     if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
                         LOG.info("Auto-configuring Zipkin ScribeSpanCollector using host: {} and port: {}", host, port);
                         int num = camelContext.getTypeConverter().mandatoryConvertTo(Integer.class, port);

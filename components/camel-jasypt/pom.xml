@@ -42,9 +42,10 @@
 
     <dependencies>
 
+        <!-- extends properties component from camel-base -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
+            <artifactId>camel-base</artifactId>
         </dependency>
 
         <dependency>

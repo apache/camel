@@ -1,6 +1,6 @@
 [[properties-component]]
 = Properties Component
-:page-source: components/camel-properties/src/main/docs/properties-component.adoc
+:page-source: core/camel-base/src/main/docs/properties-component.adoc
 
 *Available as of Camel version 2.3*
 
@@ -72,21 +72,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
-// spring-boot-auto-configure options: START
 == Spring Boot Auto-Configuration
-
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-properties-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
 
 The component supports 10 options, which are listed below.
 
@@ -106,7 +92,6 @@ The component supports 10 options, which are listed below.
 | *camel.component.properties.properties-parser* | To use a custom PropertiesParser. The option is a org.apache.camel.component.properties.PropertiesParser type. |  | String
 | *camel.component.properties.system-properties-mode* | Sets the JVM system property mode (0 = never, 1 = fallback, 2 = override). The default mode (override) is to use system properties if present, and override any existing properties. OS environment variable mode is checked before JVM system property mode | 2 | Integer
 |===
-// spring-boot-auto-configure options: END
 
 [TIP]
 **Resolving property from Java code** +
