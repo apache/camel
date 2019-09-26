@@ -23,10 +23,8 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.pubsub.Pubsub;
 import com.google.api.services.pubsub.model.Subscription;
 import com.google.api.services.pubsub.model.Topic;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class PubsubTestSupport extends CamelTestSupport {
@@ -68,7 +66,7 @@ public class PubsubTestSupport extends CamelTestSupport {
         component.setConnectionFactory(cf);
 
         context.addComponent("google-pubsub", component);
-        context.addComponent("properties", new PropertiesComponent("ref:prop"));
+        context.getPropertiesComponent().setLocation("ref:prop");
     }
 
     @BindToRegistry("prop")

@@ -21,7 +21,6 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
@@ -54,10 +53,7 @@ public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends C
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setLocation("ref:myprop");
-
+        context.getPropertiesComponent().setLocation("ref:myprop");
         return context;
     }
 

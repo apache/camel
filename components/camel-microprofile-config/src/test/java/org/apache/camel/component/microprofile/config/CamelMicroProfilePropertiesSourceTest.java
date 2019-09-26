@@ -71,7 +71,7 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
 
     @Test
     public void testLoadAll() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        PropertiesComponent pc = context.getPropertiesComponent();
         Properties properties = pc.loadProperties();
 
         Assertions.assertThat(properties.get("start")).isEqualTo("direct:start");
@@ -81,7 +81,7 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
 
     @Test
     public void testLoadFiltered() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        PropertiesComponent pc = context.getPropertiesComponent();
         Properties properties = pc.loadProperties(k -> k.length() > 2);
 
         Assertions.assertThat(properties).hasSize(2);

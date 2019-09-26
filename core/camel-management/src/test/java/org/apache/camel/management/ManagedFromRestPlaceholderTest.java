@@ -23,7 +23,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
@@ -35,11 +34,7 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext answer = super.createCamelContext();
         answer.getRegistry().bind("dummy-test", new DummyRestConsumerFactory());
-
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/management/rest.properties");
-        answer.addComponent("properties", pc);
-
+        answer.getPropertiesComponent().setLocation("classpath:org/apache/camel/management/rest.properties");
         return answer;
     }
 

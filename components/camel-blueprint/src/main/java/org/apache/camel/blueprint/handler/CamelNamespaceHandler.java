@@ -258,10 +258,6 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         CamelContextFactoryBean ccfb = (CamelContextFactoryBean) value;
         ccfb.setImplicitId(implicitId);
 
-        // The properties component is always used / created by the CamelContextFactoryBean
-        // so we need to ensure that the resolver is ready to use
-        ComponentMetadata propertiesComponentResolver = getComponentResolverReference(context, "properties");
-
         MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
         factory.setId(".camelBlueprint.passThrough." + contextId);
         factory.setObject(new PassThroughCallable<>(value));
@@ -274,7 +270,6 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.setDestroyMethod("destroy");
         factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
         factory2.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
-        factory2.addDependsOn(propertiesComponentResolver.getId());
         // We need to add other components which the camel context dependsOn
         if (org.apache.camel.util.ObjectHelper.isNotEmpty(ccfb.getDependsOn())) {
             factory2.setDependsOn(Arrays.asList(ccfb.getDependsOn().split(" |,")));

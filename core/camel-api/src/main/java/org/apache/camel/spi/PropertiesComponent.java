@@ -21,14 +21,13 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
 
-import org.apache.camel.Component;
 import org.apache.camel.StaticService;
 
 /**
  * Component for property placeholders and loading properties from sources
  * (such as .properties file from classpath or file system)
  */
-public interface PropertiesComponent extends Component, StaticService {
+public interface PropertiesComponent extends StaticService {
 
     /**
      * The prefix token.
@@ -39,11 +38,6 @@ public interface PropertiesComponent extends Component, StaticService {
      * The suffix token.
      */
     String SUFFIX_TOKEN = "}}";
-
-    /**
-     * Has the component been created as a default by {@link org.apache.camel.CamelContext} during starting up Camel.
-     */
-    String DEFAULT_CREATED = "PropertiesComponentDefaultCreated";
 
     /**
      * Parses the input text and resolve all property placeholders from within the text.
@@ -120,5 +114,15 @@ public interface PropertiesComponent extends Component, StaticService {
      * and will use first, if a property exist.
      */
     void setOverrideProperties(Properties overrideProperties);
+
+    /**
+     * Encoding to use when loading properties file from the file system or classpath.
+     * <p/>
+     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
+     * as documented by {@link java.util.Properties#load(java.io.InputStream)}
+     * <p/>
+     * Important you must set encoding before setting locations.
+     */
+    void setEncoding(String encoding);
 
 }

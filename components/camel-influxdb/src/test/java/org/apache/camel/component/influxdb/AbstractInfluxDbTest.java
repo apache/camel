@@ -17,7 +17,6 @@
 package org.apache.camel.component.influxdb;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.springframework.context.ApplicationContext;
@@ -32,8 +31,7 @@ public class AbstractInfluxDbTest extends CamelTestSupport {
         applicationContext = new AnnotationConfigApplicationContext(MockedInfluxDbConfiguration.class);
         CamelContext ctx = new SpringCamelContext(applicationContext);
         ctx.init();
-        PropertiesComponent pc = new PropertiesComponent("classpath:influxdb.test.properties");
-        ctx.addComponent("properties", pc);
+        ctx.getPropertiesComponent().setLocation("classpath:influxdb.test.properties");
         return ctx;
     }
 

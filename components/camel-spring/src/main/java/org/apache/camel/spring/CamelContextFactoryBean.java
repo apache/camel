@@ -37,7 +37,6 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
@@ -332,12 +331,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             LOG.info("Bridging Camel and Spring property placeholder configurer with id: {}", id);
 
             // get properties component
-            PropertiesComponent pc = (PropertiesComponent) getContext().getComponent("properties", false);
-            if (pc == null) {
-                // do not auto create the component as spring autowrire by constructor causes a side effect when using bridge
-                pc = new PropertiesComponent();
-                getContext().addComponent("properties", pc);
-            }
+            PropertiesComponent pc = (PropertiesComponent) getContext().getPropertiesComponent();
             // use the spring system properties mode which has a different value than Camel may have
             pc.setSystemPropertiesMode(configurer.getSystemPropertiesMode());
 

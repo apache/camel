@@ -25,7 +25,6 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.junit.Test;
 
 public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest extends ManagementTestSupport {
@@ -39,11 +38,7 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
         props.put("theBar", "mock:bar");
 
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setLocations(new String[0]);
-        pc.setOverrideProperties(props);
-
+        context.getPropertiesComponent().setOverrideProperties(props);
         return context;
     }
 

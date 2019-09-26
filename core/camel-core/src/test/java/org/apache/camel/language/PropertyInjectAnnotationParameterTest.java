@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.spi.PropertiesComponent;
 import org.junit.Test;
 
 /**
@@ -61,12 +61,11 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        PropertiesComponent pc = new PropertiesComponent();
+        PropertiesComponent pc = context.getPropertiesComponent();
         Properties props = new Properties();
         props.put("greeting", "Hello");
         props.put("times", "3");
         pc.setInitialProperties(props);
-        context.addComponent("properties", pc);
 
         return context;
     }

@@ -273,7 +273,6 @@
 * xref:pg-replication-slot-component.adoc[PostgresSQL Replication Slot Component]
 * xref:pgevent-component.adoc[PostgresSQL Event Component]
 * xref:lpr-component.adoc[Printer Component]
-* xref:properties-component.adoc[Properties Component]
 * xref:protobuf-dataformat.adoc[Protobuf DataFormat]
 * xref:pubnub-component.adoc[PubNub Component]
 * xref:pulsar-component.adoc[Apache Pulsar Component]
@@ -395,3 +394,4 @@
 * xref:zipkin.adoc[Zipkin Component]
 * xref:zookeeper-master-component.adoc[ZooKeeper Master Component]
 * xref:zookeeper-component.adoc[ZooKeeper Component]
+* xref:properties-component.adoc[Properties Component]

@@ -45,8 +45,7 @@ public class PropertiesComponentPropertiesSourceTest {
         context.getRegistry().bind("my-ps-1", new PropertiesPropertiesSource(Ordered.HIGHEST, "ps1", "shared", "v1", "my-key-1", "my-val-1"));
         context.getRegistry().bind("my-ps-2", new PropertiesPropertiesSource(Ordered.LOWEST, "ps2", "shared", "v2", "my-key-2", "my-val-2"));
 
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        Properties properties = pc.loadProperties();
+        Properties properties = context.getPropertiesComponent().loadProperties();
 
         assertThat(properties.get("my-key-1")).isEqualTo("my-val-1");
         assertThat(properties.get("my-key-2")).isEqualTo("my-val-2");
@@ -64,10 +63,9 @@ public class PropertiesComponentPropertiesSourceTest {
         context.getRegistry().bind("my-ps-1", new PropertiesPropertiesSource("ps1", "my-key-1", "my-val-1"));
         context.getRegistry().bind("my-ps-2", new PropertiesPropertiesSource("ps2", "my-key-2", "my-val-2"));
 
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setInitialProperties(initial);
+        context.getPropertiesComponent().setInitialProperties(initial);
 
-        Properties properties = pc.loadProperties(k -> k.endsWith("-2"));
+        Properties properties = context.getPropertiesComponent().loadProperties(k -> k.endsWith("-2"));
 
         assertThat(properties).hasSize(2);
         assertThat(properties.get("initial-2")).isEqualTo("initial-val-2");
@@ -76,11 +74,11 @@ public class PropertiesComponentPropertiesSourceTest {
 
     @Test
     public void testDisablePropertiesSourceDiscovery() {
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setAutoDiscoverPropertiesSources(false);
 
         CamelContext context = new DefaultCamelContext();
-        context.addComponent("properties", pc);
+        PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
+        pc.setAutoDiscoverPropertiesSources(false);
+
         context.getRegistry().bind("my-ps-1", new PropertiesPropertiesSource("ps1", "my-key-1", "my-val-1"));
         context.getRegistry().bind("my-ps-2", new PropertiesPropertiesSource("ps2", "my-key-2", "my-val-2"));
 

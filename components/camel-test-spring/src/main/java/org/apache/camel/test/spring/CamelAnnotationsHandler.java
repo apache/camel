@@ -29,12 +29,12 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.processor.interceptor.DefaultDebugger;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -315,7 +315,7 @@ public final class CamelAnnotationsHandler {
         if (properties.size() != 0) {
             CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
                 public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
-                    PropertiesComponent pc = camelContext.getComponent("properties", PropertiesComponent.class);
+                    PropertiesComponent pc = camelContext.getPropertiesComponent();
                     Properties extra = new Properties();
                     for (Properties prop : properties) {
                         extra.putAll(prop);

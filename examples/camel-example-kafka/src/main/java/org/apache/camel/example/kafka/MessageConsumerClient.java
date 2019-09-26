@@ -18,7 +18,6 @@ package org.apache.camel.example.kafka;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +39,7 @@ public final class MessageConsumerClient {
 
         camelContext.addRoutes(new RouteBuilder() {
             public void configure() {
-                PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
-                pc.setLocation("classpath:application.properties");
+                camelContext.getPropertiesComponent().setLocation("classpath:application.properties");
 
                 log.info("About to start route: Kafka Server -> Log ");
 
