@@ -43,7 +43,6 @@ We have also modularized many of the core components and moved them out of `came
 - camel-language
 - camel-log
 - camel-mock
-- camel-properties
 - camel-ref
 - camel-rest
 - camel-saga
@@ -92,6 +91,11 @@ The `properties` component has configuring custom prefix and suffix tokens remov
 The `properties` component has some advanced options removed: `propertyPrefix`, `propertySuffix`, and `fallbackToUnaugmented`; these options was never really useable for end users anyway. The option `propertiesResolver` has also been removed as you should use `PropertiesSource` instead.
 
 The properties component will now use OS environment variables as preferred value. This means you can set an OS environment variable which will override any property values that has been set in property files, JVM system properties etc. You can configure this with the `environmentVariableMode` option on the properties component.
+
+The `properties` component no longer support using endpoints, such as `properties:myKey`. The properties component is now only a property placeholder service.
+You can therefore no longer lookup the properties component via `camelContext.getComponent("properties")`.
+Instead you can use `camelContext.getPropertiesComponent()`.
+
 
 === Removed components
 
