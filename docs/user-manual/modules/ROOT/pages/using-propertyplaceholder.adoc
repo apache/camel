@@ -140,48 +140,6 @@ You can have multiple placeholders in the same location, such as:
 
 location=file:${env:APP_HOME}/etc/${prop.name}.properties
 
-[[UsingPropertyPlaceholder-UsingSystemorEnvironmentVariablestoConfigurePropertyPrefixesandSuffixes]]
-== Using System or Environment Variables to Configure Property Prefixes and Suffixes
-
-From *Camel 2.12.5, 2.13.3, 2.14.0*: `propertyPrefix`,
-`propertySuffix` configuration properties support the use of
-placeholders for de-referencing JVM system properties and OS
-environments variables.
-
-Example:
-
-Assume the `PropertiesComponent` is configured with the following
-properties file:
-
-[source,java]
-----
-textdev.endpoint = result1
-test.endpoint = result2
-----
-
-The same properties file is then referenced from a route definition:
-
-
-[source,java]
-----
-PropertiesComponent pc = context.getComponent("properties",
-PropertiesComponent.class); pc.setPropertyPrefix("${stage}.");
-// ...
-context.addRoutes(new RouteBuilder() {
-    @Override
-    public void configure() throws Exception {
-        from("direct:start")
-            .to("properties:mock:{{endpoint}}");
-    }
-});
-----
-
-By using the configuration options `propertyPrefix` it's possible to
-change the target endpoint simply by changing the value of the system
-property `stage` either to `dev` (the message will be routed
-to `mock:result1`) or `test` (the message will be routed
-to `mock:result2`).
-
 [[UsingPropertyPlaceholder-ConfiguringinJavaDSL]]
 == Configuring in Java DSL
 
@@ -191,9 +149,8 @@ name `properties` such as:
 
 [source,java]
 ----
-PropertiesComponent pc = new PropertiesComponent();
+PropertiesComponent pc = camelContext.getPropertiesComponent();
 pc.setLocation("classpath:com/mycompany/myprop.properties");
-context.addComponent("properties", pc);
 ----
 
 [[UsingPropertyPlaceholder-ConfiguringinSpringXML]]
@@ -276,7 +233,7 @@ cool.end=mock:result
 
 // route
 from("direct:start")
-    .to("properties:{{cool.end}}");
+    .to("{{cool.end}}");
 ----
 
 You can also use placeholders as a part of the endpoint URI:
@@ -288,7 +245,7 @@ cool.foo=result
 
 // route
 from("direct:start")
-    .to("properties:mock:{{cool.foo}}");
+    .to("mock:{{cool.foo}}");
 ----
 
 In the example above the to endpoint will be resolved to
@@ -305,39 +262,12 @@ cool.concat=mock:{{cool.foo}}
 
 // route
 from("direct:start")
-    .to("properties:mock:{{cool.concat}}");
+    .to("mock:{{cool.concat}}");
 ----
 
 Notice how `cool.concat` refer to another property.
 
-The `properties:` component also offers you to override and provide a
-location in the given URI using the `locations` option:
-
-
-[source,java]
-----
-from("direct:start")
-    .to("properties:bar.end?locations=com/mycompany/bar.properties");
-----
-
-[[UsingPropertyPlaceholder-Examples]]
-== Examples
-
-You can also use property placeholders directly in the endpoint URIs
-without having to use `properties:`.
-
-
-[source,java]
-----
-// properties
-cool.foo=result
-
-// route
-from("direct:start")
-    .to("mock:{{cool.foo}}");
-----
-
-And you can use them in multiple wherever you want them:
+And you can use placeholders several times:
 
 [source,java]
 ----
@@ -434,43 +364,6 @@ Example using property placeholders in the attributes of `<camelContext>`:
         <to uri="mock:result"/>
     </route>
 </camelContext>
-----
-
-
-[[UsingPropertyPlaceholder-OverridingaPropertySettingUsingaJVMSystemProperty]]
-== Overriding a Property Setting Using a JVM System Property
-
-*Available as of Camel 2.5*
-
-It is possible to override a property value at runtime using a JVM
-System property without the need to restart the application to pick up
-the change. This may also be accomplished from the command line by
-creating a JVM System property of the same name as the property it
-replaces with a new value.
-
-Example:
-
-
-[source,java]
-----
-PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-pc.setCache(false);
-System.setProperty("cool.end", "mock:override");
-System.setProperty("cool.result", "override");
-context.addRoutes(new RouteBuilder() {
-    @Override
-    public void configure() throws Exception {
-        from("direct:start").to("properties:cool.end");
-        from("direct:foo").to("properties:mock:{{cool.result}}");
-    }
-});
-context.start();
-getMockEndpoint("mock:override").expectedMessageCount(2);
-template.sendBody("direct:start", "Hello World");
-template.sendBody("direct:foo", "Hello Foo");
-System.clearProperty("cool.end");
-System.clearProperty("cool.result");
-assertMockEndpointsSatisfied();
 ----
 
 
@@ -590,7 +483,7 @@ service. You can disable this by setting the attribute
 `useBlueprintPropertyResolver` to false on the `<camelContext>`
 definition.
 
-=== About placeholder syntaxes
+=== About placeholder syntax
 
 Notice how we can use the Camel syntax for placeholders `{{ }}` in the
 Camel route, which will lookup the value from OSGi blueprint.
@@ -1141,7 +1034,7 @@ example to call a service on localhost, maybe for unit testing etc:
 ----
 
 [[UsingPropertyPlaceholder-UsingCustomFunctions]]
-== Using Custom Functions
+== Using Custom Functions (advanced)
 
 *Available as of Camel 2.14.1*
 
@@ -1200,7 +1093,7 @@ To register a custom function from Java code is as shown below:
 
 [source,java]
 ----
-PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+PropertiesComponent pc = (org.apache.camel.componennt.properties.PropertiesComponent) context.getPropertiesComponent();
 pc.addFunction(new MyBeerFunction());
 ----
 
