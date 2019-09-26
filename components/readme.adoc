@@ -1090,8 +1090,6 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
-| link:camel-properties/src/main/docs/properties.adoc[Properties] (camel-properties) | 2.3 | Camel Properties component
-
 | link:camel-reactive-executor-vertx/src/main/docs/reactive-executor-vertx.adoc[Reactive Executor Vertx] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert X
 
 | link:camel-reactor/src/main/docs/reactor.adoc[Reactor] (camel-reactor) | 2.20 | Reactor based back-end for Camel's reactive streams component
