@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The aws-s3 component is used for storing and retrieving objecct from Amazon
+ * The aws-s3 component is used for storing and retrieving object from Amazon
  * S3 Storage Service.
  */
 @UriEndpoint(firstVersion = "2.8.0", scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3://bucketNameOrArn", label = "cloud,file")
