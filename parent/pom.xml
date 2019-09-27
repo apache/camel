@@ -170,7 +170,7 @@
         <docker-java-bundle-version>3.1.5_1</docker-java-bundle-version>
         <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
         <dozer-version>6.4.1</dozer-version>
-        <drools-version>7.26.0.Final</drools-version>
+        <drools-version>7.27.0.Final</drools-version>
         <dropbox-version>3.1.1</dropbox-version>
         <debezium-version>0.9.5.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.15</debezium-mysql-connector-version>
