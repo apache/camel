@@ -1,7 +1,8 @@
-[[irc-component]]
-= IRC Component
+== IRC Component
 
 *Available as of Camel version 1.1*
+*Available as of Camel version 1.1*
+
 
 
 The IRC component implements an
@@ -63,7 +64,7 @@ irc:hostname:port
 
 with the following path and query parameters:
 
-=== Path Parameters (2 parameters):
+==== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -74,7 +75,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (25 parameters):
+==== Query Parameters (25 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
