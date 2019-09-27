@@ -278,7 +278,7 @@
         <hystrix-bundle-version>1.5.18_1</hystrix-bundle-version>
         <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
         <ical4j-version>1.0.7</ical4j-version>
-        <ignite-version>2.7.5</ignite-version>
+        <ignite-version>2.7.6</ignite-version>
         <infinispan-version>9.4.16.Final</infinispan-version>
         <infinispan-spring-boot-version>2.1.7.Final</infinispan-spring-boot-version>
         <influx-java-driver-version>2.15</influx-java-driver-version>
