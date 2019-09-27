@@ -45,7 +45,20 @@ public interface NettyHttpBinding {
     Message toCamelMessage(FullHttpRequest request, Exchange exchange, NettyHttpConfiguration configuration) throws Exception;
 
     /**
+     * Binds from Netty {@link InboundStreamHttpRequest} to Camel {@link Message}.
+     * <p/>
+     *
+     * @param request       the netty http request
+     * @param exchange      the exchange that should contain the returned message.
+     * @param configuration the endpoint configuration
+     * @return the message to store on the given exchange
+     * @throws Exception is thrown if error during binding
+     */
+    Message toCamelMessage(InboundStreamHttpRequest request, Exchange exchange, NettyHttpConfiguration configuration) throws Exception;
+
+    /**
      * Binds from Netty {@link HttpRequest} to Camel headers as a {@link Map}.
+     * Will use the <tt>populateCamelHeaders</tt> method for populating the headers.
      *
      * @param request       the netty http request
      * @param headers       the Camel headers that should be populated
@@ -53,7 +66,7 @@ public interface NettyHttpBinding {
      * @param configuration the endpoint configuration
      * @throws Exception is thrown if error during binding
      */
-    void populateCamelHeaders(FullHttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception;
+    void populateCamelHeaders(HttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception;
 
     /**
      * Binds from Netty {@link HttpResponse} to Camel {@link Message}.
@@ -69,6 +82,19 @@ public interface NettyHttpBinding {
     Message toCamelMessage(FullHttpResponse response, Exchange exchange, NettyHttpConfiguration configuration) throws Exception;
 
     /**
+     * Binds from Netty {@link InboundStreamHttpResponse} to Camel {@link Message}.
+     * <p/>
+     * Will use the <tt>populateCamelHeaders</tt> method for populating the headers.
+     *
+     * @param response      the netty http response
+     * @param exchange      the exchange that should contain the returned message.
+     * @param configuration the endpoint configuration
+     * @return the message to store on the given exchange
+     * @throws Exception is thrown if error during binding
+     */
+    Message toCamelMessage(InboundStreamHttpResponse response, Exchange exchange, NettyHttpConfiguration configuration) throws Exception;
+
+    /**
      * Binds from Netty {@link HttpResponse} to Camel headers as a {@link Map}.
      *
      * @param response      the netty http response
@@ -77,7 +103,7 @@ public interface NettyHttpBinding {
      * @param configuration the endpoint configuration
      * @throws Exception is thrown if error during binding
      */
-    void populateCamelHeaders(FullHttpResponse response, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception;
+    void populateCamelHeaders(HttpResponse response, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception;
 
     /**
      * Binds from Camel {@link Message} to Netty {@link HttpResponse}.

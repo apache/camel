@@ -115,8 +115,14 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
     public Exchange createExchange(ChannelHandlerContext ctx, Object message) throws Exception {
         Exchange exchange = createExchange();
 
-        FullHttpRequest request = (FullHttpRequest) message;
-        Message in = getNettyHttpBinding().toCamelMessage(request, exchange, getConfiguration());
+        Message in;
+        if (message instanceof FullHttpRequest) {
+            FullHttpRequest request = (FullHttpRequest) message;
+            in = getNettyHttpBinding().toCamelMessage(request, exchange, getConfiguration());
+        } else {
+            InboundStreamHttpRequest request = (InboundStreamHttpRequest) message;
+            in = getNettyHttpBinding().toCamelMessage(request, exchange, getConfiguration());
+        }
         exchange.setIn(in);
 
         // setup the common message headers

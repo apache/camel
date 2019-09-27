@@ -35,6 +35,8 @@ import org.apache.camel.component.netty.ClientInitializerFactory;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.component.netty.http.handlers.HttpClientChannelHandler;
+import org.apache.camel.component.netty.http.handlers.HttpInboundStreamHandler;
+import org.apache.camel.component.netty.http.handlers.HttpOutboundStreamHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,8 +108,11 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             }
             pipeline.addLast("decoder-" + x, decoder);
         }
+        if (configuration.isDisableStreamCache()) {
+            pipeline.addLast("inbound-streamer", new HttpInboundStreamHandler());
+        }
         pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
-        pipeline.addLast("streamer", new CustomChunkedWriteHandler());
+        pipeline.addLast("outbound-streamer", new HttpOutboundStreamHandler());
 
         if (producer.getConfiguration().getRequestTimeout() > 0) {
             if (LOG.isTraceEnabled()) {
