@@ -247,3 +247,14 @@ from("ircs:nick@myserver:1234/#mychannelname?namesOnJoin=true&onReply=true")
 			.to("mock:result").stop();
 -----------------------------------------------------------------------------
 
+== Sending to different channel or a person
+
+If you need to send messages to a different channel (or a person) which is not defined on IRC endpoint, you can specify a different destination in a message header.
+
+You can specify the destination in the following header:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=====================================================================
+|Header |Type |Description
+|`irc.sendTo` |`String` |The channel (or the person) name.
+|=====================================================================
