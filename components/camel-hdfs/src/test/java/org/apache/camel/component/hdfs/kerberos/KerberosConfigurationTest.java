@@ -55,7 +55,7 @@ public class KerberosConfigurationTest {
         assertThat(underTest.get("fs.defaultFS"), is("hdfs://hfdsNamedService"));
     }
 
-    @Test(expected = FileNotFoundException.class)
+    @Test
     public void newKerberosConfigurationWithMissingKerberosConfigFile() {
         // given
         List<String> namedNodes = Arrays.asList("kerb_node_01.example.com:8021", "kerb_node_02.example.com:8022");
