@@ -1,6 +1,6 @@
 [[filter-eip]]
 = Filter EIP
-:page-source: core/camel-core/src/main/docs/eips/filter-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/filter-eip.adoc
 
 The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
 Filter] from the xref:enterprise-integration-patterns.adoc[EIP patterns]

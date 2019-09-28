@@ -324,6 +324,10 @@
                                             <methodPattern>getFileThumbnail</methodPattern>
                                             <methodAlias>thumbnail</methodAlias>
                                         </alias>
+                                        <alias>
+                                            <methodPattern>checkUpload</methodPattern>
+                                            <methodAlias>canUpload</methodAlias>
+                                        </alias>
                                     </aliases>
                                     <nullableOptions>
                                         <nullableOption>fields</nullableOption>

@@ -1,6 +1,6 @@
+[[robotframework-component]]
 = Robot Framework Component
 == Robotframework Component
-
 *Available as of Camel version 3.0*
 
 The *robotframework:* component allows for processing camel exchanges

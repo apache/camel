@@ -340,7 +340,6 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         return new KeyValueHolder<>(name, new KeyValueHolder<>(service, dict));
     }
 
-
     /**
      * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}
      */

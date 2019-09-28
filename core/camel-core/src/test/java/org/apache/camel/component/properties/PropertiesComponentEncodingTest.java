@@ -47,10 +47,8 @@ public class PropertiesComponentEncodingTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        PropertiesComponent prop = new PropertiesComponent();
-        prop.setLocation("classpath:org/apache/camel/component/properties/myutf8.properties");
-        prop.setEncoding("UTF-8");
-        context.addComponent("properties", prop);
+        context.getPropertiesComponent().setEncoding("UTF-8");
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myutf8.properties");
         return context;
     }
 

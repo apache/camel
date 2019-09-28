@@ -130,7 +130,7 @@ To enable camel-zipkin you need to configure first
 ----
 ZipkinTracer zipkin = new ZipkinTracer();
 // Configure a reporter, which controls how often spans are sent
-//   (the dependency is org.apache.zipkin.reporter2:zipkin-sender-okhttp3)
+//   (the dependency is io.zipkin.reporter2:zipkin-sender-okhttp3)
 sender = OkHttpSender.create("http://127.0.0.1:9411/api/v2/spans");
 zipkin.setSpanReporter(AsyncReporter.create(sender));
 // and then add zipkin to the CamelContext
@@ -146,7 +146,7 @@ zipkin tracer beans. Camel will automatically discover and use them.
 [source,xml]
 ----
   <!-- configure how to reporter spans to a Zipkin collector
-          (the dependency is org.apache.zipkin.reporter2:zipkin-reporter-spring-beans) -->
+          (the dependency is io.zipkin.reporter2:zipkin-reporter-spring-beans) -->
   <bean id="http" class="zipkin2.reporter.beans.AsyncReporterFactoryBean">
     <property name="sender">
       <bean id="sender" class="zipkin2.reporter.beans.OkHttpSenderFactoryBean">
@@ -279,6 +279,22 @@ This is not a recommended approach, but gets you up and running quickly
 without doing any service name mappings. However, when you have multiple
 systems across your infrastructure, then you should consider using human-readable service names, that you map to instead of using the camel endpoint
 uris.
+
+[[camel-zipkin-CustomTags]]
+== Custom Tags
+
+If you need to send custom tags to Zipkin server, add an exchange property with name "camel.client.customtags" and value as a Map of your custom tags. Refrain from adding too many custom tags in production environment.
+
+Following is one example of how custom tags can be added:
+
+[source,java]
+----
+Map<String, String> customTags = new HashMap<>();
+customTags.put("key1", "value1");
+customTags.put("key2", "value2");
+exchange.setProperty("camel.client.customtags", customTags);
+----
+
 
 [[camel-zipkin-camel-zipin-starter]]
 == camel-zipin-starter

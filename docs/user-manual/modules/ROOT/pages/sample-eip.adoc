@@ -1,6 +1,6 @@
 [[sample-eip]]
 = Sample EIP
-:page-source: core/camel-core/src/main/docs/eips/sample-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/sample-eip.adoc
 *Available as of Camel 2.1*
 
 A sampling throttler allows you to extract a sample of the exchanges from the traffic through a route. +

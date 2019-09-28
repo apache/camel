@@ -1,6 +1,6 @@
 [[inOnly-eip]]
 = In Only EIP
-:page-source: core/camel-core/src/main/docs/eips/inOnly-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/inOnly-eip.adoc
 
 The *inOnly:* EIP define an InOnly ExchangePattern.
 

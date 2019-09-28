@@ -19,6 +19,8 @@ package org.apache.camel.example.client;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,23 +30,28 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Requires that the JMS broker is running, as well as CamelServer
  */
 public final class CamelClient {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelClient.class);
+
     private CamelClient() {
         // Helper class
     }
 
     // START SNIPPET: e1
     public static void main(final String[] args) throws Exception {
-        System.out.println("Notice this client requires that the CamelServer is already running!");
+        LOG.info("Notice this client requires that the CamelServer is already running!");
 
         AbstractApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
 
         // get the camel template for Spring template style sending of messages (= producer)
         ProducerTemplate camelTemplate = context.getBean("camelTemplate", ProducerTemplate.class);
 
-        System.out.println("Invoking the multiply with 22");
+        LOG.info("Invoking the multiply with 22");
+
         // as opposed to the CamelClientRemoting example we need to define the service URI in this java code
-        int response = (Integer)camelTemplate.sendBody("jms:queue:numbers", ExchangePattern.InOut, 22);
-        System.out.println("... the result is: " + response);
+        int response = camelTemplate.requestBody("jms:queue:numbers", 22, int.class);
+
+        LOG.info("... the result is: {}", response);
 
         // we're done so let's properly close the application context
         IOHelper.close(context);

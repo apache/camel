@@ -19,17 +19,15 @@ package org.apache.camel.spring.boot.routefilter;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.test.spring.CamelSpringBootRunner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@RunWith(CamelSpringBootRunner.class)
+@CamelSpringBootTest
 @SpringBootApplication
-@SpringBootTest(classes = BarTest.class,
-    properties = {"camel.springboot.java-routes-include-pattern=**/Bar*"})
+@SpringBootTest(classes = BarTest.class, properties = {"camel.springboot.java-routes-include-pattern=**/Bar*"})
 public class BarTest {
 
     @Autowired

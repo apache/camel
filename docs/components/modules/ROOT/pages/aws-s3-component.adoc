@@ -28,7 +28,7 @@ For example in order to read file `hello.txt` from bucket `helloBucket`, use the
 
 [source,java]
 --------------------------------------------------------------------------------
-from("aws-s3:helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=hello.txt")
+from("aws-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=hello.txt")
   .to("file:/var/downloaded");
 --------------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ The AWS S3 Storage Service component supports 5 options, which are listed below.
 The AWS S3 Storage Service endpoint is configured using URI syntax:
 
 ----
-aws-s3:bucketNameOrArn
+aws-s3://bucketNameOrArn
 ----
 
 with the following path and query parameters:

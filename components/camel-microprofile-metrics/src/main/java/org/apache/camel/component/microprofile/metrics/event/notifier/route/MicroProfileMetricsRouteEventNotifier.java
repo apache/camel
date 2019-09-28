@@ -18,11 +18,21 @@ package org.apache.camel.component.microprofile.metrics.event.notifier.route;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.microprofile.metrics.event.notifier.AbstractMicroProfileMetricsEventNotifier;
+import org.apache.camel.component.microprofile.metrics.gauge.AtomicIntegerGauge;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.RouteEvent;
-import org.eclipse.microprofile.metrics.ConcurrentGauge;
+import org.eclipse.microprofile.metrics.Metadata;
+import org.eclipse.microprofile.metrics.MetadataBuilder;
+import org.eclipse.microprofile.metrics.Metric;
+import org.eclipse.microprofile.metrics.MetricFilter;
+import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry;
+import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.Tag;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ROUTES_ADDED_DESCRIPTION;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ROUTES_ADDED_DISPLAY_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ROUTES_RUNNING_DESCRIPTION;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ROUTES_RUNNING_DISPLAY_NAME;
 import static org.apache.camel.spi.CamelEvent.Type.RouteAdded;
 import static org.apache.camel.spi.CamelEvent.Type.RouteRemoved;
 import static org.apache.camel.spi.CamelEvent.Type.RouteStarted;
@@ -30,8 +40,8 @@ import static org.apache.camel.spi.CamelEvent.Type.RouteStopped;
 
 public class MicroProfileMetricsRouteEventNotifier extends AbstractMicroProfileMetricsEventNotifier<RouteEvent> {
 
-    private ConcurrentGauge routesAdded;
-    private ConcurrentGauge routesRunning;
+    private AtomicIntegerGauge routesAdded = new AtomicIntegerGauge();
+    private AtomicIntegerGauge routesRunning = new AtomicIntegerGauge();
     private MicroProfileMetricsRouteEventNotifierNamingStrategy namingStrategy = MicroProfileMetricsRouteEventNotifierNamingStrategy.DEFAULT;
 
     public MicroProfileMetricsRouteEventNotifier() {
@@ -45,8 +55,33 @@ public class MicroProfileMetricsRouteEventNotifier extends AbstractMicroProfileM
         CamelContext camelContext = getCamelContext();
         MetricRegistry metricRegistry = getMetricRegistry();
         Tag[] tags = namingStrategy.getTags(camelContext);
-        routesAdded = metricRegistry.concurrentGauge(namingStrategy.getRouteAddedName(), tags);
-        routesRunning = metricRegistry.concurrentGauge(namingStrategy.getRouteRunningName(), tags);
+
+        String routeAddedName = namingStrategy.getRouteAddedName();
+        String routeRunningName = namingStrategy.getRouteRunningName();
+
+        metricRegistry.removeMatching(new MetricFilter() {
+            @Override
+            public boolean matches(MetricID metricID, Metric metric) {
+                return metricID.getName().equals(routeAddedName) || metricID.getName().equals(routeRunningName);
+            }
+        });
+
+        Metadata routesAddedMetadata = new MetadataBuilder()
+            .withName(routeAddedName)
+            .withDisplayName(ROUTES_ADDED_DISPLAY_NAME)
+            .withDescription(ROUTES_ADDED_DESCRIPTION)
+            .withType(MetricType.GAUGE)
+            .build();
+
+        metricRegistry.register(routesAddedMetadata, routesAdded, tags);
+
+        Metadata routesRunningMetadata = new MetadataBuilder()
+            .withName(routeRunningName)
+            .withDisplayName(ROUTES_RUNNING_DISPLAY_NAME)
+            .withDescription(ROUTES_RUNNING_DESCRIPTION)
+            .withType(MetricType.GAUGE)
+            .build();
+        metricRegistry.register(routesRunningMetadata, routesRunning, tags);
     }
 
     @Override
@@ -56,13 +91,13 @@ public class MicroProfileMetricsRouteEventNotifier extends AbstractMicroProfileM
         }
 
         if (event.getType().equals(RouteAdded)) {
-            routesAdded.inc();
+            routesAdded.increment();
         } else if (event.getType().equals(RouteRemoved)) {
-            routesAdded.dec();
+            routesAdded.decrement();
         } else if (event.getType().equals(RouteStarted)) {
-            routesRunning.inc();
+            routesRunning.increment();
         } else if (event.getType().equals(RouteStopped)) {
-            routesRunning.dec();
+            routesRunning.decrement();
         }
     }
 

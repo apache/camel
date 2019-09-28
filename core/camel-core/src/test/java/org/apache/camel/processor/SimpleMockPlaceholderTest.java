@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.junit.Test;
 
 public class SimpleMockPlaceholderTest extends ContextTestSupport {
@@ -35,9 +34,7 @@ public class SimpleMockPlaceholderTest extends ContextTestSupport {
         myProp.put("foo", "log:foo");
         myProp.put("end", "result");
 
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setInitialProperties(myProp);
-        context.addComponent("properties", pc);
+        context.getPropertiesComponent().setInitialProperties(myProp);
 
         return context;
     }

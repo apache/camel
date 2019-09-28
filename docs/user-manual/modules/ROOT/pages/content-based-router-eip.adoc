@@ -1,6 +1,6 @@
 [[contentBasedRouter-eip]]
 = Content Based Router
-:page-source: core/camel-core/src/main/docs/eips/content-based-router-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/content-based-router-eip.adoc
 
 The
 http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
@@ -67,7 +67,7 @@ problems with the Java DSL, accepting using `when` or `otherwise`.
 ----
 
 For further examples of this pattern in use you could look at the
-https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/camel/processor/ChoiceTest.java[junit test case].
+https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/ChoiceTest.java[junit test case].
 
 [[ContentBasedRouter-UsingThisPattern]]
 == Using This Pattern

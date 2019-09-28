@@ -64,9 +64,7 @@ public class XPathFunctionsTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: ex
                 // setup properties component
-                PropertiesComponent properties = new PropertiesComponent();
-                properties.setLocation("classpath:org/apache/camel/builder/xml/myprop.properties");
-                context.addComponent("properties", properties);
+                context.getPropertiesComponent().setLocation("classpath:org/apache/camel/builder/xml/myprop.properties");
 
                 // myprop.properties contains the following properties
                 // foo=Camel
@@ -81,7 +79,7 @@ public class XPathFunctionsTest extends ContextTestSupport {
                     // here we use the simple language to evaluate the
                     // expression
                     // which at runtime will be evaluated to 'Donkey Kong'
-                    .when().xpath("//name = function:simple('Donkey ${properties:bar}')").to("mock:donkey").otherwise().to("mock:other").end();
+                    .when().xpath("//name = function:simple('Donkey {{bar}}')").to("mock:donkey").otherwise().to("mock:other").end();
                 // END SNIPPET: ex
             }
         };

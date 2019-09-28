@@ -1,6 +1,6 @@
 [[idempotentConsumer-eip]]
 = Idempotent Consumer EIP
-:page-source: core/camel-core/src/main/docs/eips/idempotentConsumer-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/idempotentConsumer-eip.adoc
 
 The
 http://www.enterpriseintegrationpatterns.com/IdempotentReceiver.html[Idempotent

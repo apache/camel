@@ -749,12 +749,9 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     PropertiesComponent getPropertiesComponent();
 
     /**
-     * Returns the configured properties component or create one if none has been configured.
-     *
-     * @param autoCreate whether the component should be created if none is configured
-     * @return the properties component
+     * Sets a custom properties component to be used.
      */
-    PropertiesComponent getPropertiesComponent(boolean autoCreate);
+    void setPropertiesComponent(PropertiesComponent propertiesComponent);
 
     /**
      * Gets a readonly list with the names of the languages currently registered.

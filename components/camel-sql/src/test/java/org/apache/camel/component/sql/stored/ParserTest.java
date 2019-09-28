@@ -22,13 +22,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.component.sql.stored.template.ast.InOutParameter;
 import org.apache.camel.component.sql.stored.template.ast.InParameter;
 import org.apache.camel.component.sql.stored.template.ast.OutParameter;
 import org.apache.camel.component.sql.stored.template.ast.ParseRuntimeException;
 import org.apache.camel.component.sql.stored.template.ast.Template;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
@@ -118,7 +118,7 @@ public class ParserTest extends CamelTestSupport {
 
     @Test
     public void colonInSimple() {
-        PropertiesComponent pc = (PropertiesComponent) context.getComponent("properties");
+        PropertiesComponent pc = context.getPropertiesComponent();
         pc.setLocation("classpath:jndi.properties");
         Exchange exchange = createExchangeWithBody(1);
         Template template = parser.parseTemplate("ADDNUMBERS2(-1342 ${properties:java.naming.factory.initial})");

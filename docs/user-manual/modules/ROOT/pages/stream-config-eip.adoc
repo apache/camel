@@ -1,6 +1,6 @@
 [[stream-config-eip]]
 = Stream-config EIP
-:page-source: core/camel-core/src/main/docs/eips/stream-config-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/stream-config-eip.adoc
 
 Stream-processing resequence EIP
 

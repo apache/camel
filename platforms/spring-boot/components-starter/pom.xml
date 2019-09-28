@@ -298,7 +298,6 @@
     <module>camel-pg-replication-slot-starter</module>
     <module>camel-pgevent-starter</module>
     <module>camel-printer-starter</module>
-    <module>camel-properties-starter</module>
     <module>camel-protobuf-starter</module>
     <module>camel-pubnub-starter</module>
     <module>camel-pulsar-starter</module>

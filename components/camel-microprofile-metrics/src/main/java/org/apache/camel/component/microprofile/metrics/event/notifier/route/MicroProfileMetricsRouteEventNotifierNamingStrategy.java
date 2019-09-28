@@ -17,15 +17,10 @@
 package org.apache.camel.component.microprofile.metrics.event.notifier.route;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
-import org.apache.camel.component.microprofile.metrics.event.notifier.MicroProfileMetricsEventNotifierService;
-import org.apache.camel.spi.CamelEvent;
 import org.eclipse.microprofile.metrics.Tag;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTES_ADDED_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTES_RUNNING_METRIC_NAME;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EVENT_TYPE_TAG;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.SERVICE_NAME;
 
 public interface MicroProfileMetricsRouteEventNotifierNamingStrategy {
 
@@ -45,11 +40,8 @@ public interface MicroProfileMetricsRouteEventNotifierNamingStrategy {
     String getRouteRunningName();
 
     default Tag[] getTags(CamelContext camelContext) {
-        String[] tags = {
-            SERVICE_NAME + "=" + MicroProfileMetricsEventNotifierService.class.getSimpleName(),
-            CAMEL_CONTEXT_TAG + "=" + camelContext.getName(),
-            EVENT_TYPE_TAG + "=" + CamelEvent.RouteEvent.class.getSimpleName(),
+        return new Tag[] {
+            new Tag(CAMEL_CONTEXT_TAG, camelContext.getName())
         };
-        return MicroProfileMetricsHelper.parseTagArray(tags);
     }
 }

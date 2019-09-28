@@ -84,13 +84,19 @@ public class CamelAutoConfiguration {
     }
 
     static CamelContext doConfigureCamelContext(ApplicationContext applicationContext,
-                                         CamelContext camelContext,
-                                         CamelConfigurationProperties config) throws Exception {
+                                                CamelContext camelContext,
+                                                CamelConfigurationProperties config) throws Exception {
 
         camelContext.init();
 
-        final Map<String, BeanRepository> repositories = applicationContext.getBeansOfType(BeanRepository.class);
+        // initialize properties component eager
+        PropertiesComponent pc = applicationContext.getBeanProvider(PropertiesComponent.class).getIfAvailable();
+        if (pc != null) {
+            pc.setCamelContext(camelContext);
+            camelContext.setPropertiesComponent(pc);
+        }
 
+        final Map<String, BeanRepository> repositories = applicationContext.getBeansOfType(BeanRepository.class);
         if (!repositories.isEmpty()) {
             List<BeanRepository> reps = new ArrayList<>();
             // include default bean repository as well
@@ -126,6 +132,7 @@ public class CamelAutoConfiguration {
         DefaultConfigurationConfigurer.configure(camelContext, config);
         // lookup and configure SPI beans
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
+
 
         return camelContext;
     }
@@ -215,14 +222,10 @@ public class CamelAutoConfiguration {
     // (PropertiesComponent extends ServiceSupport) would be used for bean
     // destruction. And we want Camel to handle the lifecycle.
     @Bean(destroyMethod = "")
-    PropertiesComponent properties(CamelContext camelContext, PropertiesParser parser) {
-        if (camelContext.hasComponent("properties") != null) {
-            return camelContext.getComponent("properties", PropertiesComponent.class);
-        } else {
-            PropertiesComponent pc = new PropertiesComponent();
-            pc.setPropertiesParser(parser);
-            return pc;
-        }
+    PropertiesComponent properties(PropertiesParser parser) {
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setPropertiesParser(parser);
+        return pc;
     }
 
     /**

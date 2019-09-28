@@ -1,15 +1,15 @@
 [[to-eip]]
 = To EIP
-:page-source: core/camel-core/src/main/docs/eips/to-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/to-eip.adoc
 
 See message related documentation
 
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message.adoc[Message]
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-bus.adoc[Message Bus]
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-channel.adoc[Message Channel]
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-endpoint.adoc[Message Endpoint]
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-router.adoc[Message Router]
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message Translator]
+* xref:message.adoc[Message]
+* xref:message-bus.adoc[Message Bus]
+* xref:message-channel.adoc[Message Channel]
+* xref:message-endpoint.adoc[Message Endpoint]
+* xref:message-router.adoc[Message Router]
+* xref:message-translator.adoc[Message Translator]
 
 == Options
 

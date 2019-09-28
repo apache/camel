@@ -1,6 +1,6 @@
 [[delay-eip]]
 = Delay EIP
-:page-source: core/camel-core/src/main/docs/eips/delay-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/delay-eip.adoc
 The Delayer Pattern allows you to delay the delivery of messages to some destination.
 
 == Options

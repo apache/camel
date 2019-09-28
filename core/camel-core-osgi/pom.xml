@@ -31,7 +31,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: Core OSGi</name>
-    <description>Using Camel with OSGi</description>
+    <description>Camel Core OSGi support</description>
 
     <properties>
         <camel.osgi.import>
@@ -49,11 +49,12 @@
 
     <dependencies>
 
-        <!-- core required: org.apache.camel.impl, org.apache.camel.impl.converter -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
         </dependency>
+
+        <!-- osgi -->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.cmpn</artifactId>

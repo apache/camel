@@ -34,9 +34,7 @@ public class PulsarTestSupport extends ContainerAwareTestSupport {
     }
 
     public static GenericContainer pulsarContainer() {
-        return new GenericContainer(CONTAINER_IMAGE)
-            .withNetworkAliases(CONTAINER_NAME)
-            .withExposedPorts(BROKER_PORT, BROKER_HTTP_PORT)
+        return new GenericContainer(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME).withExposedPorts(BROKER_PORT, BROKER_HTTP_PORT)
             .withCommand("/pulsar/bin/pulsar", "standalone", "--no-functions-worker", "-nss")
             .waitingFor(Wait.forHttp(WAIT_FOR_ENDPOINT).forStatusCode(200).forPort(BROKER_HTTP_PORT));
     }

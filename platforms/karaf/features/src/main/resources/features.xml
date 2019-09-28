@@ -44,14 +44,15 @@
   <feature name='camel-core' version='${project.version}' start-level='50'>
     <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <bundle dependency='true'>mvn:com.github.ben-manes.caffeine/caffeine/${caffeine-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.camel/camel-util-json/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/spi-annotations/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-management-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-util/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-util-json/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-support/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-management/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-core-engine/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cloud/${project.version}</bundle>
@@ -70,7 +71,6 @@
     <bundle>mvn:org.apache.camel/camel-language/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-log/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mock/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-properties/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ref/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rest/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-saga/${project.version}</bundle>
@@ -2795,10 +2795,10 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:io.zipkin.brave/brave/${brave-zipkin-version}</bundle>
     <bundle dependency='true'>wrap:mvn:io.zipkin.brave/brave-context-slf4j/${brave-zipkin-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.zipkin.zipkin2/zipkin/${zipkin-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.zipkin.reporter2/zipkin-reporter/${zipkin-reporter-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.zipkin.reporter2/zipkin-sender-urlconnection/${zipkin-reporter-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.zipkin.reporter2/zipkin-sender-libthrift/${zipkin-reporter-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.zipkin2/zipkin/${zipkin-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.reporter2/zipkin-reporter/${zipkin-reporter-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.reporter2/zipkin-sender-urlconnection/${zipkin-reporter-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.reporter2/zipkin-sender-libthrift/${zipkin-reporter-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.thrift/libthrift/${libthrift-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-zipkin/${project.version}</bundle>
   </feature>

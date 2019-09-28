@@ -47,7 +47,6 @@
         <module>camel-language</module>
         <module>camel-log</module>
         <module>camel-mock</module>
-        <module>camel-properties</module>
         <module>camel-ref</module>
         <module>camel-rest</module>
         <module>camel-seda</module>
@@ -67,6 +66,7 @@
         <module>camel-testcontainers</module>
         <module>camel-testcontainers-spring</module>
         <module>camel-test-junit5</module>
+        <module>camel-test-spring-junit5</module>
         <module>camel-blueprint</module>
         <module>camel-spring</module>
         <module>camel-groovy</module>

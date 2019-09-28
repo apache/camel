@@ -1,6 +1,6 @@
 [[serviceCall-eip]]
 = Service Call EIP
-:page-source: core/camel-core/src/main/docs/eips/serviceCall-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/serviceCall-eip.adoc
 *Available as of Camel 2.18*
 
 The Service Call EIP allows to call remote services in a distributed system.

@@ -35,7 +35,7 @@ import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeade
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.TOPIC_NAME;
 
 public final class PulsarMessageUtils {
-    
+
     private PulsarMessageUtils() {
     }
 

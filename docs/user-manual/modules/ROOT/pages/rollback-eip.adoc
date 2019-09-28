@@ -1,6 +1,6 @@
 [[rollback-eip]]
 = Rollback EIP
-:page-source: core/camel-core/src/main/docs/eips/rollback-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/rollback-eip.adoc
 Rollback might be needed if there is a transaction or transactional pieces in your design.
 
 Camel recommends supporting the
@@ -10,7 +10,7 @@ using spring transactions.
 
 image::eip/TransactionalClientSolution.gif[image]
 
-Transaction Oriented Endpoints like https://github.com/apache/camel/blob/master/components/camel-jms/src/main/docs/jms-component.adoc[JMS] support using a
+Transaction Oriented Endpoints like xref:components::jms-component.adoc[JMS] support using a
 transaction for both inbound and outbound message exchanges. Endpoints
 that support transactions will participate in the current transaction
 context that they are called from.
@@ -116,7 +116,7 @@ from("activemq:queue:foo").policy(notsupported).to("activemq:queue:bar");
 
 === OSGi Blueprint
 
-If you are using https://github.com/apache/camel/blob/master/docs/user-manual/en/using-osgi-blueprint-with-camel.adoc[OSGi
+If you are using xref:using-osgi-blueprint-with-camel.adoc[OSGi
 Blueprint] then you most likely have to explicit declare a policy and
 refer to the policy from the transacted in the route.
 
@@ -189,7 +189,7 @@ Transaction error handler
 When a route is marked as transacted using *transacted* Camel will
 automatic use the
 xref:transactionerrorhandler.adoc[TransactionErrorHandler] as
-https://github.com/apache/camel/blob/master/docs/user-manual/en/error-handler.adoc[Error Handler]. It supports basically the same
+xref:error-handler.adoc[Error Handler]. It supports basically the same
 feature set as the xref:defaulterrorhandler.adoc[DefaultErrorHandler],
 so you can for instance use xref:exception-clause.adoc[Exception Clause]
 as well.

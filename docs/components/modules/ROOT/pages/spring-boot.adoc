@@ -90,7 +90,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 129 options, which are listed below.
+The component supports 139 options, which are listed below.
 
 
 
@@ -124,6 +124,16 @@ The component supports 129 options, which are listed below.
 | *camel.clustered.controller.namespace* | The default namespace. |  | String
 | *camel.clustered.controller.routes* | Routes configuration. |  | Map
 | *camel.component.enabled* | Global option to enable/disable component auto-configuration, default is true. | true | Boolean
+| *camel.component.properties.auto-discover-properties-sources* | Whether to automatically discovery instances of PropertiesSource from registry and service factory. | true | Boolean
+| *camel.component.properties.default-fallback-enabled* | If false, the component does not attempt to find a default for the key by looking after the colon separator. | true | Boolean
+| *camel.component.properties.encoding* | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by java.util.Properties#load(java.io.InputStream) |  | String
+| *camel.component.properties.environment-variable-mode* | Sets the OS environment variables mode (0 = never, 1 = fallback, 2 = override). The default mode (override) is to use OS environment variables if present, and override any existing properties. OS environment variable mode is checked before JVM system property mode | 2 | Integer
+| *camel.component.properties.ignore-missing-location* | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | Boolean
+| *camel.component.properties.initial-properties* | Sets initial properties which will be used before any locations are resolved. The option is a java.util.Properties type. |  | String
+| *camel.component.properties.location* | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
+| *camel.component.properties.override-properties* | Sets a special list of override properties that take precedence and will use first, if a property exist. The option is a java.util.Properties type. |  | String
+| *camel.component.properties.properties-parser* | To use a custom PropertiesParser. The option is a org.apache.camel.component.properties.PropertiesParser type. |  | String
+| *camel.component.properties.system-properties-mode* | Sets the JVM system property mode (0 = never, 1 = fallback, 2 = override). The default mode (override) is to use system properties if present, and override any existing properties. OS environment variable mode is checked before JVM system property mode | 2 | Integer
 | *camel.dataformat.enabled* | Global option to enable/disable dataformat auto-configuration, default is true. | true | Boolean
 | *camel.health.check.routes.enabled* | Global option to enable/disable Camel extended health check for routes, default is false. | false | Boolean
 | *camel.health.check.routes.threshold* | General health check configurations. |  | Map
@@ -578,7 +588,7 @@ The Rest-DSL XML files should be Camel XML rests (not CamelContext) such as
 ----
 
 [[SpringBoot-Testing]]
-== Testing
+== Testing the JUnit 4 way
 For testing, Maven users will need to add the following dependencies to their `pom.xml`:
 
 [source,xml]
@@ -618,6 +628,56 @@ public class MyApplicationTest {
 
     @EndpointInject("mock:direct:end")
     MockEndpoint mock;
+
+    @Test
+    public void testReceive() throws Exception {
+        mock.expectedBodiesReceived("Hello");
+        template.sendBody("direct:start", "Hello");
+        mock.assertIsSatisfied();
+    }
+
+}
+----
+== Testing the JUnit 5 way
+For testing, Maven users will need to add the following dependencies to their `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <version>${spring-boot.version}</version> <!-- Use the same version as your Spring Boot version -->
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-spring-junit5</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+    <scope>test</scope>
+</dependency>
+----
+
+To test a Camel Spring Boot application, annotate your test class(es) with
+`@CamelSpringBootTest`. This brings Camel's Spring Test
+support to your application, so that you can write tests using
+https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html[Spring Boot test conventions].
+
+To get the `CamelContext` or `ProducerTemplate`, you can inject them into the class in the normal Spring manner, using `@Autowired`.
+
+You can also use xref:manual::spring-testing.adoc[Camel Spring test annotations] to configure tests declaratively. This example uses the `@MockEndpoints` annotation to auto-mock an endpoint:
+
+[source,java]
+----
+@CamelSpringBootTest
+@SpringBootApplication
+@MockEndpoints("direct:end")
+public class MyApplicationTest {
+
+    @Autowired
+    private ProducerTemplate template;
+
+    @EndpointInject("mock:direct:end")
+    private MockEndpoint mock;
 
     @Test
     public void testReceive() throws Exception {

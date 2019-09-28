@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.pg.replication.slot.integration;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -30,7 +29,6 @@ import org.apache.camel.PropertyInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
@@ -93,8 +91,7 @@ public class PgReplicationSlotIntegrationTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        PropertiesComponent component = new PropertiesComponent("classpath:/test-options.properties");
-        camelContext.addComponent("properties", component);
+        camelContext.getPropertiesComponent().setLocation("classpath:/test-options.properties");
         return camelContext;
     }
 

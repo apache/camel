@@ -578,7 +578,7 @@ kmp.setKeyPassword("keyPassword");
 SSLContextParameters scp = new SSLContextParameters();
 scp.setKeyManagers(kmp);
 
-HttpComponent httpComponent = getContext().getComponent("https4", HttpComponent.class);
+HttpComponent httpComponent = getContext().getComponent("https", HttpComponent.class);
 httpComponent.setSslContextParameters(scp);
 ---------------------------------------------------------------------------------------
 
@@ -598,7 +598,7 @@ Spring DSL based configuration of endpoint
     </camel:keyManagers>
   </camel:sslContextParameters>...
 ...
-  <to uri="https4://127.0.0.1/mail/?sslContextParameters=#sslContextParameters"/>...
+  <to uri="https://127.0.0.1/mail/?sslContextParameters=#sslContextParameters"/>...
 --------------------------------------------------------------------------------------
 
 [[HTTP-ConfiguringApacheHTTPClientDirectly]]
@@ -647,7 +647,7 @@ If you are doing this using the Spring DSL, you can specify your
  class="my.https.HttpClientConfigurer">
 </bean>
 
-<to uri="https4://myhostname.com:443/myURL?httpClientConfigurer=myHttpClientConfigurer"/>
+<to uri="https://myhostname.com:443/myURL?httpClientConfigurer=myHttpClientConfigurer"/>
 -----------------------------------------------------------------------------------------
 
 As long as you implement the HttpClientConfigurer and configure your
@@ -696,7 +696,7 @@ public class HttpContextFactory {
 
 [source,xml]
 -----------------------------------------------------------------------
-<to uri="https4://myhostname.com:443/myURL?httpContext=myHttpContext"/>
+<to uri="https://myhostname.com:443/myURL?httpContext=myHttpContext"/>
 -----------------------------------------------------------------------
 
 [[HTTP-UsingdifferentSSLContextParameters]]

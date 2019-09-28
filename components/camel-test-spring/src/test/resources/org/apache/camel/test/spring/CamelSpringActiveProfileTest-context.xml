@@ -30,7 +30,7 @@
       <transform>
         <simple>Hello ${body}</simple>
       </transform>
-      <to uri="properties:{{cool.end}}" />
+      <to uri="{{cool.end}}" />
     </route>
   </camelContext>
   

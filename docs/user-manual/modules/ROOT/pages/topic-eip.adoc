@@ -1,6 +1,6 @@
 [[topic-eip]]
 = Topic EIP
-:page-source: core/camel-core/src/main/docs/eips/topic-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/topic-eip.adoc
 
 Topic Load Balancer, with this policy you'll get a Topic behavior by sending to all destinations.
 

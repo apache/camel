@@ -55,7 +55,7 @@ fileMode=Append to append each of the chunks together.
 
 
 // component options: START
-The HDFS component supports 2 options, which are listed below.
+The HDFS component supports 3 options, which are listed below.
 
 
 
@@ -63,6 +63,7 @@ The HDFS component supports 2 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *jAASConfiguration* (common) | To use the given configuration for security with JAAS. |  | Configuration
+| *kerberosConfigFile* (common) | To use kerberos authentication, set the value of the 'java.security.krb5.conf' environment variable to an existing file. If the environment variable is already set, warn if different than the specified parameter |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -93,7 +94,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (40 parameters):
+=== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -102,6 +103,10 @@ with the following path and query parameters:
 | *connectOnStartup* (common) | Whether to connect to the HDFS file system on starting the producer/consumer. If false then the connection is created on-demand. Notice that HDFS may take up till 15 minutes to establish a connection, as it has hardcoded 45 x 20 sec redelivery. By setting this option to false allows your application to startup, and not block for up till 15 minutes. | true | boolean
 | *fileSystemType* (common) | Set to LOCAL to not use HDFS but local java.io.File instead. | HDFS | HdfsFileSystemType
 | *fileType* (common) | The file type to use. For more details see Hadoop HDFS documentation about the various files types. | NORMAL_FILE | HdfsFileType
+| *kerberosConfigFileLocation* (common) | The location of the kerb5.conf file (\https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html) |  | String
+| *kerberosKeytabLocation* (common) | The location of the keytab file used to authenticate with the kerberos nodes (contains pairs of kerberos principals and encrypted keys (which are derived from the Kerberos password)) |  | String
+| *kerberosNamedNodes* (common) | A comma separated list of kerberos nodes (e.g. srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file (\https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html) |  | String
+| *kerberosUsername* (common) | The username used to authenticate with the kerberos nodes |  | String
 | *keyType* (common) | The type for the key in case of sequence or map files. | NULL | WritableType
 | *owner* (common) | The file owner must match this owner for the consumer to pickup the file. Otherwise the file is skipped. |  | String
 | *valueType* (common) | The type for the key in case of sequence or map files | BYTES | WritableType
@@ -157,7 +162,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -167,6 +172,7 @@ The component supports 3 options, which are listed below.
 | *camel.component.hdfs.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.hdfs.enabled* | Whether to enable auto configuration of the hdfs component. This is enabled by default. |  | Boolean
 | *camel.component.hdfs.j-a-a-s-configuration* | To use the given configuration for security with JAAS. The option is a javax.security.auth.login.Configuration type. |  | String
+| *camel.component.hdfs.kerberos-config-file* | To use kerberos authentication, set the value of the 'java.security.krb5.conf' environment variable to an existing file. If the environment variable is already set, warn if different than the specified parameter |  | String
 |===
 // spring-boot-auto-configure options: END
 
@@ -320,3 +326,16 @@ resource with bundle that contains blueprint definition.
 
 This way Hadoop 2.x will have correct mapping of URI schemes to
 filesystem implementations.
+
+=== Using this component with Kerberos authentication
+
+The kerberos config file is read when the camel component is created, not when the endpoint is created.
+Because of this, the config file must be set at startup, with a call like:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+static {
+  HdfsComponent.setKerberosConfigFile("/etc/security/kerb5.conf");
+}
+------------------------------------------------------------------------------------------------------
+
