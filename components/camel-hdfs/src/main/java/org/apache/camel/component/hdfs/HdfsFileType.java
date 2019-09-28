@@ -54,7 +54,6 @@ import org.apache.hadoop.io.SequenceFile.Writer;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
-import org.apache.hadoop.util.Progressable;
 import org.apache.hadoop.util.ReflectionUtils;
 
 public enum HdfsFileType {
@@ -74,11 +73,11 @@ public enum HdfsFileType {
         }
 
         @Override
-        public long next(HdfsInputStream hdfsistr, Holder<Object> key, Holder<Object> value) {
+        public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
             try {
-                ByteArrayOutputStream bos = new ByteArrayOutputStream(hdfsistr.getChunkSize());
-                byte buf[] = new byte[hdfsistr.getChunkSize()];
-                int bytesRead = ((InputStream) hdfsistr.getIn()).read(buf);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream(hdfsInputStream.getChunkSize());
+                byte[] buf = new byte[hdfsInputStream.getChunkSize()];
+                int bytesRead = ((InputStream) hdfsInputStream.getIn()).read(buf);
                 if (bytesRead >= 0) {
                     bos.write(buf, 0, bytesRead);
                     key.value = null;
@@ -99,20 +98,12 @@ public enum HdfsFileType {
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 if (!configuration.isAppend()) {
                     rout = hdfsInfo.getFileSystem().create(hdfsInfo.getPath(), configuration.isOverwrite(), configuration.getBufferSize(),
-                            configuration.getReplication(), configuration.getBlockSize(), new Progressable() {
-                                @Override
-                                public void progress() {
-                                }
-                            });
+                            configuration.getReplication(), configuration.getBlockSize(), () -> { });
                 } else {
-                    rout = hdfsInfo.getFileSystem().append(hdfsInfo.getPath(), configuration.getBufferSize(), new Progressable() {
-                        @Override
-                        public void progress() {
-                        }
-                    });
+                    rout = hdfsInfo.getFileSystem().append(hdfsInfo.getPath(), configuration.getBufferSize(), () -> { });
                 }
                 return rout;
             } catch (IOException ex) {
@@ -125,7 +116,7 @@ public enum HdfsFileType {
             try {
                 Closeable rin;
                 if (configuration.getFileSystemType().equals(HdfsFileSystemType.LOCAL)) {
-                    HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
+                    HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                     rin = hdfsInfo.getFileSystem().open(hdfsInfo.getPath());
                 } else {
                     rin = new FileInputStream(getHfdsFileToTmpFile(hdfsPath, configuration));
@@ -158,7 +149,7 @@ public enum HdfsFileType {
                     outputDest.delete();
                 }
 
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 FileSystem fileSystem = hdfsInfo.getFileSystem();
                 FileUtil.copy(fileSystem, new Path(hdfsPath), outputDest, false, fileSystem.getConf());
                 try {
@@ -220,17 +211,14 @@ public enum HdfsFileType {
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 Class<?> keyWritableClass = configuration.getKeyType().getWritableClass();
                 Class<?> valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = SequenceFile.createWriter(hdfsInfo.getConf(), Writer.file(hdfsInfo.getPath()), Writer.keyClass(keyWritableClass),
                         Writer.valueClass(valueWritableClass), Writer.bufferSize(configuration.getBufferSize()),
                         Writer.replication(configuration.getReplication()), Writer.blockSize(configuration.getBlockSize()),
                         Writer.compression(configuration.getCompressionType(), configuration.getCompressionCodec().getCodec()),
-                        Writer.progressable(new Progressable() {
-                            @Override
-                            public void progress() {
-                            }
+                        Writer.progressable(() -> {
                         }), Writer.metadata(new SequenceFile.Metadata()));
                 return rout;
             } catch (IOException ex) {
@@ -242,7 +230,7 @@ public enum HdfsFileType {
         public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rin;
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 rin = new SequenceFile.Reader(hdfsInfo.getConf(), Reader.file(hdfsInfo.getPath()));
                 return rin;
             } catch (IOException ex) {
@@ -267,9 +255,9 @@ public enum HdfsFileType {
         }
 
         @Override
-        public long next(HdfsInputStream hdfsistr, Holder<Object> key, Holder<Object> value) {
+        public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
             try {
-                MapFile.Reader reader = (MapFile.Reader) hdfsistr.getIn();
+                MapFile.Reader reader = (MapFile.Reader) hdfsInputStream.getIn();
                 Holder<Integer> keySize = new Holder<>();
                 WritableComparable<?> keyWritable = (WritableComparable<?>) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
                 Holder<Integer> valueSize = new Holder<>();
@@ -291,15 +279,12 @@ public enum HdfsFileType {
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 Class<? extends WritableComparable> keyWritableClass = configuration.getKeyType().getWritableClass();
                 Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = new MapFile.Writer(hdfsInfo.getConf(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass), MapFile.Writer.valueClass(valueWritableClass),
                     MapFile.Writer.compression(configuration.getCompressionType(), configuration.getCompressionCodec().getCodec()),
-                    MapFile.Writer.progressable(new Progressable() {
-                        @Override
-                        public void progress() {
-                        }
+                    MapFile.Writer.progressable(() -> {
                     }));
                 return rout;
             } catch (IOException ex) {
@@ -311,7 +296,7 @@ public enum HdfsFileType {
         public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rin;
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 rin = new MapFile.Reader(new Path(hdfsPath), hdfsInfo.getConf());
                 return rin;
             } catch (IOException ex) {
@@ -360,16 +345,13 @@ public enum HdfsFileType {
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 Class<? extends WritableComparable> keyWritableClass = configuration.getKeyType().getWritableClass();
                 Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = new BloomMapFile.Writer(hdfsInfo.getConf(), new Path(hdfsPath), org.apache.hadoop.io.MapFile.Writer.keyClass(keyWritableClass),
                         org.apache.hadoop.io.MapFile.Writer.valueClass(valueWritableClass),
                         org.apache.hadoop.io.MapFile.Writer.compression(configuration.getCompressionType(), configuration.getCompressionCodec().getCodec()),
-                        org.apache.hadoop.io.MapFile.Writer.progressable(new Progressable() {
-                            @Override
-                            public void progress() {
-                            }
+                        org.apache.hadoop.io.MapFile.Writer.progressable(() -> {
                         }));
                 return rout;
             } catch (IOException ex) {
@@ -381,7 +363,7 @@ public enum HdfsFileType {
         public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rin;
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 rin = new BloomMapFile.Reader(new Path(hdfsPath), hdfsInfo.getConf());
                 return rin;
             } catch (IOException ex) {
@@ -425,14 +407,10 @@ public enum HdfsFileType {
         public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rout;
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
                 rout = new ArrayFile.Writer(hdfsInfo.getConf(), hdfsInfo.getFileSystem(), hdfsPath, valueWritableClass,
-                        configuration.getCompressionType(), new Progressable() {
-                            @Override
-                            public void progress() {
-                            }
-                        });
+                        configuration.getCompressionType(), () -> { });
                 return rout;
             } catch (IOException ex) {
                 throw new RuntimeCamelException(ex);
@@ -443,7 +421,7 @@ public enum HdfsFileType {
         public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rin;
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
+                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
                 rin = new ArrayFile.Reader(hdfsInfo.getFileSystem(), hdfsPath, hdfsInfo.getConf());
                 return rin;
             } catch (IOException ex) {
@@ -506,7 +484,7 @@ public enum HdfsFileType {
 
     public abstract long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter);
 
-    public abstract long next(HdfsInputStream hdfsistr, Holder<Object> key, Holder<Object> value);
+    public abstract long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value);
 
     public abstract Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration);
 
@@ -515,7 +493,7 @@ public enum HdfsFileType {
     public static long copyBytes(InputStream in, OutputStream out, int buffSize, boolean close) throws IOException {
         long numBytes = 0;
         PrintStream ps = out instanceof PrintStream ? (PrintStream) out : null;
-        byte buf[] = new byte[buffSize];
+        byte[] buf = new byte[buffSize];
         try {
             int bytesRead = in.read(buf);
             while (bytesRead >= 0) {

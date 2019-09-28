@@ -41,4 +41,4 @@ from("direct:startInOut")
   .inOut("bean:process");
 ----
 
-See https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/to-eip.adoc[to-eip with pattern]
+See xref:to-eip.adoc[to-eip with pattern]

@@ -18,13 +18,11 @@ package org.apache.camel.component.microprofile.metrics.message.history;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
-import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.eclipse.microprofile.metrics.Tag;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.NODE_ID_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ROUTE_ID_TAG;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.SERVICE_NAME;
 
 public interface MicroProfileMetricsMessageHistoryNamingStrategy {
 
@@ -33,12 +31,10 @@ public interface MicroProfileMetricsMessageHistoryNamingStrategy {
     String getName(Route route, NamedNode node);
 
     default Tag[] getTags(Route route, NamedNode node) {
-        String[] tags = {
-            SERVICE_NAME + "=" + MicroProfileMetricsMessageHistory.class.getSimpleName(),
-            CAMEL_CONTEXT_TAG + "=" + route.getCamelContext().getName(),
-            ROUTE_ID_TAG + "=" + route.getId(),
-            NODE_ID_TAG + "=" + node.getId(),
+        return new Tag[] {
+            new Tag(CAMEL_CONTEXT_TAG, route.getCamelContext().getName()),
+            new Tag(ROUTE_ID_TAG, route.getId()),
+            new Tag(NODE_ID_TAG, node.getId())
         };
-        return MicroProfileMetricsHelper.parseTagArray(tags);
     }
 }

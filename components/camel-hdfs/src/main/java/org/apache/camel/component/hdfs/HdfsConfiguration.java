@@ -19,8 +19,11 @@ package org.apache.camel.component.hdfs;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -28,6 +31,8 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.URISupport;
 import org.apache.hadoop.io.SequenceFile;
+
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 @UriParams
 public class HdfsConfiguration {
@@ -80,6 +85,17 @@ public class HdfsConfiguration {
     private boolean connectOnStartup = true;
     @UriParam
     private String owner;
+
+    @UriParam
+    private String kerberosNamedNodes;
+    private List<String> kerberosNamedNodeList;
+
+    @UriParam
+    private String kerberosConfigFileLocation;
+    @UriParam
+    private String kerberosUsername;
+    @UriParam
+    private String kerberosKeytabLocation;
 
     public HdfsConfiguration() {
     }
@@ -171,25 +187,32 @@ public class HdfsConfiguration {
 
     private List<HdfsProducer.SplitStrategy> getSplitStrategies(Map<String, Object> hdfsSettings) {
         List<HdfsProducer.SplitStrategy> strategies = new ArrayList<>();
-        for (Object obj : hdfsSettings.keySet()) {
-            String key = (String) obj;
-            if ("splitStrategy".equals(key)) {
-                String eit = (String) hdfsSettings.get(key);
-                if (eit != null) {
-                    String[] strstrategies = eit.split(",");
-                    for (String strstrategy : strstrategies) {
-                        String tokens[] = strstrategy.split(":");
-                        if (tokens.length != 2) {
-                            throw new IllegalArgumentException("Wrong Split Strategy " + key + "=" + eit);
-                        }
-                        HdfsProducer.SplitStrategyType sst = HdfsProducer.SplitStrategyType.valueOf(tokens[0]);
-                        long ssv = Long.valueOf(tokens[1]);
-                        strategies.add(new HdfsProducer.SplitStrategy(sst, ssv));
-                    }
+
+        splitStrategy = getString(hdfsSettings, "splitStrategy", kerberosNamedNodes);
+
+        if (isNotEmpty(splitStrategy)) {
+            String[] strstrategies = splitStrategy.split(",");
+            for (String strstrategy : strstrategies) {
+                String[] tokens = strstrategy.split(":");
+                if (tokens.length != 2) {
+                    throw new IllegalArgumentException("Wrong Split Strategy [splitStrategy" + "=" + splitStrategy + "]");
                 }
+                HdfsProducer.SplitStrategyType sst = HdfsProducer.SplitStrategyType.valueOf(tokens[0]);
+                long ssv = Long.parseLong(tokens[1]);
+                strategies.add(new HdfsProducer.SplitStrategy(sst, ssv));
             }
         }
         return strategies;
+    }
+
+    private List<String> getKerberosNamedNodeList(Map<String, Object> hdfsSettings) {
+        kerberosNamedNodes = getString(hdfsSettings, "kerberosNamedNodes", kerberosNamedNodes);
+        
+        if (isNotEmpty(kerberosNamedNodes)) {
+            return Arrays.stream(kerberosNamedNodes.split(",")).distinct().collect(Collectors.toList());
+        }
+
+        return Collections.emptyList();
     }
 
     public void checkConsumerOptions() {
@@ -197,7 +220,7 @@ public class HdfsConfiguration {
 
     public void checkProducerOptions() {
         if (isAppend()) {
-            if (getSplitStrategies().size() != 0) {
+            if (!getSplitStrategies().isEmpty()) {
                 throw new IllegalArgumentException("Split Strategies incompatible with append=true");
             }
             if (getFileType() != HdfsFileType.NORMAL_FILE) {
@@ -236,6 +259,11 @@ public class HdfsConfiguration {
         pattern = getString(hdfsSettings, "pattern", pattern);
         chunkSize = getInteger(hdfsSettings, "chunkSize", chunkSize);
         splitStrategies = getSplitStrategies(hdfsSettings);
+
+        kerberosNamedNodeList = getKerberosNamedNodeList(hdfsSettings);
+        kerberosConfigFileLocation = getString(hdfsSettings, "kerberosConfigFileLocation", kerberosConfigFileLocation);
+        kerberosUsername = getString(hdfsSettings, "kerberosUsername", kerberosUsername);
+        kerberosKeytabLocation = getString(hdfsSettings, "kerberosKeytabLocation", kerberosKeytabLocation);
     }
 
     public URI getUri() {
@@ -511,4 +539,59 @@ public class HdfsConfiguration {
     public void setOwner(String owner) {
         this.owner = owner;
     }
+
+    public String getKerberosNamedNodes() {
+        return kerberosNamedNodes;
+    }
+
+    /**
+     * A comma separated list of kerberos nodes
+     * (e.g. srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
+     */
+    public void setKerberosNamedNodes(String kerberosNamedNodes) {
+        this.kerberosNamedNodes = kerberosNamedNodes;
+    }
+
+    public List<String> getKerberosNamedNodeList() {
+        return kerberosNamedNodeList;
+    }
+
+    public String getKerberosConfigFileLocation() {
+        return kerberosConfigFileLocation;
+    }
+
+    /**
+     * The location of the kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
+     */
+    public void setKerberosConfigFileLocation(String kerberosConfigFileLocation) {
+        this.kerberosConfigFileLocation = kerberosConfigFileLocation;
+    }
+
+    public String getKerberosUsername() {
+        return kerberosUsername;
+    }
+
+    /**
+     * The username used to authenticate with the kerberos nodes
+     */
+    public void setKerberosUsername(String kerberosUsername) {
+        this.kerberosUsername = kerberosUsername;
+    }
+
+    public String getKerberosKeytabLocation() {
+        return kerberosKeytabLocation;
+    }
+
+    /**
+     * The location of the keytab file used to authenticate with the kerberos nodes
+     * (contains pairs of kerberos principals and encrypted keys (which are derived from the Kerberos password))
+     */
+    public void setKerberosKeytabLocation(String kerberosKeytabLocation) {
+        this.kerberosKeytabLocation = kerberosKeytabLocation;
+    }
+
+    public boolean isKerberosAuthentication() {
+        return isNotEmpty(kerberosNamedNodes) && isNotEmpty(kerberosConfigFileLocation) && isNotEmpty(kerberosUsername) && isNotEmpty(kerberosKeytabLocation);
+    }
+
 }

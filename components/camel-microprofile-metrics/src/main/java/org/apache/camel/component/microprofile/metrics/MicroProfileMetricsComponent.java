@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.microprofile.metrics;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -25,7 +24,6 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
-import org.eclipse.microprofile.metrics.Tag;
 
 @Component("microprofile-metrics")
 public class MicroProfileMetricsComponent extends DefaultComponent {

@@ -1,7 +1,7 @@
+[[robotframework-component]]
 = Robot Framework Component
 :page-source: components/camel-robotframework/src/main/docs/robotframework-component.adoc
 == Robotframework Component
-
 *Available as of Camel version 3.0*
 
 The *robotframework:* component allows for processing camel exchanges

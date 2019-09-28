@@ -20,13 +20,15 @@ import java.util.Arrays;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.asMap;
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This class tests the marshalling of {@link org.apache.camel.dataformat.univocity.UniVocityTsvDataFormat} using the

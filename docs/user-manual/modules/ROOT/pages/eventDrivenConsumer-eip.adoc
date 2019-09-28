@@ -1,6 +1,6 @@
 [[eventDrivenConsumer-eip]]
 = Event Driven Consumer
-:page-source: core/camel-core/src/main/docs/eips/eventDrivenConsumer-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/eventDrivenConsumer-eip.adoc
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/EventDrivenConsumer.html[Event Driven Consumer]

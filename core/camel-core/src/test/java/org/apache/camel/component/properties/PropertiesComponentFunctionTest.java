@@ -42,7 +42,7 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
 
     @Test
     public void testFunction() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
         pc.addFunction(new MyFunction());
 
         context.addRoutes(new RouteBuilder() {

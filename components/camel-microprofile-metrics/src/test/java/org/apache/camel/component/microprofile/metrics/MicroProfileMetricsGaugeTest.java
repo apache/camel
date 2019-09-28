@@ -18,6 +18,7 @@ package org.apache.camel.component.microprofile.metrics;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.microprofile.metrics.gauge.SimpleGauge;
 import org.junit.Test;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_VALUE;
 
@@ -26,21 +27,32 @@ public class MicroProfileMetricsGaugeTest extends MicroProfileMetricsTestSupport
     @Test
     public void testGaugeMetric() {
         template.sendBody("direct:gaugeValue", null);
-        MicroProfileMetricsCamelGauge gauge = getGauge("test-gauge");
+        SimpleGauge gauge = getSimpleGauge("test-gauge");
         assertEquals(10, gauge.getValue().intValue());
     }
 
     @Test
     public void testGaugeMetricHeaderValue() {
         template.sendBody("direct:gaugeValueHeader", null);
-        MicroProfileMetricsCamelGauge gauge = getGauge("test-gauge-header");
+        SimpleGauge gauge = getSimpleGauge("test-gauge-header");
         assertEquals(20, gauge.getValue().intValue());
     }
 
     @Test
     public void testGaugeMetricHeaderOverrideValue() {
         template.sendBodyAndHeader("direct:gaugeValue", null, HEADER_GAUGE_VALUE, 20);
-        MicroProfileMetricsCamelGauge gauge = getGauge("test-gauge");
+        SimpleGauge gauge = getSimpleGauge("test-gauge");
+        assertEquals(20, gauge.getValue().intValue());
+    }
+
+    @Test
+    public void testGaugeMetricReuse() {
+        template.sendBody("direct:gaugeValue", null);
+        SimpleGauge gauge = getSimpleGauge("test-gauge");
+        assertEquals(10, gauge.getValue().intValue());
+
+        template.sendBodyAndHeader("direct:gaugeValue", null, HEADER_GAUGE_VALUE, 20);
+        gauge = getSimpleGauge("test-gauge");
         assertEquals(20, gauge.getValue().intValue());
     }
 

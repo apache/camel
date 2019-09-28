@@ -1,8 +1,8 @@
 [[process-eip]]
 = Process EIP
-:page-source: core/camel-core/src/main/docs/eips/process-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/process-eip.adoc
 
-The http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor] interface is used to implement consumers of message exchanges or to implement a https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message Translator]
+The http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor] interface is used to implement consumers of message exchanges or to implement a xref:message-translator.adoc[Message Translator]
 
 == Options
 
@@ -33,7 +33,7 @@ public class MyProcessor implements Processor {
 
 You can then easily use this inside a route by declaring the bean in
 Spring, say via the XML (or registering it in JNDI if that is your
-https://github.com/apache/camel/blob/master/docs/user-manual/en/registry.adoc[Registry])
+xref:registry.adoc[Registry])
 
 [source,xml]
 --------------------------------------------------------
@@ -59,7 +59,7 @@ Processor myProcessor = new MyProcessor();
 from("activemq:myQueue").process(myProcessor);
 ----
 
-If you need to lookup the processor in the https://github.com/apache/camel/blob/master/docs/user-manual/en/registry.adoc[Registry]
+If you need to lookup the processor in the xref:registry.adoc[Registry]
 then you should use the *processRef* DSL:
 
 [source,java]

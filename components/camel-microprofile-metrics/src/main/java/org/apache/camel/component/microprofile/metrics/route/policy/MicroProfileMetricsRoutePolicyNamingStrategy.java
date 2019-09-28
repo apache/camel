@@ -16,15 +16,11 @@
  */
 package org.apache.camel.component.microprofile.metrics.route.policy;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.eclipse.microprofile.metrics.Tag;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.FAILED_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ROUTE_ID_TAG;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.SERVICE_NAME;
 
 public interface MicroProfileMetricsRoutePolicyNamingStrategy {
 
@@ -32,14 +28,10 @@ public interface MicroProfileMetricsRoutePolicyNamingStrategy {
 
     String getName(Route route);
 
-    default Tag[] getTags(Route route, Exchange exchange) {
-        String[] tags = {
-            SERVICE_NAME + "=" + MicroProfileMetricsRoutePolicyService.class.getSimpleName(),
-            CAMEL_CONTEXT_TAG + "=" + route.getCamelContext().getName(),
-            ROUTE_ID_TAG + "=" + route.getId(),
-            FAILED_TAG + "=" + exchange.isFailed(),
+    default Tag[] getTags(Route route) {
+        return new Tag[] {
+            new Tag(CAMEL_CONTEXT_TAG, route.getCamelContext().getName()),
+            new Tag(ROUTE_ID_TAG, route.getId()),
         };
-        return MicroProfileMetricsHelper.parseTagArray(tags);
     }
-
 }

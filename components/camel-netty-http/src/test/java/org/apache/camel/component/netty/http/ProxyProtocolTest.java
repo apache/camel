@@ -61,11 +61,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(Parameterized.class)
 public class ProxyProtocolTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ProxyProtocolTest.class);
+
     private static final int ORIGIN_PORT = AvailablePortFinder.getNextAvailable();
 
     private static final int PROXY_PORT = AvailablePortFinder.getNextAvailable();
-
-    protected static final Logger LOG = LoggerFactory.getLogger(ProxyProtocolTest.class);
 
     private final DefaultCamelContext context;
 

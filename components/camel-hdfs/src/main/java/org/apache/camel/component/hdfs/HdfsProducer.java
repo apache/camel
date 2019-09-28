@@ -29,8 +29,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HdfsProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HdfsProducer.class);
 
     private final HdfsConfiguration config;
     private final StringBuilder hdfsPath;
@@ -93,7 +97,7 @@ public class HdfsProducer extends DefaultProducer {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doStart() {
         // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
         Configuration auth = HdfsComponent.getJAASConfiguration();
         try {
@@ -116,6 +120,10 @@ public class HdfsProducer extends DefaultProducer {
                 log.debug("Creating IdleCheck task scheduled to run every {} millis", config.getCheckIdleInterval());
                 scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy), config.getCheckIdleInterval(), config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
             }
+        } catch (Exception e) {
+            LOG.warn("Failed to start the HDFS producer. Caused by: [{}]", e.getMessage());
+            LOG.debug("", e);
+            throw new RuntimeException(e);
         } finally {
             HdfsComponent.setJAASConfiguration(auth);
         }

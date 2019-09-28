@@ -126,10 +126,7 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
-                PropertiesComponent properties = new PropertiesComponent();
-                properties.setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
-                context.addComponent("properties", properties);
+                context.getPropertiesComponent().setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
 
                 from("direct:start").autoStartup("{{autoStartupProp}}").to("mock:result");
             }
@@ -149,10 +146,7 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
-                PropertiesComponent properties = new PropertiesComponent();
-                properties.setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
-                context.addComponent("properties", properties);
+                context.getPropertiesComponent().setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
 
                 from("direct:start").id("route1").autoStartup("{{noAutoStartupProp}}").to("mock:result");
             }

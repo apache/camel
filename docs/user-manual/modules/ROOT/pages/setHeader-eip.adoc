@@ -1,6 +1,6 @@
 [[setHeader-eip]]
 = Set Header EIP
-:page-source: core/camel-core/src/main/docs/eips/setHeader-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/setHeader-eip.adoc
 
 The SetHeader EIP allows you to set and header on your exchange.
 

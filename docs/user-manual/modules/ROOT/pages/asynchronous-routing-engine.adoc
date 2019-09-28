@@ -39,11 +39,11 @@ http://camel.apache.org/camel-30-roadmap.html#Camel3.0-Roadmap-SEDA%2FVMcomponen
 
 When we say a component is supported, that means, the component is
 leveraging the asynchronous model. For example xref:components::jetty-component.adoc[Jetty]
-uses continuations and the async http client to be fully asynchronous
-and non blocked. That means no threads will ever be blocked while
+uses continuations and the async HTTP client to be fully asynchronous
+and non-blocked. That means no threads will ever be blocked while
 waiting for a reply.
 
-In the future additional Components will be
+In the future, additional Components will be
 supported as well where it's applicable.
 
 [[AsynchronousRoutingEngine-Forcingtousesynchronousprocessing]]
@@ -52,12 +52,12 @@ supported as well where it's applicable.
 You can configure the endpoints with the option `synchronous=true` to
 force using synchronous processing. For example when sending a web
 service request using xref:components::cxf-component.adoc[CXF], the caller will wait for the
-reply if `synchronous=true` was configured. Currently this option is
-supported by the all the producers. If you don't want to let the
+reply if `synchronous=true` was configured. Currently, this option is
+supported by all the producers. If you don't want to let the
 xref:components::cxf-component.adoc[CXF] consumer leverage the CXF continuation API to use the
 asynchronous processing, you can also use this option `synchronous=true`
-to disable it. The JBI and NMR component
-are always asynchronous and doesn't support this option.
+to disable it. The JBI and NMR components
+are always asynchronous and don't support this option.
 
 [[AsynchronousRoutingEngine-Backgroundinformation]]
 == Background information

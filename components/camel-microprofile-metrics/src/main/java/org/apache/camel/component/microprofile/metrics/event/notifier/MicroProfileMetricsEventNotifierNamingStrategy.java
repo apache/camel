@@ -18,25 +18,21 @@ package org.apache.camel.component.microprofile.metrics.event.notifier;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.eclipse.microprofile.metrics.Tag;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.ENDPOINT_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EVENT_TYPE_TAG;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.FAILED_TAG;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.SERVICE_NAME;
 
 public interface MicroProfileMetricsEventNotifierNamingStrategy {
 
     String getName(Exchange exchange, Endpoint endpoint);
 
     default Tag[] getTags(ExchangeEvent event, Endpoint endpoint) {
-        String[] tags = {
-            SERVICE_NAME + "=" + MicroProfileMetricsEventNotifierService.class.getSimpleName(),
-            EVENT_TYPE_TAG + "=" + event.getClass().getSimpleName(),
-            ENDPOINT_NAME + "=" + endpoint.getEndpointUri(),
-            FAILED_TAG + "=" + event.getExchange().isFailed()
+        return new Tag[] {
+            new Tag(CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName()),
+            new Tag(ENDPOINT_NAME, endpoint.getEndpointUri()),
+            new Tag(EVENT_TYPE_TAG, event.getClass().getSimpleName()),
         };
-        return MicroProfileMetricsHelper.parseTagArray(tags);
     }
 }

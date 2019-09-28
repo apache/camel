@@ -46,7 +46,7 @@ public class HdfsOutputStream implements Closeable {
         HdfsOutputStream ret = new HdfsOutputStream();
         ret.fileType = configuration.getFileType();
         ret.actualPath = hdfsPath;
-        ret.info = new HdfsInfo(ret.actualPath);
+        ret.info = new HdfsInfo(ret.actualPath, configuration);
 
         ret.suffixedPath = ret.actualPath + '.' + configuration.getOpenedSuffix();
         if (configuration.isWantAppend() || configuration.isAppend()) {
@@ -54,7 +54,7 @@ public class HdfsOutputStream implements Closeable {
                 configuration.setAppend(false);
             } else {
                 configuration.setAppend(true);
-                ret.info = new HdfsInfo(ret.suffixedPath);
+                ret.info = new HdfsInfo(ret.suffixedPath, configuration);
                 ret.info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath));
             }
         } else {

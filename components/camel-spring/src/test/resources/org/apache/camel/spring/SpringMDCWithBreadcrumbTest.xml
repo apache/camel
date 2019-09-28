@@ -32,7 +32,7 @@
         <route id="route-a">
             <from uri="direct:a"/>
             <process ref="processorA"/>
-            <to uri="log:foo"/>
+            <to uri="log:foo" pattern="InOnly"/>
             <to uri="direct:b"/>
         </route>
 

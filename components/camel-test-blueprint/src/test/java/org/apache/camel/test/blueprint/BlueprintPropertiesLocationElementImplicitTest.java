@@ -35,7 +35,7 @@ public class BlueprintPropertiesLocationElementImplicitTest extends CamelBluepri
         mock.expectedHeaderReceived("property-2", "property-value-2");
         mock.expectedHeaderReceived("cm", "cm-value");
 
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
         assertNotNull("Properties component not defined", pc);
 
         List<String> locations = pc.getLocations();

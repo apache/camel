@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsExchangeRecorder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -28,12 +29,14 @@ import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Timer;
 import org.eclipse.microprofile.metrics.Timer.Context;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_ROUTE_POLICY_METRIC_NAME;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.PROCESSING_METRICS_SUFFIX;
 
 public class MicroProfileMetricsRoutePolicy extends RoutePolicySupport implements NonManagedService {
 
     private MetricRegistry metricRegistry;
     private MetricsStatistics statistics;
     private MicroProfileMetricsRoutePolicyNamingStrategy namingStrategy = MicroProfileMetricsRoutePolicyNamingStrategy.DEFAULT;
+    private MicroProfileMetricsExchangeRecorder exchangeRecorder;
 
     private static final class MetricsStatistics {
         private final MetricRegistry metricRegistry;
@@ -47,9 +50,8 @@ public class MicroProfileMetricsRoutePolicy extends RoutePolicySupport implement
         }
 
         public void onExchangeBegin(Exchange exchange) {
-            namingStrategy.getName(route);
-
-            Timer timer = metricRegistry.timer(namingStrategy.getName(route), namingStrategy.getTags(route, exchange));
+            String name = namingStrategy.getName(route);
+            Timer timer = metricRegistry.timer(name + PROCESSING_METRICS_SUFFIX, namingStrategy.getTags(route));
             exchange.setProperty(propertyName(exchange), timer.time());
         }
 
@@ -89,6 +91,8 @@ public class MicroProfileMetricsRoutePolicy extends RoutePolicySupport implement
             metricRegistry = MicroProfileMetricsHelper.getMetricRegistry(route.getCamelContext());
         }
 
+        exchangeRecorder = new MicroProfileMetricsExchangeRecorder(metricRegistry, namingStrategy.getName(route), namingStrategy.getTags(route));
+
         try {
             MicroProfileMetricsRoutePolicyService registryService = route.getCamelContext().hasService(MicroProfileMetricsRoutePolicyService.class);
             if (registryService == null) {
@@ -103,11 +107,14 @@ public class MicroProfileMetricsRoutePolicy extends RoutePolicySupport implement
         statistics = new MetricsStatistics(metricRegistry, route, getNamingStrategy());
     }
 
-
     @Override
     public void onExchangeBegin(Route route, Exchange exchange) {
         if (statistics != null) {
             statistics.onExchangeBegin(exchange);
+        }
+
+        if (exchangeRecorder != null) {
+            exchangeRecorder.recordExchangeBegin();
         }
     }
 
@@ -115,6 +122,10 @@ public class MicroProfileMetricsRoutePolicy extends RoutePolicySupport implement
     public void onExchangeDone(Route route, Exchange exchange) {
         if (statistics != null) {
             statistics.onExchangeDone(exchange);
+        }
+
+        if (exchangeRecorder != null) {
+            exchangeRecorder.recordExchangeComplete(exchange);
         }
     }
 }

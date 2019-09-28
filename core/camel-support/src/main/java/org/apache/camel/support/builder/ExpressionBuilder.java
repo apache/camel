@@ -1315,12 +1315,7 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 String text = simpleExpression(key).evaluate(exchange, String.class);
                 try {
-                    // the properties component is mandatory if no locations provided
-                    PropertiesComponent pc = exchange.getContext().getPropertiesComponent(false);
-                    if (pc == null) {
-                        throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                            + " in CamelContext to support property placeholders in expressions");
-                    }
+                    PropertiesComponent pc = exchange.getContext().getPropertiesComponent();
                     // enclose key with {{ }} to force parsing as key can be a nested expression too
                     return pc.parseUri(PropertiesComponent.PREFIX_TOKEN + text + PropertiesComponent.SUFFIX_TOKEN);
                 } catch (Exception e) {

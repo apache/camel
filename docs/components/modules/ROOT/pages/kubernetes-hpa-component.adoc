@@ -120,3 +120,54 @@ The component supports 2 options, which are listed below.
 - createHPA
 - deleteHPA
 
+== Kubernetes HPA Producer Examples
+
+- listHPA: this operation list the HPAs on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:list").
+    toF("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPA").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of HPAs from your cluster
+
+- listDeploymentsByLabels:  this operation list the HPAs by labels on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listByLabels").process(new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, labels);
+            }
+        });
+    toF("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPAByLabels").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of HPAs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
+
+== Kubernetes HPA Consumer Example
+
+[source,java]
+--------------------------------------------------------------------------------
+fromF("kubernetes-hpa://%s?oauthToken=%s&namespace=default&resourceName=test", host, authToken).process(new KubernertesProcessor()).to("mock:result");
+
+    public class KubernertesProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Message in = exchange.getIn();
+            HorizontalPodAutoscaler hpa = exchange.getIn().getBody(HorizontalPodAutoscaler.class);
+            log.info("Got event with hpa name: " + hpa.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+        }
+    }
+--------------------------------------------------------------------------------
+
+This consumer will return a list of events on the namespace default for the hpa test.
+

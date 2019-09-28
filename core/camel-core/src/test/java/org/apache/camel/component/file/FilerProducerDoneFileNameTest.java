@@ -53,10 +53,7 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setLocation("ref:myProp");
-
+        context.getPropertiesComponent().setLocation("ref:myProp");
         return context;
     }
 

@@ -63,8 +63,7 @@ public class DumpModelAsXmlChoiceFilterRoutePropertyPlaceholderTest extends Cont
                 prop.put("extra", "extra-gold");
                 prop.put("mypath", "xpath");
 
-                PropertiesComponent pc = context.getPropertiesComponent(true);
-                pc.setInitialProperties(prop);
+                context.getPropertiesComponent().setInitialProperties(prop);
 
                 from("direct:start").routeId("myRoute").to("log:input").transform().header("{{duke}}").choice().when().header("{{best}}").to("mock:gold").filter()
                     .header("{{extra}}").to("mock:extra-gold").endChoice().when().simple("${body} contains 'Camel'").to("mock:camel").otherwise().to("mock:other").end()

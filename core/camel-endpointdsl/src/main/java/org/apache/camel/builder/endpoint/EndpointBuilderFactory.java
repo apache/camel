@@ -238,7 +238,6 @@ public interface EndpointBuilderFactory extends
         PdfEndpointBuilderFactory,
         PgEventEndpointBuilderFactory,
         PrinterEndpointBuilderFactory,
-        PropertiesEndpointBuilderFactory,
         PubNubEndpointBuilderFactory,
         PulsarEndpointBuilderFactory,
         QuartzEndpointBuilderFactory,

@@ -251,7 +251,6 @@
         <include>org.apache.camel:camel-pg-replication-slot</include>
         <include>org.apache.camel:camel-pgevent</include>
         <include>org.apache.camel:camel-printer</include>
-        <include>org.apache.camel:camel-properties</include>
         <include>org.apache.camel:camel-protobuf</include>
         <include>org.apache.camel:camel-pubnub</include>
         <include>org.apache.camel:camel-pulsar</include>
@@ -324,6 +323,7 @@
         <include>org.apache.camel:camel-test-junit5</include>
         <include>org.apache.camel:camel-test-karaf</include>
         <include>org.apache.camel:camel-test-spring</include>
+        <include>org.apache.camel:camel-test-spring-junit5</include>
         <include>org.apache.camel:camel-testcontainers</include>
         <include>org.apache.camel:camel-testcontainers-spring</include>
         <include>org.apache.camel:camel-thrift</include>
@@ -594,7 +594,6 @@
         <include>org.apache.camel:camel-pg-replication-slot-starter</include>
         <include>org.apache.camel:camel-pgevent-starter</include>
         <include>org.apache.camel:camel-printer-starter</include>
-        <include>org.apache.camel:camel-properties-starter</include>
         <include>org.apache.camel:camel-protobuf-starter</include>
         <include>org.apache.camel:camel-pubnub-starter</include>
         <include>org.apache.camel:camel-pulsar-starter</include>

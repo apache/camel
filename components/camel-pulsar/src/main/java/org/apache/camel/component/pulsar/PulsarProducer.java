@@ -25,6 +25,7 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageUtils;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.ProducerBuilder;
 
@@ -43,8 +44,7 @@ public class PulsarProducer extends DefaultProducer {
         final Message message = exchange.getIn();
         byte[] body;
         try {
-            body = exchange.getContext().getTypeConverter()
-                    .mandatoryConvertTo(byte[].class, exchange, message.getBody());
+            body = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, message.getBody());
         } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
             // fallback to try serialize the data
             body = PulsarMessageUtils.serialize(message.getBody());
@@ -60,20 +60,16 @@ public class PulsarProducer extends DefaultProducer {
             if (producerName == null) {
                 producerName = topicUri + "-" + Thread.currentThread().getId();
             }
-            final ProducerBuilder<byte[]> producerBuilder = pulsarEndpoint
-                    .getPulsarClient()
-                    .newProducer()
-                    .producerName(producerName)
-                    .topic(topicUri)
-                    .sendTimeout(configuration.getSendTimeoutMs(), TimeUnit.MILLISECONDS)
-                    .blockIfQueueFull(configuration.isBlockIfQueueFull())
-                    .maxPendingMessages(configuration.getMaxPendingMessages())
-                    .maxPendingMessagesAcrossPartitions(configuration.getMaxPendingMessagesAcrossPartitions())
-                    .batchingMaxPublishDelay(configuration.getBatchingMaxPublishDelayMicros(), TimeUnit.MICROSECONDS)
-                    .batchingMaxMessages(configuration.getMaxPendingMessages())
-                    .enableBatching(configuration.isBatchingEnabled())
-                    .initialSequenceId(configuration.getInitialSequenceId())
-                    .compressionType(configuration.getCompressionType());
+            final ProducerBuilder<byte[]> producerBuilder = pulsarEndpoint.getPulsarClient().newProducer().producerName(producerName).topic(topicUri)
+                .sendTimeout(configuration.getSendTimeoutMs(), TimeUnit.MILLISECONDS).blockIfQueueFull(configuration.isBlockIfQueueFull())
+                .maxPendingMessages(configuration.getMaxPendingMessages()).maxPendingMessagesAcrossPartitions(configuration.getMaxPendingMessagesAcrossPartitions())
+                .batchingMaxPublishDelay(configuration.getBatchingMaxPublishDelayMicros(), TimeUnit.MICROSECONDS).batchingMaxMessages(configuration.getMaxPendingMessages())
+                .enableBatching(configuration.isBatchingEnabled()).initialSequenceId(configuration.getInitialSequenceId()).compressionType(configuration.getCompressionType());
+            if (ObjectHelper.isNotEmpty(configuration.getMessageRouter())) {
+                producerBuilder.messageRouter(configuration.getMessageRouter());
+            } else {
+                producerBuilder.messageRoutingMode(configuration.getMessageRoutingMode());
+            }
             producer = producerBuilder.create();
         }
     }

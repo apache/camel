@@ -161,6 +161,7 @@
                             <exclude>junit:*</exclude>
                             <exclude>org.junit.jupiter:*</exclude>
                             <exclude>org.junit.vintage:*</exclude>
+                            <exclude>org.junit.platform:*</exclude>
                             <exclude>net.sf.ehcache:ehcache</exclude>
 
                             <exclude>xml-apis:*</exclude>

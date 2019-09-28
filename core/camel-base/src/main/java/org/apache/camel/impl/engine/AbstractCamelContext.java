@@ -149,6 +149,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -1650,30 +1651,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public String resolvePropertyPlaceholders(String text) {
-        // While it is more efficient to only do the lookup if we are sure we
-        // need the component,
-        // with custom tokens, we cannot know if the URI contains a property or
-        // not without having
-        // the component. We also lose fail-fast behavior for the missing
-        // component with this change.
-        PropertiesComponent pc = getPropertiesComponent(false);
-
-        // Do not parse uris that are designated for the properties component as
-        // it will handle that itself
-        if (text != null && !text.startsWith("properties:")) {
-            // No component, assume default tokens.
-            if (pc == null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
-                // lookup existing properties component, or force create a new
-                // default component
-                pc = getPropertiesComponent(true);
-            }
-
-            if (pc != null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
-                // the parser will throw exception if property key was not found
-                String answer = pc.parseUri(text);
-                log.debug("Resolved text: {} -> {}", text, answer);
-                return answer;
-            }
+        if (text != null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
+            // the parser will throw exception if property key was not found
+            String answer = getPropertiesComponent().parseUri(text);
+            log.debug("Resolved text: {} -> {}", text, answer);
+            return answer;
         }
 
         // return original text as is
@@ -1735,6 +1717,23 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     @Override
     public void setInjector(Injector injector) {
         this.injector = doAddService(injector);
+    }
+
+    @Override
+    public PropertiesComponent getPropertiesComponent() {
+        if (propertiesComponent == null) {
+            synchronized (lock) {
+                if (propertiesComponent == null) {
+                    setPropertiesComponent(createPropertiesComponent());
+                }
+            }
+        }
+        return propertiesComponent;
+    }
+
+    @Override
+    public void setPropertiesComponent(PropertiesComponent propertiesComponent) {
+        this.propertiesComponent = doAddService(propertiesComponent);
     }
 
     @Override
@@ -2582,16 +2581,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             addService(runtimeEndpointRegistry, true, true);
         }
 
-        // eager lookup any configured properties component to avoid subsequent
-        // lookup attempts which may impact performance
-        // due we use properties component for property placeholder resolution
-        // at runtime
-        PropertiesComponent existing = getPropertiesComponent(false);
-        if (existing != null) {
-            // store reference to the existing properties component
-            propertiesComponent = existing;
-        }
-
         bindDataFormats();
 
         // start components
@@ -3318,6 +3307,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getRestRegistryFactory();
         getReactiveExecutor();
         getBeanIntrospection();
+        getPropertiesComponent();
 
         if (isTypeConverterStatisticsEnabled() != null) {
             getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
@@ -3397,40 +3387,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
      */
     protected boolean shouldStartRoutes() {
         return isStarted() && !isStarting();
-    }
-
-    /**
-     * Gets the properties component in use, eventually creating it.
-     */
-    @Override
-    public PropertiesComponent getPropertiesComponent() {
-        return getPropertiesComponent(true);
-    }
-
-    @Override
-    public PropertiesComponent getPropertiesComponent(boolean autoCreate) {
-        if (propertiesComponent == null && autoCreate) {
-            Object comp = ResolverHelper.lookupComponentInRegistryWithFallback(this, "properties");
-            if (comp == null) {
-                try {
-                    comp = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH).newInstance("properties").orElse(null);
-                } catch (NoFactoryAvailableException e) {
-                    // ignore
-                }
-                if (comp != null) {
-                    log.debug("No existing PropertiesComponent has been configured, created a new default PropertiesComponent with name: properties");
-                    globalOptions.put(PropertiesComponent.DEFAULT_CREATED, "true");
-                }
-            }
-            if (comp instanceof PropertiesComponent) {
-                addComponent("properties", (PropertiesComponent) comp);
-                // this adds comp as properties component and sets this.propertiesComponent = comp
-            }
-            if (propertiesComponent == null) {
-                throw new IllegalStateException("Cannot auto create Properties component");
-            }
-        }
-        return propertiesComponent;
     }
 
     @Override
@@ -4184,6 +4140,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected abstract TypeConverterRegistry createTypeConverterRegistry();
 
     protected abstract Injector createInjector();
+
+    protected abstract PropertiesComponent createPropertiesComponent();
 
     protected abstract CamelBeanPostProcessor createBeanPostProcessor();
 

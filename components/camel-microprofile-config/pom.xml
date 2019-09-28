@@ -40,10 +40,9 @@
 
     <dependencies>
 
-        <!-- extends the properties component -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-properties</artifactId>
+            <artifactId>camel-support</artifactId>
             <version>${project.version}</version>
         </dependency>
 

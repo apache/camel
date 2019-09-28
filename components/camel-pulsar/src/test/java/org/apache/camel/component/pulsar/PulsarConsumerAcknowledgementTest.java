@@ -42,12 +42,8 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer-1";
 
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI
-            + "?numberOfConsumers=1&subscriptionType=Exclusive"
-            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-            + "&allowManualAcknowledgement=true"
-            + "&ackTimeoutMillis=1000"
-    )
+    @EndpointInject(uri = "pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                          + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer" + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000")
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")
@@ -58,10 +54,7 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
     @Before
     public void setup() throws Exception {
         context.removeRoute("myRoute");
-        producer = givenPulsarClient().newProducer(Schema.STRING)
-                .producerName(PRODUCER)
-                .topic(TOPIC_URI)
-                .create();
+        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
     }
 
     @Override
@@ -85,11 +78,7 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl()
-                .serviceUrl(getPulsarBrokerUrl())
-                .ioThreads(1)
-                .listenerThreads(1)
-                .build();
+        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
     }
 
     @Test
@@ -102,8 +91,7 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn()
-                            .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt = (PulsarMessageReceipt)exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     receipt.acknowledge();
                 });
             }
@@ -124,8 +112,7 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn()
-                            .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt = (PulsarMessageReceipt)exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     try {
                         CompletableFuture<Void> f = receipt.acknowledgeAsync();
                         f.get();
@@ -151,8 +138,7 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn()
-                            .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt = (PulsarMessageReceipt)exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     // Ack the second message. The first will also be acked.
                     if (exchange.getIn().getBody().equals("Hello World Again!")) {
                         receipt.acknowledgeCumulative();
@@ -177,8 +163,7 @@ public class PulsarConsumerAcknowledgementTest extends PulsarTestSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn()
-                            .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt = (PulsarMessageReceipt)exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     // Ack the second message. The first will also be acked.
                     if (exchange.getIn().getBody().equals("Hello World Again!")) {
                         try {

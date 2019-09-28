@@ -1,0 +1,142 @@
+= Camel Test Spring JUnit 5
+:page-source: components/camel-test-spring-junit5/src/main/docs/test-spring-junit5.adoc
+
+*Available since 3.0*
+
+The `camel-test-spring-junit5` module makes it possible to test Camel Spring based applications with JUnit 5.
+
+Testing is a crucial part of any development or integration work. The Spring Framework offers a number of features that makes it easy to test while using Spring for Inversion of Control.
+
+There are multiple approaches to test Camel Spring 5.x based routes with JUnit 5.
+
+== Extending the CamelSpringTestSupport class
+An approach is to extend `org.apache.camel.test.spring.junit5.CamelSpringTestSupport`, for instance:
+----
+public class SimpleMockTest extends CamelSpringTestSupport {
+
+    @EndpointInject("mock:result")
+    protected MockEndpoint resultEndpoint;
+
+    @Produce("direct:start")
+    protected ProducerTemplate template;
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/test/patterns/SimpleMockTest.xml");
+    }
+
+    @Test
+    public void testMock() throws Exception {
+        String expectedBody = "Hello World";
+        resultEndpoint.expectedBodiesReceived(expectedBody);
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
+        resultEndpoint.assertIsSatisfied();
+    }
+}
+----
+
+This approach provides feature parity with `org.apache.camel.test.junit5.CamelTestSupport` from xref:components::test-junit5.adoc[camel-test-junit5] but does not support Spring annotations on the test class such as `@Autowired`, `@DirtiesContext`, and `@ContextConfiguration`.
+
+Instead of instantiating the `CamelContext` and routes programmatically, this class relies on a Spring context to wire the needed components together. If your test extends this class, you must provide the Spring context by implementing the following method.
+[source,java]
+----
+protected abstract AbstractApplicationContext createApplicationContext();
+----
+
+== Using the @CamelSpringTest annotation
+Another approach involves the usage of the `org.apache.camel.test.spring.junit5.CamelSpringTest` annotation, for instance:
+----
+@CamelSpringTest
+@ContextConfiguration
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+public class CamelSpringPlainTest {
+
+    @Autowired
+    protected CamelContext camelContext;
+
+    @EndpointInject("mock:a")
+    protected MockEndpoint mockA;
+
+    @EndpointInject("mock:b")
+    protected MockEndpoint mockB;
+
+    @Produce("direct:start")
+    protected ProducerTemplate start;
+
+    @Test
+    public void testPositive() throws Exception {
+        assertEquals(ServiceStatus.Started, camelContext.getStatus());
+
+        mockA.expectedBodiesReceived("David");
+        mockB.expectedBodiesReceived("Hello David");
+
+        start.sendBody("David");
+
+        MockEndpoint.assertIsSatisfied(camelContext);
+    }
+
+    @Test
+    public void testAnotherCase() throws Exception {
+    ...
+    }
+}
+----
+
+The above test will load the route from `org/apache/camel/test/spring/CamelSpringPlainTest-context.xml` which looks like below:
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd ">
+
+	<camelContext id="camelContext"
+		xmlns="http://camel.apache.org/schema/spring" trace="true"
+		autoStartup="true">
+		<packageScan>
+			<package>org.apache.camel.test.spring</package>
+		</packageScan>
+		<route>
+			<from uri="direct:start" />
+			<to uri="mock:a" />
+			<transform>
+				<simple>Hello ${body}</simple>
+			</transform>
+			<to uri="mock:b" />
+		</route>
+	</camelContext>
+
+	<bean id="bridgePropertyPlaceholder"
+		class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+		<property name="location"
+			value="classpath:org/apache/camel/test/spring/test.properties" />
+	</bean>
+</beans>
+----
+
+This approach supports both Camel and Spring annotations, such as `@Autowired`, `@DirtiesContext`, and `@ContextConfiguration`.
+However, it does NOT have feature parity with `org.apache.camel.test.junit5.CamelTestSupport`.
+
+== Migrating Camel Spring Tests from JUnit 4 to JUnit 5
+Find below some hints to help in migrating Camel Spring tests from JUnit 4 to JUnit 5.
+
+=== Referencing the Camel Test Spring JUnit 5 library in your project
+Projects using `camel-test-spring` would need to use `camel-test-spring-junit5`. For instance, maven users would update their pom.xml file as below:
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-test-spring-junit5</artifactId>
+  <scope>test</scope>
+</dependency>
+----
+
+Tips: It's possible to run JUnit 4 & JUnit 5 based Camel Spring tests side by side including the following dependencies `camel-test-spring`,
+`camel-test-spring-junit5` and `junit-vintage-engine`. This configuration allows to migrate a Camel Spring test at once.
+
+=== Typical migration steps linked to JUnit 5 support in Camel Test Spring
+* Migration steps linked to xref:components::test-junit5.adoc[JUnit 5 support in Camel Test itself] should have been applied first
+* Imports of `org.apache.camel.test.spring.\*` should be replaced with `org.apache.camel.test.spring.junit5.*`
+* Usage of `@RunWith(CamelSpringRunner.class)` should be replaced with `@CamelSpringTest`
+* Usage of `@BootstrapWith(CamelTestContextBootstrapper.class)` should be replaced with `@CamelSpringTest`
+* Usage of `@RunWith(CamelSpringBootRunner.class)` should be replaced with `@CamelSpringBootTest`

@@ -44,5 +44,6 @@ org.apache.camel.spring.boot.cloud.CamelCloudServiceDiscoveryAutoConfiguration,\
 org.apache.camel.spring.boot.cloud.CamelCloudServiceFilterAutoConfiguration,\
 org.apache.camel.spring.boot.cloud.CamelCloudServiceChooserAutoConfiguration,\
 org.apache.camel.spring.boot.cluster.ClusteredRouteControllerAutoConfiguration,\
+org.apache.camel.spring.boot.properties.PropertiesComponentAutoConfiguration,\
 org.apache.camel.spring.boot.security.CamelSSLAutoConfiguration
 

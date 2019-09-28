@@ -1,6 +1,6 @@
 [[multicast-eip]]
 = Multicast EIP
-:page-source: core/camel-core/src/main/docs/eips/multicast-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/multicast-eip.adoc
 
 The Multicast EIP allows to route the same message to a number of endpoints
 and process them in a different way. The main difference between the

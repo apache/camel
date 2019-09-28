@@ -1,6 +1,6 @@
 [[setBody-eip]]
 = Set Body EIP
-:page-source: core/camel-core/src/main/docs/eips/setBody-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/setBody-eip.adoc
 
 The SetBody EIP allows you to set the body of your exchange.
 

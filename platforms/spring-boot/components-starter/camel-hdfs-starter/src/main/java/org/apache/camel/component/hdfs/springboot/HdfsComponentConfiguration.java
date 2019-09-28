@@ -42,6 +42,13 @@ public class HdfsComponentConfiguration
      */
     private String jAASConfiguration;
     /**
+     * To use kerberos authentication, set the value of the
+     * 'java.security.krb5.conf' environment variable to an existing file. If
+     * the environment variable is already set, warn if different than the
+     * specified parameter
+     */
+    private String kerberosConfigFile;
+    /**
      * Whether the component should use basic property binding (Camel 2.x) or
      * the newer property binding with additional capabilities
      */
@@ -53,6 +60,14 @@ public class HdfsComponentConfiguration
 
     public void setJAASConfiguration(String jAASConfiguration) {
         this.jAASConfiguration = jAASConfiguration;
+    }
+
+    public String getKerberosConfigFile() {
+        return kerberosConfigFile;
+    }
+
+    public void setKerberosConfigFile(String kerberosConfigFile) {
+        this.kerberosConfigFile = kerberosConfigFile;
     }
 
     public Boolean getBasicPropertyBinding() {

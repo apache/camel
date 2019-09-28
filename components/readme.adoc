@@ -1,7 +1,7 @@
 = Components
 
 // components: START
-Number of Components: 301 in 239 JAR artifacts (0 deprecated)
+Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -107,7 +107,7 @@ Number of Components: 301 in 239 JAR artifacts (0 deprecated)
 `aws-msk:label` | 3.0 | The aws-kms is used for managing Amazon KMS
 
 | link:camel-aws-s3/src/main/docs/aws-s3-component.adoc[AWS S3 Storage Service] (camel-aws-s3) +
-`aws-s3:bucketNameOrArn` | 2.8 | The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
+`aws-s3://bucketNameOrArn` | 2.8 | The aws-s3 component is used for storing and retrieving object from Amazon S3 Storage Service.
 
 | link:camel-aws-ses/src/main/docs/aws-ses-component.adoc[AWS Simple Email Service] (camel-aws-ses) +
 `aws-ses:from` | 2.9 | The aws-ses component is used for sending emails with Amazon's SES service.
@@ -682,9 +682,6 @@ Number of Components: 301 in 239 JAR artifacts (0 deprecated)
 | link:camel-printer/src/main/docs/lpr-component.adoc[Printer] (camel-printer) +
 `lpr:hostname:port/printername` | 2.1 | The printer component is used for sending messages to printers as print jobs.
 
-| link:camel-properties/src/main/docs/properties-component.adoc[Properties] (camel-properties) +
-`properties:key` | 2.3 | The properties component is used for using property placeholders in endpoint uris.
-
 | link:camel-pubnub/src/main/docs/pubnub-component.adoc[PubNub] (camel-pubnub) +
 `pubnub:channel` | 2.19 | To send and receive messages to PubNub data stream network for connected devices.
 
@@ -1065,7 +1062,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 34 in 34 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1130,6 +1127,8 @@ Number of Miscellaneous Components: 34 in 34 JAR artifacts (0 deprecated)
 | link:camel-test-karaf/src/main/docs/test-karaf.adoc[Test Karaf] (camel-test-karaf) | 2.18 | Camel integration testing with Apache Karaf
 
 | link:camel-test-spring/src/main/docs/test-spring.adoc[Test Spring] (camel-test-spring) | 2.10 | Camel unit testing with Spring
+
+| link:camel-test-spring-junit5/src/main/docs/test-spring-junit5.adoc[Test Spring Junit5] (camel-test-spring-junit5) | 3.0 | Camel unit testing with Spring and JUnit 5
 
 | link:camel-testcontainers/src/main/docs/testcontainers.adoc[Testcontainers] (camel-testcontainers) | 2.22 | Camel support for testcontainers
 

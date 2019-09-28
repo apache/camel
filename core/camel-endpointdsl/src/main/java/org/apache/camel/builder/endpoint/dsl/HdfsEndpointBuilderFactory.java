@@ -132,6 +132,59 @@ public interface HdfsEndpointBuilderFactory {
             return this;
         }
         /**
+         * The location of the kerb5.conf file
+         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointConsumerBuilder kerberosConfigFileLocation(
+                String kerberosConfigFileLocation) {
+            doSetProperty("kerberosConfigFileLocation", kerberosConfigFileLocation);
+            return this;
+        }
+        /**
+         * The location of the keytab file used to authenticate with the
+         * kerberos nodes (contains pairs of kerberos principals and encrypted
+         * keys (which are derived from the Kerberos password)).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointConsumerBuilder kerberosKeytabLocation(
+                String kerberosKeytabLocation) {
+            doSetProperty("kerberosKeytabLocation", kerberosKeytabLocation);
+            return this;
+        }
+        /**
+         * A comma separated list of kerberos nodes (e.g.
+         * srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file
+         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointConsumerBuilder kerberosNamedNodes(
+                String kerberosNamedNodes) {
+            doSetProperty("kerberosNamedNodes", kerberosNamedNodes);
+            return this;
+        }
+        /**
+         * The username used to authenticate with the kerberos nodes.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointConsumerBuilder kerberosUsername(
+                String kerberosUsername) {
+            doSetProperty("kerberosUsername", kerberosUsername);
+            return this;
+        }
+        /**
          * The type for the key in case of sequence or map files.
          * 
          * The option is a:
@@ -1065,6 +1118,59 @@ public interface HdfsEndpointBuilderFactory {
             return this;
         }
         /**
+         * The location of the kerb5.conf file
+         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointProducerBuilder kerberosConfigFileLocation(
+                String kerberosConfigFileLocation) {
+            doSetProperty("kerberosConfigFileLocation", kerberosConfigFileLocation);
+            return this;
+        }
+        /**
+         * The location of the keytab file used to authenticate with the
+         * kerberos nodes (contains pairs of kerberos principals and encrypted
+         * keys (which are derived from the Kerberos password)).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointProducerBuilder kerberosKeytabLocation(
+                String kerberosKeytabLocation) {
+            doSetProperty("kerberosKeytabLocation", kerberosKeytabLocation);
+            return this;
+        }
+        /**
+         * A comma separated list of kerberos nodes (e.g.
+         * srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file
+         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointProducerBuilder kerberosNamedNodes(
+                String kerberosNamedNodes) {
+            doSetProperty("kerberosNamedNodes", kerberosNamedNodes);
+            return this;
+        }
+        /**
+         * The username used to authenticate with the kerberos nodes.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointProducerBuilder kerberosUsername(
+                String kerberosUsername) {
+            doSetProperty("kerberosUsername", kerberosUsername);
+            return this;
+        }
+        /**
          * The type for the key in case of sequence or map files.
          * 
          * The option is a:
@@ -1587,6 +1693,57 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointBuilder fileType(String fileType) {
             doSetProperty("fileType", fileType);
+            return this;
+        }
+        /**
+         * The location of the kerb5.conf file
+         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointBuilder kerberosConfigFileLocation(
+                String kerberosConfigFileLocation) {
+            doSetProperty("kerberosConfigFileLocation", kerberosConfigFileLocation);
+            return this;
+        }
+        /**
+         * The location of the keytab file used to authenticate with the
+         * kerberos nodes (contains pairs of kerberos principals and encrypted
+         * keys (which are derived from the Kerberos password)).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointBuilder kerberosKeytabLocation(
+                String kerberosKeytabLocation) {
+            doSetProperty("kerberosKeytabLocation", kerberosKeytabLocation);
+            return this;
+        }
+        /**
+         * A comma separated list of kerberos nodes (e.g.
+         * srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file
+         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointBuilder kerberosNamedNodes(String kerberosNamedNodes) {
+            doSetProperty("kerberosNamedNodes", kerberosNamedNodes);
+            return this;
+        }
+        /**
+         * The username used to authenticate with the kerberos nodes.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointBuilder kerberosUsername(String kerberosUsername) {
+            doSetProperty("kerberosUsername", kerberosUsername);
             return this;
         }
         /**

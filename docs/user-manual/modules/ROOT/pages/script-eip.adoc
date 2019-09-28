@@ -1,6 +1,6 @@
 [[script-eip]]
 = Script EIP
-:page-source: core/camel-core/src/main/docs/eips/script-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/script-eip.adoc
 *Available as of Camel 2.16*
 
 Is used to execute a script which does not change the message (by default).

@@ -137,7 +137,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * The camel-core directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core")
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-engine")
     protected File coreDir;
 
     /**

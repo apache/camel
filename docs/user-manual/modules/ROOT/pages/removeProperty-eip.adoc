@@ -1,6 +1,6 @@
 [[removeProperty-eip]]
 = Remove Property EIP
-:page-source: core/camel-core/src/main/docs/eips/removeProperty-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/removeProperty-eip.adoc
 
 The RemoveProperty EIP allows you to remove a Property from your exchange.
 

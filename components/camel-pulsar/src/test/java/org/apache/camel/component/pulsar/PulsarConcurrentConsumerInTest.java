@@ -45,7 +45,7 @@ public class PulsarConcurrentConsumerInTest extends PulsarTestSupport {
     private static final int NUMBER_OF_CONSUMERS = 5;
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=5&subscriptionType=Shared"
-                          + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer-")
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer-")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -72,7 +72,7 @@ public class PulsarConcurrentConsumerInTest extends PulsarTestSupport {
     @Override
     protected Registry createCamelRegistry() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        
+
         registerPulsarBeans(registry);
 
         return registry;

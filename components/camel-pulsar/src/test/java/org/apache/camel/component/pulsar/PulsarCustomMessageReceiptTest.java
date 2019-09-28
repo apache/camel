@@ -53,12 +53,8 @@ public class PulsarCustomMessageReceiptTest extends PulsarTestSupport {
 
     public PulsarMessageReceipt mockPulsarMessageReceipt = mock(PulsarMessageReceipt.class);
 
-    @EndpointInject(uri = "pulsar:" + TOPIC_URI
-            + "?numberOfConsumers=1&subscriptionType=Exclusive"
-            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-            + "&allowManualAcknowledgement=true"
-            + "&ackTimeoutMillis=1000"
-    )
+    @EndpointInject(uri = "pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                          + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer" + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000")
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")
@@ -68,10 +64,7 @@ public class PulsarCustomMessageReceiptTest extends PulsarTestSupport {
 
     @Before
     public void setup() throws Exception {
-        producer = givenPulsarClient().newProducer(Schema.STRING)
-                .producerName(PRODUCER)
-                .topic(TOPIC_URI)
-                .create();
+        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
     }
 
     @Override
@@ -97,11 +90,7 @@ public class PulsarCustomMessageReceiptTest extends PulsarTestSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl()
-                .serviceUrl(getPulsarBrokerUrl())
-                .ioThreads(1)
-                .listenerThreads(1)
-                .build();
+        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
     }
 
     @Test
@@ -116,8 +105,7 @@ public class PulsarCustomMessageReceiptTest extends PulsarTestSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn()
-                            .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt = (PulsarMessageReceipt)exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     receipt.acknowledge();
                 });
             }
@@ -127,10 +115,11 @@ public class PulsarCustomMessageReceiptTest extends PulsarTestSupport {
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
 
-        // The mock does not actually acknowledge using the pulsar consumer, so the message will be re-consumed
+        // The mock does not actually acknowledge using the pulsar consumer, so
+        // the message will be re-consumed
         // after the ackTimeout.
         verify(mockPulsarMessageReceipt, atLeast(2)).acknowledge();
         verifyNoMoreInteractions(mockPulsarMessageReceipt);
     }
-    
+
 }

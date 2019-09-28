@@ -38,6 +38,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic.Kind;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
@@ -94,6 +95,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             String extendsScheme = uriEndpoint.extendsScheme();
             String title = uriEndpoint.title();
             final String label = uriEndpoint.label();
+            validateSchemaName(scheme, classElement);
             if (!isNullOrEmpty(scheme)) {
                 // support multiple schemes separated by comma, which maps to the exact same component
                 // for example camel-mail has a bunch of component schema names that does that
@@ -119,6 +121,13 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                             writer -> writeJSonSchemeAndPropertyConfigurer(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes));
                 }
             }
+        }
+    }
+
+    private void validateSchemaName(final String schemaName, final TypeElement classElement) {
+        // our schema name has to be in lowercase
+        if (!schemaName.equals(schemaName.toLowerCase())) {
+            processingEnv.getMessager().printMessage(Kind.WARNING, String.format("Mixed case schema name in '%s' with value '%s' has been deprecated. Please use lowercase only!", classElement.getQualifiedName(), schemaName));
         }
     }
 

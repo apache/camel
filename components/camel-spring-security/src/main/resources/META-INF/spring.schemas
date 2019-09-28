@@ -126,6 +126,7 @@ http\://camel.apache.org/schema/spring-security/camel-spring-security-2.23.0.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.23.1.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.23.2.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.23.3.xsd=schema/camel-spring-security.xsd
+http\://camel.apache.org/schema/spring-security/camel-spring-security-2.23.4.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.24.0.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.24.1.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.24.2.xsd=schema/camel-spring-security.xsd

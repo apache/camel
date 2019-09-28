@@ -438,7 +438,7 @@ context.setMessageHistoryFactory(new MicroProfileMetricsMessageHistoryFactory())
 
 == MicroProfileMetricsExchangeEventNotifier
 
-The exchange event notifer times exchanges from creation through to completion.
+The exchange event notifier times exchanges from creation through to completion.
 
 EventNotifiers can be added to the `CamelContext`, e.g.:
 
@@ -450,11 +450,22 @@ camelContext.getManagementStrategy().addEventNotifier(new MicroProfileMetricsExc
 
 == MicroProfileMetricsRouteEventNotifier
 
-The route event notifer counts added and running routes within the `CamelContext`.
+The route event notifier counts added and running routes within the `CamelContext`.
 
 EventNotifiers can be added to the `CamelContext`, e.g.:
 
 [source,java]
 ----
 camelContext.getManagementStrategy().addEventNotifier(new MicroProfileMetricsRouteEventNotifier())
+----
+
+== MicroProfileMetricsCamelContextEventNotifier
+
+The Camel Context event notifier adds some basic metrics about the state of the `CamelContext`.
+
+EventNotifiers can be added to the `CamelContext`, e.g.:
+
+[source,java]
+----
+camelContext.getManagementStrategy().addEventNotifier(new MicroProfileMetricsCamelContextEventNotifier())
 ----

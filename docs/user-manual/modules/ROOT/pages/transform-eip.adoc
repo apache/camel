@@ -1,10 +1,10 @@
 [[transform-eip]]
 = Transform EIP
-:page-source: core/camel-core/src/main/docs/eips/transform-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/transform-eip.adoc
 
 See below for details
 
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message Translator]
+* xref:message-translator.adoc[Message Translator]
 
 == Options
 

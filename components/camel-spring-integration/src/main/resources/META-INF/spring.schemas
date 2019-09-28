@@ -132,6 +132,7 @@ http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.23
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.23.1.xsd=schema/camel-spring-integration.xsd
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.23.2.xsd=schema/camel-spring-integration.xsd
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.23.3.xsd=schema/camel-spring-integration.xsd
+http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.23.4.xsd=schema/camel-spring-integration.xsd
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.24.0.xsd=schema/camel-spring-integration.xsd
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.24.1.xsd=schema/camel-spring-integration.xsd
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.24.2.xsd=schema/camel-spring-integration.xsd

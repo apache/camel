@@ -1,6 +1,6 @@
 [[unmarshal-eip]]
 = Unmarshal EIP
-:page-source: core/camel-core/src/main/docs/eips/unmarshal-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/unmarshal-eip.adoc
 
 If you receive a message from one of the Camel xref:components::index.adoc[Components] such as xref:components::file-component.adoc[File], xref:components::http-component.adoc[HTTP] or xref:components::jms-component.adoc[JMS] you often want to unmarshal the payload into some bean so that you can process it using some xref:bean-integration.adoc[Bean Integration] or perform xref:predicate.adoc[Predicate] evaluation and so forth. To do this use the *unmarshal* word in the xref:dsl.adoc[DSL] in Java or the xref:xml-configuration.adoc[Xml Configuration].
 
@@ -29,7 +29,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 ----
 
-The above uses a named DataFormat of _jaxb_ which is configured with a number of Java package names. You can if you prefer use a named reference to a data format which can then be defined in your https://github.com/apache/camel/blob/master/docs/user-manual/en/registry.adoc[Registry] such as via your xref:components::spring.adoc[Spring] XML file.
+The above uses a named DataFormat of _jaxb_ which is configured with a number of Java package names. You can if you prefer use a named reference to a data format which can then be defined in your xref:registry.adoc[Registry] such as via your xref:components::spring.adoc[Spring] XML file.
 
 You can also use the DSL itself to define the data format as you use it.
 For example the following uses Java serialization to unmarshal a binary

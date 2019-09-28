@@ -1,6 +1,6 @@
 [[toD-eip]]
 = To D EIP
-:page-source: core/camel-core/src/main/docs/eips/toD-eip.adoc
+:page-source: core/camel-core-engine/src/main/docs/eips/toD-eip.adoc
 
 There is a new `.toD` / `<toD>` that allows to send a message to a dynamic
 computed xref:endpoint.adoc[Endpoint] using one or
