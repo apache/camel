@@ -23,7 +23,6 @@ import java.nio.ByteBuffer;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.ByteWritable;
 import org.apache.hadoop.io.BytesWritable;
@@ -38,7 +37,7 @@ import org.apache.hadoop.io.Writable;
 
 public class HdfsWritableFactories {
 
-    interface HdfsWritableFactory {
+    public interface HdfsWritableFactory {
 
         Writable create(Object value, TypeConverter typeConverter, Holder<Integer> size);
 
