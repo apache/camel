@@ -33,9 +33,12 @@ import org.apache.camel.util.StringHelper;
  * <p/>
  * This implementation is to return the port part only.
  */
-public class ServicePortFunction {
+public final class ServicePortFunction {
 
     private static final String PORT_PREFIX = "_SERVICE_PORT";
+
+    private ServicePortFunction() {
+    }
 
     public static String apply(String remainder) {
         String key = remainder;
