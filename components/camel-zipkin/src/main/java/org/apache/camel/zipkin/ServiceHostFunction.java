@@ -33,9 +33,12 @@ import org.apache.camel.util.StringHelper;
  * <p/>
  * This implementation is to return the host part only.
  */
-public class ServiceHostFunction {
+public final class ServiceHostFunction {
 
     private static final String HOST_PREFIX = "_SERVICE_HOST";
+
+    private ServiceHostFunction() {
+    }
 
     public static String apply(String remainder) {
         String key = remainder;
