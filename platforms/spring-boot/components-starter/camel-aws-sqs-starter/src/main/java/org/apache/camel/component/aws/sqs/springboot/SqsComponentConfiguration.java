@@ -281,6 +281,10 @@ public class SqsComponentConfiguration
          * Setting the autocreation of the queue
          */
         private Boolean autoCreateQueue = true;
+        /**
+         * The underlying protocol used to communicate with SQS
+         */
+        private String protocol = "https";
 
         public String getAmazonAWSHost() {
             return amazonAWSHost;
@@ -549,6 +553,14 @@ public class SqsComponentConfiguration
 
         public void setAutoCreateQueue(Boolean autoCreateQueue) {
             this.autoCreateQueue = autoCreateQueue;
+        }
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public void setProtocol(String protocol) {
+            this.protocol = protocol;
         }
     }
 }
