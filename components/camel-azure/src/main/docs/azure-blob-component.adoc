@@ -235,39 +235,38 @@ You have to provide the containerOrBlob name and the credentials if the private 
 
 === Azure Blob Client configuration
 
-If your Camel Application is running behind a firewall or if you need to
-have more control over the Azure Blob Client configuration, you can
-create your own instance:
+If your Camel application is running behind a firewall or if you need more control over the Azure Blob Client configuration, you can create your own instance:
 
 [source,java]
---------------------------------------------------------------------------------------
-StorageCredentials credentials = new StorageCredentialsAccountAndKey("camelazure", Base64.encode("thekey".getBytes()));
-CloudBlob client = new CloudBlockBlob("camelazure", credentials);
+----
+StorageCredentials credentials = new StorageCredentialsAccountAndKey(accountName, accessKey);
+CloudBlob client = new CloudBlockBlob(URI.create("https://"
+                    + accountName + ".blob.core.windows.net/" + containerName 
+                    + "/" + fileName), credentials);
 registry.bind("azureBlobClient", client);
---------------------------------------------------------------------------------------
+----
 
-and refer to it in your Camel azure-blob component configuration:
+Then refer to this instance in your Camel `azure-blob` component configuration:
 
 [source,java]
---------------------------------------------------------------------------------
-from("azure-blob://camelazure/container1/blockBlob?azureBlobClient=#client")
+----
+from("azure-blob://" + accountName + "/" + containerName + "/" + fileName + "?azureBlobClient=#client")
 .to("mock:result");
---------------------------------------------------------------------------------
+----
 
 == Dependencies
 
-Maven users will need to add the following dependency to their pom.xml.
+Maven users will need to add the following dependency to their `pom.xml`.
 
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
-where `${camel-version`} must be replaced by the actual version of Camel.
-
+where `${camel-version}` must be replaced by the actual version of Camel.
