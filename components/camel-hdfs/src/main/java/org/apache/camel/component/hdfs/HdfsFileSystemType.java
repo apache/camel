@@ -24,7 +24,7 @@ public enum HdfsFileSystemType {
             StringBuilder hpath = new StringBuilder();
             hpath.append("file://");
             hpath.append(config.getPath());
-            if (!config.getSplitStrategies().isEmpty()) {
+            if (config.hasSplitStrategies()) {
                 hpath.append('/');
             }
             return hpath;
@@ -40,7 +40,7 @@ public enum HdfsFileSystemType {
             hpath.append(':');
             hpath.append(config.getPort());
             hpath.append(config.getPath());
-            if (!config.getSplitStrategies().isEmpty()) {
+            if (config.hasSplitStrategies()) {
                 hpath.append('/');
             }
             return hpath;

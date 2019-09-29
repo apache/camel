@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.hdfs;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Map;
 
 import javax.security.auth.login.Configuration;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.hdfs.kerberos.KerberosConfiguration;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.hadoop.fs.FsUrlStreamHandlerFactory;
@@ -90,17 +90,7 @@ public class HdfsComponent extends DefaultComponent {
      * @param kerberosConfigFileLocation - kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
      */
     public static void setKerberosConfigFile(String kerberosConfigFileLocation) {
-        if (!new File(kerberosConfigFileLocation).exists()) {
-            LOG.warn("Kerberos configuration file [{}}] could not be found.", kerberosConfigFileLocation);
-            return;
-        }
-
-        String krb5Conf = System.getProperty(KERBEROS_5_SYS_ENV);
-        if (krb5Conf == null || !krb5Conf.isEmpty()) {
-            System.setProperty(KERBEROS_5_SYS_ENV, kerberosConfigFileLocation);
-        } else if (!krb5Conf.equalsIgnoreCase(kerberosConfigFileLocation)) {
-            LOG.warn("[{}] was already configured with: [{}] config file", KERBEROS_5_SYS_ENV, krb5Conf);
-        }
+        KerberosConfiguration.setKerberosConfigFile(kerberosConfigFileLocation);
     }
 
 }

@@ -66,7 +66,7 @@ public class KerberosConfigurationTest {
         underTest = new KerberosConfiguration(namedNodes, kerberosConfigFileLocation, replicationFactor);
 
         // then
-        /* exception was thrown */
+        /* message is printed in the logs */
     }
 
     @Test(expected = FileNotFoundException.class)

@@ -191,15 +191,15 @@ public class HdfsConfiguration {
         splitStrategy = getString(hdfsSettings, "splitStrategy", kerberosNamedNodes);
 
         if (isNotEmpty(splitStrategy)) {
-            String[] strstrategies = splitStrategy.split(",");
-            for (String strstrategy : strstrategies) {
-                String[] tokens = strstrategy.split(":");
+            String[] strategyElements = splitStrategy.split(",");
+            for (String strategyElement : strategyElements) {
+                String[] tokens = strategyElement.split(":");
                 if (tokens.length != 2) {
                     throw new IllegalArgumentException("Wrong Split Strategy [splitStrategy" + "=" + splitStrategy + "]");
                 }
-                HdfsProducer.SplitStrategyType sst = HdfsProducer.SplitStrategyType.valueOf(tokens[0]);
-                long ssv = Long.parseLong(tokens[1]);
-                strategies.add(new HdfsProducer.SplitStrategy(sst, ssv));
+                HdfsProducer.SplitStrategyType strategyType = HdfsProducer.SplitStrategyType.valueOf(tokens[0]);
+                long strategyValue = Long.parseLong(tokens[1]);
+                strategies.add(new HdfsProducer.SplitStrategy(strategyType, strategyValue));
             }
         }
         return strategies;
@@ -216,11 +216,12 @@ public class HdfsConfiguration {
     }
 
     public void checkConsumerOptions() {
+        // no validation required
     }
 
     public void checkProducerOptions() {
         if (isAppend()) {
-            if (!getSplitStrategies().isEmpty()) {
+            if (hasSplitStrategies()) {
                 throw new IllegalArgumentException("Split Strategies incompatible with append=true");
             }
             if (getFileType() != HdfsFileType.NORMAL_FILE) {
@@ -489,6 +490,10 @@ public class HdfsConfiguration {
 
     public List<HdfsProducer.SplitStrategy> getSplitStrategies() {
         return splitStrategies;
+    }
+
+    public boolean hasSplitStrategies() {
+        return !splitStrategies.isEmpty();
     }
 
     public String getSplitStrategy() {
