@@ -69,7 +69,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (55 parameters):
+=== Query Parameters (56 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,6 +79,7 @@ with the following path and query parameters:
 | *amazonSQSClient* (common) | To use the AmazonSQS as client |  | AmazonSQS
 | *autoCreateQueue* (common) | Setting the autocreation of the queue | true | boolean
 | *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
+| *protocol* (common) | The underlying protocol used to communicate with SQS | https | String
 | *queueOwnerAWSAccountId* (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
 | *region* (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *attributeNames* (consumer) | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
