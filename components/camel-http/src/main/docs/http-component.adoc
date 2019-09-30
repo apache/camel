@@ -543,6 +543,12 @@ To disable cookies you can set the HTTP Client to ignore cookies by
 adding this URI option: +
  `httpClient.cookieSpec=ignoreCookies`
 
+== Basic auth with the streaming message body
+
+In order to avoid the `NonRepeatableRequestException`, you need to do the
+Preemptive Basic Authentication by adding the option: +
+ `authenticationPreemptive=true`
+
 == Advanced Usage
 
 If you need more control over the HTTP producer you should use the
