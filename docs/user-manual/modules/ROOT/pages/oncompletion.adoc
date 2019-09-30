@@ -27,7 +27,7 @@ failed
 * `onWhen` predicate to only trigger in certain situations
 * *Camel 2.14:* mode: to define whether to run either before or after
 route consumer writes response back to callee (if its InOut)
-* *Camel 2.14:*whether to run async or sync (use a thread pool or not)
+* *Camel 2.14:* whether to run async or sync (use a thread pool or not)
 
 From *Camel 2.14* onwards the onCompletion has been modified to support
 running the completion task in either synchronous or asynchronous mode
