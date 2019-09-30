@@ -1,5 +1,5 @@
 [[as2-component]]
-== AS2 Component
+= AS2 Component
 
 *Available as of Camel version 2.22*
 
