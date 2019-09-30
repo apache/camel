@@ -22,6 +22,15 @@ message Person {
   }
 
   repeated PhoneNumber phone = 4;
+  repeated string nicknames = 5;
+
+  message Address {
+     optional string street = 1;
+     optional int32 street_number = 2;
+     optional bool is_valid = 3;
+  }
+
+  optional Address address = 6;
 }
 
 message AddressBook {
