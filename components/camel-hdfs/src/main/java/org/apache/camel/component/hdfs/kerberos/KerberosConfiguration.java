@@ -24,12 +24,13 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
-import org.apache.camel.component.hdfs.HdfsComponent;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hdfs.DFSConfigKeys;
 import org.apache.hadoop.hdfs.DFSUtil;
 import org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider;
 import org.apache.hadoop.security.UserGroupInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_CLIENT_FAILOVER_PROXY_PROVIDER_KEY_PREFIX;
 import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_HA_NAMENODES_KEY_PREFIX;
@@ -37,7 +38,11 @@ import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_NAMENODE_RPC_ADDRESS_KEY;
 
 public class KerberosConfiguration extends Configuration {
 
+    private static final Logger LOG = LoggerFactory.getLogger(KerberosConfiguration.class);
+
     private static final String HFDS_NAMED_SERVICE = "hfdsNamedService";
+
+    private static final String KERBEROS_5_SYS_ENV = "java.security.krb5.conf";
 
     private static final String AUTHENTICATION_MODE = "hadoop.security.authentication";
     private static final String HFDS_FS = "fs.defaultFS";
@@ -63,7 +68,7 @@ public class KerberosConfiguration extends Configuration {
                                  String kerberosConfigFileLocation,
                                  int replicationFactor) {
 
-        HdfsComponent.setKerberosConfigFile(kerberosConfigFileLocation);
+        setKerberosConfigFile(kerberosConfigFileLocation);
         setupHdfsConfiguration(namedNodes, replicationFactor);
     }
 
@@ -104,6 +109,26 @@ public class KerberosConfiguration extends Configuration {
         // we need to log in otherwise you cannot connect to the filesystem later on
         UserGroupInformation.setConfiguration(this);
         UserGroupInformation.loginUserFromKeytab(username, keyTabFileLocation);
+    }
+
+    /**
+     * To use kerberos authentication, set the value of the 'java.security.krb5.conf' environment variable to an existing file.
+     * If the environment variable is already set, warn if different than the specified parameter
+     *
+     * @param kerberosConfigFileLocation - kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
+     */
+    public static void setKerberosConfigFile(String kerberosConfigFileLocation) {
+        if (!new File(kerberosConfigFileLocation).exists()) {
+            LOG.warn("Kerberos configuration file [{}}] could not be found.", kerberosConfigFileLocation);
+            return;
+        }
+
+        String krb5Conf = System.getProperty(KERBEROS_5_SYS_ENV);
+        if (krb5Conf == null || !krb5Conf.isEmpty()) {
+            System.setProperty(KERBEROS_5_SYS_ENV, kerberosConfigFileLocation);
+        } else if (!krb5Conf.equalsIgnoreCase(kerberosConfigFileLocation)) {
+            LOG.warn("[{}] was already configured with: [{}] config file", KERBEROS_5_SYS_ENV, krb5Conf);
+        }
     }
 
     private String nodeToString(String nodeName) {
