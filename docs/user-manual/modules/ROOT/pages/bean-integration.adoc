@@ -22,11 +22,11 @@ The following annotations is supported and inject by Camel's
 |`@EndpointInject` |To inject an endpoint, see more details at xref:pojo-producing.adoc[POJO
 Producing].
 
-|`@BeanInject` |*Camel 2.13:* To inject a bean obtained from the
+|`@BeanInject` |To inject a bean obtained from the
 Registry. See xref:bean-injection.adoc[Bean
 Injection].
 
-|`@PropertyInject` |*Camel 2.12:* To inject a value using
+|`@PropertyInject` |To inject a value using
 property placeholder.
 
 |`@Produce` |To inject a producer to send message to an endpoint. See
@@ -34,6 +34,8 @@ POJO Producing.
 
 |`@Consume` |To inject a consumer on a method. See xref:pojo-consuming.adoc[POJO
 Consuming].
+
+|`@BindToRegistry` |Used for binding a bean to the registry. If no name is specified then the bean will have its name auto computed based on the class name, field name, or method name where the annotation is configured.
 |=======================================================================
 
 See more details at:
