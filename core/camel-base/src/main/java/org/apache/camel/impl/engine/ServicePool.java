@@ -89,6 +89,13 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
             if (p.evict(s)) {
                 pool.remove(e);
             }
+        } else {
+            ServicePool.stop(s);
+            try {
+                e.getCamelContext().removeService(s);
+            } catch (Exception ex) {
+                LOG.error("Error removing service {}", s, ex);
+            }
         }
     }
 
