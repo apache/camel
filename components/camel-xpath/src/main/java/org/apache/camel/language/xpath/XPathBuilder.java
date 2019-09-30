@@ -1061,15 +1061,13 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
             IOHelper.close(is);
         }
 
-        if (threadSafety && answer != null && answer instanceof NodeList) {
+        if (threadSafety && answer instanceof NodeList) {
             try {
                 NodeList list = (NodeList)answer;
 
-                // when the result is NodeList and it has 2+ elements then its
-                // not thread-safe to use concurrently
-                // and we need to clone each node and build a thread-safe list
-                // to be used instead
-                boolean threadSafetyNeeded = list.getLength() >= 2;
+                // when the result is NodeList and it has 1 or more elements then its not thread-safe to use concurrently
+                // and we need to clone each node and build a thread-safe list to be used instead
+                boolean threadSafetyNeeded = list.getLength() >= 1;
                 if (threadSafetyNeeded) {
                     answer = new ThreadSafeNodeList(list);
                     if (LOG.isDebugEnabled()) {
