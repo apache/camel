@@ -16,11 +16,8 @@
 == Documentation
 
 * <<User Guide>>
-* Manual
 * xref:books.adoc[Books]
-* Tutorials
 * xref:examples.adoc[Examples]
-* Cookbook
 * xref:architecture.adoc[Architecture]
 * xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 * xref:dsl.adoc[DSL]
@@ -47,7 +44,6 @@ it has been forced to block threads while exchanges are being processed
 asynchronous
 * xref:error-handling-in-camel.adoc[Error handling in Camel]
 * xref:using-propertyplaceholder.adoc[How to use Camel property placeholders]
-* [Tutorials]
 * xref:examples.adoc[Examples]
 * xref:testing.adoc[Testing]
 * xref:xml-configuration.adoc[XML Configuration]
@@ -58,21 +54,14 @@ camel routes without them knowing
 * [Creating a new Spring based Camel Route]
 * [Camel JMX]
 * xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
-* [Working with Camel and SCR]
-* Working with REST and [Rest DSL]
-
-=== xref:examples.adoc[Examples]
-
-* xref:bam-example.adoc[BAM Example]
+* xref:rest-dsl.adoc[Working with REST and Rest DSL]
 
 === xref:architecture.adoc[Architecture]
 
-* AOP
 * xref:async.adoc[Async]
 * xref:asynchronous-routing-engine.adoc[Asynchronous Routing Engine]
 * xref:backlogdebugger.adoc[BacklogDebugger]
 * xref:backlog-tracer.adoc[BacklogTracer]
-* xref:bam.adoc[BAM]
 * xref:batch-consumer.adoc[Batch Consumer]
 * xref:binding.adoc[Binding]
 * xref:browsable-endpoint.adoc[BrowsableEndpoint]
@@ -112,7 +101,6 @@ camel routes without them knowing
 * xref:servicepool.adoc[ServicePool]
 * xref:stream-caching.adoc[Stream caching]
 * xref:threading-model.adoc[Threading Model]
-* ToAsync
 * Tracer
 * xref:transport.adoc[Transport]
 * xref:type-converter.adoc[Type Converter]
@@ -123,11 +111,11 @@ camel routes without them knowing
 === xref:dsl.adoc[DSL]
 
 * xref:java-dsl.adoc[Java DSL]
-* xref:components::spring.adoc[Spring DSL]
-* xref:using-osgi-blueprint-with-camel.adoc[Blueprint DSL]
+* xref:bean-integration.adoc[Java Annotation DSL]
+* xref:components::spring.adoc[Spring XML DSL]
+* xref:using-osgi-blueprint-with-camel.adoc[OSGi Blueprint XML DSL]
 * xref:rest-dsl.adoc[Rest DSL]
-* xref:bean-integration.adoc[Annotation DSL]
-* Kotlin DSL
+
 
 === Components
 
@@ -538,18 +526,15 @@ camel routes without them knowing
 * xref:support.adoc[Support]
 * https://github.com/apache/camel/blob/master/CONTRIBUTING.md[Contributing]
 * xref:mailing-lists.adoc[Mailing Lists]
-* Gitter / IRC Chat
+* https://gitter.im/apache/apache-camel[Gitter Chat]
 * xref:user-stories.adoc[User Stories]
-* News
-* Articles
-* Site
+* xref:blog.adoc[Blog]
+* xref:articles.adoc[Articles]
 * Team
 * Camel Extra
 
 == Developers
 
 * Developer Guide
-* Source
 * https://github.com/apache/camel/[GitHub]
 * xref:building.adoc[Building]
-* Javadoc
