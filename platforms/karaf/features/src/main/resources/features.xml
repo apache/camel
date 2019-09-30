@@ -939,6 +939,7 @@
     <bundle dependency='true'>mvn:io.netty/netty-codec-dns/${netty-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch/${elasticsearch-rest-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch-client/${elasticsearch-rest-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.logging.log4j/log4j-core/${log4j2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-elasticsearch-rest/${project.version}</bundle>
   </feature>
   <feature name='camel-etcd' version='${project.version}' start-level='50'>
