@@ -395,13 +395,13 @@
         <junit-version>4.12</junit-version>
         <junit-jupiter-version>5.5.1</junit-jupiter-version>
         <jxmpp-version>0.6.3</jxmpp-version>
-	<jython-version>2.5.3</jython-version>
+	    <jython-version>2.5.3</jython-version>
         <jython-standalone-version>2.5.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
         <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
         <kafka-version>2.3.0</kafka-version>
         <kafka-bundle-version>2.3.0_1</kafka-bundle-version>
-        <karaf4-version>4.2.6</karaf4-version>
+        <karaf4-version>4.2.7</karaf4-version>
         <kie-version>7.27.0.Final</kie-version>
         <kubernetes-client-version>4.6.0</kubernetes-client-version>
         <kubernetes-model-version>4.6.0</kubernetes-model-version>
