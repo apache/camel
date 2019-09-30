@@ -14,21 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
-import io.netty.handler.stream.ChunkedWriteHandler;
+import java.io.InputStream;
 
-public class CustomChunkedWriteHandler extends ChunkedWriteHandler {
-    @Override
-    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        if (msg instanceof ChunkedHttpRequest) {
-            super.write(ctx, ((ChunkedHttpRequest) msg).getRequest(), promise);
-        } else if (msg instanceof ChunkedHttpResponse) {
-            super.write(ctx, ((ChunkedHttpResponse)msg).getResponse(), promise);
-        }
-        super.write(ctx, msg, promise);
+import io.netty.handler.codec.http.HttpResponse;
+
+public class InboundStreamHttpResponse {
+    private HttpResponse response;
+    private InputStream in;
+
+    public InboundStreamHttpResponse(HttpResponse response, InputStream in) {
+        this.response = response;
+        this.in = in;
     }
 
+    public InputStream getInputStream() {
+        return in;
+    }
+
+    public HttpResponse getHttpResponse() {
+        return response;
+    }
 }
