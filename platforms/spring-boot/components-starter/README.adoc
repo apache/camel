@@ -1,25 +1,24 @@
 = Camel Component Starters
 
-Starters are Apache Camel modules intended to be used in Spring Boot applications.
+Starters are Apache Camel modules intended to be used in Spring Boot applications. 
 There is a `camel-xxx-starter` module for each Camel component (with few exceptions listed below).
+
+You should always use the `camel-xxx-starter` modules when using Spring Boot with Camel. These are the Camel components
+which are officially supported with Spring Boot. If there is no `camel-xxx-starter` module then the Camel component is not supported on Spring Boot with Camel.
 
 Starters are created to meet the following requirements:
 
 * Allow the auto-configuration of the component through the native spring-boot configuration system (compatible with IDE tooling)
 * Manage transitive logging dependencies to better integrate with spring-boot logging system
 * Include additional dependencies and align transitive ones to minimize the effort of creating a working spring-boot application
+* May include additional features such as additonal configurations, actuators, or health checks
 
 Each starter has its own integration test (in path `tests/camel-itest-spring-boot`) that verifies its compatibility with the current release of spring-boot.
 
-The following components do not have a starter because of compatibility issues:
+The following components do not have a starter:
 
 * **camel-blueprint** (intended for OSGi only)
 * **camel-cdi** (intended for CDI only)
-* **camel-core-osgi** (intended for OSGi only)
-* **camel-core-xml**
 * **camel-eventadmin** (intended for OSGi only)
-* **camel-ibatis** (`camel-mybatis-starter` is included)
 * **camel-paxlogging** (intended for OSGi only)
-* **camel-scr** (intended for OSGi only)
-* **camel-spark-rest**
-* **camel-swagger** (`camel-swagger-java-starter` is included)
+* **camel-spark-rest** (does not work with Spring Boot)
