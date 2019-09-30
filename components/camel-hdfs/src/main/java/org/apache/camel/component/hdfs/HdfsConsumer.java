@@ -192,9 +192,9 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             if (log.isDebugEnabled()) {
                 log.debug("Skipping file: {} as not matching owner: {}", fileStatus.getPath(), config.getOwner());
             }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     private HdfsInputStream createInputStream(FileStatus fileStatus) {
