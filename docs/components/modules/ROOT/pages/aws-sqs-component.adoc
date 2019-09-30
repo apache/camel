@@ -149,7 +149,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 38 options, which are listed below.
+The component supports 39 options, which are listed below.
 
 
 
@@ -179,6 +179,7 @@ The component supports 38 options, which are listed below.
 | *camel.component.aws-sqs.configuration.message-retention-period* | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue. |  | Integer
 | *camel.component.aws-sqs.configuration.operation* | The operation to do in case the user don't want to send only a message |  | SqsOperations
 | *camel.component.aws-sqs.configuration.policy* | The policy for this queue |  | String
+| *camel.component.aws-sqs.configuration.protocol* | The underlying protocol used to communicate with SQS | https | String
 | *camel.component.aws-sqs.configuration.proxy-host* | To define a proxy host when instantiating the SQS client |  | String
 | *camel.component.aws-sqs.configuration.proxy-port* | To define a proxy port when instantiating the SQS client |  | Integer
 | *camel.component.aws-sqs.configuration.queue-name* | Name of queue. The queue will be created if they don't already exists. |  | String

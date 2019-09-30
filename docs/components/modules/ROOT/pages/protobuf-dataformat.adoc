@@ -83,6 +83,10 @@ from("direct:marshal")
     .to("mock:reverse");
 --------------------------------------------------------------------------------------------------
 
+== Input data type
+This dataformat supports marshaling input data either as protobuf `Message` type or `Map` data type. In case of input data as `Map` type, first it will try to retrieve the data as `Map` using built-in type converters, if it fails to
+do so, it will fall back to retrieve it as proto `Message`.
+
 == Protobuf overview
 
 This quick overview of how to use Protobuf. For more detail see the
@@ -197,11 +201,11 @@ DataFormat marshal and unmarshal API like this.
 -----------------------------------------------------------------------------------
 
 Or use the DSL protobuf() passing the unmarshal default instance or
-default instance class name like this.
+default instance class name like this. However, if you have input data as `Map` type, you will need to **specify** the ProtobufDataFormat otherwise it will throw an error.
 
 [source,java]
 --------------------------------------------------------------------------------------------------
-   // You don't need to specify the default instance for protobuf marshaling               
+   // You don't need to specify the default instance for protobuf marshaling, but you will need in case your input data is a Map type
    from("direct:marshal").marshal().protobuf();
    from("direct:unmarshalA").unmarshal()
        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person")
