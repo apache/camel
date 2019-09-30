@@ -24,21 +24,22 @@ public class HdfsActivator implements BundleActivator {
 
     @Override
     public void start(BundleContext context) throws Exception {
+        // no action needed
     }
 
     @Override
     public void stop(BundleContext context) throws Exception {
-        // There's problem inside OSGi when framwork is being shutdown
+        // There's problem inside OSGi when framework is being shutdown
         // hadoop.fs code registers some JVM shutdown hooks throughout the code and this ordered
         // list of hooks is run in shutdown thread.
         // At that time bundle class loader / bundle wiring is no longer valid (bundle is stopped)
         // so ShutdownHookManager can't load additional classes. But there are some inner classes
         // loaded when iterating over registered hadoop shutdown hooks.
-        // Let's explicitely load these inner classes when bundle is stopped, as there's last chance
+        // Let's explicitly load these inner classes when bundle is stopped, as there's last chance
         // to use valid bundle class loader.
         // This is based on the knowledge of what's contained in SMX bundle
         // org.apache.servicemix.bundles.hadoop-client-*.jar
-        // the above is just a warning that hadopp may have some quirks when running inside OSGi
+        // the above is just a warning that hadoop may have some quirks when running inside OSGi
         ClassLoader hadoopCl = ShutdownHookManager.class.getClassLoader();
         if (hadoopCl != null) {
             String shm = ShutdownHookManager.class.getName();
