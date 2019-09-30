@@ -507,7 +507,7 @@
         <os-maven-plugin-version>1.6.0</os-maven-plugin-version>
         <oscache-bundle-version>2.4_5</oscache-bundle-version>
         <osgi-version>6.0.0</osgi-version>
-        <paho-version>1.2.1</paho-version>
+        <paho-version>1.2.2</paho-version>
         <paranamer-bundle-version>2.8_1</paranamer-bundle-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
         <pax-cdi-version>1.0.0</pax-cdi-version>
