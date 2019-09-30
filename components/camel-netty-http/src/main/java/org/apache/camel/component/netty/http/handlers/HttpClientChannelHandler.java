@@ -23,11 +23,13 @@ import java.util.Map;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
+import org.apache.camel.component.netty.http.InboundStreamHttpResponse;
 import org.apache.camel.component.netty.http.NettyHttpProducer;
 
 /**
@@ -44,7 +46,20 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
 
     @Override
     protected Message getResponseMessage(Exchange exchange, ChannelHandlerContext ctx, Object message) throws Exception {
-        FullHttpResponse response = (FullHttpResponse) message;
+        HttpResponse response;
+        Message answer;
+
+        if (message instanceof FullHttpResponse) {
+            FullHttpResponse fullHttpResponse = (FullHttpResponse) message;
+            response = fullHttpResponse;
+            // use the binding
+            answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(fullHttpResponse, exchange, producer.getConfiguration());
+        } else {
+            InboundStreamHttpResponse streamHttpResponse = (InboundStreamHttpResponse) message;
+            response = streamHttpResponse.getHttpResponse();
+            answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(streamHttpResponse, exchange, producer.getConfiguration());
+        }
+
         if (!HttpUtil.isKeepAlive(response)) {
             // just want to make sure we close the channel if the keepAlive is not true
             exchange.setProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
@@ -59,7 +74,7 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
             }
             producer.getEndpoint().getCookieHandler().storeCookies(exchange, uri, m);
         }
-        // use the binding
-        return producer.getEndpoint().getNettyHttpBinding().toCamelMessage(response, exchange, producer.getConfiguration());
+
+        return answer;
     }
 }

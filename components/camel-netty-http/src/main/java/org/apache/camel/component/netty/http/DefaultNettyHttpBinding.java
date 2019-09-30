@@ -113,7 +113,21 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     }
 
     @Override
-    public void populateCamelHeaders(FullHttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
+    public Message toCamelMessage(InboundStreamHttpRequest request, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
+        LOG.trace("toCamelMessage: {}", request);
+
+        NettyHttpMessage answer = new NettyHttpMessage(exchange.getContext(), null, null);
+        answer.setExchange(exchange);
+        if (configuration.isMapHeaders()) {
+            populateCamelHeaders(request.getHttpRequest(), answer.getHeaders(), exchange, configuration);
+        }
+
+        answer.setBody(request.getInputStream());
+        return answer;
+    }
+
+    @Override
+    public void populateCamelHeaders(HttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("populateCamelHeaders: {}", request);
 
         // NOTE: these headers is applied using the same logic as camel-http/camel-jetty to be consistent
@@ -227,13 +241,13 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // if we're proxying the body is a buffer that we do not want to consume directly
         if (request.method().name().equals("POST") && request.headers().get(Exchange.CONTENT_TYPE) != null
                 && request.headers().get(Exchange.CONTENT_TYPE).startsWith(NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
-                && !configuration.isBridgeEndpoint() && !configuration.isHttpProxy()) {
+                && !configuration.isBridgeEndpoint() && !configuration.isHttpProxy() && request instanceof FullHttpRequest) {
 
             String charset = "UTF-8";
 
             // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
             String body;
-            ByteBuf buffer = request.content();
+            ByteBuf buffer = ((FullHttpRequest)request).content();
             try {
                 body = buffer.toString(Charset.forName(charset));
             } finally {
@@ -306,7 +320,21 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     }
 
     @Override
-    public void populateCamelHeaders(FullHttpResponse response, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
+    public Message toCamelMessage(InboundStreamHttpResponse response, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
+        LOG.trace("toCamelMessage: {}", response);
+
+        NettyHttpMessage answer = new NettyHttpMessage(exchange.getContext(), null, null);
+        answer.setExchange(exchange);
+        if (configuration.isMapHeaders()) {
+            populateCamelHeaders(response.getHttpResponse(), answer.getHeaders(), exchange, configuration);
+        }
+
+        answer.setBody(response.getInputStream());
+        return answer;
+    }
+
+    @Override
+    public void populateCamelHeaders(HttpResponse response, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("populateCamelHeaders: {}", response);
 
         headers.put(Exchange.HTTP_RESPONSE_CODE, response.status().code());
@@ -394,7 +422,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         HttpResponse response = null;
 
         if (response == null && body instanceof InputStream && configuration.isDisableStreamCache()) {
-            response = new ChunkedHttpResponse((InputStream)body, new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code)));
+            response = new OutboundStreamHttpResponse((InputStream)body, new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code)));
             response.headers().set(TRANSFER_ENCODING, CHUNKED);
         }
 
@@ -547,7 +575,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         }
 
         if (request == null && body instanceof InputStream && configuration.isDisableStreamCache()) {
-            request = new ChunkedHttpRequest((InputStream)body, new DefaultHttpRequest(protocol, httpMethod, uriForRequest));
+            request = new OutboundStreamHttpRequest((InputStream)body, new DefaultHttpRequest(protocol, httpMethod, uriForRequest));
             request.headers().set(TRANSFER_ENCODING, CHUNKED);
         }
 
@@ -572,7 +600,6 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                     }
                 }
 
-
                 if (buffer != null) {
                     if (buffer.readableBytes() > 0) {
                         request = ((DefaultFullHttpRequest)request).replace(buffer);
@@ -585,12 +612,11 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                     }
                 }
             }
-
-            // update HTTP method accordingly as we know if we have a body or not
-            HttpMethod method = NettyHttpHelper.createMethod(message, body != null);
-            request.setMethod(method);
         }
 
+        // update HTTP method accordingly as we know if we have a body or not
+        HttpMethod method = NettyHttpHelper.createMethod(message, body != null);
+        request.setMethod(method);
 
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
 

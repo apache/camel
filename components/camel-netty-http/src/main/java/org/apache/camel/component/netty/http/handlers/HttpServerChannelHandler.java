@@ -40,6 +40,7 @@ import org.apache.camel.component.netty.NettyConverter;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty.http.HttpPrincipal;
+import org.apache.camel.component.netty.http.InboundStreamHttpRequest;
 import org.apache.camel.component.netty.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
 import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
@@ -77,7 +78,12 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        HttpRequest request = (HttpRequest) msg;
+        HttpRequest request;
+        if (msg instanceof HttpRequest) {
+            request = (HttpRequest) msg;
+        } else {
+            request = ((InboundStreamHttpRequest) msg).getHttpRequest();
+        }
 
         LOG.debug("Message received: {}", request);
 
@@ -272,7 +278,13 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
             exchange.setProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
         }
-        HttpRequest request = (HttpRequest) message;
+
+        HttpRequest request;
+        if (message instanceof HttpRequest) {
+            request = (HttpRequest) message;
+        } else {
+            request = ((InboundStreamHttpRequest)message).getHttpRequest();
+        }
         // setup the connection property in case of the message header is removed
         boolean keepAlive = HttpUtil.isKeepAlive(request);
         if (!keepAlive) {
