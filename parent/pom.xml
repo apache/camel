@@ -45,7 +45,7 @@
         <activemq-version>5.15.10</activemq-version>
         <activemq-artemis-version>2.10.1</activemq-artemis-version>
         <aether-version>1.0.2.v20150114</aether-version>
-        <ahc-version>2.10.2</ahc-version>
+        <ahc-version>2.10.3</ahc-version>
         <ant-bundle-version>1.7.0_6</ant-bundle-version>
         <antlr-bundle-version>3.5.2_1</antlr-bundle-version>
         <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
@@ -345,7 +345,7 @@
         <jedis-client-version>2.9.0</jedis-client-version>
         <jedis-client-bundle-version>2.9.0_1</jedis-client-bundle-version>
         <jersey-version>2.28</jersey-version>
-        <jetty9-version>9.4.19.v20190610</jetty9-version>
+        <jetty9-version>9.4.20.v20190813</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -401,7 +401,7 @@
         <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
         <kafka-version>2.3.0</kafka-version>
         <kafka-bundle-version>2.3.0_1</kafka-bundle-version>
-        <karaf4-version>4.2.6</karaf4-version>
+        <karaf4-version>4.2.7</karaf4-version>
         <kie-version>7.27.0.Final</kie-version>
         <kubernetes-client-version>4.6.0</kubernetes-client-version>
         <kubernetes-model-version>4.6.0</kubernetes-model-version>
@@ -433,7 +433,7 @@
         <maven-archetype-plugin-version>3.0.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
         <maven-assembly-plugin-version>3.0.0</maven-assembly-plugin-version>
-        <maven-bundle-plugin-version>4.2.0</maven-bundle-plugin-version>
+        <maven-bundle-plugin-version>4.2.1</maven-bundle-plugin-version>
         <maven-checkstyle-plugin-version>3.0.0</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
         <maven-owasp-plugin-version>5.2.2</maven-owasp-plugin-version>
@@ -461,7 +461,7 @@
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
         <mock-javamail-version>1.9</mock-javamail-version>
-        <mockwebserver-version>0.1.6</mockwebserver-version>
+        <mockwebserver-version>0.1.7</mockwebserver-version>
         <mockito-version>2.28.2</mockito-version>
         <mongo-java-driver-version>3.11.0</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
@@ -507,13 +507,13 @@
         <os-maven-plugin-version>1.6.0</os-maven-plugin-version>
         <oscache-bundle-version>2.4_5</oscache-bundle-version>
         <osgi-version>6.0.0</osgi-version>
-        <paho-version>1.2.1</paho-version>
+        <paho-version>1.2.2</paho-version>
         <paranamer-bundle-version>2.8_1</paranamer-bundle-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
         <pax-cdi-version>1.0.0</pax-cdi-version>
         <pax-exam-version>4.13.1</pax-exam-version>
         <pax-tiny-bundle-version>1.3.2</pax-tiny-bundle-version>
-        <pax-logging-version>1.8.6</pax-logging-version>
+        <pax-logging-version>1.11.2</pax-logging-version>
         <pdfbox-version>2.0.17</pdfbox-version>
         <perfmark-version>0.17.0</perfmark-version>
         <pgjdbc-driver-version>42.2.6</pgjdbc-driver-version>
@@ -529,7 +529,7 @@
         <pulsar-bundle-version>2.4.0_1</pulsar-bundle-version>
         <qpid-broker-version>7.1.4</qpid-broker-version>
         <qpid-proton-j-version>0.33.2</qpid-proton-j-version>
-        <qpid-jms-client-version>0.45.0</qpid-jms-client-version>
+        <qpid-jms-client-version>0.46.0</qpid-jms-client-version>
         <quartz-version>2.3.1</quartz-version>
         <quickfixj-version>2.1.1</quickfixj-version>
         <rabbitmq-amqp-client-version>5.7.3</rabbitmq-amqp-client-version>
@@ -625,7 +625,7 @@
         <tagsoup-bundle-version>1.2.1_1</tagsoup-bundle-version>
         <tagsoup-version>1.2.1</tagsoup-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
-        <testcontainers-version>1.12.1</testcontainers-version>
+        <testcontainers-version>1.12.2</testcontainers-version>
         <tinybundles-version>2.1.1</tinybundles-version>
         <tika-version>1.22</tika-version>
         <twilio-version>7.9.1</twilio-version>

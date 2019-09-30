@@ -23,7 +23,6 @@ import java.nio.ByteBuffer;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.ByteWritable;
 import org.apache.hadoop.io.BytesWritable;
@@ -215,9 +214,7 @@ public class HdfsWritableFactories {
 
         @Override
         public Writable create(Object value, TypeConverter typeConverter, Holder<Integer> size) {
-            InputStream is = null;
-            try {
-                is = typeConverter.convertTo(InputStream.class, value);
+            try (InputStream is = typeConverter.convertTo(InputStream.class, value)) {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 IOUtils.copyBytes(is, bos, HdfsConstants.DEFAULT_BUFFERSIZE, false);
                 BytesWritable writable = new BytesWritable();
@@ -226,8 +223,6 @@ public class HdfsWritableFactories {
                 return writable;
             } catch (IOException ex) {
                 throw new RuntimeCamelException(ex);
-            } finally {
-                IOHelper.close(is);
             }
         }
 

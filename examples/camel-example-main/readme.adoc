@@ -14,11 +14,20 @@ _public static void main_ class and where you manually setup Camel without
 any help from Camel's built-in Main class. However it shows how to do this
 in a _raw style_ without using any _magic_.
 
+== Generating tooling meta-data
+
+The `camel-main-maven-plugin` is used for pre-scanning your project and prepare
+autowiring and sprint boot tooling support by classpath scanning.
+
+You can run this via
+
+    mvn camel-main:generate
+
 == How to run
 
 You can run this example using
 
-    mvn camel:run   
+    mvn camel:run
 
 == More information
 

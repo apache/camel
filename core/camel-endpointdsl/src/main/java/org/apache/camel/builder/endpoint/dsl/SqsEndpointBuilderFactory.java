@@ -137,6 +137,17 @@ public interface SqsEndpointBuilderFactory {
             return this;
         }
         /**
+         * The underlying protocol used to communicate with SQS.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SqsEndpointConsumerBuilder protocol(String protocol) {
+            doSetProperty("protocol", protocol);
+            return this;
+        }
+        /**
          * Specify the queue owner aws account id when you need to connect the
          * queue with different account owner.
          * 
@@ -1325,6 +1336,17 @@ public interface SqsEndpointBuilderFactory {
             return this;
         }
         /**
+         * The underlying protocol used to communicate with SQS.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SqsEndpointProducerBuilder protocol(String protocol) {
+            doSetProperty("protocol", protocol);
+            return this;
+        }
+        /**
          * Specify the queue owner aws account id when you need to connect the
          * queue with different account owner.
          * 
@@ -1861,6 +1883,17 @@ public interface SqsEndpointBuilderFactory {
         default SqsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * The underlying protocol used to communicate with SQS.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SqsEndpointBuilder protocol(String protocol) {
+            doSetProperty("protocol", protocol);
             return this;
         }
         /**

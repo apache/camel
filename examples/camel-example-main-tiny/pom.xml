@@ -118,6 +118,7 @@
                 </configuration>
             </plugin>
 
+            <!-- Run 'mvn camel-main:generate' -->
             <!-- generate autowire.properties file that can automatic detect resources
                  from the classpath to make convention over configuration for Camel components -->
             <plugin>
@@ -127,15 +128,6 @@
                 <configuration>
                     <logClasspath>false</logClasspath>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>generate</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
             </plugin>
 
         </plugins>

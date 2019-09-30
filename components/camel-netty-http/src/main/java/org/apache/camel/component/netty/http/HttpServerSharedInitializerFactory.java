@@ -30,6 +30,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.ServerInitializerFactory;
+import org.apache.camel.component.netty.http.handlers.HttpInboundStreamHandler;
+import org.apache.camel.component.netty.http.handlers.HttpOutboundStreamHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,8 +86,9 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
         pipeline.addLast("decoder", new HttpRequestDecoder(4096, configuration.getMaxHeaderSize(), 8192));
         pipeline.addLast("encoder", new HttpResponseEncoder());
         if (configuration.isChunked()) {
+            pipeline.addLast("inbound-streamer", new HttpInboundStreamHandler());
             pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
-            pipeline.addLast("streamer", new CustomChunkedWriteHandler());
+            pipeline.addLast("outbound-streamer", new HttpOutboundStreamHandler());
         }
         if (configuration.isCompression()) {
             pipeline.addLast("deflater", new HttpContentCompressor());

@@ -11,6 +11,15 @@ via Camel built-in dependency-injection that supports binding via the
 
 Also notice how you can configure Camel in the `application.properties` file.
 
+== Generating tooling meta-data
+
+The `camel-main-maven-plugin` is used for pre-scanning your project and prepare
+autowiring and sprint boot tooling support by classpath scanning.
+
+You can run this via
+
+    mvn camel-main:generate
+
 == How to run
 
 You can run this example using
