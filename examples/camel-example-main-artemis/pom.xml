@@ -106,6 +106,7 @@
                 </configuration>
             </plugin>
 
+            <!-- Run 'mvn camel-main:generate' -->
             <!-- generate autowire.properties file that can automatic detect resources
                  from the classpath to make convention over configuration for Camel components -->
             <plugin>
@@ -121,15 +122,6 @@
                     <!-- to use spring caching connection factory instead of the default -->
                     <!-- <mappings>javax.jms.ConnectionFactory=#class:org.springframework.jms.connection.CachingConnectionFactory</mappings> -->
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>generate</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
             </plugin>
 
         </plugins>
