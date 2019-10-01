@@ -159,6 +159,16 @@ Camel-AWS EKS component provides the following operation on the producer side:
 - describeCluster
 - deleteCluster
 
+== Producer Examples
+
+- listClusters: this operation will list the available clusters in EKS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listClusters")
+    .to("aws-eks://test?ecsClient=#amazonEcsClient&operation=listClusters")
+--------------------------------------------------------------------------------
+
 == Automatic detection of AmazonEKS client in registry
 
 The component is capable of detecting the presence of an AmazonEKS bean into the registry.
