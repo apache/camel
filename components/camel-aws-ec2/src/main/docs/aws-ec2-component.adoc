@@ -158,6 +158,20 @@ terminate operations on.
 |`CamelAwsEC2InstancesTags` |`Collection` |A collection of tags to add or remove from EC2 resources
 |=======================================================================
 
+== Supported producer operations
+
+- createAndRunInstances
+- startInstances
+- stopInstances
+- terminateInstances
+- describeInstances
+- describeInstancesStatus
+- rebootInstances
+- monitorInstances
+- unmonitorInstances
+- createTags
+- deleteTags
+
 == Automatic detection of AmazonEC2 client in registry
 
 The component is capable of detecting the presence of an AmazonEC2 bean into the registry.
