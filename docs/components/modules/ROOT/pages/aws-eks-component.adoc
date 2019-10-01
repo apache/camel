@@ -166,7 +166,7 @@ Camel-AWS EKS component provides the following operation on the producer side:
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:listClusters")
-    .to("aws-eks://test?ecsClient=#amazonEcsClient&operation=listClusters")
+    .to("aws-eks://test?ecsClient=#amazonEksClient&operation=listClusters")
 --------------------------------------------------------------------------------
 
 == Automatic detection of AmazonEKS client in registry
