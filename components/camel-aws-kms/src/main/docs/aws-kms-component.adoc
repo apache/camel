@@ -156,6 +156,16 @@ Camel-AWS KMS component provides the following operation on the producer side:
 - describeKey
 - enableKey
 
+== Producer Examples
+
+- listKeys: this operation will list the available keys in KMS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listKeys")
+      .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=listKeys")
+--------------------------------------------------------------------------------
+
 == Automatic detection of AWSKMS client in registry
 
 The component is capable of detecting the presence of an AWSKMS bean into the registry.
