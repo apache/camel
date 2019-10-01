@@ -168,6 +168,16 @@ Camel-AWS MQ component provides the following operation on the producer side:
 - updateBroker
 - describeBroker
 
+== Producer Examples
+
+- listBrokers: this operation will list the available MQ Brokers in AWS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listBrokers")
+    .to("aws-mq://test?amazonMqClient=#amazonMqClient&operation=listBrokers")
+--------------------------------------------------------------------------------
+
 == Automatic detection of AmazonMQ client in registry
 
 The component is capable of detecting the presence of an AmazonMQ bean into the registry.
