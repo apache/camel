@@ -17,16 +17,14 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <artifactId>spring-boot</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-RC2</version>
     </parent>
 
     <artifactId>camel-spring-boot-dm</artifactId>
@@ -66,7 +64,7 @@
         <maven-checkstyle-plugin-version>3.0.0</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
 
-        <camel.osgi.manifest></camel.osgi.manifest>
+        <camel.osgi.manifest />
     </properties>
 
     <build>
@@ -77,11 +75,11 @@
                 <executions>
                     <execution>
                         <id>versions</id>
-                        <phase/>
+                        <phase />
                     </execution>
                     <execution>
                         <id>bundle-manifest</id>
-                        <phase/>
+                        <phase />
                     </execution>
                 </executions>
             </plugin>
