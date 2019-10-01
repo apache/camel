@@ -24,6 +24,8 @@ import java.util.Set;
 import com.mongodb.MongoClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.mongodb.meta.MongoDBMetaExtension;
+import org.apache.camel.component.mongodb.verifier.MongoComponentVerifierExtension;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -50,6 +52,8 @@ public class MongoDbComponent extends DefaultComponent {
 
     public MongoDbComponent(CamelContext context) {
         super(context);
+        registerExtension(MongoComponentVerifierExtension::new);
+        registerExtension(MongoDBMetaExtension::new);
     }
 
     @Override
