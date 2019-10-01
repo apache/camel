@@ -594,14 +594,14 @@
         <spring-data-keyvalue-bundle-version>2.1.10.RELEASE_1</spring-data-keyvalue-bundle-version>
         <spring-data-redis-version>2.1.10.RELEASE</spring-data-redis-version>
         <spring-data-redis-bundle-version>2.1.10.RELEASE_1</spring-data-redis-bundle-version>
-        <spring-integration-version>5.1.3.RELEASE</spring-integration-version>
+        <spring-integration-version>5.1.8.RELEASE</spring-integration-version>
         <spring-ldap-version>2.3.2.RELEASE</spring-ldap-version>
         <spring-ldap-bundle-version>2.3.2.RELEASE_1</spring-ldap-bundle-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.1.9.RELEASE</spring5-version>
-        <spring-security-version>5.1.4.RELEASE</spring-security-version>
-        <spring-security-bundle-version>5.1.3.RELEASE_1</spring-security-bundle-version>
+        <spring5-version>5.1.10.RELEASE</spring5-version>
+        <spring-security-version>5.1.6.RELEASE</spring-security-version>
+        <spring-security-bundle-version>5.1.6.RELEASE_1</spring-security-bundle-version>
         <spring-ws-version>3.0.7.RELEASE</spring-ws-version>
         <spring-ws-bundle-version>3.0.7.RELEASE_1</spring-ws-bundle-version>
         <spring-xml-bundle-version>3.0.7.RELEASE_1</spring-xml-bundle-version>
