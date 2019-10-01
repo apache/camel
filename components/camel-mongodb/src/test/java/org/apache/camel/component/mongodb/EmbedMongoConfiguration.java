@@ -43,7 +43,7 @@ import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 @Configuration
 public class EmbedMongoConfiguration {
 
-    private static final int PORT = findAvailableTcpPort();
+    public static final int PORT = findAvailableTcpPort();
 
     static {
         try {
