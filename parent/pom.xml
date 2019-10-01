@@ -549,7 +549,7 @@
         <ribbon-version>2.3.0</ribbon-version>
         <roaster-version>2.20.1.Final</roaster-version>
 	<robotframework-version>3.1.1</robotframework-version>
-        <rome-version>1.12.1</rome-version>
+        <rome-version>1.12.2</rome-version>
         <rxjava-version>1.3.8</rxjava-version>
         <rxjava2-version>2.2.12</rxjava2-version>
         <saxon-bundle-version>9.9.1-4_1</saxon-bundle-version>
