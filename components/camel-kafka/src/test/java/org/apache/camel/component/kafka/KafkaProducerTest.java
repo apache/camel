@@ -40,6 +40,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -183,6 +185,28 @@ public class KafkaProducerTest {
         in.setHeader(KafkaConstants.KEY, "someKey");
 
         producer.process(exchange);
+
+        // the header is preserved
+        assertNotNull(in.getHeader(KafkaConstants.TOPIC));
+
+        verifySendMessage(4, "anotherTopic", "someKey");
+        assertRecordMetadataExists();
+    }
+
+    @Test
+    public void processSendsMessageWithOverrideTopicHeaderAndEndPoint() throws Exception {
+        endpoint.getConfiguration().setTopic("sometopic");
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
+
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
+        in.setHeader(KafkaConstants.OVERRIDE_TOPIC, "anotherTopic");
+        in.setHeader(KafkaConstants.KEY, "someKey");
+
+        producer.process(exchange);
+
+        // the header is now removed
+        assertNull(in.getHeader(KafkaConstants.OVERRIDE_TOPIC));
 
         verifySendMessage(4, "anotherTopic", "someKey");
         assertRecordMetadataExists();

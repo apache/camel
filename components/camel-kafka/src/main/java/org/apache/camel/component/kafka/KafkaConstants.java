@@ -22,6 +22,7 @@ public final class KafkaConstants {
     public static final String PARTITION = "kafka.PARTITION";
     public static final String KEY = "kafka.KEY";
     public static final String TOPIC = "kafka.TOPIC";
+    public static final String OVERRIDE_TOPIC = "kafka.OVERRIDE_TOPIC";
     public static final String OFFSET = "kafka.OFFSET";
     public static final String HEADERS = "kafka.HEADERS";
     public static final String LAST_RECORD_BEFORE_COMMIT = "kafka.LAST_RECORD_BEFORE_COMMIT";
