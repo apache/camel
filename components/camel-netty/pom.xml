@@ -79,4 +79,22 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <forkedProcessTimeoutInSeconds>5000</forkedProcessTimeoutInSeconds>
+                    <systemPropertyVariables>
+                        <!-- can use PARANOID for checking every access -->
+                        <io.netty.leakDetection.level>ADVANCED</io.netty.leakDetection.level>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
