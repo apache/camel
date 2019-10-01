@@ -172,6 +172,20 @@ terminate operations on.
 - createTags
 - deleteTags
 
+== Producer Examples
+
+- createAndRunInstances: this operation will create an EC2 instance and run it
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createAndRun")
+     .setHeader(EC2Constants.IMAGE_ID, constant("ami-fd65ba94"))
+     .setHeader(EC2Constants.INSTANCE_TYPE, constant(InstanceType.T2Micro))
+     .setHeader(EC2Constants.INSTANCE_MIN_COUNT, constant("1"))
+     .setHeader(EC2Constants.INSTANCE_MAX_COUNT, constant("1"))
+     .to("aws-ec2://TestDomain?accessKey=xxxx&secretKey=xxxx&operation=createAndRunInstances");
+--------------------------------------------------------------------------------
+
 == Automatic detection of AmazonEC2 client in registry
 
 The component is capable of detecting the presence of an AmazonEC2 bean into the registry.
