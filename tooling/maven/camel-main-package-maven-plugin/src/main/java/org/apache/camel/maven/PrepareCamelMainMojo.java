@@ -18,7 +18,11 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -159,14 +163,23 @@ public class PrepareCamelMainMojo extends AbstractMojo {
 
             outFolder.mkdirs();
             File file = new File(outFolder, "camel-main-configuration-metadata.json");
-            try {
-                FileOutputStream fos = new FileOutputStream(file, false);
-                fos.write(json.getBytes());
-                fos.close();
-                getLog().info("Created file: " + file);
-            } catch (Throwable e) {
-                throw new MojoFailureException("Cannot write to file " + file + " due " + e.getMessage(), e);
+            updateResource(file.toPath(), json.getBytes());
+        }
+    }
+
+    private void updateResource(Path path, byte[] newdata) throws MojoFailureException {
+        try {
+            byte[] olddata = new byte[0];
+            if (Files.exists(path) && Files.isReadable(path)) {
+                olddata = Files.readAllBytes(path);
             }
+            if (!Arrays.equals(olddata, newdata)) {
+                Files.write(path, newdata, StandardOpenOption.WRITE,
+                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            }
+            getLog().info("Created file: " + path);
+        } catch (Throwable e) {
+            throw new MojoFailureException("Cannot write to file " + path + " due " + e.getMessage(), e);
         }
     }
 

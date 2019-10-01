@@ -432,7 +432,7 @@
         <maven-archetype-plugin-version>3.0.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
         <maven-assembly-plugin-version>3.0.0</maven-assembly-plugin-version>
-        <maven-bundle-plugin-version>4.2.1</maven-bundle-plugin-version>
+        <maven-bundle-plugin-version>4.2.1-SNAPSHOT</maven-bundle-plugin-version>
         <maven-checkstyle-plugin-version>3.0.0</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
         <maven-owasp-plugin-version>5.2.2</maven-owasp-plugin-version>
