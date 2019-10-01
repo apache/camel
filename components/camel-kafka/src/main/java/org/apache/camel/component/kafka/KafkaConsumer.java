@@ -216,6 +216,8 @@ public class KafkaConsumer extends DefaultConsumer {
                 // re-connect
                 reConnect = doRun();
             }
+
+            log.info("Terminating KafkaConsumer thread: {} receiving from topic: {}", threadId, topicName);
         }
 
         void preInit() {
