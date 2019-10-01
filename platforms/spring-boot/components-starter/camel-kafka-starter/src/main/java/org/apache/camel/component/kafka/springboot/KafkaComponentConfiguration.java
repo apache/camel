@@ -181,22 +181,6 @@ public class KafkaComponentConfiguration
          */
         private String groupId;
         /**
-         * If the option is true, then KafkaProducer will ignore the
-         * KafkaConstants.TOPIC header setting of the inbound message.
-         */
-        private Boolean bridgeEndpoint = false;
-        /**
-         * If the option is true, then KafkaProducer will detect if the message
-         * is attempted to be sent back to the same topic it may come from, if
-         * the message was original from a kafka consumer. If the
-         * KafkaConstants.TOPIC header is the same as the original kafka
-         * consumer topic, then the header setting is ignored, and the topic of
-         * the producer endpoint is used. In other words this avoids sending the
-         * same message back to where it came from. This option is not in use if
-         * the option bridgeEndpoint is set to true.
-         */
-        private Boolean circularTopicDetection = true;
-        /**
          * The partitioner class for partitioning messages amongst sub-topics.
          * The default partitioner is based on the hash of the key.
          */
@@ -803,22 +787,6 @@ public class KafkaComponentConfiguration
 
         public void setGroupId(String groupId) {
             this.groupId = groupId;
-        }
-
-        public Boolean getBridgeEndpoint() {
-            return bridgeEndpoint;
-        }
-
-        public void setBridgeEndpoint(Boolean bridgeEndpoint) {
-            this.bridgeEndpoint = bridgeEndpoint;
-        }
-
-        public Boolean getCircularTopicDetection() {
-            return circularTopicDetection;
-        }
-
-        public void setCircularTopicDetection(Boolean circularTopicDetection) {
-            this.circularTopicDetection = circularTopicDetection;
         }
 
         public String getPartitioner() {
