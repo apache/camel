@@ -170,7 +170,7 @@ public class KafkaProducerTest {
 
         producer.process(exchange);
 
-        verifySendMessage("anotherTopic");
+        verifySendMessage("sometopic");
         assertRecordMetadataExists();
     }
 
@@ -189,7 +189,7 @@ public class KafkaProducerTest {
         // the header is preserved
         assertNotNull(in.getHeader(KafkaConstants.TOPIC));
 
-        verifySendMessage(4, "anotherTopic", "someKey");
+        verifySendMessage(4, "sometopic", "someKey");
         assertRecordMetadataExists();
     }
 
@@ -277,9 +277,8 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendMessageWithBridgeEndpoint() throws Exception {
+    public void processSendMessageWithTopicHeader() throws Exception {
         endpoint.getConfiguration().setTopic("someTopic");
-        endpoint.getConfiguration().setBridgeEndpoint(true);
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
@@ -289,41 +288,6 @@ public class KafkaProducerTest {
         producer.process(exchange);
 
         verifySendMessage(4, "someTopic", "someKey");
-        assertRecordMetadataExists();
-    }
-
-    @Test
-    public void processSendMessageWithCircularDetected() throws Exception {
-        endpoint.getConfiguration().setTopic("sometopic");
-        endpoint.getConfiguration().setCircularTopicDetection(true);
-        Mockito.when(exchange.getIn()).thenReturn(in);
-        Mockito.when(exchange.getOut()).thenReturn(out);
-        Mockito.when(exchange.getFromEndpoint()).thenReturn(fromEndpoint);
-        // this is the from topic that are from the fromEndpoint
-        in.setHeader(KafkaConstants.TOPIC, "fromtopic");
-        in.setHeader(KafkaConstants.KEY, "somekey");
-
-        producer.process(exchange);
-
-        verifySendMessage("sometopic", "somekey");
-        assertRecordMetadataExists();
-    }
-
-    @Test
-    public void processSendMessageWithNoCircularDetected() throws Exception {
-        endpoint.getConfiguration().setTopic("sometopic");
-        endpoint.getConfiguration().setCircularTopicDetection(false);
-        Mockito.when(exchange.getIn()).thenReturn(in);
-        Mockito.when(exchange.getOut()).thenReturn(out);
-        Mockito.when(exchange.getFromEndpoint()).thenReturn(fromEndpoint);
-        // this is the from topic that are from the fromEndpoint
-        in.setHeader(KafkaConstants.TOPIC, "fromtopic");
-        in.setHeader(KafkaConstants.KEY, "somekey");
-
-        producer.process(exchange);
-
-        // will end up sending back to itself at fromtopic
-        verifySendMessage("fromtopic", "somekey");
         assertRecordMetadataExists();
     }
 

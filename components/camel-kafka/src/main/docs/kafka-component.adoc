@@ -332,16 +332,12 @@ Before sending a message to Kafka you can configure the following headers.
 |===
 | Header constant              | Header value          | Type    | Description
 | KafkaConstants.KEY           | "kafka.KEY"           | Object  | *Required* The key of the message in order to ensure that all related message goes in the same partition
-| KafkaConstants.TOPIC         | "kafka.TOPIC"         | String  | The topic to which send the message (only read if the `bridgeEndpoint` endpoint parameter is `true`)
 | KafkaConstants.OVERRIDE_TOPIC | "kafka.OVERRIDE_TOPIC" | String  | The topic to which send the message (override and takes precedence), and the header is not preserved. |
 | KafkaConstants.PARTITION_KEY | "kafka.PARTITION_KEY" | Integer | Explicitly specify the partition (only used if the `KafkaConstants.KEY` header is defined)
 |===
 
-If you want to send a message to a dynamic topic then favour using `KafkaConstants.OVERRIDE_TOPIC` as its used as a one-time header
-that are not send along the message, as its removed in the producer. If you are using `KafkaConstants.TOPIC` then the header
-is propagated in the producer, which means that if the consumer is also Camel and you want to route to a 3rd topic then
-this header may interfere and route to a previous topic, which is not your intention. Therefore you need to turn on the bridgeEndpoint option;
-or better just use the `KafkaConstants.OVERRIDE_TOPIC` header instead.
+If you want to send a message to a dynamic topic then use `KafkaConstants.OVERRIDE_TOPIC` as its used as a one-time header
+that are not send along the message, as its removed in the producer.
 
 After the message is sent to Kafka, the following headers are available
 [width="100%",cols="2m,2m,1m,5",options="header"]

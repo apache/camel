@@ -137,12 +137,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
 
-    // Producer Camel specific configuration properties
-    @UriParam(label = "producer")
-    private boolean bridgeEndpoint;
-    @UriParam(label = "producer", defaultValue = "true")
-    private boolean circularTopicDetection = true;
-
     // Producer configuration properties
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
     private String partitioner = KafkaConstants.KAFKA_DEFAULT_PARTITIONER;
@@ -554,36 +548,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setGroupId(String groupId) {
         this.groupId = groupId;
-    }
-
-    public boolean isBridgeEndpoint() {
-        return bridgeEndpoint;
-    }
-
-    /**
-     * If the option is true, then KafkaProducer will ignore the
-     * KafkaConstants.TOPIC header setting of the inbound message.
-     */
-    public void setBridgeEndpoint(boolean bridgeEndpoint) {
-        this.bridgeEndpoint = bridgeEndpoint;
-    }
-
-    public boolean isCircularTopicDetection() {
-        return circularTopicDetection;
-    }
-
-    /**
-     * If the option is true, then KafkaProducer will detect if the message is
-     * attempted to be sent back to the same topic it may come from, if the
-     * message was original from a kafka consumer. If the KafkaConstants.TOPIC
-     * header is the same as the original kafka consumer topic, then the header
-     * setting is ignored, and the topic of the producer endpoint is used. In
-     * other words this avoids sending the same message back to where it came
-     * from. This option is not in use if the option bridgeEndpoint is set to
-     * true.
-     */
-    public void setCircularTopicDetection(boolean circularTopicDetection) {
-        this.circularTopicDetection = circularTopicDetection;
     }
 
     public String getPartitioner() {
