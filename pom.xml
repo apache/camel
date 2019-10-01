@@ -262,6 +262,7 @@
                             <exclude>**/fabric8/*.yaml</exclude>
                             <exclude>**/src/main/data/*.patient</exclude>
                             <exclude>**/src/main/data/*.csv</exclude>
+                            <exclude>**/src/main/resources/avro/*.avsc</exclude>
                             <!-- generated files -->
                             <exclude>**/target/**/*</exclude>
                             <exclude>**/eclipse-classes/**/*</exclude>
