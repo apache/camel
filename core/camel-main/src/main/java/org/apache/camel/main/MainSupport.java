@@ -836,7 +836,7 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected void autoConfigurationFailFast(CamelContext camelContext, Map<String, String> autoConfiguredProperties) throws Exception {
         // load properties
-        Properties prop = camelContext.getPropertiesComponent().loadProperties();
+        Properties prop = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
         LOG.debug("Properties from Camel properties component:");
         for (String key : prop.stringPropertyNames()) {
             LOG.debug("    {}={}", key, prop.getProperty(key));
@@ -921,7 +921,7 @@ public abstract class MainSupport extends ServiceSupport {
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
 
         // now configure context/hystrix/rest with additional properties
-        Properties prop = camelContext.getPropertiesComponent().loadProperties();
+        Properties prop = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
@@ -1011,7 +1011,7 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected void autoConfigurationPropertiesComponent(CamelContext camelContext, Map<String, String> autoConfiguredProperties) throws Exception {
         // load properties
-        Properties prop = camelContext.getPropertiesComponent().loadProperties();
+        Properties prop = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
@@ -1050,7 +1050,7 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected void autoConfigurationMainConfiguration(CamelContext camelContext, MainConfigurationProperties config, Map<String, String> autoConfiguredProperties) throws Exception {
         // load properties
-        Properties prop = camelContext.getPropertiesComponent().loadProperties();
+        Properties prop = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
 
         // load properties from ENV (override existing)
         if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
@@ -1109,7 +1109,7 @@ public abstract class MainSupport extends ServiceSupport {
         }
 
         // load properties from properties component (override existing)
-        Properties propPC = camelContext.getPropertiesComponent().loadProperties();
+        Properties propPC = camelContext.getPropertiesComponent().loadProperties(name -> name.startsWith("camel."));
         prop.putAll(propPC);
 
         // load properties from ENV (override existing)

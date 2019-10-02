@@ -54,7 +54,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport im
     public Properties loadProperties(Predicate<String> filter) {
         Properties answer = new Properties();
 
-        for (String name: answer.stringPropertyNames()) {
+        for (String name: properties.stringPropertyNames()) {
             if (filter.test(name)) {
                 answer.put(name, properties.get(name));
             }
