@@ -219,7 +219,7 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     public InvokeResult invoke(InvokeRequest invokeRequest) {
         InvokeResult result = new InvokeResult();
 
-        Map<String, Object> payload = new HashMap<>();
+        Map<String, String> payload = new HashMap<>();
         try {
             ObjectMapper mapper = new ObjectMapper();
             payload = mapper.readValue(StandardCharsets.UTF_8.decode(invokeRequest.getPayload()).toString(), new TypeReference<Map<String, String>>() {

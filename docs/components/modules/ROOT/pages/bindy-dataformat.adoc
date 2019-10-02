@@ -482,6 +482,9 @@ generated (output message) must be different compare to input position
 |defaultValue |string |optional - default value = "" - defines the field's
 default value when the respective CSV field is empty/not available
 
+|columnName |string |optional - default value = "" - defines the field's
+header name; uses the name of the property as default. Only applicable when `CsvRecord` has `generateHeaderColumns = true`
+
 |impliedDecimalSeparator |boolean |optional - default value = "false" - Indicates if there is
 a decimal point implied at a specified location
 
@@ -726,6 +729,27 @@ public class Order {
 
     @DataField(pos = 4, defaultValue = "Barin")
     private String lastName;
+}
+----
+
+*case 8 : columnName*
+
+Specifies the column name for the property only if `CsvRecord` has annotation `generateHeaderColumns = true`
+
+*Column Name*
+[source,java]
+----
+@CsvRecord(separator = ",", generateHeaderColumns = true)
+public class Order {
+
+    @DataField(pos = 1)
+    private int orderNr;
+
+    @DataField(pos = 5, columnName = "ISIN")
+    private String isinCode;
+
+    @DataField(name = "Name", pos = 6)
+    private String instrumentName;
 }
 ----
 
