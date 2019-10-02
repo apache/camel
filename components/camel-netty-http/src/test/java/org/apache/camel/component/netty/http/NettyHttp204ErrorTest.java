@@ -78,11 +78,11 @@ public class NettyHttp204ErrorTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://localhost:{{port}}/foo")
-                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(204))
-                        .setBody().constant("Nothing Found");
+                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(204))
+                    .setBody().constant("Nothing Found");
 
                 from("direct:start")
-                        .to("netty-http:http://localhost:{{port}}/foo");
+                    .to("netty-http:http://localhost:{{port}}/foo");
 
             }
         };
