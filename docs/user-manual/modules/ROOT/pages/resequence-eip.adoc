@@ -66,7 +66,7 @@ Typically you'd use a header rather than the body to order things; or maybe a pa
 
 [source,java]
 ----
-resequencer(header("mySeqNo"))
+resequence(header("mySeqNo"))
 ----
 
 for example to reorder messages using a custom sequence number in the header `mySeqNo`. +
