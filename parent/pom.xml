@@ -294,8 +294,7 @@
         <ivy-version>2.4.0</ivy-version>
         <jackson-version>1.9.12</jackson-version>
         <jackson-spark-version>2.6.7</jackson-spark-version>
-        <jackson2-version>2.9.9</jackson2-version>
-        <jackson2-databind-version>2.9.9.3</jackson2-databind-version>
+        <jackson2-version>2.10.0</jackson2-version>
         <jackrabbit-version>2.19.4</jackrabbit-version>
         <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
@@ -4018,7 +4017,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson2-databind-version}</version>
+                <version>${jackson2-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
