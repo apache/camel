@@ -94,7 +94,8 @@ The properties component will now use OS environment variables as preferred valu
 
 The `properties` component no longer support using endpoints, such as `properties:myKey`. The properties component is now only a property placeholder service.
 You can therefore no longer lookup the properties component via `camelContext.getComponent("properties")`.
-Instead you can use `camelContext.getPropertiesComponent()`.
+Instead you can use `camelContext.getPropertiesComponent()`, which also returns an interface of the properties component as `org.apache.camel.spi.PropertiesComponent`.
+The implementation is still named `org.apache.camel.component.properties.PropertiesComponent`, however it should rarely be used, as you should favour using the interface instead.
 
 
 === Removed components
