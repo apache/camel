@@ -26,36 +26,36 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Test;
 
 public class UndertowError204Test extends BaseUndertowTest {
-	
-	@Test
-	public void testHttp204Error_web() throws Exception {
-		HttpUriRequest request = new HttpGet( "http://localhost:" + getPort() + "/foobar");
-		HttpClient httpClient = HttpClientBuilder.create().build();
-		HttpResponse httpResponse = httpClient.execute(request);
-		
-		assertEquals(204, httpResponse.getStatusLine().getStatusCode());
-		assertNull(httpResponse.getEntity());
-	}
-	
+
     @Test
-    public void testHttp204Error_direct_call() throws Exception {
-    	Exchange inExchange = this.createExchangeWithBody("Hello World");
-    	Exchange outExchange = template.send("undertow:http://localhost:{{port}}/foobar", inExchange);
-    	
-    	assertEquals(204, outExchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE));
-    	assertEquals("", outExchange.getIn().getBody(String.class));
+    public void testHttp204ErrorCallingViaHttp() throws Exception {
+        HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foobar");
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponse httpResponse = httpClient.execute(request);
+
+        assertEquals(204, httpResponse.getStatusLine().getStatusCode());
+        assertNull(httpResponse.getEntity());
     }
-    
+
     @Test
-    public void testHttp204Error_indirect_call() throws Exception {
-    	Exchange inExchange = this.createExchangeWithBody("Hello World");
-    	Exchange outExchange = template.send("direct:start", inExchange);
-    	
-    	assertEquals(204, outExchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE));
-    	assertEquals("", outExchange.getIn().getBody(String.class));
-    	
-    	assertEquals(null, outExchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-    	assertEquals(null, outExchange.getOut().getBody(String.class));
+    public void testHttp204ErrorCallingUndertowViaCamel() throws Exception {
+        Exchange inExchange = this.createExchangeWithBody("Hello World");
+        Exchange outExchange = template.send("undertow:http://localhost:{{port}}/foobar", inExchange);
+
+        assertEquals(204, outExchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("", outExchange.getIn().getBody(String.class));
+    }
+
+    @Test
+    public void testHttp204ErrorCallingViaCamelRoute() throws Exception {
+        Exchange inExchange = this.createExchangeWithBody("Hello World");
+        Exchange outExchange = template.send("direct:start", inExchange);
+
+        assertEquals(204, outExchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("", outExchange.getIn().getBody(String.class));
+
+        assertEquals(null, outExchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(null, outExchange.getOut().getBody(String.class));
     }
 
     @Override
@@ -63,14 +63,13 @@ public class UndertowError204Test extends BaseUndertowTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-            	from("undertow:http://localhost:{{port}}/foobar")
-            		.setHeader(Exchange.HTTP_RESPONSE_CODE, constant(204))
-            		.setBody().constant("Nothing Found");
-            	
-            	
-            	from("direct:start")
-            		.to("undertow:http://localhost:{{port}}/foobar");
-            	
+                from("undertow:http://localhost:{{port}}/foobar")
+                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(204))
+                    .setBody().constant("Nothing Found");
+
+                from("direct:start")
+                    .to("undertow:http://localhost:{{port}}/foobar");
+
             }
         };
     }
