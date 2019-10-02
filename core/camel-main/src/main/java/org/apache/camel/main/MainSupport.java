@@ -1252,13 +1252,6 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
-    private static String optionKey(String key) {
-        // as we ignore case for property names we should use keys in same case and without dashes
-        key = StringHelper.replaceAll(key, "-", "");
-        key = key.toLowerCase(Locale.US);
-        return key;
-    }
-
     public void addRouteBuilder(RouteBuilder routeBuilder) {
         getRouteBuilders().add(routeBuilder);
     }
@@ -1279,7 +1272,14 @@ public abstract class MainSupport extends ServiceSupport {
         setRouteBuilderClasses(existing);
     }
 
-    private static boolean setPropertiesOnTarget(CamelContext context, Object target, Map<String, Object> properties,
+    protected static String optionKey(String key) {
+        // as we ignore case for property names we should use keys in same case and without dashes
+        key = StringHelper.replaceAll(key, "-", "");
+        key = key.toLowerCase(Locale.US);
+        return key;
+    }
+
+    protected static boolean setPropertiesOnTarget(CamelContext context, Object target, Map<String, Object> properties,
                                                  String optionKey, String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
                                                  Map<String, String> autoConfiguredProperties) throws Exception {
         ObjectHelper.notNull(context, "context");
