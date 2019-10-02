@@ -7,10 +7,7 @@ The other one is `enrich`
 `pollEnrich` uses a Polling Consumer to obtain the additional data. It is usually used for Event Message messaging, for instance to read a file or download a FTP file.
 
 [NOTE]
-.Good practice to use timeout value
-===
-By default Camel will use the receive. Which may block until there is a message available. It is therefore recommended to always provide a timeout value, to make this clear that we may wait for a message, until the timeout is hit.
-===
+Good practice to use timeout value. By default Camel will use the receive. Which may block until there is a message available. It is therefore recommended to always provide a timeout value, to make this clear that we may wait for a message, until the timeout is hit.
 
 If there is no data then the `newExchange` in the aggregation strategy is `null`.
 
@@ -22,10 +19,8 @@ You can pass in a timeout value that determines which method to use
 
 The timeout values is in millis.
 
-===
 `pollEnrich` does *not* access any data from the current Exchange which means when polling it cannot use any of the existing headers you may have set on the Exchange. For example you cannot set a filename in the `Exchange.FILE_NAME` header and use `pollEnrich` to consume only that file. For that you *must* set the filename in the endpoint URI.
 Both `enrich` and `pollEnrich` supports dynamic endpoints that uses an Expression to compute the uri, which allows to use data from the current Exchange. In other words all what is told above no longer apply and it just works.
-===
 
 == Content enrichment using pollEnrich
 The `pollEnrich` works just as the `enrich` however as it uses a Polling Consumer we have 3 methods when polling
@@ -89,8 +84,6 @@ For example to wait up to 5 seconds you can do:
 ----
 
 == Using dynamic uris
-
-*Available as of Camel 2.16*
 
 Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to `pollEnrich` from an endpoint that uses a header to indicate a SEDA queue name:
 [source,java]
