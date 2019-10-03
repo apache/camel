@@ -27,7 +27,7 @@ import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExt
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-import org.apache.camel.component.mongodb.conf.MongoConfiguration;
+import org.apache.camel.component.mongodb.conf.ConnectionParamsConfiguration;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +60,7 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
     }
 
     private void verifyCredentials(ResultBuilder builder, Map<String, Object> parameters) {
-        MongoConfiguration mongoConf = new MongoConfiguration(cast(parameters));
+        ConnectionParamsConfiguration mongoConf = new ConnectionParamsConfiguration(cast(parameters));
         MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
         // Avoid retry and long timeout
         optionsBuilder.connectTimeout(CONNECTION_TIMEOUT);
@@ -80,8 +80,8 @@ public class MongoComponentVerifierExtension extends DefaultComponentVerifierExt
             builder.error(errorBuilder.build());
         } catch (MongoTimeoutException e) {
             // When there is any connection exception, the driver tries to reconnect until timeout is reached
-            // wrapping the original socket exception into a timeout exception
-            String description = null;
+            // wrapping the original security/socket exception into a timeout exception
+            String description;
             VerificationError.StandardCode code = VerificationError.StandardCode.GENERIC;
             if (e.getMessage().contains("com.mongodb.MongoSecurityException")) {
                 code = VerificationError.StandardCode.AUTHENTICATION;
