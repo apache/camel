@@ -199,6 +199,17 @@ The component is capable of detecting the presence of an AmazonSimpleEmailServic
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
+== Producer Examples
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setHeader(SesConstants.SUBJECT, constant("This is my subject"))
+    .setHeader(SesConstants.TO, constant(Collections.singletonList("to@example.com"))
+    .setBody(constant("This is my message text."))
+    .to("aws-ses://from@example.com?accessKey=xxx&secretKey=yyy");
+--------------------------------------------------------------------------------
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
