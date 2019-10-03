@@ -96,14 +96,23 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
         MongoDatabase admin = mongo.getDatabase("admin");
         MongoCollection<Document> usersCollection = admin.getCollection("system.users");
         if (usersCollection.count() == 0) {
-            usersCollection.insertOne(Document.parse("{\n" + "    \"_id\": \"admin.test-user\",\n"
-                    + "    \"user\": \"test-user\",\n" + "    \"db\": \"admin\",\n" + "    \"credentials\": {\n"
-                    + "        \"SCRAM-SHA-1\": {\n" + "            \"iterationCount\": 10000,\n"
+            usersCollection.insertOne(Document.parse("{\n"
+                    + "    \"_id\": \"admin.test-user\",\n"
+                    + "    \"user\": \"test-user\",\n"
+                    + "    \"db\": \"admin\",\n"
+                    + "    \"credentials\": {\n"
+                    + "        \"SCRAM-SHA-1\": {\n"
+                    + "            \"iterationCount\": 10000,\n"
                     + "            \"salt\": \"gmmPAoNdvFSWCV6PGnNcAw==\",\n"
                     + "            \"storedKey\": \"qE9u1Ax7Y40hisNHL2b8/LAvG7s=\",\n"
-                    + "            \"serverKey\": \"RefeJcxClt9JbOP/VnrQ7YeQh6w=\"\n" + "        }\n" + "    },\n"
-                    + "    \"roles\": [\n" + "        {\n" + "            \"role\": \"readWrite\",\n"
-                    + "            \"db\": \"test\"\n" + "        }\n" + "    ]\n" + "}" + ""));
+                    + "            \"serverKey\": \"RefeJcxClt9JbOP/VnrQ7YeQh6w=\"\n"
+                    + "        }\n" + "    },\n"
+                    + "    \"roles\": [\n" + "        {\n"
+                    + "            \"role\": \"readWrite\",\n"
+                    + "            \"db\": \"test\"\n"
+                    + "        }\n"
+                    + "    ]\n"
+                    + "}"));
         }
     }
 
