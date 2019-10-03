@@ -41,7 +41,7 @@ attribute on *`@Produce`*, *`@EndpointInject`*.
 
 ====
 
-[[POJOProducing-HidingtheCamelAPIsFromYourCodeUsing@Produce]]
+[[POJOProducing-HidingtheCamelAPIsFromYourCodeUsingProduce]]
 == Hiding the Camel APIs From Your Code Using `@Produce`
 
 We recommend xref:hiding-middleware.adoc[Hiding Middleware] APIs from
