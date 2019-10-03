@@ -3,8 +3,8 @@
 There are two different ways to send messages to any Camel
 xref:endpoint.adoc[Endpoint] from a POJO.
 
-[[POJOProducing-@EndpointInject]]
-= Via `@EndpointInject`
+[[POJOProducing-EndpointInject]]
+== Via `@EndpointInject`
 
 To allow sending of messages from POJOs you can use the
 `org.apache.camel.EndpointInject`
