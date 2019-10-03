@@ -18,13 +18,13 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +37,16 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public abstract class DefaultServicePool<Key, Service> extends ServiceSupport implements ServicePool<Key, Service> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected final ConcurrentMap<Key, BlockingQueue<Service>> pool = new ConcurrentHashMap<>();
+    protected final Map<Key, BlockingQueue<Service>> pool;
     protected int capacity = 100;
 
     protected DefaultServicePool() {
+        this.pool = LRUCacheFactory.newLRUCache(capacity);
     }
 
     public DefaultServicePool(int capacity) {
         this.capacity = capacity;
+        this.pool = LRUCacheFactory.newLRUCache(capacity);
     }
 
     public int getCapacity() {
