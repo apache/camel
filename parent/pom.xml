@@ -179,10 +179,10 @@
         <ehcache-version>2.10.6</ehcache-version>
         <ehcache3-version>3.7.0</ehcache3-version>
         <ekstazi-maven-plugin-version>5.3.0</ekstazi-maven-plugin-version>
-        <elasticsearch-rest-sniffer-version>7.3.1</elasticsearch-rest-sniffer-version>
-        <elasticsearch-rest-cluster-runner-version>7.3.1.0</elasticsearch-rest-cluster-runner-version>
-        <elasticsearch-rest-version>7.3.1</elasticsearch-rest-version>
-        <elasticsearch-rest-bundle-version>7.3.1_1</elasticsearch-rest-bundle-version>
+        <elasticsearch-rest-sniffer-version>7.3.2</elasticsearch-rest-sniffer-version>
+        <elasticsearch-rest-cluster-runner-version>7.3.2.0</elasticsearch-rest-cluster-runner-version>
+        <elasticsearch-rest-version>7.3.2</elasticsearch-rest-version>
+        <elasticsearch-rest-bundle-version>7.3.2_1</elasticsearch-rest-bundle-version>
         <elsql-version>1.3</elsql-version>
         <eddsa-version>0.3.0</eddsa-version>
         <embedmongo-version>2.1.1</embedmongo-version>
