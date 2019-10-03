@@ -18,25 +18,20 @@ package org.apache.camel.component.mongodb.conf;
 
 import java.util.Map;
 
-public class MongoConfiguration {
+public class ConnectionParamsConfiguration {
 
     private String host = "localhost:27017";
     private String user;
     private String password;
     private String adminDB = "admin";
 
-    public MongoConfiguration() {
-        super();
-    }
-
-    public MongoConfiguration(Map<String, String> parameters) {
-        super();
+    public ConnectionParamsConfiguration(Map<String, String> parameters) {
         this.host = parameters.get("host");
         this.user = parameters.get("user");
         this.password = parameters.get("password");
         // Optional parameters
         String optionalAdminDB = parameters.getOrDefault("adminDB", "");
-        if (!"".equals(optionalAdminDB)) {
+        if (!optionalAdminDB.isEmpty()) {
             this.adminDB = optionalAdminDB;
         }
     }

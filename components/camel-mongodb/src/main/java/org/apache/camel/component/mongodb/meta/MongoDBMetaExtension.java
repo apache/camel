@@ -29,8 +29,7 @@ import com.mongodb.client.model.Filters;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.extension.metadata.AbstractMetaDataExtension;
 import org.apache.camel.component.extension.metadata.MetaDataBuilder;
-import org.apache.camel.component.mongodb.MongoDbComponent;
-import org.apache.camel.component.mongodb.conf.MongoConfiguration;
+import org.apache.camel.component.mongodb.conf.ConnectionParamsConfiguration;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,17 +55,20 @@ public class MongoDBMetaExtension extends AbstractMetaDataExtension {
         Map<String, String> textParameters = cast(parameters);
         LOGGER.debug("Fetching mongodb meta information with params: {}", textParameters);
 
-        MongoConfiguration mongoConf = new MongoConfiguration(textParameters);
+        ConnectionParamsConfiguration mongoConf = new ConnectionParamsConfiguration(textParameters);
         MongoClientURI connectionURI = new MongoClientURI(mongoConf.getMongoClientURI());
 
-        JsonNode collectionInfoRoot = null;
+        JsonNode collectionInfoRoot;
         try (MongoClient mongoConnection = new MongoClient(connectionURI)) {
             Document collectionInfo = mongoConnection.getDatabase(textParameters.get("database"))
                     .listCollections()
-                    .filter(Filters.eq("name", textParameters.get("collection"))).first();
+                    .filter(Filters.eq("name", textParameters.get("collection")))
+                    .first();
             LOGGER.debug("Collection info: {}", collectionInfo);
             if (collectionInfo == null) {
-                LOGGER.error("Cannot read information for collection {}.{}", textParameters.get("database"),
+                LOGGER.error(
+                        "Cannot read information for collection {}.{}",
+                        textParameters.get("database"),
                         textParameters.get("collection"));
                 return Optional.empty();
             }
