@@ -32,6 +32,7 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -43,6 +44,7 @@ import org.apache.camel.component.netty.http.HttpPrincipal;
 import org.apache.camel.component.netty.http.InboundStreamHttpRequest;
 import org.apache.camel.component.netty.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
+import org.apache.camel.component.netty.http.NettyHttpMessage;
 import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty.http.SecurityAuthenticator;
 import org.apache.camel.spi.CamelLogger;
@@ -316,11 +318,41 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     protected Object getResponseBody(Exchange exchange) throws Exception {
+        HttpResponse response;
         // use the binding
         if (exchange.hasOut()) {
-            return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getOut(), consumer.getConfiguration());
+            response = consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getOut(), consumer.getConfiguration());
         } else {
-            return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getIn(), consumer.getConfiguration());
+            response = consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getIn(), consumer.getConfiguration());
         }
+        
+        // TODO is this where we should tackle handling the 204 change?
+        handleNoContent(exchange, exchange.getIn(), response);
+        
+        return response;
+    }
+    
+    protected void handleNoContent(Exchange exchange, Message answer, HttpResponse response) {
+        HttpResponseStatus responseStatus = response.status();
+        if (responseStatus.code() == 200 && hasNoContentBody(exchange, answer)) {
+            answer.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
+            answer.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, "No Content");
+            answer.setBody("");
+            
+            response.setStatus(new HttpResponseStatus(204, "No Content"));
+        }
+    }
+    
+    protected boolean hasNoContentBody(Exchange exchange, Message answer) {
+        boolean hasNoBody = false;
+        String bodyObj = answer.getBody(String.class);
+        if (bodyObj == null || bodyObj.trim().isEmpty()
+            || bodyObj.equalsIgnoreCase("No Content") 
+            || bodyObj.equalsIgnoreCase("No Body")){
+            
+            hasNoBody = true;
+        }
+        
+        return hasNoBody;
     }
 }

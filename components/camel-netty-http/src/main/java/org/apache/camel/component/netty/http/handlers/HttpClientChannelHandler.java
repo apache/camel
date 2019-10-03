@@ -24,12 +24,14 @@ import java.util.Map;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.http.InboundStreamHttpResponse;
+import org.apache.camel.component.netty.http.NettyHttpMessage;
 import org.apache.camel.component.netty.http.NettyHttpProducer;
 
 /**
@@ -59,7 +61,7 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
             response = streamHttpResponse.getHttpResponse();
             answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(streamHttpResponse, exchange, producer.getConfiguration());
         }
-
+        
         if (!HttpUtil.isKeepAlive(response)) {
             // just want to make sure we close the channel if the keepAlive is not true
             exchange.setProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
@@ -75,6 +77,29 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
             producer.getEndpoint().getCookieHandler().storeCookies(exchange, uri, m);
         }
 
+        //handleNoContent(exchange, answer, response);
         return answer;
     }
+    
+//    protected void handleNoContent(Exchange exchange, Message answer, HttpResponse response) {
+//        HttpResponseStatus responseStatus = response.status();
+//        if (responseStatus.code() == 200 && hasNoContentBody(exchange, answer)) {
+//            answer.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
+//            answer.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, "No Content");
+//            answer.setBody("");
+//        }
+//    }
+//    
+//    protected boolean hasNoContentBody(Exchange exchange, Message answer) {
+//        boolean hasNoBody = false;
+//        String bodyObj = answer.getBody(String.class);
+//        if (bodyObj == null || bodyObj.trim().isEmpty()
+//            || bodyObj.equalsIgnoreCase("No Content") 
+//            || bodyObj.equalsIgnoreCase("No Body")){
+//            
+//            hasNoBody = true;
+//        }
+//        
+//        return hasNoBody;
+//    }
 }

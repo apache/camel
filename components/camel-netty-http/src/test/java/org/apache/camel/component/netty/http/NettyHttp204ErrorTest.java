@@ -25,6 +25,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 public class NettyHttp204ErrorTest extends BaseNettyTest {
@@ -50,14 +51,14 @@ public class NettyHttp204ErrorTest extends BaseNettyTest {
         NettyHttpMessage message = outExchange.getIn(NettyHttpMessage.class);
         FullHttpResponse response = message.getHttpResponse();
 
-        assertEquals(204, response.getStatus().code());
+        assertEquals(204, response.status().code());
         assertEquals("", message.getBody(String.class));
     }
 
     @Test
     public void testHttp204ErrorViaCamelRoute() throws Exception {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
-        Exchange outExchange = template.send("direct:start", inExchange);
+        Exchange outExchange = template.send("direct:foo", inExchange);
 
         assertEquals(204, outExchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("", outExchange.getIn().getBody(String.class));
@@ -68,10 +69,53 @@ public class NettyHttp204ErrorTest extends BaseNettyTest {
         NettyHttpMessage message = outExchange.getIn(NettyHttpMessage.class);
         FullHttpResponse response = message.getHttpResponse();
 
-        assertEquals(204, response.getStatus().code());
+        assertEquals(204, response.status().code());
         assertEquals("", message.getBody(String.class));
     }
+    
+    @Test
+    public void testSwitchNoBodyTo204ViaHttp() throws Exception {
+        HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/bar");
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponse httpResponse = httpClient.execute(request);
 
+        assertEquals(204, httpResponse.getStatusLine().getStatusCode());
+        assertNull(httpResponse.getEntity());
+    }
+    
+    @Test
+    public void testSwitchingNoBodyTo204NettyHttpViaCamel() throws Exception {
+        Exchange inExchange = this.createExchangeWithBody("Hello World");
+        Exchange outExchange = template.send("netty-http:http://localhost:{{port}}/bar", inExchange);
+
+        assertEquals(204, outExchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("", outExchange.getIn().getBody(String.class));
+
+        NettyHttpMessage message = outExchange.getIn(NettyHttpMessage.class);
+        FullHttpResponse response = message.getHttpResponse();
+
+        assertEquals(204, response.status().code());
+        assertEquals("", message.getBody(String.class));
+    }
+    
+    @Test
+    public void testSwitchingNoBodyTo204ViaCamelRoute() throws Exception {
+        Exchange inExchange = this.createExchangeWithBody("Hello World");
+        Exchange outExchange = template.send("direct:bar", inExchange);
+
+        assertEquals(204, outExchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("", outExchange.getIn().getBody(String.class));
+
+        assertEquals(null, outExchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(null, outExchange.getOut().getBody(String.class));
+
+        NettyHttpMessage message = outExchange.getIn(NettyHttpMessage.class);
+        FullHttpResponse response = message.getHttpResponse();
+
+        assertEquals(204, response.status().code());
+        assertEquals("", message.getBody(String.class));
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -81,8 +125,15 @@ public class NettyHttp204ErrorTest extends BaseNettyTest {
                     .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(204))
                     .setBody().constant("Nothing Found");
 
-                from("direct:start")
+                from("direct:foo")
                     .to("netty-http:http://localhost:{{port}}/foo");
+                
+                from("netty-http:http://localhost:{{port}}/bar")
+                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
+                    .setBody().constant("No Content");
+                
+                from("direct:bar")
+                .to("netty-http:http://localhost:{{port}}/bar");
 
             }
         };
