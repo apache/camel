@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class MainSupportCommandLineTest {
 
-    private class MyMainSupport extends MainSupport {
+    private class MyMainSupport extends MainCommandLineSupport {
 
         private CamelContext context = new DefaultCamelContext();
 
