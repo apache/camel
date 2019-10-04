@@ -104,8 +104,17 @@ public class InOutProducer extends SjmsProducer {
                         log.debug("Message Received in the Consumer Pool");
                         log.debug("  Message : {}", message);
                         try {
-                            Exchanger<Object> exchanger = EXCHANGERS.get(message.getJMSCorrelationID());
-                            exchanger.exchange(message, getResponseTimeOut(), TimeUnit.MILLISECONDS);
+                            String correlationID = message.getJMSCorrelationID();
+                            Exchanger<Object> exchanger = EXCHANGERS.get(correlationID);
+                            if (exchanger != null) {
+                                exchanger.exchange(message, getResponseTimeOut(), TimeUnit.MILLISECONDS);
+                            } else {
+                                // we could not correlate the received reply message to a matching request and therefore
+                                // we cannot continue routing the unknown message
+                                // log a warn and then ignore the message
+                                log.warn("Reply received for unknown correlationID [{}] on reply destination [{}]. Current correlation map size: {}. The message will be ignored: {}",
+                                        new Object[]{correlationID, replyToDestination, EXCHANGERS.size(), message});
+                            }
                         } catch (Exception e) {
                             log.warn("Unable to exchange message: {}. This exception is ignored.", message, e);
                         }
