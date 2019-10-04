@@ -663,13 +663,6 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-cbor/${jackson2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cbor/${project.version}</bundle>
   </feature>
-  <feature name='camel-cdi' version='${project.version}' start-level='50'>
-    <details>camel-cdi in OSGi is deprecated. Use blueprint instead. camel-cdi requires that either pax-cdi-weld or pax-cdi-openwebbeans has been installed</details>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${pax-cdi-version}'>pax-cdi</feature>
-    <feature>eventadmin</feature>
-    <bundle>mvn:org.apache.camel/camel-cdi/${project.version}</bundle>
-  </feature>
   <feature name='camel-chatscript' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -2368,16 +2361,6 @@
 
     <bundle>mvn:org.apache.camel/camel-soroush/${project.version}</bundle>
   </feature>
-  <feature name='camel-spark-rest' version='${project.version}' start-level='50'>
-    <details>camel-spark-rest is deprecated in OSGi, use camel-servlet or camel-jetty instead.
-      This feature requires sun.reflect package, you'll need to add it to your container. In Karaf you can do this by
-      adding sun.reflect in the JDK8 section of etc/jre.properties file
-    </details>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-jetty</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.sparkjava-core/${spark-rest-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-spark-rest/${project.version}</bundle>
-  </feature>
   <feature name='camel-splunk' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.splunk/${splunk-version}</bundle>
@@ -2433,19 +2416,6 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jedis/${jedis-client-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-pool2/${commons-pool2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-redis/${project.version}</bundle>
-  </feature>
-  <feature name='camel-spring-security' version='${project.version}' start-level='50'>
-    <details>camel-spring-security is deprecated</details>
-    <feature>http</feature>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${spring-version-range}'>spring</feature>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-security-core/${spring-security-bundle-version}</bundle>
-    <bundle dependency="true">mvn:net.sf.ehcache/ehcache/${ehcache-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-security-config/${spring-security-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-spring-security/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-ws' version='${project.version}' start-level='50'>
     <feature>http</feature>
