@@ -32,11 +32,6 @@
     <name>Camel :: Redis</name>
     <description>Camel Spring Redis Component</description>
 
-    <properties>
-        <camel.osgi.import.before.defaults>org.springframework.data.*;version="[1.0,2)"
-        </camel.osgi.import.before.defaults>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -81,6 +76,14 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
