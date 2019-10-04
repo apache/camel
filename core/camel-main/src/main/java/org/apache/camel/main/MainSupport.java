@@ -77,11 +77,10 @@ public abstract class MainSupport extends ServiceSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(MainSupport.class);
     protected static final int UNINITIALIZED_EXIT_CODE = Integer.MIN_VALUE;
     protected static final int DEFAULT_EXIT_CODE = 0;
-    protected final List<MainListener> listeners = new ArrayList<>();
-    protected final List<Option> options = new ArrayList<>();
-    protected final CountDownLatch latch = new CountDownLatch(1);
-    protected final AtomicBoolean completed = new AtomicBoolean(false);
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
+    protected final List<MainListener> listeners = new ArrayList<>();
+    protected final AtomicBoolean completed = new AtomicBoolean(false);
+    protected final CountDownLatch latch = new CountDownLatch(1);
 
     protected volatile CamelContext camelContext;
     protected volatile ProducerTemplate camelTemplate;
@@ -122,68 +121,6 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     protected MainSupport() {
-        addOption(new Option("h", "help", "Displays the help screen") {
-            protected void doProcess(String arg, LinkedList<String> remainingArgs) {
-                showOptions();
-                completed();
-            }
-        });
-        addOption(new ParameterOption("r", "routers",
-            "Sets the router builder classes which will be loaded while starting the camel context",
-            "routerBuilderClasses") {
-            @Override
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setRouteBuilderClasses(parameter);
-            }
-        });
-        addOption(new ParameterOption("d", "duration",
-            "Sets the time duration (seconds) that the application will run for before terminating.",
-            "duration") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                // skip second marker to be backwards compatible
-                if (parameter.endsWith("s") || parameter.endsWith("S")) {
-                    parameter = parameter.substring(0, parameter.length() - 1);
-                }
-                configure().setDurationMaxSeconds(Integer.parseInt(parameter));
-            }
-        });
-        addOption(new ParameterOption("dm", "durationMaxMessages",
-            "Sets the duration of maximum number of messages that the application will process before terminating.",
-            "durationMaxMessages") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                configure().setDurationMaxMessages(Integer.parseInt(parameter));
-            }
-        });
-        addOption(new ParameterOption("di", "durationIdle",
-            "Sets the idle time duration (seconds) duration that the application can be idle before terminating.",
-            "durationIdle") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                // skip second marker to be backwards compatible
-                if (parameter.endsWith("s") || parameter.endsWith("S")) {
-                    parameter = parameter.substring(0, parameter.length() - 1);
-                }
-                configure().setDurationMaxIdleSeconds(Integer.parseInt(parameter));
-            }
-        });
-        addOption(new Option("t", "trace", "Enables tracing") {
-            protected void doProcess(String arg, LinkedList<String> remainingArgs) {
-                enableTrace();
-            }
-        });
-        addOption(new ParameterOption("e", "exitcode",
-            "Sets the exit code if duration was hit",
-            "exitcode") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                configure().setDurationHitExitCode(Integer.parseInt(parameter));
-            }
-        });
-        addOption(new ParameterOption("pl", "propertiesLocation",
-            "Sets location(s) to load properties, such as from classpath or file system.",
-            "propertiesLocation") {
-            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setPropertyPlaceholderLocations(parameter);
-            }
-        });
     }
 
     /**
@@ -314,51 +251,6 @@ public abstract class MainSupport extends ServiceSupport {
         completed.set(true);
         exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, DEFAULT_EXIT_CODE);
         latch.countDown();
-    }
-
-    /**
-     * Displays the command line options.
-     */
-    public void showOptions() {
-        showOptionsHeader();
-
-        for (Option option : options) {
-            System.out.println(option.getInformation());
-        }
-    }
-
-    /**
-     * Parses the command line arguments.
-     */
-    public void parseArguments(String[] arguments) {
-        LinkedList<String> args = new LinkedList<>(Arrays.asList(arguments));
-
-        boolean valid = true;
-        while (!args.isEmpty()) {
-            String arg = args.removeFirst();
-
-            boolean handled = false;
-            for (Option option : options) {
-                if (option.processOption(arg, args)) {
-                    handled = true;
-                    break;
-                }
-            }
-            if (!handled) {
-                System.out.println("Unknown option: " + arg);
-                System.out.println();
-                valid = false;
-                break;
-            }
-        }
-        if (!valid) {
-            showOptions();
-            completed();
-        }
-    }
-
-    public void addOption(Option option) {
-        options.add(option);
     }
 
     /**
@@ -628,23 +520,6 @@ public abstract class MainSupport extends ServiceSupport {
                 Thread.currentThread().interrupt();
             }
         }
-    }
-
-    /**
-     * Parses the command line arguments then runs the program.
-     */
-    public void run(String[] args) throws Exception {
-        parseArguments(args);
-        run();
-        LOG.info("MainSupport exiting code: {}", getExitCode());
-    }
-
-    /**
-     * Displays the header message for the command line options.
-     */
-    public void showOptionsHeader() {
-        System.out.println("Apache Camel Runner takes the following options");
-        System.out.println();
     }
 
     public CamelContext getCamelContext() {
@@ -1417,31 +1292,4 @@ public abstract class MainSupport extends ServiceSupport {
         protected abstract void doProcess(String arg, LinkedList<String> remainingArgs);
     }
 
-    public abstract class ParameterOption extends Option {
-        private String parameterName;
-
-        protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
-            super(abbreviation, fullName, description);
-            this.parameterName = parameterName;
-        }
-
-        @Override
-        protected void doProcess(String arg, LinkedList<String> remainingArgs) {
-            if (remainingArgs.isEmpty()) {
-                System.err.println("Expected fileName for ");
-                showOptions();
-                completed();
-            } else {
-                String parameter = remainingArgs.removeFirst();
-                doProcess(arg, parameter, remainingArgs);
-            }
-        }
-
-        @Override
-        public String getInformation() {
-            return "  " + getAbbreviation() + " or " + getFullName() + " <" + parameterName + "> = " + getDescription();
-        }
-
-        protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);
-    }
 }

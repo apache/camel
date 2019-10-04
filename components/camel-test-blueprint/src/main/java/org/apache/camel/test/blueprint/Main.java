@@ -20,13 +20,13 @@ import java.util.LinkedList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.main.MainSupport;
+import org.apache.camel.main.MainCommandLineSupport;
 import org.osgi.framework.BundleContext;
 
 /**
  * A command line tool for booting up a CamelContext using an OSGi Blueprint XML file
  */
-public class Main extends MainSupport {
+public class Main extends MainCommandLineSupport {
 
     protected static Main instance;
     private BundleContext bundleContext;
