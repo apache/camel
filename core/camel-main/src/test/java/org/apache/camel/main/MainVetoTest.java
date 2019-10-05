@@ -30,9 +30,9 @@ public class MainVetoTest extends Assert {
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.setDuration(30);
-        main.setDurationHitExitCode(99);
-        main.addRouteBuilder(new MyRoute());
+        main.configure().setDurationMaxSeconds(30);
+        main.configure().setDurationHitExitCode(99);
+        main.addRoutesBuilder(new MyRoute());
         main.addMainListener(new MainListenerSupport() {
             @Override
             public void configure(CamelContext context) {
