@@ -29,22 +29,22 @@ public class MainListenerSupport implements MainListener {
     }
 
     @Override
-    public void beforeStart(MainSupport main) {
+    public void beforeStart(BaseMainSupport main) {
         // noop
     }
 
     @Override
-    public void afterStart(MainSupport main) {
+    public void afterStart(BaseMainSupport main) {
         // noop
     }
 
     @Override
-    public void beforeStop(MainSupport main) {
+    public void beforeStop(BaseMainSupport main) {
         // noop
     }
 
     @Override
-    public void afterStop(MainSupport main) {
+    public void afterStop(BaseMainSupport main) {
         // noop
     }
 }
