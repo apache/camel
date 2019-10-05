@@ -21,8 +21,8 @@ import java.util.List;
 import com.orbitz.consul.model.health.Node;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulCatalogActions;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ConsulCatalogTest extends ConsulTestSupport {
 
@@ -34,9 +34,9 @@ public class ConsulCatalogTest extends ConsulTestSupport {
             .to("direct:consul")
             .request(List.class);
 
-        Assert.assertFalse(ref.isEmpty());
-        Assert.assertFalse(res.isEmpty());
-        Assert.assertEquals(ref, res);
+        Assertions.assertFalse(ref.isEmpty());
+        Assertions.assertFalse(res.isEmpty());
+        Assertions.assertEquals(ref, res);
     }
 
     @Test
@@ -47,9 +47,9 @@ public class ConsulCatalogTest extends ConsulTestSupport {
             .to("direct:consul")
             .request(List.class);
 
-        Assert.assertFalse(ref.isEmpty());
-        Assert.assertFalse(res.isEmpty());
-        Assert.assertEquals(ref, res);
+        Assertions.assertFalse(ref.isEmpty());
+        Assertions.assertFalse(res.isEmpty());
+        Assertions.assertEquals(ref, res);
     }
 
     @Override
