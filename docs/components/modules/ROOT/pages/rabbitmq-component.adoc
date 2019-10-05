@@ -290,9 +290,12 @@ To connect to RabbitMQ you can setup a `ConnectionFactory` (same as with JMS) wi
   <property name="username" value="camel"/>
   <property name="password" value="bugsbunny"/>
 </bean>
+----
 
 And then refer to the connection factory in the endpoint uri as shown below:
 
+[source,xml]
+----
 <camelContext>
   <route>
     <from uri="direct:rabbitMQEx2"/>
@@ -383,7 +386,7 @@ camel exchange then they will be set on the RabbitMQ message.
 Headers are set by the consumer once the message is received. The
 producer will also set the headers for downstream processors once the
 exchange has taken place. Any headers set prior to production that the
-producer sets will be overriden.
+producer sets will be overridden.
 
 == Message Body
 
@@ -400,6 +403,7 @@ routing key B,
 [source,java]
 ----
 from("rabbitmq:A?routingKey=B")
+  .to("log:cheese");
 ----
 
 To receive messages from a queue with a single thread with auto
@@ -408,13 +412,15 @@ acknowledge disabled.
 [source,java]
 ----
 from("rabbitmq:A?routingKey=B&threadPoolSize=1&autoAck=false")
+  .to("log:cheese");
 ----
 
 To send messages to an exchange called C
 
 [source,java]
 ----
-to("rabbitmq:C")
+from("direct:foo")
+  .to("rabbitmq:C");
 ----
 
 Declaring a headers exchange and queue
@@ -422,15 +428,16 @@ Declaring a headers exchange and queue
 [source,java]
 ----
 from("rabbitmq:ex?exchangeType=headers&queue=q&bindingArgs=#bindArgs")
+  .to("log:cheese");
 ----
 
 and place corresponding `Map<String, Object>` with the id of "bindArgs" in the Registry.
 
-For example declaring a method in spring
+For example declaring a method in Spring
 
 [source,java]
 ----
-@Bean(name="bindArgs")
+@Bean(name = "bindArgs")
 public Map<String, Object> bindArgsBuilder() {
     return Collections.singletonMap("foo", "bar");
 }
