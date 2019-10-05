@@ -72,12 +72,12 @@ public class MainExample {
     public static class Events extends MainListenerSupport {
 
         @Override
-        public void afterStart(MainSupport main) {
+        public void afterStart(BaseMainSupport main) {
             System.out.println("MainExample with Camel is now started!");
         }
 
         @Override
-        public void beforeStop(MainSupport main) {
+        public void beforeStop(BaseMainSupport main) {
             System.out.println("MainExample with Camel is now being stopped!");
         }
     }
