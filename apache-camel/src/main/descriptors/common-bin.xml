@@ -153,6 +153,7 @@
         <include>org.apache.camel:camel-google-sheets</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-grape</include>
+        <include>org.apache.camel:camel-graphql</include>
         <include>org.apache.camel:camel-grok</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-grpc</include>
@@ -501,6 +502,7 @@
         <include>org.apache.camel:camel-google-sheets-starter</include>
         <include>org.apache.camel:camel-gora-starter</include>
         <include>org.apache.camel:camel-grape-starter</include>
+        <include>org.apache.camel:camel-graphql-starter</include>
         <include>org.apache.camel:camel-grok-starter</include>
         <include>org.apache.camel:camel-groovy-starter</include>
         <include>org.apache.camel:camel-grpc-starter</include>

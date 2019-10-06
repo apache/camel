@@ -1,0 +1,189 @@
+[[graphql-component]]
+= GraphQL Component
+:page-source: components/camel-graphql/src/main/docs/graphql-component.adoc
+
+*Available as of Camel version 3.0*
+
+The GraphQL component is a GraphQL client that communicates over HTTP and supports queries and mutations, but not subscriptions. It uses the https://hc.apache.org/httpcomponents-client-4.5.x/index.html[Apache HttpClient] library.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-graphql</artifactId>
+    <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== GraphQL Endpoint URI
+
+// endpoint options: START
+The GraphQL endpoint is configured using URI syntax:
+
+----
+graphql:httpUri?options
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *httpUri* | *Required* The GraphQL server URI. |  | URI
+|===
+
+
+=== Query Parameters (11 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessToken* (producer) | The access token sent in the Authorization header. |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operationName* (producer) | The query or mutation name. |  | String
+| *password* (producer) | The password for Basic authentication. |  | String
+| *proxyHost* (producer) | The proxy host in the format hostname:port. |  | String
+| *query* (producer) | The query text. |  | String
+| *queryFile* (producer) | The query file name located in the classpath. |  | String
+| *username* (producer) | The username for Basic authentication. |  | String
+| *variables* (producer) | The JsonObject instance containing the operation variables. |  | JsonObject
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+== GraphQL Component Options
+
+// component options: START
+The GraphQL component supports 1 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-graphql-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.graphql.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.graphql.enabled* | Whether to enable auto configuration of the graphql component. This is enabled by default. |  | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+== Message Body
+
+Camel will store the GraphQL response from the external server on the OUT message body. All headers from the IN message will be copied to the OUT message, so headers are preserved during routing. Additionally Camel will add the HTTP response headers as well to the OUT message headers.
+
+== Examples
+
+=== Queries
+
+Simple queries can be defined directly in the URI:
+
+[source,java]
+----
+from("direct:start")
+    .to("graphql://http://example.com/graphql?query={books{id name}}")
+----
+
+More complex queries can be stored in a file and referenced in the URI:
+
+[source,java]
+----
+# booksQuery.graphql
+query Books {
+  books {
+    id
+    name
+  }
+}
+
+from("direct:start")
+    .to("graphql://http://example.com/graphql?queryFile=booksQuery.graphql")
+----
+
+When the query file defines multiple operations, it's required to specify which one should be executed:
+
+[source,java]
+----
+from("direct:start")
+    .to("graphql://http://example.com/graphql?queryFile=multipleQueries.graphql&operationName=Books")
+----
+
+Queries with variables need to reference a JsonObject instance from the registry:
+
+[source,java]
+----
+@BindToRegistry("bookByIdQueryVariables")
+public JsonObject bookByIdQueryVariables() {
+    JsonObject variables = new JsonObject();
+    variables.put("id", "book-1");
+    return variables;
+}
+
+from("direct:start")
+    .to("graphql://http://example.com/graphql?queryFile=bookByIdQuery.graphql&variables=#bookByIdQueryVariables")
+----
+
+=== Mutations
+
+Mutations are like queries with variables. They specify a query and a reference to a variables bean:
+
+[source,java]
+----
+# addBookMutation.graphql
+mutation AddBook($bookInput: BookInput) {
+  addBook(bookInput: $bookInput) {
+    id
+    name
+    author {
+      name
+    }
+  }
+}
+
+@BindToRegistry("addBookMutationVariables")
+public JsonObject addBookMutationVariables() {
+    JsonObject bookInput = new JsonObject();
+    bookInput.put("name", "Typee");
+    bookInput.put("authorId", "author-2");
+    JsonObject variables = new JsonObject();
+    variables.put("bookInput", bookInput);
+    return variables;
+}
+
+from("direct:start")
+    .to("graphql://http://example.com/graphql?graphql?queryFile=addBookMutation.graphql&variables=#addBookMutationVariables")
+----
