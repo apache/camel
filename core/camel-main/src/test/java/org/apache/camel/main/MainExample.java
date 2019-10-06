@@ -38,7 +38,7 @@ public class MainExample {
         // bind MyBean into the registry
         main.bind("foo", new MyBean());
         // add routes
-        main.addRouteBuilder(new MyRouteBuilder());
+        main.addRoutesBuilder(new MyRouteBuilder());
         // add event listener
         main.addMainListener(new Events());
         // set the properties from a file

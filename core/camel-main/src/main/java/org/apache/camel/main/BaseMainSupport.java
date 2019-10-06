@@ -37,6 +37,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
@@ -80,7 +81,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
-    protected List<RouteBuilder> routeBuilders = new ArrayList<>();
+    protected List<RoutesBuilder> routeBuilders = new ArrayList<>();
     protected String routeBuilderClasses;
     protected List<Object> configurations = new ArrayList<>();
     protected String configurationClasses;
@@ -330,11 +331,27 @@ public abstract class BaseMainSupport extends ServiceSupport {
         return camelContext;
     }
 
-    public List<RouteBuilder> getRouteBuilders() {
+    /**
+     * @deprecated use {@link #getRoutesBuilders()}
+     */
+    @Deprecated
+    public List<RoutesBuilder> getRouteBuilders() {
+        return getRoutesBuilders();
+    }
+
+    /**
+     * @deprecated use {@link #setRoutesBuilders(List)} ()}
+     */
+    @Deprecated
+    public void setRouteBuilders(List<RoutesBuilder> routeBuilders) {
+        setRoutesBuilders(routeBuilders);
+    }
+
+    public List<RoutesBuilder> getRoutesBuilders() {
         return routeBuilders;
     }
 
-    public void setRouteBuilders(List<RouteBuilder> routeBuilders) {
+    public void setRoutesBuilders(List<RoutesBuilder> routesBuilders) {
         this.routeBuilders = routeBuilders;
     }
 
@@ -377,7 +394,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
         // lets use Camel's bean post processor on any existing route builder classes
         // so the instance has some support for dependency injection
         CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
-        for (RouteBuilder routeBuilder : getRouteBuilders()) {
+        for (RoutesBuilder routeBuilder : getRoutesBuilders()) {
             postProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
             postProcessor.postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
         }
@@ -389,7 +406,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 // lets use Camel's injector so the class has some support for dependency injection
                 Object builder = camelContext.getInjector().newInstance(routeClazz);
                 if (builder instanceof RouteBuilder) {
-                    getRouteBuilders().add((RouteBuilder) builder);
+                    getRoutesBuilders().add((RouteBuilder) builder);
                 } else {
                     LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
                 }
@@ -504,7 +521,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
         loadRouteBuilders(camelContext);
         // sort routes according to ordered
         routeBuilders.sort(OrderedComparator.get());
-        for (RouteBuilder routeBuilder : routeBuilders) {
+        for (RoutesBuilder routeBuilder : routeBuilders) {
             camelContext.addRoutes(routeBuilder);
         }
         // register lifecycle so we are notified in Camel is stopped from JMX or somewhere else
@@ -912,8 +929,16 @@ public abstract class BaseMainSupport extends ServiceSupport {
         }
     }
 
-    public void addRouteBuilder(RouteBuilder routeBuilder) {
-        getRouteBuilders().add(routeBuilder);
+    /**
+     * @deprecated use {@link #addRoutesBuilder(RoutesBuilder)}
+     */
+    @Deprecated
+    public void addRouteBuilder(RoutesBuilder routeBuilder) {
+        getRoutesBuilders().add(routeBuilder);
+    }
+
+    public void addRoutesBuilder(RoutesBuilder routeBuilder) {
+        getRoutesBuilders().add(routeBuilder);
     }
 
     public void addRouteBuilder(Class... routeBuilder) {
