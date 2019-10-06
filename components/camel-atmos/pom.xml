@@ -44,7 +44,7 @@
 
         <!-- atmos -->
         <dependency>
-            <groupId>com.emc.vipr</groupId>
+            <groupId>com.emc.ecs</groupId>
             <artifactId>atmos-client</artifactId>
             <version>${atmos-client-version}</version>
             <exclusions>
