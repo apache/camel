@@ -1,0 +1,18 @@
+{
+  "data": {
+    "books": [
+      {
+        "id": "book-1",
+        "name": "Harry Potter and the Philosopher's Stone"
+      },
+      {
+        "id": "book-2",
+        "name": "Moby Dick"
+      },
+      {
+        "id": "book-3",
+        "name": "Interview with the vampire"
+      }
+    ]
+  }
+}
