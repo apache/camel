@@ -6,7 +6,7 @@ The following Apache Camel artifacts are provided:
 == Components
 
 // components: START
-Number of Components: 299 in 237 JAR artifacts (0 deprecated)
+Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -233,6 +233,8 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 | xref:gora-component.adoc[Gora] (camel-gora) | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 
 | xref:grape-component.adoc[Grape] (camel-grape) | 2.16 | The grape component allows you to fetch, load and manage additional jars when CamelContext is running.
+
+| xref:graphql-component.adoc[GraphQL] (camel-graphql) | 3.0 | A Camel GraphQL Component
 
 | xref:grpc-component.adoc[gRPC] (camel-grpc) | 2.19 | The gRPC component allows to call and expose remote procedures via HTTP/2 with protobuf dataformat
 

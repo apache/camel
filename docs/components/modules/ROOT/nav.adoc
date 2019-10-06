@@ -134,6 +134,7 @@
 * xref:google-sheets-stream-component.adoc[Google Sheets Stream Component]
 * xref:gora-component.adoc[Gora Component]
 * xref:grape-component.adoc[Grape Component]
+* xref:graphql-component.adoc[GraphQL Component]
 * xref:grok-dataformat.adoc[Grok DataFormat]
 * xref:groovy-language.adoc[Groovy Language]
 * xref:grpc-component.adoc[gRPC Component]

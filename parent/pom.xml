@@ -238,6 +238,7 @@
         <google-api-services-pubsub-version>v1-rev12-1.22.0</google-api-services-pubsub-version>
         <google-mail-guava-version>17.0</google-mail-guava-version>
         <google-truth-version>0.30</google-truth-version>
+        <graphql-java-version>13.0</graphql-java-version>
         <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
         <grpc-version>1.23.0</grpc-version>
         <grpc-google-auth-library-version>0.13.0</grpc-google-auth-library-version>
@@ -1383,6 +1384,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-grape</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-graphql</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2971,6 +2977,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-graphql-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-grok-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -4287,7 +4298,7 @@
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>caffeine</artifactId>
-                <version>${caffeine-version}</version>                
+                <version>${caffeine-version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.checkerframework</groupId>
@@ -4936,14 +4947,14 @@
                 <artifactId>tagsoup</artifactId>
                 <version>${tagsoup-version}</version>
             </dependency>
-            
+
             <!-- optional Any23 -->
             <dependency>
                 <groupId>org.apache.any23</groupId>
                 <artifactId>apache-any23-core</artifactId>
                 <version>${apache-any23-version}</version>
             </dependency>
-            
+
             <!-- optional RDF4J -->
             <dependency>
                 <groupId>org.eclipse.rdf4j</groupId>
@@ -5672,7 +5683,7 @@
                           </goals>
                       </execution>
                   </executions>
-              </plugin>  
+              </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -5784,7 +5795,7 @@
             <plugin>
               <groupId>org.jboss.jandex</groupId>
               <artifactId>jandex-maven-plugin</artifactId>
-          </plugin>  
+          </plugin>
         </plugins>
     </build>
 

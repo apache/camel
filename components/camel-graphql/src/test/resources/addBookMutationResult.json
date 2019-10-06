@@ -1,0 +1,11 @@
+{
+  "data": {
+    "addBook": {
+      "id": "book-4",
+      "name": "Typee",
+      "author": {
+        "name": "Herman Melville"
+      }
+    }
+  }
+}
