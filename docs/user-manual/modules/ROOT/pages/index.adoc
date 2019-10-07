@@ -49,7 +49,7 @@ asynchronous
 * xref:xml-configuration.adoc[XML Configuration]
 * [Using CamelProxy] for how to use proxies for clients to easily invoke
 camel routes without them knowing
-* [Camel Maven Plugin] for running Camel from a Maven goal
+* xref:camel-maven-plugin.adoc[Camel Maven Plugin] for running Camel from a Maven goal
 * [Camel Maven Archetypes]
 * [Creating a new Spring based Camel Route]
 * [Camel JMX]
