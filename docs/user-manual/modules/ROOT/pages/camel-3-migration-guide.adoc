@@ -409,17 +409,22 @@ All the events from package `org.apache.camel.management.event` has been moved t
 
 Testing using `adviceWith` currently needs to be changed from:
 
-  context.getRouteDefinition("start").adviceWith(context, new RouteBuilder() {
+  context.getRouteDefinition("start").adviceWith(camelContext, new AdviceWithRouteBuilder() {
     ...
   }
 
 to using style:
 
-  RouteReifier.adviceWith(context.getRouteDefinition("start"), context, new RouteBuilder() {
+  ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
+  RouteReifier.adviceWith(mcc.getRouteDefinition("start"), mcc, new AdviceWithRouteBuilder() {
     ...
   }
 
-We are planning on making this easier in 3.0.0-M2 onwards.
+However its even easier using lambda style with `AdviceWithRouteBuilder` directly:
+
+  AdviceWithRouteBuilder.adviceWith(context, "myRoute", a -> {
+    a.replaceFromWith("direct:start");
+  }
 
 ==== Generic Classes
 
