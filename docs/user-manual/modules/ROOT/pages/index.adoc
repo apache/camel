@@ -50,7 +50,7 @@ asynchronous
 * [Using CamelProxy] for how to use proxies for clients to easily invoke
 camel routes without them knowing
 * xref:camel-maven-plugin.adoc[Camel Maven Plugin] for running Camel from a Maven goal
-* [Camel Maven Archetypes]
+* xref:camel-maven-archetypes.adoc[Camel Maven Archetypes]
 * [Creating a new Spring based Camel Route]
 * [Camel JMX]
 * xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
