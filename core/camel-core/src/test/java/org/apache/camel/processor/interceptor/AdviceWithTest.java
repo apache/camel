@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
@@ -95,6 +96,21 @@ public class AdviceWithTest extends ContextTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testAdvisedEmptyRoutes() throws Exception {
+        try {
+            RouteReifier.adviceWith(new RouteDefinition(), context, new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+                }
+            });
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
     @Override
