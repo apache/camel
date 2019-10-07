@@ -52,7 +52,7 @@ camel routes without them knowing
 * xref:camel-maven-plugin.adoc[Camel Maven Plugin] for running Camel from a Maven goal
 * xref:camel-maven-archetypes.adoc[Camel Maven Archetypes]
 * xref:creating-a-new-spring-based-camel-route.adoc[Creating a new Spring based Camel Route]
-* [Camel JMX]
+* xref:components::jmx-component.adoc[Camel JMX]
 * xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 * xref:rest-dsl.adoc[Working with REST and Rest DSL]
 
