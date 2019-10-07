@@ -25,7 +25,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -325,7 +324,7 @@ public class JdbcProducer extends DefaultProducer {
         JdbcOutputType outputType = getEndpoint().getOutputType();
         exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, iterator.getColumnNames());
         if (outputType == JdbcOutputType.StreamList) {
-            exchange.getOut().setBody(iterator);
+            exchange.getOut().setBody(new StreamListIterator(getEndpoint().getCamelContext(), getEndpoint().getOutputClass(), getEndpoint().getBeanRowMapper(), iterator));
             exchange.addOnCompletion(new ResultSetIteratorCompletion(iterator));
             // do not close resources as we are in streaming mode
             answer = false;
@@ -348,7 +347,7 @@ public class JdbcProducer extends DefaultProducer {
             Map<String, Object> row = iterator.next();
             Object value;
             if (getEndpoint().getOutputClass() != null) {
-                value = newBeanInstance(row);
+                value = JdbcHelper.newBeanInstance(getEndpoint().getCamelContext(), getEndpoint().getOutputClass(), getEndpoint().getBeanRowMapper(), row);
             } else {
                 value = row;
             }
@@ -366,38 +365,12 @@ public class JdbcProducer extends DefaultProducer {
         if (iterator.hasNext()) {
             throw new SQLDataException("Query result not unique for outputType=SelectOne.");
         } else if (getEndpoint().getOutputClass() != null) {
-            return newBeanInstance(row);
+            return JdbcHelper.newBeanInstance(getEndpoint().getCamelContext(), getEndpoint().getOutputClass(), getEndpoint().getBeanRowMapper(), row);
         } else if (row.size() == 1) {
             return row.values().iterator().next();
         } else {
             return row;
         }
-    }
-
-    private Object newBeanInstance(Map<String, Object> row) throws SQLException {
-        Class<?> outputClass = getEndpoint().getCamelContext().getClassResolver().resolveClass(getEndpoint().getOutputClass());
-        Object answer = getEndpoint().getCamelContext().getInjector().newInstance(outputClass);
-
-        Map<String, Object> properties = new LinkedHashMap<>();
-
-        // map row names using the bean row mapper
-        for (Map.Entry<String, Object> entry : row.entrySet()) {
-            Object value = entry.getValue();
-            String name = getEndpoint().getBeanRowMapper().map(entry.getKey(), value);
-            properties.put(name, value);
-        }
-        try {
-            IntrospectionSupport.setProperties(answer, properties);
-        } catch (Exception e) {
-            throw new SQLException("Error setting properties on output class " + outputClass, e);
-        }
-
-        // check we could map all properties to the bean
-        if (!properties.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Cannot map all properties to bean of type " + outputClass + ". There are " + properties.size() + " unmapped properties. " + properties);
-        }
-        return answer;
     }
 
     private static final class ResultSetIteratorCompletion implements Synchronization {
