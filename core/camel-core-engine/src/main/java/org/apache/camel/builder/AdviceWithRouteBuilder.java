@@ -75,7 +75,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @param camelContext the camel context
      * @param routeId either the route id as a string value, or <tt>null</tt> to
      *            chose the 1st route, or you can specify a number for the n'th
-     *            route.
+     *            route, or provide the route definition instance directly as well.
      * @param builder the advice with route builder
      * @return a new route which is this route merged with the route builder
      * @throws Exception can be thrown from the route builder
@@ -87,22 +87,26 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
         }
 
         RouteDefinition rd;
-        String id = mcc.getTypeConverter().convertTo(String.class, routeId);
-        if (id != null) {
-            rd = mcc.getRouteDefinition(id);
-            if (rd == null) {
-                // okay it may be a number
-                Integer num = mcc.getTypeConverter().tryConvertTo(Integer.class, routeId);
-                if (num != null) {
-                    rd = mcc.getRouteDefinitions().get(num);
-                }
-            }
-            if (rd == null) {
-                throw new IllegalArgumentException("Cannot advice route as route with id: " + routeId + " does not exists");
-            }
+        if (routeId instanceof RouteDefinition) {
+            rd = (RouteDefinition) routeId;
         } else {
-            // grab first route
-            rd = mcc.getRouteDefinitions().get(0);
+            String id = mcc.getTypeConverter().convertTo(String.class, routeId);
+            if (id != null) {
+                rd = mcc.getRouteDefinition(id);
+                if (rd == null) {
+                    // okay it may be a number
+                    Integer num = mcc.getTypeConverter().tryConvertTo(Integer.class, routeId);
+                    if (num != null) {
+                        rd = mcc.getRouteDefinitions().get(num);
+                    }
+                }
+                if (rd == null) {
+                    throw new IllegalArgumentException("Cannot advice route as route with id: " + routeId + " does not exists");
+                }
+            } else {
+                // grab first route
+                rd = mcc.getRouteDefinitions().get(0);
+            }
         }
 
         return RouteReifier.adviceWith(rd, camelContext, new AdviceWithRouteBuilder() {
