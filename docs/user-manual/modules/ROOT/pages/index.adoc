@@ -78,7 +78,7 @@ camel routes without them knowing
 * xref:dozer-type-conversion.adoc[Dozer Type Conversion]
 * xref:dsl.adoc[DSL]
 * xref:endpoint.adoc[Endpoint]
-* Endpoint Annotations
+* xref:endpoint-annotations.adoc[Endpoint Annotations]
 * xref:endpoint-completer.adoc[EndpointCompleter]
 * xref:error-handler.adoc[Error Handler]
 * xref:exchange.adoc[Exchange]
