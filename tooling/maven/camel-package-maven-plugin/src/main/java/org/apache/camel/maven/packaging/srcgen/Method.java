@@ -26,6 +26,8 @@ public class Method {
     GenericType returnType;
     boolean isDefault;
     boolean isPublic;
+    boolean isProtected;
+    boolean isStatic;
     boolean isConstructor;
     String body;
     List<Param> parameters = new ArrayList<>();
@@ -35,6 +37,18 @@ public class Method {
 
     public Method setPublic() {
         isPublic = true;
+        isProtected = false;
+        return this;
+    }
+
+    public Method setProtected() {
+        isPublic = false;
+        isProtected = true;
+        return this;
+    }
+
+    public Method setStatic() {
+        isStatic = true;
         return this;
     }
 
