@@ -529,7 +529,7 @@ camel routes without them knowing
 * https://gitter.im/apache/apache-camel[Gitter Chat]
 * xref:user-stories.adoc[User Stories]
 * xref:team.adoc[Team]
-* Camel Extra
+* https://github.com/camel-extra/camel-extra[Camel Extra]
 
 == Developers
 
