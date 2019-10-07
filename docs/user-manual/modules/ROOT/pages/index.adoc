@@ -528,7 +528,7 @@ camel routes without them knowing
 * xref:mailing-lists.adoc[Mailing Lists]
 * https://gitter.im/apache/apache-camel[Gitter Chat]
 * xref:user-stories.adoc[User Stories]
-* Team
+* xref:team.adoc[Team]
 * Camel Extra
 
 == Developers
