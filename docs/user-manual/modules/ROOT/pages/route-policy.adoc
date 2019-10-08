@@ -63,7 +63,7 @@ _works_.
 
 The throttling inflight route policy has the following options:
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,10%,80%",options="header",]
 |===
 
 |Option |Default |Description
