@@ -106,7 +106,7 @@ camel routes without them knowing
 * xref:type-converter.adoc[Type Converter]
 * xref:uris.adoc[URIs]
 * xref:uuidgenerator.adoc[UuidGenerator]
-* XML Configuration
+* xref:xml-configuration.adoc[XML Configuration]
 
 === xref:dsl.adoc[DSL]
 
