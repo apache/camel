@@ -538,7 +538,7 @@
         <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
         <regexp-bundle-version>1.4_1</regexp-bundle-version>
         <rescu-version>2.0.2</rescu-version>
-        <rest-assured-version>4.1.1</rest-assured-version>
+        <rest-assured-version>4.1.2</rest-assured-version>
         <restlet-version>2.3.12</restlet-version>
         <restlet-woodstox-version>4.3.0</restlet-woodstox-version>
         <revapi-java-version>0.19.1</revapi-java-version>
