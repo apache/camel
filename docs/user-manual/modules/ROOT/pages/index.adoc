@@ -65,7 +65,7 @@ camel routes without them knowing
 * xref:camelcontext.adoc[CamelContext]
 * xref:camel-core.adoc[Camel Core]
 * xref:cep.adoc[CEP]
-* Clustering and loadbalancing
+* xref:clustering.adoc[Clustering and loadbalancing]
 * xref:components::index.adoc[Component]
 * xref:componentconfiguration.adoc[ComponentConfiguration]
 * xref:data-format.adoc[Data Format]
