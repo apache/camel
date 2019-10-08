@@ -89,6 +89,10 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer,scheduler",
             description = "The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.")
     private int backoffErrorThreshold;
+    @UriParam(label = "consumer,scheduler", defaultValue = "0",
+            description = "Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once."
+                    + " If you set it to 5, it will only fire five times. A value of zero or negative means fire forever.")
+    private long repeatCount;
 
     protected ScheduledPollEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -152,6 +156,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             spc.setBackoffErrorThreshold(backoffErrorThreshold);
             spc.setBackoffIdleThreshold(backoffIdleThreshold);
             spc.setBackoffMultiplier(backoffMultiplier);
+            spc.setRepeatCount(repeatCount);
             spc.setDelay(delay);
             spc.setGreedy(greedy);
             spc.setInitialDelay(initialDelay);
@@ -366,6 +371,20 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setBackoffErrorThreshold(int backoffErrorThreshold) {
         this.backoffErrorThreshold = backoffErrorThreshold;
+    }
+
+    public long getRepeatCount() {
+        return repeatCount;
+    }
+
+    /**
+     * Specifies a maximum limit of number of fires.
+     * So if you set it to 1, the scheduler will only fire once.
+     * If you set it to 5, it will only fire five times.
+     * A value of zero or negative means fire forever.
+     */
+    public void setRepeatCount(long repeatCount) {
+        this.repeatCount = repeatCount;
     }
 
 }

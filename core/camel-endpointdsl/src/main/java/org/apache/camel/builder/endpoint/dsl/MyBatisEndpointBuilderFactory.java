@@ -389,6 +389,32 @@ public interface MyBatisEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default MyBatisEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default MyBatisEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
