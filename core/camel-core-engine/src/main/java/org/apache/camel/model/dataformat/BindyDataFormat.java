@@ -42,6 +42,9 @@ public class BindyDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "true")
     private Boolean unwrapSingleInstance;
+    @XmlAttribute
+    @Metadata(defaultValue = "false")
+    private Boolean allowEmptyStream;
     @XmlTransient
     private Class<?> clazz;
 
@@ -106,6 +109,18 @@ public class BindyDataFormat extends DataFormatDefinition {
      */
     public void setUnwrapSingleInstance(Boolean unwrapSingleInstance) {
         this.unwrapSingleInstance = unwrapSingleInstance;
+    }
+
+    public Boolean getAllowEmptyStream() {
+        return allowEmptyStream;
+    }
+    
+    /**
+   * Whether to allow empty streams in the unmarshal process. If true, no
+   * exception will be thrown when a body without records is provided.
+   */
+    public void setAllowEmptyStream(Boolean allowEmptyStream) {
+        this.allowEmptyStream = allowEmptyStream;
     }
 
 }
