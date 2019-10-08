@@ -48,7 +48,7 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
     private Class<?> classType;
     private CamelContext camelContext;
     private boolean unwrapSingleInstance = true;
-    private boolean allowEmptyStream = false;
+    private boolean allowEmptyStream;
 
     public BindyAbstractDataFormat() {
     }
