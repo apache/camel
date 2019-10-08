@@ -91,7 +91,7 @@ camel routes without them knowing
 * xref:languages.adoc[Languages]
 * xref:lifecycle.adoc[Lifecycle]
 * xref:oncompletion.adoc[OnCompletion]
-* Pluggable Class Resolvers
+* xref:pluggable-class-resolvers.adoc[Pluggable Class Resolvers]
 * xref:predicate.adoc[Predicate]
 * xref:processor.adoc[Processor]
 * xref:registry.adoc[Registry]
