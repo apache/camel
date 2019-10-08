@@ -1062,7 +1062,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1131,6 +1131,8 @@ Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
 | link:camel-test-spring-junit5/src/main/docs/test-spring-junit5.adoc[Test Spring Junit5] (camel-test-spring-junit5) | 3.0 | Camel unit testing with Spring and JUnit 5
 
 | link:camel-testcontainers/src/main/docs/testcontainers.adoc[Testcontainers] (camel-testcontainers) | 2.22 | Camel support for testcontainers
+
+| link:camel-testcontainers-junit5/src/main/docs/testcontainers-junit5.adoc[Testcontainers Junit5] (camel-testcontainers-junit5) | 3.0 | Camel support for testcontainers with JUnit 5
 
 | link:camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc[Testcontainers Spring] (camel-testcontainers-spring) | 2.22 | Camel unit testing with Spring and testcontainers
 
