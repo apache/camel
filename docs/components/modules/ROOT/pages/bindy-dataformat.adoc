@@ -53,7 +53,7 @@ you can put multiple models in the same package.
 == Options
 
 // dataformat options: START
-The Bindy dataformat supports 5 options, which are listed below.
+The Bindy dataformat supports 6 options, which are listed below.
 
 
 
@@ -64,6 +64,7 @@ The Bindy dataformat supports 5 options, which are listed below.
 | classType |  | String | Name of model class to use.
 | locale |  | String | To configure a default locale to use, such as us for united states. To use the JVM platform default locale then use the name default
 | unwrapSingleInstance | true | Boolean | When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a java.util.List.
+| allowEmptyStream | false | Boolean | Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without records is provided.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
@@ -83,25 +84,28 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 18 options, which are listed below.
+The component supports 21 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.dataformat.bindy-csv.allow-empty-stream* | Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without records is provided. | false | Boolean
 | *camel.dataformat.bindy-csv.class-type* | Name of model class to use. |  | String
 | *camel.dataformat.bindy-csv.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.bindy-csv.enabled* | Enable bindy-csv dataformat | true | Boolean
 | *camel.dataformat.bindy-csv.locale* | To configure a default locale to use, such as us for united states. To use the JVM platform default locale then use the name default |  | String
 | *camel.dataformat.bindy-csv.type* | Whether to use Csv, Fixed, or KeyValue. |  | String
 | *camel.dataformat.bindy-csv.unwrap-single-instance* | When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a java.util.List. | true | Boolean
+| *camel.dataformat.bindy-fixed.allow-empty-stream* | Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without records is provided. | false | Boolean
 | *camel.dataformat.bindy-fixed.class-type* | Name of model class to use. |  | String
 | *camel.dataformat.bindy-fixed.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.bindy-fixed.enabled* | Enable bindy-fixed dataformat | true | Boolean
 | *camel.dataformat.bindy-fixed.locale* | To configure a default locale to use, such as us for united states. To use the JVM platform default locale then use the name default |  | String
 | *camel.dataformat.bindy-fixed.type* | Whether to use Csv, Fixed, or KeyValue. |  | String
 | *camel.dataformat.bindy-fixed.unwrap-single-instance* | When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a java.util.List. | true | Boolean
+| *camel.dataformat.bindy-kvp.allow-empty-stream* | Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without records is provided. | false | Boolean
 | *camel.dataformat.bindy-kvp.class-type* | Name of model class to use. |  | String
 | *camel.dataformat.bindy-kvp.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.bindy-kvp.enabled* | Enable bindy-kvp dataformat | true | Boolean
@@ -482,6 +486,9 @@ generated (output message) must be different compare to input position
 |defaultValue |string |optional - default value = "" - defines the field's
 default value when the respective CSV field is empty/not available
 
+|columnName |string |optional - default value = "" - defines the field's
+header name; uses the name of the property as default. Only applicable when `CsvRecord` has `generateHeaderColumns = true`
+
 |impliedDecimalSeparator |boolean |optional - default value = "false" - Indicates if there is
 a decimal point implied at a specified location
 
@@ -726,6 +733,27 @@ public class Order {
 
     @DataField(pos = 4, defaultValue = "Barin")
     private String lastName;
+}
+----
+
+*case 8 : columnName*
+
+Specifies the column name for the property only if `CsvRecord` has annotation `generateHeaderColumns = true`
+
+*Column Name*
+[source,java]
+----
+@CsvRecord(separator = ",", generateHeaderColumns = true)
+public class Order {
+
+    @DataField(pos = 1)
+    private int orderNr;
+
+    @DataField(pos = 5, columnName = "ISIN")
+    private String isinCode;
+
+    @DataField(name = "Name", pos = 6)
+    private String instrumentName;
 }
 ----
 

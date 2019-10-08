@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.Ordered;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.model.FromDefinition;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is used to
  * build {@link Route} instances in a {@link CamelContext} for smart routing.
  */
-public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder {
+public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered {
     protected Logger log = LoggerFactory.getLogger(getClass());
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RestsDefinition restCollection = new RestsDefinition();
@@ -67,6 +68,19 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     public RouteBuilder(CamelContext context) {
         super(context);
+    }
+
+    /**
+     * Override this method to define ordering of {@link RouteBuilder} classes that are added to
+     * Camel from various runtimes such as camel-main, camel-spring-boot. This allows end users
+     * to control the ordering if some routes must be added and started before others.
+     * <p/>
+     * Use low numbers for higher priority. Normally the sorting will start from 0 and move upwards.
+     * So if you want to be last then use {@link Integer#MAX_VALUE} or eg {@link #LOWEST}.
+     */
+    @Override
+    public int getOrder() {
+        return LOWEST;
     }
 
     /**

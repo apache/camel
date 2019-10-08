@@ -88,6 +88,13 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
      * @see AdviceWithRouteBuilder
      */
     public static RouteDefinition adviceWith(RouteDefinition definition, CamelContext camelContext, RouteBuilder builder) throws Exception {
+        ObjectHelper.notNull(definition, "RouteDefinition");
+        ObjectHelper.notNull(camelContext, "CamelContext");
+        ObjectHelper.notNull(builder, "RouteBuilder");
+
+        if (definition.getInput() == null) {
+            throw new IllegalArgumentException("RouteDefinition has no input");
+        }
         return new RouteReifier(definition).adviceWith(camelContext, builder);
     }
 

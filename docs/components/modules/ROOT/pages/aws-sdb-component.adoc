@@ -239,6 +239,20 @@ AmazonSimpleDB client = new AmazonSimpleDBClient(awsCredentials, clientConfigura
 registry.bind("client", client);
 --------------------------------------------------------------------------------------
 
+=== SDB Producer operations
+
+Camel-AWS SDB component provides the following operation on the producer side:
+
+- BatchDeleteAttributes
+- BatchPutAttributes
+- DeleteAttributes
+- DeleteDomain
+- DomainMetadata
+- GetAttributes
+- ListDomains
+- PutAttributes
+- Select
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.

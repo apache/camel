@@ -360,6 +360,19 @@ AmazonDynamoDB client = new AmazonDynamoDBClient(awsCredentials, clientConfigura
 registry.bind("client", client);
 --------------------------------------------------------------------------------------
 
+== Supported producer operations
+
+- BatchGetItems
+- DeleteItem
+- DeleteTable
+- DescribeTable
+- GetItem
+- PutItem
+- Query
+- Scan
+- UpdateItem
+- UpdateTable
+
 == Automatic detection of AmazonDynamoDB client in registry
 
 The component is capable of detecting the presence of an AmazonDynamoDB bean into the registry.

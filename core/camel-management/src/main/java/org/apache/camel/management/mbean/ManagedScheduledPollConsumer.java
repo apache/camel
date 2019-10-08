@@ -78,6 +78,11 @@ public class ManagedScheduledPollConsumer extends ManagedConsumer implements Man
     }
 
     @Override
+    public boolean isPolling() {
+        return getConsumer().isPolling();
+    }
+
+    @Override
     public boolean isSchedulerStarted() {
         return getConsumer().isSchedulerStarted();
     }
@@ -110,5 +115,10 @@ public class ManagedScheduledPollConsumer extends ManagedConsumer implements Man
     @Override
     public int getBackoffCounter() {
         return getConsumer().getBackoffCounter();
+    }
+
+    @Override
+    public long getRepeatCount() {
+        return getConsumer().getRepeatCount();
     }
 }

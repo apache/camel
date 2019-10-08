@@ -563,6 +563,8 @@ reducing the overhead on the broker since all the messages are consumed
 from the destination in the order they are produced by the interested
 consumer.
 
+NOTE: You should only use queues as destination types, topics is not recommended or fully supported.
+
 Currently the only correlation strategy is to use the `JMSCorrelationId`.
 The _InOut_ Consumer uses this strategy as well ensuring that all
 responses messages to the included `JMSReplyTo` destination also have the

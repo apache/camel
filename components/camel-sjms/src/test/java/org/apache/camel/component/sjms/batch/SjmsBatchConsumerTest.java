@@ -25,12 +25,15 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MockConnectionFactory;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
@@ -153,6 +156,9 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
 
         template.sendBody("direct:in", generateStrings(messageCount));
         mockBatches.assertIsSatisfied();
+
+        Message msg = mockBatches.getExchanges().get(0).getMessage();
+        assertEquals("size", msg.getExchange().getProperty(Exchange.AGGREGATED_COMPLETED_BY));
     }
 
     @Test
@@ -180,6 +186,9 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
         template.sendBody("direct:in", generateStrings(50));
         template.sendBody("direct:in", "Message done");
         mockBatches.assertIsSatisfied();
+
+        Message msg = mockBatches.getExchanges().get(0).getMessage();
+        assertEquals("predicate", msg.getExchange().getProperty(Exchange.AGGREGATED_COMPLETED_BY));
     }
 
     @Test
@@ -206,6 +215,9 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
         template.sendBody("direct:in", generateStrings(messageCount));
         mockBatches.assertIsSatisfied();
         assertFirstMessageBodyOfLength(mockBatches, messageCount);
+
+        Message msg = mockBatches.getExchanges().get(0).getMessage();
+        assertEquals("timeout", msg.getExchange().getProperty(Exchange.AGGREGATED_COMPLETED_BY));
     }
 
     @Test
@@ -233,6 +245,9 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
         template.sendBody("direct:in", generateStrings(messageCount));
 
         mockBatches.assertIsSatisfied();
+
+        Message msg = mockBatches.getExchanges().get(0).getMessage();
+        assertEquals("interval", msg.getExchange().getProperty(Exchange.AGGREGATED_COMPLETED_BY));
     }
 
     @Test
@@ -384,7 +399,46 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
         stopWatch.taken();
+    }
 
+    @Test
+    public void testConsumptionCompletionAware() throws Exception {
+        final int completionSize = 5;
+
+        final String queueName = getQueueName();
+        context.addRoutes(new TransactedSendHarness(queueName));
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+                context.getRegistry().bind("groupedStrategy", AggregationStrategies.groupedBody());
+
+                fromF("sjms-batch:%s?completionSize=%s&aggregationStrategy=#groupedStrategy",
+                        queueName, completionSize).routeId("batchConsumer").startupOrder(10)
+                        .log(LoggingLevel.DEBUG, "${body.size}")
+                        .to("mock:batches");
+            }
+        });
+        context.start();
+
+        MockEndpoint mockBatches = getMockEndpoint("mock:batches");
+        mockBatches.expectedMessageCount(1);
+
+        template.sendBody("direct:in", "A,B,C,D,E");
+
+        mockBatches.assertIsSatisfied();
+        
+        Message msg = mockBatches.getExchanges().get(0).getMessage();
+        assertNotNull(msg);
+
+        assertEquals("size", msg.getExchange().getProperty(Exchange.AGGREGATED_COMPLETED_BY));
+
+        List body = msg.getBody(List.class);
+        assertNotNull(body);
+        assertEquals(5, body.size());
+        assertEquals("A", body.get(0));
+        assertEquals("B", body.get(1));
+        assertEquals("C", body.get(2));
+        assertEquals("D", body.get(3));
+        assertEquals("E", body.get(4));
     }
 
     private void assertFirstMessageBodyOfLength(MockEndpoint mockEndpoint, int expectedLength) {

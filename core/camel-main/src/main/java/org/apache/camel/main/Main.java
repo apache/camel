@@ -26,7 +26,7 @@ import org.apache.camel.spi.Registry;
 /**
  * A Main class for booting up Camel in standalone mode.
  */
-public class Main extends MainSupport {
+public class Main extends MainCommandLineSupport {
 
     protected static Main instance;
     protected final MainRegistry registry = new MainRegistry();

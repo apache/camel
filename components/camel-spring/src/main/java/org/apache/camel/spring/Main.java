@@ -47,7 +47,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
  * Each line in the {@link #LOCATION_PROPERTIES} is a reference to a Spring XML file to include,
  * which by default gets loaded from classpath.
  */
-public class Main extends org.apache.camel.main.MainSupport {
+public class Main extends org.apache.camel.main.MainCommandLineSupport {
 
     public static final String LOCATION_PROPERTIES = "META-INF/camel-spring/location.properties";
     protected static Main instance;

@@ -403,7 +403,8 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     if (timeout.compareAndSet(true, false) || timeoutInterval.compareAndSet(true, false)) {
                         // trigger timeout
                         LOG.trace("Completion batch due timeout");
-                        completionBatch(session);
+                        String completedBy = completionInterval > 0 ? "interval" : "timeout";
+                        completionBatch(session, completedBy);
                         reset();
                         continue;
                     }
@@ -411,7 +412,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     if (completionSize > 0 && messageCount >= completionSize) {
                         // trigger completion size
                         LOG.trace("Completion batch due size");
-                        completionBatch(session);
+                        completionBatch(session, "size");
                         reset();
                         continue;
                     }
@@ -454,7 +455,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                                     if (complete) {
                                         // trigger completion predicate
                                         LOG.trace("Completion batch due predicate");
-                                        completionBatch(session);
+                                        completionBatch(session, "predicate");
                                         reset();
                                     }
                                 } catch (Exception e) {
@@ -492,12 +493,12 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                 aggregatedExchange = null;
             }
 
-            private void completionBatch(final Session session) {
+            private void completionBatch(final Session session, String completedBy) {
                 // batch
                 if (aggregatedExchange == null && getEndpoint().isSendEmptyMessageWhenIdle()) {
                     processEmptyMessage();
                 } else if (aggregatedExchange != null) {
-                    processBatch(aggregatedExchange, session);
+                    processBatch(aggregatedExchange, session, completedBy);
                 }
             }
 
@@ -546,13 +547,21 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         /**
          * Send an message with the batches messages.
          */
-        private void processBatch(Exchange exchange, Session session) {
+        private void processBatch(Exchange exchange, Session session, String completedBy) {
             int id = BATCH_COUNT.getAndIncrement();
             int batchSize = exchange.getProperty(Exchange.BATCH_SIZE, Integer.class);
             if (LOG.isDebugEnabled()) {
                 long total = MESSAGE_RECEIVED.get() + batchSize;
                 LOG.debug("Processing batch[" + id + "]:size=" + batchSize + ":total=" + total);
             }
+
+            if ("timeout".equals(completedBy)) {
+                aggregationStrategy.timeout(exchange, id, batchSize, completionTimeout);
+            }
+            exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, completedBy);
+
+            // invoke the on completion callback
+            aggregationStrategy.onCompletion(exchange);
 
             SessionCompletion sessionCompletion = new SessionCompletion(session);
             exchange.addOnCompletion(sessionCompletion);

@@ -28,7 +28,7 @@ public class MainTest extends Assert {
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRouteBuilder(new MyRouteBuilder());
+        main.addRoutesBuilder(new MyRouteBuilder());
         main.enableTrace();
         main.bind("foo", 31);
         main.start();
@@ -52,7 +52,7 @@ public class MainTest extends Assert {
     public void testDisableHangupSupport() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRouteBuilder(new MyRouteBuilder());
+        main.addRoutesBuilder(new MyRouteBuilder());
         main.disableHangupSupport();
         main.enableTrace();
         main.bind("foo", 31);
@@ -71,7 +71,7 @@ public class MainTest extends Assert {
 
         main.stop();
     }
-    
+
     @Test
     public void testLoadingRouteFromCommand() throws Exception {
         Main main = new Main();
@@ -94,7 +94,7 @@ public class MainTest extends Assert {
     public void testOptionalProperties() throws Exception {
         // lets make a simple route
         Main main = new Main();
-        main.addRouteBuilder(new MyRouteBuilder());
+        main.addRoutesBuilder(new MyRouteBuilder());
         main.start();
 
         CamelContext camelContext = main.getCamelContext();

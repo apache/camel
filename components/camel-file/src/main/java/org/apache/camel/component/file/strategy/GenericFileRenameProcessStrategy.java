@@ -93,6 +93,8 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     @Override
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         try {
+            operations.releaseRetrievedFileResources(exchange);
+
             if (commitRenamer != null) {
                 // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
                 Exchange copy = ExchangeHelper.createCopy(exchange, true);
@@ -111,8 +113,11 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
                 renameFile(operations, file, newName);
             }
         } finally {
-            // must invoke super
-            super.commit(operations, endpoint, exchange, file);
+            deleteLocalWorkFile(exchange);
+            // must release lock last
+            if (exclusiveReadLockStrategy != null) {
+                exclusiveReadLockStrategy.releaseExclusiveReadLockOnCommit(operations, file, exchange);
+            }
         }
     }
 

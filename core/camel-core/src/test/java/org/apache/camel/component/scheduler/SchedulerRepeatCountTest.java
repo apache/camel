@@ -14,21 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf;
+package org.apache.camel.component.scheduler;
 
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
 
-@RunWith(PaxExam.class)
-public class CamelSparkRestTest extends BaseKarafTest {
-
-    public static final String COMPONENT = extractName(CamelSparkRestTest.class);
+public class SchedulerRepeatCountTest extends ContextTestSupport {
 
     @Test
-    public void test() throws Exception {
-        testComponent(COMPONENT);
+    public void testSchedulerRepeatCount() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(3);
+        mock.setAssertPeriod(1000);
+
+        assertMockEndpointsSatisfied();
     }
 
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() {
+                from("scheduler://foo?delay=10&repeatCount=3").to("mock:result");
+            }
+        };
+    }
 
 }

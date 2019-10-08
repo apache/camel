@@ -7,6 +7,32 @@ from version 2.x to 3.0.
 
 Camel 3 supports Java 11. Support for Java 8 is best effort for the earlier versions of Camel 3. However at some time in the 3.x lifeline we will drop support for Java 8.
 
+However, in Java 11 JAXB modules have been **removed** from the JDK, therefore you will need to add them as Maven dependencies since there are couple of components rely on them:
+
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <version>${javax.activation.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb.api.version}</version>
+        </dependency>
+ 
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>${jaxb.api.version}</version>
+        </dependency>
+ 
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${jaxb.api.version}</version>
+        </dependency>
+
 == Modularization of camel-core
 
 One of the biggest changes is the modularization of camel-core.
@@ -94,7 +120,8 @@ The properties component will now use OS environment variables as preferred valu
 
 The `properties` component no longer support using endpoints, such as `properties:myKey`. The properties component is now only a property placeholder service.
 You can therefore no longer lookup the properties component via `camelContext.getComponent("properties")`.
-Instead you can use `camelContext.getPropertiesComponent()`.
+Instead you can use `camelContext.getPropertiesComponent()`, which also returns an interface of the properties component as `org.apache.camel.spi.PropertiesComponent`.
+The implementation is still named `org.apache.camel.component.properties.PropertiesComponent`, however it should rarely be used, as you should favour using the interface instead.
 
 
 === Removed components
@@ -238,6 +265,10 @@ The component `camel-aws` has been split into multiple components:
 - camel-aws-swf
 
 So you'll have to add explicitly the dependencies for these components. From the OSGi perspective, there is still a `camel-aws` Karaf feature, which includes all the components features.
+
+=== Kafka
+
+The `camel-kafka` component has removed the options `bridgeEndpoint` and `circularEndpointDetection` as this is no longer needed as the component is acting as briding would work on Camel 2.x. In other words `camel-kafka` will send messages to the topic from the endpoint uri. To override this use the `KafkaConstants.OVERRIDE_TOPIC` header with the new topic. See more details in the `camel-kafka` component documentation.
 
 === Telegram
 
@@ -404,17 +435,22 @@ All the events from package `org.apache.camel.management.event` has been moved t
 
 Testing using `adviceWith` currently needs to be changed from:
 
-  context.getRouteDefinition("start").adviceWith(context, new RouteBuilder() {
+  context.getRouteDefinition("start").adviceWith(camelContext, new AdviceWithRouteBuilder() {
     ...
   }
 
 to using style:
 
-  RouteReifier.adviceWith(context.getRouteDefinition("start"), context, new RouteBuilder() {
+  ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
+  RouteReifier.adviceWith(mcc.getRouteDefinition("start"), mcc, new AdviceWithRouteBuilder() {
     ...
   }
 
-We are planning on making this easier in 3.0.0-M2 onwards.
+However its even easier using lambda style with `AdviceWithRouteBuilder` directly:
+
+  AdviceWithRouteBuilder.adviceWith(context, "myRoute", a -> {
+    a.replaceFromWith("direct:start");
+  }
 
 ==== Generic Classes
 

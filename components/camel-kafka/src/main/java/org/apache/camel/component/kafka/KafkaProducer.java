@@ -142,27 +142,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
     protected Iterator<ProducerRecord> createRecorder(Exchange exchange) throws Exception {
         String topic = endpoint.getConfiguration().getTopic();
 
-        if (!endpoint.getConfiguration().isBridgeEndpoint()) {
-            String headerTopic = exchange.getIn().getHeader(KafkaConstants.TOPIC, String.class);
-            boolean allowHeader = true;
-
-            // when we do not bridge then detect if we try to send back to ourselves
-            // which we most likely do not want to do
-            if (headerTopic != null && endpoint.getConfiguration().isCircularTopicDetection()) {
-                Endpoint from = exchange.getFromEndpoint();
-                if (from instanceof KafkaEndpoint) {
-                    String fromTopic = ((KafkaEndpoint) from).getConfiguration().getTopic();
-                    allowHeader = !headerTopic.equals(fromTopic);
-                    if (!allowHeader) {
-                        log.debug("Circular topic detected from message header."
-                                + " Cannot send to same topic as the message comes from: {}"
-                                + ". Will use endpoint configured topic: {}", from, topic);
-                    }
-                }
-            }
-            if (allowHeader && headerTopic != null) {
-                topic = headerTopic;
-            }
+        // must remove header so its not propagated
+        Object overrideTopic = exchange.getIn().removeHeader(KafkaConstants.OVERRIDE_TOPIC);
+        if (overrideTopic != null) {
+            log.debug("Using override topic: {}", overrideTopic);
+            topic = overrideTopic.toString();
         }
 
         if (topic == null) {

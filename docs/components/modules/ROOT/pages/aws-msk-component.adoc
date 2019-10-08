@@ -161,6 +161,16 @@ Camel-AWS MSK component provides the following operation on the producer side:
 - createCluster
 - deleteCluster
 
+== Producer Examples
+
+- listBrokers: this operation will list the available MSK Brokers in AWS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listClusters")
+    .to("aws-msk://test?mskClient=#amazonMskClient&operation=listClusters")
+--------------------------------------------------------------------------------
+
 == Automatic detection of AWSKafka client in registry
 
 The component is capable of detecting the presence of an AWSKafka bean into the registry.

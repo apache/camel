@@ -1456,32 +1456,6 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If the option is true, then KafkaProducer will ignore the
-         * KafkaConstants.TOPIC header setting of the inbound message.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default KafkaEndpointProducerBuilder bridgeEndpoint(
-                boolean bridgeEndpoint) {
-            doSetProperty("bridgeEndpoint", bridgeEndpoint);
-            return this;
-        }
-        /**
-         * If the option is true, then KafkaProducer will ignore the
-         * KafkaConstants.TOPIC header setting of the inbound message.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default KafkaEndpointProducerBuilder bridgeEndpoint(
-                String bridgeEndpoint) {
-            doSetProperty("bridgeEndpoint", bridgeEndpoint);
-            return this;
-        }
-        /**
          * The total bytes of memory the producer can use to buffer records
          * waiting to be sent to the server. If records are sent faster than
          * they can be delivered to the server the producer will either block or
@@ -1520,44 +1494,6 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointProducerBuilder bufferMemorySize(
                 String bufferMemorySize) {
             doSetProperty("bufferMemorySize", bufferMemorySize);
-            return this;
-        }
-        /**
-         * If the option is true, then KafkaProducer will detect if the message
-         * is attempted to be sent back to the same topic it may come from, if
-         * the message was original from a kafka consumer. If the
-         * KafkaConstants.TOPIC header is the same as the original kafka
-         * consumer topic, then the header setting is ignored, and the topic of
-         * the producer endpoint is used. In other words this avoids sending the
-         * same message back to where it came from. This option is not in use if
-         * the option bridgeEndpoint is set to true.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default KafkaEndpointProducerBuilder circularTopicDetection(
-                boolean circularTopicDetection) {
-            doSetProperty("circularTopicDetection", circularTopicDetection);
-            return this;
-        }
-        /**
-         * If the option is true, then KafkaProducer will detect if the message
-         * is attempted to be sent back to the same topic it may come from, if
-         * the message was original from a kafka consumer. If the
-         * KafkaConstants.TOPIC header is the same as the original kafka
-         * consumer topic, then the header setting is ignored, and the topic of
-         * the producer endpoint is used. In other words this avoids sending the
-         * same message back to where it came from. This option is not in use if
-         * the option bridgeEndpoint is set to true.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default KafkaEndpointProducerBuilder circularTopicDetection(
-                String circularTopicDetection) {
-            doSetProperty("circularTopicDetection", circularTopicDetection);
             return this;
         }
         /**
@@ -2785,6 +2721,18 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The location of the trust store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default KafkaEndpointProducerBuilder sslTruststoreLocation(
+                String sslTruststoreLocation) {
+            doSetProperty("sslTruststoreLocation", sslTruststoreLocation);
+            return this;
+        }
+        /**
          * The file format of the trust store file. Default value is JKS.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2810,18 +2758,6 @@ public interface KafkaEndpointBuilderFactory {
         default KafkaEndpointProducerBuilder schemaRegistryURL(
                 String schemaRegistryURL) {
             doSetProperty("schemaRegistryURL", schemaRegistryURL);
-            return this;
-        }
-        /**
-         * The location of the trust store file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default KafkaEndpointProducerBuilder sslTruststoreLocation(
-                String sslTruststoreLocation) {
-            doSetProperty("sslTruststoreLocation", sslTruststoreLocation);
             return this;
         }
         /**

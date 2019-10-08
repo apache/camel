@@ -168,6 +168,17 @@ Camel-AWS IAM component provides the following operation on the producer side:
 - addUserToGroup
 - removeUserFromGroup
 
+== Producer Examples
+
+- createUser: this operation will create a user in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createUser")
+    .setHeader(IAMConstants.GROUP_NAME, constant("camel"))
+    .to("aws-iam://test?iamClient=#amazonIAMClient&operation=createUser")
+--------------------------------------------------------------------------------
+
 == Automatic detection of AmazonIdentityManagement client in registry
 
 The component is capable of detecting the presence of an AmazonIdentityManagement bean into the registry.
