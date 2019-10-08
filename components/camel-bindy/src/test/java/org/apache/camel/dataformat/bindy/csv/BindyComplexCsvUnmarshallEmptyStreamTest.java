@@ -57,8 +57,8 @@ public class BindyComplexCsvUnmarshallEmptyStreamTest extends AbstractJUnit4Spri
     public static class ContextConfig extends RouteBuilder {
         @Override
         public void configure() {
-          BindyCsvDataFormat bindyCsvDataFormat = new BindyCsvDataFormat(TYPE);
-          bindyCsvDataFormat.setAllowEmptyStream(true);
+            BindyCsvDataFormat bindyCsvDataFormat = new BindyCsvDataFormat(TYPE);
+            bindyCsvDataFormat.setAllowEmptyStream(true);
             from("direct:start")
                 .unmarshal(bindyCsvDataFormat)
                 .to("mock:result");
