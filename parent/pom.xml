@@ -380,7 +380,7 @@
         <jsch-bundle-version>0.1.55_1</jsch-bundle-version>
         <json-accessors-smart-version>1.2</json-accessors-smart-version>
         <jsonassert-version>1.5.0</jsonassert-version>
-        <json-flattener-version>0.5.0</json-flattener-version>
+        <json-flattener-version>0.7.1</json-flattener-version>
         <json-path-version>2.4.0</json-path-version>
         <json-simple-version>1.1.1</json-simple-version>
         <json-smart-version>2.3</json-smart-version>
