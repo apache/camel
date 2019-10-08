@@ -39,9 +39,6 @@
 * xref:configuring-camel.adoc[Configuring Camel]
 * xref:configuring-route-startup-ordering-and-autostartup.adoc[Configuring route startup ordering and autostartup]
 * xref:graceful-shutdown.adoc[Graceful Shutdown]
-* [AsyncProcessorAwaitManager] for insight into the routing engine when
-it has been forced to block threads while exchanges are being processed
-asynchronous
 * xref:error-handling-in-camel.adoc[Error handling in Camel]
 * xref:using-propertyplaceholder.adoc[How to use Camel property placeholders]
 * xref:examples.adoc[Examples]
