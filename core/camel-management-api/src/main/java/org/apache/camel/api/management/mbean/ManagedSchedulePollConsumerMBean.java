@@ -45,6 +45,9 @@ public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
     @ManagedAttribute(description = "Scheduled TimeUnit")
     void setTimeUnit(String timeUnit);
 
+    @ManagedAttribute(description = "Is the scheduler currently polling")
+    boolean isPolling();
+
     @ManagedAttribute(description = "Is the scheduler started")
     boolean isSchedulerStarted();
 
@@ -65,5 +68,8 @@ public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
 
     @ManagedAttribute(description = "Current backoff counter")
     int getBackoffCounter();
+
+    @ManagedAttribute(description = "Repeat count")
+    long getRepeatCount();
 
 }
