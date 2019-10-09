@@ -40,8 +40,12 @@ public abstract class ValidatorReifier<T> {
 
     protected final T definition;
 
-    ValidatorReifier(T definition) {
+    public ValidatorReifier(T definition) {
         this.definition = definition;
+    }
+
+    public static void registerReifier(Class<?> processorClass, Function<ValidatorDefinition, ValidatorReifier<? extends ValidatorDefinition>> creator) {
+        VALIDATORS.put(processorClass, creator);
     }
 
     public static ValidatorReifier<? extends ValidatorDefinition> reifier(ValidatorDefinition definition) {
