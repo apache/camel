@@ -41,8 +41,8 @@ public class PulsarConfiguration {
     private int consumerQueueSize = 10;
     @UriParam(label = "consumer", defaultValue = "sole-consumer")
     private String consumerName = "sole-consumer";
-    @UriParam(label = "producer", defaultValue = "default-producer")
-    private String producerName = "default-producer";
+    @UriParam(label = "producer")
+    private String producerName = null;
     @UriParam(label = "consumer", defaultValue = "cons")
     private String consumerNamePrefix = "cons";
     @UriParam(label = "consumer", defaultValue = "false")
