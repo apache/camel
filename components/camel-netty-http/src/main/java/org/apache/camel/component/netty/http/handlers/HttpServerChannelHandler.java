@@ -319,15 +319,18 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     @Override
     protected Object getResponseBody(Exchange exchange) throws Exception {
         HttpResponse response;
+        Message answer;
         // use the binding
         if (exchange.hasOut()) {
             response = consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getOut(), consumer.getConfiguration());
+            answer = exchange.getOut();
         } else {
             response = consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getIn(), consumer.getConfiguration());
+            answer = exchange.getIn();
         }
         
         // TODO is this where we should tackle handling the 204 change?
-        handleNoContent(exchange, exchange.getIn(), response);
+        handleNoContent(exchange, answer, response);
         
         return response;
     }
