@@ -88,7 +88,7 @@ with the following path and query parameters:
 | *initialSequenceId* (producer) | Set the baseline for the sequence ids for messages published by the producer. First message will be using (initialSequenceId 1) as its sequence id and subsequent messages will be assigned incremental sequence ids, if not otherwise specified. | -1 | long
 | *maxPendingMessages* (producer) | Set the max size of the queue holding the messages pending to receive an acknowledgment from the broker. Default is 1000. | 1000 | int
 | *maxPendingMessagesAcross Partitions* (producer) | Set the number of max pending messages across all the partitions. Default is 50000. | 50000 | int
-| *producerName* (producer) | Name of the producer | default-producer | String
+| *producerName* (producer) | Name of the producer, if unset lets Pulsar select a unique identifier | | String
 | *sendTimeoutMs* (producer) | Send timeout in milliseconds. Defaults to 30,000ms (30 seconds) | 30000 | int
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===

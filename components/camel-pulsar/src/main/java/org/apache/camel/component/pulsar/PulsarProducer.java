@@ -58,13 +58,9 @@ public class PulsarProducer extends DefaultProducer {
             final String topicUri = pulsarEndpoint.getTopicUri();
             PulsarConfiguration configuration = pulsarEndpoint.getPulsarConfiguration();
             String producerName = configuration.getProducerName();
-            if (producerName == null) {
-                producerName = topicUri + "-" + Thread.currentThread().getId();
-            }
             final ProducerBuilder<byte[]> producerBuilder = pulsarEndpoint
                     .getPulsarClient()
                     .newProducer()
-                    .producerName(producerName)
                     .topic(topicUri)
                     .sendTimeout(configuration.getSendTimeoutMs(), TimeUnit.MILLISECONDS)
                     .blockIfQueueFull(configuration.isBlockIfQueueFull())
@@ -75,7 +71,9 @@ public class PulsarProducer extends DefaultProducer {
                     .enableBatching(configuration.isBatchingEnabled())
                     .initialSequenceId(configuration.getInitialSequenceId())
                     .compressionType(configuration.getCompressionType());
-
+            if (producerName != null) {
+                producerBuilder.producerName(producerName);
+            }
             producer = producerBuilder.create();
         }
     }
