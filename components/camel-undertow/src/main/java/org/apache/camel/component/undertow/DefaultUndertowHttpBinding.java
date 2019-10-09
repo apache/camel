@@ -71,6 +71,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     //use default filter strategy from Camel HTTP
     private HeaderFilterStrategy headerFilterStrategy;
     private Boolean transferException;
+    private Boolean muteException;
     private boolean useStreaming;
 
     public DefaultUndertowHttpBinding() {
@@ -80,12 +81,14 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     public DefaultUndertowHttpBinding(boolean useStreaming) {
         this.headerFilterStrategy = new UndertowHeaderFilterStrategy();
         this.transferException = Boolean.FALSE;
+        this.muteException = Boolean.FALSE;
         this.useStreaming = useStreaming;
     }
 
-    public DefaultUndertowHttpBinding(HeaderFilterStrategy headerFilterStrategy, Boolean transferException) {
+    public DefaultUndertowHttpBinding(HeaderFilterStrategy headerFilterStrategy, Boolean transferException, Boolean muteException) {
         this.headerFilterStrategy = headerFilterStrategy;
         this.transferException = transferException;
+        this.muteException = muteException;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
@@ -104,6 +107,15 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     @Override
     public void setTransferException(Boolean transferException) {
         this.transferException = transferException;
+    }
+
+    public Boolean isMuteException() {
+        return muteException;
+    }
+
+    @Override
+    public void setMuteException(Boolean muteException) {
+        this.muteException = muteException;
     }
 
     @Override
@@ -337,28 +349,30 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         Exception exception = message.getExchange().getException();
 
         if (exception != null) {
-            if (isTransferException()) {
-                // we failed due an exception, and transfer it as java serialized object
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(bos);
-                oos.writeObject(exception);
-                oos.flush();
-                IOHelper.close(oos, bos);
+            if (!isMuteException()) {
+                if (isTransferException()) {
+                    // we failed due an exception, and transfer it as java serialized object
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(bos);
+                    oos.writeObject(exception);
+                    oos.flush();
+                    IOHelper.close(oos, bos);
 
-                // the body should be the serialized java object of the exception
-                body = ByteBuffer.wrap(bos.toByteArray());
-                // force content type to be serialized java object
-                message.setHeader(Exchange.CONTENT_TYPE, "application/x-java-serialized-object");
-            } else {
-                // we failed due an exception so print it as plain text
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                exception.printStackTrace(pw);
+                    // the body should be the serialized java object of the exception
+                    body = ByteBuffer.wrap(bos.toByteArray());
+                    // force content type to be serialized java object
+                    message.setHeader(Exchange.CONTENT_TYPE, "application/x-java-serialized-object");
+                } else {
+                    // we failed due an exception so print it as plain text
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    exception.printStackTrace(pw);
 
-                // the body should then be the stacktrace
-                body = ByteBuffer.wrap(sw.toString().getBytes());
-                // force content type to be text/plain as that is what the stacktrace is
-                message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    // the body should then be the stacktrace
+                    body = ByteBuffer.wrap(sw.toString().getBytes());
+                    // force content type to be text/plain as that is what the stacktrace is
+                    message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                }
             }
 
             // and mark the exception as failure handled, as we handled it by returning it as the response

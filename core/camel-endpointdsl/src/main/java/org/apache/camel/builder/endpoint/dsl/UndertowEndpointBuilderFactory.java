@@ -641,6 +641,33 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default UndertowEndpointProducerBuilder muteException(
+                Boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default UndertowEndpointProducerBuilder muteException(
+                String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * Sets additional channel options. The options that can be used are
          * defined in org.xnio.Options. To configure from endpoint uri, then
          * prefix each option with option., such as
