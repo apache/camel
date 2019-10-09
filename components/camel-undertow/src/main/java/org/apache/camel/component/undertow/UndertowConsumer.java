@@ -181,6 +181,14 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
     private void sendResponse(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException, NoTypeConversionAvailableException {
         Object body = getResponseBody(httpExchange, camelExchange);
 
+        Message answer;
+        if (camelExchange.hasOut()) {
+            answer = camelExchange.getOut();
+        } else {
+            answer = camelExchange.getIn();
+        }
+        this.handleNoContent(camelExchange, answer, httpExchange);
+        
         if (body == null) {
             log.trace("No payload to send as reply for exchange: {}", camelExchange);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
@@ -200,6 +208,29 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
             ByteBuffer bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, body);
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }
+    }
+    
+    protected void handleNoContent(Exchange exchange, Message answer, HttpServerExchange httpExchange) {
+        if (httpExchange.getStatusCode() == 200 && hasNoContentBody(exchange, answer)) {
+            answer.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
+            answer.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, "No Content");
+            answer.setBody("");
+
+            httpExchange.setStatusCode(204);
+        }
+    }
+    
+    protected boolean hasNoContentBody(Exchange exchange, Message answer) {
+        boolean hasNoBody = false;
+        String bodyObj = answer.getBody(String.class);
+        if (bodyObj == null || bodyObj.trim().isEmpty()
+            || bodyObj.equalsIgnoreCase("No Content") 
+            || bodyObj.equalsIgnoreCase("No Body")){
+
+            hasNoBody = true;
+        }
+
+        return hasNoBody;
     }
 
     /**
