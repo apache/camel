@@ -1,17 +1,23 @@
-= Telegram API Example
+== Telegram API Example
 
 This example shows how to use Telegram API.
 
-== How to run
+=== How to run
 
 You can run this example using
 
     mvn compile exec:java
 
-== Custom chat and authorization token
+=== Custom chat and authorization token
 
 You can specify your "chat id" and "authorization token" in "application.properties" file.
 
-== More information
+=== Help and contributions
 
-You can find more information about Apache Camel at the website: http://camel.apache.org/
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

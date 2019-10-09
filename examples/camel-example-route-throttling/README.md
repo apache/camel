@@ -42,11 +42,12 @@ You can also start the other client to create the files which then let the examp
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
+### Help and contributions
 
-### Forum, Help, etc
+If you hit any problem using Camel or have some feedback, 
+then please [let us know](https://camel.apache.org/support.html).
 
-If you hit an problems please let us know on the Camel Forums
-	<http://camel.apache.org/discussion-forums.html>
+We also love contributors, 
+so [get involved](https://camel.apache.org/contributing.html) :-)
 
-Please help us make Apache Camel better - we appreciate any feedback you may
-have.  Enjoy!
+The Camel riders!

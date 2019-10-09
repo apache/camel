@@ -1,8 +1,7 @@
 :experimental:
+== FHIR Authorization and Transaction Example - Spring Boot
 
-= FHIR Authorization and Transaction Example - Spring Boot
-
-== Introduction
+=== Introduction
 
 This is an example application of the `camel-fhir` component. We'll be using `camel-spring-boot` as well for an easy setup.
 
@@ -20,7 +19,7 @@ However, you can edit the `application.properties` file to change the defaults a
 
 There is an example of a test in the `MyCamelApplicationTest` class, which mocks out the FHIR server, thus can be run without the FHIR server.
 
-== Build
+=== Build
 
 You can build this example using:
 
@@ -28,7 +27,7 @@ You can build this example using:
 $ mvn package
 ```
 
-== Run
+=== Run
 
 You can run this example using:
 
@@ -46,7 +45,7 @@ located in the `src/main/data` folder into it. You should see the following outp
 
 The Camel application can be stopped pressing kbd:[Ctrl+c] in the shell.
 
-== To get health check
+=== To get health check
 
 To show a summary of spring boot health check
 
@@ -54,7 +53,7 @@ To show a summary of spring boot health check
 curl -XGET -s http://localhost:8080/actuator/health
 ----
 
-== To get info about the routes
+=== To get info about the routes
 
 To show a summary of all the routes
 
@@ -68,14 +67,12 @@ To show detailed information for a specific route
 curl -XGET -s http://localhost:8080/actuator/camelroutes/{id}/detail
 ----
 
+=== Help and contributions
 
-== Forum, Help, etc
+If you hit any problem using Camel or have some feedback, 
+then please https://camel.apache.org/support.html[let us know].
 
-If you hit an problems please let us know on the Camel Forums
-<http://camel.apache.org/discussion-forums.html>
-
-Please help us make Apache Camel better - we appreciate any feedback you may have. Enjoy!
+We also love contributors, 
+so https://camel.apache.org/contributing.html[get involved] :-)
 
 The Camel riders!
-
-

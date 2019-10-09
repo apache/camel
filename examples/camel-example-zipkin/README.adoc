@@ -1,0 +1,127 @@
+== Zipkin Example
+
+=== Introduction
+
+This example shows how to use Camel with Zipkin to trace/timing all
+incoming and outgoing Camel messages.
+
+The example requires a running Zipkin Server.
+
+The example includes three sub maven modules that implement
+
+* client
+* service1
+* service2
+
+Where client -> service1 -> service2 using HTTP.
+
+=== Configuration
+
+This example assumes you will run Zipkin on the same host using the
+default collector port of 9410. If you wish to change those, you can do
+so using these files:
+
+Service1 is configured in the
+`+src/main/resources/application.properties+` properties file. Service2
+is configured in the `+src/main/java/sample/camel/Service2Route.java+`
+source file. Client is configured in the
+`+src/main/java/sample/camel/ClientApplication.java+` source file.
+
+=== Build
+
+First, start Zipkin as described below in the
+link:%22Installing%20Zipkin%20Server%22[Installing Zipkin Server]
+section
+
+Then compile this example:
+
+[source,sh]
+----
+$ mvn compile
+----
+
+=== Run the example
+
+Then using three different shells and run service1 and service2 before
+the client.
+
+[source,sh]
+----
+$ cd service1
+$ mvn compile spring-boot:run
+----
+
+When service1 is ready then start service2
+
+[source,sh]
+----
+$ cd service2
+$ mvn compile camel:run
+----
+
+And then start the client that calls service1 every 30th seconds.
+
+[source,sh]
+----
+$ cd client
+$ mvn compile camel:run
+----
+
+=== Zipkin UI
+
+You should be able to visualize the traces and timings from this example
+using the Zipkin UI. The services are named `+service1+` and
+`+service2+`.
+
+In the screen shot below we are showing a trace of a client calling
+service1 and service2.
+
+image:images/zipkin-web-console-1.png[Zipkin UI Trace
+Details,title="Detail of a trace"]
+
+You can then click on each span and get annotated data from the Camel
+exchange and about the requests as shown:
+
+image:images/zipkin-web-console-2.png[Zipkin UI Span
+Details,title="Detail of the span"]
+
+=== Installing Zipkin Server
+
+The quickest way to get Zipkin started is to fetch the
+https://search.maven.org/remote_content?g=io.zipkin&a=zipkin-server&v=LATEST&c=exec[latest
+released server] as a self-contained executable jar.
+
+[source,bash]
+----
+curl -sSL https://zipkin.io/quickstart.sh | bash -s
+----
+
+.. and then run it
+
+[source,bash]
+----
+java -jar zipkin.jar
+----
+
+Finally, browse to http://localhost:9411 to find traces!
+
+=== Installing Zipkin Server using Docker
+
+If you want to try Zipkin locally then you quickly try that using
+Docker.
+
+There is a https://zipkin.io/pages/quickstart.html[quickstart guide at
+zipkin] that has further instructions. Remember to configure the IP
+address and port number in the `+application.properties+` file.
+
+You can find the IP using `+docker-machine ls+`
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!
