@@ -3,7 +3,7 @@
     "kind": "model",
     "name": "constant",
     "title": "Constant",
-    "description": "To use a constant value in Camel expressions or predicates. Important: this is a fixed constant value that is only set once during starting up the route, do not use this if you want dynamic values during routing.",
+    "description": "To use a constant value in Camel expressions or predicates.",
     "firstVersion": "1.5.0",
     "javaType": "org.apache.camel.model.language.ConstantExpression",
     "label": "language,core",
