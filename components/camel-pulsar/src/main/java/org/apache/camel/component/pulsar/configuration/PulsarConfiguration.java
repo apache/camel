@@ -42,7 +42,7 @@ public class PulsarConfiguration {
     @UriParam(label = "consumer", defaultValue = "sole-consumer")
     private String consumerName = "sole-consumer";
     @UriParam(label = "producer")
-    private String producerName = null;
+    private String producerName;
     @UriParam(label = "consumer", defaultValue = "cons")
     private String consumerNamePrefix = "cons";
     @UriParam(label = "consumer", defaultValue = "false")
