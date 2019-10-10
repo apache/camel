@@ -62,7 +62,7 @@
         <aries-spifly-version>1.2.1</aries-spifly-version>
         <aries-util-version>1.1.3</aries-util-version>
         <arquillian-container-se-managed-version>1.0.2.Final</arquillian-container-se-managed-version>
-        <arquillian-version>1.4.1.Final</arquillian-version>
+        <arquillian-version>1.5.0.Final</arquillian-version>
         <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
         <asciidoctorj-version>1.5.6</asciidoctorj-version>
         <asm-version>5.0.4</asm-version>
