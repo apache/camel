@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import io.undertow.Handlers;
@@ -43,6 +45,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
@@ -181,16 +184,9 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
     private void sendResponse(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException, NoTypeConversionAvailableException {
         Object body = getResponseBody(httpExchange, camelExchange);
 
-        Message answer;
-        if (camelExchange.hasOut()) {
-            answer = camelExchange.getOut();
-        } else {
-            answer = camelExchange.getIn();
-        }
-        this.handleNoContent(camelExchange, answer, httpExchange);
-        
         if (body == null) {
             log.trace("No payload to send as reply for exchange: {}", camelExchange);
+            this.changeStatusCodeToNoContent(camelExchange, httpExchange);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseSender().send("No response available");
             return;
@@ -204,33 +200,55 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
                 IOHelper.copy(input, output, IOHelper.DEFAULT_BUFFER_SIZE, true);
             }
         } else {
-            TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
-            ByteBuffer bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, body);
+            ByteBuffer bodyAsByteBuffer = this.convertBodyToByteBuffer(camelExchange, httpExchange, body);
+            if (bodyAsByteBuffer.hasRemaining()) {
+                int x = 1;
+            }
+            //TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
+            //ByteBuffer bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, body);
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }
     }
     
-    protected void handleNoContent(Exchange exchange, Message answer, HttpServerExchange httpExchange) {
-        if (httpExchange.getStatusCode() == 200 && hasNoContentBody(exchange, answer)) {
+    /*
+     * when an HTTP response has status code 200 
+     * but does not have content in the body change the status code to 204
+     */
+    private void changeStatusCodeToNoContent(Exchange camelExchange, HttpServerExchange httpExchange) {
+        Message answer = camelExchange.getMessage();
+        if (httpExchange.getStatusCode() == 200) {
             answer.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
             answer.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, "No Content");
-            answer.setBody("");
 
             httpExchange.setStatusCode(204);
         }
     }
-    
-    protected boolean hasNoContentBody(Exchange exchange, Message answer) {
-        boolean hasNoBody = false;
-        String bodyObj = answer.getBody(String.class);
-        if (bodyObj == null || bodyObj.trim().isEmpty()
-            || bodyObj.equalsIgnoreCase("No Content") 
-            || bodyObj.equalsIgnoreCase("No Body")){
-
-            hasNoBody = true;
+ 
+    private ByteBuffer convertBodyToByteBuffer(Exchange camelExchange, HttpServerExchange httpExchange, Object bodyObj) throws NoTypeConversionAvailableException {
+        
+        TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
+        ByteBuffer bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, bodyObj);
+        
+        if (!bodyAsByteBuffer.hasRemaining()) {
+            this.changeStatusCodeToNoContent(camelExchange, httpExchange);
+        } else {
+            if (this.hasNoContent(StandardCharsets.UTF_8.decode(bodyAsByteBuffer.asReadOnlyBuffer()).toString())) {
+                this.changeStatusCodeToNoContent(camelExchange, httpExchange);
+            }
         }
+        
+        return bodyAsByteBuffer;
 
-        return hasNoBody;
+    }
+    
+    private boolean hasNoContent(String bodyAsString) {
+        if (bodyAsString.trim().isEmpty()
+            || bodyAsString.equalsIgnoreCase("No Content")
+            || bodyAsString.equalsIgnoreCase("No Body")) {
+            
+            return true;
+        }
+        return false;
     }
 
     /**
