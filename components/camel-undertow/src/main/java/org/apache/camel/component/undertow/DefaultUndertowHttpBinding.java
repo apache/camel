@@ -348,7 +348,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         Object body = message.getBody();
         Exception exception = message.getExchange().getException();
 
-        if (exception != null && isMuteException()) {
+        if (exception != null && !isMuteException()) {
             if (isTransferException()) {
                 // we failed due an exception, and transfer it as java serialized object
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -374,6 +374,11 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             }
 
             // and mark the exception as failure handled, as we handled it by returning it as the response
+            ExchangeHelper.setFailureHandled(message.getExchange());
+        }
+        else if (exception != null && isMuteException()) {
+        	
+        	// mark the exception as failure handled, as we handled it by actively muting it
             ExchangeHelper.setFailureHandled(message.getExchange());
         }
 
