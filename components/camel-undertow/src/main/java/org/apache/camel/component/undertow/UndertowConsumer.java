@@ -201,11 +201,6 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
             }
         } else {
             ByteBuffer bodyAsByteBuffer = this.convertBodyToByteBuffer(camelExchange, httpExchange, body);
-            if (bodyAsByteBuffer.hasRemaining()) {
-                int x = 1;
-            }
-            //TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
-            //ByteBuffer bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, body);
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }
     }
