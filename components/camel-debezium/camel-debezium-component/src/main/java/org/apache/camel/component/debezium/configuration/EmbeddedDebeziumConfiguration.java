@@ -147,6 +147,13 @@ public abstract class EmbeddedDebeziumConfiguration {
         }
     }
 
+    protected static <T> void addPropertyIfNotNull(final Configuration.Builder configBuilder,
+                                                   final String key, final T value) {
+        if (value != null) {
+            configBuilder.with(key, value);
+        }
+    }
+
     /**
      * Validate all configurations defined and return
      * {@link ConfigurationValidation} instance which contains the validation
