@@ -222,6 +222,7 @@
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
         <include>org.apache.camel:camel-pubnub</include>
+        <include>org.apache.camel:camel-pulsar</include>
         <include>org.apache.camel:camel-quartz</include>
         <include>org.apache.camel:camel-quartz2</include>
         <include>org.apache.camel:camel-quickfix</include>
@@ -545,6 +546,7 @@
         <include>org.apache.camel:camel-printer-starter</include>
         <include>org.apache.camel:camel-protobuf-starter</include>
         <include>org.apache.camel:camel-pubnub-starter</include>
+        <include>org.apache.camel:camel-pulsar-starter</include>
         <include>org.apache.camel:camel-quartz2-starter</include>
         <include>org.apache.camel:camel-quickfix-starter</include>
         <include>org.apache.camel:camel-rabbitmq-starter</include>
