@@ -348,31 +348,29 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         Object body = message.getBody();
         Exception exception = message.getExchange().getException();
 
-        if (exception != null) {
-            if (!isMuteException()) {
-                if (isTransferException()) {
-                    // we failed due an exception, and transfer it as java serialized object
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(bos);
-                    oos.writeObject(exception);
-                    oos.flush();
-                    IOHelper.close(oos, bos);
+        if (exception != null && isMuteException()) {
+            if (isTransferException()) {
+                // we failed due an exception, and transfer it as java serialized object
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(bos);
+                oos.writeObject(exception);
+                oos.flush();
+                IOHelper.close(oos, bos);
 
-                    // the body should be the serialized java object of the exception
-                    body = ByteBuffer.wrap(bos.toByteArray());
-                    // force content type to be serialized java object
-                    message.setHeader(Exchange.CONTENT_TYPE, "application/x-java-serialized-object");
-                } else {
-                    // we failed due an exception so print it as plain text
-                    StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    exception.printStackTrace(pw);
+                // the body should be the serialized java object of the exception
+                body = ByteBuffer.wrap(bos.toByteArray());
+                // force content type to be serialized java object
+                message.setHeader(Exchange.CONTENT_TYPE, "application/x-java-serialized-object");
+            } else {
+                // we failed due an exception so print it as plain text
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                exception.printStackTrace(pw);
 
-                    // the body should then be the stacktrace
-                    body = ByteBuffer.wrap(sw.toString().getBytes());
-                    // force content type to be text/plain as that is what the stacktrace is
-                    message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                }
+                // the body should then be the stacktrace
+                body = ByteBuffer.wrap(sw.toString().getBytes());
+                // force content type to be text/plain as that is what the stacktrace is
+                message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
             }
 
             // and mark the exception as failure handled, as we handled it by returning it as the response
