@@ -46,6 +46,14 @@ public class PahoComponentConfiguration
      */
     private String clientId;
     /**
+     * Username to be used for authentication against the MQTT broker
+     */
+    private String userName;
+    /**
+     * Password to be used for authentication against the MQTT broker
+     */
+    private String password;
+    /**
      * Client connection options. The option is a
      * org.eclipse.paho.client.mqttv3.MqttConnectOptions type.
      */
@@ -70,6 +78,22 @@ public class PahoComponentConfiguration
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getConnectOptions() {

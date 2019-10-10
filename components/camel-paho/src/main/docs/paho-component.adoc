@@ -51,7 +51,7 @@ Where *topic* is the name of the topic.
 == Options
 
 // component options: START
-The Paho component supports 4 options, which are listed below.
+The Paho component supports 6 options, which are listed below.
 
 
 
@@ -60,6 +60,8 @@ The Paho component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *brokerUrl* (common) | The URL of the MQTT broker. |  | String
 | *clientId* (common) | MQTT client identifier. |  | String
+| *userName* (security) | Username to be used for authentication against the MQTT broker |  | String
+| *password* (security) | Password to be used for authentication against the MQTT broker |  | String
 | *connectOptions* (advanced) | Client connection options |  | MqttConnectOptions
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
@@ -96,18 +98,18 @@ with the following path and query parameters:
 | *clientId* (common) | MQTT client identifier. |  | String
 | *connectOptions* (common) | Client connection options |  | MqttConnectOptions
 | *filePersistenceDirectory* (common) | Base directory used by the file persistence provider. |  | String
-| *password* (common) | Password to be used for authentication against the MQTT broker |  | String
 | *persistence* (common) | Client persistence to be used - memory or file. | MEMORY | PahoPersistence
 | *qos* (common) | Client quality of service level (0-2). | 2 | int
 | *resolveMqttConnectOptions* (common) | Define if you don't want to resolve the MQTT Connect Options from registry | true | boolean
 | *retained* (common) | Retain option | false | boolean
-| *userName* (common) | Username to be used for authentication against the MQTT broker |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *password* (security) | Password to be used for authentication against the MQTT broker |  | String
+| *userName* (security) | Username to be used for authentication against the MQTT broker |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START

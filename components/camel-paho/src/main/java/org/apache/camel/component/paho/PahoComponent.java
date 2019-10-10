@@ -33,6 +33,10 @@ public class PahoComponent extends DefaultComponent {
 
     private String brokerUrl;
     private String clientId;
+    @Metadata(label = "security", secret = true)
+    private String userName;
+    @Metadata(label = "security", secret = true)
+    private String password;
     @Metadata(label = "advanced")
     private MqttConnectOptions connectOptions;
     
@@ -55,6 +59,12 @@ public class PahoComponent extends DefaultComponent {
         }
         if (clientId != null) {
             answer.setClientId(clientId);
+        }
+        if (userName != null) {
+            answer.setUserName(userName);
+        }
+        if (password != null) {
+            answer.setPassword(password);
         }
         if (connectOptions != null) {
             answer.setConnectOptions(connectOptions);
@@ -86,6 +96,28 @@ public class PahoComponent extends DefaultComponent {
      */
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Username to be used for authentication against the MQTT broker
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Password to be used for authentication against the MQTT broker
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public MqttConnectOptions getConnectOptions() {

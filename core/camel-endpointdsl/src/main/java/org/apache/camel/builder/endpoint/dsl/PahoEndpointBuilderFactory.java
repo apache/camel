@@ -125,17 +125,6 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Password to be used for authentication against the MQTT broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Client persistence to be used - memory or file.
          * 
          * The option is a:
@@ -231,17 +220,6 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Username to be used for authentication against the MQTT broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointConsumerBuilder userName(String userName) {
-            doSetProperty("userName", userName);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -275,6 +253,28 @@ public interface PahoEndpointBuilderFactory {
         default PahoEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Password to be used for authentication against the MQTT broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default PahoEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username to be used for authentication against the MQTT broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default PahoEndpointConsumerBuilder userName(String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -491,17 +491,6 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Password to be used for authentication against the MQTT broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Client persistence to be used - memory or file.
          * 
          * The option is a:
@@ -597,17 +586,6 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Username to be used for authentication against the MQTT broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointProducerBuilder userName(String userName) {
-            doSetProperty("userName", userName);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -645,6 +623,28 @@ public interface PahoEndpointBuilderFactory {
         default PahoEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Password to be used for authentication against the MQTT broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default PahoEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username to be used for authentication against the MQTT broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default PahoEndpointProducerBuilder userName(String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -804,17 +804,6 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Password to be used for authentication against the MQTT broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * Client persistence to be used - memory or file.
          * 
          * The option is a:
@@ -909,11 +898,22 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
+         * Password to be used for authentication against the MQTT broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default PahoEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
          * Username to be used for authentication against the MQTT broker.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: security
          */
         default PahoEndpointBuilder userName(String userName) {
             doSetProperty("userName", userName);
