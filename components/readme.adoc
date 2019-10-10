@@ -5,7 +5,7 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Component | Available From | Description
+| Component | Since | Description
 
 | link:camel-activemq/src/main/docs/activemq-component.adoc[ActiveMQ] (camel-activemq) +
 `activemq:destinationType:destinationName` | 1.0 | The activemq component allows messages to be sent to (or consumed from) Apache ActiveMQ. This component extends the Camel JMS component.
@@ -918,7 +918,7 @@ Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Data Format | Available From | Description
+| Data Format | Since | Description
 
 | link:camel-any23/src/main/docs/any23-dataformat.adoc[Any23] (camel-any23) | 3.0 | Any23 data format is used for parsing data to RDF.
 
@@ -1020,7 +1020,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Language | Available From | Description
+| Language | Since | Description
 
 | link:camel-bean/src/main/docs/bean-language.adoc[Bean method] (camel-bean) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
 
@@ -1066,7 +1066,7 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Component | Available From | Description
+| Component | Since | Description
 
 | link:camel-attachments/src/main/docs/attachments.adoc[Attachments] (camel-attachments) | 3.0 | Java Attachments support for Camel Message
 
