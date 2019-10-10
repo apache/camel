@@ -41,6 +41,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.apache.camel.util.BufferCaster.cast;
+
 public final class Scanner implements Iterator<String>, Closeable {
 
     private static final Map<String, Pattern> CACHE = new LinkedHashMap<String, Pattern>() {
@@ -92,7 +94,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         this.source = source;
         delimPattern = pattern != null ? pattern : cachePattern(WHITESPACE_PATTERN);
         buf = CharBuffer.allocate(BUFFER_SIZE);
-        buf.limit(0);
+        cast(buf).limit(0);
         matcher = delimPattern.matcher(buf);
         matcher.useTransparentBounds(true);
         matcher.useAnchoringBounds(false);
@@ -155,8 +157,8 @@ public final class Scanner implements Iterator<String>, Closeable {
             expandBuffer();
         }
         int p = buf.position();
-        buf.position(buf.limit());
-        buf.limit(buf.capacity());
+        cast(buf).position(buf.limit());
+        cast(buf).limit(buf.capacity());
         int n;
         try {
             n = source.read(buf);
@@ -170,23 +172,23 @@ public final class Scanner implements Iterator<String>, Closeable {
         } else if (n > 0) {
             needInput = false;
         }
-        buf.limit(buf.position());
-        buf.position(p);
+        cast(buf).limit(buf.position());
+        cast(buf).position(p);
     }
 
     private void expandBuffer() {
         int offset = savedPosition == -1 ? position : savedPosition;
-        buf.position(offset);
+        cast(buf).position(offset);
         if (offset > 0) {
             buf.compact();
             translateSavedIndexes(offset);
             position -= offset;
-            buf.flip();
+            cast(buf).flip();
         } else {
             int newSize = buf.capacity() * 2;
             CharBuffer newBuf = CharBuffer.allocate(newSize);
             newBuf.put(buf);
-            newBuf.flip();
+            cast(newBuf).flip();
             translateSavedIndexes(offset);
             position -= offset;
             buf = newBuf;
