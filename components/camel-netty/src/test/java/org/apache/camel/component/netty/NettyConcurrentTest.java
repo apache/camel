@@ -47,6 +47,11 @@ public class NettyConcurrentTest extends BaseNettyTest {
     }
 
     @Test
+    public void testMediumConcurrentProducers() throws Exception {
+        doSendMessages(10000, 20);
+    }
+
+    @Test
     @Ignore
     public void testLargeConcurrentProducers() throws Exception {
         doSendMessages(250000, 100);
@@ -73,7 +78,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
             responses.put(index, out);
         }
 
-        notify.matches(2, TimeUnit.MINUTES);
+        notify.matches(60, TimeUnit.SECONDS);
         log.info("Took " + watch.taken() + " millis to process " + files + " messages using " + poolSize + " client threads.");
         assertEquals(files, responses.size());
 
