@@ -113,7 +113,8 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Base directory used by the file persistence provider.
+         * Base directory used by file persistence. Will by default use user
+         * directory.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -169,32 +170,6 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointConsumerBuilder qos(String qos) {
             doSetProperty("qos", qos);
-            return this;
-        }
-        /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointConsumerBuilder resolveMqttConnectOptions(
-                boolean resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
-            return this;
-        }
-        /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointConsumerBuilder resolveMqttConnectOptions(
-                String resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
@@ -372,6 +347,32 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointConsumerBuilder resolveMqttConnectOptions(
+                boolean resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            return this;
+        }
+        /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointConsumerBuilder resolveMqttConnectOptions(
+                String resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -479,7 +480,8 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Base directory used by the file persistence provider.
+         * Base directory used by file persistence. Will by default use user
+         * directory.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -535,32 +537,6 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointProducerBuilder qos(String qos) {
             doSetProperty("qos", qos);
-            return this;
-        }
-        /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointProducerBuilder resolveMqttConnectOptions(
-                boolean resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
-            return this;
-        }
-        /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointProducerBuilder resolveMqttConnectOptions(
-                String resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
@@ -685,6 +661,32 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointProducerBuilder resolveMqttConnectOptions(
+                boolean resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            return this;
+        }
+        /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointProducerBuilder resolveMqttConnectOptions(
+                String resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -792,7 +794,8 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Base directory used by the file persistence provider.
+         * Base directory used by file persistence. Will by default use user
+         * directory.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -847,32 +850,6 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointBuilder qos(String qos) {
             doSetProperty("qos", qos);
-            return this;
-        }
-        /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointBuilder resolveMqttConnectOptions(
-                boolean resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
-            return this;
-        }
-        /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointBuilder resolveMqttConnectOptions(
-                String resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
@@ -954,6 +931,32 @@ public interface PahoEndpointBuilderFactory {
         default AdvancedPahoEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointBuilder resolveMqttConnectOptions(
+                boolean resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            return this;
+        }
+        /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointBuilder resolveMqttConnectOptions(
+                String resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
