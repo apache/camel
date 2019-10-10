@@ -1,10 +1,10 @@
-# Camel Example Spring Boot and ActiveMQ AMQP
+== Camel Example Spring Boot and ActiveMQ AMQP
 
 This example shows how to work with a simple Apache Camel application using Spring Boot and Apache ActiveMQ.
 
-= Preparing ActiveMQ brokers
+=== Preparing ActiveMQ brokers
 
-From Apache ActiveMQ you can download the broker as a .zip or .tar.gz file.
+From Apache ActiveMQ you can download the broker as a `.zip` or `.tar.gz` file.
 
 Unzip/tar the archive, and start a terminal.
 
@@ -14,17 +14,23 @@ Change directory to the unzipped directory and start the broker.
 
 Which runs the broker in the foreground and logs to the console.
 
-== How to run the example
+=== How to run the example
 
 You can run this example using
 
     mvn spring-boot:run
 
-== Using Camel components
+=== Using Camel components
 
 Apache Camel provides 200+ components which you can use to integrate and route messages between many systems
 and data formats. To use any of these Camel components, add the component as a dependency to your project.
 
-== More information
+=== Help and contributions
 
-You can find more information about Apache Camel at the website: http://camel.apache.org/
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

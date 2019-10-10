@@ -1,0 +1,35 @@
+== Camel AS2 Example
+
+=== Introduction
+
+This example shows how to work with AS2 and Camel.
+
+The Camel AS2 example is a demo of the camel-as2 component to show how
+to route messages between AS2 endpoints, with endpoints consuming and
+producing AS2 messages over HTTP request.
+
+=== Build
+
+You will need to compile this example first:
+
+....
+mvn compile
+....
+
+=== Run
+
+To run the example type
+
+....
+mvn camel:run
+....
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

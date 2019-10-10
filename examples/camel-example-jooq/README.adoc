@@ -1,7 +1,7 @@
 :experimental:
-= JOOQ Example
+== JOOQ Example
 
-== Introduction
+=== Introduction
 
 This example shows how to use JOOQ library with Camel to build type safe SQL queries through its API.
 
@@ -9,21 +9,21 @@ Example project contains SQL script to create database.
 Database is generated every time when Maven `generate-sources` phase is triggered.
 JOOQ classes are generated inside `target/generated-sources/jooq` directory by `jooq-codegen-maven` plugin.
 
-== Build
+=== Build
 You will need to compile this example first:
 
 	mvn clean install
 
 This command will generate database and JOOQ classes.
 
-== Run with maven
+=== Run with maven
 To run the example using Maven type
 
 	mvn camel:run
 
 To stop the example hit kbd:[Ctrl+c]
 
-== Example routes
+=== Example routes
 
 [source,xml]
 ------------------------------------------------------------
@@ -59,14 +59,12 @@ In this example route `produce-route` inserts and selects new entity every 1s.
 
 And the consumer route `consume-route` selects and deletes all entities from database every 5s.
 
-== Forum, Help, etc
+=== Help and contributions
 
-If you hit an problems please let us know on the Camel Forums
-	<http://camel.apache.org/discussion-forums.html>
+If you hit any problem using Camel or have some feedback, 
+then please https://camel.apache.org/support.html[let us know].
 
-Please help us make Apache Camel better - we appreciate any feedback you may
-have.  Enjoy!
-
-
+We also love contributors, 
+so https://camel.apache.org/contributing.html[get involved] :-)
 
 The Camel riders!
