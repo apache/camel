@@ -295,7 +295,7 @@
         <jackson-version>1.9.12</jackson-version>
         <jackson-spark-version>2.6.7</jackson-spark-version>
         <jackson2-version>2.10.0</jackson2-version>
-        <jackrabbit-version>2.19.4</jackrabbit-version>
+        <jackrabbit-version>2.19.5</jackrabbit-version>
         <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
         <jasminb-jsonapi-version>0.9</jasminb-jsonapi-version>
