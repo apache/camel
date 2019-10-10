@@ -37,6 +37,9 @@ public interface ProducerCache extends Service {
     /**
      * Acquires a pooled producer which you <b>must</b> release back again after usage using the
      * {@link #releaseProducer(org.apache.camel.Endpoint, org.apache.camel.AsyncProducer)} method.
+     * <p/>
+     * If the producer is currently starting then the cache will wait at most 30 seconds for the producer
+     * to finish starting and be ready for use.
      *
      * @param endpoint the endpoint
      * @return the producer
