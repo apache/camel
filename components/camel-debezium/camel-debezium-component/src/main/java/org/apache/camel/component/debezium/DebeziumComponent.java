@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration;
 import org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration;
+import org.apache.camel.component.debezium.configuration.MySqlDBZConfig;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
@@ -54,7 +55,7 @@ public class DebeziumComponent extends DefaultComponent {
             // we have more than one connector supported
             final DebeziumConnectorTypes connectorTypes = DebeziumConnectorTypes.fromString(remaining);
             if (connectorTypes == DebeziumConnectorTypes.MYSQL) {
-                configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
+                configuration = new MySqlDBZConfig();
             } else {
                 throw new IllegalArgumentException(String
                     .format("Connector of type '%s' is not supported yet.",
