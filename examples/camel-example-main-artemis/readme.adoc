@@ -1,4 +1,4 @@
-= Camel Example Main Artemis
+== Camel Example Main Artemis
 
 This example shows how to run Camel standalone via the built-in Main class.
 The example requires a running Apache ActiveMQ Artemis broker running.
@@ -17,7 +17,7 @@ via two different styles
   that performs classpath scanning to auto-detect the JMS client and prepare for autowiring
   by generating the `META-INF/services/org/apache/camel/autowire.properties` file.
 
-== Generating tooling meta-data
+=== Generating tooling meta-data
 
 The `camel-main-maven-plugin` is used for pre-scanning your project and prepare
 autowiring and sprint boot tooling support by classpath scanning.
@@ -31,7 +31,7 @@ which are generated in `target/classes/META-INF/services/org/apache/camel/autowi
 
 See also more details in `application.properties`
 
-== How to run
+=== How to run
 
 First install https://activemq.apache.org/components/artemis/[Apache ActiveMQ Artemis]
 and create a broker, such as `mybroker`, and create the admin user as `admin` as username
@@ -45,6 +45,12 @@ Then you can run this example using
 
     mvn camel-main:generate camel:run
 
-== More information
+=== Help and contributions
 
-You can find more information about Apache Camel at the website: http://camel.apache.org/
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

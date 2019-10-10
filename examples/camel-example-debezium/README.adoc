@@ -10,6 +10,7 @@ This project consists of the following examples:
   2. Example how data can be sinked into Cassandra that produced by Debezium.
 
 == Prerequisites
+
 === MySQL
 In order to stream changes from MySQL, you will need to have https://debezium.io/documentation/reference/0.9/connectors/mysql.html#enabling-the-binlog[_row-level_] binary binlog enabled. However,
 for the sake of this example, we will use the following docker image which is setup with row enabled binary logs and some sample data:
@@ -24,7 +25,6 @@ Since we will use Kinesis to stream changes from Debezium as an example, you nee
 kinesis.accessKey ={{generated-access-key}}
 kinesis.secretKey = {{generated-secret-key}}
 ```
-
 
 === Cassandra
 In this example, we will use Cassandra to sink the events into, you will need to either to download and run Cassandra on your machine or you can simply use the following docker image that exposes a Cassandra instance on port 9042:
@@ -45,7 +45,6 @@ USE dbzSink;
 );
 ```
 *Note:* We will stream a table called `product` from MySQL docker image which is already set. Most of the configurations that will get you started with this example are already set in `application.properties`.
-
 
 === Build
 
@@ -80,7 +79,6 @@ the changes reflecting on Cassandra as well, you can verify that by running the 
 select * from dbzSink.products;
 ```
 
-
 === Configuration
 
 You can configure the details in the file:
@@ -89,13 +87,12 @@ You can configure the details in the file:
 You can enable verbose logging by adjusting the `src/main/resources/log4j2.properties`
   file as documented in the file.
 
-=== Forum, Help, etc
+=== Help and contributions
 
-If you hit an problems please let us know on the Camel Forums
-	<http://camel.apache.org/discussion-forums.html>
+If you hit any problem using Camel or have some feedback, 
+then please https://camel.apache.org/support.html[let us know].
 
-Please help us make Apache Camel better - we appreciate any feedback you may
-have.  Enjoy!
-
+We also love contributors, 
+so https://camel.apache.org/contributing.html[get involved] :-)
 
 The Camel riders!
