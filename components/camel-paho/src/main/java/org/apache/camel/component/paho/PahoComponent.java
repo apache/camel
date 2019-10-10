@@ -26,7 +26,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
 /**
- * Component to integrate with the Eclispe Paho MQTT library.
+ * Component to integrate with the Eclipse Paho MQTT library.
  */
 @Component("paho")
 public class PahoComponent extends DefaultComponent {

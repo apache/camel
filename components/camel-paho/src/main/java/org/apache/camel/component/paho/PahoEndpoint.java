@@ -56,7 +56,7 @@ public class PahoEndpoint extends DefaultEndpoint {
     private boolean retained;
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = PahoPersistence.MEMORY;
-    @UriParam(description = "Base directory used by file persistence. Will by default use current directory.")
+    @UriParam
     private String filePersistenceDirectory;
     @UriParam(defaultValue = "true")
     private boolean autoReconnect = true;
@@ -64,7 +64,7 @@ public class PahoEndpoint extends DefaultEndpoint {
     private String userName;
     @UriParam(label = "security") @Metadata(secret = true)
     private String password;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean resolveMqttConnectOptions = true;
 
     // Collaboration members
@@ -112,7 +112,7 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     // Resolvers
     protected MqttClientPersistence resolvePersistence() {
-        if (persistence ==  PahoPersistence.MEMORY) {
+        if (persistence == PahoPersistence.MEMORY) {
             return new MemoryPersistence();
         } else {
             if (filePersistenceDirectory != null) {
@@ -236,7 +236,7 @@ public class PahoEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Base directory used by the file persistence provider.
+     * Base directory used by file persistence. Will by default use user directory.
      */
     public void setFilePersistenceDirectory(String filePersistenceDirectory) {
         this.filePersistenceDirectory = filePersistenceDirectory;
