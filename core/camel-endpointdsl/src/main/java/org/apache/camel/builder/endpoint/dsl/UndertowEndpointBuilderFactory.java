@@ -181,6 +181,33 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default UndertowEndpointConsumerBuilder muteException(
+                Boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: consumer
+         */
+        default UndertowEndpointConsumerBuilder muteException(
+                String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
@@ -638,33 +665,6 @@ public interface UndertowEndpointBuilderFactory {
         default UndertowEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * If enabled and an Exchange failed processing on the consumer side the
-         * response's body won't contain the exception's stack trace.
-         * 
-         * The option is a: <code>java.lang.Boolean</code> type.
-         * 
-         * Group: producer
-         */
-        default UndertowEndpointProducerBuilder muteException(
-                Boolean muteException) {
-            doSetProperty("muteException", muteException);
-            return this;
-        }
-        /**
-         * If enabled and an Exchange failed processing on the consumer side the
-         * response's body won't contain the exception's stack trace.
-         * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * 
-         * Group: producer
-         */
-        default UndertowEndpointProducerBuilder muteException(
-                String muteException) {
-            doSetProperty("muteException", muteException);
             return this;
         }
         /**
