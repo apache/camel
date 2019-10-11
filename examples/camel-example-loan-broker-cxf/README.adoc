@@ -1,0 +1,37 @@
+== Loan Broker Example with Apache CXF
+
+=== Introduction
+
+This example shows how to use Camel to implement the EIP’s loan broker
+example, from the EIP book
+(http://www.enterpriseintegrationpatterns.com/SystemManagementExample.html).
+
+The example use web services for exchanging messages between the client,
+credit agency, and the banks.
+
+=== Build
+
+You will need to compile this example first:
+
+....
+mvn compile
+....
+
+=== Run
+
+....
+mvn exec:java -PWS.LoanBroker
+mvn exec:java -PWS.Client
+....
+
+To stop the example hit ctrl+c
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

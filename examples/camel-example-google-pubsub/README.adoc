@@ -31,7 +31,6 @@ Using a json service account credentials file::
 Using an account and key::
   Set `credentials.account` to the service account email and `credentials.key` to the service account key.
 
-
 == Run
 
 Run the consumer and producer in separate shells:
@@ -50,7 +49,6 @@ As the pubsub channel is persistent the consumer and producer do not need to run
 
 Messages can be send from the Google Pubsub console which will be picked up by the consumer.
 
-
 == Configuration
 
 You can configure the details in the file:
@@ -59,14 +57,12 @@ You can configure the details in the file:
 You can enable verbose logging by adjusting the `src/main/resources/log4j2.properties`
   file as documented in the file.
 
+=== Help and contributions
 
-== Forum, Help, etc
+If you hit any problem using Camel or have some feedback, 
+then please https://camel.apache.org/support.html[let us know].
 
-If you hit an problems please let us know on the Camel Forums
-	<http://camel.apache.org/discussion-forums.html>
-
-Please help us make Apache Camel better - we appreciate any feedback you may
-have.  Enjoy!
-
+We also love contributors, 
+so https://camel.apache.org/contributing.html[get involved] :-)
 
 The Camel riders!

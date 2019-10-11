@@ -5,7 +5,7 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Component | Available From | Description
+| Component | Since | Description
 
 | link:camel-activemq/src/main/docs/activemq-component.adoc[ActiveMQ] (camel-activemq) +
 `activemq:destinationType:destinationName` | 1.0 | The activemq component allows messages to be sent to (or consumed from) Apache ActiveMQ. This component extends the Camel JMS component.
@@ -668,7 +668,7 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 `paxlogging:appender` | 2.6 | The paxlogging component can be used in an OSGi environment to receive PaxLogging events and process them.
 
 | link:camel-paho/src/main/docs/paho-component.adoc[Paho] (camel-paho) +
-`paho:topic` | 2.16 | Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
+`paho:topic` | 2.16 | Component for communicating with MQTT message brokers using Eclipse Paho MQTT Client.
 
 | link:camel-pdf/src/main/docs/pdf-component.adoc[PDF] (camel-pdf) +
 `pdf:operation` | 2.16 | The pdf components provides the ability to create, modify or extract content from PDF documents.
@@ -918,7 +918,7 @@ Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Data Format | Available From | Description
+| Data Format | Since | Description
 
 | link:camel-any23/src/main/docs/any23-dataformat.adoc[Any23] (camel-any23) | 3.0 | Any23 data format is used for parsing data to RDF.
 
@@ -1020,7 +1020,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Language | Available From | Description
+| Language | Since | Description
 
 | link:camel-bean/src/main/docs/bean-language.adoc[Bean method] (camel-bean) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
 
@@ -1062,11 +1062,11 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Component | Available From | Description
+| Component | Since | Description
 
 | link:camel-attachments/src/main/docs/attachments.adoc[Attachments] (camel-attachments) | 3.0 | Java Attachments support for Camel Message
 
@@ -1087,6 +1087,8 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
 | link:camel-lra/src/main/docs/lra.adoc[Lra] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
 
 | link:camel-microprofile-config/src/main/docs/microprofile-config.adoc[Microprofile Config] (camel-microprofile-config) | 3.0 | Bridging Eclipse MicroProfile Config with Camel properties
+
+| link:camel-microprofile-health/src/main/docs/microprofile-health.adoc[Microprofile Health] (camel-microprofile-health) | 3.0 | Bridging Eclipse MicroProfile Health with Camel health checks
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 

@@ -1,17 +1,17 @@
-# Camel Health Checks and Spring Boot
+== Camel Health Checks and Spring Boot
 
 This example shows how to work with a simple Apache Camel application using Spring Boot.
 
 NOTE: Some of the routes fail intentionally to have health check monitor their failures
 
-= How to run
+=== How to run
 
 * mvn clean package
 * service/src/main/bash/consul-run-linux.sh
 * mvn -pl service spring-boot:run
 * mvn -pl application spring-boot:run
 
-== How to play with the example
+=== How to play with the example
 
 You can interact with the example using curl or httpie
 
@@ -199,7 +199,7 @@ $ http -b GET localhost:8080/health
 }
 ----
 
-== Using the HealthCheckService
+=== Using the HealthCheckService
 
 The HealthCheckService can be enabled by setting the property `camel.health.check.service.enabled` to `true`. Once done every call to the Camel health check endpoint as well as the SpringBoot one will return the last known response or an error if the requested check has not yet been invoked.
 
@@ -210,6 +210,12 @@ To force the service to refresh a check, you can use:
 $ http -b GET localhost:8080/camel/health/check/{id}/invoke
 ----
 
-== More information
+=== Help and contributions
 
-You can find more information about Apache Camel at the website: http://camel.apache.org/
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

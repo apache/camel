@@ -1,4 +1,4 @@
-# Spring Cloud and ServiceCall EIP Example
+== Spring Cloud and ServiceCall EIP Example
 
 This example show how to use Camel with ServiceCall EIP with spring-cloud and consul.
 
@@ -7,17 +7,17 @@ This example includes two maven modules:
  - service that exposes a number of services
  - consumer that consumes services
 
-= Configuration
+== Configuration
 
 The consumer is configured in the src/main/resources/application.properties
 
-== Build
+=== Build
 
 You can build this example using
 
     mvn compile
 
-== Run the example
+=== Run the example
 
 Using multiple shells:
 
@@ -37,7 +37,7 @@ Using multiple shells:
   $ cd consumer
   $ mvn spring-boot:run
 
-== Test the example:
+=== Test the example:
 
 In a new shell:
 
@@ -56,7 +56,13 @@ You can open the Consul web console
 
 Where you can find information about the services and its state.
 
-== More information
+=== Help and contributions
 
-You can find more information about Apache Camel at the website: http://camel.apache.org/
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!
 

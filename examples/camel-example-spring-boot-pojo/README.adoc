@@ -1,19 +1,19 @@
-# Spring Boot Example with POJO Routing
+== Spring Boot Example with POJO Routing
 
-= Introduction
+=== Introduction
 
 This example demonstrates how you can use POJO Royting with Camel's `@Consume` and `@Produce` annotations
 on your Java beans. The example will generate a series of random numbers that is routed to either a low
 or high method call. The method then constructs a new message that is routed to another POJO that is
 hidden by an interface.
 
-== Build
+=== Build
 
 You can build this example using:
 
     $ mvn package
 
-== Run
+=== Run
 
 You can run this example using:
 
@@ -21,10 +21,12 @@ You can run this example using:
 
 And you should see output in the console with high and low numbers. The example will self stop after one minute.
 
-== Help
+=== Help and contributions
 
-If you hit any problems please let us know on the http://camel.apache.org/discussion-forums.html[Camel Forums].
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
 
-Please help us make Apache Camel better - we appreciate any feedback you may have. Enjoy!
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
 
 The Camel riders!

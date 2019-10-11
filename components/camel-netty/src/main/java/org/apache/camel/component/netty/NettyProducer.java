@@ -61,7 +61,7 @@ public class NettyProducer extends DefaultAsyncProducer {
     private ClientInitializerFactory pipelineFactory;
     private CamelLogger noReplyLogger;
     private EventLoopGroup workerGroup;
-    private ObjectPool<ChannelFuture> pool;
+    private volatile ObjectPool<ChannelFuture> pool;
     private NettyCamelStateCorrelationManager correlationManager;
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
@@ -90,26 +90,6 @@ public class NettyProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
-        if (configuration.getCorrelationManager() != null) {
-            correlationManager = configuration.getCorrelationManager();
-        } else {
-            correlationManager = new DefaultNettyCamelStateCorrelationManager();
-        }
-        if (correlationManager instanceof CamelContextAware) {
-            ((CamelContextAware) correlationManager).setCamelContext(getContext());
-        }
-        ServiceHelper.startService(correlationManager);
-
-        if (configuration.getWorkerGroup() == null) {
-            // create new pool which we should shutdown when stopping as its not shared
-            workerGroup = new NettyWorkerPoolBuilder()
-                .withNativeTransport(configuration.isNativeTransport())
-                .withWorkerCount(configuration.getWorkerCount())
-                .withName("NettyClientTCPWorker").build();
-        }
-
         if (configuration.isProducerPoolEnabled()) {
             // setup pool where we want an unbounded pool, which allows the pool to shrink on no demand
             GenericObjectPool.Config config = new GenericObjectPool.Config();
@@ -137,6 +117,14 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
         }
 
+        if (configuration.getWorkerGroup() == null) {
+            // create new pool which we should shutdown when stopping as its not shared
+            workerGroup = new NettyWorkerPoolBuilder()
+                    .withNativeTransport(configuration.isNativeTransport())
+                    .withWorkerCount(configuration.getWorkerCount())
+                    .withName("NettyClientTCPWorker").build();
+        }
+
         // setup pipeline factory
         ClientInitializerFactory factory = configuration.getClientInitializerFactory();
         if (factory != null) {
@@ -158,6 +146,18 @@ public class NettyProducer extends DefaultAsyncProducer {
             channelFuture.get();
             pool.returnObject(channelFuture);
         }
+
+        if (configuration.getCorrelationManager() != null) {
+            correlationManager = configuration.getCorrelationManager();
+        } else {
+            correlationManager = new DefaultNettyCamelStateCorrelationManager();
+        }
+        if (correlationManager instanceof CamelContextAware) {
+            ((CamelContextAware) correlationManager).setCamelContext(getContext());
+        }
+        ServiceHelper.startService(correlationManager);
+
+        super.doStart();
     }
 
     @Override
@@ -174,15 +174,14 @@ public class NettyProducer extends DefaultAsyncProducer {
             workerGroup = null;
         }
 
+        ServiceHelper.stopService(correlationManager);
+
         if (pool != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Stopping producer with channel pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
             }
             pool.close();
-            pool = null;
         }
-
-        ServiceHelper.stopService(correlationManager);
 
         super.doStop();
     }
@@ -232,6 +231,9 @@ public class NettyProducer extends DefaultAsyncProducer {
                 channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
             }
             if (channel == null) {
+                if (pool == null) {
+                    throw new IllegalStateException("Producer pool is null");
+                }
                 channelFuture = pool.borrowObject();
                 if (channelFuture != null) {
                     log.trace("Got channel request from pool {}", channelFuture);

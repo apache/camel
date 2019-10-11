@@ -1,4 +1,4 @@
-= Camel Kafka example
+== Camel Kafka example
 
 === Introduction
 
@@ -8,8 +8,6 @@ This project consists of the following examples:
 
   1. Producer triggers with a timer and produces messages to the configured topic partition
   2. Consumer consumes from configured topic by reading the offset value from locally stored file.
-
-
 
 === Preparing Kafka
 
@@ -23,14 +21,11 @@ You will need to create following topics before you run the examples.
 
 On windows run
 
-    
     $ ${KAFKA}/bin/kafka-topics.bat --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 1 --topic my-topic
 
 On linux run
-
-    
+ 
     $ ${KAFKA}/bin/kafka-topics.sh --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 1 --topic my-topic
-
 
 === Build
 
@@ -44,7 +39,6 @@ Run the consumer first in separate shell
 
     $ mvn spring-boot:run
 
-
 camel-context.xml file has both kafka-producer and kafka-consumer routes defined to produce/consume messages to topic my-topic.
 
 Press `Ctrl-C` to exit.
@@ -57,13 +51,12 @@ You can configure the details in the file:
 You can enable verbose logging by adjusting the `src/main/resources/log4j2.properties`
   file as documented in the file.
 
-=== Forum, Help, etc
+=== Help and contributions
 
-If you hit an problems please let us know on the Camel Forums
-	<http://camel.apache.org/discussion-forums.html>
+If you hit any problem using Camel or have some feedback, 
+then please https://camel.apache.org/support.html[let us know].
 
-Please help us make Apache Camel better - we appreciate any feedback you may
-have.  Enjoy!
-
+We also love contributors, 
+so https://camel.apache.org/contributing.html[get involved] :-)
 
 The Camel riders!
