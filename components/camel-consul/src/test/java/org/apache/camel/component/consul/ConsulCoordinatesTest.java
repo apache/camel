@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class ConsulCoordinatesTest extends ConsulTestSupport {
 
     @Test
-    public void testDatacenters() throws Exception {
+    public void testDatacenters() {
         List<Datacenter> ref = getConsul().coordinateClient().getDatacenters();
         List<Datacenter> res = fluentTemplate()
             .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCoordinatesActions.DATACENTERS)
@@ -43,7 +43,7 @@ public class ConsulCoordinatesTest extends ConsulTestSupport {
 
     @Disabled("Disabled as it seems that nodes is always 0")
     @Test
-    public void testNodes() throws Exception {
+    public void testNodes() {
         List<Coordinate> ref = getConsul().coordinateClient().getNodes();
         List<Coordinate> res = fluentTemplate()
             .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCoordinatesActions.NODES)
@@ -56,7 +56,7 @@ public class ConsulCoordinatesTest extends ConsulTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:consul")

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class ConsulSessionTest extends ConsulTestSupport {
 
     @Test
-    public void testServiceInstance() throws Exception {
+    public void testServiceInstance() {
         final String name = UUID.randomUUID().toString();
         final int sessions = getConsul().sessionClient().listSessions().size();
 
@@ -80,7 +80,7 @@ public class ConsulSessionTest extends ConsulTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:consul")
