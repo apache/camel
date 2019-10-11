@@ -29,8 +29,11 @@ import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.SocketUtils;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
     private AgentClient client;

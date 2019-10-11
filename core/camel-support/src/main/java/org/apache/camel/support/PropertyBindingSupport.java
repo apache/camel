@@ -33,7 +33,6 @@ import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.util.ObjectHelper.cast;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
@@ -473,6 +472,12 @@ public final class PropertyBindingSupport {
                     valid = key.indexOf('.') == -1;
                 }
                 if (valid) {
+                    // GeneratedPropertyConfigurer works by invoking the methods directly but it does
+                    // not resolve property placeholders eventually defined in the value before invoking
+                    // the setter.
+                    if (value instanceof String) {
+                        value = camelContext.resolvePropertyPlaceholders((String)value);
+                    }
                     try {
                         value = resolveValue(camelContext, target, key, value, ignoreCase, fluentBuilder, allowPrivateSetter);
                     } catch (Exception e) {

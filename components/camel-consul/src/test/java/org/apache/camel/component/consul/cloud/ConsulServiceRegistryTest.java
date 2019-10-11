@@ -24,7 +24,9 @@ import com.orbitz.consul.model.catalog.CatalogService;
 import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConsulServiceRegistryTest extends ConsulTestSupport {
     @Override
@@ -33,7 +35,7 @@ public class ConsulServiceRegistryTest extends ConsulTestSupport {
     }
 
     @Test
-    public void testSimpleServiceRegistration() throws Exception {
+    public void testSimpleServiceRegistration() {
         ConsulServiceRegistry registry = new ConsulServiceRegistry();
         registry.setCamelContext(context());
         registry.setUrl(consulUrl());

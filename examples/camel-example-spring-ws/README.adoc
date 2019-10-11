@@ -1,0 +1,42 @@
+== Camel Spring Web Services Example
+
+=== Introduction
+
+This example shows how to expose a SOAP-based web service using Camel
+and Spring Web Services.
+
+=== Build
+
+You will need to compile this example first:
+
+....
+mvn clean install
+....
+
+=== Run
+
+To run the example, you need to start up the server by typing
+
+....
+  mvn jetty:run
+....
+
+To stop the server hit ctrl+c
+
+The web service endpoint address is: http://localhost:8080/increment
+
+The WSDL is available at: http://localhost:8080/increment/increment.wsdl
+
+You can test the web service using for example SOAP-UI. This excellent
+tool is freely available from http://www.soapui.org. There’s a ready to
+use SOAP-UI project available in the `+client+` directory.
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

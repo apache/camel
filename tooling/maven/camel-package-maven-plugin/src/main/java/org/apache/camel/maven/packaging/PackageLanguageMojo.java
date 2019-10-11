@@ -266,7 +266,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     private static String asDescription(String name, String description) {
         // special for some languages
         if ("file".equals(name)) {
-            return "For expressions and predicates using the file/simple language";
+            return "For expressions and predicates using the file/simple language.";
         }
         return description;
     }

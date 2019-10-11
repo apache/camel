@@ -1,7 +1,8 @@
-[[restlet-component]]
-= Restlet Component
+= Restlet Component (deprecated)
 
 *Available as of Camel version 2.0*
+*Available as of Camel version 2.0*
+
 
 The Restlet component provides http://www.restlet.org[Restlet] based
 endpoints for consuming and producing RESTful
@@ -431,4 +432,3 @@ well:
    <url>https://maven.restlet.com</url>
 </repository>
 ----
-

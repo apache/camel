@@ -1,0 +1,37 @@
+== JMS & File Example
+
+=== Introduction
+
+This example shows how to work with files and JMS.
+
+The example consumes messages from a queue and writes them to the file
+system.
+
+=== Build
+
+You will need to compile this example first:
+
+....
+mvn compile
+....
+
+=== Run
+
+The example should run if you type
+
+....
+mvn exec:java -PExample
+....
+
+After the example is complete, then there should be 10 files written in
+the test directory.
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

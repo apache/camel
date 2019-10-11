@@ -27,8 +27,10 @@ import com.orbitz.consul.model.agent.Registration;
 import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulHealthActions;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsulHealthTest extends ConsulTestSupport {
     private AgentClient client;
@@ -77,7 +79,7 @@ public class ConsulHealthTest extends ConsulTestSupport {
     // *************************************************************************
 
     @Test
-    public void testServiceInstance() throws Exception {
+    public void testServiceInstance() {
         List<ServiceHealth> ref = getConsul().healthClient().getAllServiceInstances(this.service).getResponse();
         List<ServiceHealth> res = fluentTemplate()
             .withHeader(ConsulConstants.CONSUL_ACTION, ConsulHealthActions.SERVICE_INSTANCES)
@@ -85,9 +87,9 @@ public class ConsulHealthTest extends ConsulTestSupport {
             .to("direct:consul")
             .request(List.class);
 
-        Assert.assertEquals(2, ref.size());
-        Assert.assertEquals(2, res.size());
-        Assert.assertEquals(ref, res);
+        Assertions.assertEquals(2, ref.size());
+        Assertions.assertEquals(2, res.size());
+        Assertions.assertEquals(ref, res);
 
         assertTrue(registrations.stream().anyMatch(
             r -> r.getPort().isPresent() && r.getPort().get() == res.get(0).getService().getPort() && r.getId().equalsIgnoreCase(res.get(0).getService().getId())
@@ -98,7 +100,7 @@ public class ConsulHealthTest extends ConsulTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:consul")

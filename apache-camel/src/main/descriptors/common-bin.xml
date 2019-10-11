@@ -220,6 +220,7 @@
         <include>org.apache.camel:camel-metrics</include>
         <include>org.apache.camel:camel-micrometer</include>
         <include>org.apache.camel:camel-microprofile-config</include>
+        <include>org.apache.camel:camel-microprofile-health</include>
         <include>org.apache.camel:camel-microprofile-metrics</include>
         <include>org.apache.camel:camel-milo</include>
         <include>org.apache.camel:camel-mina</include>
@@ -325,6 +326,7 @@
         <include>org.apache.camel:camel-test-spring</include>
         <include>org.apache.camel:camel-test-spring-junit5</include>
         <include>org.apache.camel:camel-testcontainers</include>
+        <include>org.apache.camel:camel-testcontainers-junit5</include>
         <include>org.apache.camel:camel-testcontainers-spring</include>
         <include>org.apache.camel:camel-thrift</include>
         <include>org.apache.camel:camel-tika</include>

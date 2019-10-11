@@ -27,7 +27,7 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.main.MainSupport;
+import org.apache.camel.main.MainCommandLineSupport;
 import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ import static org.apache.deltaspike.cdise.api.CdiContainerLoader.getCdiContainer
  * See http://camel.apache.org/camel-boot.html.
  */
 @Vetoed
-public class Main extends MainSupport {
+public class Main extends MainCommandLineSupport {
 
     static {
         // Since version 2.3.0.Final and WELD-1915, Weld SE registers a shutdown hook that conflicts

@@ -34,6 +34,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
+    protected static final String SCHEME = "mongodb";
+    protected static final String HOST = "localhost:" + EmbedMongoConfiguration.PORT;
+    protected static final String USER = "test-user";
+    protected static final String PASSWORD = "test-pwd";
+
     protected static MongoClient mongo;
     protected static MongoDatabase db;
     protected static MongoCollection<Document> testCollection;
@@ -81,6 +86,34 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
         CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext, true);
         ctx.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
         return ctx;
+    }
+
+    /**
+     * Useful to simulate the presence of an authenticated user with
+     * name {@value #USER} and password {@value #PASSWORD}
+     */
+    protected void createAuthorizationUser() {
+        MongoDatabase admin = mongo.getDatabase("admin");
+        MongoCollection<Document> usersCollection = admin.getCollection("system.users");
+        if (usersCollection.count() == 0) {
+            usersCollection.insertOne(Document.parse("{\n"
+                    + "    \"_id\": \"admin.test-user\",\n"
+                    + "    \"user\": \"test-user\",\n"
+                    + "    \"db\": \"admin\",\n"
+                    + "    \"credentials\": {\n"
+                    + "        \"SCRAM-SHA-1\": {\n"
+                    + "            \"iterationCount\": 10000,\n"
+                    + "            \"salt\": \"gmmPAoNdvFSWCV6PGnNcAw==\",\n"
+                    + "            \"storedKey\": \"qE9u1Ax7Y40hisNHL2b8/LAvG7s=\",\n"
+                    + "            \"serverKey\": \"RefeJcxClt9JbOP/VnrQ7YeQh6w=\"\n"
+                    + "        }\n" + "    },\n"
+                    + "    \"roles\": [\n" + "        {\n"
+                    + "            \"role\": \"readWrite\",\n"
+                    + "            \"db\": \"test\"\n"
+                    + "        }\n"
+                    + "    ]\n"
+                    + "}"));
+        }
     }
 
     protected void pumpDataIntoTestCollection() {

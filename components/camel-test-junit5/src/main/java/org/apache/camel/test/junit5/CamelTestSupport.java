@@ -295,6 +295,13 @@ public abstract class CamelTestSupport implements BeforeEachCallback, AfterAllCa
     }
 
     /**
+     * Gets the name of the current test being executed.
+     */
+    public final String getCurrentTestName() {
+        return currentTestName;
+    }
+
+    /**
      * Override to enable debugger
      * <p/>
      * Is default <tt>false</tt>

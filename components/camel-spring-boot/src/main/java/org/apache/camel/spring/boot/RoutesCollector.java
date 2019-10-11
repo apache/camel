@@ -35,6 +35,7 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -86,6 +87,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
 
             final AntPathMatcher matcher = new AntPathMatcher();
+            final List<RoutesBuilder> routes = new ArrayList<>();
             for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class, configurationProperties.isIncludeNonSingletons(), true).values()) {
                 // filter out abstract classes
                 boolean abs = Modifier.isAbstract(routesBuilder.getClass().getModifiers());
@@ -142,13 +144,20 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                     }
                     LOG.debug("Java RoutesBuilder: {} accepted by include/exclude filter: {}", name, match);
                     if (match) {
-                        try {
-                            LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
-                            camelContext.addRoutes(routesBuilder);
-                        } catch (Exception e) {
-                            throw new CamelSpringBootInitializationException(e);
-                        }
+                        routes.add(routesBuilder);
                     }
+                }
+            }
+
+            // sort routes according to ordered
+            routes.sort(OrderedComparator.get());
+            // then add the routes
+            for (RoutesBuilder routesBuilder : routes) {
+                try {
+                    LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
+                    camelContext.addRoutes(routesBuilder);
+                } catch (Exception e) {
+                    throw new CamelSpringBootInitializationException(e);
                 }
             }
 

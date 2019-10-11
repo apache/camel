@@ -22,10 +22,10 @@ import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicy;
 
 public class ConsulServiceRegistrationWithRoutePolicyTest extends ConsulServiceRegistrationTestBase {
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT)
                     .routeId(SERVICE_ID)
                     .routeGroup(SERVICE_NAME)

@@ -60,7 +60,7 @@ public class PulsarComponentTest extends CamelTestSupport {
         assertEquals("cons", endpoint.getPulsarConfiguration().getConsumerNamePrefix());
         assertEquals(10, endpoint.getPulsarConfiguration().getConsumerQueueSize());
         assertEquals(1, endpoint.getPulsarConfiguration().getNumberOfConsumers());
-        assertEquals("default-producer", endpoint.getPulsarConfiguration().getProducerName());
+        assertNull(endpoint.getPulsarConfiguration().getProducerName());
         assertEquals("subs", endpoint.getPulsarConfiguration().getSubscriptionName());
         assertEquals(SubscriptionType.EXCLUSIVE, endpoint.getPulsarConfiguration().getSubscriptionType());
         assertFalse(endpoint.getPulsarConfiguration().isAllowManualAcknowledgement());

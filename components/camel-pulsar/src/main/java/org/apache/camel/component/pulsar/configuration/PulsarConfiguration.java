@@ -41,8 +41,8 @@ public class PulsarConfiguration {
     private int consumerQueueSize = 10;
     @UriParam(label = "consumer", defaultValue = "sole-consumer")
     private String consumerName = "sole-consumer";
-    @UriParam(label = "producer", defaultValue = "default-producer")
-    private String producerName = "default-producer";
+    @UriParam(label = "producer")
+    private String producerName;
     @UriParam(label = "consumer", defaultValue = "cons")
     private String consumerNamePrefix = "cons";
     @UriParam(label = "consumer", defaultValue = "false")
@@ -136,7 +136,7 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Name of the producer
+     * Name of the producer. If unset, lets Pulsar select a unique identifier.
      */
     public void setProducerName(String producerName) {
         this.producerName = producerName;

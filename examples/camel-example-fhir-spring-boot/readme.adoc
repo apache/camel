@@ -11,7 +11,7 @@ The Camel route is located in the `MyCamelRouter` class.
 This example will read HL7V2 patients from a directory and convert them to FHIR dtsu3 patients and upload them to a configured FHIR server. 
 
 The example assumes you have a running FHIR server at your disposal.
-You may use [hapi-fhir-jpa-server-example](https://github.com/jamesagnew/hapi-fhir/tree/master/hapi-fhir-jpaserver-example)
+You may use https://github.com/jamesagnew/hapi-fhir/tree/master/hapi-fhir-jpaserver-example[hapi-fhir-jpa-server-example].
 
 By default, the example uses `\http://localhost:8080/baseDstu3` as the FHIR server URL, DSTU3 as the FHIR version and `target/work/fhir/input`
 as the directory to look for HL7V2 patients.
@@ -67,14 +67,12 @@ To show detailed information for a specific route
 curl -XGET -s http://localhost:8080/actuator/camelroutes/{id}/detail
 ----
 
+=== Help and contributions
 
-== Forum, Help, etc
+If you hit any problem using Camel or have some feedback, 
+then please https://camel.apache.org/support.html[let us know].
 
-If you hit an problems please let us know on the Camel Forums
-<http://camel.apache.org/discussion-forums.html>
-
-Please help us make Apache Camel better - we appreciate any feedback you may have. Enjoy!
+We also love contributors, 
+so https://camel.apache.org/contributing.html[get involved] :-)
 
 The Camel riders!
-
-

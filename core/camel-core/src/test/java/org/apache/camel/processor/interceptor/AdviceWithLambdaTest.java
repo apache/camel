@@ -20,6 +20,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.RouteDefinition;
 import org.junit.Test;
 
 public class AdviceWithLambdaTest extends ContextTestSupport {
@@ -83,6 +84,33 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testAdvisedRouteDefinition() throws Exception {
+        AdviceWithRouteBuilder.adviceWith(context, context.getRouteDefinitions().get(0), a -> {
+            a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+        });
+
+        getMockEndpoint("mock:foo").expectedMessageCount(0);
+        getMockEndpoint("mock:advised").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testAdvisedEmptyRouteDefinition() throws Exception {
+        try {
+            AdviceWithRouteBuilder.adviceWith(context, new RouteDefinition(), a -> {
+                a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+            });
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
     @Override
