@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.StringHelper.after;
 
-import java.util.function.Function;
-
 /**
  * Some helper methods for working with {@link Endpoint} instances
  */
