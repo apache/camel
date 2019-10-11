@@ -46,8 +46,7 @@ public class PahoEndpoint extends DefaultEndpoint {
     @UriParam
     private final PahoConfiguration configuration;
     @UriParam(label = "advanced")
-    private MqttClient client;
-    private transient boolean stopClient;
+    private volatile MqttClient client;
 
     public PahoEndpoint(String uri, String topic, PahoComponent component, PahoConfiguration configuration) {
         super(uri, component);
@@ -56,26 +55,42 @@ public class PahoEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        if (client == null) {
-            stopClient = true;
-            client = new MqttClient(configuration.getBrokerUrl(), configuration.getClientId(), resolvePersistence());
-            client.connect(createMqttConnectOptions(configuration));
-        }
+    public Producer createProducer() throws Exception {
+        PahoProducer producer = new PahoProducer(this);
+        producer.setClient(client);
+        return producer;
     }
 
     @Override
-    protected void doStop() throws Exception {
-        if (stopClient && client.isConnected()) {
-            client.disconnect();
-        }
-
-        super.doStop();
+    public Consumer createConsumer(Processor processor) throws Exception {
+        PahoConsumer consumer = new PahoConsumer(this, processor);
+        consumer.setClient(client);
+        configureConsumer(consumer);
+        return consumer;
     }
 
-    private static MqttConnectOptions createMqttConnectOptions(PahoConfiguration config) {
+    @Override
+    public PahoComponent getComponent() {
+        return (PahoComponent) super.getComponent();
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public Exchange createExchange(MqttMessage mqttMessage, String topic) {
+        Exchange exchange = createExchange();
+
+        PahoMessage paho = new PahoMessage(exchange.getContext(), mqttMessage);
+        paho.setBody(mqttMessage.getPayload());
+        paho.setHeader(PahoConstants.MQTT_TOPIC, topic);
+        paho.setHeader(PahoConstants.MQTT_QOS, mqttMessage.getQos());
+
+        exchange.setIn(paho);
+        return exchange;
+    }
+
+    protected static MqttConnectOptions createMqttConnectOptions(PahoConfiguration config) {
         MqttConnectOptions mq = new MqttConnectOptions();
         if (ObjectHelper.isNotEmpty(config.getUserName()) && ObjectHelper.isNotEmpty(config.getPassword())) {
             mq.setUserName(config.getUserName());
@@ -106,27 +121,7 @@ public class PahoEndpoint extends DefaultEndpoint {
         return mq;
     }
 
-    @Override
-    public Producer createProducer() throws Exception {
-        return new PahoProducer(this);
-    }
-
-    @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
-        return new PahoConsumer(this, processor);
-    }
-
-    @Override
-    public PahoComponent getComponent() {
-        return (PahoComponent) super.getComponent();
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    // Resolvers
-    protected MqttClientPersistence resolvePersistence() {
+    protected static MqttClientPersistence createMqttClientPersistence(PahoConfiguration configuration) {
         if (configuration.getPersistence() == PahoPersistence.MEMORY) {
             return new MemoryPersistence();
         } else {
@@ -138,18 +133,6 @@ public class PahoEndpoint extends DefaultEndpoint {
         }
     }
 
-    public Exchange createExchange(MqttMessage mqttMessage, String topic) {
-        Exchange exchange = createExchange();
-
-        PahoMessage paho = new PahoMessage(exchange.getContext(), mqttMessage);
-        paho.setBody(mqttMessage.getPayload());
-        paho.setHeader(PahoConstants.MQTT_TOPIC, topic);
-        paho.setHeader(PahoConstants.MQTT_QOS, mqttMessage.getQos());
-
-        exchange.setIn(paho);
-        return exchange;
-    }
-
     public PahoConfiguration getConfiguration() {
         return configuration;
     }
@@ -159,7 +142,7 @@ public class PahoEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * To use an exiting mqtt client
+     * To use an existing mqtt client
      */
     public void setClient(MqttClient client) {
         this.client = client;

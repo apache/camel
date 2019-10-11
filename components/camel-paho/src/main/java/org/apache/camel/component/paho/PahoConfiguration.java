@@ -30,7 +30,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 public class PahoConfiguration implements Cloneable {
 
     @UriParam
-    private String clientId = "camel-" + System.nanoTime();
+    private String clientId;
     @UriParam(defaultValue = PahoConstants.DEFAULT_BROKER_URL)
     private String brokerUrl = PahoConstants.DEFAULT_BROKER_URL;
     @UriParam(defaultValue = "2")
@@ -88,7 +88,7 @@ public class PahoConfiguration implements Cloneable {
     }
 
     /**
-     * MQTT client identifier.
+     * MQTT client identifier. The identifier must be unique.
      */
     public void setClientId(String clientId) {
         this.clientId = clientId;

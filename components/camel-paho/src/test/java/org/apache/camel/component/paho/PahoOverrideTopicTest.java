@@ -55,9 +55,12 @@ public class PahoOverrideTopicTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:test").to("paho:queue?brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho:myoverride?brokerUrl=tcp://localhost:" + mqttPort).to("mock:test");
+                PahoComponent paho = context.getComponent("paho", PahoComponent.class);
+                paho.setBrokerUrl("tcp://localhost:" + mqttPort);
 
+                from("direct:test").to("paho:queue").log("Message sent");
+
+                from("paho:myoverride").log("Message received").to("mock:test");
             }
         };
     }
