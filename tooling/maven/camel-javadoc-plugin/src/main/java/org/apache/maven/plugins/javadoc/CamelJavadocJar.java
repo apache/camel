@@ -20,18 +20,22 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
@@ -44,6 +48,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.archiver.Archiver;
@@ -51,6 +56,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
+import org.codehaus.plexus.util.cli.Commandline;
 
 /**
  * Bundles the Javadoc documentation for <code>main Java code</code> in an
@@ -266,57 +272,132 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
         }
     }
 
-    /*
-     * private void writeIncrementalInfo(MavenProject project) throws
-     * MojoExecutionException { try { Path cacheData =
-     * getIncrementalDataPath(project); String curdata = getIncrementalData();
-     * Files.createDirectories(cacheData.getParent()); try (Writer w =
-     * Files.newBufferedWriter(cacheData)) { w.append(curdata); } } catch
-     * (IOException e) { throw new
-     * MojoExecutionException("Error checking manifest uptodate status", e); } }
-     * private boolean isUpToDate(MavenProject project) throws
-     * MojoExecutionException { long t0 = System.currentTimeMillis(); try { Path
-     * cacheData = getIncrementalDataPath(project); String prvdata; if
-     * (Files.isRegularFile(cacheData)) { prvdata = new
-     * String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8); } else {
-     * prvdata = null; } String curdata = getIncrementalData(); if
-     * (curdata.equals(prvdata)) { long lastmod =
-     * Files.getLastModifiedTime(cacheData).toMillis(); Set<String> stale =
-     * Stream.concat(Stream.of(new
-     * File(project.getBuild().getOutputDirectory())),
-     * project.getArtifacts().stream().map(Artifact::getFile)) .flatMap(f ->
-     * newer(lastmod, f)) .collect(Collectors.toSet()); if (!stale.isEmpty()) {
-     * getLog().info("Stale files: " + stale.stream()
-     * .collect(Collectors.joining(", "))); } else { // everything is in order,
-     * skip
-     * getLog().info("Skipping manifest generation, everything is up to date.");
-     * return true; } } else { if (prvdata == null) {
-     * getLog().info("No previous run data found, generating manifest."); } else
-     * { getLog().info("Configuration changed, re-generating manifest."); } } }
-     * catch (IOException e) { throw new
-     * MojoExecutionException("Error checking manifest uptodate status", e); }
-     * finally { long t1 = System.currentTimeMillis();
-     * getLog().warn("isUpToDate took " + (t1 - t0) + " ms"); } return false; }
-     * private String getIncrementalData() { return
-     * getInstructions().entrySet().stream().map(e -> e.getKey() + "=" +
-     * e.getValue()) .collect(Collectors.joining("\n", "", "\n")); } private
-     * Path getIncrementalDataPath(MavenProject project) { return
-     * Paths.get(project.getBuild().getDirectory(), "camel-javadoc-plugin",
-     * "org.apache.camel_camel-javadoc-plugin_javadoc_xx"); } private long
-     * lastmod(Path p) { try { return Files.getLastModifiedTime(p).toMillis(); }
-     * catch (IOException e) { return 0; } } private Stream<String> newer(long
-     * lastmod, File file) { try { if (file.isDirectory()) { return
-     * Files.walk(file.toPath()) .filter(Files::isRegularFile) .filter(p ->
-     * lastmod(p) > lastmod) .map(Path::toString); } else if (file.isFile()) {
-     * if (lastmod(file.toPath()) > lastmod) { if
-     * (file.getName().endsWith(".jar")) { try (ZipFile zf = new ZipFile(file))
-     * { return zf.stream() .filter(ze -> !ze.isDirectory()) .filter(ze ->
-     * ze.getLastModifiedTime().toMillis() > lastmod) .map(ze -> file.toString()
-     * + "!" + ze.getName()) .collect(Collectors.toList()) .stream(); } } else {
-     * return Stream.of(file.toString()); } } else { return Stream.empty(); } }
-     * else { return Stream.empty(); } } catch (IOException e) { throw new
-     * IOError(e); } }
-     */
+    protected void executeJavadocCommandLine(Commandline cmd, File javadocOutputDirectory )
+            throws MavenReportException {
+        if (!isUpToDate(project, cmd)) {
+            super.executeJavadocCommandLine(cmd, javadocOutputDirectory);
+            writeIncrementalData(project, cmd);
+        }
+    }
+
+    private String getIncrementalData(Commandline cmd) throws MavenReportException {
+        try {
+            List<String> ignored = new ArrayList<>();
+            List<String> options = new ArrayList<>();
+            Path dir = cmd.getWorkingDirectory().toPath().toAbsolutePath().normalize();
+            String[] args = cmd.getCommandline();
+            Collections.addAll(options, args);
+            for (String arg : args) {
+                if (arg.startsWith("@")) {
+                    String name = arg.substring(1);
+                    Files.lines(dir.resolve(name)).forEachOrdered(options::add);
+                    ignored.add(name);
+                }
+            }
+            List<String> state = new ArrayList<>(options);
+            boolean cp = false;
+            boolean sp = false;
+            for (String arg : options) {
+                if (cp) {
+                    String s = unquote(arg);
+                    Stream.of(s.split(File.pathSeparator))
+                            .map(dir::resolve)
+                            .map(p -> p + " = " + lastmod(p))
+                            .forEachOrdered(state::add);
+                } else if (sp) {
+                    String s = unquote(arg);
+                    Stream.of(s.split(File.pathSeparator))
+                            .map(dir::resolve)
+                            .flatMap(CamelJavadocJar::walk)
+                            .filter(Files::isRegularFile)
+                            .map(p -> p + " = " + lastmod(p))
+                            .forEachOrdered(state::add);
+                }
+                cp = "-classpath".equals(arg);
+                sp = "-sourcepath".equals(arg);
+            }
+            walk(dir)
+                    .filter(Files::isRegularFile)
+                    .filter(p -> !ignored.contains(p.getFileName().toString()))
+                    .map(p -> p + " = " + lastmod(p))
+                    .forEachOrdered(state::add);
+
+            return String.join(SystemUtils.LINE_SEPARATOR, state);
+        } catch (Exception e) {
+            throw new MavenReportException("Unable to compute mojo state", e);
+        }
+    }
+
+    static Stream<Path> walk(Path dir) {
+        try {
+            return Files.walk(dir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String unquote(String s) {
+        if (s.startsWith("'") && s.endsWith("'")) {
+            return s.substring(1, s.length() - 1).replaceAll("\\'", "'");
+        } else {
+            return s;
+        }
+    }
+
+    private void writeIncrementalData(MavenProject project, Commandline cmd) throws MavenReportException {
+        try {
+            String curdata = getIncrementalData(cmd);
+            Path cacheData = getIncrementalDataPath(project);
+            Files.createDirectories(cacheData.getParent());
+            try (Writer w = Files.newBufferedWriter(cacheData)) {
+                w.append(curdata);
+            }
+        } catch (IOException e) {
+            throw new MavenReportException("Error checking manifest uptodate status", e);
+        }
+    }
+
+    private boolean isUpToDate(MavenProject project, Commandline cmd) throws MavenReportException {
+        long t0 = System.currentTimeMillis();
+        try {
+            String curdata = getIncrementalData(cmd);
+            Path cacheData = getIncrementalDataPath(project);
+            String prvdata;
+            if (Files.isRegularFile(cacheData)) {
+                prvdata = new String(Files.readAllBytes(cacheData), StandardCharsets.UTF_8);
+            } else {
+                prvdata = null;
+            }
+            if (curdata.equals(prvdata)) {
+                getLog().info("Skipping javadoc generation, everything is up to date.");
+                return true;
+            } else {
+                if (prvdata == null) {
+                    getLog().info("No previous run data found, generating javadoc.");
+                } else {
+                    getLog().info("Configuration changed, re-generating javadoc.");
+                }
+            }
+        } catch (IOException e) {
+            throw new MavenReportException("Error checking uptodate status", e);
+        } finally {
+            long t1 = System.currentTimeMillis();
+            getLog().warn("isUpToDate took " + (t1 - t0) + " ms");
+        }
+        return false;
+    }
+
+    private Path getIncrementalDataPath(MavenProject project) {
+        return Paths.get(project.getBuild().getDirectory(), "camel-javadoc-plugin", "org.apache.camel_camel-javadoc-plugin_javadoc_xx");
+    }
+
+    private long lastmod(Path p) {
+        try {
+            return Files.getLastModifiedTime(p).toMillis();
+        } catch (IOException e) {
+            return 0;
+        }
+    }
 
     void copy(Path in, Path out) throws IOException {
         if (Files.isDirectory(in)) {

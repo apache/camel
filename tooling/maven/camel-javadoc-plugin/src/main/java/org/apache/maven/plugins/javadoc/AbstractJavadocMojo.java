@@ -5233,7 +5233,7 @@ public abstract class AbstractJavadocMojo
      * @param javadocOutputDirectory not null
      * @throws MavenReportException if any errors occur
      */
-    private void executeJavadocCommandLine( Commandline cmd, File javadocOutputDirectory )
+    protected void executeJavadocCommandLine( Commandline cmd, File javadocOutputDirectory )
             throws MavenReportException
     {
         if ( getLog().isDebugEnabled() )
