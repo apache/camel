@@ -169,7 +169,7 @@ Required SWF component options
 
 You have to provide the amazonSWClient in the
 Registry or your accessKey and secretKey to access
-the https://aws.amazon.com/swf[Amazon's Simple Workflow Service].
+the https://aws.amazon.com/swf[Amazon SWF].
 
 == Usage
 
