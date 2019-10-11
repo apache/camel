@@ -186,7 +186,6 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
 
         if (body == null) {
             log.trace("No payload to send as reply for exchange: {}", camelExchange);
-            this.changeStatusCodeToNoContent(camelExchange, httpExchange);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseSender().send("No response available");
             return;
@@ -200,52 +199,12 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
                 IOHelper.copy(input, output, IOHelper.DEFAULT_BUFFER_SIZE, true);
             }
         } else {
-            ByteBuffer bodyAsByteBuffer = this.convertBodyToByteBuffer(camelExchange, httpExchange, body);
+            TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
+            ByteBuffer bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, body);
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }
     }
     
-    /*
-     * when an HTTP response has status code 200 
-     * but does not have content in the body change the status code to 204
-     */
-    private void changeStatusCodeToNoContent(Exchange camelExchange, HttpServerExchange httpExchange) {
-        Message answer = camelExchange.getMessage();
-        if (httpExchange.getStatusCode() == 200) {
-            answer.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
-            answer.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, "No Content");
-
-            httpExchange.setStatusCode(204);
-        }
-    }
- 
-    private ByteBuffer convertBodyToByteBuffer(Exchange camelExchange, HttpServerExchange httpExchange, Object bodyObj) throws NoTypeConversionAvailableException {
-        
-        TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
-        ByteBuffer bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, bodyObj);
-        
-        if (!bodyAsByteBuffer.hasRemaining()) {
-            this.changeStatusCodeToNoContent(camelExchange, httpExchange);
-        } else {
-            if (this.hasNoContent(StandardCharsets.UTF_8.decode(bodyAsByteBuffer.asReadOnlyBuffer()).toString())) {
-                this.changeStatusCodeToNoContent(camelExchange, httpExchange);
-            }
-        }
-        
-        return bodyAsByteBuffer;
-
-    }
-    
-    private boolean hasNoContent(String bodyAsString) {
-        if (bodyAsString.trim().isEmpty()
-            || bodyAsString.equalsIgnoreCase("No Content")
-            || bodyAsString.equalsIgnoreCase("No Body")) {
-            
-            return true;
-        }
-        return false;
-    }
-
     /**
      * Create an {@link Exchange} from the associated {@link UndertowEndpoint} and set the {@code in} {@link Message}'s
      * body to the given {@code message} and {@link UndertowConstants#CONNECTION_KEY} header to the given
@@ -309,13 +268,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
     }
 
     private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException {
-        Object result;
-        if (camelExchange.hasOut()) {
-            result = getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getOut());
-        } else {
-            result = getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getIn());
-        }
-        return result;
+        return getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getMessage());
     }
     
     private HttpHandler wrapHandler(HttpHandler handler, UndertowEndpoint endpoint) {

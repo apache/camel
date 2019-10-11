@@ -18,11 +18,13 @@ package org.apache.camel.component.undertow;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +46,7 @@ import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
@@ -308,7 +311,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
     @Override
     public Object toHttpResponse(HttpServerExchange httpExchange, Message message) throws IOException {
-        boolean failed = message.getExchange().isFailed();
+        Exchange camelExchange = message.getExchange();
+        boolean failed = camelExchange.isFailed();
         int defaultCode = failed ? 500 : 200;
 
         int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, defaultCode, int.class);
@@ -326,7 +330,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             while (it.hasNext()) {
                 String headerValue = tc.convertTo(String.class, it.next());
                 if (headerValue != null && headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, camelExchange)) {
                     LOG.trace("HTTP-Header: {}={}", key, headerValue);
                     httpExchange.getResponseHeaders().add(new HttpString(key), headerValue);
                 }
@@ -334,7 +338,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         }
 
         Object body = message.getBody();
-        Exception exception = message.getExchange().getException();
+        Exception exception = camelExchange.getException();
 
         if (exception != null) {
             if (isTransferException()) {
@@ -362,7 +366,20 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             }
 
             // and mark the exception as failure handled, as we handled it by returning it as the response
-            ExchangeHelper.setFailureHandled(message.getExchange());
+            ExchangeHelper.setFailureHandled(camelExchange);
+        } else {
+            // there are no exceptions
+            // so check the body for content
+            // if there is none change the status code to 204
+            if (body == null) {
+                this.changeStatusCodeToNoContent(camelExchange, httpExchange);
+            } if (body instanceof InputStream) {
+                // reading out the input stream to check it causes issues 
+                // do we want to check using PushbackStream?
+            } else {
+                this.checkBodyForContent(camelExchange, httpExchange, body);
+            }
+            
         }
 
         // set the content type in the response.
@@ -375,6 +392,44 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return body;
     }
 
+    /*
+     * when an HTTP response has status code 200 
+     * but does not have content in the body change the status code to 204
+     */
+    private void changeStatusCodeToNoContent(Exchange camelExchange, HttpServerExchange httpExchange) {
+        Message answer = camelExchange.getMessage();
+        if (httpExchange.getStatusCode() == 200) {
+            answer.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
+            answer.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, "No Content");
+
+            httpExchange.setStatusCode(204);
+        }
+    }
+    
+    private ByteBuffer checkBodyForContent(Exchange camelExchange, HttpServerExchange httpExchange, Object bodyObj) {
+        
+        TypeConverter tc = camelExchange.getContext().getTypeConverter();
+        ByteBuffer bodyAsByteBuffer = tc.convertTo(ByteBuffer.class, bodyObj);
+        
+        if (!bodyAsByteBuffer.hasRemaining()) {
+            this.changeStatusCodeToNoContent(camelExchange, httpExchange);
+        } else {
+            if (this.hasNoContent(StandardCharsets.UTF_8.decode(bodyAsByteBuffer.asReadOnlyBuffer()).toString())) {
+                this.changeStatusCodeToNoContent(camelExchange, httpExchange);
+            }
+        }
+        
+        return bodyAsByteBuffer;
+
+    }
+    
+    private boolean hasNoContent(String bodyAsString) {
+        return (bodyAsString.trim().isEmpty()
+            || bodyAsString.equalsIgnoreCase("No Content")
+            || bodyAsString.equalsIgnoreCase("No Body"));
+    }
+    
+    
     @Override
     public Object toHttpRequest(ClientRequest clientRequest, Message message) {
 
