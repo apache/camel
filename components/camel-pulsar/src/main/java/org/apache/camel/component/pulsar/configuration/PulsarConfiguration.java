@@ -124,7 +124,7 @@ public class PulsarConfiguration {
     }
 
     /**
-     * Name of the producer
+     * Name of the producer, if unset lets Pulsar select a unique identifier
      */
     public void setProducerName(String producerName) {
         this.producerName = producerName;
