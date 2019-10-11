@@ -22,13 +22,10 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
 public class UndertowMuteExceptionTest extends BaseUndertowTest {
 
     @Test
-    public void muteExceptionTest() throws IOException, ClassNotFoundException {
+    public void muteExceptionTest() throws Exception {
         HttpClient client = new HttpClient();
         GetMethod get = new GetMethod("http://localhost:" + getPort() + "/test/mute");
         get.setRequestHeader("Accept", "application/text");
@@ -40,9 +37,8 @@ public class UndertowMuteExceptionTest extends BaseUndertowTest {
         Assert.assertEquals(500, get.getStatusCode());
     }
 
-
     @Test
-    public void muteExceptionWithTransferExceptionTest() throws IOException, ClassNotFoundException {
+    public void muteExceptionWithTransferExceptionTest() throws Exception {
         HttpClient client = new HttpClient();
         GetMethod get = new GetMethod("http://localhost:" + getPort() + "/test/muteWithTransfer");
         get.setRequestHeader("Accept", "application/text");
@@ -59,7 +55,6 @@ public class UndertowMuteExceptionTest extends BaseUndertowTest {
         return new RouteBuilder() {
 
             public void configure() {
-
                 from("undertow:http://localhost:" + getPort() + "/test/mute?muteException=true").to("mock:input")
                     .throwException(new IllegalArgumentException("Camel cannot do this"));
 
