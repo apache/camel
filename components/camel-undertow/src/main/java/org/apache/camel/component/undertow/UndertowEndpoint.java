@@ -262,7 +262,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
 
     /**
      * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
-     *
      */
     public void setMuteException(Boolean muteException) {
         this.muteException = muteException;
