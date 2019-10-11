@@ -3825,8 +3825,8 @@ public abstract class AbstractJavadocMojo
      * @param b                   the flag which controls if the argument is added or not.
      * @param value               the argument value to be added.
      * @param requiredJavaVersion the required Java version, for example 1.31f or 1.4f
-     * @see #addArgIf(java.util.List, boolean, String)
-     * @see #isJavaDocVersionAtLeast(float)
+     * @see #addArgIf(List, boolean, String)
+     * @see #isJavaDocVersionAtLeast(JavaVersion)
      */
     private void addArgIf( List<String> arguments, boolean b, String value, JavaVersion requiredJavaVersion )
     {
@@ -3856,7 +3856,7 @@ public abstract class AbstractJavadocMojo
      * @param arguments a list of arguments, not null
      * @param key       the argument name.
      * @param value     the argument value to be added.
-     * @see #addArgIfNotEmpty(java.util.List, String, String, boolean)
+     * @see #addArgIfNotEmpty(List, String, String, boolean)
      */
     private void addArgIfNotEmpty( List<String> arguments, String key, String value )
     {
@@ -3876,7 +3876,7 @@ public abstract class AbstractJavadocMojo
      * @param splitValue          if <code>true</code> given value will be tokenized by comma
      * @param requiredJavaVersion the required Java version, for example 1.31f or 1.4f
      * @see #addArgIfNotEmpty(List, String, String, boolean, boolean)
-     * @see #isJavaDocVersionAtLeast(float)
+     * @see #isJavaDocVersionAtLeast(JavaVersion)
      */
     private void addArgIfNotEmpty( List<String> arguments, String key, String value, boolean repeatKey,
                                    boolean splitValue, JavaVersion requiredJavaVersion )
@@ -3969,7 +3969,7 @@ public abstract class AbstractJavadocMojo
      * @param key                 the argument name.
      * @param value               the argument value to be added.
      * @param requiredJavaVersion the required Java version, for example 1.31f or 1.4f
-     * @see #addArgIfNotEmpty(java.util.List, String, String, float, boolean)
+     * @see #addArgIfNotEmpty(List, String, String, JavaVersion, boolean)
      */
     private void addArgIfNotEmpty( List<String> arguments, String key, String value,
                                    JavaVersion requiredJavaVersion )
@@ -3986,8 +3986,8 @@ public abstract class AbstractJavadocMojo
      * @param value               the argument value to be added.
      * @param requiredJavaVersion the required Java version, for example 1.31f or 1.4f
      * @param repeatKey           repeat or not the key in the command line
-     * @see #addArgIfNotEmpty(java.util.List, String, String)
-     * @see #isJavaDocVersionAtLeast(float)
+     * @see #addArgIfNotEmpty(List, String, String)
+     * @see #isJavaDocVersionAtLeast(JavaVersion)
      */
     private void addArgIfNotEmpty( List<String> arguments, String key, String value, JavaVersion requiredJavaVersion,
                                    boolean repeatKey )
@@ -4149,9 +4149,9 @@ public abstract class AbstractJavadocMojo
      * {@link #stylesheet} is equals to <code>maven</code>.
      *
      * @param anOutputDirectory the output directory
-     * @throws java.io.IOException if any
+     * @throws IOException if any
      * @see #DEFAULT_CSS_NAME
-     * @see JavadocUtil#copyResource(java.net.URL, java.io.File)
+     * @see JavadocUtil#copyResource(URL, File)
      */
     private void copyDefaultStylesheet( File anOutputDirectory )
             throws IOException
@@ -4176,7 +4176,7 @@ public abstract class AbstractJavadocMojo
      * the current project or of the projects in the reactor to the <code>outputDirectory</code>.
      *
      * @param anOutputDirectory the output directory
-     * @throws java.io.IOException if any
+     * @throws IOException if any
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.2.html#docfiles">Reference
      *      Guide, Copies new "doc-files" directory for holding images and examples</a>
      * @see #docfilessubdirs
@@ -4327,7 +4327,7 @@ public abstract class AbstractJavadocMojo
      * @param files           not null, containing list of quoted files
      * @param onlyPackageName boolean for only package name
      * @return a list of package names or files with unnamed package names, depending the value of the unnamed flag
-     * @see #getFiles(List)
+     * @see #getFiles(Collection)
      * @see #getSourcePaths()
      */
     private List<String> getPackageNamesOrFilesWithUnnamedPackages( Collection<String> sourcePaths, List<String> files,
@@ -4435,7 +4435,7 @@ public abstract class AbstractJavadocMojo
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/whatsnew-1.4.html#runningjavadoc">
      *      What s New in Javadoc 1.4
      *      </a>
-     * @see #isJavaDocVersionAtLeast(float)
+     * @see #isJavaDocVersionAtLeast(JavaVersion)
      * @see #ARGFILE_FILE_NAME
      * @see #FILES_FILE_NAME
      */
@@ -4644,7 +4644,7 @@ public abstract class AbstractJavadocMojo
      *
      * @param javadocOutputDirectory not null
      * @param arguments   not null
-     * @param sourcePaths not null
+     * @param allSourcePaths not null
      * @throws MavenReportException if any
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#javadocoptions">http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#javadocoptions</a>
      */
@@ -5679,7 +5679,7 @@ public abstract class AbstractJavadocMojo
      * @return the detected Javadoc links using the Maven conventions for all dependencies defined in the current
      *         project or an empty list.
      * @see #detectLinks
-     * @see #isValidJavadocLink(String)
+     * @see #isValidJavadocLink(String, boolean)
      * @since 2.6
      */
     private List<String> getDependenciesLinks()
