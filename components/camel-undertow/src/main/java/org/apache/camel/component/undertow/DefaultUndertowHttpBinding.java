@@ -379,7 +379,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             ExchangeHelper.setFailureHandled(camelExchange);
         } else if (exception != null && isMuteException()) {
             // mark the exception as failure handled, as we handled it by actively muting it
-            ExchangeHelper.setFailureHandled(message.getExchange());
+            ExchangeHelper.setFailureHandled(camelExchange);
         } else {
             // there are no exceptions
             // so check the body for content
