@@ -130,7 +130,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 11 options, which are listed below.
 
 
 
@@ -144,6 +144,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.undertow.host-options.http2-enabled* | Set if the Undertow host should use http2 protocol. |  | Boolean
 | *camel.component.undertow.host-options.io-threads* | Set if the Undertow host should use http2 protocol. |  | Integer
 | *camel.component.undertow.host-options.worker-threads* | Set if the Undertow host should use http2 protocol. |  | Integer
+| *camel.component.undertow.mute-exception* | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | Boolean
 | *camel.component.undertow.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.undertow.undertow-http-binding* | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. The option is a org.apache.camel.component.undertow.UndertowHttpBinding type. |  | String
 | *camel.component.undertow.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean

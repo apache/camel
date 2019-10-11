@@ -668,7 +668,7 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 `paxlogging:appender` | 2.6 | The paxlogging component can be used in an OSGi environment to receive PaxLogging events and process them.
 
 | link:camel-paho/src/main/docs/paho-component.adoc[Paho] (camel-paho) +
-`paho:topic` | 2.16 | Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
+`paho:topic` | 2.16 | Component for communicating with MQTT message brokers using Eclipse Paho MQTT Client.
 
 | link:camel-pdf/src/main/docs/pdf-component.adoc[PDF] (camel-pdf) +
 `pdf:operation` | 2.16 | The pdf components provides the ability to create, modify or extract content from PDF documents.
