@@ -47,7 +47,6 @@ import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
-import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
@@ -71,6 +70,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     //use default filter strategy from Camel HTTP
     private HeaderFilterStrategy headerFilterStrategy;
     private Boolean transferException;
+    private Boolean muteException;
     private boolean useStreaming;
 
     public DefaultUndertowHttpBinding() {
@@ -80,12 +80,14 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     public DefaultUndertowHttpBinding(boolean useStreaming) {
         this.headerFilterStrategy = new UndertowHeaderFilterStrategy();
         this.transferException = Boolean.FALSE;
+        this.muteException = Boolean.FALSE;
         this.useStreaming = useStreaming;
     }
 
-    public DefaultUndertowHttpBinding(HeaderFilterStrategy headerFilterStrategy, Boolean transferException) {
+    public DefaultUndertowHttpBinding(HeaderFilterStrategy headerFilterStrategy, Boolean transferException, Boolean muteException) {
         this.headerFilterStrategy = headerFilterStrategy;
         this.transferException = transferException;
+        this.muteException = muteException;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
@@ -104,6 +106,15 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     @Override
     public void setTransferException(Boolean transferException) {
         this.transferException = transferException;
+    }
+
+    public Boolean isMuteException() {
+        return muteException;
+    }
+
+    @Override
+    public void setMuteException(Boolean muteException) {
+        this.muteException = muteException;
     }
 
     @Override
@@ -336,7 +347,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         Object body = message.getBody();
         Exception exception = message.getExchange().getException();
 
-        if (exception != null) {
+        if (exception != null && !isMuteException()) {
             if (isTransferException()) {
                 // we failed due an exception, and transfer it as java serialized object
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -362,6 +373,9 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             }
 
             // and mark the exception as failure handled, as we handled it by returning it as the response
+            ExchangeHelper.setFailureHandled(message.getExchange());
+        } else if (exception != null && isMuteException()) {
+            // mark the exception as failure handled, as we handled it by actively muting it
             ExchangeHelper.setFailureHandled(message.getExchange());
         }
 

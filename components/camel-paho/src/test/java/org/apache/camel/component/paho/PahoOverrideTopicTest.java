@@ -17,18 +17,13 @@
 package org.apache.camel.component.paho;
 
 import org.apache.activemq.broker.BrokerService;
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.junit.After;
 import org.junit.Test;
 
 public class PahoOverrideTopicTest extends CamelTestSupport {
-
-    @BindToRegistry("connectOptions")
-    MqttConnectOptions connectOptions = new MqttConnectOptions();
 
     BrokerService broker;
 
@@ -60,9 +55,12 @@ public class PahoOverrideTopicTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:test").to("paho:queue?brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho:myoverride?brokerUrl=tcp://localhost:" + mqttPort).to("mock:test");
+                PahoComponent paho = context.getComponent("paho", PahoComponent.class);
+                paho.setBrokerUrl("tcp://localhost:" + mqttPort);
 
+                from("direct:test").to("paho:queue").log("Message sent");
+
+                from("paho:myoverride").log("Message received").to("mock:test");
             }
         };
     }
