@@ -28,7 +28,7 @@
 
   <artifactId>camel-restlet</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Restlet</name>
+  <name>Camel :: Restlet (deprecated)</name>
   <description>Camel REST (Restlet based) Component</description>
 
   <properties>
