@@ -16,15 +16,12 @@
  */
 package org.apache.camel.component.undertow;
 
+import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.accesslog.AccessLogReceiver;
 import java.net.URI;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
-
-import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.accesslog.AccessLogReceiver;
-
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -87,6 +84,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "false")
     private Boolean transferException = Boolean.FALSE;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private Boolean muteException = Boolean.FALSE;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean keepAlive = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "true")
@@ -256,12 +255,25 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         this.transferException = transferException;
     }
 
+    public Boolean getMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     *
+     */
+    public void setMuteException(Boolean muteException) {
+        this.muteException = muteException;
+    }
+
     public UndertowHttpBinding getUndertowHttpBinding() {
         if (undertowHttpBinding == null) {
             // create a new binding and use the options from this endpoint
             undertowHttpBinding = new DefaultUndertowHttpBinding(useStreaming);
             undertowHttpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             undertowHttpBinding.setTransferException(getTransferException());
+            undertowHttpBinding.setMuteException(getMuteException());
         }
         return undertowHttpBinding;
     }

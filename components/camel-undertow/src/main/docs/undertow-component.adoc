@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (26 parameters):
+=== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -89,6 +89,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *httpMethodRestrict* (consumer) | Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma. |  | String
 | *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | Boolean
+| *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | Boolean
 | *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
