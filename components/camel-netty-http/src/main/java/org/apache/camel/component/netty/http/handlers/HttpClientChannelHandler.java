@@ -24,14 +24,12 @@ import java.util.Map;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.http.InboundStreamHttpResponse;
-import org.apache.camel.component.netty.http.NettyHttpMessage;
 import org.apache.camel.component.netty.http.NettyHttpProducer;
 
 /**
@@ -77,29 +75,7 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
             producer.getEndpoint().getCookieHandler().storeCookies(exchange, uri, m);
         }
 
-        //handleNoContent(exchange, answer, response);
         return answer;
     }
     
-//    protected void handleNoContent(Exchange exchange, Message answer, HttpResponse response) {
-//        HttpResponseStatus responseStatus = response.status();
-//        if (responseStatus.code() == 200 && hasNoContentBody(exchange, answer)) {
-//            answer.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
-//            answer.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, "No Content");
-//            answer.setBody("");
-//        }
-//    }
-//    
-//    protected boolean hasNoContentBody(Exchange exchange, Message answer) {
-//        boolean hasNoBody = false;
-//        String bodyObj = answer.getBody(String.class);
-//        if (bodyObj == null || bodyObj.trim().isEmpty()
-//            || bodyObj.equalsIgnoreCase("No Content") 
-//            || bodyObj.equalsIgnoreCase("No Body")){
-//            
-//            hasNoBody = true;
-//        }
-//        
-//        return hasNoBody;
-//    }
 }

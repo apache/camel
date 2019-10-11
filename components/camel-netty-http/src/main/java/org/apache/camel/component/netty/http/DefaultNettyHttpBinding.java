@@ -24,7 +24,9 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -514,8 +516,66 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             message.setHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
         }
         LOG.trace("Connection: {}", connection);
+        
+        handleResponseWithNoContent(message, response, body);
 
         return response;
+    }
+    
+    /*
+     * when an HTTP response has status code 200 
+     * but does not have content in the body change the status code to 204
+     */
+    private void handleResponseWithNoContent(Message message, HttpResponse httpResponse, Object body) {
+        if (body == null) {
+            changeStatusCodeToNoContent(message, httpResponse);
+        } else {
+            checkBodyForContentAndUpdateStatusCode(message, httpResponse, body);
+        }
+    }
+    
+    /*
+     * change the status code to no content
+     */
+    private void changeStatusCodeToNoContent(Message message, HttpResponse httpResponse) {
+        HttpResponseStatus responseStatus = httpResponse.status();
+        if (responseStatus.code() == 200) {
+            message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, HttpResponseStatus.NO_CONTENT.code());
+            message.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, HttpResponseStatus.NO_CONTENT.reasonPhrase());
+            httpResponse.setStatus(new HttpResponseStatus(HttpResponseStatus.NO_CONTENT.code(), HttpResponseStatus.NO_CONTENT.reasonPhrase()));
+        }
+    }
+    
+    /*
+     * check body content for being empty
+     */
+    private void checkBodyForContentAndUpdateStatusCode(Message message, HttpResponse httpResponse, Object body) {
+        if (body instanceof InputStream) {
+            // reading out the input stream to check it causes issues 
+            // do we want to check using PushbackStream?
+        } else {
+            //
+            TypeConverter tc = message.getExchange().getContext().getTypeConverter();
+            ByteBuffer bodyAsByteBuffer = tc.convertTo(ByteBuffer.class, body);
+            if (!bodyAsByteBuffer.hasRemaining()) {
+                this.changeStatusCodeToNoContent(message, httpResponse);
+            } else {
+                if (hasNoContent(StandardCharsets.UTF_8.decode(bodyAsByteBuffer.asReadOnlyBuffer()).toString())) {
+                    changeStatusCodeToNoContent(message, httpResponse);
+                }
+            }
+        }
+    }
+    
+    /*
+     * an empty body along with 
+     * various values in the body 
+     * will be treated as no content
+     */
+    private boolean hasNoContent(String bodyAsString) {
+        return (bodyAsString.trim().isEmpty()
+            || bodyAsString.equalsIgnoreCase("No Content")
+            || bodyAsString.equalsIgnoreCase("No Body"));
     }
 
     @Override
@@ -684,6 +744,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 connection = HttpHeaderValues.CLOSE.toString();
             }
         }
+        
         request.headers().set(HttpHeaderNames.CONNECTION.toString(), connection);
         LOG.trace("Connection: {}", connection);
 
