@@ -43,7 +43,7 @@ You can append query options to the URI in the following format,
 == Options
 
 // component options: START
-The Undertow component supports 5 options, which are listed below.
+The Undertow component supports 6 options, which are listed below.
 
 
 
@@ -54,6 +54,7 @@ The Undertow component supports 5 options, which are listed below.
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *hostOptions* (advanced) | To configure common options, such as thread pools |  | UndertowHostOptions
+| *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END

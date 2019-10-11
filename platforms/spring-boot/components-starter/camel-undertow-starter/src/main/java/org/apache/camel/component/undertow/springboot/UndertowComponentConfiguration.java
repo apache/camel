@@ -57,6 +57,11 @@ public class UndertowComponentConfiguration
      */
     private UndertowHostOptionsNestedConfiguration hostOptions;
     /**
+     * If enabled and an Exchange failed processing on the consumer side the
+     * response's body won't contain the exception's stack trace.
+     */
+    private Boolean muteException = false;
+    /**
      * Whether the component should use basic property binding (Camel 2.x) or
      * the newer property binding with additional capabilities
      */
@@ -94,6 +99,14 @@ public class UndertowComponentConfiguration
     public void setHostOptions(
             UndertowHostOptionsNestedConfiguration hostOptions) {
         this.hostOptions = hostOptions;
+    }
+
+    public Boolean getMuteException() {
+        return muteException;
+    }
+
+    public void setMuteException(Boolean muteException) {
+        this.muteException = muteException;
     }
 
     public Boolean getBasicPropertyBinding() {

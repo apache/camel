@@ -69,6 +69,8 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private UndertowHostOptions hostOptions;
+    @Metadata(label = "consumer", defaultValue = "false")
+    private boolean muteException;
 
     public UndertowComponent() {
         this(null);
@@ -98,6 +100,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         UndertowEndpoint endpoint = createEndpointInstance(endpointUri, this);
         // set options from component
         endpoint.setSslContextParameters(sslParams);
+        endpoint.setMuteException(muteException);
         // Prefer endpoint configured over component configured
         if (undertowHttpBinding == null) {
             // fallback to component configured
@@ -393,6 +396,17 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
      */
     public void setHostOptions(UndertowHostOptions hostOptions) {
         this.hostOptions = hostOptions;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     public ComponentVerifierExtension getVerifier() {
