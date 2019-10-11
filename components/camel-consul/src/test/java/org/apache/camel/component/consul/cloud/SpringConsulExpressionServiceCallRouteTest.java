@@ -32,7 +32,7 @@ public class SpringConsulExpressionServiceCallRouteTest extends SpringConsulServ
     }
 
     @Test
-    public void testServiceCallConfiguration() throws Exception {
+    public void testServiceCallConfiguration() {
         List<DefaultServiceCallProcessor> processors = findServiceCallProcessors();
 
         Assert.assertFalse(processors.isEmpty());

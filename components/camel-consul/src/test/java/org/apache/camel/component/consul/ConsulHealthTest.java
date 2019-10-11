@@ -79,7 +79,7 @@ public class ConsulHealthTest extends ConsulTestSupport {
     // *************************************************************************
 
     @Test
-    public void testServiceInstance() throws Exception {
+    public void testServiceInstance() {
         List<ServiceHealth> ref = getConsul().healthClient().getAllServiceInstances(this.service).getResponse();
         List<ServiceHealth> res = fluentTemplate()
             .withHeader(ConsulConstants.CONSUL_ACTION, ConsulHealthActions.SERVICE_INSTANCES)
@@ -100,7 +100,7 @@ public class ConsulHealthTest extends ConsulTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:consul")

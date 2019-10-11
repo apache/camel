@@ -47,7 +47,7 @@ public class ConsulEventWatchTest extends ConsulTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 fromF("consul:event?key=%s&blockSeconds=1", key)

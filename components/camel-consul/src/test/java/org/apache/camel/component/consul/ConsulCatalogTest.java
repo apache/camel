@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class ConsulCatalogTest extends ConsulTestSupport {
 
     @Test
-    public void testListDatacenters() throws Exception {
+    public void testListDatacenters() {
         List<String> ref = getConsul().catalogClient().getDatacenters();
         List<String> res = fluentTemplate()
             .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_DATACENTERS)
@@ -40,7 +40,7 @@ public class ConsulCatalogTest extends ConsulTestSupport {
     }
 
     @Test
-    public void testListNodes() throws Exception {
+    public void testListNodes() {
         List<Node> ref = getConsul().catalogClient().getNodes().getResponse();
         List<Node> res = fluentTemplate()
             .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_NODES)
@@ -53,7 +53,7 @@ public class ConsulCatalogTest extends ConsulTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:consul")
