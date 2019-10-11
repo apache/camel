@@ -56,6 +56,11 @@ public class BindyFixedLengthDataFormatConfiguration
      */
     private Boolean unwrapSingleInstance = true;
     /**
+     * Whether to allow empty streams in the unmarshal process. If true, no
+     * exception will be thrown when a body without records is provided.
+     */
+    private Boolean allowEmptyStream = false;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML, or
@@ -93,6 +98,14 @@ public class BindyFixedLengthDataFormatConfiguration
 
     public void setUnwrapSingleInstance(Boolean unwrapSingleInstance) {
         this.unwrapSingleInstance = unwrapSingleInstance;
+    }
+
+    public Boolean getAllowEmptyStream() {
+        return allowEmptyStream;
+    }
+
+    public void setAllowEmptyStream(Boolean allowEmptyStream) {
+        this.allowEmptyStream = allowEmptyStream;
     }
 
     public Boolean getContentTypeHeader() {

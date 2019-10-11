@@ -56,15 +56,15 @@ public class PahoEndpoint extends DefaultEndpoint {
     private boolean retained;
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = PahoPersistence.MEMORY;
-    @UriParam(description = "Base directory used by file persistence. Will by default use current directory.")
+    @UriParam
     private String filePersistenceDirectory;
     @UriParam(defaultValue = "true")
     private boolean autoReconnect = true;
-    @UriParam @Metadata(secret = true)
+    @UriParam(label = "security") @Metadata(secret = true)
     private String userName;
-    @UriParam @Metadata(secret = true)
+    @UriParam(label = "security") @Metadata(secret = true)
     private String password;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean resolveMqttConnectOptions = true;
 
     // Collaboration members
@@ -112,7 +112,7 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     // Resolvers
     protected MqttClientPersistence resolvePersistence() {
-        if (persistence ==  PahoPersistence.MEMORY) {
+        if (persistence == PahoPersistence.MEMORY) {
             return new MemoryPersistence();
         } else {
             if (filePersistenceDirectory != null) {
@@ -213,8 +213,6 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     /**
      * Retain option
-     *
-     * @param retained true/false
      */
     public void setRetained(boolean retained) {
         this.retained = retained;
@@ -238,7 +236,7 @@ public class PahoEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Base directory used by the file persistence provider.
+     * Base directory used by file persistence. Will by default use user directory.
      */
     public void setFilePersistenceDirectory(String filePersistenceDirectory) {
         this.filePersistenceDirectory = filePersistenceDirectory;
@@ -272,7 +270,6 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     /**
      * Client will automatically attempt to reconnect to the server if the connection is lost
-     * @param autoReconnect
      */
     public synchronized void setAutoReconnect(boolean autoReconnect) {
         this.autoReconnect = autoReconnect;
@@ -284,7 +281,6 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     /**
      * Username to be used for authentication against the MQTT broker
-     * @param userName
      */
     public void setUserName(String userName) {
         this.userName = userName;
@@ -296,7 +292,6 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     /**
      * Password to be used for authentication against the MQTT broker
-     * @param password
      */
     public void setPassword(String password) {
         this.password = password;
@@ -308,7 +303,6 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     /**
      * Define if you don't want to resolve the MQTT Connect Options from registry
-     * @param resolveMqttConnectOptions
      */
     public synchronized void setResolveMqttConnectOptions(boolean resolveMqttConnectOptions) {
         this.resolveMqttConnectOptions = resolveMqttConnectOptions;

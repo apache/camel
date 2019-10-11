@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -43,6 +44,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private ScheduledExecutorService scheduledExecutorService;
 
     // if adding more options then align with org.apache.camel.support.ScheduledPollEndpoint
+
     private boolean startScheduler = true;
     private long initialDelay = 1000;
     private long delay = 500;
@@ -55,6 +57,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private int backoffMultiplier;
     private int backoffIdleThreshold;
     private int backoffErrorThreshold;
+    private long repeatCount;
     private Map<String, Object> schedulerProperties;
 
     // state during running
@@ -62,6 +65,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private volatile int backoffCounter;
     private volatile long idleCounter;
     private volatile long errorCounter;
+    private final AtomicLong counter = new AtomicLong();
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -143,6 +147,14 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                 backoffCounter = 0;
                 log.trace("doRun() backoff finished, resetting counters.");
             }
+        }
+
+        long count = counter.incrementAndGet();
+        boolean stopFire = repeatCount > 0 && count > repeatCount;
+        if (stopFire) {
+            log.debug("Cancelling {} scheduler as repeat count limit reached after {} counts.", getEndpoint(), repeatCount);
+            scheduler.unscheduleTask();
+            return;
         }
 
         int retryCounter = -1;
@@ -257,7 +269,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     /**
      * Whether polling is currently in progress
      */
-    protected boolean isPolling() {
+    public boolean isPolling() {
         return polling;
     }
 
@@ -377,6 +389,14 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         this.backoffErrorThreshold = backoffErrorThreshold;
     }
 
+    public long getRepeatCount() {
+        return repeatCount;
+    }
+
+    public void setRepeatCount(long repeatCount) {
+        this.repeatCount = repeatCount;
+    }
+
     public ScheduledExecutorService getScheduledExecutorService() {
         return scheduledExecutorService;
     }
@@ -474,6 +494,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         backoffCounter = 0;
         idleCounter = 0;
         errorCounter = 0;
+        counter.set(0);
 
         super.doStop();
     }
@@ -491,7 +512,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     public void onInit() throws Exception {
-        // make sure the scheduler is starter
+        // make sure the scheduler is starting
         startScheduler = true;
     }
 

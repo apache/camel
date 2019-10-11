@@ -26,7 +26,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConsulRibbonServiceCallRouteTest extends ConsulTestSupport {
     private static final String SERVICE_NAME = "http-service";

@@ -60,6 +60,9 @@ public class BindyDataFormatReifier extends DataFormatReifier<BindyDataFormat> {
         if (definition.getUnwrapSingleInstance() != null) {
             setProperty(camelContext, dataFormat, "unwrapSingleInstance", definition.getUnwrapSingleInstance());
         }
+        if (definition.getAllowEmptyStream() != null) {
+            setProperty(camelContext, dataFormat, "allowEmptyStream", definition.getAllowEmptyStream());
+        }
     }
 
 }

@@ -81,10 +81,16 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         // create a new pipeline
         ChannelPipeline pipeline = ch.pipeline();
 
-        SslHandler sslHandler = configureServerSSLOnDemand();
+        ChannelHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
             //TODO must close on SSL exception
             // sslHandler.setCloseOnSSLException(true);
+
+            if (sslHandler instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                sslHandler = ((ChannelHandlerFactory) sslHandler).newChannelHandler();
+            }
+
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
             pipeline.addLast("ssl", sslHandler);
         }

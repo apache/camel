@@ -73,7 +73,7 @@
       <dependency>
         <groupId>com.alibaba</groupId>
         <artifactId>fastjson</artifactId>
-        <version>1.2.61</version>
+        <version>1.2.62</version>
       </dependency>
       <dependency>
         <groupId>com.cloudbees.thirdparty</groupId>
@@ -3161,6 +3161,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-testcontainers</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-testcontainers-junit5</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

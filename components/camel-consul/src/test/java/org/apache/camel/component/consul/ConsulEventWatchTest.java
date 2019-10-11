@@ -21,7 +21,7 @@ import java.util.List;
 import com.orbitz.consul.EventClient;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConsulEventWatchTest extends ConsulTestSupport {
     private String key;

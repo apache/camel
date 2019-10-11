@@ -113,7 +113,8 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Base directory used by the file persistence provider.
+         * Base directory used by file persistence. Will by default use user
+         * directory.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -122,17 +123,6 @@ public interface PahoEndpointBuilderFactory {
         default PahoEndpointConsumerBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
             doSetProperty("filePersistenceDirectory", filePersistenceDirectory);
-            return this;
-        }
-        /**
-         * Password to be used for authentication against the MQTT broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
             return this;
         }
         /**
@@ -183,32 +173,6 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointConsumerBuilder resolveMqttConnectOptions(
-                boolean resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
-            return this;
-        }
-        /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointConsumerBuilder resolveMqttConnectOptions(
-                String resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
-            return this;
-        }
-        /**
          * Retain option.
          * 
          * The option is a: <code>boolean</code> type.
@@ -228,17 +192,6 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointConsumerBuilder retained(String retained) {
             doSetProperty("retained", retained);
-            return this;
-        }
-        /**
-         * Username to be used for authentication against the MQTT broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointConsumerBuilder userName(String userName) {
-            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -275,6 +228,28 @@ public interface PahoEndpointBuilderFactory {
         default PahoEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Password to be used for authentication against the MQTT broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default PahoEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username to be used for authentication against the MQTT broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default PahoEndpointConsumerBuilder userName(String userName) {
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -369,6 +344,32 @@ public interface PahoEndpointBuilderFactory {
         default AdvancedPahoEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointConsumerBuilder resolveMqttConnectOptions(
+                boolean resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            return this;
+        }
+        /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointConsumerBuilder resolveMqttConnectOptions(
+                String resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
@@ -479,7 +480,8 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Base directory used by the file persistence provider.
+         * Base directory used by file persistence. Will by default use user
+         * directory.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -488,17 +490,6 @@ public interface PahoEndpointBuilderFactory {
         default PahoEndpointProducerBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
             doSetProperty("filePersistenceDirectory", filePersistenceDirectory);
-            return this;
-        }
-        /**
-         * Password to be used for authentication against the MQTT broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
             return this;
         }
         /**
@@ -549,32 +540,6 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointProducerBuilder resolveMqttConnectOptions(
-                boolean resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
-            return this;
-        }
-        /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointProducerBuilder resolveMqttConnectOptions(
-                String resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
-            return this;
-        }
-        /**
          * Retain option.
          * 
          * The option is a: <code>boolean</code> type.
@@ -594,17 +559,6 @@ public interface PahoEndpointBuilderFactory {
          */
         default PahoEndpointProducerBuilder retained(String retained) {
             doSetProperty("retained", retained);
-            return this;
-        }
-        /**
-         * Username to be used for authentication against the MQTT broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointProducerBuilder userName(String userName) {
-            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -647,6 +601,28 @@ public interface PahoEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Password to be used for authentication against the MQTT broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default PahoEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Username to be used for authentication against the MQTT broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default PahoEndpointProducerBuilder userName(String userName) {
+            doSetProperty("userName", userName);
+            return this;
+        }
     }
 
     /**
@@ -682,6 +658,32 @@ public interface PahoEndpointBuilderFactory {
         default AdvancedPahoEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointProducerBuilder resolveMqttConnectOptions(
+                boolean resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            return this;
+        }
+        /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointProducerBuilder resolveMqttConnectOptions(
+                String resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**
@@ -792,7 +794,8 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Base directory used by the file persistence provider.
+         * Base directory used by file persistence. Will by default use user
+         * directory.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -801,17 +804,6 @@ public interface PahoEndpointBuilderFactory {
         default PahoEndpointBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
             doSetProperty("filePersistenceDirectory", filePersistenceDirectory);
-            return this;
-        }
-        /**
-         * Password to be used for authentication against the MQTT broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointBuilder password(String password) {
-            doSetProperty("password", password);
             return this;
         }
         /**
@@ -861,32 +853,6 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointBuilder resolveMqttConnectOptions(
-                boolean resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
-            return this;
-        }
-        /**
-         * Define if you don't want to resolve the MQTT Connect Options from
-         * registry.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointBuilder resolveMqttConnectOptions(
-                String resolveMqttConnectOptions) {
-            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
-            return this;
-        }
-        /**
          * Retain option.
          * 
          * The option is a: <code>boolean</code> type.
@@ -909,11 +875,22 @@ public interface PahoEndpointBuilderFactory {
             return this;
         }
         /**
+         * Password to be used for authentication against the MQTT broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default PahoEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
          * Username to be used for authentication against the MQTT broker.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: security
          */
         default PahoEndpointBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -954,6 +931,32 @@ public interface PahoEndpointBuilderFactory {
         default AdvancedPahoEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointBuilder resolveMqttConnectOptions(
+                boolean resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
+            return this;
+        }
+        /**
+         * Define if you don't want to resolve the MQTT Connect Options from
+         * registry.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedPahoEndpointBuilder resolveMqttConnectOptions(
+                String resolveMqttConnectOptions) {
+            doSetProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
         }
         /**

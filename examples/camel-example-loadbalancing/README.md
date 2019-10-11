@@ -42,10 +42,12 @@ To run the example, then execute the following command in the respective folder:
 
 	mvn exec:java -Ploadbalancer
 
-### Forum, Help, etc
+### Help and contributions
 
-If you hit an problems please let us know on the Camel Forums
-	<http://camel.apache.org/discussion-forums.html>
+If you hit any problem using Camel or have some feedback, 
+then please [let us know](https://camel.apache.org/support.html).
 
-Please help us make Apache Camel better - we appreciate any feedback you may
-have.  Enjoy!
+We also love contributors, 
+so [get involved](https://camel.apache.org/contributing.html) :-)
+
+The Camel riders!

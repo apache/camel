@@ -33,5 +33,3 @@ mvn camel:run
 
 The configuration file is in
 *src/main/resources/META-INF/spring/camel-context.xml*.
-
-The routing rules lives at *src/main/java/myGroupId/MyRouteBuilder.java*

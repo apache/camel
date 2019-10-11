@@ -62,7 +62,7 @@
         <aries-spifly-version>1.2.1</aries-spifly-version>
         <aries-util-version>1.1.3</aries-util-version>
         <arquillian-container-se-managed-version>1.0.2.Final</arquillian-container-se-managed-version>
-        <arquillian-version>1.4.1.Final</arquillian-version>
+        <arquillian-version>1.5.0.Final</arquillian-version>
         <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
         <asciidoctorj-version>1.5.6</asciidoctorj-version>
         <asm-version>5.0.4</asm-version>
@@ -188,10 +188,10 @@
         <embedmongo-version>2.1.1</embedmongo-version>
         <etcd4j-version>2.17.0</etcd4j-version>
         <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
-        <fabric8-maven-plugin-version>4.2.0</fabric8-maven-plugin-version>
+        <fabric8-maven-plugin-version>4.3.0</fabric8-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
         <facebook4j-core-bundle-version>2.4.13_1</facebook4j-core-bundle-version>
-        <fastjson-version>1.2.61</fastjson-version>
+        <fastjson-version>1.2.62</fastjson-version>
         <fastjson-bundle-version>1.2.61_1</fastjson-bundle-version>
         <felix-configadmin-version>1.8.8</felix-configadmin-version>
         <felix-connect-version>0.2.0</felix-connect-version>
@@ -295,7 +295,7 @@
         <jackson-version>1.9.12</jackson-version>
         <jackson-spark-version>2.6.7</jackson-spark-version>
         <jackson2-version>2.10.0</jackson2-version>
-        <jackrabbit-version>2.19.4</jackrabbit-version>
+        <jackrabbit-version>2.19.5</jackrabbit-version>
         <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
         <jasminb-jsonapi-version>0.9</jasminb-jsonapi-version>
@@ -350,7 +350,7 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.4.0</jettison-version>
         <jgit-version>5.5.0.201909110433-r</jgit-version>
-        <jgroups-version>4.1.5.Final</jgroups-version>
+        <jgroups-version>4.1.6.Final</jgroups-version>
         <jgroups-raft-version>0.4.3.Final</jgroups-raft-version>
         <jgroups-raft-jgroups-version>4.0.20.Final</jgroups-raft-jgroups-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
@@ -380,7 +380,7 @@
         <jsch-bundle-version>0.1.55_1</jsch-bundle-version>
         <json-accessors-smart-version>1.2</json-accessors-smart-version>
         <jsonassert-version>1.5.0</jsonassert-version>
-        <json-flattener-version>0.5.0</json-flattener-version>
+        <json-flattener-version>0.7.1</json-flattener-version>
         <json-path-version>2.4.0</json-path-version>
         <json-simple-version>1.1.1</json-simple-version>
         <json-smart-version>2.3</json-smart-version>
@@ -455,7 +455,7 @@
         <microprofile-config-version>1.3</microprofile-config-version>
         <microprofile-metrics-version>2.0.0</microprofile-metrics-version>
         <milo-version>0.2.5</milo-version>
-        <mimepull-version>1.9.11</mimepull-version>
+        <mimepull-version>1.9.12</mimepull-version>
         <mina-version>2.0.21</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
@@ -538,7 +538,7 @@
         <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
         <regexp-bundle-version>1.4_1</regexp-bundle-version>
         <rescu-version>2.0.2</rescu-version>
-        <rest-assured-version>4.1.1</rest-assured-version>
+        <rest-assured-version>4.1.2</rest-assured-version>
         <restlet-version>2.3.12</restlet-version>
         <restlet-woodstox-version>4.3.0</restlet-woodstox-version>
         <revapi-java-version>0.19.1</revapi-java-version>
@@ -550,7 +550,7 @@
 	<robotframework-version>3.1.1</robotframework-version>
         <rome-version>1.12.2</rome-version>
         <rxjava-version>1.3.8</rxjava-version>
-        <rxjava2-version>2.2.12</rxjava2-version>
+        <rxjava2-version>2.2.13</rxjava2-version>
         <saxon-bundle-version>9.9.1-5_1</saxon-bundle-version>
         <saxon-version>9.9.1-5</saxon-version>
         <scala-version>2.11.7</scala-version>
@@ -638,7 +638,7 @@
         <velocity-bundle-version>1.7_6</velocity-bundle-version>
         <velocity-tools-version>2.0</velocity-tools-version>
         <velocity-version>2.0</velocity-version>
-        <vertx-version>3.8.1</vertx-version>
+        <vertx-version>3.8.2</vertx-version>
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
@@ -671,7 +671,7 @@
         <xstream-version>1.4.11</xstream-version>
         <zendesk-client-version>0.6.2</zendesk-client-version>
         <zipkin-reporter-version>2.10.3</zipkin-reporter-version>
-        <zipkin-version>2.17.1</zipkin-version>
+        <zipkin-version>2.17.2</zipkin-version>
         <zjsonpatch-version>0.3.0</zjsonpatch-version>
         <zookeeper-version>3.4.14</zookeeper-version>
         <zookeeper-guava-version>16.0</zookeeper-guava-version>
@@ -2268,6 +2268,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-testcontainers</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-testcontainers-junit5</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

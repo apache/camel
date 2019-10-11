@@ -22,9 +22,9 @@ import com.orbitz.consul.model.coordinate.Coordinate;
 import com.orbitz.consul.model.coordinate.Datacenter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulCoordinatesActions;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ConsulCoordinatesTest extends ConsulTestSupport {
 
@@ -36,12 +36,12 @@ public class ConsulCoordinatesTest extends ConsulTestSupport {
             .to("direct:consul")
             .request(List.class);
 
-        Assert.assertFalse(ref.isEmpty());
-        Assert.assertFalse(res.isEmpty());
-        Assert.assertEquals(ref, res);
+        Assertions.assertFalse(ref.isEmpty());
+        Assertions.assertFalse(res.isEmpty());
+        Assertions.assertEquals(ref, res);
     }
 
-    @Ignore("Disabled as it seems that nodes is always 0")
+    @Disabled("Disabled as it seems that nodes is always 0")
     @Test
     public void testNodes() throws Exception {
         List<Coordinate> ref = getConsul().coordinateClient().getNodes();
@@ -50,9 +50,9 @@ public class ConsulCoordinatesTest extends ConsulTestSupport {
             .to("direct:consul")
             .request(List.class);
 
-        Assert.assertFalse(ref.isEmpty());
-        Assert.assertFalse(res.isEmpty());
-        Assert.assertEquals(ref, res);
+        Assertions.assertFalse(ref.isEmpty());
+        Assertions.assertFalse(res.isEmpty());
+        Assertions.assertEquals(ref, res);
     }
 
     @Override
