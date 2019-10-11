@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.undertow;
 
-import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.accesslog.AccessLogReceiver;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
+
+import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.accesslog.AccessLogReceiver;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;

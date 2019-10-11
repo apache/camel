@@ -47,7 +47,6 @@ import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
-import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
@@ -375,10 +374,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
             // and mark the exception as failure handled, as we handled it by returning it as the response
             ExchangeHelper.setFailureHandled(message.getExchange());
-        }
-        else if (exception != null && isMuteException()) {
-        	
-        	// mark the exception as failure handled, as we handled it by actively muting it
+        } else if (exception != null && isMuteException()) {
+            // mark the exception as failure handled, as we handled it by actively muting it
             ExchangeHelper.setFailureHandled(message.getExchange());
         }
 

@@ -48,6 +48,6 @@ public interface UndertowHttpBinding {
     
     void setTransferException(Boolean transferException);
 
-    void setMuteException(Boolean MuteException);
+    void setMuteException(Boolean muteException);
 
 }
