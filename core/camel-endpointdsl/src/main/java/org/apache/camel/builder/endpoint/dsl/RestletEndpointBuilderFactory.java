@@ -1057,6 +1057,7 @@ public interface RestletEndpointBuilderFactory {
      * Path parameter: uriPattern
      * The resource pattern such as /customer/{id}
      */
+    @Deprecated
     default RestletEndpointBuilder restlet(String path) {
         class RestletEndpointBuilderImpl extends AbstractEndpointBuilder implements RestletEndpointBuilder, AdvancedRestletEndpointBuilder {
             public RestletEndpointBuilderImpl(String path) {
