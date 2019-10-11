@@ -17,18 +17,13 @@
 package org.apache.camel.component.paho;
 
 import org.apache.activemq.broker.BrokerService;
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.junit.After;
 import org.junit.Test;
 
 public class PahoOverrideTopicTest extends CamelTestSupport {
-
-    @BindToRegistry("connectOptions")
-    MqttConnectOptions connectOptions = new MqttConnectOptions();
 
     BrokerService broker;
 

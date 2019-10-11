@@ -36,14 +36,14 @@ public class PahoConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         String topic = getEndpoint().getTopic();
-        getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
+        getEndpoint().getClient().subscribe(topic, getEndpoint().getConfiguration().getQos());
         getEndpoint().getClient().setCallback(new MqttCallbackExtended() {
 
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
                 if (reconnect) {
                     try {
-                        getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
+                        getEndpoint().getClient().subscribe(topic, getEndpoint().getConfiguration().getQos());
                     } catch (MqttException e) {
                         log.error("MQTT resubscribe failed {}", e.getMessage(), e);
                     }
