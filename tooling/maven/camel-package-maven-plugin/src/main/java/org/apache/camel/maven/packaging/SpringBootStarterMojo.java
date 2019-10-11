@@ -78,6 +78,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
         /* extended core */ "camel-attachments",
         /* Java EE -> */ "camel-cdi",
         /* MicroProfile -> */ "camel-microprofile-config",
+        /* MicroProfile -> */ "camel-microprofile-health",
         /* MicroProfile -> */ "camel-microprofile-metrics",
         /* deprecated (and not working perfectly) -> */ "camel-swagger", "camel-ibatis",
         /* currently incompatible */ "camel-spark-rest",
