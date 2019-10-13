@@ -1,7 +1,7 @@
 = Components
 
 // components: START
-Number of Components: 300 in 238 JAR artifacts (0 deprecated)
+Number of Components: 300 in 238 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -710,7 +710,7 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 `rest-swagger:specificationUri#operationId` | 2.19 | An awesome REST endpoint backed by Swagger specifications.
 
 | link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
-`restlet:protocol:host:port/uriPattern` | 2.0 | Component for consuming and producing Restful resources using Restlet.
+`restlet:protocol:host:port/uriPattern` | 2.0 | *deprecated* Component for consuming and producing Restful resources using Restlet.
 
 | link:camel-robotframework/src/main/docs/robotframework-component.adoc[Robot Framework] (camel-robotframework) +
 `robotframework:resourceUri` | 3.0 | Represents a RobotFramework endpoint.
