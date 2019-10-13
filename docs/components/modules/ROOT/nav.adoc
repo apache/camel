@@ -284,7 +284,7 @@
 * xref:reactive-streams-component.adoc[Reactive Streams Component]
 * xref:reactor-component.adoc[Reactor Component]
 * xref:rest-swagger-component.adoc[REST Swagger Component]
-* xref:restlet-component.adoc[Restlet Component]
+* xref:restlet-component.adoc[Restlet Component (deprecated)]
 * xref:ribbon.adoc[Ribbon Component]
 * xref:rmi-component.adoc[RMI Component (deprecated)]
 * xref:routebox-component.adoc[RouteBox Component (deprecated)]
