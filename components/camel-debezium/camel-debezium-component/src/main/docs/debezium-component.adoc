@@ -58,7 +58,7 @@ The Debezium component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (consumer) | Allow pre-configured Configurations to be set, you will need to extend EmbeddedDebeziumConfiguration in order to create the configuration for the component |  | EmbeddedDebeziumConfiguration
+| *configuration* (consumer) | Allow pre-configured Configurations to be set, you will need to extend MySqlConnectorEmbeddedDebeziumConfiguration in order to create the configuration for the component |  | MySqlConnectorEmbeddedDebeziumConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -131,7 +131,7 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.debezium.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.debezium.configuration* | Allow pre-configured Configurations to be set, you will need to extend EmbeddedDebeziumConfiguration in order to create the configuration for the component. The option is a org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration type. |  | String
+| *camel.component.debezium.configuration* | Allow pre-configured Configurations to be set, you will need to extend MySqlConnectorEmbeddedDebeziumConfiguration in order to create the configuration for the component. The option is a org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration type. |  | String
 | *camel.component.debezium.enabled* | Whether to enable auto configuration of the debezium component. This is enabled by default. |  | Boolean
 |===
 // spring-boot-auto-configure options: END

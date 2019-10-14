@@ -6,14 +6,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Field;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.common.config.ConfigDef;
 
-public class ConnectorConfigFieldFactory {
+public class ConnectorConfigFieldsFactory {
 
-    private ConnectorConfigFieldFactory() {
+    private ConnectorConfigFieldsFactory() {
     }
 
     public static Map<String, ConnectorConfigField> createConnectorFieldsAsMap(final ConfigDef configDef, final Class<?> configClass, final Set<String> requiredFields, final Map<String, Object> overridenDefaultValues) {
@@ -40,25 +39,10 @@ public class ConnectorConfigFieldFactory {
     }
 
     private static Set<String> getDeprecatedFieldsFromConfigClass(final Class<?> configClass) {
-        if (isConfigClassValid(configClass)) {
-            return Stream.of(configClass.getDeclaredFields())
-                    .filter(field -> field.getAnnotation(Deprecated.class) != null)
-                    .map(ConnectorConfigFieldFactory::retrieveDbzFieldWithReflection)
-                    .collect(Collectors.toSet());
-        }
-        throw new IllegalArgumentException(String.format("Class '%s' is not valid Debezium configuration class", configClass.getName()));
-    }
-
-    private static boolean isConfigClassValid(final Class<?> configClass) {
-        // config class should be a subtype of CommonConnectorConfig
-        Class<?> clazz = configClass;
-        while (clazz != null) {
-            if (clazz == CommonConnectorConfig.class) {
-                return true;
-            }
-            clazz = clazz.getSuperclass();
-        }
-        return false;
+        return Stream.of(configClass.getDeclaredFields())
+                .filter(field -> field.getAnnotation(Deprecated.class) != null)
+                .map(ConnectorConfigFieldsFactory::retrieveDbzFieldWithReflection)
+                .collect(Collectors.toSet());
     }
 
     private static String retrieveDbzFieldWithReflection(final java.lang.reflect.Field reflectionField) {
