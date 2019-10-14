@@ -197,9 +197,11 @@ public class RuntimeCamelCatalogTest {
 
         // unknown component
         result = catalog.validateEndpointProperties("foo:bar?me=you");
-        assertFalse(result.isSuccess());
+        assertTrue(result.isSuccess());
+        assertTrue(result.hasWarnings());
         assertTrue(result.getUnknownComponent().equals("foo"));
-        assertEquals(1, result.getNumberOfErrors());
+        assertEquals(0, result.getNumberOfErrors());
+        assertEquals(1, result.getNumberOfWarnings());
 
         // invalid boolean but default value
         result = catalog.validateEndpointProperties("log:output?showAll=ggg");
@@ -229,21 +231,26 @@ public class RuntimeCamelCatalogTest {
 
         // incapable to parse
         result = catalog.validateEndpointProperties("{{getFtpUrl}}?recursive=true");
-        assertFalse(result.isSuccess());
+        assertTrue(result.isSuccess());
+        assertTrue(result.hasWarnings());
         assertTrue(result.getIncapable() != null);
     }
 
     @Test
-    public void validatePropertiesSummary() throws Exception {
+    public void validatePropertiesSummaryUnknown() throws Exception {
+        // unknown component yammer
         EndpointValidationResult result = catalog
             .validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
-        assertFalse(result.isSuccess());
-        String reason = result.summaryErrorMessage(true);
+        assertTrue(result.isSuccess());
+        assertTrue(result.hasWarnings());
+        String reason = result.summaryErrorMessage(true, true, true);
         LOG.info(reason);
 
+        // unknown component jms
         result = catalog.validateEndpointProperties("jms:unknown:myqueue");
-        assertFalse(result.isSuccess());
-        reason = result.summaryErrorMessage(false);
+        assertTrue(result.isSuccess());
+        assertTrue(result.hasWarnings());
+        reason = result.summaryErrorMessage(false, false, true);
         LOG.info(reason);
     }
 
