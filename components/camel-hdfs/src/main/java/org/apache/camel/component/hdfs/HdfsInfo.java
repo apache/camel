@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import org.apache.camel.component.hdfs.kerberos.KerberosConfiguration;
+import org.apache.camel.component.hdfs.kerberos.KerberosAuthentication;
+import org.apache.camel.component.hdfs.kerberos.KerberosConfigurationBuilder;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -49,27 +50,33 @@ public final class HdfsInfo {
         return path;
     }
 
-    private Configuration newConfiguration(HdfsConfiguration endpointConfig) throws IOException {
-        if (endpointConfig.isKerberosAuthentication()) {
-            List<String> namedNodes = endpointConfig.getNamedNodeList();
-            String kerberosConfigFileLocation = endpointConfig.getKerberosConfigFileLocation();
-            return new KerberosConfiguration(namedNodes, kerberosConfigFileLocation, endpointConfig.getReplication());
+    private static Configuration newConfiguration(HdfsConfiguration endpointConfig) {
+        Configuration configuration = new Configuration();
 
-        } else {
-            return new Configuration();
+        if (endpointConfig.isKerberosAuthentication()) {
+            String kerberosConfigFileLocation = endpointConfig.getKerberosConfigFileLocation();
+            KerberosConfigurationBuilder.withKerberosConfiguration(configuration, kerberosConfigFileLocation);
 
         }
+
+        List<String> namedNodes = endpointConfig.getNamedNodeList();
+        if (!namedNodes.isEmpty()) {
+            HaConfigurationBuilder.withClusterConfiguration(configuration, endpointConfig.getNamedNodeList(), endpointConfig.getReplication());
+
+        }
+
+        return configuration;
     }
 
     /**
      * this will connect to the hadoop hdfs file system, and in case of no connection
      * then the hardcoded timeout in hadoop is 45 x 20 sec = 15 minutes
      */
-    private FileSystem newFileSystem(Configuration configuration, String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
+    private static FileSystem newFileSystem(Configuration configuration, String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
         if (endpointConfig.isKerberosAuthentication()) {
             String userName = endpointConfig.getKerberosUsername();
             String keytabLocation = endpointConfig.getKerberosKeytabLocation();
-            ((KerberosConfiguration)configuration).loginWithKeytab(userName, keytabLocation);
+            new KerberosAuthentication(configuration, userName, keytabLocation).loginWithKeytab();
         }
 
         return FileSystem.get(URI.create(hdfsPath), configuration);

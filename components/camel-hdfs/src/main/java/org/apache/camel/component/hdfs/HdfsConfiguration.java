@@ -88,7 +88,7 @@ public class HdfsConfiguration {
 
     @UriParam
     private String namedNodes;
-    private List<String> namedNodeList;
+    private List<String> namedNodeList = Collections.emptyList();
 
     @UriParam
     private String kerberosConfigFileLocation;
