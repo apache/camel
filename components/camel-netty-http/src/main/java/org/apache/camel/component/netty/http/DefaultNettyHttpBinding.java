@@ -390,7 +390,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // support bodies as native Netty
         ByteBuf buffer;
         
-        int code = determineResponseCode(message.getExchange(), null, body);
+        int code = determineResponseCode(message.getExchange(), body);
         LOG.trace("HTTP Status Code: {}", code);
 
         // if there was an exception then use that as body
@@ -525,7 +525,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     /*
      * set the HTTP status code
      */
-    private int determineResponseCode(Exchange camelExchange, HttpResponse httpResponse, Object body) {
+    private int determineResponseCode(Exchange camelExchange, Object body) {
         boolean failed = camelExchange.isFailed();
         int defaultCode = failed ? 500 : 200;
         
