@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
 import io.debezium.config.Field;
 import io.debezium.relational.history.FileDatabaseHistory;
@@ -50,13 +51,18 @@ public final class ConnectorConfigGenerator {
         ObjectHelper.notNull(requiredFields, "requiredFields");
         ObjectHelper.notNull(overridenDefaultValues, "overridenDefaultValues");
 
+        // check if config class is correct
+        if (!isConfigClassValid(dbzConfigClass)) {
+            throw new IllegalArgumentException(String.format("Class '%s' is not valid Debezium configuration class", dbzConfigClass.getName()));
+        }
+
         final ConfigDef configDef = connector.config();
         // add additional fields
         Field.group(configDef, "additionalFields", FileDatabaseHistory.FILE_PATH);
         // get the name of the connector from the configClass
         final String connectorName = dbzConfigClass.getSimpleName().replace("ConnectorConfig", "");
 
-        return new ConnectorConfigGenerator(connector, ConnectorConfigFieldFactory.createConnectorFieldsAsMap(configDef, dbzConfigClass, requiredFields, overridenDefaultValues), connectorName);
+        return new ConnectorConfigGenerator(connector, ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(configDef, dbzConfigClass, requiredFields, overridenDefaultValues), connectorName);
     }
 
     private ConnectorConfigGenerator(final SourceConnector connector, final Map<String, ConnectorConfigField> dbzConfigFields, final String connectorName) {
@@ -76,6 +82,10 @@ public final class ConnectorConfigGenerator {
         return className;
     }
 
+    public String getPackageName() {
+        return PACKAGE_NAME;
+    }
+
     public void printGeneratedClass(final OutputStream outputStream) {
         final PrintStream printStreams = new PrintStream(outputStream, true);
         printStreams.println(toString());
@@ -85,6 +95,18 @@ public final class ConnectorConfigGenerator {
     @Override
     public String toString() {
         return javaClass.printClass(true);
+    }
+
+    private static boolean isConfigClassValid(final Class<?> configClass) {
+        // config class should be a subtype of CommonConnectorConfig
+        Class<?> clazz = configClass;
+        while (clazz != null) {
+            if (clazz == CommonConnectorConfig.class) {
+                return true;
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return false;
     }
 
     private void generateJavaClass() {
