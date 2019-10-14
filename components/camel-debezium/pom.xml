@@ -38,10 +38,6 @@
         <module>camel-debezium-maven-plugin</module>
     </modules>
 
-    <properties>
-        <salesforce.component.root>${project.basedir}</salesforce.component.root>
-    </properties>
-
     <dependencies>
 
         <!-- camel -->

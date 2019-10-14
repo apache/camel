@@ -35,17 +35,17 @@ public class DebeziumComponentTest {
         final Map<String, Object> params = new HashMap<>();
         params.put("name", "test_name");
         params.put("offsetStorageFileName", "/offset_test_file");
-        params.put("databaseHostName", "localhost");
+        params.put("databaseHostname", "localhost");
         params.put("databaseUser", "dbz");
         params.put("databasePassword", "pwd");
         params.put("databaseServerName", "test");
         params.put("databaseServerId", 1234);
-        params.put("databaseHistoryFileName", "/db_history_file_test");
+        params.put("databaseHistoryFileFilename", "/db_history_file_test");
 
         final String remaining = "mysql";
         final String uri = "debezium:mysql?name=test_name&offsetStorageFileName=/test&"
-                           + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
-                           + "databaseServerName=test&databaseHistoryFileName=/test";
+                + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
+                + "databaseServerName=test&databaseHistoryFileName=/test";
 
         final DebeziumComponent debeziumComponent = new DebeziumComponent(new DefaultCamelContext());
         final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining, params);
@@ -54,15 +54,15 @@ public class DebeziumComponentTest {
 
         // test for config
         final MySqlConnectorEmbeddedDebeziumConfiguration configuration = (MySqlConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint
-            .getConfiguration();
+                .getConfiguration();
         assertEquals("test_name", configuration.getName());
         assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
-        assertEquals("localhost", configuration.getDatabaseHostName());
+        assertEquals("localhost", configuration.getDatabaseHostname());
         assertEquals("dbz", configuration.getDatabaseUser());
         assertEquals("pwd", configuration.getDatabasePassword());
         assertEquals("test", configuration.getDatabaseServerName());
         assertEquals(1234, configuration.getDatabaseServerId());
-        assertEquals("/db_history_file_test", configuration.getDatabaseHistoryFileName());
+        assertEquals("/db_history_file_test", configuration.getDatabaseHistoryFileFilename());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -70,17 +70,17 @@ public class DebeziumComponentTest {
         final Map<String, Object> params = new HashMap<>();
         params.put("name", "test_name");
         params.put("offsetStorageFileName", "/offset_test_file");
-        params.put("databaseHostName", "localhost");
+        params.put("databaseHostname", "localhost");
         params.put("databaseUser", "dbz");
         params.put("databasePassword", "pwd");
         params.put("databaseServerName", "test");
         params.put("databaseServerId", 1234);
-        params.put("databaseHistoryFileName", "/db_history_file_test");
+        params.put("databaseHistoryFileFilename", "/db_history_file_test");
 
         final String remaining = "dummy";
         final String uri = "debezium:dummy?name=test_name&offsetStorageFileName=/test&"
-                           + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
-                           + "databaseServerName=test&databaseHistoryFileName=/test";
+                + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
+                + "databaseServerName=test&databaseHistoryFileName=/test";
 
         final DebeziumComponent debeziumComponent = new DebeziumComponent(new DefaultCamelContext());
         final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining, params);
@@ -104,17 +104,17 @@ public class DebeziumComponentTest {
         debeziumComponent.setConfiguration(configuration);
 
         final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining,
-                                                                                   Collections.emptyMap());
+                Collections.emptyMap());
 
         assertNotNull(debeziumEndpoint);
 
         // assert configurations
         final TestEmbeddedDebeziumConfiguration actualConfigurations = (TestEmbeddedDebeziumConfiguration)debeziumEndpoint
-            .getConfiguration();
+                .getConfiguration();
         assertNotNull(actualConfigurations);
         assertEquals(configuration.getTestField(), actualConfigurations.getTestField());
         assertEquals(configuration.getOffsetStorageReplicationFactor(),
-                     actualConfigurations.getOffsetStorageReplicationFactor());
+                actualConfigurations.getOffsetStorageReplicationFactor());
         assertEquals(configuration.getName(), actualConfigurations.getName());
         assertEquals(configuration.getConnectorClass(), actualConfigurations.getConnectorClass());
     }
@@ -129,7 +129,7 @@ public class DebeziumComponentTest {
         debeziumComponent.setConfiguration(null);
 
         final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining,
-                                                                                   Collections.emptyMap());
+                Collections.emptyMap());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -142,6 +142,6 @@ public class DebeziumComponentTest {
         debeziumComponent.setConfiguration(null);
 
         final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, remaining,
-                                                                                   Collections.emptyMap());
+                Collections.emptyMap());
     }
 }

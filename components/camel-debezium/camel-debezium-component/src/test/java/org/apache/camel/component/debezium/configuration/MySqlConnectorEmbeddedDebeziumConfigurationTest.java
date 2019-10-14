@@ -60,11 +60,11 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
         configuration.setDatabaseServerId(123);
         configuration.setDatabaseServerName("test_server");
         configuration.setOffsetStorageFileName("/offset/file");
-        configuration.setDatabaseHistoryFileName("/database_history/file");
+        configuration.setDatabaseHistoryFileFilename("/database_history/file");
 
         assertFalse(configuration.validateConfiguration().isValid());
 
-        configuration.setDatabaseHostName("localhost");
+        configuration.setDatabaseHostname("localhost");
         configuration.setDatabasePassword("test_pwd");
 
         assertTrue(configuration.validateConfiguration().isValid());
@@ -75,24 +75,24 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
         final MySqlConnectorEmbeddedDebeziumConfiguration configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
-        configuration.setDatabaseHostName("localhost");
+        configuration.setDatabaseHostname("localhost");
         configuration.setDatabasePassword("test_pwd");
         configuration.setDatabaseServerId(123);
         configuration.setDatabaseServerName("test_server");
         configuration.setOffsetStorageFileName("/offset/file");
-        configuration.setDatabaseHistoryFileName("/database_history/file");
+        configuration.setDatabaseHistoryFileFilename("/database_history/file");
 
         final ConfigurationValidation validation = configuration.validateConfiguration();
         assertTrue(validation.isValid());
 
         assertEquals("test_config", configuration.getName());
         assertEquals("test_db", configuration.getDatabaseUser());
-        assertEquals("localhost", configuration.getDatabaseHostName());
+        assertEquals("localhost", configuration.getDatabaseHostname());
         assertEquals("test_pwd", configuration.getDatabasePassword());
         assertEquals(123, configuration.getDatabaseServerId());
         assertEquals("test_server", configuration.getDatabaseServerName());
         assertEquals("/offset/file", configuration.getOffsetStorageFileName());
-        assertEquals("/database_history/file", configuration.getDatabaseHistoryFileName());
+        assertEquals("/database_history/file", configuration.getDatabaseHistoryFileFilename());
     }
 
 }
