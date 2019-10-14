@@ -35,7 +35,7 @@ function deleteComponentImageSymlinks() {
 }
 
 function createComponentSymlinks() {
-    return src(['../core/camel-base/src/main/docs/*.adoc', '../components/{*,*/*}/src/main/docs/*.adoc'])
+    return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-jaxp/src/main/docs/*.adoc', '../components/{*,*/*}/src/main/docs/*.adoc'])
         .pipe(map((file, done) => {
             // this flattens the output to just .../pages/....adoc
             // instead of .../pages/camel-.../src/main/docs/....adoc
@@ -80,7 +80,7 @@ function deleteUserManualSymlinks() {
 }
 
 function createUserManualSymlinks() {
-    return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-core-engine/src/main/docs/eips/*.adoc'])
+    return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-jaxp/src/main/docs/*.adoc', '../core/camel-core-engine/src/main/docs/eips/*.adoc'])
         // Antora disabled symlinks, there is an issue open
         // https://gitlab.com/antora/antora/issues/188
         // to reinstate symlink support, until that's resolved

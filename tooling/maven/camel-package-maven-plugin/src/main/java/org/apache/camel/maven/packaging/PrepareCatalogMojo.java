@@ -1075,6 +1075,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (baseDir != null && baseDir.isDirectory()) {
             File target = new File(baseDir, "src/main/docs");
             findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
+            // also look in camel-jaxp
+            target = new File(baseDir, "../camel-jaxp/src/main/docs");
+            findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
         }
 
         getLog().info("Found " + adocFiles.size() + " ascii document files");
