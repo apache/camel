@@ -60,7 +60,7 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     }
     
     @Test
-    public void testNoSwitchViaHttpNoContent() throws Exception {
+    public void testNoSwitchingHasBodyViaHttpNoContent() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/bar");
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpResponse httpResponse = httpClient.execute(request);
@@ -71,7 +71,7 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     }
 
     @Test
-    public void testNoSwitchingNettyHttpViaCamelNoContent() throws Exception {
+    public void testNoSwitchingHasBodyNettyHttpViaCamelNoContent() throws Exception {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("undertow:http://localhost:{{port}}/bar", inExchange);
 
@@ -81,13 +81,44 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     }
 
     @Test
-    public void testNoSwitchingViaCamelRouteNoContent() throws Exception {
+    public void testNoSwitchingHasBodyViaCamelRouteNoContent() throws Exception {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:bar", inExchange);
 
         Message msg = outExchange.getMessage();
         assertEquals(200, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("No Content", msg.getBody(String.class));
+    }
+    
+    @Test
+    public void testNoSwitchingHasCodeViaHttpNoContent() throws Exception {
+        HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foobar");
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponse httpResponse = httpClient.execute(request);
+
+        assertEquals(200, httpResponse.getStatusLine().getStatusCode());
+        assertNotNull(httpResponse.getEntity());
+        assertEquals("", EntityUtils.toString(httpResponse.getEntity()));
+    }
+
+    @Test
+    public void testNoSwitchingHasCodeNettyHttpViaCamelNoContent() throws Exception {
+        Exchange inExchange = this.createExchangeWithBody("Hello World");
+        Exchange outExchange = template.send("undertow:http://localhost:{{port}}/foobar", inExchange);
+
+        Message msg = outExchange.getMessage();
+        assertEquals(200, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("", msg.getBody(String.class));
+    }
+
+    @Test
+    public void testNoSwitchingHasCodeViaCamelRouteNoContent() throws Exception {
+        Exchange inExchange = this.createExchangeWithBody("Hello World");
+        Exchange outExchange = template.send("direct:foobar", inExchange);
+
+        Message msg = outExchange.getMessage();
+        assertEquals(200, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("", msg.getBody(String.class));
     }
     
     @Override
@@ -97,18 +128,25 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
             public void configure() throws Exception {
 
                 from("undertow:http://localhost:{{port}}/foo")
-                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
                     .setBody().constant("");
 
                 from("direct:foo")
                     .to("undertow:http://localhost:{{port}}/foo");
+
                 
                 from("undertow:http://localhost:{{port}}/bar")
-                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
                     .setBody().constant("No Content");
 
                 from("direct:bar")
                     .to("undertow:http://localhost:{{port}}/bar");
+                
+                
+                from("undertow:http://localhost:{{port}}/foobar")
+                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
+                    .setBody().constant("");
+
+                from("direct:foobar")
+                    .to("undertow:http://localhost:{{port}}/foobar");
 
             }
         };

@@ -325,10 +325,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         Object body = message.getBody();
         Exception exception = camelExchange.getException();
         
-        boolean failed = camelExchange.isFailed();
-        int defaultCode = failed ? 500 : 200;
-        int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, defaultCode, int.class);
-        httpExchange.setStatusCode(code);
+        setResponseCode(camelExchange, httpExchange, body);
 
         //copy headers from Message to Response
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
@@ -377,8 +374,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         } else if (exception != null && isMuteException()) {
             // mark the exception as failure handled, as we handled it by actively muting it
             ExchangeHelper.setFailureHandled(camelExchange);
-        } else {
-            handleResponseWithNoContent(message, httpExchange, body);
         }
         
         // set the content type in the response.
@@ -392,15 +387,36 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     }
 
     /*
-     * when an HTTP response has status code 200 
-     * but does not have content in the body change the status code to 204
+     * set the HTTP status code
      */
-    private void handleResponseWithNoContent(Message message, HttpServerExchange httpExchange, Object body) {
-        if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
-            if (httpExchange.getStatusCode() == 200) {
-                message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
-                message.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, StatusCodes.NO_CONTENT_STRING);
-                httpExchange.setStatusCode(204);
+    private void setResponseCode(Exchange camelExchange, HttpServerExchange httpExchange, Object body) {
+        boolean failed = camelExchange.isFailed();
+        int defaultCode = failed ? 500 : 200;
+        
+        Message message = camelExchange.getMessage();
+        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+        int codeToUse = (currentCode == null ? defaultCode : currentCode);
+        
+        if (codeToUse == 500) {
+            message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, codeToUse);
+            httpExchange.setStatusCode(codeToUse);
+        } else {
+            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+                // no content 
+                if (currentCode == null) {
+                    // no code has been set
+                    // so use 204 when there is no body
+                    message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
+                    message.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, StatusCodes.NO_CONTENT_STRING);
+                    httpExchange.setStatusCode(204);
+                } else {
+                    // use the code set explicitly
+                    message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, currentCode);
+                    httpExchange.setStatusCode(currentCode);
+                }
+            } else {
+                message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, codeToUse);
+                httpExchange.setStatusCode(codeToUse);
             }
         }
     }
