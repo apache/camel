@@ -24,9 +24,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -391,12 +389,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         Exception cause = message.getExchange().getException();
         // support bodies as native Netty
         ByteBuf buffer;
-        // the response code is 200 for OK and 500 for failed
-        boolean failed = message.getExchange().isFailed();
-        int defaultCode = failed ? 500 : 200;
-
-        int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, defaultCode, int.class);
-
+        
+        int code = determineResponseCode(message.getExchange(), null, body);
         LOG.trace("HTTP Status Code: {}", code);
 
         // if there was an exception then use that as body
@@ -525,24 +519,28 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         }
         LOG.trace("Connection: {}", connection);
         
-        handleResponseWithNoContent(message, response, body);
-
         return response;
     }
     
     /*
-     * when an HTTP response has status code 200 
-     * but does not have content in the body change the status code to 204
+     * set the HTTP status code
      */
-    private void handleResponseWithNoContent(Message message, HttpResponse httpResponse, Object body) {
-        if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
-            HttpResponseStatus responseStatus = httpResponse.status();
-            if (responseStatus.code() == 200) {
-                message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, HttpResponseStatus.NO_CONTENT.code());
-                message.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, HttpResponseStatus.NO_CONTENT.reasonPhrase());
-                httpResponse.setStatus(new HttpResponseStatus(HttpResponseStatus.NO_CONTENT.code(), HttpResponseStatus.NO_CONTENT.reasonPhrase()));
+    private int determineResponseCode(Exchange camelExchange, HttpResponse httpResponse, Object body) {
+        boolean failed = camelExchange.isFailed();
+        int defaultCode = failed ? 500 : 200;
+        
+        Message message = camelExchange.getMessage();
+        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+        int codeToUse = (currentCode == null ? defaultCode : currentCode);
+        
+        if (codeToUse != 500) {
+            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+                // no content 
+                codeToUse = (currentCode == null ? 204 : currentCode);
             }
         }
+        
+        return codeToUse;
     }
     
     @Override
