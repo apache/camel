@@ -409,38 +409,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return codeToUse;
     }
     
-//    private int determineResponseCode(Exchange camelExchange, HttpServerExchange httpExchange, Object body) {
-//        boolean failed = camelExchange.isFailed();
-//        int defaultCode = failed ? 500 : 200;
-//        
-//        Message message = camelExchange.getMessage();
-//        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-//        int codeToUse = (currentCode == null ? defaultCode : currentCode);
-//        
-//        if (codeToUse == 500) {
-//            message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, codeToUse);
-//            httpExchange.setStatusCode(codeToUse);
-//        } else {
-//            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
-//                // no content 
-//                if (currentCode == null) {
-//                    // no code has been set
-//                    // so use 204 when there is no body
-//                    message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
-//                    message.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, StatusCodes.NO_CONTENT_STRING);
-//                    httpExchange.setStatusCode(204);
-//                } else {
-//                    // use the code set explicitly
-//                    message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, currentCode);
-//                    httpExchange.setStatusCode(currentCode);
-//                }
-//            } else {
-//                message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, codeToUse);
-//                httpExchange.setStatusCode(codeToUse);
-//            }
-//        }
-//    }
-    
     @Override
     public Object toHttpRequest(ClientRequest clientRequest, Message message) {
 
