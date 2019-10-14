@@ -18,7 +18,7 @@ package org.apache.camel.component.debezium.configuration;
 
 import io.debezium.config.Configuration;
 
-public class TestEmbeddedDebeziumConfiguration extends EmbeddedDebeziumConfiguration {
+public class TestEmbeddedDebeziumConfiguration extends MySqlConnectorEmbeddedDebeziumConfiguration {
 
     private String testField;
 

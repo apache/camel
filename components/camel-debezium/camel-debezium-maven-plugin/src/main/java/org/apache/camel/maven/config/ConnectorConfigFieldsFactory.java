@@ -1,4 +1,4 @@
-package org.apache.camel.maven;
+package org.apache.camel.maven.config;
 
 import java.util.HashMap;
 import java.util.Map;

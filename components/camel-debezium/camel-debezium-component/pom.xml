@@ -121,11 +121,11 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <id>default-descriptor</id>
+                        <id>generate</id>
                         <goals>
-                            <goal>hello</goal>
+                            <goal>generate-mysql-connector-config</goal>
+                            <goal>generate-postgres-connector-config</goal>
                         </goals>
-                        <phase>generate-sources</phase>
                     </execution>
                 </executions>
             </plugin>
