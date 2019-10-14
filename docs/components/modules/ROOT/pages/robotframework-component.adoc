@@ -1,7 +1,9 @@
-[[robotframework-component]]
-== Robotframework Component
+= Robot Framework Component
+:page-source: components/camel-robotframework/src/main/docs/robotframework-component.adoc
 
 *Available as of Camel version 3.0*
+*Available as of Camel version 3.0*
+
 
 The *robotframework:* component allows for processing camel exchanges
 in acceptence test suites which are already implemented with its own DSL. 
@@ -307,4 +309,3 @@ And the `template.robot` file:
 
 Please note that when you pass values through Camel Exchange to test cases,
 they will be available as case-sensitive ``body``, ``headers.[yourHeaderName]`` and ``properties.[yourPropertyName]``
-
