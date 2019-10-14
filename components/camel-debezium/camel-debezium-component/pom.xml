@@ -48,28 +48,9 @@
         </dependency>
 
         <dependency>
-            <groupId>io.debezium</groupId>
-            <artifactId>debezium-connector-postgres</artifactId>
-            <version>${debezium-version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>${debezium-mysql-connector-version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>1.8</version>
-        </dependency>
-
-        <!-- maven plugin dependency -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-package-maven-plugin</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -124,7 +105,6 @@
                         <id>generate</id>
                         <goals>
                             <goal>generate-mysql-connector-config</goal>
-                            <goal>generate-postgres-connector-config</goal>
                         </goals>
                     </execution>
                 </executions>
