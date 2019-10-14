@@ -55,10 +55,6 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 @Mojo(name = "update-doc-component-list", threadSafe = true)
 public class UpdateDocComponentListMojo extends AbstractMojo {
 
-    // TODO: update template link
-    // xref:activemq-component.adoc
-
-
     /**
      * The maven project.
      */
@@ -263,7 +259,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
 
             // update regular components
             boolean exists = file.exists();
-            String changed = templateComponents(components, count, deprecated);
+            String changed = templateComponents(components, count, deprecated, false);
             boolean updated = updateComponents(file, changed);
 
             if (updated) {
@@ -277,7 +273,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             // update doc in the website dir
             file = websiteDocFile;
             exists = file.exists();
-            changed = templateComponents(components, count, deprecated);
+            changed = templateComponents(components, count, deprecated, true);
             updated = updateComponents(file, changed);
             if (updated) {
                 getLog().info("Updated website doc file: " + file);
@@ -327,7 +323,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
 
             // update regular components
             boolean exists = file.exists();
-            String changed = templateOthers(others, count, deprecated);
+            String changed = templateOthers(others, count, deprecated, false);
             boolean updated = updateOthers(file, changed);
 
             if (updated) {
@@ -341,7 +337,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             // update doc in the website dir
             file = websiteDocFile;
             exists = file.exists();
-            changed = templateOthers(others, count, deprecated);
+            changed = templateOthers(others, count, deprecated, true);
             updated = updateOthers(file, changed);
             if (updated) {
                 getLog().info("Updated website doc file: " + file);
@@ -422,7 +418,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
 
             // update regular data formats
             boolean exists = file.exists();
-            String changed = templateDataFormats(dataFormats, count, deprecated);
+            String changed = templateDataFormats(dataFormats, count, deprecated, false);
             boolean updated = updateDataFormats(file, changed);
 
             if (updated) {
@@ -436,7 +432,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             // update doc in the website dir
             file = websiteDocFile;
             exists = file.exists();
-            changed = templateDataFormats(dataFormats, count, deprecated);
+            changed = templateDataFormats(dataFormats, count, deprecated, true);
             updated = updateDataFormats(file, changed);
             if (updated) {
                 getLog().info("Updated website doc file: " + file);
@@ -506,7 +502,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
 
             // update regular data formats
             boolean exists = file.exists();
-            String changed = templateLanguages(languages, count, deprecated);
+            String changed = templateLanguages(languages, count, deprecated, false);
             boolean updated = updateLanguages(file, changed);
 
             if (updated) {
@@ -520,7 +516,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             // update doc in the website dir
             file = websiteDocFile;
             exists = file.exists();
-            changed = templateLanguages(languages, count, deprecated);
+            changed = templateLanguages(languages, count, deprecated, true);
             updated = updateLanguages(file, changed);
             if (updated) {
                 getLog().info("Updated website doc file: " + file);
@@ -548,9 +544,14 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
     }
 
-    private String templateComponents(List<ComponentModel> models, int artifacts, long deprecated) throws MojoExecutionException {
+    private String templateComponents(List<ComponentModel> models, int artifacts, long deprecated, boolean website) throws MojoExecutionException {
         try {
-            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-components.mvel"));
+            String template;
+            if (website) {
+                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-components-list.mvel"));
+            } else {
+                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-components.mvel"));
+            }
             Map<String, Object> map = new HashMap<>();
             map.put("components", models);
             map.put("numberOfArtifacts", artifacts);
@@ -562,9 +563,14 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
     }
 
-    private String templateOthers(List<OtherModel> models, int artifacts, long deprecated) throws MojoExecutionException {
+    private String templateOthers(List<OtherModel> models, int artifacts, long deprecated, boolean website) throws MojoExecutionException {
         try {
-            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-others.mvel"));
+            String template;
+            if (website) {
+                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-others-list.mvel"));
+            } else {
+                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-others.mvel"));
+            }
             Map<String, Object> map = new HashMap<>();
             map.put("others", models);
             map.put("numberOfArtifacts", artifacts);
@@ -576,9 +582,14 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
     }
 
-    private String templateDataFormats(List<DataFormatModel> models, int artifacts, long deprecated) throws MojoExecutionException {
+    private String templateDataFormats(List<DataFormatModel> models, int artifacts, long deprecated, boolean website) throws MojoExecutionException {
         try {
-            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-dataformats.mvel"));
+            String template;
+            if (website) {
+                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-dataformats-list.mvel"));
+            } else {
+                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-dataformats.mvel"));
+            }
             Map<String, Object> map = new HashMap<>();
             map.put("dataformats", models);
             map.put("numberOfArtifacts", artifacts);
@@ -590,9 +601,14 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
     }
 
-    private String templateLanguages(List<LanguageModel> models, int artifacts, long deprecated) throws MojoExecutionException {
+    private String templateLanguages(List<LanguageModel> models, int artifacts, long deprecated, boolean website) throws MojoExecutionException {
         try {
-            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-languages.mvel"));
+            String template;
+            if (website) {
+                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-languages-list.mvel"));
+            } else {
+                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-languages.mvel"));
+            }
             Map<String, Object> map = new HashMap<>();
             map.put("languages", models);
             map.put("numberOfArtifacts", artifacts);
