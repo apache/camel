@@ -1,5 +1,5 @@
 [[MicroProfileHealth-MicroProfileHealthComponent]]
-= MicroProfile Health Component
+== MicroProfile Health
 
 *Available as of Camel 3.0*
 
