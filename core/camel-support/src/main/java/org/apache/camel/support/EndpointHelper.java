@@ -101,6 +101,7 @@ public final class EndpointHelper {
      * <li>exact match, returns true</li>
      * <li>wildcard match (pattern ends with a * and the uri starts with the pattern), returns true</li>
      * <li>regular expression match, returns true</li>
+     * <li>exact match with uri normalization of the pattern if possible, returns true</li>
      * <li>otherwise returns false</li>
      * </ul>
      *
@@ -126,24 +127,40 @@ public final class EndpointHelper {
         }
 
         // we need to test with and without scheme separators (//)
-        if (uri.contains("://")) {
-            // try without :// also
-            String scheme = StringHelper.before(uri, "://");
-            String path = after(uri, "://");
-            if (PatternHelper.matchPattern(scheme + ":" + path, pattern)) {
-                return true;
-            }
-        } else {
-            // try with :// also
-            String scheme = StringHelper.before(uri, ":");
-            String path = after(uri, ":");
-            if (PatternHelper.matchPattern(scheme + "://" + path, pattern)) {
-                return true;
+        boolean match = PatternHelper.matchPattern(toggleUriSchemeSeparators(uri), pattern);
+        match |= PatternHelper.matchPattern(uri, pattern);
+        if (!match && pattern != null && pattern.contains("?")) {
+            // try normalizing the pattern as a uri for exact matching, so parameters are ordered the same as in the endpoint uri
+            try {
+                pattern = URISupport.normalizeUri(pattern);
+                // try both with and without scheme separators (//)
+                match = toggleUriSchemeSeparators(uri).equalsIgnoreCase(pattern);
+                return match || uri.equalsIgnoreCase(pattern);
+            } catch (URISyntaxException e) {
+                //Can't normalize and original match failed
+                return false;
+            } catch (Exception e) {
+                throw new ResolveEndpointFailedException(uri, e);
             }
         }
+        return match;
+    }
 
-        // and fallback to test with the uri as is
-        return PatternHelper.matchPattern(uri, pattern);
+    /**
+     * Toggles // separators in the given uri. If the uri does not contain ://, the slashes are added, otherwise they are removed.
+     * @param normalizedUri The uri to add/remove separators in
+     * @return The uri with separators added or removed
+     */
+    private static String toggleUriSchemeSeparators(String normalizedUri) {
+        if (normalizedUri.contains("://")) {
+            String scheme = StringHelper.before(normalizedUri, "://");
+            String path = after(normalizedUri, "://");
+            return scheme + ":" + path;
+        } else {
+            String scheme = StringHelper.before(normalizedUri, ":");
+            String path = after(normalizedUri, ":");
+            return scheme + "://" + path;
+        }
     }
 
     /**
