@@ -32,6 +32,7 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.utils.SecurityUtils;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
@@ -704,6 +705,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     }
 
     static SalesforceHttpClient createHttpClient(final SslContextFactory sslContextFactory) throws Exception {
+        SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
+
         final SalesforceHttpClient httpClient = new SalesforceHttpClient(sslContextFactory);
         // default settings, use httpClientProperties to set other
         // properties
