@@ -5,9 +5,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import io.debezium.connector.postgresql.PostgresConnector;
-import io.debezium.connector.postgresql.PostgresConnectorConfig;
+import io.debezium.connector.mysql.MySqlConnector;
+import io.debezium.connector.mysql.MySqlConnectorConfig;
+import io.debezium.relational.history.FileDatabaseHistory;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -21,9 +27,15 @@ public class TestMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final ConnectorConfigGenerator connectorConfigGenerator = ConnectorConfigGenerator.create(new PostgresConnector(), PostgresConnectorConfig.class);
+        final Set<String> requiredFields = new HashSet<>(Arrays.asList(MySqlConnectorConfig.PASSWORD.name(), MySqlConnectorConfig.SERVER_NAME.name()));
+        final Map<String, Object> overrideFields = new HashMap<>();
+        overrideFields.put(MySqlConnectorConfig.DATABASE_HISTORY.name(), FileDatabaseHistory.class);
+        overrideFields.put(MySqlConnectorConfig.TOMBSTONES_ON_DELETE.name(), false);
+
+        final ConnectorConfigGenerator connectorConfigGenerator = ConnectorConfigGenerator.create(new MySqlConnector(), MySqlConnectorConfig.class, requiredFields, overrideFields);
         try {
-            final File connectorConfigClassFile = new File(generatedSrcDir, connectorConfigGenerator.getClassName() + ".java");
+            final File parentPath = new File(generatedSrcDir, connectorConfigGenerator.getPackageName().replace(".", "/"));
+            final File connectorConfigClassFile = new File(parentPath, connectorConfigGenerator.getClassName() + ".java");
             if(!connectorConfigClassFile.exists()){
                 connectorConfigClassFile.getParentFile().mkdirs();
                 connectorConfigClassFile.createNewFile();

@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration;
 import org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration;
-import org.apache.camel.component.debezium.configuration.MySqlDBZConfig;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
@@ -33,6 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 @Component("debezium")
 public class DebeziumComponent extends DefaultComponent {
 
+    @UriParam
     private EmbeddedDebeziumConfiguration configuration;
 
     public DebeziumComponent() {
@@ -55,7 +56,7 @@ public class DebeziumComponent extends DefaultComponent {
             // we have more than one connector supported
             final DebeziumConnectorTypes connectorTypes = DebeziumConnectorTypes.fromString(remaining);
             if (connectorTypes == DebeziumConnectorTypes.MYSQL) {
-                configuration = new MySqlDBZConfig();
+                configuration = instantiate("org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration", MySqlConnectorEmbeddedDebeziumConfiguration.class);
             } else {
                 throw new IllegalArgumentException(String
                     .format("Connector of type '%s' is not supported yet.",
@@ -77,10 +78,10 @@ public class DebeziumComponent extends DefaultComponent {
 
     /**
      * Allow pre-configured Configurations to be set, you will need to extend
-     * {@link EmbeddedDebeziumConfiguration} in order to create the configuration
+     * {@link MySqlConnectorEmbeddedDebeziumConfiguration} in order to create the configuration
      * for the component
      *
-     * @return {@link EmbeddedDebeziumConfiguration}
+     * @return {@link MySqlConnectorEmbeddedDebeziumConfiguration}
      */
     public EmbeddedDebeziumConfiguration getConfiguration() {
         return configuration;
@@ -89,6 +90,16 @@ public class DebeziumComponent extends DefaultComponent {
     public void setConfiguration(EmbeddedDebeziumConfiguration configuration) {
         if (this.configuration == null) {
             this.configuration = configuration;
+        }
+    }
+
+    private <T> T instantiate(final String className, final Class<T> type){
+        try{
+            return type.cast(Class.forName(className).newInstance());
+        } catch(InstantiationException
+                | IllegalAccessException
+                | ClassNotFoundException e){
+            throw new IllegalStateException(e);
         }
     }
 }
