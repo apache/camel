@@ -535,57 +535,16 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
      * but does not have content in the body change the status code to 204
      */
     private void handleResponseWithNoContent(Message message, HttpResponse httpResponse, Object body) {
-        if (body == null) {
-            changeStatusCodeToNoContent(message, httpResponse);
-        } else {
-            checkBodyForContentAndUpdateStatusCode(message, httpResponse, body);
-        }
-    }
-    
-    /*
-     * change the status code to no content
-     */
-    private void changeStatusCodeToNoContent(Message message, HttpResponse httpResponse) {
-        HttpResponseStatus responseStatus = httpResponse.status();
-        if (responseStatus.code() == 200) {
-            message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, HttpResponseStatus.NO_CONTENT.code());
-            message.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, HttpResponseStatus.NO_CONTENT.reasonPhrase());
-            httpResponse.setStatus(new HttpResponseStatus(HttpResponseStatus.NO_CONTENT.code(), HttpResponseStatus.NO_CONTENT.reasonPhrase()));
-        }
-    }
-    
-    /*
-     * check body content for being empty
-     */
-    private void checkBodyForContentAndUpdateStatusCode(Message message, HttpResponse httpResponse, Object body) {
-        if (body instanceof InputStream) {
-            // reading out the input stream to check it causes issues 
-            // do we want to check using PushbackStream?
-        } else {
-            //
-            TypeConverter tc = message.getExchange().getContext().getTypeConverter();
-            ByteBuffer bodyAsByteBuffer = tc.convertTo(ByteBuffer.class, body);
-            if (!bodyAsByteBuffer.hasRemaining()) {
-                this.changeStatusCodeToNoContent(message, httpResponse);
-            } else {
-                if (hasNoContent(StandardCharsets.UTF_8.decode(bodyAsByteBuffer.asReadOnlyBuffer()).toString())) {
-                    changeStatusCodeToNoContent(message, httpResponse);
-                }
+        if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+            HttpResponseStatus responseStatus = httpResponse.status();
+            if (responseStatus.code() == 200) {
+                message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, HttpResponseStatus.NO_CONTENT.code());
+                message.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, HttpResponseStatus.NO_CONTENT.reasonPhrase());
+                httpResponse.setStatus(new HttpResponseStatus(HttpResponseStatus.NO_CONTENT.code(), HttpResponseStatus.NO_CONTENT.reasonPhrase()));
             }
         }
     }
     
-    /*
-     * an empty body along with 
-     * various values in the body 
-     * will be treated as no content
-     */
-    private boolean hasNoContent(String bodyAsString) {
-        return (bodyAsString.trim().isEmpty()
-            || bodyAsString.equalsIgnoreCase("No Content")
-            || bodyAsString.equalsIgnoreCase("No Body"));
-    }
-
     @Override
     public HttpRequest toNettyRequest(Message message, String fullUri, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("toNettyRequest: {}", message);

@@ -25,6 +25,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
@@ -69,6 +70,47 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
         assertEquals("", message.getBody(String.class));
     }
     
+    @Test
+    public void testNoSwitchingViaHttp() throws Exception {
+        HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foo");
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponse httpResponse = httpClient.execute(request);
+
+        assertEquals(200, httpResponse.getStatusLine().getStatusCode());
+        assertNotNull(httpResponse.getEntity());
+        assertEquals("No Content", EntityUtils.toString(httpResponse.getEntity()));
+    }
+    
+    @Test
+    public void testNoSwitchingNettyHttpViaCamel() throws Exception {
+        Exchange inExchange = this.createExchangeWithBody("Hello World");
+        Exchange outExchange = template.send("netty-http:http://localhost:{{port}}/foo", inExchange);
+
+        assertEquals(200, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("No Content", outExchange.getMessage().getBody(String.class));
+
+        NettyHttpMessage message = outExchange.getIn(NettyHttpMessage.class);
+        FullHttpResponse response = message.getHttpResponse();
+
+        assertEquals(200, response.status().code());
+        assertEquals("No Content", message.getBody(String.class));
+    }
+    
+    @Test
+    public void testNoSwitchingViaCamelRoute() throws Exception {
+        Exchange inExchange = this.createExchangeWithBody("Hello World");
+        Exchange outExchange = template.send("direct:foo", inExchange);
+
+        assertEquals(200, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("No Content", outExchange.getMessage().getBody(String.class));
+
+        NettyHttpMessage message = outExchange.getIn(NettyHttpMessage.class);
+        FullHttpResponse response = message.getHttpResponse();
+
+        assertEquals(200, response.status().code());
+        assertEquals("No Content", message.getBody(String.class));
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -76,10 +118,17 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
             public void configure() throws Exception {
                 from("netty-http:http://localhost:{{port}}/bar")
                     .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
-                    .setBody().constant("No Content");
+                    .setBody().constant("");
                 
                 from("direct:bar")
-                .to("netty-http:http://localhost:{{port}}/bar");
+                    .to("netty-http:http://localhost:{{port}}/bar");
+                
+                from("netty-http:http://localhost:{{port}}/foo")
+                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
+                    .setBody().constant("No Content");
+                
+                from("direct:foo")
+                    .to("netty-http:http://localhost:{{port}}/foo");
 
             }
         };
