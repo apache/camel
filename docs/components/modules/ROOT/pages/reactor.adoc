@@ -1,5 +1,5 @@
 = Reactor Component
-:page-source: components/camel-reactor/src/main/docs/reactor-component.adoc
+:page-source: components/camel-reactor/src/main/docs/reactor.adoc
 
 *Available as of Camel version 2.20*
 
