@@ -22,7 +22,7 @@ import io.debezium.config.Configuration;
 
 import org.apache.kafka.connect.file.FileStreamSourceConnector;
 
-public class FileConnectorEmbeddedDebeziumConfiguration extends EmbeddedDebeziumConfiguration {
+public class FileConnectorEmbeddedDebeziumConfiguration extends MySqlConnectorEmbeddedDebeziumConfiguration {
 
     private Path testFilePath;
     private String topicConfig;

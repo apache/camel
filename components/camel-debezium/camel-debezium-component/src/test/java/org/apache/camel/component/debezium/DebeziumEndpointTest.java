@@ -54,7 +54,7 @@ public class DebeziumEndpointTest {
     @Before
     public void setUp() {
         debeziumEndpoint = new DebeziumEndpoint("", new DebeziumComponent(new DefaultCamelContext()),
-                                                new MySqlConnectorEmbeddedDebeziumConfiguration());
+                new MySqlConnectorEmbeddedDebeziumConfiguration());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class DebeziumEndpointTest {
         // assert headers
         assertEquals("dummy", inMessage.getHeader(DebeziumConstants.HEADER_IDENTIFIER));
         assertEquals(Envelope.Operation.CREATE.code(),
-                     inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
+                inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
         final Struct key = (Struct)inMessage.getHeader(DebeziumConstants.HEADER_KEY);
         assertEquals(12345, key.getInt32("id").intValue());
         assertSourceMetadata(inMessage);
@@ -106,7 +106,7 @@ public class DebeziumEndpointTest {
         // assert headers
         assertEquals("dummy", inMessage.getHeader(DebeziumConstants.HEADER_IDENTIFIER));
         assertEquals(Envelope.Operation.DELETE.code(),
-                     inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
+                inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
         final Struct key = (Struct)inMessage.getHeader(DebeziumConstants.HEADER_KEY);
         assertEquals(12345, key.getInt32("id").intValue());
         assertNotNull(inMessage.getHeader(DebeziumConstants.HEADER_BEFORE));
@@ -145,7 +145,7 @@ public class DebeziumEndpointTest {
         // assert headers
         assertEquals("dummy", inMessage.getHeader(DebeziumConstants.HEADER_IDENTIFIER));
         assertEquals(Envelope.Operation.UPDATE.code(),
-                     inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
+                inMessage.getHeader(DebeziumConstants.HEADER_OPERATION));
         final Struct key = (Struct)inMessage.getHeader(DebeziumConstants.HEADER_KEY);
         assertEquals(12345, key.getInt32("id").intValue());
         assertSourceMetadata(inMessage);
@@ -200,7 +200,7 @@ public class DebeziumEndpointTest {
         final Schema recordSchema = SchemaBuilder.struct().field("id", SchemaBuilder.int8()).build();
         final Schema sourceSchema = SchemaBuilder.struct().field("lsn", SchemaBuilder.int32()).build();
         Envelope envelope = Envelope.defineSchema().withName("dummy.Envelope").withRecord(recordSchema)
-            .withSource(sourceSchema).build();
+                .withSource(sourceSchema).build();
         final Struct after = new Struct(recordSchema);
         final Struct source = new Struct(sourceSchema);
 
@@ -208,35 +208,35 @@ public class DebeziumEndpointTest {
         source.put("lsn", 1234);
         final Struct payload = envelope.create(after, source, System.nanoTime());
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
-                                createKeyRecord(), envelope.schema(), payload);
+                createKeyRecord(), envelope.schema(), payload);
     }
 
     private SourceRecord createDeleteRecord() {
         final Schema recordSchema = SchemaBuilder.struct().field("id", SchemaBuilder.int8()).build();
         Envelope envelope = Envelope.defineSchema().withName("dummy.Envelope").withRecord(recordSchema)
-            .withSource(SchemaBuilder.struct().build()).build();
+                .withSource(SchemaBuilder.struct().build()).build();
         final Struct before = new Struct(recordSchema);
         before.put("id", (byte)1);
         final Struct payload = envelope.delete(before, null, System.nanoTime());
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
-                                createKeyRecord(), envelope.schema(), payload);
+                createKeyRecord(), envelope.schema(), payload);
     }
 
     private SourceRecord createDeleteRecordWithNull() {
         final Schema recordSchema = SchemaBuilder.struct().field("id", SchemaBuilder.int8()).build();
         Envelope envelope = Envelope.defineSchema().withName("dummy.Envelope").withRecord(recordSchema)
-            .withSource(SchemaBuilder.struct().build()).build();
+                .withSource(SchemaBuilder.struct().build()).build();
         final Struct before = new Struct(recordSchema);
         before.put("id", (byte)1);
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
-                                createKeyRecord(), null, null);
+                createKeyRecord(), null, null);
     }
 
     private SourceRecord createUpdateRecord() {
         final Schema recordSchema = SchemaBuilder.struct().field("id", SchemaBuilder.int8()).build();
         final Schema sourceSchema = SchemaBuilder.struct().field("lsn", SchemaBuilder.int32()).build();
         Envelope envelope = Envelope.defineSchema().withName("dummy.Envelope").withRecord(recordSchema)
-            .withSource(sourceSchema).build();
+                .withSource(sourceSchema).build();
         final Struct before = new Struct(recordSchema);
         final Struct source = new Struct(sourceSchema);
         final Struct after = new Struct(recordSchema);
@@ -246,7 +246,7 @@ public class DebeziumEndpointTest {
         source.put("lsn", 1234);
         final Struct payload = envelope.update(before, after, source, System.nanoTime());
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", createKeySchema(),
-                                createKeyRecord(), envelope.schema(), payload);
+                createKeyRecord(), envelope.schema(), payload);
     }
 
     private SourceRecord createUnknownUnnamedSchemaRecord() {
