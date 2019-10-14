@@ -349,7 +349,7 @@
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.4.0</jettison-version>
-        <jgit-version>5.5.0.201909110433-r</jgit-version>
+        <jgit-version>5.5.1.201910021850-r</jgit-version>
         <jgroups-version>4.1.6.Final</jgroups-version>
         <jgroups-raft-version>0.4.3.Final</jgroups-raft-version>
         <jgroups-raft-jgroups-version>4.0.20.Final</jgroups-raft-jgroups-version>
