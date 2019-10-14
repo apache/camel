@@ -104,7 +104,7 @@ with the following path and query parameters:
 | *fileType* (common) | The file type to use. For more details see Hadoop HDFS documentation about the various files types. | NORMAL_FILE | HdfsFileType
 | *kerberosConfigFileLocation* (common) | The location of the kerb5.conf file (\https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html) |  | String
 | *kerberosKeytabLocation* (common) | The location of the keytab file used to authenticate with the kerberos nodes (contains pairs of kerberos principals and encrypted keys (which are derived from the Kerberos password)) |  | String
-| *kerberosNamedNodes* (common) | A comma separated list of kerberos nodes (e.g. srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file (\https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html) |  | String
+| *namedNodes* (common) | A comma separated list of named nodes (e.g. srv11.example.com:8021,srv12.example.com:8021) |  | String
 | *kerberosUsername* (common) | The username used to authenticate with the kerberos nodes |  | String
 | *keyType* (common) | The type for the key in case of sequence or map files. | NULL | WritableType
 | *owner* (common) | The file owner must match this owner for the consumer to pickup the file. Otherwise the file is skipped. |  | String

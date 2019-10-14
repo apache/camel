@@ -51,7 +51,7 @@ public final class HdfsInfo {
 
     private Configuration newConfiguration(HdfsConfiguration endpointConfig) throws IOException {
         if (endpointConfig.isKerberosAuthentication()) {
-            List<String> namedNodes = endpointConfig.getKerberosNamedNodeList();
+            List<String> namedNodes = endpointConfig.getNamedNodeList();
             String kerberosConfigFileLocation = endpointConfig.getKerberosConfigFileLocation();
             return new KerberosConfiguration(namedNodes, kerberosConfigFileLocation, endpointConfig.getReplication());
 

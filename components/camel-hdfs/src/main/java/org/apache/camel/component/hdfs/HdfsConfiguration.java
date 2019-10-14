@@ -87,8 +87,8 @@ public class HdfsConfiguration {
     private String owner;
 
     @UriParam
-    private String kerberosNamedNodes;
-    private List<String> kerberosNamedNodeList;
+    private String namedNodes;
+    private List<String> namedNodeList;
 
     @UriParam
     private String kerberosConfigFileLocation;
@@ -188,7 +188,7 @@ public class HdfsConfiguration {
     private List<HdfsProducer.SplitStrategy> getSplitStrategies(Map<String, Object> hdfsSettings) {
         List<HdfsProducer.SplitStrategy> strategies = new ArrayList<>();
 
-        splitStrategy = getString(hdfsSettings, "splitStrategy", kerberosNamedNodes);
+        splitStrategy = getString(hdfsSettings, "splitStrategy", splitStrategy);
 
         if (isNotEmpty(splitStrategy)) {
             String[] strategyElements = splitStrategy.split(",");
@@ -205,11 +205,11 @@ public class HdfsConfiguration {
         return strategies;
     }
 
-    private List<String> getKerberosNamedNodeList(Map<String, Object> hdfsSettings) {
-        kerberosNamedNodes = getString(hdfsSettings, "kerberosNamedNodes", kerberosNamedNodes);
+    private List<String> getNamedNodeList(Map<String, Object> hdfsSettings) {
+        namedNodes = getString(hdfsSettings, "namedNodes", namedNodes);
         
-        if (isNotEmpty(kerberosNamedNodes)) {
-            return Arrays.stream(kerberosNamedNodes.split(",")).distinct().collect(Collectors.toList());
+        if (isNotEmpty(namedNodes)) {
+            return Arrays.stream(namedNodes.split(",")).distinct().collect(Collectors.toList());
         }
 
         return Collections.emptyList();
@@ -261,7 +261,7 @@ public class HdfsConfiguration {
         chunkSize = getInteger(hdfsSettings, "chunkSize", chunkSize);
         splitStrategies = getSplitStrategies(hdfsSettings);
 
-        kerberosNamedNodeList = getKerberosNamedNodeList(hdfsSettings);
+        namedNodeList = getNamedNodeList(hdfsSettings);
         kerberosConfigFileLocation = getString(hdfsSettings, "kerberosConfigFileLocation", kerberosConfigFileLocation);
         kerberosUsername = getString(hdfsSettings, "kerberosUsername", kerberosUsername);
         kerberosKeytabLocation = getString(hdfsSettings, "kerberosKeytabLocation", kerberosKeytabLocation);
@@ -545,20 +545,19 @@ public class HdfsConfiguration {
         this.owner = owner;
     }
 
-    public String getKerberosNamedNodes() {
-        return kerberosNamedNodes;
+    public String getNamedNodes() {
+        return namedNodes;
     }
 
     /**
-     * A comma separated list of kerberos nodes
-     * (e.g. srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html)
+     * A comma separated list of named nodes (e.g. srv11.example.com:8020,srv12.example.com:8020)
      */
-    public void setKerberosNamedNodes(String kerberosNamedNodes) {
-        this.kerberosNamedNodes = kerberosNamedNodes;
+    public void setNamedNodes(String namedNodes) {
+        this.namedNodes = namedNodes;
     }
 
-    public List<String> getKerberosNamedNodeList() {
-        return kerberosNamedNodeList;
+    public List<String> getNamedNodeList() {
+        return namedNodeList;
     }
 
     public String getKerberosConfigFileLocation() {
@@ -596,7 +595,7 @@ public class HdfsConfiguration {
     }
 
     public boolean isKerberosAuthentication() {
-        return isNotEmpty(kerberosNamedNodes) && isNotEmpty(kerberosConfigFileLocation) && isNotEmpty(kerberosUsername) && isNotEmpty(kerberosKeytabLocation);
+        return isNotEmpty(namedNodes) && isNotEmpty(kerberosConfigFileLocation) && isNotEmpty(kerberosUsername) && isNotEmpty(kerberosKeytabLocation);
     }
 
 }
