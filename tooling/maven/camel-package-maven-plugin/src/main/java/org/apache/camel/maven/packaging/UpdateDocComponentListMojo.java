@@ -50,10 +50,13 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
 /**
- * Prepares the readme.md files content up to date with all the artifacts that Apache Camel ships.
+ * Updates the documentation with the component list to be up to date with all the artifacts that Apache Camel ships.
  */
-@Mojo(name = "prepare-readme", threadSafe = true)
-public class PrepareReadmeMojo extends AbstractMojo {
+@Mojo(name = "update-doc-component-list", threadSafe = true)
+public class UpdateDocComponentListMojo extends AbstractMojo {
+
+    // TODO: update template link
+    // xref:activemq-component.adoc
 
     /**
      * The maven project.
@@ -104,6 +107,12 @@ public class PrepareReadmeMojo extends AbstractMojo {
     protected File readmeComponentsDir;
 
     /**
+     * The website doc for components
+     */
+    @Parameter(defaultValue = "${project.directory}/../../../docs/components/modules/ROOT/nav.adoc")
+    protected File websiteDocFile;
+
+    /**
      * Maven ProjectHelper.
      */
     @Component
@@ -118,19 +127,17 @@ public class PrepareReadmeMojo extends AbstractMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        // update readme file in camel-core
-        executeEipsReadme();
-        executeComponentsReadme(true);
-        executeDataFormatsReadme(true);
-        executeLanguagesReadme(true);
-        // update readme file in components
-        executeComponentsReadme(false);
+        executeEipsList();
+        executeComponentsList(true);
+        executeDataFormatsList(true);
+        executeLanguagesList(true);
+        executeComponentsList(false);
+        executeDataFormatsList(false);
+        executeLanguagesList(false);
         executeOthersReadme();
-        executeDataFormatsReadme(false);
-        executeLanguagesReadme(false);
     }
 
-    protected void executeEipsReadme() throws MojoExecutionException, MojoFailureException {
+    protected void executeEipsList() throws MojoExecutionException, MojoFailureException {
         Set<File> eipFiles = new TreeSet<>();
 
         if (eipsDir != null && eipsDir.isDirectory()) {
@@ -183,7 +190,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    protected void executeComponentsReadme(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
+    protected void executeComponentsList(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
         Set<File> componentFiles = new TreeSet<>();
 
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -266,6 +273,18 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 getLog().warn("No readme.adoc file: " + file);
             }
 
+            // update doc in the website dir
+            file = websiteDocFile;
+            exists = file.exists();
+            changed = templateComponents(components, count, deprecated);
+            updated = updateComponents(file, changed);
+            if (updated) {
+                getLog().info("Updated website doc file: " + file);
+            } else if (exists) {
+                getLog().debug("No changes to website doc file: " + file);
+            } else {
+                getLog().warn("No website doc file: " + file);
+            }
         } catch (IOException e) {
             throw new MojoFailureException("Error due " + e.getMessage(), e);
         }
@@ -318,12 +337,25 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 getLog().warn("No readme.adoc file: " + file);
             }
 
+            // update doc in the website dir
+            file = websiteDocFile;
+            exists = file.exists();
+            changed = templateOthers(others, count, deprecated);
+            updated = updateOthers(file, changed);
+            if (updated) {
+                getLog().info("Updated website doc file: " + file);
+            } else if (exists) {
+                getLog().debug("No changes to website doc file: " + file);
+            } else {
+                getLog().warn("No website doc file: " + file);
+            }
+
         } catch (IOException e) {
             throw new MojoFailureException("Error due " + e.getMessage(), e);
         }
     }
 
-    protected void executeDataFormatsReadme(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
+    protected void executeDataFormatsList(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
         Set<File> dataFormatFiles = new TreeSet<>();
 
         if (dataFormatsDir != null && dataFormatsDir.isDirectory()) {
@@ -400,12 +432,25 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 getLog().warn("No readme.adoc file: " + file);
             }
 
+            // update doc in the website dir
+            file = websiteDocFile;
+            exists = file.exists();
+            changed = templateDataFormats(dataFormats, count, deprecated);
+            updated = updateDataFormats(file, changed);
+            if (updated) {
+                getLog().info("Updated website doc file: " + file);
+            } else if (exists) {
+                getLog().debug("No changes to website doc file: " + file);
+            } else {
+                getLog().warn("No website doc file: " + file);
+            }
+
         } catch (IOException e) {
             throw new MojoFailureException("Error due " + e.getMessage(), e);
         }
     }
 
-    protected void executeLanguagesReadme(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
+    protected void executeLanguagesList(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
         Set<File> languageFiles = new TreeSet<>();
 
         if (languagesDir != null && languagesDir.isDirectory()) {
@@ -469,6 +514,19 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 getLog().debug("No changes to readme.adoc file: " + file);
             } else {
                 getLog().warn("No readme.adoc file: " + file);
+            }
+
+            // update doc in the website dir
+            file = websiteDocFile;
+            exists = file.exists();
+            changed = templateLanguages(languages, count, deprecated);
+            updated = updateLanguages(file, changed);
+            if (updated) {
+                getLog().info("Updated website doc file: " + file);
+            } else if (exists) {
+                getLog().debug("No changes to website doc file: " + file);
+            } else {
+                getLog().warn("No website doc file: " + file);
             }
 
         } catch (IOException e) {
