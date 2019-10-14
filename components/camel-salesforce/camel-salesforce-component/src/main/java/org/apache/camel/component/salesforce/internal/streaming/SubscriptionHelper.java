@@ -67,7 +67,10 @@ public class SubscriptionHelper extends ServiceSupport {
 
     private static final String FAILURE_FIELD = "failure";
     private static final String EXCEPTION_FIELD = "exception";
+    private static final String SFDC_FIELD = "sfdc";
+    private static final String FAILURE_REASON_FIELD = "failureReason";
     private static final int DISCONNECT_INTERVAL = 5000;
+    private static final String SERVER_TOO_BUSY_ERROR = "503::";
 
     BayeuxClient client;
 
@@ -301,12 +304,17 @@ public class SubscriptionHelper extends ServiceSupport {
     }
 
     @SuppressWarnings("unchecked")
-    private Exception getFailure(Message message) {
+    private static Exception getFailure(Message message) {
         Exception exception = null;
         if (message.get(EXCEPTION_FIELD) != null) {
             exception = (Exception)message.get(EXCEPTION_FIELD);
         } else if (message.get(FAILURE_FIELD) != null) {
             exception = (Exception)((Map<String, Object>)message.get("failure")).get("exception");
+        } else {
+            String failureReason = getFailureReason(message);
+            if (failureReason != null) {
+                exception = new SalesforceException(failureReason, null);
+            }
         }
         return exception;
     }
@@ -398,10 +406,12 @@ public class SubscriptionHelper extends ServiceSupport {
                             error = "Missing error message";
                         }
 
+                        Exception failure = getFailure(message);
+                        String msg = String.format("Error subscribing to %s: %s", topicName, failure != null ? failure.getMessage() : error);
                         boolean abort = true;
 
                         if (isTemporaryError(message)) {
-                            LOG.warn("Error subscribing to channel {}: {}", channelName, error);
+                            LOG.warn(msg);
 
                             // retry after delay
                             final long backoff = restartBackoff.getAndAdd(backoffIncrement);
@@ -428,8 +438,6 @@ public class SubscriptionHelper extends ServiceSupport {
                         }
 
                         if (abort) {
-                            Exception failure = getFailure(message);
-                            String msg = String.format("Error subscribing to %s: %s", topicName, failure != null ? failure.getMessage() : error);
                             consumer.handleException(msg, new SalesforceException(msg, failure));
                         }
                     } else {
@@ -454,15 +462,15 @@ public class SubscriptionHelper extends ServiceSupport {
 
     private static boolean isTemporaryError(Message message) {
         String failureReason = getFailureReason(message);
-        return failureReason != null && failureReason.startsWith("503:");
+        return failureReason != null && failureReason.startsWith(SERVER_TOO_BUSY_ERROR);
     }
 
     private static String getFailureReason(Message message) {
         String failureReason = null;
         if (message.getExt() != null) {
-            Map<String, Object> sfdc = (Map<String, Object>) message.getExt().get("sfdc");
-            if (sfdc != null) {
-                failureReason  = (String) sfdc.get("failureReason");
+            Map<String, Object> sfdcFields = (Map<String, Object>) message.getExt().get(SFDC_FIELD);
+            if (sfdcFields != null) {
+                failureReason  = (String) sfdcFields.get(FAILURE_REASON_FIELD);
             }
         }
         return failureReason;
