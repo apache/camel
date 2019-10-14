@@ -424,7 +424,7 @@ camel routes without them knowing
 ** xref:components::leveldb.adoc[LevelDB]
 ** xref:components::lra.adoc[Lra]
 ** xref:components::opentracing.adoc[OpenTracing]
-** xref:components::reactor-component.adoc[Reactor]
+** xref:components::reactor.adoc[Reactor]
 ** xref:components::ribbon.adoc[Ribbon]
 ** xref:components::rxjava.adoc[Rxjava]
 ** xref:components::shiro.adoc[Shiro]
