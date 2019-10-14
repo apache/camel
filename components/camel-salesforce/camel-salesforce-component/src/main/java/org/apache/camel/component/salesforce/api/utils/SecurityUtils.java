@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.salesforce.api.utils;
-
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import java.util.Arrays;
 
-public class SecurityUtils {
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+
+public final class SecurityUtils {
+
+    private SecurityUtils() {
+    }
 
     public static void adaptToIBMCipherNames(final SslContextFactory sslContextFactory) {
         //jetty client adds into excluded cipher suites all ciphers starting with SSL_
