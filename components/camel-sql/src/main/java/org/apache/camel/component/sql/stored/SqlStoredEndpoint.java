@@ -79,6 +79,10 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
         return "sql-stored:" + UnsafeUriCharactersEncoder.encode(this.template);
     }
 
+    protected CallableStatementWrapperFactory getWrapperFactory() {
+        return wrapperFactory;
+    }
+
     @Override
     protected void doStart() throws Exception {
         this.wrapperFactory = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(getCamelContext().getClassResolver()), isFunction());
@@ -157,12 +161,4 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
         this.function = function;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
-    public CallableStatementWrapperFactory getWrapperFactory() {
-        return wrapperFactory;
-    }
 }
