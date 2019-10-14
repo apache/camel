@@ -27,6 +27,7 @@ import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.utils.SecurityUtils;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
@@ -226,6 +227,8 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
         try {
             final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setSslContext(sslContextParameters.createSSLContext(new DefaultCamelContext()));
+
+            SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
 
             httpClient = new SalesforceHttpClient(sslContextFactory);
         } catch (final GeneralSecurityException e) {
