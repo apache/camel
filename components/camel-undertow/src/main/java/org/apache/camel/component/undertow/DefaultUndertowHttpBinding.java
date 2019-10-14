@@ -18,13 +18,11 @@ package org.apache.camel.component.undertow;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -380,7 +378,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             // mark the exception as failure handled, as we handled it by actively muting it
             ExchangeHelper.setFailureHandled(camelExchange);
         } else {
-            handleResponseWithNoContent(camelExchange, httpExchange, body);
+            handleResponseWithNoContent(message, httpExchange, body);
         }
         
         // set the content type in the response.
@@ -397,58 +395,15 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
      * when an HTTP response has status code 200 
      * but does not have content in the body change the status code to 204
      */
-    private void handleResponseWithNoContent(Exchange camelExchange, HttpServerExchange httpExchange, Object body) {
-        if (body == null) {
-            changeStatusCodeToNoContent(camelExchange, httpExchange);
-        } else {
-            checkBodyForContentAndUpdateStatusCode(camelExchange, httpExchange, body);
-        }
-    }
-    
-    /*
-     * change the status code to no content
-     */
-    private void changeStatusCodeToNoContent(Exchange camelExchange, HttpServerExchange httpExchange) {
-        Message message = camelExchange.getMessage();
-        if (httpExchange.getStatusCode() == 200) {
-            message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
-            message.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, StatusCodes.NO_CONTENT_STRING);
-            httpExchange.setStatusCode(204);
-        }
-    }
-    
-    /*
-     * check body content for being empty
-     */
-    private void checkBodyForContentAndUpdateStatusCode(Exchange camelExchange, HttpServerExchange httpExchange, Object body) {
-        if (body instanceof InputStream) {
-            // reading out the input stream to check it causes issues 
-            // do we want to check using PushbackStream?
-        } else {
-            //
-            TypeConverter tc = camelExchange.getContext().getTypeConverter();
-            ByteBuffer bodyAsByteBuffer = tc.convertTo(ByteBuffer.class, body);
-            if (!bodyAsByteBuffer.hasRemaining()) {
-                this.changeStatusCodeToNoContent(camelExchange, httpExchange);
-            } else {
-                if (hasNoContent(StandardCharsets.UTF_8.decode(bodyAsByteBuffer.asReadOnlyBuffer()).toString())) {
-                    changeStatusCodeToNoContent(camelExchange, httpExchange);
-                }
+    private void handleResponseWithNoContent(Message message, HttpServerExchange httpExchange, Object body) {
+        if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+            if (httpExchange.getStatusCode() == 200) {
+                message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, 204);
+                message.getHeaders().put(Exchange.HTTP_RESPONSE_TEXT, StatusCodes.NO_CONTENT_STRING);
+                httpExchange.setStatusCode(204);
             }
         }
     }
-    
-    /*
-     * an empty body along with 
-     * various values in the body 
-     * will be treated as no content
-     */
-    private boolean hasNoContent(String bodyAsString) {
-        return (bodyAsString.trim().isEmpty()
-            || bodyAsString.equalsIgnoreCase("No Content")
-            || bodyAsString.equalsIgnoreCase("No Body"));
-    }
-    
     
     @Override
     public Object toHttpRequest(ClientRequest clientRequest, Message message) {

@@ -24,6 +24,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
@@ -59,33 +60,34 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     }
     
     @Test
-    public void testSwitchNoBodyTo204ViaHttpNoContent() throws Exception {
+    public void testNoSwitchViaHttpNoContent() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/bar");
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpResponse httpResponse = httpClient.execute(request);
 
-        assertEquals(204, httpResponse.getStatusLine().getStatusCode());
-        assertNull(httpResponse.getEntity());
+        assertEquals(200, httpResponse.getStatusLine().getStatusCode());
+        assertNotNull(httpResponse.getEntity());
+        assertEquals("No Content", EntityUtils.toString(httpResponse.getEntity()));
     }
 
     @Test
-    public void testSwitchingNoBodyTo204NettyHttpViaCamelNoContent() throws Exception {
+    public void testNoSwitchingNettyHttpViaCamelNoContent() throws Exception {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("undertow:http://localhost:{{port}}/bar", inExchange);
 
         Message msg = outExchange.getMessage();
-        assertEquals(204, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("", msg.getBody(String.class));
+        assertEquals(200, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("No Content", msg.getBody(String.class));
     }
 
     @Test
-    public void testSwitchingNoBodyTo204ViaCamelRouteNoContent() throws Exception {
+    public void testNoSwitchingViaCamelRouteNoContent() throws Exception {
         Exchange inExchange = this.createExchangeWithBody("Hello World");
         Exchange outExchange = template.send("direct:bar", inExchange);
 
         Message msg = outExchange.getMessage();
-        assertEquals(204, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("", msg.getBody(String.class));
+        assertEquals(200, msg.getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("No Content", msg.getBody(String.class));
     }
     
     @Override
