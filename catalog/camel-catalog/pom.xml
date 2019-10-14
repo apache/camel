@@ -246,7 +246,7 @@
                         <goals>
                             <goal>prepare-catalog</goal>
                             <goal>prepare-user-guide</goal>
-                            <goal>prepare-readme</goal>
+                            <goal>update-component-list</goal>
                             <goal>prepare-parent-pom</goal>
                             <goal>prepare-release-pom</goal>
                         </goals>
