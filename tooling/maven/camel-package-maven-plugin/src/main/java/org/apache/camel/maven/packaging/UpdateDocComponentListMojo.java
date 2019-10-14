@@ -58,6 +58,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
     // TODO: update template link
     // xref:activemq-component.adoc
 
+
     /**
      * The maven project.
      */

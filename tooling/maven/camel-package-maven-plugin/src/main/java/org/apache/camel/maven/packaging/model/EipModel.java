@@ -122,7 +122,7 @@ public class EipModel {
 
     public String getDocLink() {
         // lets store EIP docs in a sub-folder as we have many EIPs
-        return "src/main/docs/eips";
+        return "src/main/docs/eips/";
     }
 
 }
