@@ -185,11 +185,6 @@ public class OtherOptionModel {
             text = text.substring(0, text.length() - 4);
         }
 
-        // TODO: dirty hack for AUTO_ACKNOWLEDGE which we should wrap
-        if ("AUTO_ACKNOWLEDGE".equals(text)) {
-            return "AUTO_ ACKNOWLEDGE";
-        }
-
         return text;
     }
 

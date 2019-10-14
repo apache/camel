@@ -22,7 +22,7 @@ import org.testcontainers.containers.GenericContainer;
 
 public class ContainerAwareTestSupportIT extends ContainerAwareTestSupport {
     @Test
-    public void testPropertyPlaceholders() throws Exception {
+    public void testPropertyPlaceholders() {
         final GenericContainer<?> container = getContainer("myconsul");
 
         final String host = context.resolvePropertyPlaceholders("{{container:host:myconsul}}");

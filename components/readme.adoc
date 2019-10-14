@@ -1,11 +1,11 @@
 = Components
 
 // components: START
-Number of Components: 300 in 238 JAR artifacts (0 deprecated)
+Number of Components: 300 in 238 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Component | Available From | Description
+| Component | Since | Description
 
 | link:camel-activemq/src/main/docs/activemq-component.adoc[ActiveMQ] (camel-activemq) +
 `activemq:destinationType:destinationName` | 1.0 | The activemq component allows messages to be sent to (or consumed from) Apache ActiveMQ. This component extends the Camel JMS component.
@@ -668,7 +668,7 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 `paxlogging:appender` | 2.6 | The paxlogging component can be used in an OSGi environment to receive PaxLogging events and process them.
 
 | link:camel-paho/src/main/docs/paho-component.adoc[Paho] (camel-paho) +
-`paho:topic` | 2.16 | Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
+`paho:topic` | 2.16 | Component for communicating with MQTT message brokers using Eclipse Paho MQTT Client.
 
 | link:camel-pdf/src/main/docs/pdf-component.adoc[PDF] (camel-pdf) +
 `pdf:operation` | 2.16 | The pdf components provides the ability to create, modify or extract content from PDF documents.
@@ -710,7 +710,7 @@ Number of Components: 300 in 238 JAR artifacts (0 deprecated)
 `rest-swagger:specificationUri#operationId` | 2.19 | An awesome REST endpoint backed by Swagger specifications.
 
 | link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
-`restlet:protocol:host:port/uriPattern` | 2.0 | Component for consuming and producing Restful resources using Restlet.
+`restlet:protocol:host:port/uriPattern` | 2.0 | *deprecated* Component for consuming and producing Restful resources using Restlet.
 
 | link:camel-robotframework/src/main/docs/robotframework-component.adoc[Robot Framework] (camel-robotframework) +
 `robotframework:resourceUri` | 3.0 | Represents a RobotFramework endpoint.
@@ -918,7 +918,7 @@ Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Data Format | Available From | Description
+| Data Format | Since | Description
 
 | link:camel-any23/src/main/docs/any23-dataformat.adoc[Any23] (camel-any23) | 3.0 | Any23 data format is used for parsing data to RDF.
 
@@ -976,7 +976,7 @@ Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 | link:camel-lzf/src/main/docs/lzf-dataformat.adoc[LZF Deflate Compression] (camel-lzf) | 2.17 | The LZF data format is a message compression and de-compression format (uses the LZF deflate algorithm).
 
-| link:camel-mail/src/main/docs/mime-multipart-dataformat.adoc[MIME Multipart] (camel-mail) | 2.17 | The MIME Multipart data format can marshal a Camel message with attachments into a Camel message having a MIME-Multipart message as message body (and no attachments), and vise-versa when unmarshalling.
+| link:camel-mail/src/main/docs/mime-multipart-dataformat.adoc[MIME Multipart] (camel-mail) | 2.17 | The MIME Multipart data format is used for marshalling Camel messages with attachments into MIME-Multipart message, and vise-versa.
 
 | link:camel-crypto/src/main/docs/pgp-dataformat.adoc[PGP] (camel-crypto) | 2.9 | PGP data format is used for encrypting and decrypting of messages using Java Cryptographic Extension and PGP.
 
@@ -1020,15 +1020,15 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Language | Available From | Description
+| Language | Since | Description
 
 | link:camel-bean/src/main/docs/bean-language.adoc[Bean method] (camel-bean) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
 
-| link:camel-base/src/main/docs/constant-language.adoc[Constant] (camel-base) | 1.5 | To use a constant value in Camel expressions or predicates. Important: this is a fixed constant value that is only set once during starting up the route, do not use this if you want dynamic values during routing.
+| link:camel-base/src/main/docs/constant-language.adoc[Constant] (camel-base) | 1.5 | To use a constant value in Camel expressions or predicates.
 
 | link:camel-base/src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-base) | 2.0 | To use a Camel Exchange property in expressions or predicates.
 
-| link:camel-base/src/main/docs/file-language.adoc[File] (camel-base) | 1.1 | For expressions and predicates using the file/simple language
+| link:camel-base/src/main/docs/file-language.adoc[File] (camel-base) | 1.1 | For expressions and predicates using the file/simple language.
 
 | link:camel-groovy/src/main/docs/groovy-language.adoc[Groovy] (camel-groovy) | 1.3 | To use Groovy scripts in Camel expressions or predicates.
 
@@ -1062,11 +1062,11 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Component | Available From | Description
+| Component | Since | Description
 
 | link:camel-attachments/src/main/docs/attachments.adoc[Attachments] (camel-attachments) | 3.0 | Java Attachments support for Camel Message
 
@@ -1087,6 +1087,8 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (0 deprecated)
 | link:camel-lra/src/main/docs/lra.adoc[Lra] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
 
 | link:camel-microprofile-config/src/main/docs/microprofile-config.adoc[Microprofile Config] (camel-microprofile-config) | 3.0 | Bridging Eclipse MicroProfile Config with Camel properties
+
+| link:camel-microprofile-health/src/main/docs/microprofile-health.adoc[Microprofile Health] (camel-microprofile-health) | 3.0 | Bridging Eclipse MicroProfile Health with Camel health checks
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 

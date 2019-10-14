@@ -1,17 +1,17 @@
-# Camel Example Rest Producer
+== Camel Example Rest Producer
 
 This example shows how to call a REST service using Camel Rest.
 
 The example uses a timer to trigger a Camel route to call the REST service.
 The REST service is embedded within Spring Boot itself so it can run standalone.
 
-= Camel routes
+=== Camel routes
 
 The Camel route is located in the `RestRoute` class. In this class the route
 starts from a timer, that triggers every 2nd second and calls the REST service using the rest endpoint
 which returns a message, that is logged.
 
-== Configuring Rest
+=== Configuring Rest
 
 The rest producer is configured using Camels Rest DSL which is done using the `restConfiguration` in the route.
 The actual HTTP client that is used to call the REST service is `camel-http` which is added as dependency
@@ -23,12 +23,18 @@ in the `pom.xml` file. You can use other HTTP clients with the REST producer suc
 - camel-restlet
 - camel-undertow
 
-== How to run
+=== How to run
 
 You can run this example using
 
     mvn spring-boot:run
 
-== More information
+=== Help and contributions
 
-You can find more information about Apache Camel at the website: http://camel.apache.org/
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

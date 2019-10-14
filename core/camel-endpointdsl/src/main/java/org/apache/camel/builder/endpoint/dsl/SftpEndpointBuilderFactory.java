@@ -2491,28 +2491,6 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder bufferSize(int bufferSize) {
-            doSetProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
-         * Write buffer sized in bytes.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder bufferSize(String bufferSize) {
-            doSetProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
          * Specifies how many requests may be outstanding at any one time.
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
@@ -3850,28 +3828,6 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder bufferSize(int bufferSize) {
-            doSetProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
-         * Write buffer sized in bytes.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder bufferSize(String bufferSize) {
-            doSetProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
          * Specifies how many requests may be outstanding at any one time.
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
@@ -4739,28 +4695,6 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder bindAddress(String bindAddress) {
             doSetProperty("bindAddress", bindAddress);
-            return this;
-        }
-        /**
-         * Write buffer sized in bytes.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder bufferSize(int bufferSize) {
-            doSetProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
-         * Write buffer sized in bytes.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder bufferSize(String bufferSize) {
-            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**

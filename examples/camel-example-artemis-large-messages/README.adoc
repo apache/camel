@@ -1,0 +1,89 @@
+== Camel Artemis Large Messages
+
+=== Introduction
+
+This example shows how to send large messages between Apache Camel and
+ActiveMQ Artemis. When we say large messages we refer to messages with
+sizes of GB.
+
+You should be able to run Camel and Artemis in JVMs with lower memory
+such as 256/512mb etc, and still be able to send messages in GB of sizes
+between them.
+
+This works by spool big messages to disk. Artemis spool large messages
+to its `+data/large-messages+` directory, and Camel uses stream caching
+to spool to a temporary directory during routing.
+
+=== Build
+
+The example is run using Maven.
+
+First compile the example by entering:
+
+....
+mvn compile
+....
+
+=== Install ActiveMQ Artemis
+
+To automate downloading, unpacking and configuration of Apache ActiveMQ
+Artemis with latest defined version a special profile is added. It's
+necessary to run following Maven command for do this during example
+install:
+
+....
+mvn install -P artemis
+....
+
+=== Run ActiveMQ Artemis
+
+To start configured ActiveMQ Artemis instance in a shell use:
+
+....
+$ target/artemis-instance/bin/artemis run
+....
+
+Which startup ActiveMQ Artemis in the foreground and keeps it running
+until you hit ctrl+c to shutdown ActiveMQ Artemis.
+
+=== Run Camel
+
+Before running this example, then ensure the JVM has limited memory by
+executing
+
+....
+export MAVEN_OPTS="-Xmx256m"
+....
+
+And then start the Camel application:
+
+....
+mvn camel:run
+....
+
+You can then copy files to `+target/inbox+` folder which is send to
+Artemis, and then back again to Camel and written to the
+`+target/outbox+` folder.
+
+This should work for small and big files such as files with sizes of GB.
+The JVM should not run out of memory.
+
+To stop the example hit ctrl+c. If you restart it and resume entering
+numbers you should see that it remembered previously entered values, as
+it uses a persistent store.
+
+=== ActiveMQ Artemis web console
+
+You can browse the Artemis web console: http://localhost:8161/console to
+see activity such as number of consumers and producers. You can also
+delete all messages from queues which is a handy operation.
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

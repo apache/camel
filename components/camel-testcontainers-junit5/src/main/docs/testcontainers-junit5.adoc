@@ -85,7 +85,7 @@ Camel Testcontainer provides a PropertiesFunction implementation that can be use
 ----
 public class MyTest extends ContainerAwareTestSupport {
     @Test
-    public void testPropertyPlaceholders() throws Exception {
+    public void testPropertyPlaceholders() {
         GenericContainer<?> container = getContainer("myconsul");
 
         String host = context.resolvePropertyPlaceholders("{{container:host:myconsul}}");

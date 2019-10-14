@@ -1,0 +1,45 @@
+== CDI Example
+
+=== Introduction
+
+This example shows how to work with Camel using CDI to configure
+components, endpoints and beans.
+
+A timer triggers a Camel route to run every 5th second which creates a
+message that is logged to the console.
+
+=== Build
+
+You will need to compile this example first:
+
+[source,sh]
+----
+$ mvn compile
+----
+
+=== Run
+
+To run the example, type:
+
+[source,sh]
+----
+$ mvn camel:run
+----
+
+You can see the routing rules by looking at the java code in the
+`+src/main/java+` directory.
+
+To stop the example hit ctrl+c.
+
+When we launch the example using the Camel Maven plugin, a standalone
+CDI container is created and started.
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

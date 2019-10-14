@@ -166,8 +166,8 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         }
 
         // use configured buffer size which is larger and therefore faster (as the default is no buffer)
-        if (getConfiguration().getReceiveBufferSize() > 0) {
-            client.setBufferSize(getConfiguration().getReceiveBufferSize());
+        if (getBufferSize() > 0) {
+            client.setBufferSize(getBufferSize());
         }
         // set any endpoint configured timeouts
         if (getConfiguration().getConnectTimeout() > -1) {
@@ -207,10 +207,10 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Created FTPSClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
+            log.debug("Created FTPSClient[connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
                             + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
-                    new Object[]{client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
-                            client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client});
+                    client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
+                    client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client);
         }
 
         FtpsOperations operations = new FtpsOperations(client, getFtpClientConfig());

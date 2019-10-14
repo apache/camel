@@ -88,7 +88,7 @@ public class ConsulClusteredRoutePolicyFactoryTest {
             context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
             context.addRoutes(new RouteBuilder() {
                 @Override
-                public void configure() throws Exception {
+                public void configure() {
                     from("timer:consul?delay=1s&period=1s")
                         .routeId("route-" + id)
                         .log("From ${routeId}")

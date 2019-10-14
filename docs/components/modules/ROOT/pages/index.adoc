@@ -277,7 +277,7 @@
 * xref:rabbitmq-component.adoc[RabbitMQ Component]
 * xref:reactive-executor-vertx.adoc[ReactiveExecutor VertX]
 * xref:reactive-streams-component.adoc[Reactive Streams Component]
-* xref:reactor-component.adoc[Reactor Component]
+* xref:reactor.adoc[Reactor Component]
 * xref:ref-component.adoc[Ref Component]
 * xref:rest-swagger-component.adoc[REST Swagger Component]
 * xref:rest-api-component.adoc[REST API Component]

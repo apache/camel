@@ -682,9 +682,11 @@ public class CamelCatalogTest {
 
         // unknown component
         result = catalog.validateEndpointProperties("foo:bar?me=you");
-        assertFalse(result.isSuccess());
+        assertTrue(result.isSuccess());
+        assertTrue(result.hasWarnings());
         assertTrue(result.getUnknownComponent().equals("foo"));
-        assertEquals(1, result.getNumberOfErrors());
+        assertEquals(0, result.getNumberOfErrors());
+        assertEquals(1, result.getNumberOfWarnings());
 
         // invalid boolean but default value
         result = catalog.validateEndpointProperties("log:output?showAll=ggg");
@@ -792,7 +794,8 @@ public class CamelCatalogTest {
 
         // incapable to parse
         result = catalog.validateEndpointProperties("{{getFtpUrl}}?recursive=true");
-        assertFalse(result.isSuccess());
+        assertTrue(result.isSuccess());
+        assertTrue(result.hasWarnings());
         assertTrue(result.getIncapable() != null);
     }
 

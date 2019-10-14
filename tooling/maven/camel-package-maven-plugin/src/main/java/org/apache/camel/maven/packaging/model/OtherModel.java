@@ -136,7 +136,7 @@ public class OtherModel {
     }
 
     public String getDocLink() {
-        return artifactId + "/src/main/docs";
+        return artifactId + "/src/main/docs/";
     }
 
     public String getFirstVersionShort() {

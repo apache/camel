@@ -4,9 +4,9 @@ Number of Data Formats: @{dataformats.size} in @{numberOfArtifacts} JAR artifact
 
 [width="100%",cols="4,1,5",options="header"]
 |===
-| Data Format | Available From | Description
+| Data Format | Since | Description
 @foreach{row : dataformats}
-| link:@{row.docLink}/${row.name}-dataformat.adoc[@{row.title}] (@{row.artifactId}) | @{row.firstVersionShort} | @if{row.deprecated == "true"}*deprecated* @end{}@{util.escape(row.description)}
+| link:@{row.docLink}${row.name}-dataformat.adoc[@{row.title}] (@{row.artifactId}) | @{row.firstVersionShort} | @if{row.deprecated == "true"}*deprecated* @end{}@{util.escape(row.description)}
 @end{}|===
 
 @end{}

@@ -1,4 +1,4 @@
-= Camel Example Netty Custom Correlation
+== Camel Example Netty Custom Correlation
 
 This example shows how to use TCP communication with Netty using a custom codec
 to encode and decode the data over the wire.
@@ -8,7 +8,7 @@ to multiplex concurrent messages over the same connection. A custom correlation 
 is implemented to be able to correlate the request and response message pairs so you
 do not mix-data to wrong replies.
 
-== How to run
+=== How to run
 
 You can run this example using two JVMs.
 
@@ -25,6 +25,12 @@ For requests that contains the word `beer` is delayed on the server side, and yo
 should notice that its corresponding reply is correlated correclty to its beloing request thread.
 Also the messages can be inter-leaved when some messages are faster than others.
 
-== More information
+=== Help and contributions
 
-You can find more information about Apache Camel at the website: http://camel.apache.org/
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

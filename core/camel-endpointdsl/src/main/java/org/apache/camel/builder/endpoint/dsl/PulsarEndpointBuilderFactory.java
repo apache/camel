@@ -717,7 +717,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Name of the producer.
+         * Name of the producer. If unset, lets Pulsar select a unique
+         * identifier.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

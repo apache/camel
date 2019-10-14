@@ -21,39 +21,39 @@ import java.util.List;
 import com.orbitz.consul.model.health.Node;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulCatalogActions;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ConsulCatalogTest extends ConsulTestSupport {
 
     @Test
-    public void testListDatacenters() throws Exception {
+    public void testListDatacenters() {
         List<String> ref = getConsul().catalogClient().getDatacenters();
         List<String> res = fluentTemplate()
             .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_DATACENTERS)
             .to("direct:consul")
             .request(List.class);
 
-        Assert.assertFalse(ref.isEmpty());
-        Assert.assertFalse(res.isEmpty());
-        Assert.assertEquals(ref, res);
+        Assertions.assertFalse(ref.isEmpty());
+        Assertions.assertFalse(res.isEmpty());
+        Assertions.assertEquals(ref, res);
     }
 
     @Test
-    public void testListNodes() throws Exception {
+    public void testListNodes() {
         List<Node> ref = getConsul().catalogClient().getNodes().getResponse();
         List<Node> res = fluentTemplate()
             .withHeader(ConsulConstants.CONSUL_ACTION, ConsulCatalogActions.LIST_NODES)
             .to("direct:consul")
             .request(List.class);
 
-        Assert.assertFalse(ref.isEmpty());
-        Assert.assertFalse(res.isEmpty());
-        Assert.assertEquals(ref, res);
+        Assertions.assertFalse(ref.isEmpty());
+        Assertions.assertFalse(res.isEmpty());
+        Assertions.assertEquals(ref, res);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:consul")

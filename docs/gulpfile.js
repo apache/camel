@@ -35,7 +35,7 @@ function deleteComponentImageSymlinks() {
 }
 
 function createComponentSymlinks() {
-    return src(['../core/camel-base/src/main/docs/*-component.adoc', '../components/{*,*/*}/src/main/docs/*.adoc'])
+    return src(['../core/camel-base/src/main/docs/*.adoc', '../components/{*,*/*}/src/main/docs/*.adoc'])
         .pipe(map((file, done) => {
             // this flattens the output to just .../pages/....adoc
             // instead of .../pages/camel-.../src/main/docs/....adoc
@@ -80,7 +80,7 @@ function deleteUserManualSymlinks() {
 }
 
 function createUserManualSymlinks() {
-    return src(['../core/camel-base/src/main/docs/*-language.adoc', '../core/camel-core-engine/src/main/docs/eips/*.adoc'])
+    return src(['../core/camel-base/src/main/docs/*.adoc', '../core/camel-core-engine/src/main/docs/eips/*.adoc'])
         // Antora disabled symlinks, there is an issue open
         // https://gitlab.com/antora/antora/issues/188
         // to reinstate symlink support, until that's resolved
@@ -119,25 +119,10 @@ function insertSourceAttribute() {
     });
 }
 
-function createComponentNav() {
-    return src('component-nav.adoc.template')
-        .pipe(insertGeneratedNotice())
-        .pipe(inject(src(['../core/camel-base/src/main/docs/*-component.adoc', '../components/{*,*/*}/src/main/docs/*.adoc']).pipe(sort()), {
-            removeTags: true,
-            transform: (filename, file) => {
-                const filepath = path.basename(filename);
-                const title = titleFrom(file);
-                return `* xref:${filepath}[${title}]`;
-            }
-        }))
-        .pipe(rename('nav.adoc'))
-        .pipe(dest('components/modules/ROOT/'))
-}
-
 function createUserManualNav() {
     return src('user-manual-nav.adoc.template')
         .pipe(insertGeneratedNotice())
-        .pipe(inject(src('../core/camel-base/src/main/docs/*-language.adoc').pipe(sort()), {
+        .pipe(inject(src('../core/camel-base/src/main/docs/*.adoc').pipe(sort()), {
             removeTags: true,
             name: 'languages',
             transform: (filename, file) => {
@@ -199,7 +184,7 @@ const symlinks = parallel(
   series(deleteComponentImageSymlinks, createComponentImageSymlinks),
   series(deleteUserManualSymlinks, createUserManualSymlinks)
 );
-const nav = parallel(createComponentNav, createUserManualNav);
+const nav = parallel(createUserManualNav);
 const examples = series(deleteExamples, createUserManualExamples, createComponentExamples);
 
 exports.symlinks = symlinks;

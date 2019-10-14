@@ -1,0 +1,48 @@
+== Camel Console Example
+
+=== Introduction
+
+This is a simple example that shows how to get started with Camel.
+
+This is a beginner's example that demonstrates how to get started with
+Apache Camel. In this example we integrate with the console using the
+Stream component. The example is interactive - it reads input from the
+console, and then transforms the input to upper case and prints it back
+to the console.
+
+This is implemented with a Camel route defined in the Spring XML
+
+=== Build
+
+You will need to compile this example first:
+
+....
+mvn compile
+....
+
+=== Run
+
+To run the example type
+
+....
+mvn camel:run
+....
+
+You can see the routing rules by looking at the XML in the directory:
+`+src/main/resources/META-INF/spring+`
+
+To stop the example hit ctrl+c
+
+You can also run the example from your editor such as Eclipse, IDEA etc,
+by opening the org.apache.camel.example.console.CamelConsoleMain class
+and then right click, and chose run java application.
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

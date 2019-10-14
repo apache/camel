@@ -26,7 +26,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
     private static final String SERVICE_NAME = "http-service";
@@ -90,7 +90,7 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
     // *************************************************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

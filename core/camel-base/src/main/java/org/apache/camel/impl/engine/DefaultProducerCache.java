@@ -27,7 +27,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
+import org.apache.camel.StatefulService;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.SharedCamelInternalProcessor;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
@@ -37,11 +39,16 @@ import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of {@link ProducerCache}.
  */
 public class DefaultProducerCache extends ServiceSupport implements ProducerCache {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultProducerCache.class);
+    private static final long ACQUIRE_WAIT_TIME = 30000;
 
     private final CamelContext camelContext;
     private final ServicePool<AsyncProducer> producers;
@@ -106,6 +113,27 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             AsyncProducer producer = producers.acquire(endpoint);
             if (statistics != null) {
                 statistics.onHit(endpoint.getEndpointUri());
+            }
+            // if producer is starting then wait for it to be ready
+            if (producer instanceof StatefulService) {
+                StatefulService ss = (StatefulService) producer;
+                if (ss.isStarting()) {
+                    LOG.trace("Waiting for producer to finish starting: {}", producer);
+                    StopWatch watch = new StopWatch();
+                    boolean done = false;
+                    while (!done) {
+                        done = !ss.isStarting() || watch.taken() > ACQUIRE_WAIT_TIME;
+                        if (!done) {
+                            Thread.sleep(5);
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Waiting {} ms for producer to finish starting: {} state: {}", watch.taken(), producer, ss.getStatus());
+                            }
+                        }
+                    }
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Waited {} ms for producer to finish starting: {} state: {}", watch.taken(), producer, ss.getStatus());
+                    }
+                }
             }
             return producer;
         } catch (Throwable e) {

@@ -2146,7 +2146,8 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2157,7 +2158,8 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2897,7 +2899,8 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2908,7 +2911,8 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -3176,7 +3180,8 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -3187,7 +3192,8 @@ public interface FileEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option will be converted to a <code>int</code> type.
          * 

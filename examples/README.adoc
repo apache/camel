@@ -268,12 +268,12 @@ Number of Examples: 115 (0 deprecated)
 |===
 // examples: END
 
+== Help and contributions
 
-== Forum, Help, etc
+If you hit any problem using Camel or have some feedback, 
+then please https://camel.apache.org/support.html[let us know].
 
-If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
-
-Please help us make Apache Camel better - we appreciate any feedback you may
-have.  Enjoy!
+We also love contributors, 
+so https://camel.apache.org/contributing.html[get involved] :-)
 
 The Camel riders!

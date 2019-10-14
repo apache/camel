@@ -1,0 +1,43 @@
+== Spring XQuery Example
+
+=== Introduction
+
+This example shows how to
+
+* work with files and JMS
+* transform messages using XQuery
+* use Spring XML to configure all routing rules and components
+
+The example consumes messages from a directory, transforms them, then
+sends them to a queue.
+
+=== Build
+
+You will need to compile this example first:
+
+....
+mvn compile
+....
+
+=== Run
+
+To run the example using Maven, type
+
+....
+mvn camel:run
+....
+
+You can see the routing rules by looking at the Spring XML configuration
+at `+src/main/resources/META-INF/spring+`
+
+To stop the example hit ctrl+c
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

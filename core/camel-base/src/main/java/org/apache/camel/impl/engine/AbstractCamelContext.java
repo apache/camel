@@ -2191,7 +2191,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // try to load from maven properties first
         try {
             Properties p = new Properties();
-            is = getClass().getResourceAsStream("/META-INF/maven/org.apache.camel/camel-core/pom.properties");
+            is = getClass().getResourceAsStream("/META-INF/maven/org.apache.camel/camel-base/pom.properties");
             if (is != null) {
                 p.load(is);
                 version = p.getProperty("version", "");
