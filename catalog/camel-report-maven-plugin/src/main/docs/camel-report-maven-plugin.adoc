@@ -148,7 +148,7 @@ The maven plugin *validate* goal supports the following options which can be con
 | showAll | false | Whether to show all endpoints and simple expressions (both invalid and valid).
 |===
 
-For example to turn off ignorning usage of deprecated options from the command line, you can run:
+For example to turn off ignoring usage of deprecated options from the command line, you can run:
 
 ----
 $mvn camel-report:validate -Dcamel.ignoreDeprecated=true

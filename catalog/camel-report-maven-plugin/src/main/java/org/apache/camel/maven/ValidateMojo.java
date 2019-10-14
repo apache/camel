@@ -64,35 +64,30 @@ public class ValidateMojo extends AbstractExecMojo {
 
     /**
      * Whether to fail if invalid Camel endpoints was found. By default the plugin logs the errors at WARN level
-     *
      */
     @Parameter(property = "camel.failOnError", defaultValue = "false")
     private boolean failOnError;
 
     /**
      * Whether to log endpoint URIs which was un-parsable and therefore not possible to validate
-     *
      */
     @Parameter(property = "camel.logUnparseable", defaultValue = "false")
     private boolean logUnparseable;
 
     /**
      * Whether to include Java files to be validated for invalid Camel endpoints
-     *
      */
     @Parameter(property = "camel.includeJava", defaultValue = "true")
     private boolean includeJava;
 
     /**
      * Whether to include XML files to be validated for invalid Camel endpoints
-     *
      */
     @Parameter(property = "camel.includeXml", defaultValue = "true")
     private boolean includeXml;
 
     /**
      * Whether to include test source code
-     *
      */
     @Parameter(property = "camel.includeTest", defaultValue = "false")
     private boolean includeTest;
@@ -113,21 +108,18 @@ public class ValidateMojo extends AbstractExecMojo {
 
     /**
      * Whether to ignore unknown components
-     *
      */
     @Parameter(property = "camel.ignoreUnknownComponent", defaultValue = "true")
     private boolean ignoreUnknownComponent;
 
     /**
      * Whether to ignore incapable of parsing the endpoint uri
-     *
      */
     @Parameter(property = "camel.ignoreIncapable", defaultValue = "true")
     private boolean ignoreIncapable;
 
     /**
      * Whether to ignore deprecated options being used in the endpoint uri
-     *
      */
     @Parameter(property = "camel.ignoreDeprecated", defaultValue = "true")
     private boolean ignoreDeprecated;
@@ -136,14 +128,12 @@ public class ValidateMojo extends AbstractExecMojo {
      * Whether to ignore components that uses lenient properties. When this is true, then the uri validation is stricter
      * but would fail on properties that are not part of the component but in the uri because of using lenient properties.
      * For example using the HTTP components to provide query parameters in the endpoint uri.
-     *
      */
     @Parameter(property = "camel.ignoreLenientProperties", defaultValue = "true")
     private boolean ignoreLenientProperties;
 
     /**
      * Whether to show all endpoints and simple expressions (both invalid and valid).
-     *
      */
     @Parameter(property = "camel.showAll", defaultValue = "false")
     private boolean showAll;
@@ -151,7 +141,6 @@ public class ValidateMojo extends AbstractExecMojo {
     /**
      * Whether to allow downloading Camel catalog version from the internet. This is needed if the project
      * uses a different Camel version than this plugin is using by default.
-     *
      */
     @Parameter(property = "camel.downloadVersion", defaultValue = "true")
     private boolean downloadVersion;
@@ -159,14 +148,12 @@ public class ValidateMojo extends AbstractExecMojo {
     /**
      * Whether to validate for duplicate route ids. Route ids should be unique and if there are duplicates
      * then Camel will fail to startup.
-     *
      */
     @Parameter(property = "camel.duplicateRouteId", defaultValue = "true")
     private boolean duplicateRouteId;
 
     /**
      * Whether to validate direct/seda endpoints sending to non existing consumers.
-     *
      */
     @Parameter(property = "camel.directOrSedaPairCheck", defaultValue = "true")
     private boolean directOrSedaPairCheck;
@@ -330,7 +317,7 @@ public class ValidateMojo extends AbstractExecMojo {
             int deprecated = result.getDeprecated() != null ? result.getDeprecated().size() : 0;
             deprecatedOptions += deprecated;
 
-            boolean ok = result.isSuccess();
+            boolean ok = result.isSuccess() && !result.hasWarnings();
             if (!ok && ignoreUnknownComponent && result.getUnknownComponent() != null) {
                 // if we failed due unknown component then be okay if we should ignore that
                 unknownComponents++;
@@ -378,7 +365,7 @@ public class ValidateMojo extends AbstractExecMojo {
                     sb.append(detail.getFileName());
                 }
                 sb.append("\n\n");
-                String out = result.summaryErrorMessage(false, ignoreDeprecated);
+                String out = result.summaryErrorMessage(false, ignoreDeprecated, true);
                 sb.append(out);
                 sb.append("\n\n");
 
