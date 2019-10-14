@@ -59,7 +59,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (119 parameters):
+=== Query Parameters (118 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -108,7 +108,6 @@ with the following path and query parameters:
 | *autoCreate* (advanced) | Automatically create missing directories in the file's pathname. For the file consumer, that means creating the starting directory. For the file producer, it means the directory the files should be written to. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *bindAddress* (advanced) | Specifies the address of the local interface against which the connection should bind. |  | String
-| *bufferSize* (advanced) | Write buffer sized in bytes. | 131072 | int
 | *bulkRequests* (advanced) | Specifies how many requests may be outstanding at any one time. Increasing this value may slightly improve file transfer speed but will increase memory usage. |  | Integer
 | *compression* (advanced) | To use compression. Specify a level from 1 to 10. Important: You must manually add the needed JSCH zlib JAR to the classpath for compression support. |  | int
 | *connectTimeout* (advanced) | Sets the connect timeout for waiting for a connection to be established Used by both FTPClient and JSCH | 10000 | int
