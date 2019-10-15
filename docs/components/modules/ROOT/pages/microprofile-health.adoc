@@ -1,5 +1,6 @@
 [[MicroProfileHealth-MicroProfileHealthComponent]]
-== MicroProfile Health
+= MicroProfile Health
+:page-source: components/camel-microprofile-health/src/main/docs/microprofile-health.adoc
 
 *Available as of Camel 3.0*
 
@@ -7,7 +8,20 @@ The microprofile-health component is used for bridging https://microprofile.io/p
 
 This enables you to write checks using the Camel health APIs and have them exposed via MicroProfile Health readiness and liveness checks.
 
-=== Usage
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-microprofile-health</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== Usage
 
 By default, Camel health checks are registered as both MicroProfile Health liveness and readiness checks. To have finer control over whether a Camel health check should
 be considered either a readiness or liveness check, you can extend the `AbstractCamelMicroProfileLivenessCheck` and `AbstractCamelMicroProfileReadinessCheck` classes.
@@ -36,7 +50,7 @@ public class MyHealthCheck extends AbstractCamelMicroProfileLivenessCheck {
 }
 ----
 
-=== Auto discovery
+== Auto discovery
 
 The expectation is that this component is run within a MicroProfile container, where CDI and a library implementing the MicroProfile health specification is available.
 E.g https://github.com/smallrye/smallrye-health[SmallRye Health].
