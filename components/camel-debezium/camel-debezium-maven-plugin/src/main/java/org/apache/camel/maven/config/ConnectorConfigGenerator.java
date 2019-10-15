@@ -177,7 +177,13 @@ public final class ConnectorConfigGenerator {
                         .setPrivate()
                         .setLiteralInitializer(fieldConfig.getDefaultValueAsString());
 
-                field.getJavaDoc().setText(fieldName);
+                String description = fieldConfig.getDescription();
+
+                if (description == null || description.isEmpty()) {
+                    description = String.format("Description is not available here, please check Debezium website for corresponding key '%s' description.", fieldName);
+                }
+
+                field.getJavaDoc().setText(description);
 
                 final Annotation annotation = field.addAnnotation(UriParam.class)
                         .setLiteralValue("label", "LABEL_NAME");
@@ -203,9 +209,7 @@ public final class ConnectorConfigGenerator {
                         .addParameter(fieldConfig.getRawType(), fieldConfig.getFieldName())
                         .setPublic()
                         .setReturnType(Void.TYPE)
-                        .setBody(String.format("this.%1$s = %1$s;", fieldConfig.getFieldName()))
-                        .getJavaDoc()
-                        .setText(fieldConfig.getDescription());
+                        .setBody(String.format("this.%1$s = %1$s;", fieldConfig.getFieldName()));
 
                 // getters
                 javaClass.addMethod()
