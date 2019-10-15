@@ -36,6 +36,20 @@
     <properties>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>R3</id>
+            <name>R3 Maven</name>
+            <url>https://dl.bintray.com/r3/corda/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
