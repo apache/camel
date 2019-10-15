@@ -30,7 +30,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 @Mojo(name = "generate-mysql-connector-config", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
-public class GenerateMySqlConnectorConfig extends AbstractGenerateConnectorConfig {
+public class GenerateMySqlConnectorConfigMojo extends AbstractGenerateConnectorConfig {
 
     @Override
     protected Set<String> getRequiredFields() {
