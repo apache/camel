@@ -432,7 +432,7 @@ public class SubscriptionHelper extends ServiceSupport {
                                         }
                                     });
                                 } catch (InterruptedException e) {
-                                    LOG.error("Aborting subscribe on interrupt!", e);
+                                    LOG.warn("Aborting subscribe on interrupt!", e);
                                 }
                             }
                         }
