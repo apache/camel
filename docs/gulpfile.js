@@ -119,6 +119,21 @@ function insertSourceAttribute() {
     });
 }
 
+function createComponentNav() {
+    return src('component-nav.adoc.template')
+        .pipe(insertGeneratedNotice())
+        .pipe(inject(src(['../core/camel-base/src/main/docs/*-component.adoc', '../components/{*,*/*}/src/main/docs/*.adoc']).pipe(sort()), {
+            removeTags: true,
+            transform: (filename, file) => {
+                const filepath = path.basename(filename);
+                const title = titleFrom(file);
+                return `* xref:${filepath}[${title}]`;
+            }
+        }))
+        .pipe(rename('nav.adoc'))
+        .pipe(dest('components/modules/ROOT/'))
+}
+
 function createUserManualNav() {
     return src('user-manual-nav.adoc.template')
         .pipe(insertGeneratedNotice())
@@ -184,7 +199,7 @@ const symlinks = parallel(
   series(deleteComponentImageSymlinks, createComponentImageSymlinks),
   series(deleteUserManualSymlinks, createUserManualSymlinks)
 );
-const nav = parallel(createUserManualNav);
+const nav = parallel(createComponentNav, createUserManualNav);
 const examples = series(deleteExamples, createUserManualExamples, createComponentExamples);
 
 exports.symlinks = symlinks;
