@@ -58,7 +58,7 @@ The Debezium component supports 2 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (consumer) | Allow pre-configured Configurations to be set, you will need to extend MySqlConnectorEmbeddedDebeziumConfiguration in order to create the configuration for the component |  | MySqlConnectorEmbeddedDebeziumConfiguration
+| *configuration* (consumer) | Allow pre-configured Configurations to be set, you will need to extend EmbeddedDebeziumConfiguration in order to create the configuration for the component |  | EmbeddedDebeziumConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
@@ -83,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (16 parameters):
+=== Query Parameters (72 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -105,6 +105,62 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *bigintUnsignedHandlingMode* (mysql) | bigint.unsigned.handling.mode | long | String
+| *binlogBufferSize* (mysql) | binlog.buffer.size | 0 | int
+| *columnBlacklist* (mysql) | column.blacklist |  | String
+| *connectKeepAlive* (mysql) | connect.keep.alive | true | boolean
+| *connectKeepAliveIntervalMs* (mysql) | connect.keep.alive.interval.ms | 60000 | long
+| *connectTimeoutMs* (mysql) | connect.timeout.ms | 30000 | int
+| *databaseBlacklist* (mysql) | database.blacklist |  | String
+| *databaseHistory* (mysql) | database.history | class io.debezium.relational.history.FileDatabaseHistory | String
+| *databaseHistoryFileFilename* (mysql) | database.history.file.filename |  | String
+| *databaseHistoryKafka BootstrapServers* (mysql) | database.history.kafka.bootstrap.servers |  | String
+| *databaseHistoryKafka RecoveryAttempts* (mysql) | database.history.kafka.recovery.attempts | 100 | int
+| *databaseHistoryKafka RecoveryPollIntervalMs* (mysql) | database.history.kafka.recovery.poll.interval.ms | 100 | int
+| *databaseHistoryKafkaTopic* (mysql) | database.history.kafka.topic |  | String
+| *databaseHistorySkip UnparseableDdl* (mysql) | database.history.skip.unparseable.ddl | false | boolean
+| *databaseHistoryStoreOnly MonitoredTablesDdl* (mysql) | database.history.store.only.monitored.tables.ddl | false | boolean
+| *databaseHostname* (mysql) | database.hostname |  | String
+| *databaseInitialStatements* (mysql) | database.initial.statements |  | String
+| *databaseJdbcDriver* (mysql) | database.jdbc.driver | class com.mysql.cj.jdbc.Driver | String
+| *databasePassword* (mysql) | *Required* database.password |  | String
+| *databasePort* (mysql) | database.port | 3306 | int
+| *databaseServerId* (mysql) | database.server.id | 6204 | long
+| *databaseServerIdOffset* (mysql) | database.server.id.offset | 10000 | long
+| *databaseServerName* (mysql) | *Required* database.server.name |  | String
+| *databaseSslKeystore* (mysql) | database.ssl.keystore |  | String
+| *databaseSslKeystorePassword* (mysql) | database.ssl.keystore.password |  | String
+| *databaseSslMode* (mysql) | database.ssl.mode | disabled | String
+| *databaseSslTruststore* (mysql) | database.ssl.truststore |  | String
+| *databaseSslTruststore Password* (mysql) | database.ssl.truststore.password |  | String
+| *databaseUser* (mysql) | database.user |  | String
+| *databaseWhitelist* (mysql) | database.whitelist |  | List
+| *ddlParserMode* (mysql) | ddl.parser.mode | antlr | String
+| *decimalHandlingMode* (mysql) | decimal.handling.mode | precise | String
+| *enableTimeAdjuster* (mysql) | enable.time.adjuster | true | boolean
+| *eventDeserializationFailure HandlingMode* (mysql) | event.deserialization.failure.handling.mode | fail | String
+| *gtidNewChannelPosition* (mysql) | gtid.new.channel.position | latest | String
+| *gtidSourceExcludes* (mysql) | gtid.source.excludes |  | String
+| *gtidSourceFilterDmlEvents* (mysql) | gtid.source.filter.dml.events | true | boolean
+| *gtidSourceIncludes* (mysql) | gtid.source.includes |  | List
+| *heartbeatIntervalMs* (mysql) | heartbeat.interval.ms | 0 | int
+| *heartbeatTopicsPrefix* (mysql) | heartbeat.topics.prefix | __debezium-heartbeat | String
+| *includeQuery* (mysql) | include.query | false | boolean
+| *includeSchemaChanges* (mysql) | include.schema.changes | true | boolean
+| *inconsistentSchemaHandling Mode* (mysql) | inconsistent.schema.handling.mode | fail | String
+| *maxBatchSize* (mysql) | max.batch.size | 2048 | int
+| *maxQueueSize* (mysql) | max.queue.size | 8192 | int
+| *pollIntervalMs* (mysql) | poll.interval.ms | 500 | long
+| *snapshotDelayMs* (mysql) | snapshot.delay.ms | 0 | long
+| *snapshotFetchSize* (mysql) | snapshot.fetch.size |  | int
+| *snapshotLockingMode* (mysql) | snapshot.locking.mode | minimal | String
+| *snapshotMode* (mysql) | snapshot.mode | initial | String
+| *snapshotNewTables* (mysql) | snapshot.new.tables | off | String
+| *tableBlacklist* (mysql) | table.blacklist |  | String
+| *tableIgnoreBuiltin* (mysql) | table.ignore.builtin | true | boolean
+| *tableWhitelist* (mysql) | table.whitelist |  | List
+| *timePrecisionMode* (mysql) | time.precision.mode | adaptive_time_microseconds | String
+| *tombstonesOnDelete* (mysql) | tombstones.on.delete | false | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START

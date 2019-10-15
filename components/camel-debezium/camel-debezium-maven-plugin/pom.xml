@@ -47,6 +47,19 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- debezium connectors -->
+        <dependency>
+            <groupId>io.debezium</groupId>
+            <artifactId>debezium-connector-mysql</artifactId>
+            <version>${debezium-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.debezium</groupId>
+            <artifactId>debezium-connector-postgres</artifactId>
+            <version>${debezium-version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-package-maven-plugin</artifactId>
@@ -66,18 +79,10 @@
             <artifactId>commons-text</artifactId>
             <version>${commons-text-version}</version>
         </dependency>
-        <!-- debezium connectors -->
         <dependency>
-            <groupId>io.debezium</groupId>
-            <artifactId>debezium-connector-mysql</artifactId>
-            <version>${debezium-version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.debezium</groupId>
-            <artifactId>debezium-connector-postgres</artifactId>
-            <version>${debezium-version}</version>
-            <scope>provided</scope>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -95,6 +100,41 @@
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>versions</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>validate</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>readme</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

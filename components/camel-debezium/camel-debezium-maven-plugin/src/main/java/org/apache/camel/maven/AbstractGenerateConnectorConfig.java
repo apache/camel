@@ -52,6 +52,10 @@ public abstract class AbstractGenerateConnectorConfig extends AbstractMojo {
         }
     }
 
+    public void setGeneratedSrcDir(final File generatedSrcDir) {
+        this.generatedSrcDir = generatedSrcDir;
+    }
+
     protected abstract Set<String> getRequiredFields();
 
     protected abstract Map<String, Object> getOverrideFields();
