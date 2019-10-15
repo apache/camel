@@ -1,5 +1,5 @@
-[[MicroProfileConfig-MicroProfileConfigComponent]]
-= MicroProfile Config Component
+[[MicroProfileConfig]]
+= MicroProfile Config
 :page-source: components/camel-microprofile-config/src/main/docs/microprofile-config.adoc
 
 *Available as of Camel 3.0*

@@ -976,7 +976,7 @@ Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 | xref:json-xstream-dataformat.adoc[JSon XStream] (camel-xstream) | 2.0 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
-| xref:jsonApi-dataformat.adoc[jsonApi] (camel-jsonapi) | 3.0 | JsonApi data format is used for marshal and unmarshal Json API object.
+| xref:jsonApi-dataformat.adoc[JSonApi] (camel-jsonapi) | 3.0 | JSonApi data format is used for marshal and unmarshal Json API object.
 
 | xref:lzf-dataformat.adoc[LZF Deflate Compression] (camel-lzf) | 2.17 | The LZF data format is a message compression and de-compression format (uses the LZF deflate algorithm).
 

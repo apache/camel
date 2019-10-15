@@ -1,13 +1,10 @@
 [[jsonApi-dataformat]]
-= jsonApi DataFormat
+= JSonApi DataFormat
 
-*Available as of Camel version 3.0*
-
-== JsonAPI Options
 *Available as of Camel version 3.0*
 
 // dataformat options: START
-The jsonApi dataformat supports 3 options, which are listed below.
+The JSonApi dataformat supports 3 options, which are listed below.
 
 
 
@@ -26,18 +23,18 @@ The jsonApi dataformat supports 3 options, which are listed below.
 == Dependencies
 
 To use JsonAPI in your camel routes you need to add the dependency
-on *camel-jsonApi* which implements this data format.
+on *camel-jsonapi* which implements this data format.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
 [source,xml]
-----------------------------------------------------------
+----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-jacksonxml</artifactId>
+  <artifactId>camel-jsonapi</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
-----------------------------------------------------------
+----
