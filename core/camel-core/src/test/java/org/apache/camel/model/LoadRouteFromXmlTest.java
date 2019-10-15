@@ -39,7 +39,8 @@ public class LoadRouteFromXmlTest extends ContextTestSupport {
         // START SNIPPET: e1
         // load route from XML and add them to the existing camel context
         InputStream is = getClass().getResourceAsStream("barRoute.xml");
-        context.addRouteDefinitions(is);
+        RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+        context.addRouteDefinitions(routes.getRoutes());
         // END SNIPPET: e1
 
         assertNotNull("Loaded bar route should be there", context.getRoute("bar"));
