@@ -1,6 +1,6 @@
+[[robotframework-component]]
 = Robot Framework Component
 
-*Available as of Camel version 3.0*
 *Available as of Camel version 3.0*
 
 
@@ -13,9 +13,9 @@ Java or Pyhton.
 This component will let you execute business logic of acceptence test cases 
 in Robot language on which you can pass parameters to feed data via power 
 of Camel Routes, however there is no reverse binding of parameters back where
-you can pass values back into Camel exchange. Therefore, for that reason, it actually
-acts like a template language passing camel exchanges by binding data into the test 
-cases implemented. 
+you can pass values back into Camel exchange. Therefore, for that reason,
+it actually acts like a template language passing camel exchanges by binding
+data into the test cases implemented. 
 
 [source,xml]
 ----
