@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,16 +35,13 @@ import org.apache.camel.impl.engine.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
-import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteFilters;
-import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.reifier.RouteReifier;
@@ -70,14 +66,6 @@ public class DefaultModel implements Model {
 
     public CamelContext getCamelContext() {
         return camelContext;
-    }
-
-    @Override
-    public void addRouteDefinitions(InputStream is) throws Exception {
-        RoutesDefinition def = ModelHelper.loadRoutesDefinition(camelContext, is);
-        if (def != null) {
-            addRouteDefinitions(def.getRoutes());
-        }
     }
 
     @Override
@@ -142,14 +130,6 @@ public class DefaultModel implements Model {
     @Override
     public synchronized List<RestDefinition> getRestDefinitions() {
         return restDefinitions;
-    }
-
-    @Override
-    public void addRestDefinitions(InputStream is, boolean addToRoutes) throws Exception {
-        RestsDefinition rests = ModelHelper.loadRestsDefinition(camelContext, is);
-        if (rests != null) {
-            addRestDefinitions(rests.getRests(), addToRoutes);
-        }
     }
 
     @Override

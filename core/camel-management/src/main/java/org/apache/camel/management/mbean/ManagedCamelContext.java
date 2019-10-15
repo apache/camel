@@ -484,7 +484,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, xml);
         try {
             // add will remove existing route first
-            context.getExtension(Model.class).addRouteDefinitions(is);
+            RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+            context.getExtension(Model.class).addRouteDefinitions(routes.getRoutes());
         } catch (Exception e) {
             // log the error as warn as the management api may be invoked remotely over JMX which does not propagate such exception
             String msg = "Error updating routes from xml: " + xml + " due: " + e.getMessage();
