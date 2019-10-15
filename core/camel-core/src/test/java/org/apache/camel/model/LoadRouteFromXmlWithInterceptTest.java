@@ -31,7 +31,8 @@ public class LoadRouteFromXmlWithInterceptTest extends ContextTestSupport {
     @Test
     public void testLoadRouteFromXmlWithIntercept() throws Exception {
         InputStream is = getClass().getResourceAsStream("barInterceptorRoute.xml");
-        context.addRouteDefinitions(is);
+        RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+        context.addRouteDefinitions(routes.getRoutes());
         context.start();
 
         assertNotNull("Loaded bar route should be there", context.getRoute("bar"));
