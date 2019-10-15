@@ -28,7 +28,7 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * JsonApi {@link org.apache.camel.spi.DataFormat} for marshal/unmarshal
+ * JSonApi data format for marshal/unmarshal
  */
 @Dataformat("jsonApi")
 public class JsonApiDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
