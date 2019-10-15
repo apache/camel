@@ -27,7 +27,7 @@ public class CamelJsonApiTest extends BaseKarafTest {
 
     @Test
     public void test() throws Exception {
-        testDataFormat(COMPONENT, "jsonApi");
+        testDataFormat(COMPONENT, "json-api");
     }
 
 }
