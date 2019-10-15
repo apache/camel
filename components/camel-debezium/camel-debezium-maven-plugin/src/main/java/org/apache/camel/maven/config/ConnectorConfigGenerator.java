@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.maven.config;
 
 import java.io.OutputStream;
@@ -33,6 +49,15 @@ public final class ConnectorConfigGenerator {
 
     private final JavaClass javaClass = new JavaClass(getClass().getClassLoader());
 
+    private ConnectorConfigGenerator(final SourceConnector connector, final Map<String, ConnectorConfigField> dbzConfigFields, final String connectorName) {
+        this.connector = connector;
+        this.dbzConfigFields = dbzConfigFields;
+        this.connectorName = connectorName;
+        this.className = connectorName + "Connector" + PARENT_TYPE;
+        // generate our java class
+        generateJavaClass();
+    }
+
     public static ConnectorConfigGenerator create(final SourceConnector connector, final Class<?> dbzConfigClass) {
         return create(connector, dbzConfigClass, Collections.emptySet(), Collections.emptyMap());
     }
@@ -63,15 +88,6 @@ public final class ConnectorConfigGenerator {
         final String connectorName = dbzConfigClass.getSimpleName().replace("ConnectorConfig", "");
 
         return new ConnectorConfigGenerator(connector, ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(configDef, dbzConfigClass, requiredFields, overridenDefaultValues), connectorName);
-    }
-
-    private ConnectorConfigGenerator(final SourceConnector connector, final Map<String, ConnectorConfigField> dbzConfigFields, final String connectorName) {
-        this.connector = connector;
-        this.dbzConfigFields = dbzConfigFields;
-        this.connectorName = connectorName;
-        this.className = connectorName + "Connector" + PARENT_TYPE;
-        // generate our java class
-        generateJavaClass();
     }
 
     public String getConnectorName() {
@@ -251,6 +267,6 @@ public final class ConnectorConfigGenerator {
     }
 
     private boolean isFieldInternalOrDeprecated(final ConnectorConfigField field) {
-        return (field.isInternal() || field.isDeprecated());
+        return field.isInternal() || field.isDeprecated();
     }
 }

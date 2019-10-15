@@ -64,17 +64,20 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.8</version>
+            <version>${commons-text-version}</version>
         </dependency>
+        <!-- debezium connectors -->
         <dependency>
             <groupId>io.debezium</groupId>
             <artifactId>debezium-connector-mysql</artifactId>
             <version>${debezium-version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.debezium</groupId>
             <artifactId>debezium-connector-postgres</artifactId>
             <version>${debezium-version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
