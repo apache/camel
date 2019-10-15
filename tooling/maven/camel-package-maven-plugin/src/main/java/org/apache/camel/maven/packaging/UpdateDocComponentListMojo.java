@@ -106,7 +106,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
     /**
      * The website doc for components
      */
-    @Parameter(defaultValue = "${project.directory}/../../../docs/components/modules/ROOT/nav.adoc")
+    @Parameter(defaultValue = "${project.directory}/../../../docs/components/modules/ROOT/pages/index.adoc")
     protected File websiteDocFile;
 
     /**
