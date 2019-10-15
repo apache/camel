@@ -104,13 +104,17 @@ public final class ConnectorConfigGenerator {
 
     public void printGeneratedClass(final OutputStream outputStream) {
         final PrintStream printStreams = new PrintStream(outputStream, true);
-        printStreams.println(toString());
+        printStreams.println(printClassAsString());
         printStreams.close();
+    }
+
+    public String printClassAsString() {
+        return javaClass.printClass(true);
     }
 
     @Override
     public String toString() {
-        return javaClass.printClass(true);
+        return printClassAsString();
     }
 
     private static boolean isConfigClassValid(final Class<?> configClass) {

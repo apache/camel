@@ -29,7 +29,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 @Mojo(name = "generate-postgres-connector-config", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
-public class GeneratePostgresConnectorConfig extends AbstractGenerateConnectorConfig {
+public class GeneratePostgresConnectorConfigMojo extends AbstractGenerateConnectorConfig {
 
     @Override
     protected Set<String> getRequiredFields() {
