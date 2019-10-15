@@ -31,6 +31,9 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StartupListener;
 import org.apache.camel.main.MainDurationEventNotifier;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.ModelHelper;
+import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.spi.EventNotifier;
@@ -305,7 +308,8 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                 Resource[] xmlRoutes = applicationContext.getResources(part);
                 for (Resource xmlRoute : xmlRoutes) {
                     LOG.debug("Found XML route: {}", xmlRoute);
-                    camelContext.getExtension(Model.class).addRouteDefinitions(xmlRoute.getInputStream());
+                    RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camelContext, xmlRoute.getInputStream());
+                    camelContext.getExtension(Model.class).addRouteDefinitions(routes.getRoutes());
                 }
             } catch (FileNotFoundException e) {
                 LOG.debug("No XML routes found in {}. Skipping XML routes detection.", part);
@@ -320,7 +324,8 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
             try {
                 final Resource[] xmlRests = applicationContext.getResources(part);
                 for (final Resource xmlRest : xmlRests) {
-                    camelContext.getExtension(Model.class).addRestDefinitions(xmlRest.getInputStream(), true);
+                    RestsDefinition rests = ModelHelper.loadRestsDefinition(camelContext, xmlRest.getInputStream());
+                    camelContext.getExtension(Model.class).addRestDefinitions(rests.getRests(), true);
                 }
             } catch (FileNotFoundException e) {
                 LOG.debug("No XML rests found in {}. Skipping XML rests detection.", part);

@@ -98,7 +98,8 @@ public class CamelKieServerExtension implements KieServerExtension {
 
             try (InputStream is = this.getClass().getResourceAsStream("/global-camel-routes.xml")) {
                 if (is != null) {
-                    camelContext.addRouteDefinitions(is);
+                    RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camelContext, is);
+                    camelContext.addRouteDefinitions(routes.getRoutes());
                 }
             } catch (Exception e) {
                 LOGGER.error("Error while adding Camel context for KIE Server", e);

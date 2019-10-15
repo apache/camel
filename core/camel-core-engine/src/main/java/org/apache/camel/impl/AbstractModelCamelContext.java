@@ -107,11 +107,6 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     }
 
     @Override
-    public void addRouteDefinitions(InputStream is) throws Exception {
-        model.addRouteDefinitions(is);
-    }
-
-    @Override
     public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         model.addRouteDefinitions(routeDefinitions);
     }
@@ -134,11 +129,6 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     @Override
     public List<RestDefinition> getRestDefinitions() {
         return model.getRestDefinitions();
-    }
-
-    @Override
-    public void addRestDefinitions(InputStream is, boolean addToRoutes) throws Exception {
-        model.addRestDefinitions(is, addToRoutes);
     }
 
     @Override

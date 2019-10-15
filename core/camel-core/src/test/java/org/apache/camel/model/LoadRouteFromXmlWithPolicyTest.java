@@ -44,7 +44,8 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
     @Test
     public void testLoadRouteFromXmlWitPolicy() throws Exception {
         InputStream is = getClass().getResourceAsStream("barPolicyRoute.xml");
-        context.addRouteDefinitions(is);
+        RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+        context.addRouteDefinitions(routes.getRoutes());
         context.start();
 
         assertNotNull("Loaded foo route should be there", context.getRoute("foo"));
