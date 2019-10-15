@@ -531,12 +531,12 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         
         Message message = camelExchange.getMessage();
         Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-        int codeToUse = (currentCode == null ? defaultCode : currentCode);
+        int codeToUse = currentCode == null ? defaultCode : currentCode;
         
         if (codeToUse != 500) {
             if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
                 // no content 
-                codeToUse = (currentCode == null ? 204 : currentCode);
+                codeToUse = currentCode == null ? 204 : currentCode;
             }
         }
         
