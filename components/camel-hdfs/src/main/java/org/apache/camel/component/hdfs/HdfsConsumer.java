@@ -38,12 +38,10 @@ import org.apache.hadoop.fs.PathFilter;
 
 public final class HdfsConsumer extends ScheduledPollConsumer {
 
-    public static final long DEFAULT_CONSUMER_INITIAL_DELAY = 10 * 1000L;
-
     private final HdfsConfiguration config;
     private final StringBuilder hdfsPath;
     private final Processor processor;
-    private final ReadWriteLock rwlock = new ReentrantReadWriteLock();
+    private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
     public HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration config) {
         super(endpoint, processor);
@@ -69,24 +67,21 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     }
 
     private HdfsInfo setupHdfs(boolean onStartup) throws IOException {
+        String hdfsFsDescription = config.getFileSystemLabel(hdfsPath.toString());
         // if we are starting up then log at info level, and if runtime then log at debug level to not flood the log
         if (onStartup) {
-            log.info("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", config.getHostName(), config.getPort(), hdfsPath);
+            log.info("Connecting to hdfs file-system {} (may take a while if connection is not available)", hdfsFsDescription);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", config.getHostName(), config.getPort(), hdfsPath);
-            }
+            log.debug("Connecting to hdfs file-system {} (may take a while if connection is not available)", hdfsFsDescription);
         }
 
         // hadoop will cache the connection by default so its faster to get in the poll method
         HdfsInfo answer = HdfsInfoFactory.newHdfsInfo(this.hdfsPath.toString(), config);
 
         if (onStartup) {
-            log.info("Connected to hdfs file-system {}:{}/{}", config.getHostName(), config.getPort(), hdfsPath);
+            log.info("Connected to hdfs file-system {}", hdfsFsDescription);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Connected to hdfs file-system {}:{}/{}", config.getHostName(), config.getPort(), hdfsPath);
-            }
+            log.debug("Connected to hdfs file-system {}", hdfsFsDescription);
         }
         return answer;
     }
@@ -199,11 +194,11 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
 
     private HdfsInputStream createInputStream(FileStatus fileStatus) {
         try {
-            this.rwlock.writeLock().lock();
+            this.rwLock.writeLock().lock();
 
             return HdfsInputStream.createInputStream(fileStatus.getPath().toString(), this.config);
         } finally {
-            this.rwlock.writeLock().unlock();
+            this.rwLock.writeLock().unlock();
         }
     }
 

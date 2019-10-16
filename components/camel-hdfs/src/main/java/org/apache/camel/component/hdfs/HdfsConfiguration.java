@@ -98,6 +98,7 @@ public class HdfsConfiguration {
     private String kerberosKeytabLocation;
 
     public HdfsConfiguration() {
+        // default constructor
     }
 
     private Boolean getBoolean(Map<String, Object> hdfsSettings, String param, Boolean dflt) {
@@ -207,7 +208,7 @@ public class HdfsConfiguration {
 
     private List<String> getNamedNodeList(Map<String, Object> hdfsSettings) {
         namedNodes = getString(hdfsSettings, "namedNodes", namedNodes);
-        
+
         if (isNotEmpty(namedNodes)) {
             return Arrays.stream(namedNodes.split(",")).distinct().collect(Collectors.toList());
         }
@@ -560,6 +561,10 @@ public class HdfsConfiguration {
         return namedNodeList;
     }
 
+    public boolean hasClusterConfiguration() {
+        return !getNamedNodeList().isEmpty();
+    }
+
     public String getKerberosConfigFileLocation() {
         return kerberosConfigFileLocation;
     }
@@ -595,7 +600,17 @@ public class HdfsConfiguration {
     }
 
     public boolean isKerberosAuthentication() {
-        return isNotEmpty(namedNodes) && isNotEmpty(kerberosConfigFileLocation) && isNotEmpty(kerberosUsername) && isNotEmpty(kerberosKeytabLocation);
+        return isNotEmpty(kerberosConfigFileLocation) && isNotEmpty(kerberosUsername) && isNotEmpty(kerberosKeytabLocation);
+    }
+
+    /**
+     * Get the label of the hdfs file system like: HOST_NAME:PORT/PATH
+     *
+     * @param path
+     * @return HOST_NAME:PORT/PATH
+     */
+    String getFileSystemLabel(String path) {
+        return String.format("%s:%s/%s", getHostName(), getPort(), path);
     }
 
 }

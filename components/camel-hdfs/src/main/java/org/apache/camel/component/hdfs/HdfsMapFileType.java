@@ -72,7 +72,7 @@ class HdfsMapFileType extends DefaultHdfsFileType {
             HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
             Class<? extends WritableComparable> keyWritableClass = configuration.getKeyType().getWritableClass();
             Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
-            rout = new MapFile.Writer(hdfsInfo.getConf(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass), MapFile.Writer.valueClass(valueWritableClass),
+            rout = new MapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass), MapFile.Writer.valueClass(valueWritableClass),
                     MapFile.Writer.compression(configuration.getCompressionType(), configuration.getCompressionCodec().getCodec()),
                     MapFile.Writer.progressable(() -> {
                     }));
@@ -87,7 +87,7 @@ class HdfsMapFileType extends DefaultHdfsFileType {
         try {
             Closeable rin;
             HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
-            rin = new MapFile.Reader(new Path(hdfsPath), hdfsInfo.getConf());
+            rin = new MapFile.Reader(new Path(hdfsPath), hdfsInfo.getConfiguration());
             return rin;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);

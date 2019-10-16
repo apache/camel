@@ -35,7 +35,7 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         super.setUp();
@@ -53,7 +53,7 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
 
     @Test
     public void testSimpleWriteFileWithIdleSplit() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -86,7 +86,7 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
     }
 
     private void doTest(int routeNr) throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -108,7 +108,7 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 

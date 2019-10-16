@@ -43,10 +43,10 @@ public class HdfsOsgiHelper {
             Configuration conf = new Configuration();
             // set that as the hdfs configuration's classloader
             conf.setClassLoader(cl);
-            for (String key : fileSystems.keySet()) {
-                URI uri = URI.create(key);
-                conf.setClass(String.format("fs.%s.impl", uri.getScheme()), cl.loadClass(fileSystems.get(key)), FileSystem.class);
-                LOG.debug("Successfully loaded class: {}", fileSystems.get(key));
+            for (Map.Entry<String, String> fsEntry : fileSystems.entrySet()) {
+                URI uri = URI.create(fsEntry.getKey());
+                conf.setClass(String.format("fs.%s.impl", uri.getScheme()), cl.loadClass(fsEntry.getValue()), FileSystem.class);
+                LOG.debug("Successfully loaded class: {}", fsEntry.getValue());
                 FileSystem.get(uri, conf);
                 LOG.debug("Successfully got uri: {} from FileSystem Object", uri);
             }

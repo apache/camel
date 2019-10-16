@@ -17,22 +17,64 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.IOException;
+import java.net.URI;
 
-import javax.security.auth.login.Configuration;
+import org.apache.camel.component.hdfs.kerberos.KerberosAuthentication;
+import org.apache.camel.component.hdfs.kerberos.KerberosConfigurationBuilder;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 
 public final class HdfsInfoFactory {
 
     private HdfsInfoFactory() {
+        // hidden
     }
 
-    public static HdfsInfo newHdfsInfo(String hdfsPath, HdfsConfiguration configuration) throws IOException {
+    static HdfsInfo newHdfsInfo(String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
         // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
-        Configuration auth = HdfsComponent.getJAASConfiguration();
+        javax.security.auth.login.Configuration auth = HdfsComponent.getJAASConfiguration();
         try {
-            return new HdfsInfo(hdfsPath, configuration);
+            return newHdfsInfoWithoutAuth(hdfsPath, endpointConfig);
         } finally {
             HdfsComponent.setJAASConfiguration(auth);
         }
+    }
+
+    static HdfsInfo newHdfsInfoWithoutAuth(String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
+        Configuration configuration = newConfiguration(endpointConfig);
+        FileSystem fileSystem = newFileSystem(configuration, hdfsPath, endpointConfig);
+        Path path = new Path(hdfsPath);
+
+        return new HdfsInfo(configuration, fileSystem, path);
+    }
+
+    static Configuration newConfiguration(HdfsConfiguration endpointConfig) {
+        Configuration configuration = new Configuration();
+
+        if (endpointConfig.isKerberosAuthentication()) {
+            KerberosConfigurationBuilder.withKerberosConfiguration(configuration, endpointConfig);
+        }
+
+        if (endpointConfig.hasClusterConfiguration()) {
+            HaConfigurationBuilder.withClusterConfiguration(configuration, endpointConfig);
+        }
+
+        return configuration;
+    }
+
+    /**
+     * this will connect to the hadoop hdfs file system, and in case of no connection
+     * then the hardcoded timeout in hadoop is 45 x 20 sec = 15 minutes
+     */
+    static FileSystem newFileSystem(Configuration configuration, String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
+        if (endpointConfig.isKerberosAuthentication()) {
+            String userName = endpointConfig.getKerberosUsername();
+            String keytabLocation = endpointConfig.getKerberosKeytabLocation();
+            new KerberosAuthentication(configuration, userName, keytabLocation).loginWithKeytab();
+        }
+
+        return FileSystem.get(URI.create(hdfsPath), configuration);
     }
 
 }

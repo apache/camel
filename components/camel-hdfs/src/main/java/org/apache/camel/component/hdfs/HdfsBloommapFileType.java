@@ -73,7 +73,7 @@ class HdfsBloommapFileType extends DefaultHdfsFileType {
             HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
             Class<? extends WritableComparable> keyWritableClass = configuration.getKeyType().getWritableClass();
             Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
-            rout = new BloomMapFile.Writer(hdfsInfo.getConf(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass),
+            rout = new BloomMapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass),
                     MapFile.Writer.valueClass(valueWritableClass),
                     MapFile.Writer.compression(configuration.getCompressionType(), configuration.getCompressionCodec().getCodec()),
                     MapFile.Writer.progressable(() -> {
@@ -89,7 +89,7 @@ class HdfsBloommapFileType extends DefaultHdfsFileType {
         try {
             Closeable rin;
             HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
-            rin = new BloomMapFile.Reader(new Path(hdfsPath), hdfsInfo.getConf());
+            rin = new BloomMapFile.Reader(new Path(hdfsPath), hdfsInfo.getConfiguration());
             return rin;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);

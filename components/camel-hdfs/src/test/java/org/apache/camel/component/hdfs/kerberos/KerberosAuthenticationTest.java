@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.hdfs.kerberos;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.junit.Test;
+
+import static org.apache.camel.component.hdfs.HdfsTestSupport.CWD;
 
 public class KerberosAuthenticationTest {
 
@@ -33,7 +34,7 @@ public class KerberosAuthenticationTest {
         Configuration configuration = new Configuration();
 
         String username = "test_user";
-        String keyTabFileLocation = pwd() + "/src/test/resources/kerberos/test-keytab.bin";
+        String keyTabFileLocation = CWD.getAbsolutePath() + "/src/test/resources/kerberos/test-keytab.bin";
 
         underTest = new KerberosAuthentication(configuration, username, keyTabFileLocation);
 
@@ -50,7 +51,7 @@ public class KerberosAuthenticationTest {
         Configuration configuration = new Configuration();
 
         String username = "test_user";
-        String keyTabFileLocation = pwd() + "/src/test/resources/kerberos/missing.bin";
+        String keyTabFileLocation = CWD.getAbsolutePath() + "/src/test/resources/kerberos/missing.bin";
 
         underTest = new KerberosAuthentication(configuration, username, keyTabFileLocation);
 
@@ -59,10 +60,6 @@ public class KerberosAuthenticationTest {
 
         // then
         /* exception was thrown */
-    }
-
-    private String pwd() {
-        return new File(".").getAbsolutePath();
     }
 
 }
