@@ -42,6 +42,8 @@ import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
@@ -319,16 +321,16 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
     @Override
     public Object toHttpResponse(HttpServerExchange httpExchange, Message message) throws IOException {
-        boolean failed = message.getExchange().isFailed();
-        int defaultCode = failed ? 500 : 200;
-
-        int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, defaultCode, int.class);
-
+        Exchange camelExchange = message.getExchange();
+        Object body = message.getBody();
+        Exception exception = camelExchange.getException();
+        
+        int code = determineResponseCode(camelExchange, body);
+        message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, code);
         httpExchange.setStatusCode(code);
 
-        TypeConverter tc = message.getExchange().getContext().getTypeConverter();
-
         //copy headers from Message to Response
+        TypeConverter tc = message.getExchange().getContext().getTypeConverter();
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -337,15 +339,12 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             while (it.hasNext()) {
                 String headerValue = tc.convertTo(String.class, it.next());
                 if (headerValue != null && headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, camelExchange)) {
                     LOG.trace("HTTP-Header: {}={}", key, headerValue);
                     httpExchange.getResponseHeaders().add(new HttpString(key), headerValue);
                 }
             }
         }
-
-        Object body = message.getBody();
-        Exception exception = message.getExchange().getException();
 
         if (exception != null && !isMuteException()) {
             if (isTransferException()) {
@@ -373,12 +372,12 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             }
 
             // and mark the exception as failure handled, as we handled it by returning it as the response
-            ExchangeHelper.setFailureHandled(message.getExchange());
+            ExchangeHelper.setFailureHandled(camelExchange);
         } else if (exception != null && isMuteException()) {
             // mark the exception as failure handled, as we handled it by actively muting it
-            ExchangeHelper.setFailureHandled(message.getExchange());
+            ExchangeHelper.setFailureHandled(camelExchange);
         }
-
+        
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
@@ -389,6 +388,27 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return body;
     }
 
+    /*
+     * set the HTTP status code
+     */
+    private int determineResponseCode(Exchange camelExchange, Object body) {
+        boolean failed = camelExchange.isFailed();
+        int defaultCode = failed ? 500 : 200;
+
+        Message message = camelExchange.getMessage();
+        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+        int codeToUse = currentCode == null ? defaultCode : currentCode;
+
+        if (codeToUse != 500) {
+            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+                // no content 
+                codeToUse = currentCode == null ? 204 : currentCode;
+            }
+        }
+
+        return codeToUse;
+    }
+    
     @Override
     public Object toHttpRequest(ClientRequest clientRequest, Message message) {
 
