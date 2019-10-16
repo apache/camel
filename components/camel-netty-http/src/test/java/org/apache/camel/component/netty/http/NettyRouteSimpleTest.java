@@ -42,6 +42,7 @@ public class NettyRouteSimpleTest extends BaseNettyTest {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                     .to("mock:input1")
                     .to("netty-http:http://localhost:" + port2 + "/bar");
+                
                 from("netty-http:http://0.0.0.0:" + port2 + "/bar")
                     .to("mock:input2")
                     .transform().constant("Bye World");
