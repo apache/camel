@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
+import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -70,14 +71,14 @@ import org.apache.camel.spi.Metadata;
  * Represents a {@link org.apache.camel.impl.transformer.DataFormatTransformer}
  * which leverages {@link org.apache.camel.spi.DataFormat} to perform
  * transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be
- * specified. {@see TransformerDefinition} {@see DataFormatTransformer}
+ * specified.
  */
-@Metadata(label = "transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlType(name = "dataFormatTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatTransformerDefinition extends TransformerDefinition {
 
-    @XmlElements({@XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
+    @XmlElements({@XmlElement(required = false, name = "any23", type = Any23DataFormat.class),
             @XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
             @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
             @XmlElement(required = false, name = "barcode", type = BarcodeDataFormat.class),

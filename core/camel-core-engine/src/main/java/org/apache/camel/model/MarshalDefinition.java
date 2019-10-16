@@ -69,7 +69,7 @@ import org.apache.camel.spi.Metadata;
  * Marshals data into a specified format for transmission over a transport or
  * component
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
