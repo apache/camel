@@ -69,7 +69,7 @@ import org.apache.camel.spi.Metadata;
  * Converts the message data received from the wire into a format that Apache
  * Camel processors can consume
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> {
