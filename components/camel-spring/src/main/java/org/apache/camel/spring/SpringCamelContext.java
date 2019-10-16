@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
@@ -65,7 +66,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
 
     public SpringCamelContext() {
         super(false);
-        if (Boolean.getBoolean("org.apache.camel.jmx.disabled")) {
+        if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
             disableJMX();
         }
         setManagementMBeanAssembler(new SpringManagementMBeanAssembler(this));
