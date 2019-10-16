@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.servlet;
 
+import java.io.ByteArrayInputStream;
+
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
@@ -24,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpConstants;
 import org.apache.camel.http.common.HttpHelper;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
 
 public class ServletMuteExceptionTest extends ServletCamelRouterTestSupport {
 
