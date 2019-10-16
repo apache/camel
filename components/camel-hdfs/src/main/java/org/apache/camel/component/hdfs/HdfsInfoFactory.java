@@ -43,6 +43,9 @@ public final class HdfsInfoFactory {
 
     static HdfsInfo newHdfsInfoWithoutAuth(String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
         Configuration configuration = newConfiguration(endpointConfig);
+
+        authenticate(configuration, endpointConfig);
+
         FileSystem fileSystem = newFileSystem(configuration, hdfsPath, endpointConfig);
         Path path = new Path(hdfsPath);
 
@@ -63,18 +66,28 @@ public final class HdfsInfoFactory {
         return configuration;
     }
 
-    /**
-     * this will connect to the hadoop hdfs file system, and in case of no connection
-     * then the hardcoded timeout in hadoop is 45 x 20 sec = 15 minutes
-     */
-    static FileSystem newFileSystem(Configuration configuration, String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
+    static void authenticate(Configuration configuration, HdfsConfiguration endpointConfig) throws IOException {
         if (endpointConfig.isKerberosAuthentication()) {
             String userName = endpointConfig.getKerberosUsername();
             String keytabLocation = endpointConfig.getKerberosKeytabLocation();
             new KerberosAuthentication(configuration, userName, keytabLocation).loginWithKeytab();
         }
+    }
 
-        return FileSystem.get(URI.create(hdfsPath), configuration);
+    /**
+     * this will connect to the hadoop hdfs file system, and in case of no connection
+     * then the hardcoded timeout in hadoop is 45 x 20 sec = 15 minutes
+     */
+    static FileSystem newFileSystem(Configuration configuration, String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
+        FileSystem fileSystem;
+        if (endpointConfig.hasClusterConfiguration()) {
+            // using default FS that was set during in the cluster configuration (@see org.apache.camel.component.hdfs.HaConfigurationBuilder)
+            fileSystem = FileSystem.get(configuration);
+        } else {
+            fileSystem = FileSystem.get(URI.create(hdfsPath), configuration);
+        }
+
+        return fileSystem;
     }
 
 }

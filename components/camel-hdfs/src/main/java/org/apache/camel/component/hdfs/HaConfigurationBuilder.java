@@ -19,6 +19,7 @@ package org.apache.camel.component.hdfs;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hdfs.DFSConfigKeys;
 import org.apache.hadoop.hdfs.DFSUtil;
@@ -31,6 +32,7 @@ import static org.apache.hadoop.hdfs.DFSConfigKeys.DFS_NAMENODE_RPC_ADDRESS_KEY;
 final class HaConfigurationBuilder {
 
     private static final String HFDS_NAMED_SERVICE = "hfdsNamedService";
+    private static final String HFDS_NAMED_SERVICE_SEPARATOR = "_";
     private static final String HFDS_FS = "fs.defaultFS";
 
     private HaConfigurationBuilder() {
@@ -49,13 +51,13 @@ final class HaConfigurationBuilder {
      * configuration.set("dfs.client.failover.proxy.provider.hfdsNamedService", "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider");
      * <p>
      *
+     * @param configuration  - hdfs configuration that will be setup with the HA settings
      * @param endpointConfig - configuration with the HA settings configured on the endpoint
      */
     static void withClusterConfiguration(Configuration configuration, HdfsConfiguration endpointConfig) {
-        String haNamedService = HFDS_NAMED_SERVICE;
+        String haNamedService = getSanitizedClusterName(endpointConfig.getHostName());
         withClusterConfiguration(configuration, haNamedService, endpointConfig.getNamedNodeList(), endpointConfig.getReplication());
     }
-
 
     /**
      * Generates the correct HA configuration (normally read from xml) based on the namedNodes:
@@ -69,6 +71,7 @@ final class HaConfigurationBuilder {
      * configuration.set("dfs.client.failover.proxy.provider.hfdsNamedService", "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider");
      * <p>
      *
+     * @param configuration     - hdfs configuration that will be setup with the HA settings
      * @param haNamedService    - how the ha named service that represents the cluster will be named (used to resolve the FS)
      * @param namedNodes        - All named nodes from the hadoop cluster
      * @param replicationFactor - dfs replication factor
@@ -93,8 +96,18 @@ final class HaConfigurationBuilder {
 
     }
 
+    static String getSanitizedClusterName(String rawClusterName) {
+        String clusterName = HFDS_NAMED_SERVICE;
+
+        if (StringUtils.isNotEmpty(rawClusterName)) {
+            clusterName = rawClusterName.replaceAll("\\.", HFDS_NAMED_SERVICE_SEPARATOR);
+        }
+
+        return clusterName;
+    }
+
     private static String nodeToString(String nodeName) {
-        return nodeName.replaceAll(":[0-9]*", "").replaceAll("\\.", "_");
+        return nodeName.replaceAll(":[0-9]*", "").replaceAll("\\.", HFDS_NAMED_SERVICE_SEPARATOR);
     }
 
 }

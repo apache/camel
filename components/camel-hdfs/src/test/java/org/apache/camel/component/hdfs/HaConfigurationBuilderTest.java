@@ -51,4 +51,30 @@ public class HaConfigurationBuilderTest {
         assertThat(configuration.get("fs.defaultFS"), is("hdfs://haCluster"));
     }
 
+    @Test
+    public void getSanitizedClusterNameWithNull() {
+        // given
+        String haClusterName = null;
+
+        // when
+        String actual = HaConfigurationBuilder.getSanitizedClusterName(haClusterName);
+
+        // then
+        assertThat(actual, notNullValue());
+        assertThat(actual, is("hfdsNamedService"));
+    }
+
+    @Test
+    public void getSanitizedClusterNameWithHostName() {
+        // given
+        String haClusterName = "this.is.a.cluster.host";
+
+        // when
+        String actual = HaConfigurationBuilder.getSanitizedClusterName(haClusterName);
+
+        // then
+        assertThat(actual, notNullValue());
+        assertThat(actual, is("this_is_a_cluster_host"));
+    }
+
 }
