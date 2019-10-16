@@ -68,8 +68,8 @@ public class DefaultWriteStrategy implements WriteStrategy {
 
     private void writeLine(float x, float y, String currentLine, PDPageContentStream contentStream) throws IOException {
         contentStream.beginText();
-        contentStream.moveTextPositionByAmount(x, y);
-        contentStream.drawString(currentLine);
+        contentStream.newLineAtOffset(x, y);
+        contentStream.showText(currentLine);
         contentStream.endText();
     }
 
