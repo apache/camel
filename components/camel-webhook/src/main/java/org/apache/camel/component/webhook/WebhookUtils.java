@@ -28,7 +28,7 @@ import org.apache.camel.spi.RestConsumerFactory;
  */
 public final class WebhookUtils {
 
-    private static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[]{"coap", "netty-http", "jetty", "restlet", "servlet", "undertow"};
+    private static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[]{"coap", "netty-http", "jetty", "servlet", "undertow"};
 
     private WebhookUtils() {
     }

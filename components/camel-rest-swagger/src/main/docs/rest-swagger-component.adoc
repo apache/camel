@@ -10,8 +10,6 @@ interface. Currently known working components are:
 
 * xref:http-component.adoc[http]
 * xref:netty-http-component.adoc[netty-http]
-* xref:restlet-component.adoc[restlet]
-* xref:jetty-component.adoc[jetty]
 * xref:undertow-component.adoc[undertow]
 
 Maven users will need to add the following dependency to their

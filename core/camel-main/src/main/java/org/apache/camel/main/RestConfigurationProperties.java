@@ -46,7 +46,7 @@ public class RestConfigurationProperties extends RestConfiguration {
     // --------------------------------------------------------------
 
     /**
-     * The Camel Rest component to use for the REST transport (consumer), such as restlet, spark-rest.
+     * The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow.
      * If no component has been explicit configured, then Camel will lookup if there is a Camel component
      * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry.
      * If either one is found, then that is being used.
