@@ -34,6 +34,7 @@
     <description>Camel Maven Plugins</description>
 
     <modules>
+        <module>camel-bundle-plugin</module>
         <module>camel-main-parser</module>
         <module>camel-main-package-maven-plugin</module>
         <module>camel-package-maven-plugin</module>

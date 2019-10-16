@@ -23,28 +23,33 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>tooling</artifactId>
+        <artifactId>maven-plugins</artifactId>
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-bundle-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
 
-    <name>Camel :: Maven Plugins :: Camel Bundle Plugin</name>
-    <description>Camel maven-bundle-plugin (OSGi)</description>
-
-    <properties>
-        <camel.osgi.import.pkg>
-            *
-        </camel.osgi.import.pkg>
-    </properties>
+    <name>Camel :: Maven Plugins :: Enhanced bundle plugin</name>
+    <description>Bundle plugin detecting stale input</description>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>maven-bundle-plugin</artifactId>
             <version>${maven-bundle-plugin-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>3.4</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+        </plugins>
+    </build>
 </project>
