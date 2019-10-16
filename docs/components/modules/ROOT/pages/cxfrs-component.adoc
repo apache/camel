@@ -322,9 +322,8 @@ export the resources classes as a REST service. And we leverage the
 http://cxf.apache.org/docs/invokers.html[CXF Invoker
 API] to turn a REST request into a normal Java object method
 invocation.
- Unlike the xref:restlet-component.adoc[Camel Restlet] component, you don't need
-to specify the URI template within your endpoint, CXF takes care of the
-REST request URI to resource class method mapping according to the
+You don't need to specify the URI template within your endpoint, CXF takes care
+of the REST request URI to resource class method mapping according to the
 JSR-311 specification. All you need to do in Camel is delegate this
 method request to a right processor or endpoint.
 

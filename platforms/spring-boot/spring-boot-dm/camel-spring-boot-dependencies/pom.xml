@@ -2565,16 +2565,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-restlet</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-restlet-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ribbon</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -4212,26 +4202,6 @@
         <groupId>org.python</groupId>
         <artifactId>jython</artifactId>
         <version>2.5.3</version>
-      </dependency>
-      <dependency>
-        <groupId>org.restlet.jee</groupId>
-        <artifactId>org.restlet</artifactId>
-        <version>2.3.12</version>
-      </dependency>
-      <dependency>
-        <groupId>org.restlet.jee</groupId>
-        <artifactId>org.restlet.ext.httpclient</artifactId>
-        <version>2.3.12</version>
-      </dependency>
-      <dependency>
-        <groupId>org.restlet.jse</groupId>
-        <artifactId>org.restlet.ext.gson</artifactId>
-        <version>2.3.12</version>
-      </dependency>
-      <dependency>
-        <groupId>org.restlet.jse</groupId>
-        <artifactId>org.restlet.ext.jackson</artifactId>
-        <version>2.3.12</version>
       </dependency>
       <dependency>
         <groupId>rhino</groupId>

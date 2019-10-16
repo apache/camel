@@ -287,7 +287,6 @@
 * xref:rest-swagger-component.adoc[REST Swagger Component]
 * xref:rest-api-component.adoc[REST API Component]
 * xref:rest-component.adoc[REST Component]
-* xref:restlet-component.adoc[Restlet Component (deprecated)]
 * xref:ribbon.adoc[Ribbon Component]
 * xref:robotframework-component.adoc[Robot Framework Component]
 * xref:rss-component.adoc[RSS Component]
