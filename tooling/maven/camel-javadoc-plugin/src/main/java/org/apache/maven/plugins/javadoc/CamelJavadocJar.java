@@ -382,7 +382,7 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
             throw new MavenReportException("Error checking uptodate status", e);
         } finally {
             long t1 = System.currentTimeMillis();
-            getLog().warn("isUpToDate took " + (t1 - t0) + " ms");
+            getLog().debug("isUpToDate took " + (t1 - t0) + " ms");
         }
         return false;
     }
