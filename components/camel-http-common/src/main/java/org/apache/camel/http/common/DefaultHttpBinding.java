@@ -79,6 +79,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private boolean useReaderForPayload;
     private boolean eagerCheckContentAvailable;
     private boolean transferException;
+    private boolean muteException;
     private boolean allowJavaSerializedObject;
     private boolean mapHttpMessageBody = true;
     private boolean mapHttpMessageHeaders = true;
@@ -98,6 +99,7 @@ public class DefaultHttpBinding implements HttpBinding {
     public DefaultHttpBinding(HttpCommonEndpoint endpoint) {
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
         this.transferException = endpoint.isTransferException();
+        this.muteException = endpoint.isMuteException();
         if (endpoint.getComponent() != null) {
             this.allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
         }
@@ -362,6 +364,10 @@ public class DefaultHttpBinding implements HttpBinding {
             response.setStatus(HttpServletResponse.SC_GATEWAY_TIMEOUT);
             response.setContentType("text/plain");
             response.getWriter().write("Timeout error");
+        } else if (isMuteException()) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentType("text/plain");
+            response.getWriter().write("Exception");
         } else {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
@@ -633,6 +639,16 @@ public class DefaultHttpBinding implements HttpBinding {
     @Override
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
+    }
+
+    @Override
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    @Override
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     @Override
