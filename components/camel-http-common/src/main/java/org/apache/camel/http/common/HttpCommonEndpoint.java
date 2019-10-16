@@ -81,7 +81,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             + " This is by default turned off. If you enable this then be aware that Java will deserialize the incoming"
             + " data from the request to Java and that can be a potential security risk.")
     boolean transferException;
-    @UriParam(label="consumer",
+    @UriParam(label = "consumer",
             description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
     boolean muteException;
     @UriParam(label = "producer", defaultValue = "false", description = "Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.")
@@ -413,7 +413,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     /**
      * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
      */
-    public void setMuteException(boolean muteException) { this.muteException = muteException; }
+    public void setMuteException(boolean muteException) { 
+        this.muteException = muteException; 
+    }
 
     public boolean isTraceEnabled() {
         return this.traceEnabled;
