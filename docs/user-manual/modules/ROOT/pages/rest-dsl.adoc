@@ -11,7 +11,7 @@ REST style with verbs such as get, post, delete etc.
 The Rest DSL is a facade that builds xref:components::rest-component.adoc[Rest] endpoints as
 consumers for Camel routes. The actual REST transport is leveraged by
 using Camel REST components such
-as xref:components::restlet-component.adoc[Restlet], xref:components::restlet-component.adoc[Spark-rest], and
+as xref:components::netty-http-component.adoc[Netty HTTP], xref:components::servlet-component.adoc[Servlet], and
 others that has native REST integration.
 
 == Components supporting Rest DSL
@@ -24,14 +24,12 @@ this page for how to integrate a component with the Rest DSL.
 supports Swagger Java)
 * xref:components::jetty-component.adoc[camel-jetty] (also
 supports Swagger Java)
-* xref:components::restlet-component.adoc[camel-restlet] (also
-supports Swagger Java)
 * xref:components::servlet-component.adoc[camel-servlet] (also
 supports Swagger Java)
 * xref:components::spark-rest-component.adoc[camel-spark-rest] (also
-supports Swagger Java from Camel 2.17 onwards)
+supports Swagger Java)
 * xref:components::undertow-component.adoc[camel-undertow] (also
-supports Swagger Java from Camel 2.17 onwards)
+supports Swagger Java)
 
 == Rest DSL with Java
 
@@ -338,14 +336,14 @@ To enable binding you configure this in Java DSL as shown below
 
 [source,java]
 ----
-restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+restConfiguration().component("netty-http").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
 ----
 
 And in XML DSL
 
 [source,xml]
 ----
-<restConfiguration bindingMode="auto" component="restlet" port="8080"/>
+<restConfiguration bindingMode="auto" component="netty-http" port="8080"/>
 ----
 
 When binding is enabled Camel will bind the incoming and outgoing
@@ -383,9 +381,9 @@ in Java DSL as shown below:
 
 [source,java]
 ----
-// configure to use restlet on localhost with the given port
+// configure to use netty-http on localhost with the given port
 // and enable auto binding mode
-restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+restConfiguration().component("netty-http").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
 
 // use the rest DSL to define the rest services
 rest("/users/")
@@ -401,9 +399,9 @@ use `outType` as shown below:
 
 [source,java]
 ----
-// configure to use restlet on localhost with the given port
+// configure to use netty-http on localhost with the given port
 // and enable auto binding mode
-restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+restConfiguration().component("netty-http").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
 
 // use the rest DSL to define the rest services
 rest("/users/")
@@ -416,9 +414,9 @@ of the canonical class name as shown in the following Java DSL:
 
 [source,java]
 ----
-// configure to use restlet on localhost with the given port
+// configure to use netty-http on localhost with the given port
 // and enable auto binding mode
-restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+restConfiguration().component("netty-http").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
 
 // use the rest DSL to define the rest services
 rest("/users/")
@@ -483,7 +481,7 @@ bindings.
 [width="100%",cols="20%,10%,30%",options="header",]
 |===
 |Option |Default |Description
-|component | - |The Camel Rest component to use for the REST transport, such as restlet, spark-rest.
+|component | - |The Camel Rest component to use for the REST transport, such as spark-rest.
 
                 If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used.
 |apiComponent | - |The Camel component to use as the REST API (such as swagger)
@@ -563,15 +561,15 @@ whether the Content-Type and Accept headers from
 
                    *Note:* Currently only jaxb is supported.
 |componentProperty | -|Allows to configure as many additional properties.
-  This is used to configure component specific options such as for Restlet / Spark-Rest etc.
+  This is used to configure component specific options such as for netty-http, jetty, undertow etc.
   The options value can use the # notation to refer to a bean to lookup in
   the xref:registry.adoc[Registry]
 |endpointProperty | -|Allows to configure as many additional properties.
-  This is used to configure endpoint specific options for  Restlet / Spark-Rest etc.
+  This is used to configure endpoint specific options for netty-http, jetty, undertow.
   The options value can use the # notation to refer to a bean to lookup in
   the xref:registry.adoc[Registry]
 |consumerProperty |- |Allows to configure as many additional properties.
-  This is used to configure consumer specific options for  Restlet / Spark-Rest etc.
+  This is used to configure consumer specific options for netty-http, jetty, undertow.
   The options value can use the # notation to refer to a bean to lookup in
   the xref:registry.adoc[Registry]
 |dataFormatProperty |- |Allows to configure as many additional properties.
@@ -722,7 +720,7 @@ below:
 
 [source,java]
 ----
-restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.json);
+restConfiguration().component("netty-http").host("localhost").port(portNum).bindingMode(RestBindingMode.json);
 // use the rest DSL to define the rest services
 rest("/users/")
     .post("lives").type(UserPojo.class).outType(CountryPojo.class)
@@ -826,7 +824,7 @@ invoke the `createConsumer` method when it setup the Camel routes from
 the defined DSL. The component should then implement logic to create a
 Camel consumer that exposes the REST services based on the given
 parameters, such as path, verb, and other options. For example see the
-source code for camel-restlet, camel-spark-rest.
+source code for camel-netty-http, camel-jetty, camel-undertow, camel-spark-rest.
 
 == Swagger API
 

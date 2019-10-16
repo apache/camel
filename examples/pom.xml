@@ -103,7 +103,6 @@
         <module>camel-example-reactive-streams</module>
         <module>camel-example-rest-producer</module>
         <module>camel-example-rest-swagger</module>
-        <module>camel-example-restlet-jdbc</module>
         <module>camel-example-route-throttling</module>
         <module>camel-example-servlet-rest-blueprint</module>
         <module>camel-example-servlet-tomcat</module>

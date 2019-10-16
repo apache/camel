@@ -1218,11 +1218,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-restlet</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-ribbon</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2738,11 +2733,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-rest-swagger-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-restlet-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

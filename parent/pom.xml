@@ -540,15 +540,13 @@
         <regexp-bundle-version>1.4_1</regexp-bundle-version>
         <rescu-version>2.0.2</rescu-version>
         <rest-assured-version>4.1.2</rest-assured-version>
-        <restlet-version>2.3.12</restlet-version>
-        <restlet-woodstox-version>4.3.0</restlet-woodstox-version>
         <revapi-java-version>0.19.1</revapi-java-version>
         <revapi-maven-plugin-version>0.11.1</revapi-maven-plugin-version>
         <rhino-version>1.7.7.1</rhino-version>
         <rhino-js-version>1.7R2</rhino-js-version>
         <ribbon-version>2.3.0</ribbon-version>
         <roaster-version>2.20.1.Final</roaster-version>
-	<robotframework-version>3.1.1</robotframework-version>
+        <robotframework-version>3.1.1</robotframework-version>
         <rome-version>1.12.2</rome-version>
         <rxjava-version>1.3.8</rxjava-version>
         <rxjava2-version>2.2.13</rxjava2-version>
@@ -1945,11 +1943,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rest-swagger</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-restlet</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3489,11 +3482,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rest-swagger-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-restlet-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -5142,35 +5130,12 @@
                 <version>${felix-configadmin-version}</version>
             </dependency>
 
-            <!-- Restlet -->
-            <dependency>
-                <groupId>org.restlet.jee</groupId>
-                <artifactId>org.restlet</artifactId>
-                <version>${restlet-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.restlet.jee</groupId>
-                <artifactId>org.restlet.ext.httpclient</artifactId>
-                <version>${restlet-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.restlet.jse</groupId>
-                <artifactId>org.restlet.ext.jackson</artifactId>
-                <version>${restlet-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.restlet.jse</groupId>
-                <artifactId>org.restlet.ext.gson</artifactId>
-                <version>${restlet-version}</version>
-            </dependency>
-
             <!-- need this to use the new 'maven-archetype' packaging type -->
             <dependency>
                 <groupId>org.apache.maven.archetype</groupId>
                 <artifactId>archetype-packaging</artifactId>
                 <version>${maven-archetype-packaging-version}</version>
             </dependency>
-
 
             <!-- pdfbox -->
             <dependency>
