@@ -160,6 +160,7 @@
         <skip.starting.camel.context>false</skip.starting.camel.context>
         <javax.servlet.api.version>4.0.1</javax.servlet.api.version>
         <camel.osgi.export.pkg/>
+        <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
     </properties>
 
     <dependencyManagement>
@@ -230,6 +231,56 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
+                <version>${camel-bundle-plugin-version}</version>
+                <extensions>false</extensions>
+                <configuration>
+                    <supportIncrementalBuild>true</supportIncrementalBuild>
+                    <noWarningProjectTypes>pom</noWarningProjectTypes>
+                    <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
+                    <instructions>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
+                        <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
+                        <Import-Package>${camel.osgi.import}</Import-Package>
+                        <Export-Package>${camel.osgi.export}</Export-Package>
+                        <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
+                        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
+                        <Require-Capability>${camel.osgi.require.capability}</Require-Capability>
+                        <Provide-Capability>${camel.osgi.provide.capability}</Provide-Capability>
+                        <Implementation-Title>Apache Camel</Implementation-Title>
+                        <Implementation-Version>${project.version}</Implementation-Version>
+                        <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
+                        <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
+                        <_failok>${camel.osgi.failok}</_failok>
+                        <_removeheaders>Bnd-LastModified</_removeheaders>
+                    </instructions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>versions</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>cleanVersions</goal>
+                        </goals>
+                        <configuration>
+                            <versions>
+                                <camel.osgi.version.clean>${project.version}</camel.osgi.version.clean>
+                            </versions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -243,8 +294,8 @@
                             <pluginExecutions>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
-                                        <groupId>org.apache.felix</groupId>
-                                        <artifactId>maven-bundle-plugin</artifactId>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-bundle-plugin</artifactId>
                                         <versionRange>[2.3.7,)</versionRange>
                                         <goals>
                                             <goal>cleanVersions</goal>

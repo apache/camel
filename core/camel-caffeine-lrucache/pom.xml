@@ -77,9 +77,9 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>${maven-bundle-plugin-version}</version>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
+                <version>${camel-bundle-plugin-version}</version>
                 <extensions>false</extensions>
                 <configuration>
                     <supportIncrementalBuild>true</supportIncrementalBuild>

@@ -125,9 +125,8 @@
         <plugins>
             <!-- to generate the MANIFEST-FILE of the bundle -->
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bundle-plugin</artifactId>
             </plugin>
 
             <!-- to run the example using mvn camel:run -->
