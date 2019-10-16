@@ -25,9 +25,9 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 /**
- * JsonApi data format is used for marshal and unmarshal Json API object.
+ * JSonApi data format is used for marshal and unmarshal Json API object.
  */
-@Metadata(firstVersion = "3.0.0", label = "dataformat,transformation", title = "jsonApi")
+@Metadata(firstVersion = "3.0.0", label = "dataformat,transformation", title = "JSonApi")
 @XmlRootElement(name = "jsonApi")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonApiDataFormat extends DataFormatDefinition {

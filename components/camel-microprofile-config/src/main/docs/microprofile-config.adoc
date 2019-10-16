@@ -1,5 +1,5 @@
-[[MicroProfileConfig-MicroProfileConfigComponent]]
-= MicroProfile Config Component
+[[MicroProfileConfig]]
+= MicroProfile Config
 
 *Available as of Camel 3.0*
 

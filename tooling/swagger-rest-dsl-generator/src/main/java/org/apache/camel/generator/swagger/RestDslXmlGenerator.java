@@ -19,6 +19,7 @@ package org.apache.camel.generator.swagger;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -58,6 +59,7 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
         final String xml = ModelHelper.dumpModelAsXml(context, rests);
 
         final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         builderFactory.setNamespaceAware(true);
 
         final DocumentBuilder builder = builderFactory.newDocumentBuilder();

@@ -30,8 +30,8 @@
 
     <artifactId>camel-jsonapi</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: JsonApi</name>
-    <description>Camel JsonApi data format</description>
+    <name>Camel :: JSonApi</name>
+    <description>Camel JSonApi Data Format</description>
 
     <properties>
     </properties>

@@ -159,20 +159,6 @@ public interface HdfsEndpointBuilderFactory {
             return this;
         }
         /**
-         * A comma separated list of kerberos nodes (e.g.
-         * srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file
-         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointConsumerBuilder kerberosNamedNodes(
-                String kerberosNamedNodes) {
-            doSetProperty("kerberosNamedNodes", kerberosNamedNodes);
-            return this;
-        }
-        /**
          * The username used to authenticate with the kerberos nodes.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -206,6 +192,18 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointConsumerBuilder keyType(String keyType) {
             doSetProperty("keyType", keyType);
+            return this;
+        }
+        /**
+         * A comma separated list of named nodes (e.g.
+         * srv11.example.com:8020,srv12.example.com:8020).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointConsumerBuilder namedNodes(String namedNodes) {
+            doSetProperty("namedNodes", namedNodes);
             return this;
         }
         /**
@@ -1171,20 +1169,6 @@ public interface HdfsEndpointBuilderFactory {
             return this;
         }
         /**
-         * A comma separated list of kerberos nodes (e.g.
-         * srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file
-         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointProducerBuilder kerberosNamedNodes(
-                String kerberosNamedNodes) {
-            doSetProperty("kerberosNamedNodes", kerberosNamedNodes);
-            return this;
-        }
-        /**
          * The username used to authenticate with the kerberos nodes.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1218,6 +1202,18 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointProducerBuilder keyType(String keyType) {
             doSetProperty("keyType", keyType);
+            return this;
+        }
+        /**
+         * A comma separated list of named nodes (e.g.
+         * srv11.example.com:8020,srv12.example.com:8020).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointProducerBuilder namedNodes(String namedNodes) {
+            doSetProperty("namedNodes", namedNodes);
             return this;
         }
         /**
@@ -1749,19 +1745,6 @@ public interface HdfsEndpointBuilderFactory {
             return this;
         }
         /**
-         * A comma separated list of kerberos nodes (e.g.
-         * srv11.example.com:8021,srv12.example.com:8021) - see kerb5.conf file
-         * (https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointBuilder kerberosNamedNodes(String kerberosNamedNodes) {
-            doSetProperty("kerberosNamedNodes", kerberosNamedNodes);
-            return this;
-        }
-        /**
          * The username used to authenticate with the kerberos nodes.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1794,6 +1777,18 @@ public interface HdfsEndpointBuilderFactory {
          */
         default HdfsEndpointBuilder keyType(String keyType) {
             doSetProperty("keyType", keyType);
+            return this;
+        }
+        /**
+         * A comma separated list of named nodes (e.g.
+         * srv11.example.com:8020,srv12.example.com:8020).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default HdfsEndpointBuilder namedNodes(String namedNodes) {
+            doSetProperty("namedNodes", namedNodes);
             return this;
         }
         /**

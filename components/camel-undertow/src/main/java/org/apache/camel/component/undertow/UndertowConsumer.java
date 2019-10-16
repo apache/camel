@@ -202,7 +202,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }
     }
-
+    
     /**
      * Create an {@link Exchange} from the associated {@link UndertowEndpoint} and set the {@code in} {@link Message}'s
      * body to the given {@code message} and {@link UndertowConstants#CONNECTION_KEY} header to the given
@@ -266,13 +266,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
     }
 
     private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException {
-        Object result;
-        if (camelExchange.hasOut()) {
-            result = getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getOut());
-        } else {
-            result = getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getIn());
-        }
-        return result;
+        return getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getMessage());
     }
     
     private HttpHandler wrapHandler(HttpHandler handler, UndertowEndpoint endpoint) {

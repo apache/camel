@@ -389,12 +389,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         Exception cause = message.getExchange().getException();
         // support bodies as native Netty
         ByteBuf buffer;
-        // the response code is 200 for OK and 500 for failed
-        boolean failed = message.getExchange().isFailed();
-        int defaultCode = failed ? 500 : 200;
-
-        int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, defaultCode, int.class);
-
+        
+        int code = determineResponseCode(message.getExchange(), body);
         LOG.trace("HTTP Status Code: {}", code);
 
         // if there was an exception then use that as body
@@ -522,10 +518,31 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             message.setHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
         }
         LOG.trace("Connection: {}", connection);
-
+        
         return response;
     }
-
+    
+    /*
+     * set the HTTP status code
+     */
+    private int determineResponseCode(Exchange camelExchange, Object body) {
+        boolean failed = camelExchange.isFailed();
+        int defaultCode = failed ? 500 : 200;
+        
+        Message message = camelExchange.getMessage();
+        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+        int codeToUse = currentCode == null ? defaultCode : currentCode;
+        
+        if (codeToUse != 500) {
+            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+                // no content 
+                codeToUse = currentCode == null ? 204 : currentCode;
+            }
+        }
+        
+        return codeToUse;
+    }
+    
     @Override
     public HttpRequest toNettyRequest(Message message, String fullUri, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("toNettyRequest: {}", message);
@@ -692,6 +709,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
                 connection = HttpHeaderValues.CLOSE.toString();
             }
         }
+        
         request.headers().set(HttpHeaderNames.CONNECTION.toString(), connection);
         LOG.trace("Connection: {}", connection);
 
