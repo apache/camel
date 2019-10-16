@@ -20,8 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import io.debezium.connector.mysql.MySqlConnector;
+import io.debezium.connector.mysql.MySqlConnectorConfig;
 import org.apache.commons.io.FileUtils;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Rule;
@@ -30,20 +31,22 @@ import org.junit.rules.TemporaryFolder;
 
 import static org.junit.Assert.*;
 
-public class GenerateMySqlConnectorConfigMojoTest {
+public class GenerateConnectorConfigMojoTest {
 
     @Rule
     public TemporaryFolder configFolder = new TemporaryFolder();
 
     @Test
-    public void testIfGeneratedConfigFileCorrectly() throws MojoFailureException, MojoExecutionException, IOException {
-        final GenerateMySqlConnectorConfigMojo generateMySqlConnectorConfigMojo = new GenerateMySqlConnectorConfigMojo();
+    public void testIfGeneratedConfigFileCorrectly() throws MojoFailureException, IOException {
+        final GenerateConnectorConfigMojo generateConnectorConfigMojo = new GenerateConnectorConfigMojo();
         final File connectorConfigFolder = configFolder.newFolder("connector-configurations");
 
-        generateMySqlConnectorConfigMojo.setLog(new SystemStreamLog());
-        generateMySqlConnectorConfigMojo.setGeneratedSrcDir(connectorConfigFolder);
+        generateConnectorConfigMojo.setLog(new SystemStreamLog());
+        generateConnectorConfigMojo.setGeneratedSrcDir(connectorConfigFolder);
+        generateConnectorConfigMojo.setConnectorClassName(MySqlConnector.class.getName());
+        generateConnectorConfigMojo.setConnectorConfigClassName(MySqlConnectorConfig.class.getName());
 
-        generateMySqlConnectorConfigMojo.execute();
+        generateConnectorConfigMojo.execute();
 
         // check if we created the file correctly
         final File connectorConfigFile = new File(connectorConfigFolder, "org/apache/camel/component/debezium/configuration/MySqlConnectorEmbeddedDebeziumConfiguration.java");
