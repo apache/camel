@@ -631,7 +631,7 @@
         <twilio-version>7.9.1</twilio-version>
         <twitter4j-bundle-version>4.0.7_1</twitter4j-bundle-version>
         <twitter4j-version>4.0.7</twitter4j-version>
-        <undertow-version>2.0.26.Final</undertow-version>
+        <undertow-version>2.0.27.Final</undertow-version>
         <univocity-parsers-version>2.8.3</univocity-parsers-version>
         <unix-socket-factory-version>2015-01-27T15-02-14</unix-socket-factory-version>
         <unix-socket-factory-bundle-version>1.0.0</unix-socket-factory-bundle-version>
