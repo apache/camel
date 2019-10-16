@@ -104,7 +104,7 @@
                     <execution>
                         <id>generate</id>
                         <goals>
-                            <goal>generate-mysql-connector-config</goal>
+                            <goal>generate-connector-config</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -116,6 +116,18 @@
                         <scope>runtime</scope>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <connectorClassName>io.debezium.connector.mysql.MySqlConnector</connectorClassName>
+                    <connectorConfigClassName>io.debezium.connector.mysql.MySqlConnectorConfig</connectorConfigClassName>
+                    <fields>
+                        <database.history>io.debezium.relational.history.FileDatabaseHistory</database.history>
+                        <tombstones.on.delete>false</tombstones.on.delete>
+                    </fields>
+                    <requiredFields>
+                        <field>database.password</field>
+                        <field>database.server.name</field>
+                    </requiredFields>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

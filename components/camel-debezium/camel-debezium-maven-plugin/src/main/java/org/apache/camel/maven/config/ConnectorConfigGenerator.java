@@ -41,6 +41,7 @@ public final class ConnectorConfigGenerator {
 
     private static final String PACKAGE_NAME = "org.apache.camel.component.debezium.configuration";
     private static final String PARENT_TYPE = "EmbeddedDebeziumConfiguration";
+    private static final String CONNECTOR_SUFFIX = "ConnectorConfig";
 
     private final SourceConnector connector;
     private final Map<String, ConnectorConfigField> dbzConfigFields;
@@ -85,7 +86,7 @@ public final class ConnectorConfigGenerator {
         // add additional fields
         Field.group(configDef, "additionalFields", FileDatabaseHistory.FILE_PATH);
         // get the name of the connector from the configClass
-        final String connectorName = dbzConfigClass.getSimpleName().replace("ConnectorConfig", "");
+        final String connectorName = dbzConfigClass.getSimpleName().replace(CONNECTOR_SUFFIX, "");
 
         return new ConnectorConfigGenerator(connector, ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(configDef, dbzConfigClass, requiredFields, overridenDefaultValues), connectorName);
     }

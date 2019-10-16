@@ -70,7 +70,7 @@ public class ConnectorConfigField {
     }
 
     public String getDefaultValueAsString() {
-        return getDefaultValue(fieldDef);
+        return getDefaultValueWrappedInString(fieldDef);
     }
 
     public boolean isInternal() {
@@ -115,13 +115,13 @@ public class ConnectorConfigField {
         }
     }
 
-    private String getDefaultValue(final ConfigDef.ConfigKey field) {
+    private String getDefaultValueWrappedInString(final ConfigDef.ConfigKey field) {
         if (getDefaultValue() != null) {
-            if (field.type() == ConfigDef.Type.STRING || field.type() == ConfigDef.Type.PASSWORD) {
+            if (field.type() == ConfigDef.Type.STRING || field.type() == ConfigDef.Type.PASSWORD || field.type() == ConfigDef.Type.CLASS) {
+                if (getDefaultValue() instanceof Class) {
+                    return "\"" + ((Class) getDefaultValue()).getName() + "\"";
+                }
                 return "\"" + getDefaultValue().toString() + "\"";
-            }
-            if (field.type() == ConfigDef.Type.CLASS) {
-                return "\"" + ((Class) getDefaultValue()).getName() + "\"";
             }
             return getDefaultValue().toString();
         }
