@@ -329,15 +329,18 @@ filesystem implementations.
 
 === Using this component with a HighAvailability configuration
 
-In a HA setup, there will be multiple nodes (configured through the *namedNodes* parameter).
-The "hostname" and "port" portion of the endpoint uri will no longer have the "host" meaning, but it will represent the name given to the cluster.
-You can choose whatever name you want for it (the name should follow [a-zA-Z0-9] convention).
-This name will be mapped to the HA filesystem with a coresponding proxy, with failover, and the work:
+In a HA setup, there will be multiple nodes (_configured through the *namedNodes* parameter_).
+The "hostname" and "port" portion of the endpoint uri will no longer have a _"host"_ meaning, but it will represent the name given to the cluster.
+
+You can choose whatever name you want for the cluster (_the name should follow the [a-zA-Z0-9] convention_).
+This name will be sanitized by replacing the _dirty_ characters with underscore. This is done so that a host name or ip could pottentialy be used, if it makes sense to you.
+
+The cluster name will be mapped to the HA filesystem with a coresponding proxy, with failover, and the _works_.
 
 [source,java]
 ------------------------------------------------------------------------------------------------------
 
-from("hdfs://cluster1/dir1/dir2?namedNodes=node1:8020,node2:8020").routeId(...)
+from("hdfs://node1_and_2_cluster/dir1/dir2?namedNodes=node1.exemple.org:8020,node2.exemple.org:8020").routeId(...)
 ...
 ------------------------------------------------------------------------------------------------------
 
