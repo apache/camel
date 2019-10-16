@@ -297,6 +297,32 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default AtmosphereWebsocketEndpointConsumerBuilder muteException(
+                boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default AtmosphereWebsocketEndpointConsumerBuilder muteException(
+                String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * To use a custom buffer size on the javax.servlet.ServletResponse.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
