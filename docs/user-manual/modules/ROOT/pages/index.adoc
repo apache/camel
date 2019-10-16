@@ -354,7 +354,6 @@ camel routes without them knowing
 ** xref:components::rabbitmq-component.adoc[RabbitMQ]
 ** xref:components::reactive-streams-component.adoc[Reactive Streams]
 ** xref:components::rest-swagger-component.adoc[REST Swagger]
-** xref:components::restlet-component.adoc[Restlet]
 ** xref:components::rss-component.adoc[RSS]
 ** xref:components::salesforce-component.adoc[Salesforce]
 ** xref:components::sap-netweaver-component.adoc[SAP NetWeaver]
