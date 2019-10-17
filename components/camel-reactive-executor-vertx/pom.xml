@@ -29,12 +29,13 @@
 
     <artifactId>camel-reactive-executor-vertx</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Reactive Executor :: Vert X</name>
-    <description>Reactive Executor for camel-core using Vert X</description>
+    <name>Camel :: Reactive Executor :: Vert.x</name>
+    <description>Reactive Executor for camel-core using Vert.x</description>
 
     <properties>
         <firstVersion>3.0.0</firstVersion>
         <label>reactive</label>
+        <title>Reactive Executor Vert.x</title>
     </properties>
 
     <dependencies>
