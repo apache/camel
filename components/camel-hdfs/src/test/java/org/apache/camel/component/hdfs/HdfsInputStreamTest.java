@@ -19,10 +19,9 @@ package org.apache.camel.component.hdfs;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.util.Progressable;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -31,10 +30,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyShort;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.booleanThat;
 import static org.mockito.Mockito.mock;
@@ -49,7 +44,7 @@ public class HdfsInputStreamTest {
     private FileSystem fileSystem;
     private Configuration configuration;
 
-    private HdfsOutputStream underTest;
+    private HdfsInputStream underTest;
 
     @Before
     public void setUp() throws Exception {
@@ -71,21 +66,20 @@ public class HdfsInputStreamTest {
     }
 
     @Test
-    public void createOutputStreamForExistingNormalFileWithAppend() throws IOException {
+    public void createInputStreamForLocalNormalFile() throws IOException {
         // given
         String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
-        FSDataOutputStream fsDataOutputStream = mock(FSDataOutputStream.class);
+        FSDataInputStream fsDataInputStream = mock(FSDataInputStream.class);
         when(endpointConfig.getFileType()).thenReturn(HdfsFileType.NORMAL_FILE);
-        when(endpointConfig.isWantAppend()).thenReturn(true);
-        when(endpointConfig.isAppend()).thenReturn(false);
+        when(endpointConfig.getFileSystemType()).thenReturn(HdfsFileSystemType.LOCAL);
 
-        when(fileSystem.exists(any(Path.class))).thenReturn(true);
-        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class))).thenReturn(fsDataOutputStream);
+        when(fileSystem.rename(any(Path.class), any(Path.class))).thenReturn(true);
+        when(fileSystem.open(any(Path.class))).thenReturn(fsDataInputStream);
 
         ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
 
         // when
-        underTest = HdfsOutputStream.createOutputStream(hdfsPath, hdfsInfoFactory);
+        underTest = HdfsInputStream.createInputStream(hdfsPath, hdfsInfoFactory);
 
         // then
         assertThat(underTest, notNullValue());
@@ -95,19 +89,19 @@ public class HdfsInputStreamTest {
     }
 
     @Test
-    public void createOutputStreamForMissingNormalFileWithAppend() throws IOException {
+    public void createInputStreamForMissingNormalFileWithAppend() throws IOException {
         // given
         String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
-        FSDataOutputStream fsDataOutputStream = mock(FSDataOutputStream.class);
+        FSDataInputStream fsDataInputStream = mock(FSDataInputStream.class);
         when(endpointConfig.getFileType()).thenReturn(HdfsFileType.NORMAL_FILE);
         when(endpointConfig.isWantAppend()).thenReturn(true);
         when(endpointConfig.isAppend()).thenReturn(false);
 
         when(fileSystem.exists(any(Path.class))).thenReturn(false);
-        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class))).thenReturn(fsDataOutputStream);
+        //when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class))).thenReturn(fsDataInputStream);
 
         // when
-        underTest = HdfsOutputStream.createOutputStream(hdfsPath, hdfsInfoFactory);
+        underTest = HdfsInputStream.createInputStream(hdfsPath, hdfsInfoFactory);
 
         // then
         assertThat(underTest, notNullValue());
@@ -116,52 +110,49 @@ public class HdfsInputStreamTest {
     }
 
     @Test
-    public void createOutputStreamOverwriteExistingNormalFile() throws IOException {
+    public void createInputStreamOverwriteExistingNormalFile() throws IOException {
         // given
         String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
-        FSDataOutputStream fsDataOutputStream = mock(FSDataOutputStream.class);
+        FSDataInputStream fsDataInputStream = mock(FSDataInputStream.class);
         when(endpointConfig.getFileType()).thenReturn(HdfsFileType.NORMAL_FILE);
         when(endpointConfig.isWantAppend()).thenReturn(false);
         when(endpointConfig.isAppend()).thenReturn(false);
         when(endpointConfig.isOverwrite()).thenReturn(true);
 
         when(fileSystem.exists(any(Path.class))).thenReturn(true);
-        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class))).thenReturn(fsDataOutputStream);
+        //when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class))).thenReturn(fsDataInputStream);
 
         ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
 
         // when
-        underTest = HdfsOutputStream.createOutputStream(hdfsPath, hdfsInfoFactory);
+        underTest = HdfsInputStream.createInputStream(hdfsPath, hdfsInfoFactory);
 
         // then
         assertThat(underTest, notNullValue());
         verify(fileSystem, times(1)).delete(pathCaptor.capture(), booleanThat(is(true)));
         assertThat(pathCaptor.getValue().toString(), is(hdfsPath));
 
-        assertThat(underTest.getNumOfWrittenBytes(), is(0L));
-        assertThat(underTest.getNumOfWrittenMessages(), is(0L));
+        assertThat(underTest.getNumOfReadBytes(), is(0L));
         assertThat(underTest.getActualPath(), is(hdfsPath));
-        assertThat(underTest.getLastAccess() > 0L, is(true));
-        assertThat(underTest.isBusy().get(), is(false));
     }
 
     @Test
-    public void createOutputStreamWillFailForExistingNormalFileNoOverwrite() throws IOException {
+    public void createInputStreamWillFailForExistingNormalFileNoOverwrite() throws IOException {
         // given
         String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
-        FSDataOutputStream fsDataOutputStream = mock(FSDataOutputStream.class);
+        FSDataInputStream fsDataInputStream = mock(FSDataInputStream.class);
         when(endpointConfig.getFileType()).thenReturn(HdfsFileType.NORMAL_FILE);
         when(endpointConfig.isWantAppend()).thenReturn(false);
         when(endpointConfig.isAppend()).thenReturn(false);
         when(endpointConfig.isOverwrite()).thenReturn(false);
 
         when(fileSystem.exists(any(Path.class))).thenReturn(true);
-        when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class))).thenReturn(fsDataOutputStream);
+        //when(fileSystem.create(any(Path.class), anyBoolean(), anyInt(), anyShort(), anyLong(), any(Progressable.class))).thenReturn(fsDataInputStream);
 
         // when
         Throwable expected = null;
         try {
-            underTest = HdfsOutputStream.createOutputStream(hdfsPath, hdfsInfoFactory);
+            underTest = HdfsInputStream.createInputStream(hdfsPath, hdfsInfoFactory);
         } catch (Exception e) {
             expected = e;
         }
