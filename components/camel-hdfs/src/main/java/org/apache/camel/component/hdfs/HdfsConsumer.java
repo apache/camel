@@ -75,8 +75,9 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             log.debug("Connecting to hdfs file-system {} (may take a while if connection is not available)", hdfsFsDescription);
         }
 
+        HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(config);
         // hadoop will cache the connection by default so its faster to get in the poll method
-        HdfsInfo answer = HdfsInfoFactory.newHdfsInfo(this.hdfsPath.toString(), config);
+        HdfsInfo answer = hdfsInfoFactory.newHdfsInfo(this.hdfsPath.toString());
 
         if (onStartup) {
             log.info("Connected to hdfs file-system {}", hdfsFsDescription);
@@ -146,9 +147,16 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             Message message = exchange.getIn();
             String fileName = StringUtils.substringAfterLast(inputStream.getActualPath(), "/");
             message.setHeader(Exchange.FILE_NAME, fileName);
+            message.setHeader(Exchange.FILE_NAME_CONSUMED, fileName);
+            message.setHeader("CamelFileAbsolutePath", inputStream.getActualPath());
             if (key.value != null) {
                 message.setHeader(HdfsHeader.KEY.name(), key.value);
             }
+
+            if (inputStream.getNumOfReadBytes() >= 0) {
+                message.setHeader(Exchange.FILE_LENGTH, inputStream.getNumOfReadBytes());
+            }
+
             message.setBody(value.value);
 
             log.debug("Processing file {}", fileName);
@@ -196,7 +204,8 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         try {
             this.rwLock.writeLock().lock();
 
-            return HdfsInputStream.createInputStream(fileStatus.getPath().toString(), this.config);
+            HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(config);
+            return HdfsInputStream.createInputStream(fileStatus.getPath().toString(), hdfsInfoFactory);
         } finally {
             this.rwLock.writeLock().unlock();
         }

@@ -28,6 +28,6 @@ interface HdfsFile {
 
     Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory);
 
-    Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration);
+s    Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory);
 
 }

@@ -46,8 +46,8 @@ public enum HdfsFileType {
         return this.file.createOutputStream(hdfsPath, hdfsInfoFactory.getEndpointConfig(), hdfsInfoFactory);
     }
 
-    public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
-        return this.file.createInputStream(hdfsPath, configuration);
+    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+        return this.file.createInputStream(hdfsPath, hdfsInfoFactory.getEndpointConfig(), hdfsInfoFactory);
     }
 
 }

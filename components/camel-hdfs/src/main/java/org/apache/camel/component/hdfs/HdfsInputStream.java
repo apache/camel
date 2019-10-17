@@ -47,23 +47,24 @@ public class HdfsInputStream implements Closeable {
     /**
      *
      * @param hdfsPath
-     * @param configuration
+     * @param hdfsInfoFactory
      * @return
      * @throws IOException
      */
-    public static HdfsInputStream createInputStream(String hdfsPath, HdfsConfiguration configuration) {
+    public static HdfsInputStream createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+        HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
         HdfsInputStream iStream = new HdfsInputStream();
-        iStream.fileType = configuration.getFileType();
+        iStream.fileType = endpointConfig.getFileType();
         iStream.actualPath = hdfsPath;
-        iStream.suffixedPath = iStream.actualPath + '.' + configuration.getOpenedSuffix();
-        iStream.suffixedReadPath = iStream.actualPath + '.' + configuration.getReadSuffix();
-        iStream.chunkSize = configuration.getChunkSize();
+        iStream.suffixedPath = iStream.actualPath + '.' + endpointConfig.getOpenedSuffix();
+        iStream.suffixedReadPath = iStream.actualPath + '.' + endpointConfig.getReadSuffix();
+        iStream.chunkSize = endpointConfig.getChunkSize();
         try {
-            HdfsInfo info = HdfsInfoFactory.newHdfsInfo(iStream.actualPath, configuration);
+            HdfsInfo info = hdfsInfoFactory.newHdfsInfo(iStream.actualPath);
             if (info.getFileSystem().rename(new Path(iStream.actualPath), new Path(iStream.suffixedPath))) {
-                iStream.in = iStream.fileType.createInputStream(iStream.suffixedPath, configuration);
+                iStream.in = iStream.fileType.createInputStream(iStream.suffixedPath, hdfsInfoFactory);
                 iStream.opened = true;
-                iStream.config = configuration;
+                iStream.config = endpointConfig;
             } else {
                 LOG.debug("Failed to open file [{}] because it doesn't exist", hdfsPath);
                 iStream = null;
@@ -79,7 +80,8 @@ public class HdfsInputStream implements Closeable {
     public final void close() throws IOException {
         if (opened) {
             IOUtils.closeStream(in);
-            HdfsInfo info = HdfsInfoFactory.newHdfsInfo(actualPath, config);
+            HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(config);
+            HdfsInfo info = hdfsInfoFactory.newHdfsInfo(actualPath);
             info.getFileSystem().rename(new Path(suffixedPath), new Path(suffixedReadPath));
             opened = false;
         }

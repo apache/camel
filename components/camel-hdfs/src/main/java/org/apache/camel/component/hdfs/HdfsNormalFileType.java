@@ -88,11 +88,11 @@ class HdfsNormalFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
+    public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rin;
             if (configuration.getFileSystemType().equals(HdfsFileSystemType.LOCAL)) {
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
+                HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
                 rin = hdfsInfo.getFileSystem().open(hdfsInfo.getPath());
             } else {
                 rin = new FileInputStream(getHfdsFileToTmpFile(hdfsPath, configuration));
@@ -123,7 +123,8 @@ class HdfsNormalFileType extends DefaultHdfsFileType {
                 outputDest.delete();
             }
 
-            HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
+            HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(configuration);
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             FileSystem fileSystem = hdfsInfo.getFileSystem();
             FileUtil.copy(fileSystem, new Path(hdfsPath), outputDest, false, fileSystem.getConf());
             try {
