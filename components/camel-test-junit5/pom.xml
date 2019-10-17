@@ -37,7 +37,7 @@
 	<properties>
 		<firstVersion>3.0.0</firstVersion>
 		<label>testing,java</label>
-
+        <title>Test JUnit5</title>
 	</properties>
 
 	<dependencies>
