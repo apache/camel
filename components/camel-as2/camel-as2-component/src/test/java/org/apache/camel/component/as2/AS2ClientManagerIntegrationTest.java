@@ -62,6 +62,8 @@ import org.apache.camel.component.as2.internal.AS2ApiCollection;
 import org.apache.camel.component.as2.internal.AS2ClientManagerApiMethod;
 import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
@@ -154,6 +156,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     private static AS2ServerConnection serverConnection;
     private static KeyPair serverSigningKP;
     private static List<X509Certificate> serverCertList;
+    private static RequestHandler requestHandler;
 
     private static final HttpDateGenerator DATE_GENERATOR = new HttpDateGenerator();
 
@@ -230,20 +233,21 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         // parameter type is String
         headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
 
-        final org.apache.http.protocol.HttpCoreContext result = requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
+        final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
+        HttpEntity responseEntity = result.getLeft();
+        HttpRequest request = result.getMiddle();
+        HttpResponse response = result.getRight();
 
         assertNotNull("send result", result);
         LOG.debug("send: " + result);
-        HttpRequest request = result.getRequest();
         assertNotNull("Request", request);
         assertTrue("Request does not contain body", request instanceof HttpEntityEnclosingRequest);
         HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
         assertNotNull("Request body", entity);
         assertTrue("Request body does not contain EDI entity", entity instanceof ApplicationEDIEntity);
         String ediMessage = ((ApplicationEDIEntity)entity).getEdiMessage();
-        assertEquals("EDI message is different", EDI_MESSAGE, ediMessage);
+        assertEquals("EDI message is different", EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""));
 
-        HttpResponse response = result.getResponse();
         assertNotNull("Response", response);
         assertTrue("Unexpected response type", HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE).startsWith(AS2MimeType.MULTIPART_REPORT));
         assertEquals("Unexpected mime version", AS2Constants.MIME_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION));
@@ -254,7 +258,6 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Unexpected AS2 to", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_TO));
         assertNotNull("Missing message id", HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID));
 
-        HttpEntity responseEntity = response.getEntity();
         assertNotNull("Response entity", responseEntity);
         assertTrue("Unexpected response entity type", responseEntity instanceof DispositionNotificationMultipartReportEntity);
         DispositionNotificationMultipartReportEntity reportEntity = (DispositionNotificationMultipartReportEntity)responseEntity;
@@ -265,7 +268,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Unexpected content type in second body part of report",
                 ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2Charset.US_ASCII).toString(),
                 secondPart.getContentTypeValue());
-        
+
         assertTrue("", secondPart instanceof AS2MessageDispositionNotificationEntity);
         AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity = (AS2MessageDispositionNotificationEntity) secondPart;
         assertEquals("Unexpected value for reporting UA", ORIGIN_SERVER_NAME, messageDispositionNotificationEntity.getReportingUA());
@@ -302,11 +305,14 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         // parameter type is java.security.cert.Certificate[]
         headers.put("CamelAS2.encryptingCertificateChain", certList);
 
-        final org.apache.http.protocol.HttpCoreContext result = requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
+        final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
+        HttpEntity responseEntity = result.getLeft();
+        HttpRequest request = result.getMiddle();
+        HttpResponse response = result.getRight();
 
         assertNotNull("send result", result);
         LOG.debug("send: " + result);
-        HttpRequest request = result.getRequest();
+
         assertNotNull("Request", request);
         assertTrue("Request does not contain body", request instanceof HttpEntityEnclosingRequest);
         HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
@@ -317,7 +323,6 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         String ediMessage = ((ApplicationEDIEntity)envelopeEntity).getEdiMessage();
         assertEquals("EDI message is different", EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""));
 
-        HttpResponse response = result.getResponse();
         assertNotNull("Response", response);
         assertTrue("Unexpected response type", HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE).startsWith(AS2MimeType.MULTIPART_REPORT));
         assertEquals("Unexpected mime version", AS2Constants.MIME_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION));
@@ -328,7 +333,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Unexpected AS2 to", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_TO));
         assertNotNull("Missing message id", HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID));
 
-        HttpEntity responseEntity = response.getEntity();
+
         assertNotNull("Response entity", responseEntity);
         assertTrue("Unexpected response entity type", responseEntity instanceof DispositionNotificationMultipartReportEntity);
         DispositionNotificationMultipartReportEntity reportEntity = (DispositionNotificationMultipartReportEntity)responseEntity;
@@ -380,11 +385,13 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         // parameter type is String[]
         headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
 
-        final org.apache.http.protocol.HttpCoreContext result = requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
+        final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
+        HttpEntity responseEntity = result.getLeft();
+        HttpRequest request = result.getMiddle();
+        HttpResponse response = result.getRight();
 
         assertNotNull("send result", result);
         LOG.debug("send: " + result);
-        HttpRequest request = result.getRequest();
         assertNotNull("Request", request);
         assertTrue("Request does not contain body", request instanceof HttpEntityEnclosingRequest);
         HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
@@ -395,9 +402,8 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertTrue("Signed entity wrong type", signedEntity instanceof ApplicationEDIEntity);
         ApplicationEDIEntity ediMessageEntity = (ApplicationEDIEntity) signedEntity;
         String ediMessage = ediMessageEntity.getEdiMessage();
-        assertEquals("EDI message is different", EDI_MESSAGE, ediMessage);
+        assertEquals("EDI message is different", EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""));
 
-        HttpResponse response = result.getResponse();
         assertNotNull("Response", response);
         String contentTypeHeaderValue = HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE);
         ContentType responseContentType = ContentType.parse(contentTypeHeaderValue);
@@ -410,7 +416,6 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Unexpected AS2 to", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_TO));
         assertNotNull("Missing message id", HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID));
 
-        HttpEntity responseEntity = response.getEntity();
         assertNotNull("Response entity", responseEntity);
         assertTrue("Unexpected response entity type", responseEntity instanceof MultipartSignedEntity);
         MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
@@ -435,7 +440,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Unexpected value for original message ID", HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID), messageDispositionNotificationEntity.getOriginalMessageId());
         assertEquals("Unexpected value for disposition mode", DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, messageDispositionNotificationEntity.getDispositionMode());
         assertEquals("Unexpected value for disposition type", AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType());
-        
+
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
         ReceivedContentMic computedContentMic = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest)request, decryptingKP.getPrivate());
         assertEquals("Received content MIC does not match computed", computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest());
@@ -467,11 +472,13 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         // parameter type is String[]
         headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
 
-        final org.apache.http.protocol.HttpCoreContext result = requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
+        final Triple<HttpEntity, HttpRequest, HttpResponse> result = executeRequest(headers);
+        HttpEntity responseEntity = result.getLeft();
+        HttpRequest request = result.getMiddle();
+        HttpResponse response = result.getRight();
 
         assertNotNull("send result", result);
         LOG.debug("send: " + result);
-        HttpRequest request = result.getRequest();
         assertNotNull("Request", request);
         assertTrue("Request does not contain body", request instanceof HttpEntityEnclosingRequest);
         HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
@@ -484,7 +491,6 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         String ediMessage = ediMessageEntity.getEdiMessage();
         assertEquals("EDI message is different", EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""));
 
-        HttpResponse response = result.getResponse();
         assertNotNull("Response", response);
         String contentTypeHeaderValue = HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE);
         ContentType responseContentType = ContentType.parse(contentTypeHeaderValue);
@@ -497,7 +503,6 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Unexpected AS2 to", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_TO));
         assertNotNull("Missing message id", HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID));
 
-        HttpEntity responseEntity = response.getEntity();
         assertNotNull("Response entity", responseEntity);
         assertTrue("Unexpected response entity type", responseEntity instanceof MultipartSignedEntity);
         MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
@@ -582,10 +587,14 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     public static void teardownTest() throws Exception {
         if (serverConnection != null) {
             serverConnection.stopListening("/");
+            serverConnection.close();
         }
     }
 
     public static class RequestHandler implements HttpRequestHandler {
+
+        private HttpRequest request;
+        private HttpResponse response;
 
         @Override
         public void handle(HttpRequest request, HttpResponse response, HttpContext context)
@@ -593,9 +602,26 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
             LOG.info("Received test message: " + request);
             context.setAttribute(AS2ServerManager.FROM, MDN_FROM);
             context.setAttribute(AS2ServerManager.SUBJECT, MDN_SUBJECT_PREFIX);
+
+            this.request = request;
+            this.response = response;
         }
 
+        public HttpRequest getRequest() {
+            return request;
+        }
+
+        public HttpResponse getResponse() {
+            return response;
+        }
     }
+
+    private Triple<HttpEntity, HttpRequest, HttpResponse> executeRequest(Map<String, Object> headers) throws Exception {
+        HttpEntity responseEntity = requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
+
+        return new ImmutableTriple(responseEntity, requestHandler.getRequest(), requestHandler.getResponse());
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -649,7 +675,8 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(AS2_VERSION, ORIGIN_SERVER_NAME,
                 SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA, serverCertList.toArray(new Certificate[0]), serverSigningKP.getPrivate(), serverSigningKP.getPrivate());
-        serverConnection.listen("/", new RequestHandler());
+        requestHandler = new  RequestHandler();
+        serverConnection.listen("/", requestHandler);
     }
 
     private void setupKeysAndCertificates() throws Exception {

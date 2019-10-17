@@ -18,6 +18,7 @@ package org.apache.camel.component.as2;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
+import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2Constants;
 import org.apache.camel.component.as2.internal.AS2PropertiesHelper;
@@ -41,7 +42,7 @@ public class AS2Producer extends AbstractApiProducer<AS2ApiName, AS2Configuratio
         resultExchange.setProperty(AS2Constants.AS2_INTERCHANGE, context);
         HttpResponse response = context.getResponse();
         HttpEntity entity = response.getEntity();
-        if (entity != null && entity instanceof DispositionNotificationMultipartReportEntity) {
+        if (entity instanceof DispositionNotificationMultipartReportEntity || entity instanceof MultipartSignedEntity) {
             resultExchange.getOut().setBody(entity);
         } else {
             resultExchange.getOut().setBody(null);
