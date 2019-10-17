@@ -34,7 +34,7 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         super.setUp();
@@ -47,7 +47,7 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testSimpleSplitWriteRead() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -81,7 +81,7 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 

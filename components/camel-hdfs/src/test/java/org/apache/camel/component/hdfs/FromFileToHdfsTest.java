@@ -37,7 +37,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         deleteDirectory("target/inbox");
@@ -48,7 +48,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -61,7 +61,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
 
     @Test
     public void testFileToHdfs() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -80,7 +80,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
 
     @Test
     public void testTwoFilesToHdfs() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 

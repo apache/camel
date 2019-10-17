@@ -53,7 +53,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         super.setUp();
@@ -61,7 +61,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testProducer() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         template.sendBody("direct:start1", "PAPPO");
@@ -79,7 +79,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testProducerClose() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         for (int i = 0; i < 10; ++i) {
@@ -105,7 +105,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteBoolean() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         Boolean aBoolean = true;
@@ -125,7 +125,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteByte() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         byte aByte = 8;
@@ -145,7 +145,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteInt() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         int anInt = 1234;
@@ -165,7 +165,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteFloat() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         float aFloat = 12.34f;
@@ -185,7 +185,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteDouble() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         Double aDouble = 12.34D;
@@ -205,7 +205,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteLong() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         long aLong = 1234567890;
@@ -225,7 +225,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteText() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         String txt = "CIAO MONDO !";
@@ -245,7 +245,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteTextWithKey() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         String txtKey = "THEKEY";
@@ -266,7 +266,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testMapWriteTextWithKey() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         String txtKey = "THEKEY";
@@ -286,7 +286,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testArrayWriteText() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         String txtValue = "CIAO MONDO !";
@@ -305,7 +305,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testBloomMapWriteText() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         String txtKey = "THEKEY";
@@ -325,7 +325,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteTextWithDynamicFilename() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -348,7 +348,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
     @Test
     public void testWriteTextWithDynamicFilenameExpression() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -372,7 +372,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
         super.tearDown();

@@ -18,7 +18,6 @@ package org.apache.camel.component.hdfs;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.hadoop.fs.Path;
@@ -53,29 +52,27 @@ public class HdfsInputStream implements Closeable {
      * @throws IOException
      */
     public static HdfsInputStream createInputStream(String hdfsPath, HdfsConfiguration configuration) {
-        HdfsInputStream ret = new HdfsInputStream();
-        ret.fileType = configuration.getFileType();
-        ret.actualPath = hdfsPath;
-        ret.suffixedPath = ret.actualPath + '.' + configuration.getOpenedSuffix();
-        ret.suffixedReadPath = ret.actualPath + '.' + configuration.getReadSuffix();
-        ret.chunkSize = configuration.getChunkSize();
+        HdfsInputStream iStream = new HdfsInputStream();
+        iStream.fileType = configuration.getFileType();
+        iStream.actualPath = hdfsPath;
+        iStream.suffixedPath = iStream.actualPath + '.' + configuration.getOpenedSuffix();
+        iStream.suffixedReadPath = iStream.actualPath + '.' + configuration.getReadSuffix();
+        iStream.chunkSize = configuration.getChunkSize();
         try {
-            HdfsInfo info = HdfsInfoFactory.newHdfsInfo(ret.actualPath, configuration);
-            if (info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath))) {
-                ret.in = ret.fileType.createInputStream(ret.suffixedPath, configuration);
-                ret.opened = true;
-                ret.config = configuration;
+            HdfsInfo info = HdfsInfoFactory.newHdfsInfo(iStream.actualPath, configuration);
+            if (info.getFileSystem().rename(new Path(iStream.actualPath), new Path(iStream.suffixedPath))) {
+                iStream.in = iStream.fileType.createInputStream(iStream.suffixedPath, configuration);
+                iStream.opened = true;
+                iStream.config = configuration;
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Failed to open file [{}] because it doesn't exist", hdfsPath);
-                }
-                ret = null;
+                LOG.debug("Failed to open file [{}] because it doesn't exist", hdfsPath);
+                iStream = null;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return ret;
+        return iStream;
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.apache.camel.component.hdfs.kerberos;
 
 import java.io.File;
 
+import org.apache.camel.component.hdfs.HdfsConfiguration;
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +37,10 @@ public final class KerberosConfigurationBuilder {
     /**
      * Add all the kerberos specific settings needed for this authentication mode
      *
-     * @param kerberosConfigFileLocation - The location of the kerberos config file (on the server)
+     * @param endpointConfig - configuration with the HA settings configured on the endpoint
      */
-    public static void withKerberosConfiguration(Configuration configuration, String kerberosConfigFileLocation) {
-        setKerberosConfigFile(kerberosConfigFileLocation);
+    public static void withKerberosConfiguration(Configuration configuration, HdfsConfiguration endpointConfig) {
+        setKerberosConfigFile(endpointConfig.getKerberosConfigFileLocation());
         configuration.set(AUTHENTICATION_MODE, "kerberos");
 
     }

@@ -67,7 +67,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -84,7 +84,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testSimpleConsumer() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -113,11 +113,11 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testConcurrentConsumers() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
-        final File rootdir = new File(".");
+        final File rootdir = CWD;
         final File dir = new File("target/test/multiple-consumers");
         dir.mkdirs();
         for (int i = 1; i <= ITERATIONS; i++) {
@@ -157,7 +157,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testSimpleConsumerWithEmptyFile() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -186,7 +186,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testSimpleConsumerFileWithSizeEqualToNChunks() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -217,7 +217,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testSimpleConsumerWithEmptySequenceFile() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -242,7 +242,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testReadWithReadSuffix() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -287,7 +287,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testReadBoolean() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -315,7 +315,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testReadByte() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -346,7 +346,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testReadFloat() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -376,7 +376,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testReadDouble() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -406,7 +406,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testReadInt() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -436,7 +436,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testReadLong() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -466,7 +466,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testReadBytes() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -496,7 +496,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testReadString() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -526,7 +526,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
 
     @Test
     public void testReadStringArrayFile() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
@@ -560,7 +560,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        if (!canTest()) {
+        if (skipTest()) {
             return;
         }
 
