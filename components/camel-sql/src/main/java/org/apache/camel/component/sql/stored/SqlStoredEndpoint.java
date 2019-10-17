@@ -160,4 +160,9 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
         this.function = function;
     }
 
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
 }
