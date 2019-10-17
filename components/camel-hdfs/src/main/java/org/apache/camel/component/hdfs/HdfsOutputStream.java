@@ -66,7 +66,7 @@ public class HdfsOutputStream implements Closeable {
             if (endpointConfig.isOverwrite()) {
                 oStream.info.getFileSystem().delete(actualPath, true);
             } else {
-                throw new RuntimeCamelException("The file already exists");
+                throw new RuntimeCamelException("File [" + actualPath + "] already exists");
             }
         }
 
