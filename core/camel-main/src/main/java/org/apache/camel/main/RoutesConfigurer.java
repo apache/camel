@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -36,16 +37,33 @@ public class RoutesConfigurer {
     private static final Logger LOG = LoggerFactory.getLogger(RoutesConfigurer.class);
 
     private final RoutesCollector routesCollector;
+    private final List<RoutesBuilder> routesBuilders;
 
+    /**
+     * Creates a new routes configurer
+     *
+     * @param routesCollector  routes collector
+     */
     public RoutesConfigurer(RoutesCollector routesCollector) {
+        this(routesCollector, new ArrayList<>());
+    }
+
+    /**
+     * Creates a new routes configurer
+     *
+     * @param routesCollector  routes collector
+     * @param routesBuilders   existing route builders
+     */
+    public RoutesConfigurer(RoutesCollector routesCollector, List<RoutesBuilder> routesBuilders) {
         this.routesCollector = routesCollector;
+        this.routesBuilders = routesBuilders;
     }
 
     /**
      * Collects routes and rests from the various sources (like registry or opinionated
-     * classpath locations) and injects these into the Camel context.
+     * classpath locations) and injects (adds) these into the Camel context.
      *
-     * @param camelContext  the Camel Context
+     * @param camelContext  the Camel context
      * @param config        the configuration
      */
     public void configureRoutes(CamelContext camelContext, DefaultConfigurationProperties config) {
@@ -56,18 +74,21 @@ public class RoutesConfigurer {
                         config.getJavaRoutesExcludePattern(),
                         config.getJavaRoutesIncludePattern());
 
+                // add newly discovered routes
+                routesBuilders.addAll(routes);
                 // sort routes according to ordered
-                routes.sort(OrderedComparator.get());
+                routesBuilders.sort(OrderedComparator.get());
                 // then add the routes
-                for (RoutesBuilder routesBuilder : routes) {
-                    LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
-                    camelContext.addRoutes(routesBuilder);
+                for (RoutesBuilder builder : routesBuilders) {
+                    LOG.debug("Adding routes into CamelContext from RoutesBuilder: {}", builder);
+                    camelContext.addRoutes(builder);
                 }
 
                 boolean scan = !config.getXmlRoutes().equals("false");
                 if (scan) {
                     List<RoutesDefinition> defs = routesCollector.collectXmlRoutesFromDirectory(camelContext, config.getXmlRoutes());
                     for (RoutesDefinition def : defs) {
+                        LOG.debug("Adding routes into CamelContext from XML files: {}", config.getXmlRoutes());
                         camelContext.getExtension(Model.class).addRouteDefinitions(def.getRoutes());
                     }
                 }
@@ -76,6 +97,7 @@ public class RoutesConfigurer {
                 if (scanRests) {
                     List<RestsDefinition> defs = routesCollector.collectXmlRestsFromDirectory(camelContext, config.getXmlRests());
                     for (RestsDefinition def : defs) {
+                        LOG.debug("Adding rests into CamelContext from XML files: {}", config.getXmlRests());
                         camelContext.getExtension(Model.class).addRestDefinitions(def.getRests(), true);
                     }
                 }

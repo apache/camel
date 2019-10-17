@@ -21,10 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.main.BaseRoutesCollector;
-import org.apache.camel.main.DefaultConfigurationProperties;
+import org.apache.camel.main.DefaultRoutesCollector;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -34,7 +32,7 @@ import org.springframework.core.io.Resource;
 /**
  * Spring Boot {@link org.apache.camel.main.RoutesCollector}.
  */
-public class SpringBootRoutesCollector extends BaseRoutesCollector {
+public class SpringBootRoutesCollector extends DefaultRoutesCollector {
 
     private final ApplicationContext applicationContext;
 

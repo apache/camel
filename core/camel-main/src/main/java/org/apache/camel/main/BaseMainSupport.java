@@ -51,7 +51,6 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -81,6 +80,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
+    protected RoutesCollector routesCollector = new DefaultRoutesCollector();
     protected List<RoutesBuilder> routeBuilders = new ArrayList<>();
     protected String routeBuilderClasses;
     protected List<Object> configurations = new ArrayList<>();
@@ -208,6 +208,17 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
     public void addConfiguration(Object configuration) {
         configurations.add(configuration);
+    }
+
+    public RoutesCollector getRoutesCollector() {
+        return routesCollector;
+    }
+
+    /**
+     * To use a custom {@link RoutesCollector}.
+     */
+    public void setRoutesCollector(RoutesCollector routesCollector) {
+        this.routesCollector = routesCollector;
     }
 
     public String getRouteBuilderClasses() {
@@ -519,11 +530,9 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
         // try to load the route builders
         loadRouteBuilders(camelContext);
-        // sort routes according to ordered
-        routeBuilders.sort(OrderedComparator.get());
-        for (RoutesBuilder routeBuilder : routeBuilders) {
-            camelContext.addRoutes(routeBuilder);
-        }
+        // then configure and add the routes
+        RoutesConfigurer configurer = new RoutesConfigurer(routesCollector, routeBuilders);
+        configurer.configureRoutes(camelContext, mainConfigurationProperties);
         // register lifecycle so we are notified in Camel is stopped from JMX or somewhere else
         camelContext.addLifecycleStrategy(new MainLifecycleStrategy(completed, latch));
         // allow to do configuration before its started
