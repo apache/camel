@@ -16,32 +16,31 @@
  */
 package org.apache.camel.component.hdfs;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import java.io.IOException;
 
-final class HdfsInfo {
+import org.junit.Test;
 
-    private final Configuration configuration;
-    private final FileSystem fileSystem;
-    private final Path path;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
-    HdfsInfo(Configuration configuration, FileSystem fileSystem, Path hdfsPath) {
-        this.configuration = configuration;
-        this.fileSystem = fileSystem;
-        this.path = hdfsPath;
+public class HdfsInfoTest {
+
+    private HdfsInfo underTest;
+
+    @Test
+    public void createHdfsInfo() throws IOException {
+        // given
+        String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
+        HdfsConfiguration endpointConfig = mock(HdfsConfiguration.class);
+
+        // when
+        underTest = HdfsInfoFactory.newHdfsInfoWithoutAuth(hdfsPath, endpointConfig);
+
+        // then
+        assertThat(underTest, notNullValue());
+        assertThat(underTest.getConfiguration(), notNullValue());
+        assertThat(underTest.getFileSystem(), notNullValue());
+        assertThat(underTest.getPath(), notNullValue());
     }
-
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public FileSystem getFileSystem() {
-        return fileSystem;
-    }
-
-    public Path getPath() {
-        return path;
-    }
-
 }
