@@ -42,34 +42,35 @@ public class HdfsOutputStream implements Closeable {
     protected HdfsOutputStream() {
     }
 
-    public static HdfsOutputStream createOutputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) throws IOException {
+    public static HdfsOutputStream createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) throws IOException {
+        HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
         HdfsOutputStream oStream = new HdfsOutputStream();
-        oStream.fileType = configuration.getFileType();
+        oStream.fileType = endpointConfig.getFileType();
         oStream.actualPath = hdfsPath;
         oStream.info = hdfsInfoFactory.newHdfsInfoWithoutAuth(oStream.actualPath);
 
-        oStream.suffixedPath = oStream.actualPath + '.' + configuration.getOpenedSuffix();
+        oStream.suffixedPath = oStream.actualPath + '.' + endpointConfig.getOpenedSuffix();
 
         Path actualPath = new Path(oStream.actualPath);
         boolean actualPathExists = oStream.info.getFileSystem().exists(actualPath);
 
-        if (configuration.isWantAppend() || configuration.isAppend()) {
+        if (endpointConfig.isWantAppend() || endpointConfig.isAppend()) {
             if (actualPathExists) {
-                configuration.setAppend(true);
+                endpointConfig.setAppend(true);
                 oStream.info = hdfsInfoFactory.newHdfsInfoWithoutAuth(oStream.suffixedPath);
                 oStream.info.getFileSystem().rename(actualPath, new Path(oStream.suffixedPath));
             } else {
-                configuration.setAppend(false);
+                endpointConfig.setAppend(false);
             }
         } else if (actualPathExists && !oStream.info.getFileSystem().isDirectory(actualPath)) { // only check if not directory
-            if (configuration.isOverwrite()) {
+            if (endpointConfig.isOverwrite()) {
                 oStream.info.getFileSystem().delete(actualPath, true);
             } else {
                 throw new RuntimeCamelException("The file already exists");
             }
         }
 
-        oStream.out = oStream.fileType.createOutputStream(oStream.suffixedPath, configuration);
+        oStream.out = oStream.fileType.createOutputStream(oStream.suffixedPath, hdfsInfoFactory);
         oStream.opened = true;
         return oStream;
     }

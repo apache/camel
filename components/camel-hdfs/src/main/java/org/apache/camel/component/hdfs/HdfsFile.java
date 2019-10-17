@@ -26,7 +26,7 @@ interface HdfsFile {
 
     long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value);
 
-    Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration);
+    Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory);
 
     Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration);
 

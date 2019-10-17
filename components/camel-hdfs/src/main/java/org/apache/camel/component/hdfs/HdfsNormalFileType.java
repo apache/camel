@@ -71,10 +71,10 @@ class HdfsNormalFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
+    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rout;
-            HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             if (!configuration.isAppend()) {
                 rout = hdfsInfo.getFileSystem().create(hdfsInfo.getPath(), configuration.isOverwrite(), configuration.getBufferSize(),
                         configuration.getReplication(), configuration.getBlockSize(), () -> { });

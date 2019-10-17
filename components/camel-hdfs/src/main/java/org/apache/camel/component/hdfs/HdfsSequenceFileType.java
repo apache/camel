@@ -65,10 +65,10 @@ class HdfsSequenceFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
+    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rout;
-            HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             Class<?> keyWritableClass = configuration.getKeyType().getWritableClass();
             Class<?> valueWritableClass = configuration.getValueType().getWritableClass();
             rout = SequenceFile.createWriter(hdfsInfo.getConfiguration(), SequenceFile.Writer.file(hdfsInfo.getPath()), SequenceFile.Writer.keyClass(keyWritableClass),

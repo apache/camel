@@ -41,6 +41,10 @@ class HdfsInfoFactory {
         return newHdfsInfoWithoutAuth(hdfsPath, endpointConfig);
     }
 
+    public HdfsConfiguration getEndpointConfig() {
+        return endpointConfig;
+    }
+
     static HdfsInfo newHdfsInfo(String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
         // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
         javax.security.auth.login.Configuration auth = HdfsComponent.getJAASConfiguration();

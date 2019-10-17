@@ -140,7 +140,7 @@ public class HdfsProducer extends DefaultProducer {
         }
 
         HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(config);
-        HdfsOutputStream answer = HdfsOutputStream.createOutputStream(actualPath.toString(), config, hdfsInfoFactory);
+        HdfsOutputStream answer = HdfsOutputStream.createOutputStream(actualPath.toString(), hdfsInfoFactory);
 
         if (onStartup) {
             log.info("Connected to hdfs file-system {}", hdfsFsDescription);
@@ -195,7 +195,7 @@ public class HdfsProducer extends DefaultProducer {
                 IOHelper.close(oStream, "output stream", log);
             }
             StringBuilder actualPath = getHdfsPathUsingFileNameHeader(exchange);
-            oStream = HdfsOutputStream.createOutputStream(actualPath.toString(), config, hdfsInfoFactory);
+            oStream = HdfsOutputStream.createOutputStream(actualPath.toString(), hdfsInfoFactory);
         } else if (oStream == null) {
             // must have oStream
             oStream = setupHdfs(false);
@@ -206,7 +206,7 @@ public class HdfsProducer extends DefaultProducer {
                 IOHelper.close(oStream, "output stream", log);
             }
             StringBuilder actualPath = newFileName();
-            oStream = HdfsOutputStream.createOutputStream(actualPath.toString(), config, hdfsInfoFactory);
+            oStream = HdfsOutputStream.createOutputStream(actualPath.toString(), hdfsInfoFactory);
         }
 
         String path = oStream.getActualPath();

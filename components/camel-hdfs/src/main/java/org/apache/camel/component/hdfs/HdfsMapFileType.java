@@ -66,10 +66,10 @@ class HdfsMapFileType extends DefaultHdfsFileType {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
+    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rout;
-            HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             Class<? extends WritableComparable> keyWritableClass = configuration.getKeyType().getWritableClass();
             Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
             rout = new MapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass), MapFile.Writer.valueClass(valueWritableClass),
