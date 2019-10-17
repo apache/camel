@@ -21,7 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.main.BaseRoutesCollector;
+import org.apache.camel.main.DefaultConfigurationProperties;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -40,7 +43,7 @@ public class SpringBootRoutesCollector extends BaseRoutesCollector {
     }
 
     @Override
-    public List<RoutesDefinition> collectXmlRoutesFromDirectory(CamelContext camelContext, String directory) throws Exception {
+    public List<RoutesDefinition> collectXmlRoutesFromDirectory(CamelContext camelContext, String directory) {
         List<RoutesDefinition> answer = new ArrayList<>();
 
         String[] parts = directory.split(",");
@@ -55,6 +58,8 @@ public class SpringBootRoutesCollector extends BaseRoutesCollector {
                 }
             } catch (FileNotFoundException e) {
                 log.debug("No XML routes found in {}. Skipping XML routes detection.", part);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
 
@@ -62,7 +67,7 @@ public class SpringBootRoutesCollector extends BaseRoutesCollector {
     }
 
     @Override
-    public List<RestsDefinition> collectXmlRestsFromDirectory(CamelContext camelContext, String directory) throws Exception {
+    public List<RestsDefinition> collectXmlRestsFromDirectory(CamelContext camelContext, String directory) {
         List<RestsDefinition> answer = new ArrayList<>();
 
         String[] parts = directory.split(",");
@@ -76,6 +81,8 @@ public class SpringBootRoutesCollector extends BaseRoutesCollector {
                 }
             } catch (FileNotFoundException e) {
                 log.debug("No XML rests found in {}. Skipping XML rests detection.", part);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
 

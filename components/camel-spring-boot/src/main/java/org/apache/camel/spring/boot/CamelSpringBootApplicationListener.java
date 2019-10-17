@@ -25,18 +25,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StartupListener;
 import org.apache.camel.main.MainDurationEventNotifier;
 import org.apache.camel.main.RoutesCollector;
-import org.apache.camel.model.Model;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.main.RoutesConfigurer;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
-import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,30 +43,31 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 
 /**
- * Collects routes and rests from the various sources (like Spring application context beans registry or opinionated
+ * A spring application listener that when spring boot is starting (refresh event) will setup Camel by:
+ * <p>
+ * 1. collecting routes and rests from the various sources (like Spring application context beans registry or opinionated
  * classpath locations) and injects these into the Camel context.
+ * 2. setting up Camel main controller if enabled.
+ * 3. setting up run duration if in use.
  */
-public class RoutesCollectorListener implements ApplicationListener<ContextRefreshedEvent>, Ordered {
+public class CamelSpringBootApplicationListener implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
     // Static collaborators
 
-    private static final Logger LOG = LoggerFactory.getLogger(RoutesCollectorListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelSpringBootApplicationListener.class);
 
     // Collaborators
 
     private final ApplicationContext applicationContext;
-
     private final List<CamelContextConfiguration> camelContextConfigurations;
-
     private final CamelConfigurationProperties configurationProperties;
-
     private final RoutesCollector springBootRoutesCollector;
 
     // Constructors
 
-    public RoutesCollectorListener(ApplicationContext applicationContext, List<CamelContextConfiguration> camelContextConfigurations,
-                                   CamelConfigurationProperties configurationProperties,
-                                   RoutesCollector springBootRoutesCollector) {
+    public CamelSpringBootApplicationListener(ApplicationContext applicationContext, List<CamelContextConfiguration> camelContextConfigurations,
+                                              CamelConfigurationProperties configurationProperties,
+                                              RoutesCollector springBootRoutesCollector) {
         this.applicationContext = applicationContext;
         this.camelContextConfigurations = new ArrayList<>(camelContextConfigurations);
         this.configurationProperties = configurationProperties;
@@ -88,42 +85,18 @@ public class RoutesCollectorListener implements ApplicationListener<ContextRefre
                 && camelContext.getStatus().isStopped()) {
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
 
-            final List<RoutesBuilder> routes = springBootRoutesCollector.collectRoutesFromRegistry(camelContext, configurationProperties);
+            if (configurationProperties.isRoutesCollectorEnabled()) {
+                LOG.debug("RoutesCollectorEnabled: {}", springBootRoutesCollector);
+                RoutesConfigurer configurer = new RoutesConfigurer(springBootRoutesCollector);
+                configurer.configureRoutes(camelContext, configurationProperties);
+            }
 
-            // sort routes according to ordered
-            routes.sort(OrderedComparator.get());
-            // then add the routes
-            for (RoutesBuilder routesBuilder : routes) {
-                try {
-                    LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
-                    camelContext.addRoutes(routesBuilder);
-                } catch (Exception e) {
-                    throw new CamelSpringBootInitializationException(e);
-                }
+            for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
+                LOG.debug("CamelContextConfiguration found. Invoking beforeApplicationStart: {}", camelContextConfiguration);
+                camelContextConfiguration.beforeApplicationStart(camelContext);
             }
 
             try {
-                boolean scan = !configurationProperties.getXmlRoutes().equals("false");
-                if (scan) {
-                    List<RoutesDefinition> defs = springBootRoutesCollector.collectXmlRoutesFromDirectory(camelContext, configurationProperties.getXmlRoutes());
-                    for (RoutesDefinition def : defs) {
-                        camelContext.getExtension(Model.class).addRouteDefinitions(def.getRoutes());
-                    }
-                }
-
-                boolean scanRests = !configurationProperties.getXmlRests().equals("false");
-                if (scanRests) {
-                    List<RestsDefinition> defs = springBootRoutesCollector.collectXmlRestsFromDirectory(camelContext, configurationProperties.getXmlRests());
-                    for (RestsDefinition def : defs) {
-                        camelContext.getExtension(Model.class).addRestDefinitions(def.getRests(), true);
-                    }
-                }
-
-                for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
-                    LOG.debug("CamelContextConfiguration found. Invoking beforeApplicationStart: {}", camelContextConfiguration);
-                    camelContextConfiguration.beforeApplicationStart(camelContext);
-                }
-
                 if (configurationProperties.isMainRunController()) {
                     CamelMainRunController controller = new CamelMainRunController(applicationContext, camelContext);
 
@@ -136,8 +109,8 @@ public class RoutesCollectorListener implements ApplicationListener<ContextRefre
                         }
                         // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
                         EventNotifier notifier = new MainDurationEventNotifier(camelContext,
-                            configurationProperties.getDurationMaxMessages(), configurationProperties.getDurationMaxIdleSeconds(),
-                            controller.getCompleted(), controller.getLatch(), true);
+                                configurationProperties.getDurationMaxMessages(), configurationProperties.getDurationMaxIdleSeconds(),
+                                controller.getCompleted(), controller.getLatch(), true);
                         // register our event notifier
                         ServiceHelper.startService(notifier);
                         camelContext.getManagementStrategy().addEventNotifier(notifier);
@@ -146,7 +119,7 @@ public class RoutesCollectorListener implements ApplicationListener<ContextRefre
                     if (configurationProperties.getDurationMaxSeconds() > 0) {
                         LOG.info("CamelSpringBoot will terminate after {} seconds", configurationProperties.getDurationMaxSeconds());
                         terminateMainControllerAfter(camelContext, configurationProperties.getDurationMaxSeconds(),
-                            controller.getCompleted(), controller.getLatch());
+                                controller.getCompleted(), controller.getLatch());
                     }
 
                     camelContext.addStartupListener(new StartupListener() {
@@ -185,8 +158,8 @@ public class RoutesCollectorListener implements ApplicationListener<ContextRefre
 
                             // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
                             EventNotifier notifier = new MainDurationEventNotifier(camelContext,
-                                configurationProperties.getDurationMaxMessages(), configurationProperties.getDurationMaxIdleSeconds(),
-                                completed, latch, false);
+                                    configurationProperties.getDurationMaxMessages(), configurationProperties.getDurationMaxIdleSeconds(),
+                                    completed, latch, false);
                             // register our event notifier
                             ServiceHelper.startService(notifier);
                             camelContext.getManagementStrategy().addEventNotifier(notifier);

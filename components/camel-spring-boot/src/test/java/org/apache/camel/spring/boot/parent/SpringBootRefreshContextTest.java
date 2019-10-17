@@ -18,7 +18,7 @@ package org.apache.camel.spring.boot.parent;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.boot.RoutesCollectorListener;
+import org.apache.camel.spring.boot.CamelSpringBootApplicationListener;
 import org.junit.Test;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -36,7 +36,7 @@ public class SpringBootRefreshContextTest {
         parent.refresh();
         ConfigurableApplicationContext context = new SpringApplicationBuilder(Configuration.class).web(WebApplicationType.NONE).parent(parent).run();
         ContextRefreshedEvent refreshEvent = new ContextRefreshedEvent(context);
-        RoutesCollectorListener collector = context.getBean(RoutesCollectorListener.class);
+        CamelSpringBootApplicationListener collector = context.getBean(CamelSpringBootApplicationListener.class);
         collector.onApplicationEvent(refreshEvent); //no changes should happen here
     }
 

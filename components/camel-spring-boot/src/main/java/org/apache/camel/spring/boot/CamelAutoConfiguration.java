@@ -149,11 +149,11 @@ public class CamelAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(RoutesCollectorListener.class)
-    RoutesCollectorListener routesCollectorListener(ApplicationContext applicationContext, CamelConfigurationProperties config,
-                                                    RoutesCollector routesCollector) {
+    @ConditionalOnMissingBean(CamelSpringBootApplicationListener.class)
+    CamelSpringBootApplicationListener routesCollectorListener(ApplicationContext applicationContext, CamelConfigurationProperties config,
+                                                               RoutesCollector routesCollector) {
         Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
-        return new RoutesCollectorListener(applicationContext, new ArrayList(configurations), config, routesCollector);
+        return new CamelSpringBootApplicationListener(applicationContext, new ArrayList(configurations), config, routesCollector);
     }
 
     /**

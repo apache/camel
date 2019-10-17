@@ -71,6 +71,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String routeFilterExcludePattern;
     private boolean beanIntrospectionExtendedStatistics;
     private LoggingLevel beanIntrospectionLoggingLevel;
+    private boolean routesCollectorEnabled = true;
     private String javaRoutesIncludePattern;
     private String javaRoutesExcludePattern;
     private String xmlRoutes = "classpath:camel/*.xml";
@@ -708,6 +709,22 @@ public abstract class DefaultConfigurationProperties<T> {
         this.beanIntrospectionLoggingLevel = beanIntrospectionLoggingLevel;
     }
 
+    public boolean isRoutesCollectorEnabled() {
+        return routesCollectorEnabled;
+    }
+
+    /**
+     * Whether the routes collector is enabled or not.
+     * 
+     * When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and
+     * also load additional XML routes from the file system.
+     *
+     * The routes collector is default enabled.
+     */
+    public void setRoutesCollectorEnabled(boolean routesCollectorEnabled) {
+        this.routesCollectorEnabled = routesCollectorEnabled;
+    }
+
     public String getJavaRoutesIncludePattern() {
         return javaRoutesIncludePattern;
     }
@@ -1273,6 +1290,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withMdcLoggingKeysPattern(String mdcLoggingKeysPattern) {
         this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
+        return (T) this;
+    }
+
+    /**
+     * Whether the routes collector is enabled or not.
+     *
+     * When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and
+     * also load additional XML routes from the file system.
+     *
+     * The routes collector is default enabled.
+     */
+    public T withRoutesCollectorEnabled(boolean routesCollectorEnabled) {
+        this.routesCollectorEnabled = routesCollectorEnabled;
         return (T) this;
     }
 

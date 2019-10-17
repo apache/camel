@@ -408,6 +408,16 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
     private LoggingLevel beanIntrospectionLoggingLevel;
 
     /**
+     * Whether the routes collector is enabled or not.
+     *
+     * When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and
+     * also load additional XML routes from the file system.
+     *
+     * The routes collector is default enabled.
+     */
+    private boolean routesCollectorEnabled = true;
+
+    /**
      * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation.
      * The exclusive filtering takes precedence over inclusive filtering.
      * The pattern is using Ant-path style pattern.
