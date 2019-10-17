@@ -1067,6 +1067,8 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 
 | link:camel-attachments/src/main/docs/attachments.adoc[Attachments] (camel-attachments) | 3.0 | Java Attachments support for Camel Message
 
+| link:camel-aws-xray/src/main/docs/aws-xray.adoc[AWS XRay] (camel-aws-xray) | 2.21 | Distributed tracing using AWS XRay
+
 | link:camel-blueprint/src/main/docs/blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
 
 | link:camel-cdi/src/main/docs/cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
@@ -1081,7 +1083,7 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 
 | link:camel-leveldb/src/main/docs/leveldb.adoc[LevelDB] (camel-leveldb) | 2.10 | Using LevelDB as persistent EIP store
 
-| link:camel-lra/src/main/docs/lra.adoc[Lra] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
+| link:camel-lra/src/main/docs/lra.adoc[LRA] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
 
 | link:camel-microprofile-config/src/main/docs/microprofile-config.adoc[Microprofile Config] (camel-microprofile-config) | 3.0 | Bridging Eclipse MicroProfile Config with Camel properties
 
@@ -1089,13 +1091,13 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
-| link:camel-reactive-executor-vertx/src/main/docs/reactive-executor-vertx.adoc[Reactive Executor Vertx] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert X
+| link:camel-reactive-executor-vertx/src/main/docs/reactive-executor-vertx.adoc[Reactive Executor Vert.x] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert.x
 
 | link:camel-reactor/src/main/docs/reactor.adoc[Reactor] (camel-reactor) | 2.20 | Reactor based back-end for Camel's reactive streams component
 
 | link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
-| link:camel-rxjava/src/main/docs/rxjava.adoc[Rxjava] (camel-rxjava) | 2.22 | RxJava based back-end for Camel's reactive streams component
+| link:camel-rxjava/src/main/docs/rxjava.adoc[RxJava] (camel-rxjava) | 2.22 | RxJava based back-end for Camel's reactive streams component
 
 | link:camel-shiro/src/main/docs/shiro.adoc[Shiro] (camel-shiro) | 2.5 | Security using Shiro
 
@@ -1134,8 +1136,6 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 | link:camel-testcontainers-junit5/src/main/docs/testcontainers-junit5.adoc[Testcontainers JUnit5] (camel-testcontainers-junit5) | 3.0 | Camel support for testcontainers with JUnit 5
 
 | link:camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc[Testcontainers Spring] (camel-testcontainers-spring) | 2.22 | Camel unit testing with Spring and testcontainers
-
-| link:camel-aws-xray/src/main/docs/aws-xray.adoc[XRay] (camel-aws-xray) | 2.21 | Distributed tracing using AWS XRay
 
 | link:camel-zipkin/src/main/docs/zipkin.adoc[Zipkin] (camel-zipkin) | 2.18 | Distributed message tracing using Zipkin
 |===
