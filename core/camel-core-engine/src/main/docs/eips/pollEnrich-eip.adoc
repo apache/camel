@@ -83,6 +83,21 @@ For example to wait up to 5 seconds you can do:
 </route>
 ----
 
+To use it as a consumer in the middle of a REST Get route downloading a file from AWS S3 as the response of an API call.
+[source,xml]
+----
+<rest path="/report">
+    <description>Report REST API</description>
+    <get uri="/{id}/payload">
+        <route id="report-payload-download">
+            <pollEnrich id="pollEnrich">
+                <simple>aws-s3:xavier-dev?amazonS3Client=#s3client&amp;deleteAfterRead=false&amp;fileName=report-file.pdf</simple>
+            </pollEnrich>
+        </route>
+    </get>
+</rest>
+----
+
 == Using dynamic uris
 
 Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to `pollEnrich` from an endpoint that uses a header to indicate a SEDA queue name:
