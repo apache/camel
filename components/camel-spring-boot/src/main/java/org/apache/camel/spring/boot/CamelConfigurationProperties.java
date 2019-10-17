@@ -47,30 +47,6 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
      */
     private boolean warnOnEarlyShutdown = true;
 
-    /**
-     * Directory to scan for adding additional XML routes.
-     * You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    private String xmlRoutes = "classpath:camel/*.xml";
-
-    /**
-     * Directory to scan for adding additional XML rests.
-     * You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    private String xmlRests = "classpath:camel-rest/*.xml";
-
     // Default Properties via camel-main
     // ---------------------------------
 
@@ -457,6 +433,30 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
      */
     private String javaRoutesExcludePattern;
 
+    /**
+     * Directory to scan for adding additional XML routes.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    private String xmlRoutes = "classpath:camel/*.xml";
+
+    /**
+     * Directory to scan for adding additional XML rests.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    private String xmlRests = "classpath:camel-rest/*.xml";
+
     // Getters & setters
     // -----------------
 
@@ -484,19 +484,4 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
         this.warnOnEarlyShutdown = warnOnEarlyShutdown;
     }
 
-    public String getXmlRoutes() {
-        return xmlRoutes;
-    }
-
-    public void setXmlRoutes(String xmlRoutes) {
-        this.xmlRoutes = xmlRoutes;
-    }
-
-    public String getXmlRests() {
-        return xmlRests;
-    }
-
-    public void setXmlRests(String xmlRests) {
-        this.xmlRests = xmlRests;
-    }
 }

@@ -71,31 +71,10 @@ public abstract class DefaultConfigurationProperties<T> {
     private String routeFilterExcludePattern;
     private boolean beanIntrospectionExtendedStatistics;
     private LoggingLevel beanIntrospectionLoggingLevel;
-    /**
-     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation.
-     * The exclusive filtering takes precedence over inclusive filtering.
-     * The pattern is using Ant-path style pattern.
-     *
-     * Multiple patterns can be specified separated by comma.
-     * For example to include all classes starting with Foo use: &#42;&#42;/Foo*
-     * To include all routes form a specific package use: com/mycompany/foo/&#42;
-     * To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42;
-     * And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42;
-     */
     private String javaRoutesIncludePattern;
-
-    /**
-     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation.
-     * The exclusive filtering takes precedence over inclusive filtering.
-     * The pattern is using Ant-path style pattern.
-     * Multiple patterns can be specified separated by comma.
-     *
-     * For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42;
-     * To exclude all routes form a specific package use: com/mycompany/bar/&#42;
-     * To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42;
-     * And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42;
-     */
     private String javaRoutesExcludePattern;
+    private String xmlRoutes = "classpath:camel/*.xml";
+    private String xmlRests = "classpath:camel-rest/*.xml";
 
     // getter and setters
     // --------------------------------------------------------------
@@ -767,6 +746,42 @@ public abstract class DefaultConfigurationProperties<T> {
         this.javaRoutesExcludePattern = javaRoutesExcludePattern;
     }
 
+    public String getXmlRoutes() {
+        return xmlRoutes;
+    }
+
+    /**
+     * Directory to scan for adding additional XML routes.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    public void setXmlRoutes(String xmlRoutes) {
+        this.xmlRoutes = xmlRoutes;
+    }
+
+    public String getXmlRests() {
+        return xmlRests;
+    }
+
+    /**
+     * Directory to scan for adding additional XML rests.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    public void setXmlRests(String xmlRests) {
+        this.xmlRests = xmlRests;
+    }
+
     // fluent builders
     // --------------------------------------------------------------
 
@@ -1237,9 +1252,9 @@ public abstract class DefaultConfigurationProperties<T> {
      * The pattern matches by node and route id's
      * Multiple patterns can be separated by comma.
      */
-    public DefaultConfigurationProperties withTracingPattern(String tracingPattern) {
+    public T withTracingPattern(String tracingPattern) {
         this.tracingPattern = tracingPattern;
-        return this;
+        return (T) this;
     }
 
     /**
@@ -1256,9 +1271,9 @@ public abstract class DefaultConfigurationProperties<T> {
      * 3. regular expression match, returns true
      * 4. otherwise returns false
      */
-    public DefaultConfigurationProperties withMdcLoggingKeysPattern(String mdcLoggingKeysPattern) {
+    public T withMdcLoggingKeysPattern(String mdcLoggingKeysPattern) {
         this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
-        return this;
+        return (T) this;
     }
 
     /**
@@ -1272,9 +1287,9 @@ public abstract class DefaultConfigurationProperties<T> {
      * To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42;
      * And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42;
      */
-    public DefaultConfigurationProperties withJavaRoutesIncludePattern(String javaRoutesIncludePattern) {
+    public T withJavaRoutesIncludePattern(String javaRoutesIncludePattern) {
         this.javaRoutesIncludePattern = javaRoutesIncludePattern;
-        return this;
+        return (T) this;
     }
 
     /**
@@ -1288,8 +1303,38 @@ public abstract class DefaultConfigurationProperties<T> {
      * To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42;
      * And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42;
      */
-    public DefaultConfigurationProperties withJavaRoutesExcludePattern(String javaRoutesExcludePattern) {
+    public T withJavaRoutesExcludePattern(String javaRoutesExcludePattern) {
         this.javaRoutesExcludePattern = javaRoutesExcludePattern;
-        return this;
+        return (T) this;
+    }
+
+    /**
+     * Directory to scan for adding additional XML routes.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    public T withXmlRoutes(String xmlRoutes) {
+        this.xmlRoutes = xmlRoutes;
+        return (T) this;
+    }
+
+    /**
+     * Directory to scan for adding additional XML rests.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    public T withXmlRests(String xmlRests) {
+        this.xmlRests = xmlRests;
+        return (T) this;
     }
 }
