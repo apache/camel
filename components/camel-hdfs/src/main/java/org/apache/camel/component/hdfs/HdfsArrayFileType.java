@@ -30,11 +30,11 @@ import org.apache.hadoop.util.ReflectionUtils;
 class HdfsArrayFileType extends DefaultHdfsFileType {
 
     @Override
-    public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
         try {
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = getWritable(value, typeConverter, valueSize);
-            ((ArrayFile.Writer) hdfsostr.getOut()).append(valueWritable);
+            ((ArrayFile.Writer) hdfsOutputStream.getOut()).append(valueWritable);
             return valueSize.value;
         } catch (Exception ex) {
             throw new RuntimeCamelException(ex);

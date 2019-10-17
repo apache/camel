@@ -139,7 +139,8 @@ public class HdfsProducer extends DefaultProducer {
             log.debug("Connecting to hdfs file-system {} (may take a while if connection is not available)", hdfsFsDescription);
         }
 
-        HdfsOutputStream answer = HdfsOutputStream.createOutputStream(actualPath.toString(), config);
+        HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(config);
+        HdfsOutputStream answer = HdfsOutputStream.createOutputStream(actualPath.toString(), config, hdfsInfoFactory);
 
         if (onStartup) {
             log.info("Connected to hdfs file-system {}", hdfsFsDescription);
@@ -187,13 +188,14 @@ public class HdfsProducer extends DefaultProducer {
         Object body = exchange.getIn().getBody();
         Object key = exchange.getIn().getHeader(HdfsHeader.KEY.name());
 
+        HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(config);
         // if an explicit filename is specified, close any existing stream and append the filename to the hdfsPath
         if (exchange.getIn().getHeader(Exchange.FILE_NAME) != null) {
             if (oStream != null) {
                 IOHelper.close(oStream, "output stream", log);
             }
             StringBuilder actualPath = getHdfsPathUsingFileNameHeader(exchange);
-            oStream = HdfsOutputStream.createOutputStream(actualPath.toString(), config);
+            oStream = HdfsOutputStream.createOutputStream(actualPath.toString(), config, hdfsInfoFactory);
         } else if (oStream == null) {
             // must have oStream
             oStream = setupHdfs(false);
@@ -204,7 +206,7 @@ public class HdfsProducer extends DefaultProducer {
                 IOHelper.close(oStream, "output stream", log);
             }
             StringBuilder actualPath = newFileName();
-            oStream = HdfsOutputStream.createOutputStream(actualPath.toString(), config);
+            oStream = HdfsOutputStream.createOutputStream(actualPath.toString(), config, hdfsInfoFactory);
         }
 
         String path = oStream.getActualPath();

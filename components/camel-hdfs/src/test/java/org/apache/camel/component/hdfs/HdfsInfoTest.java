@@ -35,7 +35,7 @@ public class HdfsInfoTest {
         HdfsConfiguration endpointConfig = mock(HdfsConfiguration.class);
 
         // when
-        underTest = HdfsInfoFactory.newHdfsInfoWithoutAuth(hdfsPath, endpointConfig);
+        underTest = new HdfsInfoFactory(endpointConfig).newHdfsInfoWithoutAuth(hdfsPath);
 
         // then
         assertThat(underTest, notNullValue());

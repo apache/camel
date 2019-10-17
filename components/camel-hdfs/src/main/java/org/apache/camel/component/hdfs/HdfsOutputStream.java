@@ -42,11 +42,11 @@ public class HdfsOutputStream implements Closeable {
     protected HdfsOutputStream() {
     }
 
-    public static HdfsOutputStream createOutputStream(String hdfsPath, HdfsConfiguration configuration) throws IOException {
+    public static HdfsOutputStream createOutputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) throws IOException {
         HdfsOutputStream oStream = new HdfsOutputStream();
         oStream.fileType = configuration.getFileType();
         oStream.actualPath = hdfsPath;
-        oStream.info = HdfsInfoFactory.newHdfsInfoWithoutAuth(oStream.actualPath, configuration);
+        oStream.info = hdfsInfoFactory.newHdfsInfoWithoutAuth(oStream.actualPath);
 
         oStream.suffixedPath = oStream.actualPath + '.' + configuration.getOpenedSuffix();
 
@@ -56,7 +56,7 @@ public class HdfsOutputStream implements Closeable {
         if (configuration.isWantAppend() || configuration.isAppend()) {
             if (actualPathExists) {
                 configuration.setAppend(true);
-                oStream.info = HdfsInfoFactory.newHdfsInfoWithoutAuth(oStream.suffixedPath, configuration);
+                oStream.info = hdfsInfoFactory.newHdfsInfoWithoutAuth(oStream.suffixedPath);
                 oStream.info.getFileSystem().rename(actualPath, new Path(oStream.suffixedPath));
             } else {
                 configuration.setAppend(false);

@@ -30,12 +30,12 @@ public enum HdfsFileType {
 
     private final HdfsFile file;
 
-    private HdfsFileType(HdfsFile file) {
+    HdfsFileType(HdfsFile file) {
         this.file = file;
     }
 
-    public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
-        return this.file.append(hdfsostr, key, value, typeConverter);
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
+        return this.file.append(hdfsOutputStream, key, value, typeConverter);
     }
 
     public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {

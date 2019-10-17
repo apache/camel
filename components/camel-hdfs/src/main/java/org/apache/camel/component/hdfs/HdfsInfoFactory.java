@@ -25,10 +25,20 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-public final class HdfsInfoFactory {
+class HdfsInfoFactory {
 
-    private HdfsInfoFactory() {
-        // hidden
+    private final HdfsConfiguration endpointConfig;
+
+    HdfsInfoFactory(HdfsConfiguration endpointConfig) {
+        this.endpointConfig = endpointConfig;
+    }
+
+    HdfsInfo newHdfsInfo(String hdfsPath) throws IOException {
+        return newHdfsInfo(hdfsPath, endpointConfig);
+    }
+
+    HdfsInfo newHdfsInfoWithoutAuth(String hdfsPath) throws IOException {
+        return newHdfsInfoWithoutAuth(hdfsPath, endpointConfig);
     }
 
     static HdfsInfo newHdfsInfo(String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
@@ -41,7 +51,7 @@ public final class HdfsInfoFactory {
         }
     }
 
-    static HdfsInfo newHdfsInfoWithoutAuth(String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
+    private static HdfsInfo newHdfsInfoWithoutAuth(String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
         Configuration configuration = newConfiguration(endpointConfig);
 
         authenticate(configuration, endpointConfig);

@@ -36,11 +36,11 @@ import org.apache.hadoop.fs.Path;
 class HdfsNormalFileType extends DefaultHdfsFileType {
 
     @Override
-    public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
         InputStream is = null;
         try {
             is = typeConverter.convertTo(InputStream.class, value);
-            return copyBytes(is, (FSDataOutputStream) hdfsostr.getOut(), HdfsConstants.DEFAULT_BUFFERSIZE, false);
+            return copyBytes(is, (FSDataOutputStream) hdfsOutputStream.getOut(), HdfsConstants.DEFAULT_BUFFERSIZE, false);
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
         } finally {

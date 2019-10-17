@@ -29,13 +29,13 @@ import org.apache.hadoop.util.ReflectionUtils;
 class HdfsSequenceFileType extends DefaultHdfsFileType {
 
     @Override
-    public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
         try {
             Holder<Integer> keySize = new Holder<>();
             Writable keyWritable = getWritable(key, typeConverter, keySize);
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = getWritable(value, typeConverter, valueSize);
-            SequenceFile.Writer writer = (SequenceFile.Writer) hdfsostr.getOut();
+            SequenceFile.Writer writer = (SequenceFile.Writer) hdfsOutputStream.getOut();
             writer.append(keyWritable, valueWritable);
             writer.sync();
             return Long.sum(keySize.value, valueSize.value);

@@ -32,13 +32,13 @@ import org.apache.hadoop.util.ReflectionUtils;
 class HdfsBloommapFileType extends DefaultHdfsFileType {
 
     @Override
-    public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
         try {
             Holder<Integer> keySize = new Holder<>();
             Writable keyWritable = getWritable(key, typeConverter, keySize);
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = getWritable(value, typeConverter, valueSize);
-            ((BloomMapFile.Writer) hdfsostr.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
+            ((BloomMapFile.Writer) hdfsOutputStream.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
             return Long.sum(keySize.value, valueSize.value);
         } catch (Exception ex) {
             throw new RuntimeCamelException(ex);
