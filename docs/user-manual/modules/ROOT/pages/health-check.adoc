@@ -3,18 +3,13 @@
 
 *Available as of Camel 2.20*
 
-[WARNING]
-====
-*Experimental feature*
-====
+Camel provides support to probe the state of an integration via a pluggable Health Check strategy based on the following concepts:
 
-Camel 2.20 provides an *experimental* support to probe the state of a Camel integration via a pluggable Health Check strategy based on the following concepts:
-
-- *HealthCheck:* represent an health check and defines its basic contract;
-- *HealthCheckResponse:* represent an health check invocation response;
-- *HealthCheckConfiguration:* a basic configuration object that holds some basic settings like the minimum delay between calls, the number of time a service may be reported as unhealthy before marking the check as failed; beside those simple options, the check implementation is responsible to implement further limitations when needed;
+- *HealthCheck:* represents a health check and defines its basic contract;
+- *HealthCheckResponse:* represents a health check invocation response;
+- *HealthCheckConfiguration:* a basic configuration object that holds some basic settings like the minimum delay between calls, the number of times a service may be reported as unhealthy before marking the check as failed; besides these simple options, the check implementation is responsible for implementing further limitations where needed;
 - *HealthCheckRegistry:* a registry for health checks;
-- *HealthCheckRepository:* a simple interface to define health check providers and by default there is one that grabs all the checks available in the registry so you can add your own check i.e. istantiating your bean in spring/spring-boot; components can provide theirs own repository;
+- *HealthCheckRepository:* a simple interface to define health check providers. By default there is one that grabs all the checks available in the registry so you can add your own check i.e. istantiating your bean in spring/spring-boot; components can provide their own repository;
 - *HealthCheckService:* a simple service that runs in the background and invokes the checks according to a schedule;
 
 == Examples:
@@ -98,7 +93,7 @@ camel.health.check.routes.threshold[slow].last-processing-time.failures = 5
 
 == Writing a custom check:
 
-As of version 2.20.0, there are a limited number of health checks provided by Camel out of the box so you may need to write your own check which you can do by implementing the _HealthCheck_ interface or by extending _AbstractHealthCheck_ which provides some usueful methods:
+As of version 2.20.0, there are a limited number of health checks provided by Camel out of the box, so you may need to write your own check which you can do by implementing the _HealthCheck_ interface or by extending _AbstractHealthCheck_ which provides some usueful methods:
 
 [source,java]
 ----
