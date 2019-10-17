@@ -25,7 +25,7 @@ import org.apache.camel.model.rest.RestsDefinition;
 
 /**
  * Collects routes and rests from the various sources (like registry or opinionated
- * classpath locations) and injects these into the Camel context.
+ * classpath locations) and adds these into the Camel context.
  */
 public interface RoutesCollector {
 

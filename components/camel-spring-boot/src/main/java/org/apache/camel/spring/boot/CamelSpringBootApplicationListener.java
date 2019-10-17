@@ -85,11 +85,8 @@ public class CamelSpringBootApplicationListener implements ApplicationListener<C
                 && camelContext.getStatus().isStopped()) {
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
 
-            if (configurationProperties.isRoutesCollectorEnabled()) {
-                LOG.debug("RoutesCollectorEnabled: {}", springBootRoutesCollector);
-                RoutesConfigurer configurer = new RoutesConfigurer(springBootRoutesCollector);
-                configurer.configureRoutes(camelContext, configurationProperties);
-            }
+            RoutesConfigurer configurer = new RoutesConfigurer(springBootRoutesCollector);
+            configurer.configureRoutes(camelContext, configurationProperties);
 
             for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
                 LOG.debug("CamelContextConfiguration found. Invoking beforeApplicationStart: {}", camelContextConfiguration);
