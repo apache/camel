@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -415,6 +416,19 @@ public abstract class BaseMainSupport extends ServiceSupport {
             for (String routeClass : routeClasses) {
                 Class<?> routeClazz = camelContext.getClassResolver().resolveClass(routeClass);
                 // lets use Camel's injector so the class has some support for dependency injection
+                Object builder = camelContext.getInjector().newInstance(routeClazz);
+                if (builder instanceof RouteBuilder) {
+                    getRoutesBuilders().add((RouteBuilder) builder);
+                } else {
+                    LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
+                }
+            }
+        }
+
+        if (mainConfigurationProperties.getPackageScanRouteBuilders() != null) {
+            String[] pkgs = mainConfigurationProperties.getPackageScanRouteBuilders().split(",");
+            Set<Class<?>> set = camelContext.getExtension(ExtendedCamelContext.class).getPackageScanClassResolver().findImplementations(RoutesBuilder.class, pkgs);
+            for (Class<?> routeClazz : set) {
                 Object builder = camelContext.getInjector().newInstance(routeClazz);
                 if (builder instanceof RouteBuilder) {
                     getRoutesBuilders().add((RouteBuilder) builder);

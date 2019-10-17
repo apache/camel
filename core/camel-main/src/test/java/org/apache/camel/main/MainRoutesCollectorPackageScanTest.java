@@ -16,13 +16,8 @@
  */
 package org.apache.camel.main;
 
-import java.util.Set;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,10 +26,7 @@ public class MainRoutesCollectorPackageScanTest extends Assert {
     @Test
     public void testMainRoutesCollector() throws Exception {
         Main main = new Main();
-
-        PackageScanClassResolver resolver = new DefaultPackageScanClassResolver();
-        Set<Class<?>> set = resolver.findImplementations(RouteBuilder.class, "org.apache.camel.main.scan");
-        set.forEach(main::addRouteBuilder);
+        main.configure().withPackageScanRouteBuilders("org.apache.camel.main.scan");
         main.start();
 
         CamelContext camelContext = main.getCamelContext();

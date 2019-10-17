@@ -230,6 +230,12 @@
 			"description":"Sets the name of the CamelContext."
 		},
 		{
+			"name":"camel.main.package-scan-route-builders",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Sets package names for scanning for org.apache.camel.builder.RouteBuilder classes as candidates to be included. If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode."
+		},
+		{
 			"name":"camel.main.producer-template-cache-size",
 			"type":"int",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",

@@ -30,6 +30,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autowireComponentPropertiesAllowPrivateSetter = true;
     private int durationHitExitCode;
     private boolean hangupInterceptorEnabled = true;
+    private String packageScanRouteBuilders;
 
     // extended configuration
     private final HystrixConfigurationProperties hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
@@ -178,6 +179,19 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.hangupInterceptorEnabled = hangupInterceptorEnabled;
     }
 
+    public String getPackageScanRouteBuilders() {
+        return packageScanRouteBuilders;
+    }
+
+    /**
+     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be included.
+     * If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and annotate your route builder
+     * classes with `@Component`. In other words only use this for Camel Main in standalone mode.
+     */
+    public void setPackageScanRouteBuilders(String packageScanRouteBuilders) {
+        this.packageScanRouteBuilders = packageScanRouteBuilders;
+    }
+
     public int getDurationHitExitCode() {
         return durationHitExitCode;
     }
@@ -298,6 +312,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withDurationHitExitCode(int durationHitExitCode) {
         this.durationHitExitCode = durationHitExitCode;
+        return this;
+    }
+
+    /**
+     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be included.
+     * If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and annotate your route builder
+     * classes with `@Component`. In other words only use this for Camel Main in standalone mode.
+     */
+    public MainConfigurationProperties withPackageScanRouteBuilders(String packageScanRouteBuilders) {
+        this.packageScanRouteBuilders = packageScanRouteBuilders;
         return this;
     }
 
