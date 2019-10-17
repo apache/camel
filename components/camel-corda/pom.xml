@@ -36,6 +36,7 @@
     <properties>
     </properties>
 
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

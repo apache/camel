@@ -67,7 +67,10 @@ public class SubscriptionHelper extends ServiceSupport {
 
     private static final String FAILURE_FIELD = "failure";
     private static final String EXCEPTION_FIELD = "exception";
+    private static final String SFDC_FIELD = "sfdc";
+    private static final String FAILURE_REASON_FIELD = "failureReason";
     private static final int DISCONNECT_INTERVAL = 5000;
+    private static final String SERVER_TOO_BUSY_ERROR = "503::";
 
     BayeuxClient client;
 
@@ -301,12 +304,17 @@ public class SubscriptionHelper extends ServiceSupport {
     }
 
     @SuppressWarnings("unchecked")
-    private Exception getFailure(Message message) {
+    private static Exception getFailure(Message message) {
         Exception exception = null;
         if (message.get(EXCEPTION_FIELD) != null) {
             exception = (Exception)message.get(EXCEPTION_FIELD);
         } else if (message.get(FAILURE_FIELD) != null) {
             exception = (Exception)((Map<String, Object>)message.get("failure")).get("exception");
+        } else {
+            String failureReason = getFailureReason(message);
+            if (failureReason != null) {
+                exception = new SalesforceException(failureReason, null);
+            }
         }
         return exception;
     }
@@ -397,13 +405,48 @@ public class SubscriptionHelper extends ServiceSupport {
                         if (error == null) {
                             error = "Missing error message";
                         }
+
                         Exception failure = getFailure(message);
                         String msg = String.format("Error subscribing to %s: %s", topicName, failure != null ? failure.getMessage() : error);
-                        consumer.handleException(msg, new SalesforceException(msg, failure));
+                        boolean abort = true;
+
+                        if (isTemporaryError(message)) {
+                            LOG.warn(msg);
+
+                            // retry after delay
+                            final long backoff = restartBackoff.getAndAdd(backoffIncrement);
+                            if (backoff > maxBackoff) {
+                                LOG.error("Subscribe aborted after exceeding {} msecs backoff", maxBackoff);
+                            } else {
+                                abort = false;
+
+                                try {
+                                    LOG.debug("Pausing for {} msecs before subscribe attempt", backoff);
+                                    Thread.sleep(backoff);
+
+                                    final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
+                                    httpClient.getExecutor().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            subscribe(topicName, consumer);
+                                        }
+                                    });
+                                } catch (InterruptedException e) {
+                                    LOG.warn("Aborting subscribe on interrupt!", e);
+                                }
+                            }
+                        }
+
+                        if (abort) {
+                            consumer.handleException(msg, new SalesforceException(msg, failure));
+                        }
                     } else {
                         // remember subscription
                         LOG.info("Subscribed to channel {}", subscribedChannelName);
                         listenerMap.put(consumer, listener);
+
+                        // reset backoff interval
+                        restartBackoff.set(0);
                     }
 
                     // remove this subscription listener
@@ -415,6 +458,22 @@ public class SubscriptionHelper extends ServiceSupport {
 
         // subscribe asynchronously
         clientChannel.subscribe(listener);
+    }
+
+    private static boolean isTemporaryError(Message message) {
+        String failureReason = getFailureReason(message);
+        return failureReason != null && failureReason.startsWith(SERVER_TOO_BUSY_ERROR);
+    }
+
+    private static String getFailureReason(Message message) {
+        String failureReason = null;
+        if (message.getExt() != null) {
+            Map<String, Object> sfdcFields = (Map<String, Object>) message.getExt().get(SFDC_FIELD);
+            if (sfdcFields != null) {
+                failureReason  = (String) sfdcFields.get(FAILURE_REASON_FIELD);
+            }
+        }
+        return failureReason;
     }
 
     void setupReplay(final SalesforceEndpoint endpoint) {

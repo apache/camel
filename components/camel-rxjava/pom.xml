@@ -35,7 +35,7 @@
     <properties>
         <firstVersion>2.22.0</firstVersion>
         <label>reactive,streams</label>
-
+        <title>RxJava</title>
     </properties>
 
     <dependencies>

@@ -54,7 +54,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     // this list should be in priority order
     public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[] {"servlet", "undertow", "jetty",
-        "restlet", "netty-http", "spark-java", "coap"};
+        "netty-http", "spark-java", "coap"};
 
     @Parameter
     String apiContextPath;

@@ -3,7 +3,7 @@
 Camel supports most of the link:http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns] from the excellent book by link:http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Gregor%20Hohpe[Gregor Hohpe] and link:http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Bobby%20Woolf[Bobby Woolf].
 
 // eips: START
-Number of EIPs: 62 (0 deprecated)
+Number of EIPs: 60 (0 deprecated)
 
 [width="100%",cols="4,6",options="header"]
 |===
@@ -71,9 +71,6 @@ Number of EIPs: 62 (0 deprecated)
 
 | link:src/main/docs/eips/loop-eip.adoc[Loop] +
 `<loop>` | Processes a message multiple times
-
-| link:src/main/docs/eips/marshal-eip.adoc[Marshal] +
-`<marshal>` | Marshals data into a specified format for transmission over a transport or component
 
 | link:src/main/docs/eips/multicast-eip.adoc[Multicast] +
 `<multicast>` | Routes the same message to multiple paths either sequentially or in parallel.
@@ -179,9 +176,6 @@ Number of EIPs: 62 (0 deprecated)
 
 | link:src/main/docs/eips/transform-eip.adoc[Transform] +
 `<transform>` | Transforms the message body based on an expression
-
-| link:src/main/docs/eips/unmarshal-eip.adoc[Unmarshal] +
-`<unmarshal>` | Converts the message data received from the wire into a format that Apache Camel processors can consume
 
 | link:src/main/docs/eips/validate-eip.adoc[Validate] +
 `<validate>` | Validates a message based on an expression

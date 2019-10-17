@@ -19,8 +19,6 @@ in the `pom.xml` file. You can use other HTTP clients with the REST producer suc
 
 - camel-http
 - camel-netty-http
-- camel-jetty
-- camel-restlet
 - camel-undertow
 
 === How to run

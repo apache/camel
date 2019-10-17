@@ -264,7 +264,6 @@
         <include>org.apache.camel:camel-ref</include>
         <include>org.apache.camel:camel-rest</include>
         <include>org.apache.camel:camel-rest-swagger</include>
-        <include>org.apache.camel:camel-restlet</include>
         <include>org.apache.camel:camel-ribbon</include>
         <include>org.apache.camel:camel-robotframework</include>
         <include>org.apache.camel:camel-rss</include>
@@ -608,7 +607,6 @@
         <include>org.apache.camel:camel-ref-starter</include>
         <include>org.apache.camel:camel-rest-starter</include>
         <include>org.apache.camel:camel-rest-swagger-starter</include>
-        <include>org.apache.camel:camel-restlet-starter</include>
         <include>org.apache.camel:camel-ribbon-starter</include>
         <include>org.apache.camel:camel-robotframework-starter</include>
         <include>org.apache.camel:camel-rss-starter</include>

@@ -227,9 +227,8 @@ public class AbstractHttpSpanDecoratorTest {
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
 
-        Mockito.when(exchange.hasOut()).thenReturn(true);
-        Mockito.when(exchange.getOut()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_RESPONSE_CODE)).thenReturn(200);
+        Mockito.when(exchange.getMessage()).thenReturn(message);
+        Mockito.when(message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class)).thenReturn(200);
         
         SpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override

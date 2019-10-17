@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 == Examples
 
 // examples: START
-Number of Examples: 115 (0 deprecated)
+Number of Examples: 114 (0 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -233,8 +233,6 @@ Number of Examples: 115 (0 deprecated)
 | link:camel-example-cdi-rest-servlet/README.md[CDI Rest] (camel-example-cdi-rest-servlet) | Rest | Rest DSL using Servlet with CDI example
 
 | link:camel-example-rest-producer/readme.adoc[Rest Producer] (camel-example-rest-producer) | Rest | An example showing how to use Camel Rest to call a REST service
-
-| link:camel-example-restlet-jdbc/README.md[Restlet JDBC] (camel-example-restlet-jdbc) | Rest | An example showing how to create REST API with Camel Restlet and JDBC components
 
 | link:camel-example-spark-rest/README.md[Spark Rest] (camel-example-spark-rest) | Rest | An example using Spark Rest
 

@@ -14,28 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.restlet.converter;
+package org.apache.camel.component.hdfs;
+
+import java.io.IOException;
 
 import org.junit.Test;
-import org.restlet.data.MediaType;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
-public class RestletConverterTest {
+public class HdfsInfoTest {
 
-    @Test
-    public void shouldConvertMediaTypes() {
-        final MediaType[] mediaTypes = RestletConverter.toMediaTypes("a/b, c/d");
-
-        assertEquals("Expecting two parsed media types", 2, mediaTypes.length);
-        assertEquals("Expecting first to be a/b", MediaType.valueOf("a/b"), mediaTypes[0]);
-        assertEquals("Expecting second to be c/d", MediaType.valueOf("c/d"), mediaTypes[1]);
-    }
+    private HdfsInfo underTest;
 
     @Test
-    public void shouldConvertNoMediaTypes() {
-        final MediaType[] mediaTypes = RestletConverter.toMediaTypes("");
+    public void createHdfsInfo() throws IOException {
+        // given
+        String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
+        HdfsConfiguration endpointConfig = mock(HdfsConfiguration.class);
 
-        assertEquals("Expecting no parsed media types", 0, mediaTypes.length);
+        // when
+        underTest = HdfsInfoFactory.newHdfsInfoWithoutAuth(hdfsPath, endpointConfig);
+
+        // then
+        assertThat(underTest, notNullValue());
+        assertThat(underTest.getConfiguration(), notNullValue());
+        assertThat(underTest.getFileSystem(), notNullValue());
+        assertThat(underTest.getPath(), notNullValue());
     }
 }

@@ -12,7 +12,7 @@ xref:pojo-producing.adoc[POJO Producing]
 * client side proxies for xref:pojo-producing.adoc[POJO Producing] which
 is a simple approach to xref:spring-remoting.adoc[Spring Remoting]
 
-[[BeanInjection-Using@BeanInject]]
+[[BeanInjection-Using-BeanInject]]
 == Using @BeanInject
 
 From *Camel 2.13* onwards you can inject beans (obtained from the

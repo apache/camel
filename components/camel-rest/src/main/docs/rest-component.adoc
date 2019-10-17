@@ -120,10 +120,8 @@ The component supports 7 options, which are listed below.
 
 The following components support rest consumer (Rest DSL):
 
-* camel-coap
 * camel-netty-http
 * camel-jetty
-* camel-restlet
 * camel-servlet
 * camel-spark-rest
 * camel-undertow
@@ -132,8 +130,6 @@ The following components support rest producer:
 
 * camel-http
 * camel-netty-http
-* camel-jetty
-* camel-restlet
 * camel-undertow
 
 == Path and uriTemplate syntax

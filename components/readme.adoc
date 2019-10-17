@@ -1,7 +1,7 @@
 = Components
 
 // components: START
-Number of Components: 300 in 238 JAR artifacts (1 deprecated)
+Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -709,9 +709,6 @@ Number of Components: 300 in 238 JAR artifacts (1 deprecated)
 | link:camel-rest-swagger/src/main/docs/rest-swagger-component.adoc[REST Swagger] (camel-rest-swagger) +
 `rest-swagger:specificationUri#operationId` | 2.19 | An awesome REST endpoint backed by Swagger specifications.
 
-| link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
-`restlet:protocol:host:port/uriPattern` | 2.0 | *deprecated* Component for consuming and producing Restful resources using Restlet.
-
 | link:camel-robotframework/src/main/docs/robotframework-component.adoc[Robot Framework] (camel-robotframework) +
 `robotframework:resourceUri` | 3.0 | Represents a RobotFramework endpoint.
 
@@ -1124,17 +1121,17 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 
 | link:camel-test-cdi/src/main/docs/test-cdi.adoc[Test CDI] (camel-test-cdi) | 2.17 | Camel unit testing with CDI
 
-| link:camel-test-junit5/src/main/docs/test-junit5.adoc[Test Junit5] (camel-test-junit5) | 3.0 | Camel unit testing with JUnit 5
+| link:camel-test-junit5/src/main/docs/test-junit5.adoc[Test JUnit5] (camel-test-junit5) | 3.0 | Camel unit testing with JUnit 5
 
 | link:camel-test-karaf/src/main/docs/test-karaf.adoc[Test Karaf] (camel-test-karaf) | 2.18 | Camel integration testing with Apache Karaf
 
 | link:camel-test-spring/src/main/docs/test-spring.adoc[Test Spring] (camel-test-spring) | 2.10 | Camel unit testing with Spring
 
-| link:camel-test-spring-junit5/src/main/docs/test-spring-junit5.adoc[Test Spring Junit5] (camel-test-spring-junit5) | 3.0 | Camel unit testing with Spring and JUnit 5
+| link:camel-test-spring-junit5/src/main/docs/test-spring-junit5.adoc[Test Spring JUnit5] (camel-test-spring-junit5) | 3.0 | Camel unit testing with Spring and JUnit 5
 
 | link:camel-testcontainers/src/main/docs/testcontainers.adoc[Testcontainers] (camel-testcontainers) | 2.22 | Camel support for testcontainers
 
-| link:camel-testcontainers-junit5/src/main/docs/testcontainers-junit5.adoc[Testcontainers Junit5] (camel-testcontainers-junit5) | 3.0 | Camel support for testcontainers with JUnit 5
+| link:camel-testcontainers-junit5/src/main/docs/testcontainers-junit5.adoc[Testcontainers JUnit5] (camel-testcontainers-junit5) | 3.0 | Camel support for testcontainers with JUnit 5
 
 | link:camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc[Testcontainers Spring] (camel-testcontainers-spring) | 2.22 | Camel unit testing with Spring and testcontainers
 

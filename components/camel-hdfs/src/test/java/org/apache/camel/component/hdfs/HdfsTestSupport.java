@@ -16,25 +16,55 @@
  */
 package org.apache.camel.component.hdfs;
 
+import java.io.File;
+import java.util.Objects;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.util.Shell;
 
 public abstract class HdfsTestSupport extends CamelTestSupport {
 
-    public boolean canTest() {
-        // Hadoop doesn't run on IBM JDK
-        if (System.getProperty("java.vendor").contains("IBM")) {
-            return false;
+    public static final File CWD = new File(".");
+
+    private static Boolean skipTests;
+
+    public boolean skipTest() {
+        if (Objects.isNull(skipTests)) {
+            skipTests = notConfiguredToRunTests();
         }
 
-        // must be able to get security configuration
+        return skipTests;
+    }
+
+    private boolean notConfiguredToRunTests() {
+        return isJavaFromIbm() || missingLocalHadoopConfiguration() || missingAuthenticationConfiguration();
+    }
+
+    private static boolean isJavaFromIbm() {
+        // Hadoop doesn't run on IBM JDK
+        return System.getProperty("java.vendor").contains("IBM");
+    }
+
+    private static boolean missingLocalHadoopConfiguration() {
+        boolean hasLocalHadoop;
+        try {
+            String hadoopHome = Shell.getHadoopHome();
+            hasLocalHadoop = StringUtils.isNotEmpty(hadoopHome);
+        } catch (Throwable e) {
+            hasLocalHadoop = false;
+        }
+        return !hasLocalHadoop;
+    }
+
+    private boolean missingAuthenticationConfiguration() {
         try {
             javax.security.auth.login.Configuration.getConfiguration();
+            return false;
         } catch (Exception e) {
             log.debug("Cannot run test due security exception", e);
-            return false;
+            return true;
         }
-
-        return true;
     }
 
 }

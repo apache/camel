@@ -48,6 +48,7 @@ public class JettyHttpEndpoint9 extends JettyHttpEndpoint implements AsyncEndpoi
         if (this.binding == null) {
             this.binding = new AttachmentHttpBinding();
             this.binding.setTransferException(isTransferException());
+            this.binding.setMuteException(isMuteException());
             if (getComponent() != null) {
                 this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
             }

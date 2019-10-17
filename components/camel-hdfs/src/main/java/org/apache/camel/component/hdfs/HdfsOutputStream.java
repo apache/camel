@@ -43,35 +43,35 @@ public class HdfsOutputStream implements Closeable {
     }
 
     public static HdfsOutputStream createOutputStream(String hdfsPath, HdfsConfiguration configuration) throws IOException {
-        HdfsOutputStream ret = new HdfsOutputStream();
-        ret.fileType = configuration.getFileType();
-        ret.actualPath = hdfsPath;
-        ret.info = new HdfsInfo(ret.actualPath, configuration);
+        HdfsOutputStream oStream = new HdfsOutputStream();
+        oStream.fileType = configuration.getFileType();
+        oStream.actualPath = hdfsPath;
+        oStream.info = HdfsInfoFactory.newHdfsInfoWithoutAuth(oStream.actualPath, configuration);
 
-        ret.suffixedPath = ret.actualPath + '.' + configuration.getOpenedSuffix();
+        oStream.suffixedPath = oStream.actualPath + '.' + configuration.getOpenedSuffix();
+
+        Path actualPath = new Path(oStream.actualPath);
+        boolean actualPathExists = oStream.info.getFileSystem().exists(actualPath);
+
         if (configuration.isWantAppend() || configuration.isAppend()) {
-            if (!ret.info.getFileSystem().exists(new Path(ret.actualPath))) {
-                configuration.setAppend(false);
-            } else {
+            if (actualPathExists) {
                 configuration.setAppend(true);
-                ret.info = new HdfsInfo(ret.suffixedPath, configuration);
-                ret.info.getFileSystem().rename(new Path(ret.actualPath), new Path(ret.suffixedPath));
+                oStream.info = HdfsInfoFactory.newHdfsInfoWithoutAuth(oStream.suffixedPath, configuration);
+                oStream.info.getFileSystem().rename(actualPath, new Path(oStream.suffixedPath));
+            } else {
+                configuration.setAppend(false);
             }
-        } else {
-            if (ret.info.getFileSystem().exists(new Path(ret.actualPath))) {
-                //only check if not directory
-                if (!ret.info.getFileSystem().isDirectory(new Path(ret.actualPath))) {
-                    if (configuration.isOverwrite()) {
-                        ret.info.getFileSystem().delete(new Path(ret.actualPath), true);
-                    } else {
-                        throw new RuntimeCamelException("The file already exists");
-                    }
-                }
+        } else if (actualPathExists && !oStream.info.getFileSystem().isDirectory(actualPath)) { // only check if not directory
+            if (configuration.isOverwrite()) {
+                oStream.info.getFileSystem().delete(actualPath, true);
+            } else {
+                throw new RuntimeCamelException("The file already exists");
             }
         }
-        ret.out = ret.fileType.createOutputStream(ret.suffixedPath, configuration);
-        ret.opened = true;
-        return ret;
+
+        oStream.out = oStream.fileType.createOutputStream(oStream.suffixedPath, configuration);
+        oStream.opened = true;
+        return oStream;
     }
 
     @Override

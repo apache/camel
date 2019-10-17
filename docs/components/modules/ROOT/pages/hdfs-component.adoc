@@ -328,6 +328,24 @@ resource with bundle that contains blueprint definition.
 This way Hadoop 2.x will have correct mapping of URI schemes to
 filesystem implementations.
 
+=== Using this component with a HighAvailability configuration
+
+In a HA setup, there will be multiple nodes (_configured through the *namedNodes* parameter_).
+The "hostname" and "port" portion of the endpoint uri will no longer have a _"host"_ meaning, but it will represent the name given to the cluster.
+
+You can choose whatever name you want for the cluster (_the name should follow the [a-zA-Z0-9] convention_).
+This name will be sanitized by replacing the _dirty_ characters with underscore. This is done so that a host name or ip could pottentialy be used, if it makes sense to you.
+
+The cluster name will be mapped to the HA filesystem with a coresponding proxy, with failover, and the _works_.
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+
+from("hdfs://node1_and_2_cluster/dir1/dir2?namedNodes=node1.exemple.org:8020,node2.exemple.org:8020").routeId(...)
+...
+------------------------------------------------------------------------------------------------------
+
+
 === Using this component with Kerberos authentication
 
 The kerberos config file is read when the camel component is created, not when the endpoint is created.

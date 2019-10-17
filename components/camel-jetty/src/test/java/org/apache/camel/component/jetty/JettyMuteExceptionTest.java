@@ -14,19 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.restlet;
+package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.junit.Assert;
 import org.junit.Test;
 
-public class RestletProducerPatchTest extends RestletTestSupport {
+public class JettyMuteExceptionTest extends BaseJettyTest {
 
     @Test
-    public void testRestletProducerPatch() throws Exception {
-        String out = template.requestBodyAndHeader("direct:patch", "Donald Duck", "id", 123, String.class);
-        assertEquals("123;Donald Duck", out);
+    public void testMuteException() throws Exception {
+
+        HttpClient client = new HttpClient();
+        GetMethod get = new GetMethod("http://localhost:" + getPort() + "/foo");
+        get.setRequestHeader("Accept", "application/text");
+        client.executeMethod(get);
+
+        String body = get.getResponseBodyAsString();
+        Assert.assertNotNull(body);
+        Assert.assertEquals("Exception", body);
+        Assert.assertEquals(500, get.getStatusCode());
     }
 
     @Override
@@ -34,17 +44,12 @@ public class RestletProducerPatchTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:patch").to("restlet:http://localhost:" + portNum + "/users/{id}/basic?restletMethod=PATCH");
-
-                from("restlet:http://localhost:" + portNum + "/users/{id}/basic?restletMethods=PATCH")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            Object body = exchange.getIn().getBody();
-                            exchange.getOut().setBody(id + ";" + body);
-                        }
-                    });
+                from("jetty:http://localhost:{{port}}/foo?muteException=true")
+                        .to("mock:destination")
+                        .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }
+
+
 }

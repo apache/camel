@@ -71,7 +71,7 @@ class HdfsSequenceFileType extends DefaultHdfsFileType {
             HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
             Class<?> keyWritableClass = configuration.getKeyType().getWritableClass();
             Class<?> valueWritableClass = configuration.getValueType().getWritableClass();
-            rout = SequenceFile.createWriter(hdfsInfo.getConf(), SequenceFile.Writer.file(hdfsInfo.getPath()), SequenceFile.Writer.keyClass(keyWritableClass),
+            rout = SequenceFile.createWriter(hdfsInfo.getConfiguration(), SequenceFile.Writer.file(hdfsInfo.getPath()), SequenceFile.Writer.keyClass(keyWritableClass),
                     SequenceFile.Writer.valueClass(valueWritableClass), SequenceFile.Writer.bufferSize(configuration.getBufferSize()),
                     SequenceFile.Writer.replication(configuration.getReplication()), SequenceFile.Writer.blockSize(configuration.getBlockSize()),
                     SequenceFile.Writer.compression(configuration.getCompressionType(), configuration.getCompressionCodec().getCodec()),
@@ -88,7 +88,7 @@ class HdfsSequenceFileType extends DefaultHdfsFileType {
         try {
             Closeable rin;
             HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
-            rin = new SequenceFile.Reader(hdfsInfo.getConf(), SequenceFile.Reader.file(hdfsInfo.getPath()));
+            rin = new SequenceFile.Reader(hdfsInfo.getConfiguration(), SequenceFile.Reader.file(hdfsInfo.getPath()));
             return rin;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);

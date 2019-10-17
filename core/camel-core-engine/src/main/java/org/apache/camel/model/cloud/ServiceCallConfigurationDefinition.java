@@ -292,7 +292,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
      * Sets the default Camel component to use for calling the remote service.
      * <p/>
      * By default the http component is used. You can configure this to use
-     * <tt>netty-http</tt>, <tt>jetty</tt>, <tt>restlet</tt> or some other
+     * <tt>netty-http</tt>, <tt>jetty</tt>, <tt>undertow</tt> or some other
      * components of choice. If the service is not HTTP protocol you can use
      * other components such as <tt>mqtt</tt>, <tt>jms</tt>, <tt>amqp</tt> etc.
      * <p/>
