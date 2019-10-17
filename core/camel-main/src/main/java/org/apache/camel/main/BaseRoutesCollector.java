@@ -23,6 +23,8 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -32,14 +34,15 @@ import org.slf4j.LoggerFactory;
  * Collects routes and rests from the various sources (like registry or opinionated
  * classpath locations) and injects these into the Camel context.
  */
-public class MainRoutesCollector {
+public abstract class BaseRoutesCollector implements RoutesCollector {
 
     // TODO: Add load routes from xml and rest
     // TODO: Base class and extended for spring-boot etc
+    // TODO: Add to camel main that it uses route collector
 
-    private static final Logger LOG = LoggerFactory.getLogger(MainRoutesCollector.class);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    public List<RoutesBuilder> collectRoutes(CamelContext camelContext, DefaultConfigurationProperties configurationProperties) {
+    public List<RoutesBuilder> collectRoutesFromRegistry(CamelContext camelContext, DefaultConfigurationProperties configurationProperties) {
         final List<RoutesBuilder> routes = new ArrayList<>();
 
         final AntPathMatcher matcher = new AntPathMatcher();
@@ -63,7 +66,7 @@ public class MainRoutesCollector {
                     for (String part : parts) {
                         // must negate when excluding, and hence !
                         match = !matcher.match(part, name);
-                        LOG.trace("Java RoutesBuilder: {} exclude filter: {} -> {}", name, part, match);
+                        log.trace("Java RoutesBuilder: {} exclude filter: {} -> {}", name, part, match);
                         if (!match) {
                             break;
                         }
@@ -81,7 +84,7 @@ public class MainRoutesCollector {
                     for (String part : parts) {
                         // must negate when excluding, and hence !
                         match = !matcher.match(part, name);
-                        LOG.trace("Java RoutesBuilder: {} exclude filter: {} -> {}", name, part, match);
+                        log.trace("Java RoutesBuilder: {} exclude filter: {} -> {}", name, part, match);
                         if (!match) {
                             break;
                         }
@@ -92,22 +95,25 @@ public class MainRoutesCollector {
                     String[] parts = include.split(",");
                     for (String part : parts) {
                         match = matcher.match(part, name);
-                        LOG.trace("Java RoutesBuilder: {} include filter: {} -> {}", name, part, match);
+                        log.trace("Java RoutesBuilder: {} include filter: {} -> {}", name, part, match);
                         if (match) {
                             break;
                         }
                     }
                 }
-                LOG.debug("Java RoutesBuilder: {} accepted by include/exclude filter: {}", name, match);
+                log.debug("Java RoutesBuilder: {} accepted by include/exclude filter: {}", name, match);
                 if (match) {
                     routes.add(routesBuilder);
                 }
             }
 
-
         }
 
         return routes;
     }
+
+    public abstract List<RoutesDefinition> collectXmlRoutesFromDirectory(CamelContext camelContext, String directory) throws Exception;
+
+    public abstract List<RestsDefinition> collectXmlRestsFromDirectory(CamelContext camelContext, String directory) throws Exception;
 
 }
