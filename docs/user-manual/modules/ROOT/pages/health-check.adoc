@@ -1,5 +1,5 @@
 [[HealthCheck-HealthCheck]]
-= HealthCheck
+= Health Checks
 
 *Available as of Camel 2.20*
 
