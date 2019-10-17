@@ -238,7 +238,7 @@ only increment operation is called.
 ----
 // update counter simple.counter by 7
 from("direct:in")
-    .to("metric:counter:simple.counter?increment=7")
+    .to("metrics:counter:simple.counter?increment=7")
     .to("direct:out");
 ----
 
@@ -246,7 +246,7 @@ from("direct:in")
 ----
 // increment counter simple.counter by 1
 from("direct:in")
-    .to("metric:counter:simple.counter")
+    .to("metrics:counter:simple.counter")
     .to("direct:out");
 ----
 
@@ -311,7 +311,7 @@ logged.
 ----
 // adds value 9923 to simple.histogram
 from("direct:in")
-    .to("metric:histogram:simple.histogram?value=9923")
+    .to("metrics:histogram:simple.histogram?value=9923")
     .to("direct:out");
 ----
 
@@ -319,7 +319,7 @@ from("direct:in")
 ----
 // nothing is added to simple.histogram; warning is logged
 from("direct:in")
-    .to("metric:histogram:simple.histogram")
+    .to("metrics:histogram:simple.histogram")
     .to("direct:out");
 
 ----
@@ -366,7 +366,7 @@ If `mark` is not set then `meter.mark()` is called without argument.
 ----
 // marks simple.meter without value
 from("direct:in")
-    .to("metric:simple.meter")
+    .to("metrics:simple.meter")
     .to("direct:out");
 ----
 
@@ -374,7 +374,7 @@ from("direct:in")
 ----
 // marks simple.meter with value 81
 from("direct:in")
-    .to("metric:meter:simple.meter?mark=81")
+    .to("metrics:meter:simple.meter?mark=81")
     .to("direct:out");
 ----
 
