@@ -200,6 +200,11 @@ public class NettyHttpComponentConfiguration
          */
         private Boolean transferException = false;
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         */
+        private Boolean muteException = false;
+        /**
          * If this option is enabled, then during binding from Netty to Camel
          * Message then the header values will be URL decoded (eg %20 will be a
          * space character. Notice this option is used by the default
@@ -333,6 +338,14 @@ public class NettyHttpComponentConfiguration
 
         public void setTransferException(Boolean transferException) {
             this.transferException = transferException;
+        }
+
+        public Boolean getMuteException() {
+            return muteException;
+        }
+
+        public void setMuteException(Boolean muteException) {
+            this.muteException = muteException;
         }
 
         public Boolean getUrlDecodeHeaders() {
