@@ -234,6 +234,8 @@ public class ComponentModel {
             return "camel-salesforce/camel-salesforce-component/src/main/docs/";
         } else if ("camel-servicenow".equals(artifactId)) {
             return "camel-servicenow/camel-servicenow-component/src/main/docs/";
+        } else if ("camel-debezium".equals(artifactId)) {
+            return "camel-debezium/camel-debezium-component/src/main/docs/";
         }
 
         if ("camel-core".equals(artifactId)) {
