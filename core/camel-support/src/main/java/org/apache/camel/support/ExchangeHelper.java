@@ -661,7 +661,14 @@ public final class ExchangeHelper {
                 // use IN as the response
                 answer = exchange.getIn().getBody();
             }
+
+            // in a very seldom situation then getBody can cause an exception to be set on the exchange
+            // rethrow if there was an exception during execution
+            if (exchange.getException() != null) {
+                throw CamelExecutionException.wrapCamelExecutionException(exchange, exchange.getException());
+            }
         }
+
         return answer;
     }
 
