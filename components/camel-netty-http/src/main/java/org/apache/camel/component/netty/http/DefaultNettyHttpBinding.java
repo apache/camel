@@ -421,8 +421,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
             // and mark the exception as failure handled, as we handled it by returning it as the response
             ExchangeHelper.setFailureHandled(message.getExchange());
-        }
-        else if (cause != null && configuration.isMuteException()) {
+        } else if (cause != null && configuration.isMuteException()) {
 
             // the body should hide the stacktrace (muteException enabled)
             body = NettyConverter.toByteBuffer("Exception".getBytes());
