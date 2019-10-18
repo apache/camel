@@ -104,10 +104,9 @@ public class ConnectorConfigField {
     private Class<?> getType(final ConfigDef.Type type) {
         switch (type) {
         case INT: return Integer.TYPE;
-        case LIST: return List.class;
         case SHORT: return Short.TYPE;
         case DOUBLE: return Double.TYPE;
-        case STRING: case PASSWORD: case CLASS:
+        case STRING: case PASSWORD: case CLASS: case LIST:
             return String.class;
         case BOOLEAN: return Boolean.TYPE;
         case LONG: return Long.TYPE;
