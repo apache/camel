@@ -47,56 +47,6 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
      */
     private boolean warnOnEarlyShutdown = true;
 
-    /**
-     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation.
-     * The exclusive filtering takes precedence over inclusive filtering.
-     * The pattern is using Ant-path style pattern.
-     *
-     * Multiple patterns can be specified separated by comma.
-     * For example to include all classes starting with Foo use: &#42;&#42;/Foo*
-     * To include all routes form a specific package use: com/mycompany/foo/&#42;
-     * To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42;
-     * And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42;
-     */
-    private String javaRoutesIncludePattern;
-
-    /**
-     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation.
-     * The exclusive filtering takes precedence over inclusive filtering.
-     * The pattern is using Ant-path style pattern.
-     * Multiple patterns can be specified separated by comma.
-     *
-     * For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42;
-     * To exclude all routes form a specific package use: com/mycompany/bar/&#42;
-     * To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42;
-     * And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42;
-     */
-    private String javaRoutesExcludePattern;
-
-    /**
-     * Directory to scan for adding additional XML routes.
-     * You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    private String xmlRoutes = "classpath:camel/*.xml";
-
-    /**
-     * Directory to scan for adding additional XML rests.
-     * You can turn this off by setting the value to false.
-     *
-     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
-     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
-     *
-     * Multiple directories can be specified and separated by comma, such as:
-     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
-     */
-    private String xmlRests = "classpath:camel-rest/*.xml";
-
     // Default Properties via camel-main
     // ---------------------------------
 
@@ -457,6 +407,65 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
      */
     private LoggingLevel beanIntrospectionLoggingLevel;
 
+    /**
+     * Whether the routes collector is enabled or not.
+     *
+     * When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and
+     * also load additional XML routes from the file system.
+     *
+     * The routes collector is default enabled.
+     */
+    private boolean routesCollectorEnabled = true;
+
+    /**
+     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     *
+     * Multiple patterns can be specified separated by comma.
+     * For example to include all classes starting with Foo use: &#42;&#42;/Foo*
+     * To include all routes form a specific package use: com/mycompany/foo/&#42;
+     * To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42;
+     * And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42;
+     */
+    private String javaRoutesIncludePattern;
+
+    /**
+     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     * Multiple patterns can be specified separated by comma.
+     *
+     * For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42;
+     * To exclude all routes form a specific package use: com/mycompany/bar/&#42;
+     * To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42;
+     * And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42;
+     */
+    private String javaRoutesExcludePattern;
+
+    /**
+     * Directory to scan for adding additional XML routes.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    private String xmlRoutes = "classpath:camel/*.xml";
+
+    /**
+     * Directory to scan for adding additional XML rests.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    private String xmlRests = "classpath:camel-rest/*.xml";
 
     // Getters & setters
     // -----------------
@@ -485,35 +494,4 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
         this.warnOnEarlyShutdown = warnOnEarlyShutdown;
     }
 
-    public String getJavaRoutesIncludePattern() {
-        return javaRoutesIncludePattern;
-    }
-
-    public void setJavaRoutesIncludePattern(String javaRoutesIncludePattern) {
-        this.javaRoutesIncludePattern = javaRoutesIncludePattern;
-    }
-
-    public String getJavaRoutesExcludePattern() {
-        return javaRoutesExcludePattern;
-    }
-
-    public void setJavaRoutesExcludePattern(String javaRoutesExcludePattern) {
-        this.javaRoutesExcludePattern = javaRoutesExcludePattern;
-    }
-
-    public String getXmlRoutes() {
-        return xmlRoutes;
-    }
-
-    public void setXmlRoutes(String xmlRoutes) {
-        this.xmlRoutes = xmlRoutes;
-    }
-
-    public String getXmlRests() {
-        return xmlRests;
-    }
-
-    public void setXmlRests(String xmlRests) {
-        this.xmlRests = xmlRests;
-    }
 }
