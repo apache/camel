@@ -354,6 +354,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-servicenow-component/target/classes");
                         } else if ("camel-fhir".equals(dir.getName())) {
                             target = new File(dir, "camel-fhir-component/target/classes");
+                        } else if ("camel-debezium".equals(dir.getName())) {
+                            target = new File(dir, "camel-debezium-component/target/classes");
                         } else {
                             // this module must be active with a source folder
                             File src = new File(dir, "src");
@@ -847,7 +849,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         || "camel-olingo4".equals(dir.getName())
                         || "camel-servicenow".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName())
-                        || "camel-fhir".equals(dir.getName());
+                        || "camel-fhir".equals(dir.getName())
+                        || "camel-debezium".equals(dir.getName());
                     if (special || special2) {
                         continue;
                     }
@@ -1045,6 +1048,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-servicenow-component/src/main/docs");
                         } else if ("camel-fhir".equals(dir.getName())) {
                             target = new File(dir, "camel-fhir-component/src/main/docs");
+                        } else if ("camel-debezium".equals(dir.getName())) {
+                            target = new File(dir, "camel-debezium-component/target/classes");
                         } else {
                             // this module must be active with a source folder
                             File src = new File(dir, "src");
