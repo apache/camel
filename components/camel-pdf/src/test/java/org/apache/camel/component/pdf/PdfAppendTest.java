@@ -64,8 +64,8 @@ public class PdfAppendTest extends CamelTestSupport {
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
         contentStream.setFont(PDType1Font.HELVETICA, 12);
         contentStream.beginText();
-        contentStream.moveTextPositionByAmount(20, 400);
-        contentStream.drawString(originalText);
+        contentStream.newLineAtOffset(20, 400);
+        contentStream.showText(originalText);
         contentStream.endText();
         contentStream.close();
 
@@ -104,8 +104,8 @@ public class PdfAppendTest extends CamelTestSupport {
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
         contentStream.setFont(PDType1Font.HELVETICA, 12);
         contentStream.beginText();
-        contentStream.moveTextPositionByAmount(20, 400);
-        contentStream.drawString(originalText);
+        contentStream.newLineAtOffset(20, 400);
+        contentStream.showText(originalText);
         contentStream.endText();
         contentStream.close();
 

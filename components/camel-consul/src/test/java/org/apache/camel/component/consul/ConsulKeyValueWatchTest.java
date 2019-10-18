@@ -54,7 +54,7 @@ public class ConsulKeyValueWatchTest extends ConsulTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 fromF("consul:kv?key=%s&valueAsString=true", key)

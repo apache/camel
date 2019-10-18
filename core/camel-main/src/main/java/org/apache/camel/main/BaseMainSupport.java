@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -51,7 +52,6 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -81,6 +81,7 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
+    protected RoutesCollector routesCollector = new DefaultRoutesCollector();
     protected List<RoutesBuilder> routeBuilders = new ArrayList<>();
     protected String routeBuilderClasses;
     protected List<Object> configurations = new ArrayList<>();
@@ -208,6 +209,17 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
     public void addConfiguration(Object configuration) {
         configurations.add(configuration);
+    }
+
+    public RoutesCollector getRoutesCollector() {
+        return routesCollector;
+    }
+
+    /**
+     * To use a custom {@link RoutesCollector}.
+     */
+    public void setRoutesCollector(RoutesCollector routesCollector) {
+        this.routesCollector = routesCollector;
     }
 
     public String getRouteBuilderClasses() {
@@ -412,6 +424,19 @@ public abstract class BaseMainSupport extends ServiceSupport {
                 }
             }
         }
+
+        if (mainConfigurationProperties.getPackageScanRouteBuilders() != null) {
+            String[] pkgs = mainConfigurationProperties.getPackageScanRouteBuilders().split(",");
+            Set<Class<?>> set = camelContext.getExtension(ExtendedCamelContext.class).getPackageScanClassResolver().findImplementations(RoutesBuilder.class, pkgs);
+            for (Class<?> routeClazz : set) {
+                Object builder = camelContext.getInjector().newInstance(routeClazz);
+                if (builder instanceof RouteBuilder) {
+                    getRoutesBuilders().add((RouteBuilder) builder);
+                } else {
+                    LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
+                }
+            }
+        }
     }
 
     protected void loadConfigurations(CamelContext camelContext) throws Exception {
@@ -519,11 +544,9 @@ public abstract class BaseMainSupport extends ServiceSupport {
 
         // try to load the route builders
         loadRouteBuilders(camelContext);
-        // sort routes according to ordered
-        routeBuilders.sort(OrderedComparator.get());
-        for (RoutesBuilder routeBuilder : routeBuilders) {
-            camelContext.addRoutes(routeBuilder);
-        }
+        // then configure and add the routes
+        RoutesConfigurer configurer = new RoutesConfigurer(routesCollector, routeBuilders);
+        configurer.configureRoutes(camelContext, mainConfigurationProperties);
         // register lifecycle so we are notified in Camel is stopped from JMX or somewhere else
         camelContext.addLifecycleStrategy(new MainLifecycleStrategy(completed, latch));
         // allow to do configuration before its started

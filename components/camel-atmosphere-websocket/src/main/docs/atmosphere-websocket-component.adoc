@@ -76,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (25 parameters):
+=== Query Parameters (26 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,6 +92,7 @@ with the following path and query parameters:
 | *chunked* (consumer) | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response | true | boolean
 | *httpMethodRestrict* (consumer) | Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma. |  | String
 | *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
+| *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | boolean
 | *responseBufferSize* (consumer) | To use a custom buffer size on the javax.servlet.ServletResponse. |  | Integer
 | *servletName* (consumer) | Name of the servlet to use | CamelServlet | String
 | *transferException* (consumer) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean

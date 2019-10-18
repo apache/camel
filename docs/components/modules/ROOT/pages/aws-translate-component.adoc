@@ -125,7 +125,7 @@ The component supports 13 options, which are listed below.
 
 
 
-Required EKS component options
+Required Translate component options
 
 You have to provide the amazonTranslateClient in the
 Registry or your accessKey and secretKey to access

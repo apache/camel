@@ -182,9 +182,10 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
         Object body = getResponseBody(httpExchange, camelExchange);
 
         if (body == null) {
+            String message = httpExchange.getStatusCode() == 500 ? "Exception" : "No response available";
             log.trace("No payload to send as reply for exchange: {}", camelExchange);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
-            httpExchange.getResponseSender().send("No response available");
+            httpExchange.getResponseSender().send(message);
             return;
         }
 
@@ -201,7 +202,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }
     }
-
+    
     /**
      * Create an {@link Exchange} from the associated {@link UndertowEndpoint} and set the {@code in} {@link Message}'s
      * body to the given {@code message} and {@link UndertowConstants#CONNECTION_KEY} header to the given
@@ -265,13 +266,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
     }
 
     private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException {
-        Object result;
-        if (camelExchange.hasOut()) {
-            result = getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getOut());
-        } else {
-            result = getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getIn());
-        }
-        return result;
+        return getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getMessage());
     }
     
     private HttpHandler wrapHandler(HttpHandler handler, UndertowEndpoint endpoint) {

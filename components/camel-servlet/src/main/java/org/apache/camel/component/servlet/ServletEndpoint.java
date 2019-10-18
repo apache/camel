@@ -74,6 +74,7 @@ public class ServletEndpoint extends HttpCommonEndpoint {
             }
             this.binding.setFileNameExtWhitelist(getFileNameExtWhitelist());
             this.binding.setTransferException(isTransferException());
+            this.binding.setMuteException(isMuteException());
             if (getComponent() != null) {
                 this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
             }

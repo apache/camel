@@ -37,8 +37,7 @@
     <properties>
         <firstVersion>2.21.0</firstVersion>
         <label>monitoring,microservice</label>
-        <title>XRay</title>
-
+        <title>AWS XRay</title>
     </properties>
 
     <dependencyManagement>

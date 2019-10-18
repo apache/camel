@@ -239,6 +239,7 @@
         <module>camel-metrics</module>
         <module>camel-micrometer</module>
         <module>camel-microprofile-config</module>
+        <module>camel-microprofile-health</module>
         <module>camel-microprofile-metrics</module>
         <module>camel-milo</module>
         <module>camel-mina</module>
@@ -277,8 +278,7 @@
         <module>camel-reactive-streams</module>
         <module>camel-reactor</module>
         <module>camel-rest-swagger</module>
-        <module>camel-restlet</module>
-	<module>camel-robotframework</module>
+        <module>camel-robotframework</module>
         <module>camel-rss</module>
         <module>camel-rxjava</module>
         <module>camel-saga</module>

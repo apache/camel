@@ -198,7 +198,7 @@ there is only a single parameter of the type
  }
 ----
 
-[[BeanBinding-@Handler]]
+[[BeanBinding-Handler]]
 === @Handler
 
 You can mark a method in your bean with the @Handler annotation to

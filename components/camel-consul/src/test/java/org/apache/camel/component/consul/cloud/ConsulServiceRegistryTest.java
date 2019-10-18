@@ -35,7 +35,7 @@ public class ConsulServiceRegistryTest extends ConsulTestSupport {
     }
 
     @Test
-    public void testSimpleServiceRegistration() throws Exception {
+    public void testSimpleServiceRegistration() {
         ConsulServiceRegistry registry = new ConsulServiceRegistry();
         registry.setCamelContext(context());
         registry.setUrl(consulUrl());

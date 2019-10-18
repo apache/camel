@@ -78,7 +78,7 @@ public class RestConfiguration {
     /**
      * Sets the name of the Camel component to use as the REST consumer
      *
-     * @param componentName the name of the component (such as restlet, spark-rest, etc.)
+     * @param componentName the name of the component (such as netty-http, jetty, servlet, undertow, etc.)
      */
     public void setComponent(String componentName) {
         this.component = componentName;
@@ -114,7 +114,7 @@ public class RestConfiguration {
     /**
      * Sets the name of the Camel component to use as the REST producer
      *
-     * @param componentName the name of the component (such as restlet, jetty, etc.)
+     * @param componentName the name of the component (such as http, netty-http, undertow, etc.)
      */
     public void setProducerComponent(String componentName) {
         this.producerComponent = componentName;

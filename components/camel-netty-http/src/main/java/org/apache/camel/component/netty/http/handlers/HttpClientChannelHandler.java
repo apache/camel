@@ -59,7 +59,7 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
             response = streamHttpResponse.getHttpResponse();
             answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(streamHttpResponse, exchange, producer.getConfiguration());
         }
-
+        
         if (!HttpUtil.isKeepAlive(response)) {
             // just want to make sure we close the channel if the keepAlive is not true
             exchange.setProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
@@ -77,4 +77,5 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
 
         return answer;
     }
+    
 }

@@ -1077,6 +1077,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
             target = new File(coreDir, "../camel-jaxp/src/main/docs");
             findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
         }
+        if (baseDir != null && baseDir.isDirectory()) {
+            File target = new File(baseDir, "src/main/docs");
+            findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
+            // also look in camel-jaxp
+            target = new File(baseDir, "../camel-jaxp/src/main/docs");
+            findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
+        }
 
         getLog().info("Found " + adocFiles.size() + " ascii document files");
 
@@ -1200,7 +1207,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
         if (!missing.isEmpty()) {
             getLog().info("");
-            getLog().warn("\tMissing .adoc component documentation  : " + missing.size());
+            getLog().warn("\tMissing .adoc component documentation: " + missing.size());
             for (String name : missing) {
                 getLog().warn("\t\t" + name);
             }
@@ -1219,7 +1226,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
         if (!missing.isEmpty()) {
             getLog().info("");
-            getLog().warn("\tMissing .adoc dataformat documentation  : " + missing.size());
+            getLog().warn("\tMissing .adoc dataformat documentation: " + missing.size());
             for (String name : missing) {
                 getLog().warn("\t\t" + name);
             }
@@ -1234,7 +1241,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
         if (!missing.isEmpty()) {
             getLog().info("");
-            getLog().warn("\tMissing .adoc language documentation  : " + missing.size());
+            getLog().warn("\tMissing .adoc language documentation: " + missing.size());
             for (String name : missing) {
                 getLog().warn("\t\t" + name);
             }
@@ -1249,7 +1256,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
         if (!missing.isEmpty()) {
             getLog().info("");
-            getLog().warn("\tMissing .adoc other documentation  : " + missing.size());
+            getLog().warn("\tMissing .adoc other documentation: " + missing.size());
             for (String name : missing) {
                 getLog().warn("\t\t" + name);
             }

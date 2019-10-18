@@ -1,0 +1,12 @@
+@if{!others.isEmpty()}
+
+Number of Miscellaneous Components: @{others.size} in @{numberOfArtifacts} JAR artifacts (@{numberOfDeprecated} deprecated)
+
+[width="100%",cols="4,1,5",options="header"]
+|===
+| Component | Since | Description
+@foreach{row : others}
+| xref:${row.name}.adoc[@{row.title}] (@{row.artifactId}) | @{row.firstVersionShort} | @if{row.deprecated == "true"}*deprecated* @end{}@{util.escape(row.description)}
+@end{}|===
+
+@end{}

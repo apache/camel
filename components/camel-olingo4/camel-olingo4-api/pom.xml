@@ -124,6 +124,7 @@
                             <javadocVersion>1.8.0</javadocVersion>
                             <encoding>UTF-8</encoding>
                             <doclint>none</doclint>
+                            <locale>en</locale>
                         </configuration>
                     </execution>
                 </executions>

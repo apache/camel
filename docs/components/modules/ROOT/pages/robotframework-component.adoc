@@ -1,8 +1,9 @@
 [[robotframework-component]]
 = Robot Framework Component
 :page-source: components/camel-robotframework/src/main/docs/robotframework-component.adoc
-== Robotframework Component
+
 *Available as of Camel version 3.0*
+
 
 The *robotframework:* component allows for processing camel exchanges
 in acceptence test suites which are already implemented with its own DSL. 
@@ -13,25 +14,25 @@ Java or Pyhton.
 This component will let you execute business logic of acceptence test cases 
 in Robot language on which you can pass parameters to feed data via power 
 of Camel Routes, however there is no reverse binding of parameters back where
-you can pass values back into Camel exchange. Therefore, for that reason, it actually
-acts like a template language passing camel exchanges by binding data into the test 
-cases implemented. 
+you can pass values back into Camel exchange. Therefore, for that reason,
+it actually acts like a template language passing camel exchanges by binding
+data into the test cases implemented. 
 
 [source,xml]
--------------------------------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-robotframework</artifactId>
     <version>x.x.x</version> <!-- use the same version as your Camel core version -->
 </dependency>
--------------------------------------------------------------------------------------
+----
 
-### URI format
+== URI format
 
-[source,java]
--------------------------------
+[source,text]
+----
 robotframework:templateName[?options]
--------------------------------
+----
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (eg:
@@ -40,7 +41,7 @@ invoke; or the complete URL of the remote template (eg:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+=== Options
 
 // component options: START
 The Robot Framework component supports 2 options, which are listed below.
@@ -225,15 +226,15 @@ The component supports 47 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Samples
+=== Samples
 
 For example you could use something like:
 
 [source,java]
--------------------------------------------
+----
 from("direct:setVariableCamelBody")
-.to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot")
--------------------------------------------
+    .to("robotframework:src/test/resources/org/apache/camel/component/robotframework/set_variable_camel_body.robot")
+----
 
 To use a robot test case to execute and collect the results
 and pass them to generate custom report if such need happens
@@ -242,11 +243,11 @@ It's possible to specify what template the component
 should use dynamically via a header, so for example:
 
 [source,java]
----------------------------------------------------------------------------------------------
+----
 from("direct:in")
-.setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot").
-  to("robotframework:dummy");
----------------------------------------------------------------------------------------------
+    .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
+    .to("robotframework:dummy");
+----
 
 Robotframework component helps you pass values into robot test cases 
 with the similar approach how you would be able to pass values using 
@@ -254,56 +255,57 @@ Camel Simple Language. Components supports passing values in three
 different ways. Exchange body, headers and properties.
 
 [source,java]
----------------------------------------------------------------------------------------------
+----
 from("direct:in")
-.setBody(constant("Hello Robot"))
-.setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot").
-  to("robotframework:dummy");
----------------------------------------------------------------------------------------------
+    .setBody(constant("Hello Robot"))
+    .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
+    .to("robotframework:dummy");
+----
 
-.. code:: robotframework
+And the `template.robot` file:
 
+[source,text]
+----
     *** Test Cases ***
     Set Variable Camel Body Test Case
     ${myvar} =    Set Variable    ${body}
     Should Be True    ${myvar} == ${body}
-    
+----
+
 [source,java]
----------------------------------------------------------------------------------------------
+----
 from("direct:in")
-.setHeader("testHeader", constant("testHeaderValue"))
-.setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot").
-  to("robotframework:dummy");
----------------------------------------------------------------------------------------------
+    .setHeader("testHeader", constant("testHeaderValue"))
+    .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
+    .to("robotframework:dummy");
+----
 
-.. code:: robotframework
+And the `template.robot` file:
 
+[source,text]
+----
     *** Test Cases ***
     Set Variable Camel Header Test Case
     ${myvar} =    Set Variable    ${headers.testHeader}
     Should Be True    ${myvar} == ${headers.testHeader}
-    
+----
+
 [source,java]
----------------------------------------------------------------------------------------------
+----
 from("direct:in")
-.setProperty"testProperty", constant("testPropertyValue"))
-.setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot").
-  to("robotframework:dummy");
----------------------------------------------------------------------------------------------
+    .setProperty"testProperty", constant("testPropertyValue"))
+    .setHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RESOURCE_URI).constant("path/to/my/template.robot")
+    .to("robotframework:dummy");
+----
 
-.. code:: robotframework
-
+And the `template.robot` file:
+[source,text]
+----
     *** Test Cases ***
     Set Variable Camel Header Test Case
     ${myvar} =    Set Variable    ${properties.testProperty}
     Should Be True    ${myvar} == ${properties.testProperty}
+----
 
 Please note that when you pass values through Camel Exchange to test cases,
 they will be available as case-sensitive ``body``, ``headers.[yourHeaderName]`` and ``properties.[yourPropertyName]``
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -65,7 +65,7 @@ class HdfsArrayFileType extends DefaultHdfsFileType {
             Closeable rout;
             HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
             Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
-            rout = new ArrayFile.Writer(hdfsInfo.getConf(), hdfsInfo.getFileSystem(), hdfsPath, valueWritableClass,
+            rout = new ArrayFile.Writer(hdfsInfo.getConfiguration(), hdfsInfo.getFileSystem(), hdfsPath, valueWritableClass,
                     configuration.getCompressionType(), () -> { });
             return rout;
         } catch (IOException ex) {
@@ -78,7 +78,7 @@ class HdfsArrayFileType extends DefaultHdfsFileType {
         try {
             Closeable rin;
             HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
-            rin = new ArrayFile.Reader(hdfsInfo.getFileSystem(), hdfsPath, hdfsInfo.getConf());
+            rin = new ArrayFile.Reader(hdfsInfo.getFileSystem(), hdfsPath, hdfsInfo.getConfiguration());
             return rin;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);

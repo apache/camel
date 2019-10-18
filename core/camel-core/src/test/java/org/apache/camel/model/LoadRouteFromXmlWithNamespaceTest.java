@@ -28,7 +28,8 @@ public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
     @Test
     public void testLoadRouteWithNamespaceFromXml() throws Exception {
         InputStream is = getClass().getResourceAsStream("routeWithNamespace.xml");
-        context.addRouteDefinitions(is);
+        RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+        context.addRouteDefinitions(routes.getRoutes());
         context.start();
 
         Route routeWithNamespace = context.getRoute("routeWithNamespace");

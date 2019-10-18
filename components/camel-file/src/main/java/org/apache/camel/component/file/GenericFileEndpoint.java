@@ -1068,7 +1068,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Write buffer sized in bytes.
+     * Buffer size in bytes used for writing files (or in case of FTP for downloading and uploading files).
      */
     public void setBufferSize(int bufferSize) {
         if (bufferSize <= 0) {

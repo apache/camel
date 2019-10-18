@@ -316,11 +316,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     protected Object getResponseBody(Exchange exchange) throws Exception {
-        // use the binding
-        if (exchange.hasOut()) {
-            return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getOut(), consumer.getConfiguration());
-        } else {
-            return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getIn(), consumer.getConfiguration());
-        }
+        return consumer.getEndpoint().getNettyHttpBinding().toNettyResponse(exchange.getMessage(), consumer.getConfiguration());
     }
+    
 }

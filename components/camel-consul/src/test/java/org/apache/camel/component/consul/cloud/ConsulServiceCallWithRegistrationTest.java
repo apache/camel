@@ -69,7 +69,7 @@ public class ConsulServiceCallWithRegistrationTest extends ConsulTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // context path is derived from the jetty endpoint.
                 from("direct:start")
                     .serviceCall()
@@ -104,7 +104,7 @@ public class ConsulServiceCallWithRegistrationTest extends ConsulTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // context path is had coded so it should fail as it not exposed
                 // by jetty
                 from("direct:start")

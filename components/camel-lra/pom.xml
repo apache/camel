@@ -35,7 +35,7 @@
     <properties>
         <!-- used by camel-catalog -->
         <firstVersion>2.21.0</firstVersion>
-
+        <title>LRA</title>
     </properties>
 
     <dependencies>

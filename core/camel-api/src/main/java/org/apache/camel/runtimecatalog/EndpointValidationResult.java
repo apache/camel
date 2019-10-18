@@ -32,9 +32,11 @@ public class EndpointValidationResult implements Serializable {
 
     private final String uri;
     private int errors;
+    private int warnings;
 
-    // general
+    // general error
     private String syntaxError;
+    // general warnings
     private String unknownComponent;
     private String incapable;
 
@@ -75,9 +77,16 @@ public class EndpointValidationResult implements Serializable {
         return errors;
     }
 
+    public boolean hasWarnings() {
+        return warnings > 0;
+    }
+
+    public int getNumberOfWarnings() {
+        return warnings;
+    }
+
     public boolean isSuccess() {
-        boolean ok = syntaxError == null && unknownComponent == null && incapable == null
-                && unknown == null && required == null;
+        boolean ok = syntaxError == null && unknown == null && required == null;
         if (ok) {
             ok = notConsumerOnly == null && notProducerOnly == null;
         }
@@ -95,12 +104,12 @@ public class EndpointValidationResult implements Serializable {
 
     public void addIncapable(String uri) {
         this.incapable = uri;
-        errors++;
+        warnings++;
     }
 
     public void addUnknownComponent(String name) {
         this.unknownComponent = name;
-        errors++;
+        warnings++;
     }
 
     public void addUnknown(String name) {
@@ -325,7 +334,7 @@ public class EndpointValidationResult implements Serializable {
      * @return the summary, or <tt>null</tt> if no validation errors
      */
     public String summaryErrorMessage(boolean includeHeader) {
-        return summaryErrorMessage(includeHeader, true);
+        return summaryErrorMessage(includeHeader, true, false);
     }
 
     /**
@@ -333,9 +342,10 @@ public class EndpointValidationResult implements Serializable {
      *
      * @param includeHeader    whether to include a header
      * @param ignoreDeprecated whether to ignore deprecated options in use as an error or not
+     * @param includeWarnings  whether to include warnings as an error or not
      * @return the summary, or <tt>null</tt> if no validation errors
      */
-    public String summaryErrorMessage(boolean includeHeader, boolean ignoreDeprecated) {
+    public String summaryErrorMessage(boolean includeHeader, boolean ignoreDeprecated, boolean includeWarnings) {
         boolean ok = isSuccess();
 
         // special check if we should ignore deprecated options being used
@@ -343,16 +353,18 @@ public class EndpointValidationResult implements Serializable {
             ok = deprecated == null;
         }
 
-        if (ok) {
-            return null;
+        if (includeWarnings) {
+            if (incapable != null) {
+                return "\tIncapable of parsing uri: " + incapable;
+            } else if (syntaxError != null) {
+                return "\tSyntax error: " + syntaxError;
+            } else if (unknownComponent != null) {
+                return "\tUnknown component: " + unknownComponent;
+            }
         }
 
-        if (incapable != null) {
-            return "\tIncapable of parsing uri: " + incapable;
-        } else if (syntaxError != null) {
-            return "\tSyntax error: " + syntaxError;
-        } else if (unknownComponent != null) {
-            return "\tUnknown component: " + unknownComponent;
+        if (ok) {
+            return null;
         }
 
         // for each invalid option build a reason message

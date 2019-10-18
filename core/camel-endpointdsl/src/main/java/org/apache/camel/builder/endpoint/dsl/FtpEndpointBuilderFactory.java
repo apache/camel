@@ -2227,30 +2227,6 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The receive (download) buffer size Used only by FTPClient.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedFtpEndpointConsumerBuilder receiveBufferSize(
-                int receiveBufferSize) {
-            doSetProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
-         * The receive (download) buffer size Used only by FTPClient.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedFtpEndpointConsumerBuilder receiveBufferSize(
-                String receiveBufferSize) {
-            doSetProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
          * Whether to allow using LIST command when downloading a file. Default
          * is true. In some use cases you may want to download a specific file
          * and are not allowed to use the LIST command, and therefore you can
@@ -2353,7 +2329,8 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2364,7 +2341,8 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -3617,7 +3595,8 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -3628,7 +3607,8 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -4417,7 +4397,8 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4428,7 +4409,8 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option will be converted to a <code>int</code> type.
          * 

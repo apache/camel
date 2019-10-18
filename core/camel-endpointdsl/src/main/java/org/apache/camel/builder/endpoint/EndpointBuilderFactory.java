@@ -250,7 +250,6 @@ public interface EndpointBuilderFactory extends
         RestApiEndpointBuilderFactory,
         RestEndpointBuilderFactory,
         RestSwaggerEndpointBuilderFactory,
-        RestletEndpointBuilderFactory,
         RssEndpointBuilderFactory,
         S3EndpointBuilderFactory,
         SWFEndpointBuilderFactory,
