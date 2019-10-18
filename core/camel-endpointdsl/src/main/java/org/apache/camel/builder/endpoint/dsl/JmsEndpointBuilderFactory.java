@@ -848,7 +848,7 @@ public interface JmsEndpointBuilderFactory {
          * message is loaded which generally is inefficient as the JMS
          * properties may not be required but sometimes can catch early any
          * issues with the underlying JMS provider and the use of JMS
-         * properties.
+         * properties. See also the option eagerPoisonBody.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -864,7 +864,7 @@ public interface JmsEndpointBuilderFactory {
          * message is loaded which generally is inefficient as the JMS
          * properties may not be required but sometimes can catch early any
          * issues with the underlying JMS provider and the use of JMS
-         * properties.
+         * properties. See also the option eagerPoisonBody.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -873,6 +873,23 @@ public interface JmsEndpointBuilderFactory {
         default AdvancedJmsEndpointConsumerBuilder eagerLoadingOfProperties(
                 String eagerLoadingOfProperties) {
             doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
+            return this;
+        }
+        /**
+         * If eagerLoadingOfProperties is enabled and the JMS message payload
+         * (JMS body or JMS properties) (cannot be read/mapped), then set this
+         * text as the message body instead so the message can be processed (the
+         * cause of the poison are already stored as exception on the Exchange).
+         * This can be turned off by setting eagerPoisonBody=false. See also the
+         * option eagerLoadingOfProperties.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJmsEndpointConsumerBuilder eagerPoisonBody(
+                String eagerPoisonBody) {
+            doSetProperty("eagerPoisonBody", eagerPoisonBody);
             return this;
         }
         /**

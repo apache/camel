@@ -48,6 +48,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
@@ -206,12 +207,9 @@ public class MethodInfo {
             }
 
             public boolean proceed(AsyncCallback callback) {
-                Object body = exchange.getIn().getBody();
-                if (body instanceof StreamCache) {
-                    // ensure the stream cache is reset before calling the method
-                    ((StreamCache) body).reset();
-                }
                 try {
+                    // reset cached streams so they can be read again
+                    MessageHelper.resetStreamCache(exchange.getIn());
                     return doProceed(callback);
                 } catch (InvocationTargetException e) {
                     exchange.setException(e.getTargetException());

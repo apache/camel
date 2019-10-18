@@ -86,10 +86,19 @@ public class JmsComponentConfiguration
      */
     private Integer acknowledgementMode;
     /**
+     * If eagerLoadingOfProperties is enabled and the JMS message payload (JMS
+     * body or JMS properties) (cannot be read/mapped), then set this text as
+     * the message body instead so the message can be processed (the cause of
+     * the poison are already stored as exception on the Exchange). This can be
+     * turned off by setting eagerPoisonBody=false. See also the option
+     * eagerLoadingOfProperties.
+     */
+    private String eagerPoisonBody = "Poison JMS message due to ${exception.message}";
+    /**
      * Enables eager loading of JMS properties as soon as a message is loaded
      * which generally is inefficient as the JMS properties may not be required
      * but sometimes can catch early any issues with the underlying JMS provider
-     * and the use of JMS properties
+     * and the use of JMS properties. See also the option eagerLoadingOfBody.
      */
     private Boolean eagerLoadingOfProperties = false;
     /**
@@ -654,6 +663,14 @@ public class JmsComponentConfiguration
 
     public void setAcknowledgementMode(Integer acknowledgementMode) {
         this.acknowledgementMode = acknowledgementMode;
+    }
+
+    public String getEagerPoisonBody() {
+        return eagerPoisonBody;
+    }
+
+    public void setEagerPoisonBody(String eagerPoisonBody) {
+        this.eagerPoisonBody = eagerPoisonBody;
     }
 
     public Boolean getEagerLoadingOfProperties() {
@@ -1571,10 +1588,20 @@ public class JmsComponentConfiguration
          */
         private Boolean lazyCreateTransactionManager = true;
         /**
+         * If eagerLoadingOfProperties is enabled and the JMS message payload
+         * (JMS body or JMS properties) (cannot be read/mapped), then set this
+         * text as the message body instead so the message can be processed (the
+         * cause of the poison are already stored as exception on the Exchange).
+         * This can be turned off by setting eagerPoisonBody=false. See also the
+         * option eagerLoadingOfProperties.
+         */
+        private String eagerPoisonBody = "Poison JMS message due to ${exception.message}";
+        /**
          * Enables eager loading of JMS properties and payload as soon as a
          * message is loaded which generally is inefficient as the JMS
          * properties may not be required but sometimes can catch early any
-         * issues with the underlying JMS provider and the use of JMS properties
+         * issues with the underlying JMS provider and the use of JMS
+         * properties. See also the option eagerPoisonBody.
          */
         private Boolean eagerLoadingOfProperties = false;
         /**
@@ -2339,6 +2366,14 @@ public class JmsComponentConfiguration
         public void setLazyCreateTransactionManager(
                 Boolean lazyCreateTransactionManager) {
             this.lazyCreateTransactionManager = lazyCreateTransactionManager;
+        }
+
+        public String getEagerPoisonBody() {
+            return eagerPoisonBody;
+        }
+
+        public void setEagerPoisonBody(String eagerPoisonBody) {
+            this.eagerPoisonBody = eagerPoisonBody;
         }
 
         public Boolean getEagerLoadingOfProperties() {
