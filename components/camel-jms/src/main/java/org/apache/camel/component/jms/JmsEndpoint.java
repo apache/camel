@@ -702,6 +702,11 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
+    public String getEagerPoisonBody() {
+        return getConfiguration().getEagerPoisonBody();
+    }
+
+    @ManagedAttribute
     public boolean isEagerLoadingOfProperties() {
         return getConfiguration().isEagerLoadingOfProperties();
     }
@@ -842,6 +847,11 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @ManagedAttribute
     public void setDurableSubscriptionName(String durableSubscriptionName) {
         getConfiguration().setDurableSubscriptionName(durableSubscriptionName);
+    }
+
+    @ManagedAttribute
+    public void setEagerPoisonBody(String eagerPoisonBody) {
+        getConfiguration().setEagerPoisonBody(eagerPoisonBody);
     }
 
     @ManagedAttribute
