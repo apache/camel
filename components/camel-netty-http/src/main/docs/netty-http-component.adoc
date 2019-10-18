@@ -138,7 +138,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (78 parameters):
+=== Query Parameters (79 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -152,6 +152,7 @@ with the following path and query parameters:
 | *sync* (common) | Setting to set endpoint as one-way or request-response | true | boolean
 | *tcpNoDelay* (common) | Setting to improve TCP protocol performance | true | boolean
 | *matchOnUriPrefix* (consumer) | Whether or not Camel should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
+| *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | boolean
 | *send503whenSuspended* (consumer) | Whether to send back HTTP status code 503 when the consumer has been suspended. If the option is false then the Netty Acceptor is unbound when the consumer is suspended, so clients cannot connect anymore. | true | boolean
 | *backlog* (consumer) | Allows to configure a backlog for netty consumer (server). Note the backlog is just a best effort depending on the OS. Setting this option to a value such as 200, 500 or 1000, tells the TCP stack how long the accept queue can be If this option is not configured, then the backlog depends on OS setting. |  | int
 | *bossCount* (consumer) | When netty works on nio mode, it uses default bossCount parameter from Netty, which is 1. User can use this operation to override the default bossCount from Netty | 1 | int
