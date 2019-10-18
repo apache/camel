@@ -126,7 +126,12 @@ public final class MessageHelper {
         if (message == null) {
             return;
         }
-        Object body = message.getBody();
+        Object body = null;
+        try {
+            body = message.getBody();
+        } catch (Throwable e) {
+            // ignore
+        }
         if (body instanceof StreamCache) {
             ((StreamCache) body).reset();
         }
