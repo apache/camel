@@ -228,7 +228,6 @@
         <include>org.apache.camel:camel-mock</include>
         <include>org.apache.camel:camel-mongodb</include>
         <include>org.apache.camel:camel-mongodb-gridfs</include>
-        <include>org.apache.camel:camel-mqtt</include>
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mustache</include>
         <include>org.apache.camel:camel-mvel</include>
@@ -574,7 +573,6 @@
         <include>org.apache.camel:camel-mock-starter</include>
         <include>org.apache.camel:camel-mongodb-gridfs-starter</include>
         <include>org.apache.camel:camel-mongodb-starter</include>
-        <include>org.apache.camel:camel-mqtt-starter</include>
         <include>org.apache.camel:camel-msv-starter</include>
         <include>org.apache.camel:camel-mustache-starter</include>
         <include>org.apache.camel:camel-mvel-starter</include>

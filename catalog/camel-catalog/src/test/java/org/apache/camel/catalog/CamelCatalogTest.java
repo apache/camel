@@ -669,17 +669,6 @@ public class CamelCatalogTest {
         assertEquals("no", result.getInvalidBoolean().get("useJson"));
         assertEquals("five", result.getInvalidInteger().get("initialDelay"));
 
-        // okay
-        result = catalog.validateEndpointProperties("mqtt:myqtt?reconnectBackOffMultiplier=2.5");
-        assertTrue(result.isSuccess());
-        assertEquals(0, result.getNumberOfErrors());
-
-        // number
-        result = catalog.validateEndpointProperties("mqtt:myqtt?reconnectBackOffMultiplier=five");
-        assertFalse(result.isSuccess());
-        assertEquals("five", result.getInvalidNumber().get("reconnectBackOffMultiplier"));
-        assertEquals(1, result.getNumberOfErrors());
-
         // unknown component
         result = catalog.validateEndpointProperties("foo:bar?me=you");
         assertTrue(result.isSuccess());
