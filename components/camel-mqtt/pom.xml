@@ -28,7 +28,7 @@
 
     <artifactId>camel-mqtt</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: MQTT</name>
+    <name>Camel :: MQTT (deprecated)</name>
     <description>Camel MQTT client</description>
 
     <properties>
