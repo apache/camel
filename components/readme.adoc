@@ -1,7 +1,7 @@
 = Components
 
 // components: START
-Number of Components: 299 in 237 JAR artifacts (0 deprecated)
+Number of Components: 298 in 236 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -588,9 +588,6 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | link:camel-mongodb-gridfs/src/main/docs/mongodb-gridfs-component.adoc[MongoDB GridFS] (camel-mongodb-gridfs) +
 `mongodb-gridfs:connectionBean` | 2.18 | Component for working with MongoDB GridFS.
-
-| link:camel-mqtt/src/main/docs/mqtt-component.adoc[MQTT] (camel-mqtt) +
-`mqtt:name` | 2.10 | Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
 
 | link:camel-msv/src/main/docs/msv-component.adoc[MSV] (camel-msv) +
 `msv:resourceUri` | 1.1 | Validates the payload of a message using the MSV Library.

@@ -244,7 +244,6 @@
 * xref:mock-component.adoc[Mock Component]
 * xref:mongodb-gridfs-component.adoc[MongoDB GridFS Component]
 * xref:mongodb-component.adoc[MongoDB Component]
-* xref:mqtt-component.adoc[MQTT Component]
 * xref:msv-component.adoc[MSV Component]
 * xref:mustache-component.adoc[Mustache Component]
 * xref:mvel-component.adoc[MVEL Component]
