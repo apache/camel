@@ -849,9 +849,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         || "camel-olingo4".equals(dir.getName())
                         || "camel-servicenow".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName())
-                        || "camel-fhir".equals(dir.getName())
-                        || "camel-debezium".equals(dir.getName());
-                    if (special || special2) {
+                        || "camel-fhir".equals(dir.getName());
+                    boolean special3 = "camel-debezium".equals(dir.getName());
+                    if (special || special2 || special3) {
                         continue;
                     }
 
