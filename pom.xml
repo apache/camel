@@ -231,13 +231,16 @@
                             <exclude>**/dataformat-options.mvel</exclude>
                             <exclude>**/eip-options.mvel</exclude>
                             <exclude>**/language-options.mvel</exclude>
-                            <exclude>**/readme-components.mvel</exclude>
+                            <exclude>**/website-components-list.mvel</exclude>
+                            <exclude>**/website-languages-list.mvel</exclude>
+                            <exclude>**/website-others-list.mvel</exclude>
+                            <exclude>**/website-dataformats-list.mvel</exclude>
+                            <exclude>**/readme-eips.mvel</exclude>
                             <exclude>**/readme-components.mvel</exclude>
                             <exclude>**/readme-dataformats.mvel</exclude>
-                            <exclude>**/readme-eips.mvel</exclude>
-                            <exclude>**/readme-examples.mvel</exclude>
                             <exclude>**/readme-languages.mvel</exclude>
                             <exclude>**/readme-others.mvel</exclude>
+                            <exclude>**/readme-examples.mvel</exclude>
                             <exclude>**/spring-boot-auto-configure-options.mvel</exclude>
                             <exclude>**/camel-NOTICE.txt</exclude>
                             <exclude>**/spring-boot-starter-NOTICE.txt</exclude>
