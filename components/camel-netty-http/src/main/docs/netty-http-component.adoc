@@ -241,7 +241,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 32 options, which are listed below.
+The component supports 33 options, which are listed below.
 
 
 
@@ -257,6 +257,7 @@ The component supports 32 options, which are listed below.
 | *camel.component.netty-http.configuration.map-headers* | If this option is enabled, then during binding from Netty to Camel Message then the headers will be mapped as well (eg added as header to the Camel Message as well). You can turn off this option to disable this. The headers can still be accessed from the org.apache.camel.component.netty.http.NettyHttpMessage message with the method getHttpRequest() that returns the Netty HTTP request io.netty.handler.codec.http.HttpRequest instance. | true | Boolean
 | *camel.component.netty-http.configuration.match-on-uri-prefix* | Whether or not Camel should try to find a target consumer by matching the URI prefix if no exact match is found. | false | Boolean
 | *camel.component.netty-http.configuration.max-header-size* | The maximum length of all headers. If the sum of the length of each header exceeds this value, a {@link io.netty.handler.codec.TooLongFrameException} will be raised. | 8192 | Integer
+| *camel.component.netty-http.configuration.mute-exception* | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | Boolean
 | *camel.component.netty-http.configuration.ok-status-code-range* | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number or from-to with the dash included. <p/> The default range is <tt>200-299</tt> | 200-299 | String
 | *camel.component.netty-http.configuration.path* | Resource path |  | String
 | *camel.component.netty-http.configuration.port* | The port number. Is default 80 for http and 443 for https. |  | Integer
