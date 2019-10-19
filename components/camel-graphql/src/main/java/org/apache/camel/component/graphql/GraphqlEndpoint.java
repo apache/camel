@@ -45,7 +45,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 
-@UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri?options", label = "graphql", producerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri", label = "api", producerOnly = true)
 public class GraphqlEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -53,11 +53,11 @@ public class GraphqlEndpoint extends DefaultEndpoint {
     private URI httpUri;
     @UriParam
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessToken;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam
     private String query;

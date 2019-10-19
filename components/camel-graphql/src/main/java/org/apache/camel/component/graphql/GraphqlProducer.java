@@ -18,8 +18,9 @@ package org.apache.camel.component.graphql;
 
 import java.net.URI;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -29,7 +30,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 
-class GraphqlProducer extends DefaultProducer {
+public class GraphqlProducer extends DefaultAsyncProducer {
 
     public GraphqlProducer(GraphqlEndpoint endpoint) {
         super(endpoint);
@@ -41,7 +42,7 @@ class GraphqlProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) {
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             CloseableHttpClient httpClient = getEndpoint().getHttpclient();
             URI httpUri = getEndpoint().getHttpUri();
@@ -54,15 +55,16 @@ class GraphqlProducer extends DefaultProducer {
             httpPost.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip");
             httpPost.setEntity(requestEntity);
 
-            String responseContent = httpClient.execute(httpPost, response -> {
-                return EntityUtils.toString(response.getEntity());
-            });
+            String responseContent = httpClient.execute(httpPost, response -> EntityUtils.toString(response.getEntity()));
 
             exchange.getMessage().setBody(responseContent);
 
         } catch (Exception e) {
             exchange.setException(e);
         }
+
+        callback.done(true);
+        return true;
     }
 
     protected static String buildRequestBody(String query, String operationName, JsonObject variables) {
@@ -72,5 +74,4 @@ class GraphqlProducer extends DefaultProducer {
         jsonObject.put("variables", variables != null ? variables : new JsonObject());
         return jsonObject.toJson();
     }
-
 }

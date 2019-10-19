@@ -16,19 +16,21 @@
  */
 package org.apache.camel.component.graphql.server;
 
-import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
-
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 
-public class GraphqlFactory {
+import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
+
+public final class GraphqlFactory {
+
+    private GraphqlFactory() {
+    }
 
     public static GraphQL newGraphQL() {
         try {
@@ -36,7 +38,6 @@ public class GraphqlFactory {
             GraphQLSchema graphQLSchema = buildSchema(schema);
             return GraphQL.newGraphQL(graphQLSchema).build();
         } catch (Exception e) {
-            System.err.println(e);
             throw new RuntimeException(e);
         }
     }
