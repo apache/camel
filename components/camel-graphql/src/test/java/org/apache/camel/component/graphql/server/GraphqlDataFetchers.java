@@ -22,26 +22,29 @@ import java.util.Map;
 
 import graphql.schema.DataFetcher;
 
-public class GraphqlDataFetchers {
+public final class GraphqlDataFetchers {
 
-    private static List<Book> books = Arrays.asList(
+    private static final List<Book> BOOKS = Arrays.asList(
             new Book("book-1", "Harry Potter and the Philosopher's Stone", "author-1"),
             new Book("book-2", "Moby Dick", "author-2"),
             new Book("book-3", "Interview with the vampire", "author-3"));
 
-    private static List<Author> authors = Arrays.asList(
+    private static final List<Author> AUTHORS = Arrays.asList(
             new Author("author-1", "Joanne Rowling"),
             new Author("author-2", "Herman Melville"),
             new Author("author-3", "Anne Rice"));
 
+    private GraphqlDataFetchers() {
+    }
+
     public static DataFetcher<List<Book>> getBooksDataFetcher() {
-        return dataFetchingEnvironment -> books;
+        return dataFetchingEnvironment -> BOOKS;
     }
 
     public static DataFetcher<Book> getBookByIdDataFetcher() {
         return dataFetchingEnvironment -> {
             String bookId = dataFetchingEnvironment.getArgument("id");
-            return books.stream().filter(book -> book.getId().equals(bookId)).findFirst().orElse(null);
+            return BOOKS.stream().filter(book -> book.getId().equals(bookId)).findFirst().orElse(null);
         };
     }
 
@@ -49,14 +52,14 @@ public class GraphqlDataFetchers {
         return dataFetchingEnvironment -> {
             Book book = dataFetchingEnvironment.getSource();
             String authorId = book.getAuthorId();
-            return authors.stream().filter(author -> author.getId().equals(authorId)).findFirst().orElse(null);
+            return AUTHORS.stream().filter(author -> author.getId().equals(authorId)).findFirst().orElse(null);
         };
     }
 
     public static DataFetcher<Book> addBookDataFetcher() {
         return dataFetchingEnvironment -> {
             Map<String, Object> bookInput = dataFetchingEnvironment.getArgument("bookInput");
-            String id = "book-" + (books.size() + 1);
+            String id = "book-" + (BOOKS.size() + 1);
             String name = (String) bookInput.get("name");
             String authorId = (String) bookInput.get("authorId");
             Book book = new Book(id, name, authorId);

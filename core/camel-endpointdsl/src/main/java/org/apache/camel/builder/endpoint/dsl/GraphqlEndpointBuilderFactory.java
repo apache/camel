@@ -38,17 +38,6 @@ public interface GraphqlEndpointBuilderFactory {
             return (AdvancedGraphqlEndpointBuilder) this;
         }
         /**
-         * The access token sent in the Authorization header.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default GraphqlEndpointBuilder accessToken(String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * The query or mutation name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -57,17 +46,6 @@ public interface GraphqlEndpointBuilderFactory {
          */
         default GraphqlEndpointBuilder operationName(String operationName) {
             doSetProperty("operationName", operationName);
-            return this;
-        }
-        /**
-         * The password for Basic authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default GraphqlEndpointBuilder password(String password) {
-            doSetProperty("password", password);
             return this;
         }
         /**
@@ -104,17 +82,6 @@ public interface GraphqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * The username for Basic authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default GraphqlEndpointBuilder username(String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-        /**
          * The JsonObject instance containing the operation variables.
          * 
          * The option is a: <code>org.apache.camel.util.json.JsonObject</code>
@@ -136,6 +103,39 @@ public interface GraphqlEndpointBuilderFactory {
          */
         default GraphqlEndpointBuilder variables(String variables) {
             doSetProperty("variables", variables);
+            return this;
+        }
+        /**
+         * The access token sent in the Authorization header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GraphqlEndpointBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * The password for Basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GraphqlEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * The username for Basic authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GraphqlEndpointBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -204,11 +204,11 @@ public interface GraphqlEndpointBuilderFactory {
      * GraphQL (camel-graphql)
      * A Camel GraphQL Component
      * 
-     * Category: graphql
+     * Category: api
      * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-graphql
      * 
-     * Syntax: <code>graphql:httpUri?options</code>
+     * Syntax: <code>graphql:httpUri</code>
      * 
      * Path parameter: httpUri (required)
      * The GraphQL server URI.

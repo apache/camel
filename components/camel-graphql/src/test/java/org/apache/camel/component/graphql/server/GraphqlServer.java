@@ -22,7 +22,9 @@ import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import graphql.ExecutionInput;
+import graphql.ExecutionResult;
+import graphql.GraphQL;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
@@ -35,10 +37,6 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.apache.http.util.EntityUtils;
 
-import graphql.ExecutionInput;
-import graphql.ExecutionResult;
-import graphql.GraphQL;
-
 public class GraphqlServer {
 
     private final GraphQL graphql;
@@ -47,8 +45,8 @@ public class GraphqlServer {
     public GraphqlServer() {
         this.graphql = GraphqlFactory.newGraphQL();
         this.server = ServerBootstrap.bootstrap()
-            .registerHandler("/graphql", new GraphqlHandler())
-            .create();
+                .registerHandler("/graphql", new GraphqlHandler())
+                .create();
     }
 
     public void start() throws IOException {
@@ -79,10 +77,10 @@ public class GraphqlServer {
                 Map<String, Object> variables = (Map<String, Object>) map.get("variables");
 
                 ExecutionInput executionInput = ExecutionInput.newExecutionInput()
-                    .query(query)
-                    .operationName(operationName)
-                    .variables(variables)
-                    .build();
+                        .query(query)
+                        .operationName(operationName)
+                        .variables(variables)
+                        .build();
                 ExecutionResult executionResult = graphql.execute(executionInput);
                 Map<String, Object> resultMap = executionResult.toSpecification();
                 String result = objectMapper.writeValueAsString(resultMap);
@@ -93,7 +91,8 @@ public class GraphqlServer {
         }
 
         private Map<String, Object> jsonToMap(String json) throws IOException {
-            return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+            return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {
+            });
         }
 
     }
