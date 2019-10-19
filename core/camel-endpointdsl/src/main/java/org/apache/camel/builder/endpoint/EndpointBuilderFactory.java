@@ -203,7 +203,6 @@ public interface EndpointBuilderFactory extends
         LuceneEndpointBuilderFactory,
         LumberjackEndpointBuilderFactory,
         MQEndpointBuilderFactory,
-        MQTTEndpointBuilderFactory,
         MSKEndpointBuilderFactory,
         MailEndpointBuilderFactory,
         MasterEndpointBuilderFactory,

@@ -246,7 +246,6 @@
         <module>camel-mllp</module>
         <module>camel-mongodb</module>
         <module>camel-mongodb-gridfs</module>
-        <module>camel-mqtt</module>
         <module>camel-msv</module>
         <module>camel-mustache</module>
         <module>camel-mvel</module>
