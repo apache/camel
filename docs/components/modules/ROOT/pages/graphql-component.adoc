@@ -25,7 +25,7 @@ for this component:
 The GraphQL endpoint is configured using URI syntax:
 
 ----
-graphql:httpUri?options
+graphql:httpUri
 ----
 
 with the following path and query parameters:
@@ -46,17 +46,17 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessToken* (producer) | The access token sent in the Authorization header. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operationName* (producer) | The query or mutation name. |  | String
-| *password* (producer) | The password for Basic authentication. |  | String
 | *proxyHost* (producer) | The proxy host in the format hostname:port. |  | String
 | *query* (producer) | The query text. |  | String
 | *queryFile* (producer) | The query file name located in the classpath. |  | String
-| *username* (producer) | The username for Basic authentication. |  | String
 | *variables* (producer) | The JsonObject instance containing the operation variables. |  | JsonObject
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessToken* (security) | The access token sent in the Authorization header. |  | String
+| *password* (security) | The password for Basic authentication. |  | String
+| *username* (security) | The username for Basic authentication. |  | String
 |===
 // endpoint options: END
 
