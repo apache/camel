@@ -444,9 +444,9 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                         || "camel-olingo2".equals(dir.getName())
                         || "camel-olingo4".equals(dir.getName())
                         || "camel-servicenow".equals(dir.getName())
-                        || "camel-salesforce".equals(dir.getName())
-                        || "camel-debezium".equals(dir.getName());
-                    if (special || special2) {
+                        || "camel-salesforce".equals(dir.getName());
+                    boolean special3 = "camel-debezium".equals(dir.getName());
+                    if (special || special2 || special3) {
                         continue;
                     }
 
