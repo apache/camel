@@ -217,7 +217,7 @@ public class HdfsProducer extends DefaultProducer {
 
         // close if we do not have idle checker task to do this for us
         boolean close = scheduler == null;
-        // but user may have a header to explict control the close
+        // but user may have a header to explicit control the close
         Boolean closeHeader = exchange.getIn().getHeader(HdfsConstants.HDFS_CLOSE, Boolean.class);
         if (closeHeader != null) {
             close = closeHeader;

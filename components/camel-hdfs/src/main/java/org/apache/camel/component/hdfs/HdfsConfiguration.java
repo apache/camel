@@ -86,6 +86,9 @@ public class HdfsConfiguration {
     @UriParam
     private String owner;
 
+    @UriParam(label = "consumer")
+    private boolean streamDownload;
+
     @UriParam
     private String namedNodes;
     private List<String> namedNodeList = Collections.emptyList();
@@ -601,6 +604,14 @@ public class HdfsConfiguration {
 
     public boolean isKerberosAuthentication() {
         return isNotEmpty(kerberosConfigFileLocation) && isNotEmpty(kerberosUsername) && isNotEmpty(kerberosKeytabLocation);
+    }
+
+    public boolean isStreamDownload() {
+        return streamDownload;
+    }
+
+    public void setStreamDownload(boolean streamDownload) {
+        this.streamDownload = streamDownload;
     }
 
     /**

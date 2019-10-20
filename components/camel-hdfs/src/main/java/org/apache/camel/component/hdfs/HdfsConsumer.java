@@ -41,13 +41,19 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     private final HdfsConfiguration config;
     private final StringBuilder hdfsPath;
     private final Processor processor;
+    private final HdfsInfoFactory hdfsInfoFactory;
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
-    public HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration config) {
+    public HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration endpointConfig) {
+        this(endpoint, processor, endpointConfig, new HdfsInfoFactory(endpointConfig), endpointConfig.getFileSystemType().getHdfsPath(endpointConfig));
+    }
+
+    HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory, StringBuilder hdfsPath) {
         super(endpoint, processor);
-        this.config = config;
-        this.hdfsPath = config.getFileSystemType().getHdfsPath(config);
         this.processor = processor;
+        this.config = endpointConfig;
+        this.hdfsPath = hdfsPath;
+        this.hdfsInfoFactory = hdfsInfoFactory;
         setUseFixedDelay(true);
     }
 
@@ -75,7 +81,6 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             log.debug("Connecting to hdfs file-system {} (may take a while if connection is not available)", hdfsFsDescription);
         }
 
-        HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(config);
         // hadoop will cache the connection by default so its faster to get in the poll method
         HdfsInfo answer = hdfsInfoFactory.newHdfsInfo(this.hdfsPath.toString());
 
@@ -203,8 +208,6 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     private HdfsInputStream createInputStream(FileStatus fileStatus) {
         try {
             this.rwLock.writeLock().lock();
-
-            HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(config);
             return HdfsInputStream.createInputStream(fileStatus.getPath().toString(), hdfsInfoFactory);
         } finally {
             this.rwLock.writeLock().unlock();
