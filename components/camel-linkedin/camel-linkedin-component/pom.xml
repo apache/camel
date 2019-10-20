@@ -17,15 +17,14 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-linkedin-parent</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-RC3</version>
     </parent>
 
     <artifactId>camel-linkedin</artifactId>
@@ -120,12 +119,12 @@
                                 <api>
                                     <apiName>comments</apiName>
                                     <proxyClass>org.apache.camel.component.linkedin.api.CommentsResource</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>companies</apiName>
                                     <proxyClass>org.apache.camel.component.linkedin.api.CompaniesResource</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <nullableOptions>
                                         <nullableOption>companySizes</nullableOption>
                                         <nullableOption>count</nullableOption>
@@ -155,7 +154,7 @@
                                 <api>
                                     <apiName>groups</apiName>
                                     <proxyClass>org.apache.camel.component.linkedin.api.GroupsResource</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <nullableOptions>
                                         <nullableOption>category</nullableOption>
                                         <nullableOption>count</nullableOption>
@@ -167,12 +166,12 @@
                                 <api>
                                     <apiName>jobs</apiName>
                                     <proxyClass>org.apache.camel.component.linkedin.api.JobsResource</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>people</apiName>
                                     <proxyClass>org.apache.camel.component.linkedin.api.PeopleResource</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <nullableOptions>
                                         <nullableOption>after</nullableOption>
                                         <nullableOption>before</nullableOption>
@@ -193,7 +192,7 @@
                                 <api>
                                     <apiName>posts</apiName>
                                     <proxyClass>org.apache.camel.component.linkedin.api.PostsResource</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <nullableOptions>
                                         <nullableOption>count</nullableOption>
                                         <nullableOption>start</nullableOption>
@@ -202,7 +201,7 @@
                                 <api>
                                     <apiName>search</apiName>
                                     <proxyClass>org.apache.camel.component.linkedin.api.SearchResource</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <nullableOptions>
                                         <nullableOption>company_name</nullableOption>
                                         <nullableOption>count</nullableOption>

@@ -17,15 +17,13 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo4-parent</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-RC3</version>
     </parent>
 
     <artifactId>camel-olingo4</artifactId>
@@ -35,7 +33,7 @@
     <properties>
         <componentName>Olingo4</componentName>
         <schemeName>olingo4</schemeName>
-        <maven.exe.file.extension/>
+        <maven.exe.file.extension />
         <componentPackage>org.apache.camel.component.olingo4</componentPackage>
         <outPackage>org.apache.camel.component.olingo4.internal</outPackage>
         <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
@@ -135,7 +133,7 @@
                         <configuration>
                             <apis>
                                 <api>
-                                    <apiName/>
+                                    <apiName />
                                     <proxyClass>org.apache.camel.component.olingo4.api.Olingo4App</proxyClass>
                                     <fromSignatureFile>src/signatures/olingo-api-signature.txt</fromSignatureFile>
                                     <extraOptions>

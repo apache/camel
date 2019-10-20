@@ -17,15 +17,14 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-RC3</version>
     </parent>
 
     <artifactId>camel-google-drive</artifactId>
@@ -133,67 +132,67 @@
                                 <api>
                                     <apiName>drive-about</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$About</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-apps</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Apps</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-changes</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Changes</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-channels</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Channels</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-children</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Children</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-comments</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Comments</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-files</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Files</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-parents</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Parents</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-permissions</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Permissions</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-properties</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Properties</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-realtime</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Realtime</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-replies</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Replies</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>drive-revisions</apiName>
                                     <proxyClass>com.google.api.services.drive.Drive$Revisions</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                             </apis>
                             <substitutions>

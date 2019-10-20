@@ -17,14 +17,13 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-RC3</version>
     </parent>
 
     <artifactId>camel-cxf</artifactId>
@@ -34,7 +33,7 @@
     <description>Camel CXF support</description>
 
     <properties>
-        <camel.osgi.import.defaults/>
+        <camel.osgi.import.defaults />
         <camel.osgi.import>
             !org.springframework.boot.*,
             !org.springframework.context.annotation.*;resolution:=optional,
@@ -464,17 +463,13 @@
                                 <echo>Copying spring meta files</echo>
                                 <copy todir="${project.build.directory}/spring-meta" preservelastmodified="true">
                                     <fileset dir="${project.basedir}/src/main/resources">
-                                        <include name="**/spring.*"/>
+                                        <include name="**/spring.*" />
                                     </fileset>
                                 </copy>
-                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers"
-                                         token="\\${project.version}" value="${project.version}"
-                                         preservelastmodified="true"/>
-                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas"
-                                         token="\\${project.version}" value="${project.version}"
-                                         preservelastmodified="true"/>
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers" token="\\${project.version}" value="${project.version}" preservelastmodified="true" />
+                                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas" token="\\${project.version}" value="${project.version}" preservelastmodified="true" />
                                 <copy todir="${project.build.directory}/classes" preservelastmodified="true">
-                                    <fileset dir="${project.build.directory}/spring-meta"/>
+                                    <fileset dir="${project.build.directory}/spring-meta" />
                                 </copy>
                             </target>
                         </configuration>

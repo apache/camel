@@ -17,14 +17,13 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-RC3</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -71,91 +70,67 @@
                                 <phase>validate</phase>
                                 <configuration>
                                     <target>
-                                        <path id="ecp.ws.path" location="${workspace}"/>
-                                        <property name="full.eclipse.workspace" refid="ecp.ws.path"/>
-                                        <path path="${basedir}/../buildingtools/src/main/resources"
-                                              id="buildtools.path"/>
+                                        <path id="ecp.ws.path" location="${workspace}" />
+                                        <property name="full.eclipse.workspace" refid="ecp.ws.path" />
+                                        <path path="${basedir}/../buildingtools/src/main/resources" id="buildtools.path" />
 
                                         <whichresource resource="camel-eclipse-pmd" property="pmd.url">
-                                            <classpath refid="buildtools.path"/>
+                                            <classpath refid="buildtools.path" />
                                         </whichresource>
                                         <whichresource resource="camel-pmd-ruleset.xml" property="pmdruleset.url">
-                                            <classpath refid="buildtools.path"/>
+                                            <classpath refid="buildtools.path" />
                                         </whichresource>
-                                        <whichresource resource="camel-eclipse-checkstyle"
-                                                       property="eclipse.checkstyle.url">
-                                            <classpath refid="buildtools.path"/>
+                                        <whichresource resource="camel-eclipse-checkstyle" property="eclipse.checkstyle.url">
+                                            <classpath refid="buildtools.path" />
                                         </whichresource>
                                         <whichresource resource="camel-checkstyle.xml" property="checkstyle.url">
-                                            <classpath refid="buildtools.path"/>
+                                            <classpath refid="buildtools.path" />
                                         </whichresource>&gt;
 
-                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings"/>
-                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle"/>
-                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sourceforge.pmd.eclipse"/>
+                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings" />
+                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle" />
+                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sourceforge.pmd.eclipse" />
 
-                                        <get src="${checkstyle.url}"
-                                             dest="${full.eclipse.workspace}/camel-checkstyle.xml"/>
+                                        <get src="${checkstyle.url}" dest="${full.eclipse.workspace}/camel-checkstyle.xml" />
 
                                         <!-- Add checkstyle config -->
-                                        <copy file="${basedir}/eclipse/template.checkstyle-config.xml"
-                                              tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml"
-                                              overwrite="no">
+                                        <copy file="${basedir}/eclipse/template.checkstyle-config.xml" tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" overwrite="no">
                                             <filterset>
-                                                <filter token="CHECKSTYLE_CONFIG_FILE"
-                                                        value="${full.eclipse.workspace}/camel-checkstyle.xml"/>
-                                                <filter token="APACHE_HEADER_FILE"
-                                                        value="${full.eclipse.workspace}/camel-header.txt"/>
+                                                <filter token="CHECKSTYLE_CONFIG_FILE" value="${full.eclipse.workspace}/camel-checkstyle.xml" />
+                                                <filter token="APACHE_HEADER_FILE" value="${full.eclipse.workspace}/camel-header.txt" />
                                             </filterset>
                                         </copy>
 
-                                        <xslt style="${basedir}/eclipse/addcheckstyle.xsl"
-                                              in="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml"
-                                              out="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new">
-                                            <param name="checkstyleconfig"
-                                                   expression="${full.eclipse.workspace}/camel-checkstyle.xml"/>
+                                        <xslt style="${basedir}/eclipse/addcheckstyle.xsl" in="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" out="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new">
+                                            <param name="checkstyleconfig" expression="${full.eclipse.workspace}/camel-checkstyle.xml" />
                                         </xslt>
-                                        <copy file="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new"
-                                              tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml"
-                                              overwrite="yes"/>
+                                        <copy file="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new" tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" overwrite="yes" />
 
                                         <!-- Add warning flags that we want -->
-                                        <propertyfile
-                                                file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs">
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.missingSerialVersion"
-                                                   value="ignore"/>
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedImport"
-                                                   value="ignore"/>
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.annotationSuperInterface"
-                                                   value="ignore"/>
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference"
-                                                   value="ignore"/>
+                                        <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs">
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.missingSerialVersion" value="ignore" />
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedImport" value="ignore" />
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.annotationSuperInterface" value="ignore" />
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference" value="ignore" />
                                         </propertyfile>
 
                                         <!-- Add code format rules -->
-                                        <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs"
-                                                append="true" fixlastline="true">
-                                            <filelist dir="${basedir}/eclipse" files="org.eclipse.jdt.core.prefs"/>
+                                        <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs" append="true" fixlastline="true">
+                                            <filelist dir="${basedir}/eclipse" files="org.eclipse.jdt.core.prefs" />
                                         </concat>
-                                        <loadfile property="eclipse.code.format"
-                                                  srcFile="${basedir}/eclipse/CamelCodeFormatter.xml"/>
-                                        <loadfile property="eclipse.code.templates"
-                                                  srcFile="${basedir}/eclipse/codetemplates.xml"/>
-                                        <propertyfile
-                                                file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs">
-                                            <entry key="formatter_profile" value="_ActiveMQ Java Conventions"/>
-                                            <entry key="org.eclipse.jdt.ui.formatterprofiles"
-                                                   value="${eclipse.code.format}"/>
-                                            <entry key="org.eclipse.jdt.ui.text.custom_code_templates"
-                                                   value="${eclipse.code.templates}"/>
+                                        <loadfile property="eclipse.code.format" srcFile="${basedir}/eclipse/CamelCodeFormatter.xml" />
+                                        <loadfile property="eclipse.code.templates" srcFile="${basedir}/eclipse/codetemplates.xml" />
+                                        <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs">
+                                            <entry key="formatter_profile" value="_ActiveMQ Java Conventions" />
+                                            <entry key="org.eclipse.jdt.ui.formatterprofiles" value="${eclipse.code.format}" />
+                                            <entry key="org.eclipse.jdt.ui.text.custom_code_templates" value="${eclipse.code.templates}" />
 
                                             <!-- Add import order -->
-                                            <entry key="org.eclipse.jdt.ui.importorder"
-                                                   value="java;javax;org.w3c;org.xml;w3c;"/>
+                                            <entry key="org.eclipse.jdt.ui.importorder" value="java;javax;org.w3c;org.xml;w3c;" />
                                             <!-- Sort order -->
-                                            <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V,"/>
-                                            <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M,"/>
-                                            <entry key="org.eclipse.jdt.ui.enable.visibility.order" value="true"/>
+                                            <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V," />
+                                            <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M," />
+                                            <entry key="org.eclipse.jdt.ui.enable.visibility.order" value="true" />
                                         </propertyfile>
                                     </target>
                                 </configuration>
