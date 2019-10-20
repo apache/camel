@@ -175,8 +175,12 @@ public final class ConnectorConfigGenerator {
                 final org.apache.camel.maven.packaging.srcgen.Field field = javaClass.addField()
                         .setName(fieldConfig.getFieldName())
                         .setType(fieldConfig.getRawType())
-                        .setPrivate()
-                        .setLiteralInitializer(fieldConfig.getDefaultValueAsString());
+                        .setPrivate();
+
+                // especial case for database.server.id, we don't set the default value, we let debezium do that
+                if (!fieldConfig.getRawName().equals("database.server.id")) {
+                    field.setLiteralInitializer(fieldConfig.getDefaultValueAsString());
+                }
 
                 String description = fieldConfig.getDescription();
 
@@ -189,7 +193,8 @@ public final class ConnectorConfigGenerator {
                 final Annotation annotation = field.addAnnotation(UriParam.class)
                         .setLiteralValue("label", "LABEL_NAME");
 
-                if (fieldConfig.getDefaultValue() != null) {
+                // especial case for database.server.id, we don't set the default value, we let debezium do that
+                if (fieldConfig.getDefaultValue() != null && !fieldConfig.getRawName().equals("database.server.id")) {
                     annotation.setLiteralValue("defaultValue", String.format("\"%s\"", fieldConfig.getDefaultValue()));
                 }
 
