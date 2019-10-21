@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 == Examples
 
 // examples: START
-Number of Examples: 114 (0 deprecated)
+Number of Examples: 116 (0 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -64,7 +64,7 @@ Number of Examples: 114 (0 deprecated)
 
 | link:camel-example-spring-xquery/README.adoc[Spring XQuery] (camel-example-spring-xquery) | Beginner | An example using Spring XML to transform a message using XQuery
 
-| link:camel-example-cassandra-kubernetes/ReadMe.adoc[Cassandra Kubernetes] (camel-example-cassandra-kubernetes) | Cloud | An example with Camel and Cassandra running on Kubernetes
+| link:camel-example-cassandra-kubernetes/README.adoc[Cassandra Kubernetes] (camel-example-cassandra-kubernetes) | Cloud | An example with Camel and Cassandra running on Kubernetes
 
 | link:camel-example-cdi-aws-s3/README.adoc[CDI AWS S3] (camel-example-cdi-aws-s3) | Cloud | AWS S3 CDI example
 
@@ -72,7 +72,7 @@ Number of Examples: 114 (0 deprecated)
 
 | link:camel-example-grpc-kubernetes/README.adoc[gRPC Kubernetes] (camel-example-grpc-kubernetes) | Cloud | An example showing the Camel gRPC component with Spring Boot running on Kubernetes
 
-| link:camel-example-hazelcast-kubernetes/ReadMe.adoc[Hazelcast Kubernetes] (camel-example-hazelcast-kubernetes) | Cloud | An example with Camel and Hazelcast running on Kubernetes
+| link:camel-example-hazelcast-kubernetes/README.adoc[Hazelcast Kubernetes] (camel-example-hazelcast-kubernetes) | Cloud | An example with Camel and Hazelcast running on Kubernetes
 
 | link:camel-example-spring-boot-grpc/README.adoc[gRPC Spring Boot] (camel-example-spring-boot-grpc) | Cloud | An example showing the Camel gRPC component with Spring Boot
 
@@ -89,6 +89,8 @@ Number of Examples: 114 (0 deprecated)
 | link:camel-example-spring-boot-master/readme.adoc[Spring Boot Master] (camel-example-spring-boot-master) | Clustering | An example showing how to work with Camel's Master component and Spring Boot
 
 | link:camel-example-cdi-cassandraql/README.adoc[CDI Cassandra] (camel-example-cdi-cassandraql) | Database | Cassandraql CDI example
+
+| link:camel-example-debezium/README.adoc[Debezium] (camel-example-debezium) | Database | An example for Debezium Component
 
 | link:camel-example-jdbc/README.adoc[JDBC] (camel-example-jdbc) | Database | An example for showing Camel using JDBC component
 
@@ -114,13 +116,13 @@ Number of Examples: 114 (0 deprecated)
 
 | link:camel-example-hystrix/README.adoc[Hystrix] (camel-example-hystrix) | EIP | An example showing how to use Hystrix EIP as circuit breaker in Camel routes
 
-| link:camel-example-loadbalancing/README.md[Load Balancing] (camel-example-loadbalancing) | EIP | An example that demonstrate load balancing messaging with mina servers (TCP/IP)
+| link:camel-example-loadbalancing/readme.md[Load Balancing] (camel-example-loadbalancing) | EIP | An example that demonstrate load balancing messaging with mina servers (TCP/IP)
 
 | link:camel-example-loan-broker-cxf/README.adoc[Loan Broker WebService] (camel-example-loan-broker-cxf) | EIP | An example that shows the EIP's loan broker demo
 
 | link:camel-example-loan-broker-jms/README.adoc[Loan Broker JMS] (camel-example-loan-broker-jms) | EIP | An example that shows the EIP's loan broker demo using JMS
 
-| link:camel-example-route-throttling/README.md[Route Throttling] (camel-example-route-throttling) | EIP | A client-server example using JMS transport where we on the server side can throttle the Camel
+| link:camel-example-route-throttling/readme.md[Route Throttling] (camel-example-route-throttling) | EIP | A client-server example using JMS transport where we on the server side can throttle the Camel
         route dynamically based on the flow of messages
     
 
@@ -183,6 +185,8 @@ Number of Examples: 114 (0 deprecated)
 
 | link:camel-example-kafka/README.adoc[Kafka] (camel-example-kafka) | Messaging | An example for Kafka
 
+| link:camel-example-kafka-avro/README.adoc[Kafka Avro] (camel-example-kafka-avro) | Messaging | An example for Kafka avro
+
 | link:camel-example-kafka-offsetrepository/README.adoc[Kafka Offsetrepository] (camel-example-kafka-offsetrepository) | Messaging | An example for Kafka offsetrepository
 
 | link:camel-example-main-artemis/readme.adoc[Main Artemis] (camel-example-main-artemis) | Messaging | An example for showing standalone Camel with Artemis (autowiring JMS client via classpath scanning)
@@ -223,7 +227,7 @@ Number of Examples: 114 (0 deprecated)
 
 | link:camel-example-swagger-osgi/README.adoc[Swagger OSGi] (camel-example-swagger-osgi) | OSGi | An example using REST DSL in XML and Swagger API
 
-| link:camel-example-kotlin/ReadMe.adoc[Kotlin] (camel-example-kotlin) | Other Languages | A Camel route using Kotlin
+| link:camel-example-kotlin/README.adoc[Kotlin] (camel-example-kotlin) | Other Languages | A Camel route using Kotlin
 
 | link:camel-example-reactive-executor-vertx/readme.adoc[Reactive Executor Vertx] (camel-example-reactive-executor-vertx) | Reactive | An example for showing using VertX as reactive executor with standalone Camel
 
