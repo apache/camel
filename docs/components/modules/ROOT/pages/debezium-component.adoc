@@ -14,21 +14,20 @@ Maven users will need to add the following dependency to their `pom.xml`
 for this component.
 
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-debezium</artifactId>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
-------------------------------------------------------------
+----
 
 == URI format
 
-[source,java]
+[source,text]
 ---------------------------
 debezium:connector-type[?options]
-
 ---------------------------
 
 == Supported Debezium Connectors
@@ -36,17 +35,15 @@ debezium:connector-type[?options]
 
 *Note:* Other Debezium connectors are _not_ supported at the moment.
 
-
 *Note:* Due to licensing issues, you will need to add the dependency for `mysql-conenctor-java` if you are using MySQL connector, just add the following to your POM file:
 [source,xml]
-------------------------------------------------------------
+----
 <dependency>
     <groupId>mysql</groupId>
     <artifactId>mysql-connector-java</artifactId>
     <version>8.0.15</version>
 </dependency>
-------------------------------------------------------------
-
+----
 
 == Options
 
@@ -253,7 +250,5 @@ from("debezium:[connectorType]?[options]])
         log.info("Field name has `" + schemaValue.field("name").schema() + "` type");
     });
 ----
-
-
 
 *Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[handling failures].
