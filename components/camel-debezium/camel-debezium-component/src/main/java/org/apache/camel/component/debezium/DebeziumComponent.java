@@ -21,18 +21,12 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration;
-import org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents the component that manages {@link DebeziumEndpoint}.
+ * Base class for all debezium components
  */
-@Component("debezium")
-public class DebeziumComponent extends DefaultComponent {
-
-    private EmbeddedDebeziumConfiguration configuration;
+public abstract class DebeziumComponent extends DefaultComponent {
 
     public DebeziumComponent() {
     }
@@ -44,23 +38,7 @@ public class DebeziumComponent extends DefaultComponent {
     @Override
     protected DebeziumEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
-        // check for type when configurations are not set explicitly
-        if (ObjectHelper.isEmpty(remaining) && configuration == null) {
-            throw new IllegalArgumentException("Connector type must be configured on endpoint using syntax debezium:type");
-        }
-
-        if (configuration == null) {
-            // we will change to factory strategy in order to create the configurations once
-            // we have more than one connector supported
-            final DebeziumConnectorTypes connectorTypes = DebeziumConnectorTypes.fromString(remaining);
-            if (connectorTypes == DebeziumConnectorTypes.MYSQL) {
-                configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
-            } else {
-                throw new IllegalArgumentException(String
-                        .format("Connector of type '%s' is not supported yet.",
-                                connectorTypes.getName().toLowerCase()));
-            }
-        }
+        final EmbeddedDebeziumConfiguration configuration = getConfiguration();
 
         setProperties(configuration, parameters);
 
@@ -71,23 +49,10 @@ public class DebeziumComponent extends DefaultComponent {
             throw new IllegalArgumentException(configurationValidation.getReason());
         }
 
-        return new DebeziumEndpoint(uri, this, configuration);
+        return initializeDebeziumEndpoint(uri, configuration);
     }
 
-    /**
-     * Allow pre-configured Configurations to be set, you will need to extend
-     * {@link EmbeddedDebeziumConfiguration} in order to create the configuration
-     * for the component
-     *
-     * @return {@link EmbeddedDebeziumConfiguration}
-     */
-    public EmbeddedDebeziumConfiguration getConfiguration() {
-        return configuration;
-    }
+    protected abstract DebeziumEndpoint initializeDebeziumEndpoint(final String uri, final EmbeddedDebeziumConfiguration configuration);
 
-    public void setConfiguration(EmbeddedDebeziumConfiguration configuration) {
-        if (this.configuration == null) {
-            this.configuration = configuration;
-        }
-    }
+    public abstract EmbeddedDebeziumConfiguration getConfiguration();
 }
