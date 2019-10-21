@@ -65,16 +65,16 @@ class HdfsSequenceFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
+    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rout;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
-            Class<?> keyWritableClass = configuration.getKeyType().getWritableClass();
-            Class<?> valueWritableClass = configuration.getValueType().getWritableClass();
+            Class<?> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
+            Class<?> valueWritableClass = endpointConfig.getValueType().getWritableClass();
             rout = SequenceFile.createWriter(hdfsInfo.getConfiguration(), SequenceFile.Writer.file(hdfsInfo.getPath()), SequenceFile.Writer.keyClass(keyWritableClass),
-                    SequenceFile.Writer.valueClass(valueWritableClass), SequenceFile.Writer.bufferSize(configuration.getBufferSize()),
-                    SequenceFile.Writer.replication(configuration.getReplication()), SequenceFile.Writer.blockSize(configuration.getBlockSize()),
-                    SequenceFile.Writer.compression(configuration.getCompressionType(), configuration.getCompressionCodec().getCodec()),
+                    SequenceFile.Writer.valueClass(valueWritableClass), SequenceFile.Writer.bufferSize(endpointConfig.getBufferSize()),
+                    SequenceFile.Writer.replication(endpointConfig.getReplication()), SequenceFile.Writer.blockSize(endpointConfig.getBlockSize()),
+                    SequenceFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
                     SequenceFile.Writer.progressable(() -> {
                     }), SequenceFile.Writer.metadata(new SequenceFile.Metadata()));
             return rout;
@@ -84,7 +84,7 @@ class HdfsSequenceFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
+    public Closeable createInputStream(String hdfsPath, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rin;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);

@@ -38,7 +38,7 @@ import org.apache.hadoop.fs.PathFilter;
 
 public final class HdfsConsumer extends ScheduledPollConsumer {
 
-    private final HdfsConfiguration config;
+    private final HdfsConfiguration endpointConfig;
     private final StringBuilder hdfsPath;
     private final Processor processor;
     private final HdfsInfoFactory hdfsInfoFactory;
@@ -51,7 +51,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory, StringBuilder hdfsPath) {
         super(endpoint, processor);
         this.processor = processor;
-        this.config = endpointConfig;
+        this.endpointConfig = endpointConfig;
         this.hdfsPath = hdfsPath;
         this.hdfsInfoFactory = hdfsInfoFactory;
         setUseFixedDelay(true);
@@ -66,14 +66,14 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (config.isConnectOnStartup()) {
+        if (endpointConfig.isConnectOnStartup()) {
             // setup hdfs if configured to do on startup
             setupHdfs(true);
         }
     }
 
     private HdfsInfo setupHdfs(boolean onStartup) throws IOException {
-        String hdfsFsDescription = config.getFileSystemLabel(hdfsPath.toString());
+        String hdfsFsDescription = endpointConfig.getFileSystemLabel(hdfsPath.toString());
         // if we are starting up then log at info level, and if runtime then log at debug level to not flood the log
         if (onStartup) {
             log.info("Connecting to hdfs file-system {} (may take a while if connection is not available)", hdfsFsDescription);
@@ -107,7 +107,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         class ExcludePathFilter implements PathFilter {
             @Override
             public boolean accept(Path path) {
-                return !(path.toString().endsWith(config.getOpenedSuffix()) || path.toString().endsWith(config.getReadSuffix()));
+                return !(path.toString().endsWith(endpointConfig.getOpenedSuffix()) || path.toString().endsWith(endpointConfig.getReadSuffix()));
             }
         }
 
@@ -116,7 +116,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         if (info.getFileSystem().isFile(info.getPath())) {
             fileStatuses = info.getFileSystem().globStatus(info.getPath());
         } else {
-            Path pattern = info.getPath().suffix("/" + this.config.getPattern());
+            Path pattern = info.getPath().suffix("/" + this.endpointConfig.getPattern());
             fileStatuses = info.getFileSystem().globStatus(pattern, new ExcludePathFilter());
         }
 
@@ -182,7 +182,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     }
 
     private boolean normalFileIsDirectoryHasSuccessFile(FileStatus fileStatus, HdfsInfo info) {
-        if (config.getFileType().equals(HdfsFileType.NORMAL_FILE) && fileStatus.isDirectory()) {
+        if (endpointConfig.getFileType().equals(HdfsFileType.NORMAL_FILE) && fileStatus.isDirectory()) {
             try {
                 Path successPath = new Path(fileStatus.getPath().toString() + "/_SUCCESS");
                 if (!info.getFileSystem().exists(successPath)) {
@@ -196,9 +196,9 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     }
 
     private boolean hasMatchingOwner(FileStatus fileStatus) {
-        if (config.getOwner() != null && !config.getOwner().equals(fileStatus.getOwner())) {
+        if (endpointConfig.getOwner() != null && !endpointConfig.getOwner().equals(fileStatus.getOwner())) {
             if (log.isDebugEnabled()) {
-                log.debug("Skipping file: {} as not matching owner: {}", fileStatus.getPath(), config.getOwner());
+                log.debug("Skipping file: {} as not matching owner: {}", fileStatus.getPath(), endpointConfig.getOwner());
             }
             return false;
         }

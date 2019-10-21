@@ -60,13 +60,13 @@ class HdfsArrayFileType extends DefaultHdfsFileType {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
+    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rout;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
-            Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
+            Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
             rout = new ArrayFile.Writer(hdfsInfo.getConfiguration(), hdfsInfo.getFileSystem(), hdfsPath, valueWritableClass,
-                    configuration.getCompressionType(), () -> { });
+                    endpointConfig.getCompressionType(), () -> { });
             return rout;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
@@ -74,7 +74,7 @@ class HdfsArrayFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
+    public Closeable createInputStream(String hdfsPath, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rin;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);

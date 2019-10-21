@@ -20,12 +20,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.camel.component.hdfs.HdfsConstants.DEFAULT_OPENED_SUFFIX;
+import static org.apache.camel.component.hdfs.HdfsConstants.DEFAULT_READ_SUFFIX;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -56,10 +61,15 @@ public class HdfsConsumerTest {
         Path path = mock(Path.class);
 
         when(hdfsInfoFactory.newHdfsInfo(anyString())).thenReturn(hdfsInfo);
+        when(hdfsInfoFactory.getEndpointConfig()).thenReturn(endpointConfig);
+        when(hdfsInfoFactory.newHdfsInfo(anyString())).thenReturn(hdfsInfo);
 
         when(hdfsInfo.getFileSystem()).thenReturn(fileSystem);
         when(hdfsInfo.getConfiguration()).thenReturn(configuration);
         when(hdfsInfo.getPath()).thenReturn(path);
+
+        when(endpointConfig.getReadSuffix()).thenReturn(DEFAULT_READ_SUFFIX);
+        when(endpointConfig.getOpenedSuffix()).thenReturn(DEFAULT_OPENED_SUFFIX);
 
         context = new DefaultCamelContext();
     }
@@ -108,7 +118,9 @@ public class HdfsConsumerTest {
         // given
         String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
         when(endpointConfig.getFileSystemType()).thenReturn(HdfsFileSystemType.LOCAL);
+        when(endpointConfig.getFileType()).thenReturn(HdfsFileType.NORMAL_FILE);
         when(endpointConfig.getPath()).thenReturn(hdfsPath);
+        when(endpointConfig.getOwner()).thenReturn("spiderman");
         when(endpointConfig.isConnectOnStartup()).thenReturn(true);
         when(endpointConfig.getFileSystemLabel(anyString())).thenReturn("TEST_FS_LABEL");
         when(endpoint.getCamelContext()).thenReturn(context);
@@ -120,6 +132,14 @@ public class HdfsConsumerTest {
         FileStatus fileStatus = mock(FileStatus.class);
         fileStatuses[0] = fileStatus;
         when(fileSystem.globStatus(any(Path.class))).thenReturn(fileStatuses);
+        when(fileStatus.getPath()).thenReturn(new Path(hdfsPath));
+        when(fileStatus.isFile()).thenReturn(true);
+        when(fileStatus.isDirectory()).thenReturn(false);
+        when(fileStatus.getOwner()).thenReturn("spiderman");
+
+        FSDataInputStream fsDataInputStream = mock(FSDataInputStream.class);
+        when(fileSystem.rename(any(Path.class), any(Path.class))).thenReturn(true);
+        when(fileSystem.open(any(Path.class))).thenReturn(fsDataInputStream);
 
         underTest = new HdfsConsumer(endpoint, processor, endpointConfig, hdfsInfoFactory, new StringBuilder(hdfsPath));
 
@@ -127,7 +147,7 @@ public class HdfsConsumerTest {
         int actual = underTest.doPoll();
 
         // then
-
+        assertThat(actual, is(1));
     }
 
 }

@@ -66,14 +66,14 @@ class HdfsMapFileType extends DefaultHdfsFileType {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
+    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rout;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
-            Class<? extends WritableComparable> keyWritableClass = configuration.getKeyType().getWritableClass();
-            Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
+            Class<? extends WritableComparable> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
+            Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
             rout = new MapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass), MapFile.Writer.valueClass(valueWritableClass),
-                    MapFile.Writer.compression(configuration.getCompressionType(), configuration.getCompressionCodec().getCodec()),
+                    MapFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
                     MapFile.Writer.progressable(() -> {
                     }));
             return rout;
@@ -83,7 +83,7 @@ class HdfsMapFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
+    public Closeable createInputStream(String hdfsPath, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rin;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);

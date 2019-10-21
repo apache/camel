@@ -71,15 +71,15 @@ class HdfsNormalFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
+    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rout;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
-            if (!configuration.isAppend()) {
-                rout = hdfsInfo.getFileSystem().create(hdfsInfo.getPath(), configuration.isOverwrite(), configuration.getBufferSize(),
-                        configuration.getReplication(), configuration.getBlockSize(), () -> { });
+            if (!endpointConfig.isAppend()) {
+                rout = hdfsInfo.getFileSystem().create(hdfsInfo.getPath(), endpointConfig.isOverwrite(), endpointConfig.getBufferSize(),
+                        endpointConfig.getReplication(), endpointConfig.getBlockSize(), () -> { });
             } else {
-                rout = hdfsInfo.getFileSystem().append(hdfsInfo.getPath(), configuration.getBufferSize(), () -> { });
+                rout = hdfsInfo.getFileSystem().append(hdfsInfo.getPath(), endpointConfig.getBufferSize(), () -> { });
             }
             return rout;
         } catch (IOException ex) {
@@ -88,14 +88,14 @@ class HdfsNormalFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration, HdfsInfoFactory hdfsInfoFactory) {
+    public Closeable createInputStream(String hdfsPath, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rin;
-            if (configuration.getFileSystemType().equals(HdfsFileSystemType.LOCAL)) {
+            if (endpointConfig.getFileSystemType().equals(HdfsFileSystemType.LOCAL)) {
                 HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
                 rin = hdfsInfo.getFileSystem().open(hdfsInfo.getPath());
             } else {
-                rin = new FileInputStream(getHfdsFileToTmpFile(hdfsPath, configuration));
+                rin = new FileInputStream(getHfdsFileToTmpFile(hdfsPath, endpointConfig));
             }
             return rin;
         } catch (IOException ex) {
