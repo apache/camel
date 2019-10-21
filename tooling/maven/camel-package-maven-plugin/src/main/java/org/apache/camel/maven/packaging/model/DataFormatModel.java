@@ -25,8 +25,6 @@ import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
 
 public class DataFormatModel {
 
-    private final boolean coreOnly;
-
     private String kind;
     private String name;
     private String modelName;
@@ -41,14 +39,6 @@ public class DataFormatModel {
     private String artifactId;
     private String version;
     private final List<DataFormatOptionModel> dataFormatOptions = new ArrayList<>();
-
-    public DataFormatModel() {
-        this(false);
-    }
-
-    public DataFormatModel(boolean coreOnly) {
-        this.coreOnly = coreOnly;
-    }
 
     public String getKind() {
         return kind;
@@ -164,19 +154,6 @@ public class DataFormatModel {
 
     public String getShortJavaType() {
         return StringHelper.getClassShortName(javaType);
-    }
-
-    public String getDocLink() {
-        // special for these components
-        if ("camel-fhir".equals(artifactId)) {
-            return "camel-fhir/camel-fhir-component/src/main/docs/";
-        }
-
-        if ("camel-core".equals(artifactId)) {
-            return coreOnly ? "src/main/docs/" : "../core/camel-core-engine/src/main/docs/";
-        } else {
-            return artifactId + "/src/main/docs/";
-        }
     }
 
     public String getFirstVersionShort() {

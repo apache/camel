@@ -68,21 +68,18 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
     /**
      * The project build directory
-     *
      */
     @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
 
     /**
      * The documentation directory
-     *
      */
     @Parameter(defaultValue = "${basedir}/src/main/docs")
     protected File docDir;
 
     /**
-     * The documentation directory
-     *
+     * The documentation EIP directory
      */
     @Parameter(defaultValue = "${basedir}/src/main/docs/eips")
     protected File eipDocDir;
@@ -617,7 +614,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
     private static ComponentModel generateComponentModel(String json) {
         List<Map<String, String>> rows = parseJsonSchema("component", json, false);
 
-        ComponentModel component = new ComponentModel(true);
+        ComponentModel component = new ComponentModel();
         component.setScheme(getSafeValue("scheme", rows));
         component.setSyntax(getSafeValue("syntax", rows));
         component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));
