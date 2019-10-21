@@ -511,11 +511,11 @@ public class UpdateReadmeMojo extends AbstractMojo {
             // check the first four lines (ignoring the first line)
             boolean title = lines[1].startsWith("#") || lines[1].startsWith("=");
             boolean empty = lines[2].trim().isEmpty();
-            boolean availableFrom = lines[3].trim().contains("Available as of") || lines[3].trim().contains("Available in");
+            boolean since = lines[3].trim().contains("Since Camel");
             boolean empty2 = lines[4].trim().isEmpty();
 
-            if (title && empty && availableFrom) {
-                String newLine = "*Available as of Camel version " + version + "*";
+            if (title && empty && since) {
+                String newLine = "*Since Camel " + version + "*";
                 if (!newLine.equals(lines[3])) {
                     newLines.set(3, newLine);
                     updated = true;
@@ -524,8 +524,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     newLines.add(4, "");
                     updated = true;
                 }
-            } else if (!availableFrom) {
-                String newLine = "*Available as of Camel version " + version + "*";
+            } else if (!since) {
+                String newLine = "*Since Camel " + version + "*";
                 newLines.add(3, newLine);
                 newLines.add(4, "");
                 updated = true;
@@ -533,7 +533,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
             if (updated) {
                 // build the new updated text
-                String newText = newLines.stream().collect(Collectors.joining("\n"));
+                String newText = String.join("\n", newLines);
                 writeText(file, newText);
             }
         } catch (Exception e) {
