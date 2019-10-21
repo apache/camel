@@ -1049,7 +1049,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         } else if ("camel-fhir".equals(dir.getName())) {
                             target = new File(dir, "camel-fhir-component/src/main/docs");
                         } else if ("camel-debezium".equals(dir.getName())) {
-                            target = new File(dir, "camel-debezium-component/target/classes");
+                            target = new File(dir, "camel-debezium-component/src/main/docs");
                         } else {
                             // this module must be active with a source folder
                             File src = new File(dir, "src");
