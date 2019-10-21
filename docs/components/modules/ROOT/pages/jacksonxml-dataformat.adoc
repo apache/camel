@@ -2,7 +2,7 @@
 = JacksonXML DataFormat
 :page-source: components/camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 Jackson XML is a Data Format which uses the
 http://wiki.fasterxml.com/JacksonHome/[Jackson library] with the

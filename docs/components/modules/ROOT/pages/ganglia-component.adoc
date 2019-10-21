@@ -2,7 +2,7 @@
 = Ganglia Component
 :page-source: components/camel-ganglia/src/main/docs/ganglia-component.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 Provides a mechanism to send a value (the message body) as a metric to
 the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j

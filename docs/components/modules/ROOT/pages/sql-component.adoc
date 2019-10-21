@@ -2,7 +2,7 @@
 = SQL Component
 :page-source: components/camel-sql/src/main/docs/sql-component.adoc
 
-*Available as of Camel version 1.4*
+*Since Camel 1.4*
 
 The SQL component allows you to work with databases using JDBC
 queries. The difference between this component and xref:jdbc-component.adoc[JDBC]

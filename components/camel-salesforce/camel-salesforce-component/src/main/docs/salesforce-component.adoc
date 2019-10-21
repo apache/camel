@@ -1,7 +1,7 @@
 [[salesforce-component]]
 = Salesforce Component
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 This component supports producer and consumer endpoints to communicate
 with Salesforce using Java DTOs.  +

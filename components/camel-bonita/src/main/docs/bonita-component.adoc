@@ -1,7 +1,7 @@
 [[bonita-component]]
 = Bonita Component
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 Used for communicating with a remote Bonita BPM process engine.
 

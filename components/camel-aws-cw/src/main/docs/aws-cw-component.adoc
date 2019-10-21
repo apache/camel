@@ -1,7 +1,7 @@
 [[aws-cw-component]]
 = AWS CloudWatch Component
 
-*Available as of Camel version 2.11*
+*Since Camel 2.11*
 
 The CW component allows messages to be sent to an
 https://aws.amazon.com/cloudwatch/[Amazon CloudWatch] metrics. The

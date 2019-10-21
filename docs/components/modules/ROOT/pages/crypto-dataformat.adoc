@@ -2,7 +2,7 @@
 = Crypto (Java Cryptographic Extension) DataFormat
 :page-source: components/camel-crypto/src/main/docs/crypto-dataformat.adoc
 
-*Available as of Camel version 2.3*
+*Since Camel 2.3*
 
 The Crypto Data Format integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible

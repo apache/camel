@@ -2,7 +2,7 @@
 = Apache Flink Component
 :page-source: components/camel-flink/src/main/docs/flink-component.adoc
 
-*Available as of Camel version 2.18*
+*Since Camel 2.18*
 
 This documentation page covers the https://flink.apache.org[Apache Flink]
 component for the Apache Camel. The *camel-flink* component provides a

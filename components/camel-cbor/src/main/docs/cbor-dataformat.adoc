@@ -1,7 +1,7 @@
 [[cbor-dataformat]]
 = CBOR DataFormat
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 CBOR is a Data Format which uses the
 http://wiki.fasterxml.com/JacksonHome/[Jackson library] with the

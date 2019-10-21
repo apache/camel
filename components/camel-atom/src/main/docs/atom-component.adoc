@@ -1,7 +1,7 @@
 [[atom-component]]
 = Atom Component
 
-*Available as of Camel version 1.2*
+*Since Camel 1.2*
 
 The Atom component is used for polling Atom feeds.
 

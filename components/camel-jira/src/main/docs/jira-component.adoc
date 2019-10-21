@@ -1,7 +1,7 @@
 [[jira-component]]
 = Jira Component
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 The JIRA component interacts with the JIRA API by encapsulating
 Atlassian's https://bitbucket.org/atlassian/jira-rest-java-client/src/master/[REST

@@ -2,7 +2,7 @@
 = Zip Deflate Compression DataFormat
 :page-source: components/camel-zip-deflater/src/main/docs/zipdeflater-dataformat.adoc
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 
 The Zip Deflater Data Format is a message compression and

@@ -2,7 +2,7 @@
 = XQuery Language
 :page-source: components/camel-saxon/src/main/docs/xquery-language.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
 
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
 Expression or Predicate to be

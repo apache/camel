@@ -2,7 +2,7 @@
 = Mustache Component
 :page-source: components/camel-mustache/src/main/docs/mustache-component.adoc
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 The Mustache component allows for processing a message using a
 http://mustache.github.io/[Mustache] template. This can be ideal when

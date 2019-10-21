@@ -2,7 +2,7 @@
 = FHIR Component
 :page-source: components/camel-fhir/camel-fhir-component/src/main/docs/fhir-component.adoc
 
-*Available as of Camel version 2.23*
+*Since Camel 2.23*
 
 The FHIR component integrates with the
 http://hapifhir.io/[HAPI-FHIR] library which is an open-source implementation of the

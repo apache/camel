@@ -1,7 +1,7 @@
 [[stomp-component]]
 = Stomp Component
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 The Stomp component is used for communicating with
 http://stomp.github.io/[Stomp] compliant message brokers, like

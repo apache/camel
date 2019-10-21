@@ -2,7 +2,7 @@
 = PostgresSQL Replication Slot Component
 :page-source: components/camel-pg-replication-slot/src/main/docs/pg-replication-slot-component.adoc
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 This is a component for Apache Camel which allows for
 consuming from PostgreSQL replication slots. The component works with PostgreSQL 10 or later.

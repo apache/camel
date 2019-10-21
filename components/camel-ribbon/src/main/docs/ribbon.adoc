@@ -1,6 +1,6 @@
 = Ribbon Component
 
-*Available as of Camel version 2.18*
+*Since Camel 2.18*
 
 The Ribbon component provides use of Netflix Ribbon for client side load balancing.
 

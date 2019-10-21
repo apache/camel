@@ -1,7 +1,7 @@
 = Hystrix Component
 :page-source: components/camel-hystrix/src/main/docs/hystrix.adoc
 
-*Available as of Camel version 2.18*
+*Since Camel 2.18*
 
 The Hystrix component integrates Netflix Hystrix circuit breaker in Camel routes.
 

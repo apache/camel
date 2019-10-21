@@ -2,7 +2,7 @@
 = Schematron Component
 :page-source: components/camel-schematron/src/main/docs/schematron-component.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 http://www.schematron.com/index.html[Schematron] is an XML-based
 language for validating XML instance documents. It is used to make

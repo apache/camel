@@ -2,7 +2,7 @@
 = uniVocity CSV DataFormat
 :page-source: components/camel-univocity-parsers/src/main/docs/univocity-csv-dataformat.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 This xref:manual::data-format.adoc[Data
 Format] uses http://www.univocity.com/pages/about-parsers[uniVocity-parsers]

@@ -2,7 +2,7 @@
 = Debezium Component
 :page-source: components/camel-debezium/camel-debezium-component/src/main/docs/debezium-component.adoc
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 The Debezium component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.9/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from various databases using Debezium without the need for Kafka or Kafka Connect.
 

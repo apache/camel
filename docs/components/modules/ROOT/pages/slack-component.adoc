@@ -2,7 +2,7 @@
 = Slack Component
 :page-source: components/camel-slack/src/main/docs/slack-component.adoc
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 The Slack component allows you to connect to an instance
 of http://www.slack.com/[Slack] and delivers a message contained in the

@@ -1,7 +1,7 @@
 [[jetty-component]]
 = Jetty Component
 
-*Available as of Camel version 1.2*
+*Since Camel 1.2*
 
 The Jetty component provides HTTP-based endpoints
 for consuming and producing HTTP requests. That is, the Jetty component

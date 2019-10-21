@@ -1,7 +1,7 @@
 [[univocity-csv-dataformat]]
 = uniVocity CSV DataFormat
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 This xref:manual::data-format.adoc[Data
 Format] uses http://www.univocity.com/pages/about-parsers[uniVocity-parsers]

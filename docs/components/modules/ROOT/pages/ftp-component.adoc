@@ -2,7 +2,7 @@
 = FTP Component
 :page-source: components/camel-ftp/src/main/docs/ftp-component.adoc
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
 
 This component provides access to remote file systems over the FTP and
 SFTP protocols.

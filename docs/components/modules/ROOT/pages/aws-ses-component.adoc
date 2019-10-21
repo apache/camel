@@ -2,7 +2,7 @@
 = AWS Simple Email Service Component
 :page-source: components/camel-aws-ses/src/main/docs/aws-ses-component.adoc
 
-*Available as of Camel version 2.9*
+*Since Camel 2.9*
 
 The ses component supports sending emails with
 https://aws.amazon.com/ses[Amazon's SES] service.

@@ -2,7 +2,7 @@
 = JGroups raft Component
 :page-source: components/camel-jgroups-raft/src/main/docs/jgroups-raft-component.adoc
 
-*Available as of Camel version 2.24*
+*Since Camel 2.24*
 
 http://belaban.github.io/jgroups-raft/[JGroups-raft] is a https://raftconsensus.github.io/[Raft] implementation in http://www.jgroups.org/[JGroups].
 The *jgroups-raft:* component provides interoperability between camel and a JGroups-raft clusters.

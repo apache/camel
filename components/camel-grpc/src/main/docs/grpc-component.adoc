@@ -1,7 +1,7 @@
 [[grpc-component]]
 = gRPC Component
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The gRPC component allows you to call or expose Remote Procedure Call (RPC) services
 using https://developers.google.com/protocol-buffers/docs/overview[Protocol Buffers (protobuf)]

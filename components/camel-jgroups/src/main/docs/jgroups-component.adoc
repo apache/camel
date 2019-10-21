@@ -1,7 +1,7 @@
 [[jgroups-component]]
 = JGroups Component
 
-*Available as of Camel version 2.13*
+*Since Camel 2.13*
 
 http://www.jgroups.org[JGroups] is a toolkit for reliable multicast
 communication. The *jgroups:* component provides exchange of messages

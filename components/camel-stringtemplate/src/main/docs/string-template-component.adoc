@@ -1,7 +1,7 @@
 [[string-template-component]]
 = String Template Component
 
-*Available as of Camel version 1.2*
+*Since Camel 1.2*
 
 The String Template component allows you to process a message using a
 http://www.stringtemplate.org/[String Template]. This can be ideal when

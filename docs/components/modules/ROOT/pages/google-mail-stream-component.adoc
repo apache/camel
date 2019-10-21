@@ -2,7 +2,7 @@
 = Google Mail Stream Component
 :page-source: components/camel-google-mail/src/main/docs/google-mail-stream-component.adoc
 
-*Available as of Camel version 2.22*
+*Since Camel 2.22*
 
 The Google Mail component provides access
 to http://gmail.com/[Gmail] via

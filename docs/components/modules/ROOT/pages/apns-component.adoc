@@ -2,7 +2,7 @@
 = APNS Component
 :page-source: components/camel-apns/src/main/docs/apns-component.adoc
 
-*Available as of Camel version 2.8*
+*Since Camel 2.8*
 
 The APNS component is used for sending notifications to iOS devices.
 The APNS components use https://github.com/notnoop/java-apns[javapns]

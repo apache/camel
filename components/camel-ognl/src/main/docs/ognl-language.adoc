@@ -1,7 +1,7 @@
 [[ognl-language]]
 = OGNL Language
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
 
 Camel allows http://commons.apache.org/proper/commons-ognl/[OGNL] to be
 used as an Expression or

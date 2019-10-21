@@ -1,7 +1,7 @@
 [[stax-component]]
 = StAX Component
 
-*Available as of Camel version 2.9*
+*Since Camel 2.9*
 
 The StAX component allows messages to be process through a SAX
 http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler]. +

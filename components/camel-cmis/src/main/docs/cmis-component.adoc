@@ -1,7 +1,7 @@
 [[cmis-component]]
 = CMIS Component
 
-*Available as of Camel version 2.11*
+*Since Camel 2.11*
 
 The cmis component uses the
 http://chemistry.apache.org/java/opencmis.html[Apache Chemistry] client
