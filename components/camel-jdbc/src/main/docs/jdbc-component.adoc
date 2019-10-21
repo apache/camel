@@ -175,10 +175,6 @@ return the generated keys in headers. +
 generated keys will be provided as headers with the keys listed in the
 table above.
 
-You can see more details in this
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-jdbc/src/test/java/org/apache/camel/component/jdbc/JdbcGeneratedKeysTest.java[unit
-test].
-
 Using generated keys does not work with together with named parameters.
 
 == Using named parameters
