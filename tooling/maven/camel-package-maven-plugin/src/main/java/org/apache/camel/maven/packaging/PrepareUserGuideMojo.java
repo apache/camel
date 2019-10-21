@@ -543,7 +543,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
     private ComponentModel generateComponentModel(String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
 
-        ComponentModel component = new ComponentModel(true);
+        ComponentModel component = new ComponentModel();
         component.setScheme(JSonSchemaHelper.getSafeValue("scheme", rows));
         component.setSyntax(JSonSchemaHelper.getSafeValue("syntax", rows));
         component.setAlternativeSyntax(JSonSchemaHelper.getSafeValue("alternativeSyntax", rows));
