@@ -2,7 +2,7 @@
 = Hipchat Component
 :page-source: components/camel-hipchat/src/main/docs/hipchat-component.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 The Hipchat component supports producing and consuming messages from/to
 https://www.hipchat.com[Hipchat] service.

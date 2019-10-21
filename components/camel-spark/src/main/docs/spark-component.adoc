@@ -1,7 +1,7 @@
 [[spark-component]]
 = Apache Spark Component
 
-*Available as of Camel version 2.17*
+*Since Camel 2.17*
 
 This documentation page covers the http://spark.apache.org/[Apache
 Spark] component for the Apache Camel. The main purpose of the Spark

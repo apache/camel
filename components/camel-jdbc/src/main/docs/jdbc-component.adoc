@@ -1,7 +1,7 @@
 [[jdbc-component]]
 = JDBC Component
 
-*Available as of Camel version 1.2*
+*Since Camel 1.2*
 
 The JDBC component enables you to access databases through JDBC, where
 SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in

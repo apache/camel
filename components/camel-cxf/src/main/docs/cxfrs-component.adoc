@@ -1,7 +1,7 @@
 [[cxfrs-component]]
 = CXF-RS Component
 
-*Available as of Camel version 2.0*
+*Since Camel 2.0*
 
 The CXFRS component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to JAX-RS 1.1 and 2.0

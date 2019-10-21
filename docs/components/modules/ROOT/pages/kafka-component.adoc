@@ -2,7 +2,7 @@
 = Kafka Component
 :page-source: components/camel-kafka/src/main/docs/kafka-component.adoc
 
-*Available as of Camel version 2.13*
+*Since Camel 2.13*
 
 The Kafka component is used for communicating with
 http://kafka.apache.org/[Apache Kafka] message broker.

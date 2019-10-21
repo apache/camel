@@ -2,7 +2,7 @@
 = Wordpress Component
 :page-source: components/camel-wordpress/src/main/docs/wordpress-component.adoc
 
-*Available as of Camel version 2.21*
+*Since Camel 2.21*
 
 Camel component for https://developer.wordpress.org/rest-api/reference/[Wordpress API].
 

@@ -2,7 +2,7 @@
 = LDIF Component
 :page-source: components/camel-ldif/src/main/docs/ldif-component.adoc
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
 
 The LDIF component allows you to do updates on an LDAP server
 from a LDIF body content.

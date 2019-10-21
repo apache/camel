@@ -1,7 +1,7 @@
 [[constant-language]]
 = Constant Language
 
-*Available as of Camel version 1.5*
+*Since Camel 1.5*
 
 The Constant Expression Language is really just a way to specify
 constant strings as a type of expression.

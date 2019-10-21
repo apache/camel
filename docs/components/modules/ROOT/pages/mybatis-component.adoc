@@ -2,7 +2,7 @@
 = MyBatis Component
 :page-source: components/camel-mybatis/src/main/docs/mybatis-component.adoc
 
-*Available as of Camel version 2.7*
+*Since Camel 2.7*
 
 The MyBatis component allows you to query, poll, insert, update and
 delete data in a relational database using http://mybatis.org/[MyBatis].

@@ -1,7 +1,7 @@
 [[jolt-component]]
 = JOLT Component
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 The Jolt component allows you to process a JSON messages using an
 https://github.com/bazaarvoice/jolt[JOLT] specification. This can be

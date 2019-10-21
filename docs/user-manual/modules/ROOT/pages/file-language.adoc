@@ -2,7 +2,7 @@
 = File Language
 :page-source: core/camel-base/src/main/docs/file-language.adoc
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
 
 The file language is merged with
 xref:simple-language.adoc[Simple] language which means you can use all the file

@@ -1,7 +1,7 @@
 [[google-bigquery-sql-component]]
 = Google BigQuery Standard SQL Component
 
-*Available as of Camel version 2.23*
+*Since Camel 2.23*
 
 The Google BigQuery SQL component provides access
 to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via

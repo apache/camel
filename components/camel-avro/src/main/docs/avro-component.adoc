@@ -1,7 +1,7 @@
 [[avro-component]]
 = Avro Component
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
 
 This component provides a dataformat for avro, which allows
 serialization and deserialization of messages using Apache Avro's binary

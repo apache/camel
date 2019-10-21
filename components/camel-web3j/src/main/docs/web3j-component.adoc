@@ -1,7 +1,7 @@
 [[web3j-component]]
 = Web3j Ethereum Blockchain Component
 
-*Available as of Camel version 2.22*
+*Since Camel 2.22*
 
 The Ethereum blockchain component uses the
 https://github.com/web3j/web3j[web3j] client

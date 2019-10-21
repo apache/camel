@@ -1,7 +1,7 @@
 [[influxdb-component]]
 = InfluxDB Component
 
-*Available as of Camel version 2.18*
+*Since Camel 2.18*
 
 This component allows you to interact with InfluxDB
 https://influxdata.com/time-series-platform/influxdb/ a time series database. The native body type for this component is

@@ -1,7 +1,7 @@
 [[irc-component]]
 = IRC Component
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
 
 The IRC component implements an
 http://en.wikipedia.org/wiki/Internet_Relay_Chat[IRC] (Internet Relay

@@ -2,7 +2,7 @@
 = SIP Component
 :page-source: components/camel-sip/src/main/docs/sip-component.adoc
 
-*Available as of Camel version 2.5*
+*Since Camel 2.5*
 
 The SIP component in Camel is a communication component, based on the
 Jain SIP implementation (available under the JCP license).

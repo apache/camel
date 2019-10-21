@@ -2,7 +2,7 @@
 = Atmos Component
 :page-source: components/camel-atmos/src/main/docs/atmos-component.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 Camel-Atmos is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with ViPR object data services using the

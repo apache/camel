@@ -1,7 +1,7 @@
 [[tarfile-dataformat]]
 = Tar File DataFormat
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 The Tar File Data Format is a message compression
 and de-compression format. Messages can be marshalled (compressed) to

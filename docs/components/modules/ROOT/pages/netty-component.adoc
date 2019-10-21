@@ -2,7 +2,7 @@
 = Netty Component
 :page-source: components/camel-netty/src/main/docs/netty-component.adoc
 
-*Available as of Camel version 2.14*
+*Since Camel 2.14*
 
 The Netty component in Camel is a socket communication component,
 based on the http://netty.io/[Netty] project version 4. +

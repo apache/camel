@@ -2,7 +2,7 @@
 = Google Pubsub Component
 :page-source: components/camel-google-pubsub/src/main/docs/google-pubsub-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The Google Pubsub component provides access
 to https://cloud.google.com/pubsub/[Cloud Pub/Sub Infrastructure] via

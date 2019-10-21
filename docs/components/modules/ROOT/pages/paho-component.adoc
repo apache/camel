@@ -2,7 +2,7 @@
 = Paho Component
 :page-source: components/camel-paho/src/main/docs/paho-component.adoc
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 Paho component provides connector for the MQTT messaging protocol using
 the https://eclipse.org/paho/[Eclipse Paho] library. Paho is one of the

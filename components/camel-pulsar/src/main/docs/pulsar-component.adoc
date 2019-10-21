@@ -1,7 +1,7 @@
 [[pulsar-component]]
 = Apache Pulsar Component
 
-*Available as of Camel version 2.24*
+*Since Camel 2.24*
 
 
 Maven users will need to add the following dependency to

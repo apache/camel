@@ -1,7 +1,7 @@
 [[amqp-component]]
 = AMQP Component
 
-*Available as of Camel version 1.2*
+*Since Camel 1.2*
 
 The AMQP component supports the
 http://www.amqp.org/[AMQP 1.0 protocol]

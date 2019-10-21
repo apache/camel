@@ -1,7 +1,7 @@
 [[jooq-component]]
 = JOOQ Component
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 The JOOQ component enables you to store and retrieve Java objects from persistent storage using JOOQ library.
 
