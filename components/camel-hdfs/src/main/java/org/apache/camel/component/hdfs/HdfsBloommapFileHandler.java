@@ -29,7 +29,7 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.util.ReflectionUtils;
 
-class HdfsBloommapFileType extends DefaultHdfsFileType {
+class HdfsBloommapFileHandler extends DefaultHdfsFile {
 
     @Override
     public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
@@ -67,10 +67,11 @@ class HdfsBloommapFileType extends DefaultHdfsFileType {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory) {
+    public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rout;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
+            HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
             Class<? extends WritableComparable> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
             Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
             rout = new BloomMapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass),
@@ -85,7 +86,7 @@ class HdfsBloommapFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createInputStream(String hdfsPath, HdfsConfiguration endpointConfig, HdfsInfoFactory hdfsInfoFactory) {
+    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rin;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);

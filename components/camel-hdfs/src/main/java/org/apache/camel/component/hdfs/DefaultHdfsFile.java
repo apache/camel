@@ -37,7 +37,7 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
-abstract class DefaultHdfsFileType implements HdfsFile {
+abstract class DefaultHdfsFile implements HdfsFile {
 
     protected final long copyBytes(InputStream in, OutputStream out, int buffSize, boolean close) throws IOException {
         long numBytes = 0;
