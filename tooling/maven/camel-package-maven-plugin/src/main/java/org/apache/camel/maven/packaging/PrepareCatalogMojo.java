@@ -1073,15 +1073,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (coreDir != null && coreDir.isDirectory()) {
             File target = new File(coreDir, "src/main/docs");
             findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
-            // also look in camel-jaxp
-            target = new File(coreDir, "../camel-jaxp/src/main/docs");
-            findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
         }
         if (baseDir != null && baseDir.isDirectory()) {
             File target = new File(baseDir, "src/main/docs");
             findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
             // also look in camel-jaxp
-            target = new File(baseDir, "../camel-jaxp/src/main/docs");
+            target = new File(coreDir, "../camel-jaxp/src/main/docs");
             findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
         }
 
