@@ -38,10 +38,16 @@ class HdfsNormalFileHandler extends DefaultHdfsFile {
     @Override
     public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         try {
-            Closeable rout;
+            FSDataOutputStream rout;
             HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
-            if (!endpointConfig.isAppend()) {
+            if (endpointConfig.isAppend()) {
+                rout = hdfsInfo.getFileSystem().append(
+                        hdfsInfo.getPath(),
+                        endpointConfig.getBufferSize(),
+                        () -> { }
+                );
+            } else {
                 rout = hdfsInfo.getFileSystem().create(
                         hdfsInfo.getPath(),
                         endpointConfig.isOverwrite(),
@@ -50,8 +56,6 @@ class HdfsNormalFileHandler extends DefaultHdfsFile {
                         endpointConfig.getBlockSize(),
                         () -> { }
                 );
-            } else {
-                rout = hdfsInfo.getFileSystem().append(hdfsInfo.getPath(), endpointConfig.getBufferSize(), () -> { });
             }
             return rout;
         } catch (IOException ex) {

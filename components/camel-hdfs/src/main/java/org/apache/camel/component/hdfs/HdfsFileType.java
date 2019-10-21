@@ -22,11 +22,11 @@ import org.apache.camel.TypeConverter;
 
 public enum HdfsFileType {
 
-    NORMAL_FILE(new HdfsNormalFileType()),
-    SEQUENCE_FILE(new HdfsSequenceFileType()),
-    MAP_FILE(new HdfsMapFileType()),
-    BLOOMMAP_FILE(new HdfsBloommapFileType()),
-    ARRAY_FILE(new HdfsArrayFileType());
+    NORMAL_FILE(new HdfsNormalFileHandler()),
+    SEQUENCE_FILE(new HdfsSequenceFileHandler()),
+    MAP_FILE(new HdfsMapFileHandler()),
+    BLOOMMAP_FILE(new HdfsBloommapFileHandler()),
+    ARRAY_FILE(new HdfsArrayFileTypeHandler());
 
     private final HdfsFile file;
 
@@ -34,20 +34,20 @@ public enum HdfsFileType {
         this.file = file;
     }
 
+    public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+        return this.file.createOutputStream(hdfsPath, hdfsInfoFactory);
+    }
+
     public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
         return this.file.append(hdfsOutputStream, key, value, typeConverter);
     }
 
+    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+        return this.file.createInputStream(hdfsPath, hdfsInfoFactory);
+    }
+
     public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
         return this.file.next(hdfsInputStream, key, value);
-    }
-
-    public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
-        return this.file.createOutputStream(hdfsPath, hdfsInfoFactory.getEndpointConfig(), hdfsInfoFactory);
-    }
-
-    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
-        return this.file.createInputStream(hdfsPath, hdfsInfoFactory.getEndpointConfig(), hdfsInfoFactory);
     }
 
 }
