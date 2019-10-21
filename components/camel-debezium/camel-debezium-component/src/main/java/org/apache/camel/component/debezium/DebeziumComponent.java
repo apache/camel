@@ -26,19 +26,19 @@ import org.apache.camel.support.DefaultComponent;
 /**
  * Base class for all debezium components
  */
-public abstract class DebeziumComponent extends DefaultComponent {
+public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration> extends DefaultComponent {
 
-    public DebeziumComponent() {
+    protected DebeziumComponent() {
     }
 
-    public DebeziumComponent(CamelContext context) {
+    protected DebeziumComponent(CamelContext context) {
         super(context);
     }
 
     @Override
     protected DebeziumEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
-        final EmbeddedDebeziumConfiguration configuration = getConfiguration();
+        final C configuration = getConfiguration();
 
         setProperties(configuration, parameters);
 
@@ -52,7 +52,9 @@ public abstract class DebeziumComponent extends DefaultComponent {
         return initializeDebeziumEndpoint(uri, configuration);
     }
 
-    protected abstract DebeziumEndpoint initializeDebeziumEndpoint(final String uri, final EmbeddedDebeziumConfiguration configuration);
+    protected abstract DebeziumEndpoint initializeDebeziumEndpoint(final String uri, final C configuration);
 
-    public abstract EmbeddedDebeziumConfiguration getConfiguration();
+    public abstract C getConfiguration();
+
+    public abstract void setConfiguration(final C configuration);
 }

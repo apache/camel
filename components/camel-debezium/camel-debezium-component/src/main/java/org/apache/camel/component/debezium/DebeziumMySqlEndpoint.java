@@ -9,7 +9,7 @@ import org.apache.camel.spi.UriParam;
  * embedded engine.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mysql", title = "Debezium MySQL Connector", syntax = "debezium-mysql", label = "database,sql,mysql", consumerOnly = true)
-public final class DebeziumMySqlEndpoint extends DebeziumEndpoint {
+public final class DebeziumMySqlEndpoint extends DebeziumEndpoint<MySqlConnectorEmbeddedDebeziumConfiguration> {
 
     @UriParam
     private MySqlConnectorEmbeddedDebeziumConfiguration configuration;
@@ -28,6 +28,7 @@ public final class DebeziumMySqlEndpoint extends DebeziumEndpoint {
         return configuration;
     }
 
+    @Override
     public void setConfiguration(final MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
         this.configuration = configuration;
     }

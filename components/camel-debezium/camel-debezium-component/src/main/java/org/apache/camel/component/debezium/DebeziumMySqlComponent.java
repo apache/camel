@@ -6,7 +6,7 @@ import org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedD
 import org.apache.camel.spi.annotations.Component;
 
 @Component("debezium-mysql")
-public final class DebeziumMySqlComponent extends DebeziumComponent {
+public final class DebeziumMySqlComponent extends DebeziumComponent<MySqlConnectorEmbeddedDebeziumConfiguration> {
 
     private MySqlConnectorEmbeddedDebeziumConfiguration configuration;
 
@@ -26,19 +26,20 @@ public final class DebeziumMySqlComponent extends DebeziumComponent {
      * @return {@link MySqlConnectorEmbeddedDebeziumConfiguration}
      */
     @Override
-    public EmbeddedDebeziumConfiguration getConfiguration() {
+    public MySqlConnectorEmbeddedDebeziumConfiguration getConfiguration() {
         if (configuration == null) {
             return new MySqlConnectorEmbeddedDebeziumConfiguration();
         }
         return configuration;
     }
 
+    @Override
     public void setConfiguration(MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @Override
-    protected DebeziumEndpoint initializeDebeziumEndpoint(String uri, EmbeddedDebeziumConfiguration configuration) {
-        return new DebeziumMySqlEndpoint(uri, this, (MySqlConnectorEmbeddedDebeziumConfiguration) configuration);
+    protected DebeziumEndpoint initializeDebeziumEndpoint(String uri, MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
+        return new DebeziumMySqlEndpoint(uri, this,  configuration);
     }
 }

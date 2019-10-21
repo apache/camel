@@ -36,14 +36,14 @@ import org.apache.kafka.connect.source.SourceRecord;
 /**
  * Base class for debezium endpoint implementation
  */
-public abstract class DebeziumEndpoint extends DefaultEndpoint {
+public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> extends DefaultEndpoint {
 
 
-    public DebeziumEndpoint(String uri, DebeziumComponent component) {
+    protected DebeziumEndpoint(String uri, DebeziumComponent component) {
         super(uri, component);
     }
 
-    public DebeziumEndpoint() {
+    protected DebeziumEndpoint() {
         super();
     }
 
@@ -92,7 +92,9 @@ public abstract class DebeziumEndpoint extends DefaultEndpoint {
         return exchange;
     }
 
-    public abstract EmbeddedDebeziumConfiguration getConfiguration();
+    public abstract C getConfiguration();
+
+    public abstract void setConfiguration(final C configuration);
 
     private Map<String, Object> extractSourceMetadataValueFromValueStruct(final Schema schema, final Object value) {
         // we want to convert metadata to map since it facilitate usage and also struct structure is not needed for the metadata
