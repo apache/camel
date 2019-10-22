@@ -238,14 +238,14 @@ to the original caller.
 
 [source,java]
 ----
-include::{examplesdir}/components/camel-core/src/test/java/org/apache/camel/component/seda/SedaAsyncRouteTest.java[tags=example]
+include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/component/seda/SedaAsyncRouteTest.java[tags=example]
 ----
 
 Here we send a Hello World message and expects the reply to be OK.
 
 [source,java]
 ----
-include::{examplesdir}/components/camel-core/src/test/java/org/apache/camel/component/seda/SedaAsyncRouteTest.java[tags=example]
+include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/component/seda/SedaAsyncRouteTest.java[tags=example]
 ----
 
 
