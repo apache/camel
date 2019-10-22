@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -158,8 +159,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         PRIMITIVEMAP.put("double", "java.lang.Double");
         PRIMITIVEMAP.put("float", "java.lang.Float");
     }
-
-    private static final List<String> JAVA_LANG_TYPES = Arrays.asList("Boolean", "Byte", "Character", "Class", "Double", "Float", "Integer", "Long", "Object", "Short", "String");
 
     private static final String[] IGNORE_MODULES = {/* Non-standard -> */ "camel-grape"};
 
@@ -566,7 +565,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         writeComponentSpringFactorySource(packageName, name);
     }
 
-    private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
+    private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoFailureException {
         // find the component names
         Set<String> componentNames = new TreeSet<>();
         findComponentNames(buildDir, componentNames);
@@ -617,7 +616,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private void executeDataFormat(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
+    private void executeDataFormat(Map<File, Supplier<String>> jsonFiles) throws MojoFailureException {
         // find the data format names
         List<String> dataFormatNames = findDataFormatNames();
 
@@ -661,7 +660,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private void executeLanguage(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
+    private void executeLanguage(Map<File, Supplier<String>> jsonFiles) throws MojoFailureException {
         // find the language names
         List<String> languageNames = findLanguageNames();
 
@@ -941,7 +940,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     File jsonFile = new File(classesDir, fileName + "/" + model.getScheme() + ".json");
                     if (jsonFile.isFile() && jsonFile.exists()) {
                         try {
-                            String json = FileUtils.readFileToString(jsonFile);
+                            String json = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
                             List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
                             // grab name from annotation
@@ -2200,7 +2199,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             try {
                 // is the auto configuration already in the file
                 boolean found = false;
-                List<String> lines = FileUtils.readLines(target);
+                List<String> lines = FileUtils.readLines(target, StandardCharsets.UTF_8);
                 for (String line : lines) {
                     if (line.contains(name)) {
                         found = true;
@@ -2232,7 +2231,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     }
 
                     // update
-                    FileUtils.write(target, code.toString(), false);
+                    FileUtils.write(target, code.toString(), StandardCharsets.UTF_8, false);
                     getLog().info("Updated existing file: " + target);
                 }
             } catch (Exception e) {
@@ -2248,7 +2247,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 code = header + "\n" + code;
                 getLog().debug("Source code generated:\n" + code);
 
-                FileUtils.write(target, code);
+                FileUtils.write(target, code, StandardCharsets.UTF_8);
                 getLog().info("Created file: " + target);
             } catch (Exception e) {
                 throw new MojoFailureException("IOError with file " + target, e);
