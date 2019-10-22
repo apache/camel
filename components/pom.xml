@@ -204,6 +204,7 @@
     <module>camel-kestrel</module>
     <module>camel-krati</module>
     <module>camel-kubernetes</module>
+    <module>camel-kudu</module>
     <module>camel-kura</module>
     <module>camel-ldap</module>
     <module>camel-ldif</module>

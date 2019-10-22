@@ -64,6 +64,7 @@
     <mycila-license-version>3.0</mycila-license-version>
     <gmavenplus-plugin-version>1.6.2</gmavenplus-plugin-version>
     <groovy-version>2.5.5</groovy-version>
+    <kuduVersion>1.10.0</kuduVersion>
   </properties>
 
   <mailingLists>

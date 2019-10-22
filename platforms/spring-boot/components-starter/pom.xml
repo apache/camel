@@ -244,6 +244,7 @@
     <module>camel-kestrel-starter</module>
     <module>camel-krati-starter</module>
     <module>camel-kubernetes-starter</module>
+    <module>camel-kudu-starter</module>
     <module>camel-kura-starter</module>
     <module>camel-ldap-starter</module>
     <module>camel-ldif-starter</module>
