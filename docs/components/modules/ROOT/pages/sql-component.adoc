@@ -320,7 +320,7 @@ header _are_ represented by a `?` instead of a `pass:[#]` symbol
 |===
 
 When performing `insert` operations, the SQL Component stores the rows
-with the generated keys and number of these rown in the following
+with the generated keys and number of these rows in the following
 message headers:
 
 [cols="1,3"]
