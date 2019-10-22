@@ -1,0 +1,79 @@
+[[kudu-component]]
+= Apache Kudu Component
+
+*Available as of Camel version 2.25*
+
+The Kudu component supports storing and retrieving data from/to https://kudu.apache.org/[Apache Kudu], a free and open source column-oriented data store of the Apache Hadoop ecosystem.
+
+Prerequisites
+
+You must have a valid Kudu instance running. More information are available at https://kudu.apache.org/[Apache Kudu].
+
+== URI Format
+
+[source,java]
+------------------------------
+kudu://type[?options]
+------------------------------
+
+You can append query options to the URI in the following format, ?options=value&option2=value&...
+
+== URI Options
+
+// component options: START
+The Apache Kudu component has no options.
+// component options: END
+
+
+// endpoint options: START
+The Apache Kudu endpoint is configured using URI syntax:
+
+----
+kudu:type
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *type* | *Required* Kudu type |  | String
+|===
+
+
+=== Query Parameters (8 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* (common) | *Required* Kudu master to connect to |  | String
+| *operation* (common) | What kind of operation is to be performed in the table |  | KuduOperations
+| *port* (common) | *Required* Port where kudu service is listening |  | String
+| *tableName* (common) | The name of the table where the rows are stored |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kudu</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel (2.25.0 or higher).
