@@ -386,17 +386,15 @@ public class DefaultHttpBinding implements HttpBinding {
 
     @Override
     public void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
-        message.setHeader(Exchange.HTTP_RESPONSE_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        //message.setHeader(Exchange.HTTP_RESPONSE_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         doWriteResponse(message, response, exchange);
     }
 
     @Override
     public void doWriteResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
-        // set the status code in the response. Default is 200.
-        if (message.getHeader(Exchange.HTTP_RESPONSE_CODE) != null) {
-            int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-            response.setStatus(code);
-        }
+        int statusCode = determineResponseCode(exchange, exchange.getMessage().getBody());
+        response.setStatus(statusCode);
+        
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
@@ -427,6 +425,30 @@ public class DefaultHttpBinding implements HttpBinding {
                 doWriteDirectResponse(message, response, exchange);
             }
         }
+    }
+    
+    /*
+     * set the HTTP status code
+     * NOTE: this is similar to the Netty-Http and Undertow approach
+     * TODO: we may want to refactor this class so that 
+     * the status code is determined in one place
+     */
+    private int determineResponseCode(Exchange camelExchange, Object body) {
+        boolean failed = camelExchange.isFailed();
+        int defaultCode = failed ? 500 : 200;
+
+        Message message = camelExchange.getMessage();
+        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+        int codeToUse = currentCode == null ? defaultCode : currentCode;
+
+        if (codeToUse != 500) {
+            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+                // no content 
+                codeToUse = currentCode == null ? 204 : currentCode;
+            }
+        }
+
+        return codeToUse;
     }
     
     protected String convertHeaderValueToString(Exchange exchange, Object headerValue) {
