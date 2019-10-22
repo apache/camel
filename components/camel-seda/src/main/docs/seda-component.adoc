@@ -236,7 +236,18 @@ async queue to be able to send a fire-and-forget message for further
 processing in another thread, and return a constant reply in this thread
 to the original caller.
 
+[source,java]
+----
+include::{examplesdir}/components/camel-core/src/test/java/org/apache/camel/component/seda/SedaAsyncRouteTest.java[tags=example]
+----
+
 Here we send a Hello World message and expects the reply to be OK.
+
+[source,java]
+----
+include::{examplesdir}/components/camel-core/src/test/java/org/apache/camel/component/seda/SedaAsyncRouteTest.java[tags=example]
+----
+
 
 The "Hello World" message will be consumed from the SEDA queue from
 another thread for further processing. Since this is from a unit test,
