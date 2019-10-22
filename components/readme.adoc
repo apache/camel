@@ -1,0 +1,10 @@
+# Components
+
+Apache Camel comes with a lot of artifacts with components, data formats, languages and various other kinds.
+The up to date list is available online at the Camel website:
+
+* Components: <https://camel.apache.org/components/latest/>
+* Data Formats: <https://camel.apache.org/components/latest/#_data_formats>
+* Languages: <https://camel.apache.org/components/latest/#_expression_languages>
+* Miscellaneous: <https://camel.apache.org/components/latest/#_miscellaneous_components>
+
