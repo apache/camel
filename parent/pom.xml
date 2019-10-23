@@ -395,7 +395,7 @@
         <junit-version>4.12</junit-version>
         <junit-jupiter-version>5.5.1</junit-jupiter-version>
         <jxmpp-version>0.6.4</jxmpp-version>
-	<jython-version>2.5.3</jython-version>
+        <jython-version>2.5.3</jython-version>
         <jython-standalone-version>2.5.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
         <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
@@ -569,8 +569,8 @@
         <slf4j-version>1.7.28</slf4j-version>
         <smack-version>4.3.4</smack-version>
         <smallrye-config-version>1.0.0</smallrye-config-version>
-	<smallrye-metrics-version>2.2.0</smallrye-metrics-version>
-	<smallrye-health-version>2.0.0</smallrye-health-version>
+        <smallrye-metrics-version>2.2.0</smallrye-metrics-version>
+        <smallrye-health-version>2.0.0</smallrye-health-version>
         <snakeyaml-version>1.25</snakeyaml-version>
         <snappy-version>1.1.4</snappy-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
@@ -607,6 +607,7 @@
         <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
         <spymemcached-version>2.12.0</spymemcached-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
+        <squareup-okhttp-pubnub-version>3.12.0</squareup-okhttp-pubnub-version>
         <squareup-okhttp-bundle-version>2.7.5_1</squareup-okhttp-bundle-version>
         <squareup-okio-bundle-version>1.15.0_1</squareup-okio-bundle-version>
         <squareup-retrofit2-bundle-version>2.5.0_2</squareup-retrofit2-bundle-version>
