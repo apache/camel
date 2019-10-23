@@ -100,7 +100,7 @@
         <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
         <bndlib-version>2.4.0</bndlib-version>
         <bouncycastle-version>1.64</bouncycastle-version>
-        <box-java-sdk-version>2.38.0</box-java-sdk-version>
+        <box-java-sdk-version>2.39.0</box-java-sdk-version>
         <braintree-gateway-version>2.105.0</braintree-gateway-version>
         <brave-zipkin-version>5.8.0</brave-zipkin-version>
         <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
