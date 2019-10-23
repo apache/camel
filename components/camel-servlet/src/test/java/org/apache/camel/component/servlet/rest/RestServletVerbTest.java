@@ -108,7 +108,7 @@ public class RestServletVerbTest extends ServletCamelRouterTestSupport {
         client.setExceptionsThrownOnErrorStatus(false);
         WebResponse response = client.getResponse(req);
 
-        assertEquals(200, response.getResponseCode());
+        assertEquals(204, response.getResponseCode());
 
         assertMockEndpointsSatisfied();
     }
