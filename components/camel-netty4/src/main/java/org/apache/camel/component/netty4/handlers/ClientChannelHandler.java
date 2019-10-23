@@ -172,6 +172,13 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             return;
         }
 
+        Boolean continueWaitForAnswer = exchange.getProperty(NettyConstants.NETTY_CLIENT_CONTINUE, Boolean.class);
+        if(continueWaitForAnswer != null && continueWaitForAnswer){
+            exchange.removeProperty(NettyConstants.NETTY_CLIENT_CONTINUE);
+            // Leave channel open and continue wait for an answer.
+            return;
+        }
+
         // set the result on either IN or OUT on the original exchange depending on its pattern
         if (ExchangeHelper.isOutCapable(exchange)) {
             exchange.setOut(message);
