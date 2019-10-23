@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import javax.management.MBeanServer;
 import javax.servlet.Filter;
-import javax.servlet.MultipartConfigElement;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,8 +78,6 @@ import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.MultiPartFormDataCompliance;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
@@ -93,6 +90,7 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.eclipse.jetty.servlets.MultiPartFilter;
 import org.eclipse.jetty.util.component.Container;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -1346,19 +1344,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         holder.setAsyncSupported(true);
         holder.setInitParameter(CamelServlet.ASYNC_PARAM, Boolean.toString(endpoint.isAsync()));
         context.addServlet(holder, "/*");
-        
-        File file = File.createTempFile("camel", "");
-        file.delete();
-        
-        //must register the MultipartConfig to make jetty server multipart aware
-        holder.getRegistration().setMultipartConfig(new MultipartConfigElement(file.getParentFile().getAbsolutePath(), -1, -1, 0));
 
         // use rest enabled resolver in case we use rest
         camelServlet.setServletResolveConsumerStrategy(new HttpRestServletResolveConsumerStrategy());
-        
-        //must make RFC7578 as default to avoid using the deprecated MultiPartInputStreamParser
-        connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration()
-             .setMultiPartFormDataCompliance(MultiPartFormDataCompliance.RFC7578);
 
         return camelServlet;
     }

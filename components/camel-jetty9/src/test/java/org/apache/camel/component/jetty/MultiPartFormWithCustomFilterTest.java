@@ -37,7 +37,7 @@ import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
-
+import org.eclipse.jetty.servlets.MultiPartFilter;
 import org.junit.Test;
 
 public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
