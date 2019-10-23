@@ -33,10 +33,12 @@ public class JettySuspendWhileInProgressTest extends BaseJettyTest {
     public void testJettySuspendWhileInProgress() throws Exception {
         context.getShutdownStrategy().setTimeout(50);
 
-        // send a request/reply and have future handle so we can shutdown while in progress
+        // send a request/reply and have future handle so we can shutdown while
+        // in progress
         Future<String> reply = template.asyncRequestBodyAndHeader(serverUri, null, "name", "Camel", String.class);
 
-        // shutdown camel while in progress, wait 2 sec so the first req has been received in Camel route
+        // shutdown camel while in progress, wait 2 sec so the first req has
+        // been received in Camel route
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             public void run() {
                 try {
@@ -72,10 +74,7 @@ public class JettySuspendWhileInProgressTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty://" + serverUri)
-                    .log("Got data will wait 10 sec with reply")
-                    .delay(10000)
-                    .transform(simple("Bye ${header.name}"));
+                from("jetty://" + serverUri).log("Got data will wait 10 sec with reply").delay(10000).transform(simple("Bye ${header.name}"));
             }
         };
     }

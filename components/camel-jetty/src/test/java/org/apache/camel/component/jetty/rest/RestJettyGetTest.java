@@ -23,7 +23,7 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
 public class RestJettyGetTest extends BaseJettyTest {
-    
+
     @Test
     public void testJettyProducerGet() throws Exception {
         String out = template.requestBody("http://localhost:" + getPort() + "/users/123/basic", null, String.class);
@@ -39,16 +39,12 @@ public class RestJettyGetTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}/basic")
-                        .route()
-                        .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
-                        });
+                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        exchange.getOut().setBody(id + ";Donald Duck");
+                    }
+                });
             }
         };
     }

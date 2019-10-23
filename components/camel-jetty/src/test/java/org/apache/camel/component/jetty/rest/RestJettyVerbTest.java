@@ -77,11 +77,8 @@ public class RestJettyVerbTest extends BaseJettyTest {
             public void configure() throws Exception {
                 restConfiguration().component("jetty").host("localhost").port(getPort());
 
-                rest()
-                    .get("/users").route().transform().constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]").endRest()
-                    .get("/users/{id}").route().transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }").endRest()
-                    .post("/users").to("mock:create")
-                    .put("/users/{id}").to("mock:update")
+                rest().get("/users").route().transform().constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]").endRest().get("/users/{id}")
+                    .route().transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }").endRest().post("/users").to("mock:create").put("/users/{id}").to("mock:update")
                     .delete("/users/{id}").to("mock:delete");
             }
         };

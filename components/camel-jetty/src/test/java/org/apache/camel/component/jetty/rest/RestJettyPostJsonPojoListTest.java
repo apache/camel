@@ -40,10 +40,10 @@ public class RestJettyPostJsonPojoListTest extends BaseJettyTest {
         assertNotNull(list);
         assertEquals(2, list.size());
 
-        UserPojo user = (UserPojo) list.get(0);
+        UserPojo user = (UserPojo)list.get(0);
         assertEquals(123, user.getId());
         assertEquals("Donald Duck", user.getName());
-        user = (UserPojo) list.get(1);
+        user = (UserPojo)list.get(1);
         assertEquals(456, user.getId());
         assertEquals("John Doe", user.getName());
     }
@@ -58,9 +58,7 @@ public class RestJettyPostJsonPojoListTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .post("new").type(UserPojo[].class)
-                        .to("mock:input");
+                rest("/users/").post("new").type(UserPojo[].class).to("mock:input");
             }
         };
     }

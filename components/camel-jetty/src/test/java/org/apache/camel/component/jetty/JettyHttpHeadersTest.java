@@ -43,12 +43,9 @@ public class JettyHttpHeadersTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://0.0.0.0:{{port}}/foo")
-                        .to("mock:input")
-                        .transform().constant("Bye World");
+                from("jetty:http://0.0.0.0:{{port}}/foo").to("mock:input").transform().constant("Bye World");
             }
         };
     }
-
 
 }

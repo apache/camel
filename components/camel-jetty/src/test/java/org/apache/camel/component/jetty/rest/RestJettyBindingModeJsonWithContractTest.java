@@ -42,7 +42,7 @@ public class RestJettyBindingModeJsonWithContractTest extends BaseJettyTest {
         BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream)answer));
         String line;
         String answerString = "";
-        while ((line  = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             answerString += line;
         }
         assertTrue("Unexpected response: " + answerString, answerString.contains("\"active\":true"));
@@ -68,11 +68,9 @@ public class RestJettyBindingModeJsonWithContractTest extends BaseJettyTest {
 
                 rest("/users/")
                     // REST binding converts from JSON to UserPojo
-                    .post("new").type(UserPojo.class)
-                    .route()
-                        // then contract advice converts from UserPojo to UserPojoEx
-                        .inputType(UserPojoEx.class)
-                        .to("mock:input");
+                    .post("new").type(UserPojo.class).route()
+                    // then contract advice converts from UserPojo to UserPojoEx
+                    .inputType(UserPojoEx.class).to("mock:input");
             }
         };
     }

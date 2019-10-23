@@ -52,7 +52,6 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
         httpConnectionManager.setDefaultMaxPerRoute(5);
         context.getComponent("http", HttpComponent.class).setClientConnectionManager(httpConnectionManager);
 
-
         String endpointName = "seda:withoutConversion?concurrentConsumers=5";
         sendMessagesTo(endpointName, 5);
     }
@@ -99,11 +98,9 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:withConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search")
-                        .convertBodyTo(String.class).to("mock:results");
+                from("seda:withConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search").convertBodyTo(String.class).to("mock:results");
 
-                from("seda:withoutConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search")
-                        .to("mock:results");
+                from("seda:withoutConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search").to("mock:results");
 
                 from("jetty:http://localhost:{{port}}/search").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

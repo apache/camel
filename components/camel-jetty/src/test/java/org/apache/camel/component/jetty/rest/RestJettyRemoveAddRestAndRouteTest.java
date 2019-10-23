@@ -51,15 +51,15 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
         new RouteBuilder(context) {
             @Override
             public void configure() throws Exception {
-                rest("/")
-                    .get("/issues/{isin}/{sedol}").route().id("issues")
-                        .process(e -> e.getOut().setBody("Here's your issue " + e.getIn().getHeader("isin") + ":" + e.getIn().getHeader("sedol")))
-                    .endRest();
+                rest("/").get("/issues/{isin}/{sedol}").route().id("issues")
+                    .process(e -> e.getOut().setBody("Here's your issue " + e.getIn().getHeader("isin") + ":" + e.getIn().getHeader("sedol"))).endRest();
             }
         }.addRoutesToCamelContext(context);
         // exception here since we have 2 rest configurations
-        // org.apache.camel.model.rest.RestDefinition.asRouteDefinition(CamelContext camelContext) line 607 will have 2 rest contexts
-        // and duplicate route definitions for the same route which will cause exception
+        // org.apache.camel.model.rest.RestDefinition.asRouteDefinition(CamelContext
+        // camelContext) line 607 will have 2 rest contexts
+        // and duplicate route definitions for the same route which will cause
+        // exception
 
         InputStream stream = new URL("http://localhost:" + getPort() + "/issues/35/65").openStream();
         assertEquals("Here's your issue 35:65", IOUtils.toString(stream));
@@ -72,11 +72,8 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
             public void configure() throws Exception {
                 restConfiguration("jetty").host("localhost").port(getPort());
 
-                rest("/")
-                    .get("/issues/{isin}").route().id("issues")
-                        .process(e -> e.getOut().setBody("Here's your issue " + e.getIn().getHeader("isin"))).endRest()
-                    .get("/listings").route().id("listings")
-                        .process(e -> e.getOut().setBody("some listings"));
+                rest("/").get("/issues/{isin}").route().id("issues").process(e -> e.getOut().setBody("Here's your issue " + e.getIn().getHeader("isin"))).endRest().get("/listings")
+                    .route().id("listings").process(e -> e.getOut().setBody("some listings"));
             }
         };
     }

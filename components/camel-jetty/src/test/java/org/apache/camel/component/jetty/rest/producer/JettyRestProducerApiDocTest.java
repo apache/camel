@@ -34,17 +34,12 @@ public class JettyRestProducerApiDocTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use localhost with the given port
-                restConfiguration().component("jetty").producerComponent("http")
-                        .host("localhost").port(getPort()).producerApiDoc("hello-api.json");
+                restConfiguration().component("jetty").producerComponent("http").host("localhost").port(getPort()).producerApiDoc("hello-api.json");
 
-                from("direct:start")
-                        .to("rest:get:api:hello/hi/{name}");
+                from("direct:start").to("rest:get:api:hello/hi/{name}");
 
                 // use the rest DSL to define the rest services
-                rest("/api/")
-                        .get("hello/hi/{name}")
-                        .route()
-                        .transform().simple("Hello ${header.name}");
+                rest("/api/").get("hello/hi/{name}").route().transform().simple("Hello ${header.name}");
             }
         };
     }

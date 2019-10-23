@@ -44,12 +44,11 @@ public class HttpRedirectNoLocationTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/test")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
-                        }
-                    });
+                from("jetty://http://localhost:{{port}}/test").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
+                    }
+                });
             }
         };
     }

@@ -31,11 +31,11 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
 
     private Connector createSslSocketConnector(int port) throws URISyntaxException {
         /*
-        SslSelectChannelConnector sslSocketConnector = new SslSelectChannelConnector();
-        configureSslContextFactory(sslSocketConnector.getSslContextFactory());
-        sslSocketConnector.setPort(port);
-        return sslSocketConnector;
-        */
+         * SslSelectChannelConnector sslSocketConnector = new
+         * SslSelectChannelConnector();
+         * configureSslContextFactory(sslSocketConnector.getSslContextFactory())
+         * ; sslSocketConnector.setPort(port); return sslSocketConnector;
+         */
         return null;
     }
 
@@ -61,7 +61,7 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
                     }
                 };
                 from("jetty:https://localhost:" + port1 + "/hello").process(proc);
-                
+
                 from("jetty:https://localhost:" + port2 + "/test").to("mock:b");
             }
         };

@@ -39,13 +39,8 @@ public class JettyAsyncTransformTest extends BaseJettyTest {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("jetty:http://localhost:{{port}}/myservice")
-                    .to("log:foo")
-                    .convertBodyTo(String.class)
-                    .transform(constant("Hello World"))
-                    .to("async:hi:world")
-                    .transform(constant("Bye World"))
-                    .to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice").to("log:foo").convertBodyTo(String.class).transform(constant("Hello World")).to("async:hi:world")
+                    .transform(constant("Bye World")).to("mock:result");
             }
         };
     }

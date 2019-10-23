@@ -22,7 +22,8 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
 /**
- * CAMEL-4795, there should be no exceptions in the logs (before the fix there was a NPE)
+ * CAMEL-4795, there should be no exceptions in the logs (before the fix there
+ * was a NPE)
  */
 public class JettyAsyncThrottleTest extends BaseJettyTest {
 
@@ -38,7 +39,7 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
         int size = getMockEndpoint("mock:result").getReceivedExchanges().size();
-        
+
         for (int i = 0; i < size; i++) {
             Exchange exchange = getMockEndpoint("mock:result").getReceivedExchanges().get(i);
             log.info("Reply " + exchange);
@@ -53,22 +54,12 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
                 int port2 = getNextPort();
                 int port3 = getNextPort();
 
-                from("jetty:http://localhost:{{port}}/myservice")
-                    .removeHeaders("*")
-                    .throttle(2).asyncDelayed()
-                        .loadBalance().failover()
-                            .to("http://localhost:" + port2 + "/foo")
-                            .to("http://localhost:" + port3 + "/bar")
-                        .end()
-                    .to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice").removeHeaders("*").throttle(2).asyncDelayed().loadBalance().failover().to("http://localhost:" + port2 + "/foo")
+                    .to("http://localhost:" + port3 + "/bar").end().to("mock:result");
 
-                from("jetty:http://localhost:" + port2 + "/foo")
-                    .transform().constant("foo")
-                    .to("mock:foo");
+                from("jetty:http://localhost:" + port2 + "/foo").transform().constant("foo").to("mock:foo");
 
-                from("jetty:http://localhost:" + port3 + "/bar")
-                    .transform().constant("bar")
-                    .to("mock:bar");
+                from("jetty:http://localhost:" + port3 + "/bar").transform().constant("bar").to("mock:bar");
             }
         };
     }

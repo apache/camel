@@ -33,7 +33,7 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
     public void testHttpRouteWithOption() throws Exception {
         testHttpClient("direct:start2");
     }
-    
+
     private void testHttpClient(String uri) throws Exception {
         System.setProperty("HTTPClient.dontChunkRequests", "yes");
 
@@ -41,7 +41,7 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
         mockEndpoint.expectedBodiesReceived("<b>Hello World</b>");
 
         template.requestBodyAndHeader(uri, new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml");
-        
+
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
@@ -51,11 +51,11 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
         assertNotNull("in", in);
 
         Map<String, Object> headers = in.getHeaders();
-        
+
         log.info("Headers: " + headers);
-        
+
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
-        
+
         // should get the Content-Length
         assertEquals("Should get the transfer-encoding as chunked", "chunked", headers.get("Transfer-Encoding"));
         // remove the system property
@@ -67,19 +67,19 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
-                
+
                 from("direct:start2").to("http://localhost:{{port}}/hello").to("mock:a");
-                
+
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());                        
+                        ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());
                         exchange.getOut().setBody(bis);
                     }
                 };
-                
+
                 from("jetty:http://localhost:{{port}}/hello").process(proc);
             }
         };
-    }    
+    }
 
 }

@@ -37,12 +37,12 @@ public class HttpClientRouteTest extends BaseJettyTest {
     public void testHttpRouteWithMessageHeader() throws Exception {
         testHttpClient("direct:start");
     }
-    
+
     @Test
     public void testHttpRouteWithOption() throws Exception {
         testHttpClient("direct:start2");
     }
-    
+
     private void testHttpClient(String uri) throws Exception {
         System.setProperty("HTTPClient.dontChunkRequests", "yes");
 
@@ -50,7 +50,7 @@ public class HttpClientRouteTest extends BaseJettyTest {
         mockEndpoint.expectedBodiesReceived("<b>Hello World</b>");
 
         template.requestBodyAndHeader(uri, new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml");
-        
+
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
@@ -60,30 +60,30 @@ public class HttpClientRouteTest extends BaseJettyTest {
         assertNotNull("in", in);
 
         Map<String, Object> headers = in.getHeaders();
-        
+
         log.info("Headers: " + headers);
-        
+
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
     }
-    
+
     @Test
     public void testHttpRouteWithQuery() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
         mockEndpoint.expectedBodiesReceived("@ query");
-        
+
         template.sendBody("direct:start3", null);
-        mockEndpoint.assertIsSatisfied();        
+        mockEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
     public void testHttpRouteWithQueryByHeader() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
-        mockEndpoint.expectedBodiesReceived("test");        
-        
+        mockEndpoint.expectedBodiesReceived("test");
+
         template.sendBody("direct:start4", "test");
-        mockEndpoint.assertIsSatisfied();        
+        mockEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
     public void testHttpRouteWithHttpURI() throws Exception {
         Exchange exchange = template.send("http://localhost:" + port2 + "/querystring", new Processor() {
@@ -110,28 +110,28 @@ public class HttpClientRouteTest extends BaseJettyTest {
                         assertIsInstanceOf(InputStream.class, exchange.getIn().getBody());
                     }
                 };
-                
+
                 from("direct:start").to("http://localhost:" + port1 + "/hello").process(clientProc).convertBodyTo(String.class).to("mock:a");
                 from("direct:start2").to("http://localhost:" + port2 + "/hello").to("mock:a");
                 from("direct:start3").to("http://localhost:" + port2 + "/Query%20/test?myQuery=%40%20query").to("mock:a");
                 from("direct:start4").setHeader(Exchange.HTTP_QUERY, simple("id=${body}")).to("http://localhost:" + port2 + "/querystring").to("mock:a");
-                
+
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());                        
+                        ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());
                         exchange.getOut().setBody(bis);
                     }
                 };
                 from("jetty:http://localhost:" + port1 + "/hello").process(proc).setHeader(Exchange.HTTP_CHUNKED).constant(false);
-                
+
                 from("jetty:http://localhost:" + port2 + "/hello?chunked=false").process(proc);
-                
+
                 from("jetty:http://localhost:" + port2 + "/Query%20/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody(exchange.getIn().getHeader("myQuery", String.class));                        
+                        exchange.getOut().setBody(exchange.getIn().getHeader("myQuery", String.class));
                     }
                 });
-                
+
                 from("jetty:http://localhost:" + port2 + "/querystring").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String result = exchange.getIn().getHeader("id", String.class);
@@ -143,6 +143,6 @@ public class HttpClientRouteTest extends BaseJettyTest {
                 });
             }
         };
-    }    
+    }
 
 }

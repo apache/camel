@@ -35,8 +35,7 @@ public class JettyRestProducerInvalidApiDocTest extends CamelTestSupport {
                 // configure to use localhost with the given port
                 restConfiguration().component("jetty").host("localhost");
 
-                from("direct:start")
-                        .to("rest:get:api/hello/unknown/{name}?apiDoc=hello-api.json");
+                from("direct:start").to("rest:get:api/hello/unknown/{name}?apiDoc=hello-api.json");
 
             }
         });
@@ -57,8 +56,7 @@ public class JettyRestProducerInvalidApiDocTest extends CamelTestSupport {
                 // configure to use localhost with the given port
                 restConfiguration().component("jetty").host("localhost").producerApiDoc("hello-api.json");
 
-                from("direct:start")
-                        .to("rest:get:api/bye/?unknown={name}");
+                from("direct:start").to("rest:get:api/bye/?unknown={name}");
 
             }
         });
