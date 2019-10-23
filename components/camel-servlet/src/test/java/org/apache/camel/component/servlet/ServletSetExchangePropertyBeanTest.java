@@ -32,7 +32,7 @@ public class ServletSetExchangePropertyBeanTest extends ServletCamelRouterTestSu
         ServletUnitClient client = newClient();
         WebResponse response = client.getResponse(req);
 
-        assertEquals(200, response.getResponseCode());
+        assertEquals(204, response.getResponseCode());
         assertEquals("The response message is wrong ", "", response.getText());
     }
     
