@@ -346,6 +346,8 @@ public class FhirConfiguration {
                     && ObjectHelper.equal(proxyPort, otherFhirConfiguration.getProxyPort())
                     && ObjectHelper.equal(proxyUser, otherFhirConfiguration.getProxyUser())
                     && ObjectHelper.equal(proxyPassword, otherFhirConfiguration.getProxyPassword())
+                    && ObjectHelper.equal(client, otherFhirConfiguration.getClient())
+                    && ObjectHelper.equal(clientFactory, otherFhirConfiguration.getClientFactory())
                     && ObjectHelper.equal(serverUrl, otherFhirConfiguration.getServerUrl());
         }
         return false;
