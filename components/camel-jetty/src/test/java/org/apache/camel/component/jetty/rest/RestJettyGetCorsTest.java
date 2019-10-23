@@ -24,7 +24,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.junit.Test;
 
 public class RestJettyGetCorsTest extends BaseJettyTest {
-    
+
     @Test
     public void testCors() throws Exception {
         // send OPTIONS first which should not be routed
@@ -64,16 +64,12 @@ public class RestJettyGetCorsTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort()).enableCORS(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}/basic")
-                        .route()
-                        .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
-                        });
+                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        exchange.getOut().setBody(id + ";Donald Duck");
+                    }
+                });
             }
         };
     }

@@ -23,10 +23,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Unit test to verify that we can have URI options for external system (endpoint is lenient)
+ * Unit test to verify that we can have URI options for external system
+ * (endpoint is lenient)
  */
 public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
-    
+
     private String serverUri = "http://localhost:" + getPort() + "/myservice";
 
     @Test
@@ -41,7 +42,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHttpGetWithUTF8EncodedParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -53,7 +54,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     @Ignore
     public void testHttpGetWithISO8859EncodedParamsViaURI() throws Exception {

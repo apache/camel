@@ -76,14 +76,12 @@ public class HttpProducerConcurrentTest extends BaseJettyTest {
         executor.shutdownNow();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // expose a echo service
-                from("jetty:http://localhost:{{port}}/echo")
-                    .transform(body().append(body())).to("mock:result");
+                from("jetty:http://localhost:{{port}}/echo").transform(body().append(body())).to("mock:result");
             }
         };
     }

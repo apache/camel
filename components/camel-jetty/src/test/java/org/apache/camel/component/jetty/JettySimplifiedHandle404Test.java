@@ -24,7 +24,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 /**
- * Based on end user on forum how to get the 404 error code in his enrich aggregator
+ * Based on end user on forum how to get the 404 error code in his enrich
+ * aggregator
  */
 public class JettySimplifiedHandle404Test extends BaseJettyTest {
 
@@ -48,10 +49,13 @@ public class JettySimplifiedHandle404Test extends BaseJettyTest {
                 errorHandler(noErrorHandler());
 
                 // START SNIPPET: e1
-                // We set throwExceptionOnFailure to false to let Camel return any response from the remove HTTP server without thrown
+                // We set throwExceptionOnFailure to false to let Camel return
+                // any response from the remove HTTP server without thrown
                 // HttpOperationFailedException in case of failures.
-                // This allows us to handle all responses in the aggregation strategy where we can check the HTTP response code
-                // and decide what to do. As this is based on an unit test we assert the code is 404
+                // This allows us to handle all responses in the aggregation
+                // strategy where we can check the HTTP response code
+                // and decide what to do. As this is based on an unit test we
+                // assert the code is 404
                 from("direct:start").enrich("http://localhost:{{port}}/myserver?throwExceptionOnFailure=false&user=Camel", new AggregationStrategy() {
                     public Exchange aggregate(Exchange original, Exchange resource) {
                         // get the response code
@@ -62,13 +66,12 @@ public class JettySimplifiedHandle404Test extends BaseJettyTest {
                 }).to("mock:result");
 
                 // this is our jetty server where we simulate the 404
-                from("jetty://http://localhost:{{port}}/myserver")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody("Page not found");
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                            }
-                        });
+                from("jetty://http://localhost:{{port}}/myserver").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setBody("Page not found");
+                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                    }
+                });
                 // END SNIPPET: e1
             }
         };

@@ -55,15 +55,16 @@ public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // enable stream caching and use a low threshold so its forced to write to file
+                // enable stream caching and use a low threshold so its forced
+                // to write to file
                 context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
                 context.setStreamCaching(true);
 
                 from("jetty://http://localhost:{{port}}/myserver")
-                    // wrap the response in 2 input streams so it will force caching to disk
-                    .transform().constant(new BufferedInputStream(new ByteArrayInputStream(body2.getBytes())))
-                    .to("log:reply");
+                    // wrap the response in 2 input streams so it will force
+                    // caching to disk
+                    .transform().constant(new BufferedInputStream(new ByteArrayInputStream(body2.getBytes()))).to("log:reply");
             }
         };
     }

@@ -27,7 +27,7 @@ public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
     private int portTraceOff = getNextPort();
 
     @Test
-    public void testTraceDisabled() throws Exception {        
+    public void testTraceDisabled() throws Exception {
         HttpClient httpclient = new HttpClient();
         TraceMethod trace = new TraceMethod("http://localhost:" + portTraceOff + "/myservice");
         httpclient.executeMethod(trace);
@@ -36,9 +36,9 @@ public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
         assertTrue(trace.getStatusCode() == 405);
         trace.releaseConnection();
     }
-    
+
     @Test
-    public void testTraceEnabled() throws Exception {        
+    public void testTraceEnabled() throws Exception {
         HttpClient httpclient = new HttpClient();
         TraceMethod trace = new TraceMethod("http://localhost:" + portTraceOn + "/myservice");
         httpclient.executeMethod(trace);
@@ -47,7 +47,7 @@ public class JettyEndpointSetHttpTraceTest extends BaseJettyTest {
         assertTrue(trace.getStatusCode() == 200);
         trace.releaseConnection();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

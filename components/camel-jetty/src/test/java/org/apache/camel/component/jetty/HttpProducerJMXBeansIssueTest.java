@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jetty;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

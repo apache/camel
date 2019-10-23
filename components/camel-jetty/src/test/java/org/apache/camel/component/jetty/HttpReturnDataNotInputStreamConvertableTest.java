@@ -34,12 +34,11 @@ public class HttpReturnDataNotInputStreamConvertableTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/test")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody(new MyResponseBean());
-                        }
-                    });
+                from("jetty://http://localhost:{{port}}/test").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setBody(new MyResponseBean());
+                    }
+                });
             }
         };
     }

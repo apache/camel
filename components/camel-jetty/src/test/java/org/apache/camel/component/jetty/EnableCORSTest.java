@@ -40,14 +40,12 @@ public class EnableCORSTest extends BaseJettyTest {
         assertNull("Access-Control-Allow-Credentials HEADER should not be set", responseHeader);
     }
 
-
     @Test
     public void testCORSenabled() throws Exception {
         HttpClient httpclient = new HttpClient();
         HttpMethod httpMethod = new GetMethod("http://localhost:" + getPort2() + "/test2");
         httpMethod.addRequestHeader("Origin", "http://localhost:9000");
         httpMethod.addRequestHeader("Referer", "http://localhost:9000");
-
 
         int status = httpclient.executeMethod(httpMethod);
 
@@ -56,9 +54,7 @@ public class EnableCORSTest extends BaseJettyTest {
         Header responseHeader = httpMethod.getResponseHeader("Access-Control-Allow-Credentials");
         assertTrue("CORS not enabled", Boolean.valueOf(responseHeader.getValue()));
 
-
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

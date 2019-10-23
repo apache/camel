@@ -78,9 +78,10 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
     @Override
     protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
-        //we populate the http request parameters without checking the request method
+        // we populate the http request parameters without checking the request
+        // method
         Map<String, Object> headers = message.getHeaders();
-        //remove Content-Encoding from request
+        // remove Content-Encoding from request
         if (request instanceof org.eclipse.jetty.server.Request) {
             org.eclipse.jetty.server.Request jettyRequest = (org.eclipse.jetty.server.Request)request;
             jettyRequest.getHttpFields().remove(Exchange.CONTENT_ENCODING);
@@ -97,8 +98,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                 if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {
                     value = request.getParameter(name);
                 }
-                if (getHeaderFilterStrategy() != null
-                    && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                if (getHeaderFilterStrategy() != null && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
                     HttpHelper.appendHeader(headers, name, value);
                 }
                 continue;
@@ -110,15 +110,14 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
             if (values != null) {
                 for (String value : values) {
-                    if (getHeaderFilterStrategy() != null
-                        && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                    if (getHeaderFilterStrategy() != null && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
                         HttpHelper.appendHeader(headers, name, value);
                     }
                 }
             }
         }
     }
-    
+
     final class PartDataSource implements DataSource {
         private final Part part;
 

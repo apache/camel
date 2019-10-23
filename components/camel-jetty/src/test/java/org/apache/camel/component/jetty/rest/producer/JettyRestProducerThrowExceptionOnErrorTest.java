@@ -44,26 +44,20 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort())
-                    .endpointProperty("throwExceptionOnFailure", "false");
+                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("throwExceptionOnFailure", "false");
 
-                from("direct:start")
-                        .to("rest:get:users/{id}/basic");
+                from("direct:start").to("rest:get:users/{id}/basic");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}/basic")
-                        .route()
-                        .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                if ("666".equals(id)) {
-                                    throw new IllegalArgumentException("Bad id number");
-                                }
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
-                        });
+                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        if ("666".equals(id)) {
+                            throw new IllegalArgumentException("Bad id number");
+                        }
+                        exchange.getOut().setBody(id + ";Donald Duck");
+                    }
+                });
             }
         };
     }

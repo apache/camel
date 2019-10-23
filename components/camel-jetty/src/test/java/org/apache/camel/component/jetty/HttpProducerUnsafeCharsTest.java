@@ -28,8 +28,7 @@ public class HttpProducerUnsafeCharsTest extends BaseJettyTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("http://localhost:{{port}}/test?bridgeEndpoint=true", "Hello World",
-                Exchange.HTTP_URI, "/<>{}");
+        template.sendBodyAndHeader("http://localhost:{{port}}/test?bridgeEndpoint=true", "Hello World", Exchange.HTTP_URI, "/<>{}");
 
         assertMockEndpointsSatisfied();
     }
