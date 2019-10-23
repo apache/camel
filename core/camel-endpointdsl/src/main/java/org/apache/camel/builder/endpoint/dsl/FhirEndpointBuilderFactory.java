@@ -2201,7 +2201,8 @@ public interface FhirEndpointBuilderFactory {
      */
     enum EncodingEnum {
         JSON,
-        XML;
+        XML,
+        RDF;
     }
 
     /**
@@ -2212,7 +2213,8 @@ public interface FhirEndpointBuilderFactory {
         DSTU2_HL7ORG,
         DSTU2_1,
         DSTU3,
-        R4;
+        R4,
+        R5;
     }
 
     /**
