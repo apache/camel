@@ -31,11 +31,11 @@ import javax.servlet.http.Part;
 import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.jetty.MultiPartFilter;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.impl.DefaultAttachment;
-import org.eclipse.jetty.util.MultiPartInputStreamParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,12 +52,11 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
     @Override
     protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
-        Object object = request.getAttribute("org.eclipse.jetty.servlet.MultiPartFile.multiPartInputStream");
-        if (object instanceof MultiPartInputStreamParser) {
-            MultiPartInputStreamParser parser = (MultiPartInputStreamParser)object;
+        Boolean object = (Boolean)request.getAttribute(MultiPartFilter.MULTIPART);
+        if (object != null && object) {
             Collection<Part> parts;
             try {
-                parts = parser.getParts();
+                parts = request.getParts();
                 for (Part part : parts) {
                     DataSource ds = new PartDataSource(part);
                     Attachment attachment = new DefaultAttachment(ds);
@@ -67,6 +66,15 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                         }
                     }
                     message.addAttachmentObject(part.getName(), attachment);
+                    String name = part.getSubmittedFileName();
+                    Object value = message.getAttachment(name);
+                    Map<String, Object> headers = message.getHeaders();
+                    if (getHeaderFilterStrategy() != null
+                        && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())
+                        && name != null) {
+                        HttpHelper.appendHeader(headers, name, value);
+                    }
+                    
                 }
             } catch (Exception e) {
                 throw new RuntimeCamelException("Cannot populate attachments", e);
