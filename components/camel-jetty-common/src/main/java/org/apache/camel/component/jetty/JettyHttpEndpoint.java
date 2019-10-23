@@ -64,7 +64,7 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "consumer",
             description = "If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.")
     private boolean enableJmx;
-    @UriParam(description = "Whether Jetty org.eclipse.jetty.servlets.MultiPartFilter is enabled or not."
+    @UriParam(description = "Whether org.apache.camel.component.jetty.MultiPartFilter is enabled or not."
             + " You should set this value to false when bridging endpoints, to ensure multipart requests is proxied/bridged as well.")
     private boolean enableMultipartFilter;
     @UriParam(label = "consumer", defaultValue = "true",
@@ -297,7 +297,7 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
     }
 
     /**
-     * Whether Jetty org.eclipse.jetty.servlets.MultiPartFilter is enabled or not.
+     * Whether org.apache.camel.component.jetty.MultiPartFilter is enabled or not.
      * You should set this value to false when bridging endpoints, to ensure multipart requests is proxied/bridged as well.
      */
     public void setEnableMultipartFilter(boolean enableMultipartFilter) {
