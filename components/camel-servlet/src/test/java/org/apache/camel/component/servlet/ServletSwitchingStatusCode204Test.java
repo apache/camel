@@ -16,44 +16,37 @@
  */
 package org.apache.camel.component.servlet;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.junit.Test;
-
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
 
-public class ServletSwitchingStatusCode204Test extends ServletCamelRouterTestSupport {
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
+public class ServletSwitchingStatusCode204Test extends ServletCamelRouterTestSupport {
 
     @Test
     public void testSwitchingNoBodyTo204() throws Exception {
-    	 WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/bar");
-         ServletUnitClient client = newClient();
-         WebResponse response = client.getResponse(req);
-         
-         assertEquals(204, response.getResponseCode());
-         assertEquals("", response.getText());
+        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/bar");
+        ServletUnitClient client = newClient();
+        WebResponse response = client.getResponse(req);
+
+        assertEquals(204, response.getResponseCode());
+        assertEquals("", response.getText());
     }
 
-   @Test
-   public void testNoSwitchingNoCode() throws Exception {
-       WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/foo");
-       ServletUnitClient client = newClient();
-       WebResponse response = client.getResponse(req);
+    @Test
+    public void testNoSwitchingNoCode() throws Exception {
+        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/foo");
+        ServletUnitClient client = newClient();
+        WebResponse response = client.getResponse(req);
 
-       assertEquals(200, response.getResponseCode());
-       assertEquals("No Content", response.getText());
-   }
-	
+        assertEquals(200, response.getResponseCode());
+        assertEquals("No Content", response.getText());
+    }
+
     @Test
     public void testNoSwitchingNoBody() throws Exception {
         WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/foobar");
@@ -63,21 +56,17 @@ public class ServletSwitchingStatusCode204Test extends ServletCamelRouterTestSup
         assertEquals(200, response.getResponseCode());
         assertEquals("", response.getText());
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("servlet:/bar")
-                    .setBody().constant("");
+                from("servlet:/bar").setBody().constant("");
 
-                from("servlet:/foo")
-                    .setBody().constant("No Content");
+                from("servlet:/foo").setBody().constant("No Content");
 
-                from("servlet:/foobar")
-                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
-                    .setBody().constant("");
+                from("servlet:/foobar").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200)).setBody().constant("");
 
             }
         };
