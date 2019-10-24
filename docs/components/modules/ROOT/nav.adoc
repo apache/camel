@@ -112,7 +112,7 @@
 * xref:file-component.adoc[File Component]
 * xref:flatpack-component.adoc[Flatpack Component]
 * xref:flatpack-dataformat.adoc[Flatpack DataFormat]
-* xref:flink-component.adoc[Apache Flink Component]
+* xref:flink-component.adoc[Flink Component]
 * xref:fop-component.adoc[FOP Component]
 * xref:freemarker-component.adoc[Freemarker Component]
 * xref:ftp-component.adoc[FTP Component]

@@ -20,8 +20,6 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:amqp-component.adoc[AMQP] (camel-amqp) | 1.2 | Messaging with AMQP protocol using Apache QPid Client.
 
-| xref:flink-component.adoc[Apache Flink] (camel-flink) | 2.18 | The flink component can be used to send DataSet jobs to Apache Flink cluster.
-
 | xref:pulsar-component.adoc[Apache Pulsar] (camel-pulsar) | 2.24 | Camel Apache Pulsar Component
 
 | xref:spark-component.adoc[Apache Spark] (camel-spark) | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
@@ -193,6 +191,8 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 | xref:file-watch-component.adoc[file-watch] (camel-file-watch) | 3.0 | The file-watch is used to monitor file events in directory using java.nio.file.WatchService
 
 | xref:flatpack-component.adoc[Flatpack] (camel-flatpack) | 1.4 | The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
+
+| xref:flink-component.adoc[Flink] (camel-flink) | 2.18 | The flink component can be used to send DataSet jobs to Apache Flink cluster.
 
 | xref:fop-component.adoc[FOP] (camel-fop) | 2.10 | The fop component allows you to render a message into different output formats using Apache FOP.
 

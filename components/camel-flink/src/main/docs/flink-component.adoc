@@ -1,7 +1,8 @@
-[[flink-component]]
-= Apache Flink Component
+= Flink Component
 
 *Since Camel 2.18*
+*Since Camel 2.18*
+
 
 This documentation page covers the https://flink.apache.org[Apache Flink]
 component for the Apache Camel. The *camel-flink* component provides a
@@ -40,7 +41,7 @@ FlinkEndpoint Options
 
 
 // endpoint options: START
-The Apache Flink endpoint is configured using URI syntax:
+The Flink endpoint is configured using URI syntax:
 
 ----
 flink:endpointType
@@ -115,7 +116,7 @@ The component supports 6 options, which are listed below.
 
 
 // component options: START
-The Apache Flink component supports 5 options, which are listed below.
+The Flink component supports 5 options, which are listed below.
 
 
 
@@ -186,4 +187,3 @@ try {
         camelContext.stop();
     }
 -----------------------------------
-
