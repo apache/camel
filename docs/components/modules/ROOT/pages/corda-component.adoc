@@ -1,6 +1,6 @@
-[[corda-component]]
 = corda Component
 :page-source: components/camel-corda/src/main/docs/corda-component.adoc
+= Corda Component
 
 *Since Camel 2.23*
 
