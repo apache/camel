@@ -1,5 +1,5 @@
-[[corda-component]]
-= corda Component
+[[Corda-component]]
+= Corda Component
 
 *Since Camel 2.23*
 
