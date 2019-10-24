@@ -178,7 +178,7 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:elsql-component.adoc[ElSQL] (camel-elsql) | 2.16 | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
 
-| xref:etcd-component.adoc[etcd] (camel-etcd) | 2.18 | The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
+| xref:etcd-component.adoc[Etcd] (camel-etcd) | 2.18 | The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
 
 | xref:exec-component.adoc[Exec] (camel-exec) | 2.3 | The exec component can be used to execute OS system commands.
 

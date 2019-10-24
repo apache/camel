@@ -1,8 +1,9 @@
-[[etcd-component]]
-= etcd Component
+= Etcd Component
 :page-source: components/camel-etcd/src/main/docs/etcd-component.adoc
 
 *Since Camel 2.18*
+*Since Camel 2.18*
+
 
 The camel Etcd component allows you to work with Etcd, a distributed reliable key-value store.
 
@@ -16,7 +17,7 @@ etcd:namespace/path[?options]
 == URI Options
 
 // component options: START
-The etcd component supports 7 options, which are listed below.
+The Etcd component supports 7 options, which are listed below.
 
 
 
@@ -34,7 +35,7 @@ The etcd component supports 7 options, which are listed below.
 // component options: END
 
 // endpoint options: START
-The etcd endpoint is configured using URI syntax:
+The Etcd endpoint is configured using URI syntax:
 
 ----
 etcd:namespace/path
@@ -135,4 +136,3 @@ The component supports 17 options, which are listed below.
 | *camel.component.etcd.user-name* | The user name to use for basic authentication. |  | String
 |===
 // spring-boot-auto-configure options: END
-

@@ -100,7 +100,7 @@
 * xref:ehcache-component.adoc[Ehcache Component]
 * xref:elasticsearch-rest-component.adoc[Elastichsearch Rest Component]
 * xref:elsql-component.adoc[ElSQL Component]
-* xref:etcd-component.adoc[etcd Component]
+* xref:etcd-component.adoc[Etcd Component]
 * xref:eventadmin-component.adoc[OSGi EventAdmin Component]
 * xref:exec-component.adoc[Exec Component]
 * xref:facebook-component.adoc[Facebook Component]
