@@ -73,7 +73,7 @@
 * xref:cometd-component.adoc[CometD Component]
 * xref:consul-component.adoc[Consul Component]
 * xref:controlbus-component.adoc[Control Bus Component]
-* xref:corda-component.adoc[corda Component]
+* xref:corda-component.adoc[Corda Component]
 * xref:couchbase-component.adoc[Couchbase Component]
 * xref:couchdb-component.adoc[CouchDB Component]
 * xref:crypto-cms-component.adoc[Crypto CMS Component]
