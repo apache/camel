@@ -134,7 +134,7 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:controlbus-component.adoc[Control Bus] (camel-controlbus) | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
 
-| xref:corda-component.adoc[corda] (camel-corda) | 2.23 | The corda component uses the corda-rpc to interact with corda nodes.
+| xref:corda-component.adoc[Corda] (camel-corda) | 2.23 | The corda component uses the corda-rpc to interact with corda nodes.
 
 | xref:couchbase-component.adoc[Couchbase] (camel-couchbase) | 2.19 | Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
 

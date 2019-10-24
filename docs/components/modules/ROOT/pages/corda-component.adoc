@@ -1,6 +1,9 @@
-= corda Component
+[[corda-component]]
+= Corda Component
 :page-source: components/camel-corda/src/main/docs/corda-component.adoc
 = Corda Component
+*Since Camel 2.23*
+
 
 *Since Camel 2.23*
 
@@ -31,7 +34,7 @@ corda://<host:port>[?options]
 
 
 // component options: START
-The corda component supports 2 options, which are listed below.
+The Corda component supports 2 options, which are listed below.
 
 
 
@@ -45,7 +48,7 @@ The corda component supports 2 options, which are listed below.
 
 
 // endpoint options: START
-The corda endpoint is configured using URI syntax:
+The Corda endpoint is configured using URI syntax:
 
 ----
 corda:configuration
