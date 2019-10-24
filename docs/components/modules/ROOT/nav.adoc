@@ -354,6 +354,7 @@
 * xref:test-spring.adoc[Test Spring]
 * xref:test.adoc[Test Module]
 * xref:testcontainers-junit5.adoc[Testcontainers]
+* xref:testcontainers-spring-junit5.adoc[Testcontainers Spring]
 * xref:testcontainers-spring.adoc[Testcontainers Spring]
 * xref:testcontainers.adoc[Testcontainers]
 * xref:thrift-component.adoc[Thrift Component]

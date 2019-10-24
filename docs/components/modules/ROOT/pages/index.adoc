@@ -762,7 +762,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 38 in 38 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -839,6 +839,8 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 | xref:testcontainers-junit5.adoc[Testcontainers JUnit5] (camel-testcontainers-junit5) | 3.0 | Camel support for testcontainers with JUnit 5
 
 | xref:testcontainers-spring.adoc[Testcontainers Spring] (camel-testcontainers-spring) | 2.22 | Camel unit testing with Spring and testcontainers
+
+| xref:testcontainers-spring-junit5.adoc[Testcontainers Spring Junit5] (camel-testcontainers-spring-junit5) | 3.0 | Camel unit testing with Spring, testcontainers and JUnit 5
 
 | xref:zipkin.adoc[Zipkin] (camel-zipkin) | 2.18 | Distributed message tracing using Zipkin
 |===
