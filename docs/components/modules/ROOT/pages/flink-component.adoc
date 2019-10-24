@@ -1,7 +1,9 @@
+[[flink-component]]
 = Flink Component
 :page-source: components/camel-flink/src/main/docs/flink-component.adoc
 
 *Since Camel 2.18*
+
 *Since Camel 2.18*
 
 
