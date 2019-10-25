@@ -214,7 +214,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
             // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
             String body;
-            ByteBuf buffer = request.content();
+            ByteBuf buffer = request.content().retain();
             try {
                 body = buffer.toString(Charset.forName(charset));
             } finally {
