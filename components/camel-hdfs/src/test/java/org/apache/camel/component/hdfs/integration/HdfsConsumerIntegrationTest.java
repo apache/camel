@@ -57,7 +57,7 @@ import org.junit.Test;
 import static org.apache.hadoop.io.SequenceFile.CompressionType;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-public class HdfsConsumerTest extends HdfsTestSupport {
+public class HdfsConsumerIntegrationTest extends HdfsTestSupport {
     private static final int ITERATIONS = 200;
 
     @Override
