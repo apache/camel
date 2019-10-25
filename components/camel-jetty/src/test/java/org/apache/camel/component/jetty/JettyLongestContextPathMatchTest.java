@@ -87,7 +87,7 @@ public class JettyLongestContextPathMatchTest extends BaseJettyTest {
         template.sendBody("http://localhost:{{port}}/myapp/aaa/ddd/eee/fff/foo", null);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

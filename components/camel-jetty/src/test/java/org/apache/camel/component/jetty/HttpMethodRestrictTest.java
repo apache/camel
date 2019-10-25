@@ -31,7 +31,7 @@ public class HttpMethodRestrictTest extends BaseJettyTest {
     private String getUrl() {
         return "http://localhost:" + getPort() + "/methodRestrict";
     }
-    
+
     @Test
     public void testProperHttpMethod() throws Exception {
         HttpClient httpClient = new HttpClient();
@@ -56,12 +56,12 @@ public class HttpMethodRestrictTest extends BaseJettyTest {
 
         assertEquals("Get a wrong response status", 405, status);
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                                
+
                 from("jetty://http://localhost:{{port}}/methodRestrict?httpMethodRestrict=POST").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();

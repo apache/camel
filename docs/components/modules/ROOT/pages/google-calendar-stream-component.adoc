@@ -2,7 +2,7 @@
 = Google Calendar Stream Component
 :page-source: components/camel-google-calendar/src/main/docs/google-calendar-stream-component.adoc
 
-*Available as of Camel version 2.23*
+*Since Camel 2.23*
 
 The Google Calendar component provides access
 to https://calendar.google.com[Calendar] via

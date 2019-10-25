@@ -1,7 +1,7 @@
 [[log-component]]
 = Log Component
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
 
 The Log component logs message exchanges to the underlying logging
 mechanism.

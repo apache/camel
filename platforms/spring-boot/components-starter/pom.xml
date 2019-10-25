@@ -205,6 +205,7 @@
     <module>camel-google-sheets-starter</module>
     <module>camel-gora-starter</module>
     <module>camel-grape-starter</module>
+    <module>camel-graphql-starter</module>
     <module>camel-grok-starter</module>
     <module>camel-groovy-starter</module>
     <module>camel-grpc-starter</module>
@@ -277,7 +278,6 @@
     <module>camel-mock-starter</module>
     <module>camel-mongodb-gridfs-starter</module>
     <module>camel-mongodb-starter</module>
-    <module>camel-mqtt-starter</module>
     <module>camel-msv-starter</module>
     <module>camel-mustache-starter</module>
     <module>camel-mvel-starter</module>

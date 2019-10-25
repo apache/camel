@@ -2,7 +2,7 @@
 = CouchDB Component
 :page-source: components/camel-couchdb/src/main/docs/couchdb-component.adoc
 
-*Available as of Camel version 2.11*
+*Since Camel 2.11*
 
 The *couchdb:* component allows you to treat
 http://couchdb.apache.org/[CouchDB] instances as a producer or consumer

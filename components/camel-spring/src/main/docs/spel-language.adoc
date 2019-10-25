@@ -1,7 +1,7 @@
 [[spel-language]]
 = SpEL Language
 
-*Available as of Camel version 2.7*
+*Since Camel 2.7*
 
 Camel allows
 https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions[Spring Expression Language (SpEL)]

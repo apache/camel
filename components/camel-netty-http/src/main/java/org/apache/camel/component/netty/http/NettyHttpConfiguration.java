@@ -52,6 +52,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     @UriParam(label = "advanced")
     private boolean transferException;
     @UriParam(label = "consumer")
+    private boolean muteException;
+    @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
     @UriParam
     private boolean bridgeEndpoint;
@@ -174,6 +176,17 @@ public class NettyHttpConfiguration extends NettyConfiguration {
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     public boolean isUrlDecodeHeaders() {

@@ -29,10 +29,10 @@ import org.junit.Test;
  * Unit test for exposing a http server that returns images
  */
 public class JettyImageFileTest extends BaseJettyTest {
-    
+
     private void sendImageContent(boolean usingGZip) throws Exception {
         Endpoint endpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice");
-        Exchange exchange = endpoint.createExchange();        
+        Exchange exchange = endpoint.createExchange();
         if (usingGZip) {
             exchange.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
         }

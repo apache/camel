@@ -1,7 +1,7 @@
 [[linkedin-component]]
 = Linkedin Component
 
-*Available as of Camel version 2.14*
+*Since Camel 2.14*
 
 The LinkedIn component provides access to all of LinkedIn REST APIs
 documented

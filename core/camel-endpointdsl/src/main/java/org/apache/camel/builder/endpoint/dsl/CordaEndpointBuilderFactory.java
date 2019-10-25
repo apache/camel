@@ -33,7 +33,7 @@ public interface CordaEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the corda component.
+     * Builder for endpoint consumers for the Corda component.
      */
     public interface CordaEndpointConsumerBuilder
             extends
@@ -80,7 +80,7 @@ public interface CordaEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the corda component.
+     * Advanced builder for endpoint consumers for the Corda component.
      */
     public interface AdvancedCordaEndpointConsumerBuilder
             extends
@@ -200,7 +200,7 @@ public interface CordaEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the corda component.
+     * Builder for endpoint producers for the Corda component.
      */
     public interface CordaEndpointProducerBuilder
             extends
@@ -251,7 +251,7 @@ public interface CordaEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the corda component.
+     * Advanced builder for endpoint producers for the Corda component.
      */
     public interface AdvancedCordaEndpointProducerBuilder
             extends
@@ -314,7 +314,7 @@ public interface CordaEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the corda component.
+     * Builder for endpoint for the Corda component.
      */
     public interface CordaEndpointBuilder
             extends
@@ -325,7 +325,7 @@ public interface CordaEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the corda component.
+     * Advanced builder for endpoint for the Corda component.
      */
     public interface AdvancedCordaEndpointBuilder
             extends
@@ -385,7 +385,7 @@ public interface CordaEndpointBuilderFactory {
         }
     }
     /**
-     * corda (camel-corda)
+     * Corda (camel-corda)
      * The corda component uses the corda-rpc to interact with corda nodes.
      * 
      * Category: corda,blockchain

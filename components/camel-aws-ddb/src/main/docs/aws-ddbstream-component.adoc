@@ -1,7 +1,7 @@
 [[aws-ddbstream-component]]
 = AWS DynamoDB Streams Component
 
-*Available as of Camel version 2.17*
+*Since Camel 2.17*
 
 The DynamoDB Stream component supports receiving messages from
 Amazon DynamoDB Stream service.

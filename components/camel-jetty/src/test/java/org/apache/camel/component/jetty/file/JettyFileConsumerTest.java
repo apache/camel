@@ -51,14 +51,14 @@ public class JettyFileConsumerTest extends BaseJettyTest {
         File src = new File("src/test/resources/log4j2.properties");
         testingSendingFile(src);
     }
-    
+
     @Test
     @Ignore
     public void testSending18k() throws Exception {
         File src = new File("src/main/java/org/apache/camel/component/jetty/JettyHttpComponent.java");
         testingSendingFile(src);
     }
-    
+
     @Test
     public void testSendBinaryFile() throws Exception {
         deleteDirectory("target/test");
@@ -69,7 +69,7 @@ public class JettyFileConsumerTest extends BaseJettyTest {
         assertTrue("The uploaded file should exists", des.exists());
         assertEquals("This two file should have same size", jpg.length(), des.length());
     }
-    
+
     @Test
     public void testSendBinaryFileUsingCamelRoute() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -89,20 +89,13 @@ public class JettyFileConsumerTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp/myservice")
-                    .to("file://target/test?fileName=temp.xml")
-                    .setBody(constant("OK"));
-                
-                from("jetty:http://localhost:{{port}}/myapp/myservice2")
-                    .to("log:foo?showAll=true")
-                    .to("file://target/test?fileName=java.jpg")
-                    .setBody(constant("OK"));
+                from("jetty:http://localhost:{{port}}/myapp/myservice").to("file://target/test?fileName=temp.xml").setBody(constant("OK"));
 
-                from("file://target/binary?noop=true")
-                    .to("http://localhost:{{port}}/myapp/myservice2")
-                    .to("mock:result");
+                from("jetty:http://localhost:{{port}}/myapp/myservice2").to("log:foo?showAll=true").to("file://target/test?fileName=java.jpg").setBody(constant("OK"));
+
+                from("file://target/binary?noop=true").to("http://localhost:{{port}}/myapp/myservice2").to("mock:result");
             }
         };
-    }   
+    }
 
 }

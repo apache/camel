@@ -72,7 +72,7 @@
         <asterisk-java-bundle-version>1.0.0-final_1</asterisk-java-bundle-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
         <atmos-client-version>3.1.0</atmos-client-version>
-        <atmosphere-version>2.5.4</atmosphere-version>
+        <atmosphere-version>2.5.9</atmosphere-version>
         <atmosphere-version-range>[2.5,3.0)</atmosphere-version-range>
         <atomix-version>1.0.8</atomix-version>
         <atomix-catalyst-version>1.2.1</atomix-catalyst-version>
@@ -100,7 +100,7 @@
         <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
         <bndlib-version>2.4.0</bndlib-version>
         <bouncycastle-version>1.64</bouncycastle-version>
-        <box-java-sdk-version>2.38.0</box-java-sdk-version>
+        <box-java-sdk-version>2.39.0</box-java-sdk-version>
         <braintree-gateway-version>2.105.0</braintree-gateway-version>
         <brave-zipkin-version>5.8.0</brave-zipkin-version>
         <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
@@ -188,7 +188,7 @@
         <embedmongo-version>2.1.1</embedmongo-version>
         <etcd4j-version>2.17.0</etcd4j-version>
         <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
-        <fabric8-maven-plugin-version>4.3.0</fabric8-maven-plugin-version>
+        <fabric8-maven-plugin-version>4.3.1</fabric8-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
         <facebook4j-core-bundle-version>2.4.13_1</facebook4j-core-bundle-version>
         <fastjson-version>1.2.62</fastjson-version>
@@ -204,7 +204,7 @@
         <google-findbugs-annotations2-version>2.0.3</google-findbugs-annotations2-version>
         <google-maps-services-version>0.2.9</google-maps-services-version>
         <flatpack-version>4.0.4</flatpack-version>
-        <flink-version>1.9.0</flink-version>
+        <flink-version>1.9.1</flink-version>
         <fop-bundle-version>2.3_1</fop-bundle-version>
         <fop-version>2.3</fop-version>
         <ftpserver-version>1.1.1</ftpserver-version>
@@ -238,6 +238,7 @@
         <google-api-services-pubsub-version>v1-rev12-1.22.0</google-api-services-pubsub-version>
         <google-mail-guava-version>17.0</google-mail-guava-version>
         <google-truth-version>0.30</google-truth-version>
+        <graphql-java-version>13.0</graphql-java-version>
         <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
         <grpc-version>1.23.0</grpc-version>
         <grpc-google-auth-library-version>0.13.0</grpc-google-auth-library-version>
@@ -355,14 +356,14 @@
         <jgroups-raft-jgroups-version>4.0.20.Final</jgroups-raft-jgroups-version>
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
-        <jira-guava-version>20.0</jira-guava-version>
-        <jira-rest-client-api-version>5.1.0</jira-rest-client-api-version>
+        <jira-guava-version>26.0-jre</jira-guava-version>
+        <jira-rest-client-api-version>5.1.6</jira-rest-client-api-version>
         <libthrift-version>0.12.0</libthrift-version>
         <jing-bundle-version>20030619_5</jing-bundle-version>
         <jing-version>20030619</jing-version>
         <jmh-version>1.21</jmh-version>
         <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
-        <jodatime2-bundle-version>2.10.3</jodatime2-bundle-version>
+        <jodatime2-bundle-version>2.10.4</jodatime2-bundle-version>
         <jota-version>1.0.0-beta3</jota-version>
         <jolokia-version>1.6.2</jolokia-version>
         <jolt-version>0.1.1</jolt-version>
@@ -394,7 +395,7 @@
         <junit-version>4.12</junit-version>
         <junit-jupiter-version>5.5.1</junit-jupiter-version>
         <jxmpp-version>0.6.4</jxmpp-version>
-	<jython-version>2.5.3</jython-version>
+        <jython-version>2.5.3</jython-version>
         <jython-standalone-version>2.5.3</jython-standalone-version>
         <jzlib-version>1.1.3</jzlib-version>
         <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
@@ -402,8 +403,8 @@
         <kafka-bundle-version>2.3.0_2</kafka-bundle-version>
         <karaf4-version>4.2.7</karaf4-version>
         <kie-version>7.27.0.Final</kie-version>
-        <kubernetes-client-version>4.6.0</kubernetes-client-version>
-        <kubernetes-model-version>4.6.0</kubernetes-model-version>
+        <kubernetes-client-version>4.6.1</kubernetes-client-version>
+        <kubernetes-model-version>4.6.1</kubernetes-model-version>
         <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.10</leveldb-api-version>
@@ -453,7 +454,7 @@
         <metrics-version>3.2.6</metrics-version>
         <micrometer-version>1.2.2</micrometer-version>
         <microprofile-config-version>1.3</microprofile-config-version>
-        <microprofile-metrics-version>2.0.0</microprofile-metrics-version>
+        <microprofile-metrics-version>2.1.0</microprofile-metrics-version>
         <microprofile-health-version>2.0.1</microprofile-health-version>
         <milo-version>0.2.5</milo-version>
         <mimepull-version>1.9.12</mimepull-version>
@@ -465,7 +466,6 @@
         <mockito-version>2.28.2</mockito-version>
         <mongo-java-driver-version>3.11.1</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
-        <mqtt-client-version>1.16</mqtt-client-version>
         <msv-version>2013.6.1</msv-version>
         <mustache-java-version>0.9.6</mustache-java-version>
         <mustache-guava-version>20.0</mustache-guava-version>
@@ -569,8 +569,8 @@
         <slf4j-version>1.7.28</slf4j-version>
         <smack-version>4.3.4</smack-version>
         <smallrye-config-version>1.0.0</smallrye-config-version>
-	<smallrye-metrics-version>1.1.0</smallrye-metrics-version>
-	<smallrye-health-version>2.0.0</smallrye-health-version>
+        <smallrye-metrics-version>2.2.0</smallrye-metrics-version>
+        <smallrye-health-version>2.0.0</smallrye-health-version>
         <snakeyaml-version>1.25</snakeyaml-version>
         <snappy-version>1.1.4</snappy-version>
         <snmp4j-version>2.6.3_1</snmp4j-version>
@@ -578,7 +578,7 @@
         <!-- solr version aligned with lucene -->
         <solr-version>8.1.1</solr-version>
         <solr-version-range>[8,9)</solr-version-range>
-        <spark-version>2.4.3</spark-version>
+        <spark-version>2.4.4</spark-version>
         <spark-rest-version>2.9.1</spark-rest-version>
         <spark-rest-bundle-version>2.9.1_1</spark-rest-bundle-version>
         <splunk-version>1.6.5.0_1</splunk-version>
@@ -607,6 +607,7 @@
         <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
         <spymemcached-version>2.12.0</spymemcached-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
+        <squareup-okhttp-pubnub-version>3.12.0</squareup-okhttp-pubnub-version>
         <squareup-okhttp-bundle-version>2.7.5_1</squareup-okhttp-bundle-version>
         <squareup-okio-bundle-version>1.15.0_1</squareup-okio-bundle-version>
         <squareup-retrofit2-bundle-version>2.5.0_2</squareup-retrofit2-bundle-version>
@@ -638,7 +639,7 @@
         <velocity-bundle-version>1.7_6</velocity-bundle-version>
         <velocity-tools-version>2.0</velocity-tools-version>
         <velocity-version>2.0</velocity-version>
-        <vertx-version>3.8.2</vertx-version>
+        <vertx-version>3.8.3</vertx-version>
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
@@ -671,7 +672,7 @@
         <xstream-version>1.4.11</xstream-version>
         <zendesk-client-version>0.6.2</zendesk-client-version>
         <zipkin-reporter-version>2.10.3</zipkin-reporter-version>
-        <zipkin-version>2.18.0</zipkin-version>
+        <zipkin-version>2.18.3</zipkin-version>
         <zjsonpatch-version>0.3.0</zjsonpatch-version>
         <zookeeper-version>3.4.14</zookeeper-version>
         <zookeeper-guava-version>16.0</zookeeper-guava-version>
@@ -1182,6 +1183,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-maven-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-parent</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-digitalocean</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1373,6 +1384,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-grape</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-graphql</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1753,11 +1769,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mongodb-gridfs</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-mqtt</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2278,6 +2289,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-testcontainers-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-testcontainers-spring-junit5</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2961,6 +2977,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-graphql-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-grok-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3317,11 +3338,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mongodb-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-mqtt-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -4277,7 +4293,7 @@
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>caffeine</artifactId>
-                <version>${caffeine-version}</version>                
+                <version>${caffeine-version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.checkerframework</groupId>
@@ -4926,14 +4942,14 @@
                 <artifactId>tagsoup</artifactId>
                 <version>${tagsoup-version}</version>
             </dependency>
-            
+
             <!-- optional Any23 -->
             <dependency>
                 <groupId>org.apache.any23</groupId>
                 <artifactId>apache-any23-core</artifactId>
                 <version>${apache-any23-version}</version>
             </dependency>
-            
+
             <!-- optional RDF4J -->
             <dependency>
                 <groupId>org.eclipse.rdf4j</groupId>
@@ -5662,7 +5678,7 @@
                           </goals>
                       </execution>
                   </executions>
-              </plugin>  
+              </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -5774,7 +5790,7 @@
             <plugin>
               <groupId>org.jboss.jandex</groupId>
               <artifactId>jandex-maven-plugin</artifactId>
-          </plugin>  
+          </plugin>
         </plugins>
     </build>
 

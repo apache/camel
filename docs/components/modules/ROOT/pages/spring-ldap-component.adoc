@@ -2,7 +2,7 @@
 = Spring LDAP Component
 :page-source: components/camel-spring-ldap/src/main/docs/spring-ldap-component.adoc
 
-*Available as of Camel version 2.11*
+*Since Camel 2.11*
 
 The Spring LDAP component provides a Camel wrapper for
 http://www.springsource.org/ldap[Spring LDAP].

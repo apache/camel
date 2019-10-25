@@ -2,7 +2,7 @@
 = CXF Component
 :page-source: components/camel-cxf/src/main/docs/cxf-component.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
 
 TIP: When using CXF in streaming modes (see DataFormat option), then also
 read about Stream caching.

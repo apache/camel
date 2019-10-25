@@ -1,7 +1,7 @@
 [[drill-component]]
 = Drill Component
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The Drill component gives you the ability to querying to https://drill.apache.org/[Apache Drill Cluster]
 

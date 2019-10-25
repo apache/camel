@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -153,16 +154,15 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
     }
 
-    private File starterDir() throws IOException {
+    private File starterDir() {
         return SpringBootHelper.starterDir(baseDir, project.getArtifactId());
     }
 
-    private File allStartersDir() throws IOException {
+    private File allStartersDir() {
         return SpringBootHelper.allStartersDir(baseDir);
     }
 
     private void fixAdditionalDependencies(Document pom) throws Exception {
-
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/spring-boot-fix-dependencies.properties"));
 
@@ -220,13 +220,10 @@ public class SpringBootStarterMojo extends AbstractMojo {
                 }
                 dependencies.appendChild(pom.createComment(GENERATED_SECTION_END));
             }
-
         }
-
     }
 
     private void fixAdditionalRepositories(Document pom) throws Exception {
-
         if (project.getFile() != null) {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
@@ -245,16 +242,6 @@ public class SpringBootStarterMojo extends AbstractMojo {
         }
     }
 
-    private void appendTextElementIfPresent(Document pom, Element parent, String name, String value) {
-        if (value == null || value.length() == 0) {
-            return;
-        }
-        Element element = pom.createElement(name);
-        element.setTextContent(value);
-
-        parent.appendChild(element);
-    }
-
     private Set<String> csvToSet(String csv) {
         if (csv == null || csv.trim().length() == 0) {
             return new TreeSet<>();
@@ -268,7 +255,6 @@ public class SpringBootStarterMojo extends AbstractMojo {
     }
 
     private void fixExcludedDependencies(Document pom) throws Exception {
-
         Set<String> loggingImpl = new HashSet<>();
 
         loggingImpl.add("commons-logging:commons-logging");
@@ -291,7 +277,6 @@ public class SpringBootStarterMojo extends AbstractMojo {
         loggingImpl.add("org.slf4j:slf4j-log4j13");
         loggingImpl.add("org.slf4j:slf4j-nop");
         loggingImpl.add("org.slf4j:slf4j-simple");
-
 
         // excluded dependencies
         Set<String> configExclusions = new HashSet<>();
@@ -340,7 +325,6 @@ public class SpringBootStarterMojo extends AbstractMojo {
                 exclusions.appendChild(exclusion);
             }
         }
-
     }
 
     private Set<String> filterIncludedArtifacts(Set<String> artifacts) {
@@ -394,14 +378,14 @@ public class SpringBootStarterMojo extends AbstractMojo {
             File pomFile = new File(starterDir(), "pom.xml");
             if (pomFile.exists()) {
                 try (InputStream in = new FileInputStream(pomFile)) {
-                    String content = IOUtils.toString(in, "UTF-8");
+                    String content = IOUtils.toString(in, StandardCharsets.UTF_8);
                     boolean editablePom = content.contains(GENERATED_SECTION_START_COMMENT);
                     if (editablePom) {
                         content = removeGeneratedSections(content, 10);
                         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
                         Document pom;
-                        try (InputStream contentIn = new ByteArrayInputStream(content.getBytes("UTF-8"))) {
+                        try (InputStream contentIn = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8))) {
                             pom = builder.parse(contentIn);
                         }
 
@@ -446,20 +430,20 @@ public class SpringBootStarterMojo extends AbstractMojo {
         pomTemplate.process(props, sw);
 
         String xml = sw.toString();
-        ByteArrayInputStream bin = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+        ByteArrayInputStream bin = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
 
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document pom = builder.parse(bin);
         return pom;
     }
 
-    private void writeStaticFiles() throws IOException, TemplateException {
+    private void writeStaticFiles() throws IOException {
         String notice;
         String license;
         try (InputStream isNotice = getClass().getResourceAsStream("/spring-boot-starter-NOTICE.txt");
              InputStream isLicense = getClass().getResourceAsStream("/spring-boot-starter-LICENSE.txt")) {
-            notice = IOUtils.toString(isNotice);
-            license = IOUtils.toString(isLicense);
+            notice = IOUtils.toString(isNotice, StandardCharsets.UTF_8);
+            license = IOUtils.toString(isLicense, StandardCharsets.UTF_8);
         }
 
         writeIfChanged(notice, new File(starterDir(), "src/main/resources/META-INF/NOTICE.txt"));

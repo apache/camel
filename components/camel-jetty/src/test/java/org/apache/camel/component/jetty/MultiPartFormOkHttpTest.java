@@ -33,14 +33,11 @@ public class MultiPartFormOkHttpTest extends BaseJettyTest {
 
     private Request createMultipartRequest() throws Exception {
         MediaType mediaType = MediaType.parse("multipart/form-data; boundary=---011000010111000001101001");
-        RequestBody body = RequestBody.create(mediaType, "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"test\"\r\n\r\nsome data here\r\n-----011000010111000001101001--");
-        Request request = new Request.Builder()
-            .url("http://localhost:" + getPort() + "/test")
-            .post(body)
-            .addHeader("content-type", "multipart/form-data; boundary=---011000010111000001101001")
-            .addHeader("cache-control", "no-cache")
-            .addHeader("postman-token", "a9fd95b6-04b9-ea7a-687e-ff828ea00774")
-            .build();
+        RequestBody body = RequestBody
+            .create(mediaType, "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"test\"\r\n\r\nsome data here\r\n-----011000010111000001101001--");
+        Request request = new Request.Builder().url("http://localhost:" + getPort() + "/test").post(body)
+            .addHeader("content-type", "multipart/form-data; boundary=---011000010111000001101001").addHeader("cache-control", "no-cache")
+            .addHeader("postman-token", "a9fd95b6-04b9-ea7a-687e-ff828ea00774").build();
         return request;
     }
 

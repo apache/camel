@@ -65,7 +65,8 @@ public class JettyRouteWithSocketPropertiesTest extends BaseJettyTest {
             // just get the body as a string
             String body = exchange.getIn().getBody(String.class);
 
-            // we have access to the HttpServletRequest here and we can grab it if we need it
+            // we have access to the HttpServletRequest here and we can grab it
+            // if we need it
             HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
             assertNotNull(req);
 

@@ -32,7 +32,7 @@ public class MyAsyncComponent extends DefaultComponent {
     }
 
     private String prepareReply(String value) {
-        // to make URIs valid we make the conventions of using ':' for ' ' and 
+        // to make URIs valid we make the conventions of using ':' for ' ' and
         // capitalize words
         String[] words = value.split(":");
         String result = "";

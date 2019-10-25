@@ -663,6 +663,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-graphql</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-grok</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1034,11 +1039,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mongodb-gridfs</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-mqtt</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -1529,6 +1529,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-testcontainers-spring</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-testcontainers-spring-junit5</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2212,6 +2217,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-graphql-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-grok-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2568,11 +2578,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mongodb-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-mqtt-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

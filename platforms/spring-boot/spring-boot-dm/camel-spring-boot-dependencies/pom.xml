@@ -1049,6 +1049,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-maven-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-parent</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-debezium-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1430,6 +1440,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-grape-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-graphql</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-graphql-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2206,16 +2226,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mongodb-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-mqtt</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-mqtt-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3166,6 +3176,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-testcontainers-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-testcontainers-spring-junit5</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

@@ -2,7 +2,7 @@
 = Jing Component
 :page-source: components/camel-jing/src/main/docs/jing-component.adoc
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
 
 The Jing component uses the
 http://www.thaiopensource.com/relaxng/jing.html[Jing Library] to perform

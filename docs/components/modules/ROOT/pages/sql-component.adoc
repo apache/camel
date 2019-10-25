@@ -2,7 +2,7 @@
 = SQL Component
 :page-source: components/camel-sql/src/main/docs/sql-component.adoc
 
-*Available as of Camel version 1.4*
+*Since Camel 1.4*
 
 The SQL component allows you to work with databases using JDBC
 queries. The difference between this component and xref:jdbc-component.adoc[JDBC]
@@ -320,7 +320,7 @@ header _are_ represented by a `?` instead of a `pass:[#]` symbol
 |===
 
 When performing `insert` operations, the SQL Component stores the rows
-with the generated keys and number of these rown in the following
+with the generated keys and number of these rows in the following
 message headers:
 
 [cols="1,3"]

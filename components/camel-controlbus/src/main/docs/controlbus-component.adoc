@@ -1,7 +1,7 @@
 [[controlbus-component]]
 = Control Bus Component
 
-*Available as of Camel version 2.11*
+*Since Camel 2.11*
 
 The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the
 EIP patterns allows for the

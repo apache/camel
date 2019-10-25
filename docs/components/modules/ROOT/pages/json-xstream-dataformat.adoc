@@ -2,7 +2,7 @@
 = JSon XStream DataFormat
 :page-source: components/camel-xstream/src/main/docs/json-xstream-dataformat.adoc
 
-*Available as of Camel version 2.0*
+*Since Camel 2.0*
 
 XStream is a Data Format which uses the
 http://xstream.codehaus.org/[XStream library] to marshal and unmarshal

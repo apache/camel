@@ -1,7 +1,7 @@
 [[webhook-component]]
 = Webhook Component
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 
 The Webhook meta component allows other Camel components to configure webhooks on a remote webhook provider and

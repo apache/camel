@@ -1,7 +1,7 @@
 [[beanstalk-component]]
 = Beanstalk Component
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 Camel Beanstalk project provides a Camel component for job retrieval and
 post-processing of Beanstalk jobs.

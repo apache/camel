@@ -1,7 +1,7 @@
 [[openstack-swift-component]]
 = OpenStack Swift Component
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The Openstack Swift component allows messages to be sent to an OpenStack object storage services.
 

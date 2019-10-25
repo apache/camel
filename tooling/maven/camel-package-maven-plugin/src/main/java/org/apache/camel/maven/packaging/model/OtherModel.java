@@ -135,10 +135,6 @@ public class OtherModel {
         this.version = version;
     }
 
-    public String getDocLink() {
-        return artifactId + "/src/main/docs/";
-    }
-
     public String getFirstVersionShort() {
         return cutLastZeroDigit(firstVersion);
     }

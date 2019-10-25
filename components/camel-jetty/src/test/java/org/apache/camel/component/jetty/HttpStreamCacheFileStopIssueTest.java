@@ -56,31 +56,29 @@ public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // enable stream caching and use a low threshold so its forced to write to file
+                // enable stream caching and use a low threshold so its forced
+                // to write to file
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
                 context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
                 context.setStreamCaching(true);
 
                 // use a route so we got an unit of work
-                from("direct:start")
-                    .to("http://localhost:{{port}}/myserver")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // there should be a temp cache file
-                            File file = new File("target/cachedir");
-                            String[] files = file.list();
-                            assertTrue("There should be a temp cache file", files.length > 0);
-                        }
-                    })
-                    // TODO: CAMEL-3839: need to convert the body to a String as the tmp file will be deleted
+                from("direct:start").to("http://localhost:{{port}}/myserver").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // there should be a temp cache file
+                        File file = new File("target/cachedir");
+                        String[] files = file.list();
+                        assertTrue("There should be a temp cache file", files.length > 0);
+                    }
+                })
+                    // TODO: CAMEL-3839: need to convert the body to a String as
+                    // the tmp file will be deleted
                     // before the producer template can convert the result back
                     .convertBodyTo(String.class)
                     // mark the exchange to stop continue routing
-                    .stop()
-                    .to("mock:result");
+                    .stop().to("mock:result");
 
-                from("jetty://http://localhost:{{port}}/myserver")
-                    .transform().constant(body);
+                from("jetty://http://localhost:{{port}}/myserver").transform().constant(body);
             }
         };
     }

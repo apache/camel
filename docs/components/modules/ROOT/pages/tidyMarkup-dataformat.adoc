@@ -2,7 +2,7 @@
 = TidyMarkup DataFormat
 :page-source: components/camel-tagsoup/src/main/docs/tidyMarkup-dataformat.adoc
 
-*Available as of Camel version 2.0*
+*Since Camel 2.0*
 
 TidyMarkup is a Data Format that uses the
 http://www.ccil.org/~cowan/XML/tagsoup/[TagSoup] to tidy up HTML. It can

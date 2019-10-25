@@ -22,6 +22,7 @@ import java.security.PublicKey;
 import net.corda.core.contracts.ContractState;
 import net.corda.core.crypto.SecureHash;
 import net.corda.core.flows.FlowLogic;
+import net.corda.core.flows.StateMachineRunId;
 import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.messaging.CordaRPCOps;
@@ -33,8 +34,6 @@ import net.corda.core.node.services.vault.Sort;
 import org.apache.camel.Message;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
-import net.corda.core.flows.StateMachineRunId;
-
 
 import static org.apache.camel.component.corda.CordaConstants.ARGUMENTS;
 import static org.apache.camel.component.corda.CordaConstants.ATTACHMENT_QUERY_CRITERIA;
@@ -288,7 +287,7 @@ public class CordaProducer extends HeaderSelectorProducer {
         InputStream inputStream = message.getBody(InputStream.class);
         String uploader = message.getBody(String.class);
         String filename = message.getBody(String.class);
-        SecureHash secureHash = cordaRPCOps.uploadAttachmentWithMetadata(inputStream,uploader,filename);
+        SecureHash secureHash = cordaRPCOps.uploadAttachmentWithMetadata(inputStream, uploader, filename);
         message.setHeader(SECURE_HASH, secureHash);
     }
 }

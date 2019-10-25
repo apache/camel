@@ -31,7 +31,7 @@ public interface FlinkEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the Apache Flink component.
+     * Builder for endpoint for the Flink component.
      */
     public interface FlinkEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedFlinkEndpointBuilder advanced() {
@@ -163,7 +163,7 @@ public interface FlinkEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Apache Flink component.
+     * Advanced builder for endpoint for the Flink component.
      */
     public interface AdvancedFlinkEndpointBuilder
             extends
@@ -223,7 +223,7 @@ public interface FlinkEndpointBuilderFactory {
         }
     }
     /**
-     * Apache Flink (camel-flink)
+     * Flink (camel-flink)
      * The flink component can be used to send DataSet jobs to Apache Flink
      * cluster.
      * 

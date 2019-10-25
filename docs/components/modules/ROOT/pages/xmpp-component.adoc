@@ -2,7 +2,7 @@
 = XMPP Component
 :page-source: components/camel-xmpp/src/main/docs/xmpp-component.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
 
 The XMPP component implements an XMPP (Jabber) transport.
 

@@ -1,7 +1,7 @@
 [[zookeeper-component]]
 = ZooKeeper Component
 
-*Available as of Camel version 2.9*
+*Since Camel 2.9*
 
 The ZooKeeper component allows interaction with a
 http://hadoop.apache.org/zookeeper/[ZooKeeper] cluster and exposes the

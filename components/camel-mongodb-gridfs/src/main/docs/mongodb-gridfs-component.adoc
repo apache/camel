@@ -1,7 +1,7 @@
 [[mongodb-gridfs-component]]
 = MongoDB GridFS Component
 
-*Available as of Camel version 2.18*
+*Since Camel 2.18*
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

@@ -1,7 +1,7 @@
 [[jetty-component]]
 = Jetty Component
 
-*Available as of Camel version 1.2*
+*Since Camel 1.2*
 
 The Jetty component provides HTTP-based endpoints
 for consuming and producing HTTP requests. That is, the Jetty component
@@ -134,7 +134,7 @@ with the following path and query parameters:
 | *continuationTimeout* (consumer) | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine. | 30000 | Long
 | *enableCORS* (consumer) | If the option is true, Jetty server will setup the CrossOriginFilter which supports the CORS out of box. | false | boolean
 | *enableJmx* (consumer) | If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details. | false | boolean
-| *enableMultipartFilter* (consumer) | Whether Jetty org.eclipse.jetty.servlets.MultiPartFilter is enabled or not. You should set this value to false when bridging endpoints, to ensure multipart requests is proxied/bridged as well. | false | boolean
+| *enableMultipartFilter* (consumer) | Whether org.apache.camel.component.jetty.MultiPartFilter is enabled or not. You should set this value to false when bridging endpoints, to ensure multipart requests is proxied/bridged as well. | false | boolean
 | *httpMethodRestrict* (consumer) | Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma. |  | String
 | *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | boolean
 | *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | boolean

@@ -2,7 +2,7 @@
 = Properties Component
 :page-source: core/camel-base/src/main/docs/properties-component.adoc
 
-*Available as of Camel version 2.3*
+*Since Camel 2.3*
 
 The properties component is used for property placeholders in your Camel application, such as endpoint URIs.
 It is *not* a regular Camel component with producer and consumer for routing messages. However for historical

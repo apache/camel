@@ -1,7 +1,7 @@
 [[cometd-component]]
 = CometD Component
 
-*Available as of Camel version 2.0*
+*Since Camel 2.0*
 
 The Cometd component is a transport for working with the
 http://www.mortbay.org/jetty[jetty] implementation of the

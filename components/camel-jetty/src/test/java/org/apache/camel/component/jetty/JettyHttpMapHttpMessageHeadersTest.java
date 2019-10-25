@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
-    
+
     private String serverUriFiltered = "http://localhost:" + getPort() + "/myservice";
     private String serverUriNotFiltered = "http://localhost:" + getPort() + "/myservice1";
 
@@ -38,7 +38,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHttpGetWithParamsViaURINotFiltered() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result1");
@@ -64,7 +64,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHttpGetWithParamsViaHeaderNotFiltered() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result1");
@@ -90,7 +90,7 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testHttpPostFiltered() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
