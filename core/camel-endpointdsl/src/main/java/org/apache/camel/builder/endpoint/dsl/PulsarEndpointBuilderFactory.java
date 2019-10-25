@@ -33,7 +33,7 @@ public interface PulsarEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Apache Pulsar component.
+     * Builder for endpoint consumers for the Pulsar component.
      */
     public interface PulsarEndpointConsumerBuilder
             extends
@@ -278,7 +278,7 @@ public interface PulsarEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the Apache Pulsar component.
+     * Advanced builder for endpoint consumers for the Pulsar component.
      */
     public interface AdvancedPulsarEndpointConsumerBuilder
             extends
@@ -398,7 +398,7 @@ public interface PulsarEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the Apache Pulsar component.
+     * Builder for endpoint producers for the Pulsar component.
      */
     public interface PulsarEndpointProducerBuilder
             extends
@@ -753,7 +753,7 @@ public interface PulsarEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the Apache Pulsar component.
+     * Advanced builder for endpoint producers for the Pulsar component.
      */
     public interface AdvancedPulsarEndpointProducerBuilder
             extends
@@ -816,7 +816,7 @@ public interface PulsarEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the Apache Pulsar component.
+     * Builder for endpoint for the Pulsar component.
      */
     public interface PulsarEndpointBuilder
             extends
@@ -827,7 +827,7 @@ public interface PulsarEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Apache Pulsar component.
+     * Advanced builder for endpoint for the Pulsar component.
      */
     public interface AdvancedPulsarEndpointBuilder
             extends
@@ -919,7 +919,7 @@ public interface PulsarEndpointBuilderFactory {
         CustomPartition;
     }
     /**
-     * Apache Pulsar (camel-pulsar)
+     * Pulsar (camel-pulsar)
      * Camel Apache Pulsar Component
      * 
      * Category: messaging

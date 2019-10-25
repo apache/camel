@@ -1,8 +1,9 @@
-[[pulsar-component]]
-= Apache Pulsar Component
+= Pulsar Component
 :page-source: components/camel-pulsar/src/main/docs/pulsar-component.adoc
 
 *Since Camel 2.24*
+*Since Camel 2.24*
+
 
 
 Maven users will need to add the following dependency to
@@ -29,7 +30,7 @@ pulsar:[persistent|non-persistent]://tenant/namespace/topic
 
 
 // component options: START
-The Apache Pulsar component supports 5 options, which are listed below.
+The Pulsar component supports 5 options, which are listed below.
 
 
 
@@ -49,7 +50,7 @@ The Apache Pulsar component supports 5 options, which are listed below.
 
 
 // endpoint options: START
-The Apache Pulsar endpoint is configured using URI syntax:
+The Pulsar endpoint is configured using URI syntax:
 
 ----
 pulsar:persistence://tenant/namespace/topic
