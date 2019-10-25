@@ -29,6 +29,7 @@ import org.junit.Test;
 
 import static org.apache.camel.component.hdfs.HdfsConstants.DEFAULT_OPENED_SUFFIX;
 import static org.apache.camel.component.hdfs.HdfsConstants.DEFAULT_READ_SUFFIX;
+import static org.apache.camel.component.hdfs.HdfsTestSupport.CWD;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -137,7 +138,8 @@ public class HdfsConsumerTest {
         when(fileStatus.isDirectory()).thenReturn(false);
         when(fileStatus.getOwner()).thenReturn("spiderman");
 
-        FSDataInputStream fsDataInputStream = mock(FSDataInputStream.class);
+        String normalFile = CWD.getAbsolutePath() + "/src/test/resources/normal_file.txt";
+        FSDataInputStream fsDataInputStream = new FSDataInputStream(new MockDataInputStream(normalFile));
         when(fileSystem.rename(any(Path.class), any(Path.class))).thenReturn(true);
         when(fileSystem.open(any(Path.class))).thenReturn(fsDataInputStream);
 

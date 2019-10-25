@@ -147,38 +147,50 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     private void processHdfsInputStream(HdfsInputStream inputStream, AtomicInteger messageCount, int totalFiles) {
         Holder<Object> key = new Holder<>();
         Holder<Object> value = new Holder<>();
-        while (inputStream.next(key, value) >= 0) {
-            Exchange exchange = this.getEndpoint().createExchange();
-            Message message = exchange.getIn();
-            String fileName = StringUtils.substringAfterLast(inputStream.getActualPath(), "/");
-            message.setHeader(Exchange.FILE_NAME, fileName);
-            message.setHeader(Exchange.FILE_NAME_CONSUMED, fileName);
-            message.setHeader("CamelFileAbsolutePath", inputStream.getActualPath());
-            if (key.value != null) {
-                message.setHeader(HdfsHeader.KEY.name(), key.value);
+
+        if (this.endpointConfig.isStreamDownload()) {
+            key.value = null;
+            value.value = inputStream;
+            // use the input stream as the body
+            processHdfsInputStream(inputStream, key, value, messageCount, totalFiles);
+        } else {
+            while (inputStream.next(key, value) >= 0) {
+                processHdfsInputStream(inputStream, key, value, messageCount, totalFiles);
             }
-
-            if (inputStream.getNumOfReadBytes() >= 0) {
-                message.setHeader(Exchange.FILE_LENGTH, inputStream.getNumOfReadBytes());
-            }
-
-            message.setBody(value.value);
-
-            log.debug("Processing file {}", fileName);
-            try {
-                processor.process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-
-            // in case of unhandled exceptions then let the exception handler handle them
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException(exchange.getException());
-            }
-
-            int count = messageCount.incrementAndGet();
-            log.debug("Processed [{}] files out of [{}]", count, totalFiles);
         }
+    }
+
+    private void processHdfsInputStream(HdfsInputStream inputStream, Holder<Object> key, Holder<Object> value, AtomicInteger messageCount, int totalFiles) {
+        Exchange exchange = this.getEndpoint().createExchange();
+        Message message = exchange.getIn();
+        String fileName = StringUtils.substringAfterLast(inputStream.getActualPath(), "/");
+        message.setHeader(Exchange.FILE_NAME, fileName);
+        message.setHeader(Exchange.FILE_NAME_CONSUMED, fileName);
+        message.setHeader("CamelFileAbsolutePath", inputStream.getActualPath());
+        if (key.value != null) {
+            message.setHeader(HdfsHeader.KEY.name(), key.value);
+        }
+
+        if (inputStream.getNumOfReadBytes() >= 0) {
+            message.setHeader(Exchange.FILE_LENGTH, inputStream.getNumOfReadBytes());
+        }
+
+        message.setBody(value.value);
+
+        log.debug("Processing file {}", fileName);
+        try {
+            processor.process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        // in case of unhandled exceptions then let the exception handler handle them
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException(exchange.getException());
+        }
+
+        int count = messageCount.incrementAndGet();
+        log.debug("Processed [{}] files out of [{}]", count, totalFiles);
     }
 
     private boolean normalFileIsDirectoryHasSuccessFile(FileStatus fileStatus, HdfsInfo info) {
