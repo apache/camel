@@ -147,6 +147,18 @@
 			"defaultValue":"true"
 		},
 		{
+			"name":"camel.main.java-routes-exclude-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Used for exclusive filtering component scanning of RouteBuilder classes with Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to exclude all classes starting with Bar use: &#42;&#42;\/Bar&#42; To exclude all routes form a specific package use: com\/mycompany\/bar\/&#42; To exclude all routes form a specific package and its sub-packages use double wildcards: com\/mycompany\/bar\/&#42;&#42; And to exclude all routes from two specific packages use: com\/mycompany\/bar\/&#42;,com\/mycompany\/stuff\/&#42;"
+		},
+		{
+			"name":"camel.main.java-routes-include-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Used for inclusive filtering component scanning of RouteBuilder classes with Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to include all classes starting with Foo use: &#42;&#42;\/Foo To include all routes form a specific package use: com\/mycompany\/foo\/&#42; To include all routes form a specific package and its sub-packages use double wildcards: com\/mycompany\/foo\/&#42;&#42; And to include all routes from two specific packages use: com\/mycompany\/foo\/&#42;,com\/mycompany\/stuff\/&#42;"
+		},
+		{
 			"name":"camel.main.jmx-create-connector",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
@@ -218,6 +230,12 @@
 			"description":"Sets the name of the CamelContext."
 		},
 		{
+			"name":"camel.main.package-scan-route-builders",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Sets package names for scanning for org.apache.camel.builder.RouteBuilder classes as candidates to be included. If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode."
+		},
+		{
 			"name":"camel.main.producer-template-cache-size",
 			"type":"int",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
@@ -235,6 +253,13 @@
 			"type":"java.lang.String",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as documented by PatternHelper#matchPattern(String,String) . For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include."
+		},
+		{
+			"name":"camel.main.routes-collector-enabled",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Whether the routes collector is enabled or not. When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and also load additional XML routes from the file system. The routes collector is default enabled.",
+			"defaultValue":"true"
 		},
 		{
 			"name":"camel.main.shutdown-log-inflight-exchanges-on-timeout",
@@ -366,6 +391,20 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"To turn on MDC logging"
+		},
+		{
+			"name":"camel.main.xml-rests",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Directory to scan for adding additional XML rests. You can turn this off by setting the value to false. Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;\/&#42;camel&#42;.xml Multiple directories can be specified and separated by comma, such as: file:\/myapp\/mycamel\/&#42;.xml,file:\/myapp\/myothercamel\/&#42;.xml",
+			"defaultValue":"classpath:camel-rest\/*.xml"
+		},
+		{
+			"name":"camel.main.xml-routes",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Directory to scan for adding additional XML routes. You can turn this off by setting the value to false. Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;\/&#42;camel&#42;.xml Multiple directories can be specified and separated by comma, such as: file:\/myapp\/mycamel\/&#42;.xml,file:\/myapp\/myothercamel\/&#42;.xml",
+			"defaultValue":"classpath:camel\/*.xml"
 		},
 		{
 			"name":"camel.hystrix.allow-maximum-size-to-diverge-from-core-size",

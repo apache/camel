@@ -19,7 +19,6 @@ package org.apache.camel.component.jms;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -68,7 +67,8 @@ import org.springframework.util.ErrorHandler;
  * This component uses Spring JMS and supports JMS 1.1 and 2.0 API.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", label = "messaging")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", label = "messaging",
+        excludeProperties = "bridgeErrorHandler")
 public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
 
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
@@ -285,6 +285,10 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         JmsConsumer consumer = new JmsConsumer(this, processor, listenerContainer);
         configureListenerContainer(listenerContainer, consumer);
         configureConsumer(consumer);
+
+        if (isBridgeErrorHandler()) {
+            throw new IllegalArgumentException("BridgeErrorHandler is not support on JMS endpoint");
+        }
 
         String replyTo = consumer.getEndpoint().getReplyTo();
         if (replyTo != null && consumer.getEndpoint().getDestinationName().equals(replyTo)) {
@@ -702,6 +706,11 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
+    public String getEagerPoisonBody() {
+        return getConfiguration().getEagerPoisonBody();
+    }
+
+    @ManagedAttribute
     public boolean isEagerLoadingOfProperties() {
         return getConfiguration().isEagerLoadingOfProperties();
     }
@@ -842,6 +851,11 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @ManagedAttribute
     public void setDurableSubscriptionName(String durableSubscriptionName) {
         getConfiguration().setDurableSubscriptionName(durableSubscriptionName);
+    }
+
+    @ManagedAttribute
+    public void setEagerPoisonBody(String eagerPoisonBody) {
+        getConfiguration().setEagerPoisonBody(eagerPoisonBody);
     }
 
     @ManagedAttribute

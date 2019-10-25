@@ -52,9 +52,7 @@ public class ConvertPayloadToInputStreamTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:{{port}}/test").
-                        convertBodyTo(InputStream.class).
-                        to("mock:result");
+                from("jetty:http://localhost:{{port}}/test").convertBodyTo(InputStream.class).to("mock:result");
             }
         };
     }

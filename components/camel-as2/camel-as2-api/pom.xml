@@ -112,6 +112,7 @@
                             <detectOfflineLinks>false</detectOfflineLinks>
                             <javadocVersion>1.8.0</javadocVersion>
                             <encoding>UTF-8</encoding>
+                            <locale>en</locale>
                         </configuration>
                     </execution>
                 </executions>

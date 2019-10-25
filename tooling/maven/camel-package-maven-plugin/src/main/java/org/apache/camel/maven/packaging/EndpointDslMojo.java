@@ -103,9 +103,15 @@ public class EndpointDslMojo extends AbstractMojo {
     @Parameter(defaultValue = "${basedir}")
     protected File baseDir;
 
+    /**
+     * The output directory
+     */
     @Parameter
     protected File outputDir;
 
+    /**
+     * The package name
+     */
     @Parameter
     protected String packageName = "org.apache.camel.builder.endpoint.dsl";
 
@@ -755,7 +761,7 @@ public class EndpointDslMojo extends AbstractMojo {
     private static ComponentModel generateComponentModel(String componentName, String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
 
-        ComponentModel component = new ComponentModel(true);
+        ComponentModel component = new ComponentModel();
         component.setScheme(getSafeValue("scheme", rows));
         component.setSyntax(getSafeValue("syntax", rows));
         component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));

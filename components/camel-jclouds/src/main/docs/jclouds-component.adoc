@@ -1,7 +1,7 @@
 [[jclouds-component]]
 = JClouds Component
 
-*Available as of Camel version 2.9*
+*Since Camel 2.9*
 
 This component allows interaction with cloud provider key-value engines
 (blobstores) and compute services. The component uses

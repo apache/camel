@@ -2,7 +2,7 @@
 = Azure Storage Queue Service Component
 :page-source: components/camel-azure/src/main/docs/azure-queue-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The Azure Queue component supports storing and retrieving the messages to/from
 https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] service.

@@ -1,7 +1,7 @@
 [[spring-event-component]]
 = Spring Event Component
 
-*Available as of Camel version 1.4*
+*Since Camel 1.4*
 
 The Spring Event component provides access to the Spring
 `ApplicationEvent` objects. This allows you to publish

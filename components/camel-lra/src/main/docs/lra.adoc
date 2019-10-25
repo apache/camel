@@ -1,6 +1,6 @@
 = LRA Component
 
-*Available as of Camel version 2.21.0*
+*Since Camel 2.21.0*
 
 The LRA module provides bindings of the Saga EIP with any https://github.com/eclipse/microprofile-sandbox/tree/master/proposals/0009-LRA[Microprofile compatible LRA Coordinator (sandbox)].
 

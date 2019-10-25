@@ -66,15 +66,7 @@ public class RestJettyOptionsTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .get("v1/customers")
-                        .to("mock:customers")
-                    .put("v1/id/{id}")
-                        .to("mock:id")
-                    .get("v2/options")
-                        .to("mock:options")
-                    .post("v2/options")
-                        .to("mock:options");
+                rest("/users/").get("v1/customers").to("mock:customers").put("v1/id/{id}").to("mock:id").get("v2/options").to("mock:options").post("v2/options").to("mock:options");
             }
         };
     }

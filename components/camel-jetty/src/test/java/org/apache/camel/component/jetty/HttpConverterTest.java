@@ -35,25 +35,25 @@ public class HttpConverterTest extends BaseJettyTest {
     public boolean isUseRouteBuilder() {
         return false;
     }
-    
+
     @Test
     public void testToServletRequestAndResponse() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/test")
-                        // add this node to make sure the convert can work within DefaultMessageImpl
-                        .convertBodyTo(String.class)             
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
-                                assertNotNull("We should get request object here", request);
-                                HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
-                                assertNotNull("We should get response object here", response);
-                                String s = exchange.getIn().getBody(String.class);
-                                assertEquals("Hello World", s);
-                            }
-                        }).transform(constant("Bye World"));
+                    // add this node to make sure the convert can work within
+                    // DefaultMessageImpl
+                    .convertBodyTo(String.class).process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
+                            assertNotNull("We should get request object here", request);
+                            HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
+                            assertNotNull("We should get response object here", response);
+                            String s = exchange.getIn().getBody(String.class);
+                            assertEquals("Hello World", s);
+                        }
+                    }).transform(constant("Bye World"));
             }
         });
         context.start();
@@ -67,20 +67,20 @@ public class HttpConverterTest extends BaseJettyTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/test").
-                        process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                HttpMessage msg = exchange.getIn(HttpMessage.class);
+                from("jetty://http://localhost:{{port}}/test").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpMessage msg = exchange.getIn(HttpMessage.class);
 
-                                ServletInputStream sis = HttpConverter.toServletInputStream(msg);
-                                assertNotNull(sis);
-                                // The ServletInputStream should be cached and you can't read message here
-                                assertTrue(sis.available() == 0);                                
-                                String s = msg.getBody(String.class);
+                        ServletInputStream sis = HttpConverter.toServletInputStream(msg);
+                        assertNotNull(sis);
+                        // The ServletInputStream should be cached and you can't
+                        // read message here
+                        assertTrue(sis.available() == 0);
+                        String s = msg.getBody(String.class);
 
-                                assertEquals("Hello World", s);
-                            }
-                        }).transform(constant("Bye World"));
+                        assertEquals("Hello World", s);
+                    }
+                }).transform(constant("Bye World"));
             }
         });
         context.start();
@@ -94,18 +94,17 @@ public class HttpConverterTest extends BaseJettyTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/test").
-                        process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                HttpMessage msg = exchange.getIn(HttpMessage.class);
+                from("jetty://http://localhost:{{port}}/test").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpMessage msg = exchange.getIn(HttpMessage.class);
 
-                                InputStream sis = msg.getBody(InputStream.class);
-                                assertNotNull(sis);
-                                String s = exchange.getContext().getTypeConverter().convertTo(String.class, sis);
+                        InputStream sis = msg.getBody(InputStream.class);
+                        assertNotNull(sis);
+                        String s = exchange.getContext().getTypeConverter().convertTo(String.class, sis);
 
-                                assertEquals("Hello World", s);
-                            }
-                        }).transform(constant("Bye World"));
+                        assertEquals("Hello World", s);
+                    }
+                }).transform(constant("Bye World"));
             }
         });
         context.start();

@@ -1,7 +1,7 @@
 [[ssh-component]]
 = SSH Component
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
 
 The SSH component enables access to SSH servers such that you can send
 an SSH command, and process the response.

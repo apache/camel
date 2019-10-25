@@ -1,7 +1,7 @@
 [[iota-component]]
 = IOTA Component
 
-*Available as of Camel version 2.23*
+*Since Camel 2.23*
 
 According to IOTA Official site: "IOTA is the first open-source distributed ledger that is being built to power the future of the Internet of Things with feeless microtransactions and data integrity for machines."
 

@@ -45,18 +45,18 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
             }
         });
         contextB.start();
-        
+
         String reply = template.requestBody("direct:a", "World", String.class);
         assertEquals("Bye World", reply);
 
         reply = template.requestBody("direct:b", "Camel", String.class);
         assertEquals("Hi Camel", reply);
-        
+
         contextB.stop();
-        
+
         reply = template.requestBody("direct:a", "Earth", String.class);
         assertEquals("Bye Earth", reply);
-        
+
         try {
             reply = template.requestBody("direct:b", "Moon", String.class);
             // expert the exception here
@@ -64,7 +64,7 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
         } catch (Exception ex) {
             assertTrue("Should get the ConnectException", ex.getCause() instanceof NoHttpResponseException);
         }
-        
+
     }
 
     @Override
@@ -88,5 +88,5 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
             }
         };
     }
-    
+
 }

@@ -29,6 +29,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.main.DefaultConfigurationConfigurer;
+import org.apache.camel.main.RoutesCollector;
 import org.apache.camel.model.Model;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -133,7 +134,6 @@ public class CamelAutoConfiguration {
         // lookup and configure SPI beans
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
 
-
         return camelContext;
     }
 
@@ -144,9 +144,16 @@ public class CamelAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(RoutesCollector.class)
-    RoutesCollector routesCollector(ApplicationContext applicationContext, CamelConfigurationProperties config) {
+    RoutesCollector routesCollector(ApplicationContext applicationContext) {
+        return new SpringBootRoutesCollector(applicationContext);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(CamelSpringBootApplicationListener.class)
+    CamelSpringBootApplicationListener routesCollectorListener(ApplicationContext applicationContext, CamelConfigurationProperties config,
+                                                               RoutesCollector routesCollector) {
         Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
-        return new RoutesCollector(applicationContext, new ArrayList(configurations), config);
+        return new CamelSpringBootApplicationListener(applicationContext, new ArrayList(configurations), config, routesCollector);
     }
 
     /**

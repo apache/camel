@@ -255,7 +255,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
             // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
             String body;
-            ByteBuf buffer = ((FullHttpRequest)request).content();
+            ByteBuf buffer = ((FullHttpRequest)request).content().retain();
             try {
                 body = buffer.toString(Charset.forName(charset));
             } finally {
@@ -394,7 +394,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         LOG.trace("HTTP Status Code: {}", code);
 
         // if there was an exception then use that as body
-        if (cause != null) {
+        if (cause != null && !configuration.isMuteException()) {
             if (configuration.isTransferException()) {
                 // we failed due an exception, and transfer it as java serialized object
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -420,6 +420,15 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
 
             // and mark the exception as failure handled, as we handled it by returning it as the response
+            ExchangeHelper.setFailureHandled(message.getExchange());
+        } else if (cause != null && configuration.isMuteException()) {
+
+            // the body should hide the stacktrace (muteException enabled)
+            body = NettyConverter.toByteBuffer("Exception".getBytes());
+            // force content type to be text/plain
+            message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+
+            // and mark the exception as failure handled, as we handled it by actively muting it
             ExchangeHelper.setFailureHandled(message.getExchange());
         }
 

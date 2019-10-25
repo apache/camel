@@ -42,15 +42,13 @@ public class HttpDeleteWithBodyTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/test")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
-                            assertEquals("DELETE", method);
-                        }
-                    })
-                    .transform(simple("Bye ${body}"));
+                from("jetty://http://localhost:{{port}}/test").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String method = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
+                        assertEquals("DELETE", method);
+                    }
+                }).transform(simple("Bye ${body}"));
             }
         };
     }

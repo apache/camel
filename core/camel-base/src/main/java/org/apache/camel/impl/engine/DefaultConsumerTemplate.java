@@ -109,7 +109,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBody(String endpointUri) {
-        Object answer = null;
+        Object answer;
         Exchange exchange = receive(endpointUri);
         try {
             answer = extractResultBody(exchange);
@@ -259,6 +259,12 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
             // okay no fault then return the response
             answer = result.getMessage().getBody();
+
+            // in a very seldom situation then getBody can cause an exception to be set on the exchange
+            // rethrow if there was an exception during execution
+            if (result.getException() != null) {
+                throw wrapRuntimeCamelException(result.getException());
+            }
         }
         return answer;
     }

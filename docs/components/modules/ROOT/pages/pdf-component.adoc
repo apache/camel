@@ -2,7 +2,7 @@
 = PDF Component
 :page-source: components/camel-pdf/src/main/docs/pdf-component.adoc
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 The PDF components provides the ability to create, modify or extract
 content from PDF documents. This component uses

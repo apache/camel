@@ -91,8 +91,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
                 HttpEndpoint epOut = getContext().getEndpoint("http://localhost:" + port1 + "?bridgeEndpoint=true&throwExceptionOnFailure=false", HttpEndpoint.class);
                 epOut.setHeaderFilterStrategy(new MultipartHeaderFilterStrategy());
 
-                from("jetty:http://localhost:" + port2 + "/test/hello?enableMultipartFilter=false")
-                    .to(epOut);
+                from("jetty:http://localhost:" + port2 + "/test/hello?enableMultipartFilter=false").to(epOut);
 
                 from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
             }

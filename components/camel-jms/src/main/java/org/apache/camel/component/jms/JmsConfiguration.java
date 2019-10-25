@@ -274,11 +274,18 @@ public class JmsConfiguration implements Cloneable {
             + " handles the reply message. You can also use this option if you want to use Camel as a proxy between different"
             + " message brokers and you want to route message from one system to another.")
     private boolean disableReplyTo;
+    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message due to ${exception.message}",
+            description = "If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) is poison (cannot be read/mapped),"
+                    + " then set this text as the message body instead so the message can be processed"
+                    + " (the cause of the poison are already stored as exception on the Exchange)."
+                    + " This can be turned off by setting eagerPoisonBody=false."
+                    + " See also the option eagerLoadingOfProperties.")
+    private String eagerPoisonBody = "Poison JMS message payload: ${exception.message}";
     @UriParam(label = "consumer,advanced",
             description = "Enables eager loading of JMS properties and payload as soon as a message is loaded"
                     + " which generally is inefficient as the JMS properties may not be required"
                     + " but sometimes can catch early any issues with the underlying JMS provider"
-                    + " and the use of JMS properties")
+                    + " and the use of JMS properties. See also the option eagerPoisonBody.")
     private boolean eagerLoadingOfProperties;
     // Always make a JMS message copy when it's passed to Producer
     @UriParam(label = "producer,advanced",
@@ -1372,6 +1379,21 @@ public class JmsConfiguration implements Cloneable {
         this.lazyCreateTransactionManager = lazyCreating;
     }
 
+    public String getEagerPoisonBody() {
+        return eagerPoisonBody;
+    }
+
+    /**
+     * If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) (cannot be read/mapped),
+     * then set this text as the message body instead so the message can be processed
+     * (the cause of the poison are already stored as exception on the Exchange).
+     * This can be turned off by setting eagerPoisonBody=false.
+     * See also the option eagerLoadingOfProperties.
+     */
+    public void setEagerPoisonBody(String eagerPoisonBody) {
+        this.eagerPoisonBody = eagerPoisonBody;
+    }
+
     public boolean isEagerLoadingOfProperties() {
         return eagerLoadingOfProperties;
     }
@@ -1380,7 +1402,7 @@ public class JmsConfiguration implements Cloneable {
      * Enables eager loading of JMS properties and payload as soon as a message is loaded
      * which generally is inefficient as the JMS properties may not be required
      * but sometimes can catch early any issues with the underlying JMS provider
-     * and the use of JMS properties
+     * and the use of JMS properties. See also the option eagerPoisonBody.
      */
     public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
         this.eagerLoadingOfProperties = eagerLoadingOfProperties;
@@ -1576,9 +1598,10 @@ public class JmsConfiguration implements Cloneable {
         if (isDisableReplyTo()) {
             listener.setDisableReplyTo(true);
         }
-        if (isEagerLoadingOfProperties()) {
-            listener.setEagerLoadingOfProperties(true);
+        if (!"false".equals(eagerPoisonBody)) {
+            listener.setEagerPoisonBody(eagerPoisonBody);
         }
+        listener.setEagerLoadingOfProperties(eagerLoadingOfProperties);
         if (getReplyTo() != null) {
             listener.setReplyToDestination(getReplyTo());
         }

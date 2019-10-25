@@ -38,20 +38,15 @@ public class JettyRestProducerGetTest extends BaseJettyTest {
                 // configure to use localhost with the given port
                 restConfiguration().component("jetty").producerComponent("http").host("localhost").port(getPort());
 
-                from("direct:start")
-                        .to("rest:get:users/{id}/basic");
+                from("direct:start").to("rest:get:users/{id}/basic");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}/basic")
-                        .route()
-                        .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
-                        });
+                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        exchange.getOut().setBody(id + ";Donald Duck");
+                    }
+                });
             }
         };
     }

@@ -1,7 +1,7 @@
 [[service-component]]
 = Service Component
 
-*Available as of Camel version 2.22*
+*Since Camel 2.22*
 
 
 == Using the service endpoint

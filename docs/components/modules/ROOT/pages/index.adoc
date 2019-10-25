@@ -20,12 +20,6 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:amqp-component.adoc[AMQP] (camel-amqp) | 1.2 | Messaging with AMQP protocol using Apache QPid Client.
 
-| xref:flink-component.adoc[Apache Flink] (camel-flink) | 2.18 | The flink component can be used to send DataSet jobs to Apache Flink cluster.
-
-| xref:pulsar-component.adoc[Apache Pulsar] (camel-pulsar) | 2.24 | Camel Apache Pulsar Component
-
-| xref:spark-component.adoc[Apache Spark] (camel-spark) | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
-
 | xref:apns-component.adoc[APNS] (camel-apns) | 2.8 | For sending notifications to Apple iOS devices.
 
 | xref:as2-component.adoc[AS2] (camel-as2) | 2.22 | Component used for transferring data secure and reliable over the internet using the AS2 protocol.
@@ -134,7 +128,7 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:controlbus-component.adoc[Control Bus] (camel-controlbus) | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
 
-| xref:corda-component.adoc[corda] (camel-corda) | 2.23 | The corda component uses the corda-rpc to interact with corda nodes.
+| xref:corda-component.adoc[Corda] (camel-corda) | 2.23 | The corda component uses the corda-rpc to interact with corda nodes.
 
 | xref:couchbase-component.adoc[Couchbase] (camel-couchbase) | 2.19 | Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
 
@@ -180,7 +174,7 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:elsql-component.adoc[ElSQL] (camel-elsql) | 2.16 | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
 
-| xref:etcd-component.adoc[etcd] (camel-etcd) | 2.18 | The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
+| xref:etcd-component.adoc[Etcd] (camel-etcd) | 2.18 | The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
 
 | xref:exec-component.adoc[Exec] (camel-exec) | 2.3 | The exec component can be used to execute OS system commands.
 
@@ -193,6 +187,8 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 | xref:file-watch-component.adoc[file-watch] (camel-file-watch) | 3.0 | The file-watch is used to monitor file events in directory using java.nio.file.WatchService
 
 | xref:flatpack-component.adoc[Flatpack] (camel-flatpack) | 1.4 | The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
+
+| xref:flink-component.adoc[Flink] (camel-flink) | 2.18 | The flink component can be used to send DataSet jobs to Apache Flink cluster.
 
 | xref:fop-component.adoc[FOP] (camel-fop) | 2.10 | The fop component allows you to render a message into different output formats using Apache FOP.
 
@@ -233,6 +229,8 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 | xref:gora-component.adoc[Gora] (camel-gora) | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 
 | xref:grape-component.adoc[Grape] (camel-grape) | 2.16 | The grape component allows you to fetch, load and manage additional jars when CamelContext is running.
+
+| xref:graphql-component.adoc[GraphQL] (camel-graphql) | 3.0 | A Camel GraphQL Component
 
 | xref:grpc-component.adoc[gRPC] (camel-grpc) | 2.19 | The gRPC component allows to call and expose remote procedures via HTTP/2 with protobuf dataformat
 
@@ -400,8 +398,6 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:mongodb-gridfs-component.adoc[MongoDB GridFS] (camel-mongodb-gridfs) | 2.18 | Component for working with MongoDB GridFS.
 
-| xref:mqtt-component.adoc[MQTT] (camel-mqtt) | 2.10 | Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
-
 | xref:msv-component.adoc[MSV] (camel-msv) | 1.1 | Validates the payload of a message using the MSV Library.
 
 | xref:mustache-component.adoc[Mustache] (camel-mustache) | 2.12 | Transforms the message using a Mustache template.
@@ -464,6 +460,8 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:pubnub-component.adoc[PubNub] (camel-pubnub) | 2.19 | To send and receive messages to PubNub data stream network for connected devices.
 
+| xref:pulsar-component.adoc[Pulsar] (camel-pulsar) | 2.24 | Camel Apache Pulsar Component
+
 | xref:quartz-component.adoc[Quartz] (camel-quartz) | 2.12 | Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
 
 | xref:quickfix-component.adoc[QuickFix] (camel-quickfix) | 2.1 | The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
@@ -523,6 +521,8 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 | xref:solr-component.adoc[Solr] (camel-solr) | 2.9 | The solr component allows you to interface with an Apache Lucene Solr server.
 
 | xref:soroush-component.adoc[Soroush] (camel-soroush) | 3.0 | To integrate with the Soroush chat bot.
+
+| xref:spark-component.adoc[Spark] (camel-spark) | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
 
 | xref:spark-rest-component.adoc[Spark Rest] (camel-spark-rest) | 2.14 | The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
 
@@ -762,13 +762,15 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 38 in 38 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Component | Since | Description
 
 | xref:attachments.adoc[Attachments] (camel-attachments) | 3.0 | Java Attachments support for Camel Message
+
+| xref:aws-xray.adoc[AWS XRay] (camel-aws-xray) | 2.21 | Distributed tracing using AWS XRay
 
 | xref:blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
 
@@ -784,7 +786,7 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 
 | xref:leveldb.adoc[LevelDB] (camel-leveldb) | 2.10 | Using LevelDB as persistent EIP store
 
-| xref:lra.adoc[Lra] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
+| xref:lra.adoc[LRA] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
 
 | xref:microprofile-config.adoc[Microprofile Config] (camel-microprofile-config) | 3.0 | Bridging Eclipse MicroProfile Config with Camel properties
 
@@ -792,13 +794,13 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 
 | xref:opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
-| xref:reactive-executor-vertx.adoc[Reactive Executor Vertx] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert X
+| xref:reactive-executor-vertx.adoc[Reactive Executor Vert.x] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert.x
 
 | xref:reactor.adoc[Reactor] (camel-reactor) | 2.20 | Reactor based back-end for Camel's reactive streams component
 
 | xref:ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
-| xref:rxjava.adoc[Rxjava] (camel-rxjava) | 2.22 | RxJava based back-end for Camel's reactive streams component
+| xref:rxjava.adoc[RxJava] (camel-rxjava) | 2.22 | RxJava based back-end for Camel's reactive streams component
 
 | xref:shiro.adoc[Shiro] (camel-shiro) | 2.5 | Security using Shiro
 
@@ -838,7 +840,7 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (0 deprecated)
 
 | xref:testcontainers-spring.adoc[Testcontainers Spring] (camel-testcontainers-spring) | 2.22 | Camel unit testing with Spring and testcontainers
 
-| xref:aws-xray.adoc[XRay] (camel-aws-xray) | 2.21 | Distributed tracing using AWS XRay
+| xref:testcontainers-spring-junit5.adoc[Testcontainers Spring Junit5] (camel-testcontainers-spring-junit5) | 3.0 | Camel unit testing with Spring, testcontainers and JUnit 5
 
 | xref:zipkin.adoc[Zipkin] (camel-zipkin) | 2.18 | Distributed message tracing using Zipkin
 |===

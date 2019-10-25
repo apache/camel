@@ -23,7 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-
 /**
  * Unit test for wiki demonstration.
  */
@@ -41,7 +40,7 @@ public class ExplicitJettyAsyncRouteTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                //async and continuation is not compatible!
+                // async and continuation is not compatible!
                 from("jetty:http://localhost:{{port}}/myapp/myservice?async=true&useContinuation=false").process(new MyBookService());
             }
         };
@@ -53,7 +52,8 @@ public class ExplicitJettyAsyncRouteTest extends BaseJettyTest {
             // just get the body as a string
             String body = exchange.getIn().getBody(String.class);
 
-            // we have access to the HttpServletRequest here and we can grab it if we need it
+            // we have access to the HttpServletRequest here and we can grab it
+            // if we need it
             HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
             assertNotNull(req);
 

@@ -2,7 +2,7 @@
 = OPC UA Server Component
 :page-source: components/camel-milo/src/main/docs/milo-server-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The Milo Server component provides an OPC UA server using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.

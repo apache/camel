@@ -39,20 +39,18 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("jetty://http://localhost:{{port}}/myserver")
-                    // turn the route to in only as we do not want jetty to wait for the response
+                    // turn the route to in only as we do not want jetty to wait
+                    // for the response
                     // we can do this using the wiretap EIP pattern
                     .wireTap("direct:continue")
                     // and then construct a canned empty response
                     .transform(constant("OK"));
 
-                from("direct:continue")
-                        .delay(1500)
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                route += "B";
-                            }
-                        }).
-                        to("mock:result");
+                from("direct:continue").delay(1500).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        route += "B";
+                    }
+                }).to("mock:result");
                 // END SNIPPET: e1
             }
         });
@@ -79,22 +77,20 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/myserver")
-                    // turn the route to in only as we do not want jetty to wait for the response
-                    // we can do this by changing the MEP and sending to a seda endpoint to spin off
+                    // turn the route to in only as we do not want jetty to wait
+                    // for the response
+                    // we can do this by changing the MEP and sending to a seda
+                    // endpoint to spin off
                     // a new thread continue doing the routing
-                    .setExchangePattern(ExchangePattern.InOnly)
-                    .to("seda:continue")
+                    .setExchangePattern(ExchangePattern.InOnly).to("seda:continue")
                     // and then construct a canned empty response
                     .transform(constant("OK"));
 
-                from("seda:continue")
-                        .delay(1000)
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                route += "B";
-                            }
-                        }).
-                        to("mock:result");
+                from("seda:continue").delay(1000).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        route += "B";
+                    }
+                }).to("mock:result");
             }
         });
         context.start();

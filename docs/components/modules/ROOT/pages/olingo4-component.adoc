@@ -2,7 +2,7 @@
 = Olingo4 Component
 :page-source: components/camel-olingo4/camel-olingo4-component/src/main/docs/olingo4-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The Olingo4 component utilizes http://olingo.apache.org/[Apache Olingo]
 version 4.0 APIs to interact with OData 4.0 compliant service.

@@ -24,6 +24,7 @@ import java.util.Map;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -58,6 +59,11 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
             InboundStreamHttpResponse streamHttpResponse = (InboundStreamHttpResponse) message;
             response = streamHttpResponse.getHttpResponse();
             answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(streamHttpResponse, exchange, producer.getConfiguration());
+        }
+
+        if (response.status().equals(HttpResponseStatus.CONTINUE)) {
+            // need to continue to send the body and will ignore this response
+            exchange.setProperty(NettyConstants.NETTY_CLIENT_CONTINUE, true);
         }
         
         if (!HttpUtil.isKeepAlive(response)) {

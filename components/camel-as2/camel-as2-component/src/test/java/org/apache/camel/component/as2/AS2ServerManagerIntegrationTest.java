@@ -48,6 +48,7 @@ import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
+import org.apache.camel.component.as2.internal.AS2Constants;
 import org.apache.camel.component.as2.internal.AS2ServerManagerApiMethod;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.http.HttpEntity;
@@ -162,9 +163,9 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         Exchange exchange = exchanges.get(0);
         Message message = exchange.getIn();
         assertNotNull("exchange message", message);
-        BasicHttpContext context = message.getBody(BasicHttpContext.class);
-        assertNotNull("context", context);
-        HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+
+        HttpCoreContext coreContext = exchange.getProperty(AS2Constants.AS2_INTERCHANGE, HttpCoreContext.class);
+        assertNotNull("context", coreContext);
         HttpRequest request = coreContext.getRequest();
         assertNotNull("request", request);
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -182,7 +183,6 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
         assertTrue("Unexpected content type for message", request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
 
-
         assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
         HttpEntity entity = ((BasicHttpEntityEnclosingRequest)request).getEntity();
         assertNotNull("Request does not contain entity", entity);
@@ -193,6 +193,8 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         String rcvdMessage = ediEntity.getEdiMessage().replaceAll("\r", "");
         assertEquals("EDI message does not match", EDI_MESSAGE, rcvdMessage);
 
+        String rcvdMessageFromBody = message.getBody(String.class);
+        assertEquals("EDI message does not match", EDI_MESSAGE.replaceAll("[\n\r]", ""), rcvdMessageFromBody.replaceAll("[\n\r]", ""));
     }
 
     @Test
@@ -219,9 +221,8 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         Exchange exchange = exchanges.get(0);
         Message message = exchange.getIn();
         assertNotNull("exchange message", message);
-        BasicHttpContext context = message.getBody(BasicHttpContext.class);
-        assertNotNull("context", context);
-        HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+        HttpCoreContext coreContext = exchange.getProperty(AS2Constants.AS2_INTERCHANGE, HttpCoreContext.class);
+        assertNotNull("context", coreContext);
         HttpRequest request = coreContext.getRequest();
         assertNotNull("request", request);
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -262,6 +263,9 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
         // Validate Signature
         assertTrue("Signature is invalid", signedEntity.isValid());
+
+        String rcvdMessage = message.getBody(String.class);
+        assertEquals("Unexpected content for enveloped mime part", EDI_MESSAGE.replaceAll("[\n\r]", ""), rcvdMessage.replaceAll("[\n\r]", ""));
     }
     
     @Test
@@ -286,9 +290,8 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         Exchange exchange = exchanges.get(0);
         Message message = exchange.getIn();
         assertNotNull("exchange message", message);
-        BasicHttpContext context = message.getBody(BasicHttpContext.class);
-        assertNotNull("context", context);
-        HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+        HttpCoreContext coreContext = exchange.getProperty(AS2Constants.AS2_INTERCHANGE, HttpCoreContext.class);
+        assertNotNull("context", coreContext);
         HttpRequest request = coreContext.getRequest();
         assertNotNull("request", request);
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -306,7 +309,6 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
         assertTrue("Unexpected content type for message", request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
 
-
         assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
         HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
         assertNotNull("Request does not contain entity", entity);
@@ -323,6 +325,9 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         assertFalse("Enveloped mime type set as main body of request", ediEntity.isMainBody());
         assertEquals("Unexpected content for enveloped mime part", EDI_MESSAGE.replaceAll("[\n\r]", ""),
                 ediEntity.getEdiMessage().replaceAll("[\n\r]", ""));
+
+        String rcvdMessage = message.getBody(String.class);
+        assertEquals("Unexpected content for enveloped mime part", EDI_MESSAGE.replaceAll("[\n\r]", ""), rcvdMessage.replaceAll("[\n\r]", ""));
 
     }
 

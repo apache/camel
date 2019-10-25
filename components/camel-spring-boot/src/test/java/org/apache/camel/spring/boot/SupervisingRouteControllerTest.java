@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.boot;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,6 +34,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.awaitility.Awaitility.await;
+
 @DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -42,6 +46,7 @@ import org.springframework.test.context.junit4.SpringRunner;
     },
     properties = {
         "camel.springboot.xml-routes = false",
+        "camel.springboot.xml-rests = false",
         "camel.springboot.main-run-controller = true",
         "camel.supervising.controller.enabled = true",
         "camel.supervising.controller.initial-delay = 2s",
@@ -78,13 +83,18 @@ public class SupervisingRouteControllerTest {
         Assert.assertEquals(Long.MAX_VALUE, bar.getMaxDelay().toMillis());
         Assert.assertEquals(3L, bar.getMaxAttempts().longValue());
 
-        Assert.assertEquals(controller, context.getRoute("foo").getRouteContext().getRouteController());
-        Assert.assertEquals(controller, context.getRoute("bar").getRouteContext().getRouteController());
-        Assert.assertNull(context.getRoute("timer-unmanaged").getRouteContext().getRouteController());
-        Assert.assertNull(context.getRoute("timer-no-autostartup").getRouteContext().getRouteController());
-
         Assert.assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
         Assert.assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("bar"));
+        Assert.assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("timer-no-autostartup"));
+        Assert.assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("jetty"));
+
+        // Wait for the controller to start the routes also unmanaged
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("jetty"));
+            Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("timer-unmanaged"));
+        });
+        Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("jetty"));
+        Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("timer-unmanaged"));
     }
 
     // *************************************

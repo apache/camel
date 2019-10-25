@@ -153,6 +153,7 @@
         <include>org.apache.camel:camel-google-sheets</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-grape</include>
+        <include>org.apache.camel:camel-graphql</include>
         <include>org.apache.camel:camel-grok</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-grpc</include>
@@ -228,7 +229,6 @@
         <include>org.apache.camel:camel-mock</include>
         <include>org.apache.camel:camel-mongodb</include>
         <include>org.apache.camel:camel-mongodb-gridfs</include>
-        <include>org.apache.camel:camel-mqtt</include>
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mustache</include>
         <include>org.apache.camel:camel-mvel</include>
@@ -327,6 +327,7 @@
         <include>org.apache.camel:camel-testcontainers</include>
         <include>org.apache.camel:camel-testcontainers-junit5</include>
         <include>org.apache.camel:camel-testcontainers-spring</include>
+        <include>org.apache.camel:camel-testcontainers-spring-junit5</include>
         <include>org.apache.camel:camel-thrift</include>
         <include>org.apache.camel:camel-tika</include>
         <include>org.apache.camel:camel-timer</include>
@@ -502,6 +503,7 @@
         <include>org.apache.camel:camel-google-sheets-starter</include>
         <include>org.apache.camel:camel-gora-starter</include>
         <include>org.apache.camel:camel-grape-starter</include>
+        <include>org.apache.camel:camel-graphql-starter</include>
         <include>org.apache.camel:camel-grok-starter</include>
         <include>org.apache.camel:camel-groovy-starter</include>
         <include>org.apache.camel:camel-grpc-starter</include>
@@ -574,7 +576,6 @@
         <include>org.apache.camel:camel-mock-starter</include>
         <include>org.apache.camel:camel-mongodb-gridfs-starter</include>
         <include>org.apache.camel:camel-mongodb-starter</include>
-        <include>org.apache.camel:camel-mqtt-starter</include>
         <include>org.apache.camel:camel-msv-starter</include>
         <include>org.apache.camel:camel-mustache-starter</include>
         <include>org.apache.camel:camel-mvel-starter</include>

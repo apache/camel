@@ -44,12 +44,9 @@ public class JettyMuteExceptionTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/foo?muteException=true")
-                        .to("mock:destination")
-                        .throwException(new IllegalArgumentException("Camel cannot do this"));
+                from("jetty:http://localhost:{{port}}/foo?muteException=true").to("mock:destination").throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }
-
 
 }

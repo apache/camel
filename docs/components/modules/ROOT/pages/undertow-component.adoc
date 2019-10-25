@@ -2,7 +2,7 @@
 = Undertow Component
 :page-source: components/camel-undertow/src/main/docs/undertow-component.adoc
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 The Undertow component provides HTTP and WebSocket based endpoints for consuming
 and producing HTTP/WebSocket requests.

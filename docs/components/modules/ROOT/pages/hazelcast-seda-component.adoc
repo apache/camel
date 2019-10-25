@@ -2,7 +2,7 @@
 = Hazelcast SEDA Component
 :page-source: components/camel-hazelcast/src/main/docs/hazelcast-seda-component.adoc
 
-*Available as of Camel version 2.7*
+*Since Camel 2.7*
 
 The http://www.hazelcast.com/[Hazelcast] SEDA component is one of Camel Hazelcast Components which allows you to access Hazelcast BlockingQueue.
 SEDA component differs from the rest components provided. It implements a work-queue in order to support asynchronous SEDA architectures, similar to the core "SEDA" component.

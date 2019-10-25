@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class HttpCharacterEncodingTest extends BaseJettyTest {
-    
+
     @Test
     public void testSendToJetty() throws Exception {
         Exchange exchange = template.send("http://localhost:{{port}}/myapp/myservice", new Processor() {
@@ -31,7 +31,7 @@ public class HttpCharacterEncodingTest extends BaseJettyTest {
                 exchange.getIn().setBody("Hello World Thai Elephant \u0E08");
                 exchange.getIn().setHeader("Content-Type", "text/html; charset=utf-8");
             }
-                                        
+
         });
         // convert the response to a String
         String body = exchange.getOut().getBody(String.class);
@@ -52,10 +52,10 @@ public class HttpCharacterEncodingTest extends BaseJettyTest {
         public void process(Exchange exchange) throws Exception {
             // just get the body as a string
             String body = exchange.getIn().getBody(String.class);
-          
+
             // for unit testing make sure we got right message
             assertEquals("Hello World Thai Elephant \u0E08", body);
-            
+
             // send a html response
             exchange.getOut().setHeader("Content-Type", "text/html; charset=utf-8");
             exchange.getOut().setBody("Response message is Thai Elephant \u0E08");

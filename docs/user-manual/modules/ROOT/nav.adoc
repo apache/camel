@@ -45,6 +45,7 @@
  ** xref:validator.adoc[Validator]
  ** xref:spring-remoting.adoc[Spring Remoting]
  ** xref:hiding-middleware.adoc[Hidding Middleware]
+ ** xref:health-check.adoc[Health Checks]
 * Domain Specific Languages
  ** xref:dsl.adoc[Camel Domain Specific Language]
  ** xref:java-dsl.adoc[Java DSL]

@@ -43,7 +43,7 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
         BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream)answer));
         String line;
         String answerString = "";
-        while ((line  = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             answerString += line;
         }
         assertTrue("Unexpected response: " + answerString, answerString.contains("\"active\":true"));
@@ -70,25 +70,16 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
                 jsondf.setLibrary(JsonLibrary.Jackson);
                 jsondf.setAllowUnmarshallType(true);
                 jsondf.setUnmarshalType(UserPojoEx.class);
-                transformer()
-                    .fromType("json")
-                    .toType(UserPojoEx.class)
-                    .withDataFormat(jsondf);
-                transformer()
-                    .fromType(UserPojoEx.class)
-                    .toType("json")
-                    .withDataFormat(jsondf);
+                transformer().fromType("json").toType(UserPojoEx.class).withDataFormat(jsondf);
+                transformer().fromType(UserPojoEx.class).toType("json").withDataFormat(jsondf);
                 rest("/users/")
                     // REST binding does nothing
-                    .post("new")
-                    .route()
-                        // contract advice converts betweeen JSON and UserPojoEx directly
-                        .inputType(UserPojoEx.class)
-                        .outputType("json")
-                        .process(ex -> {
-                            ex.getIn().getBody(UserPojoEx.class).setActive(true);
-                        })
-                        .to("mock:input");
+                    .post("new").route()
+                    // contract advice converts betweeen JSON and UserPojoEx
+                    // directly
+                    .inputType(UserPojoEx.class).outputType("json").process(ex -> {
+                        ex.getIn().getBody(UserPojoEx.class).setActive(true);
+                    }).to("mock:input");
             }
         };
     }

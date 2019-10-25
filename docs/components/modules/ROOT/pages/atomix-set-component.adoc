@@ -2,7 +2,7 @@
 = Atomix Set Component
 :page-source: components/camel-atomix/src/main/docs/atomix-set-component.adoc
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
 
 The camel Atomix-Set component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/primitives/DistributedSet/[Distributed Set] collection.
 

@@ -2,7 +2,7 @@
 = GitHub Component
 :page-source: components/camel-github/src/main/docs/github-component.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 The GitHub component interacts with the GitHub API by
 encapsulating http://org.eclipse.egit.github.core[egit-github]. It

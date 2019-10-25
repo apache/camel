@@ -34,6 +34,7 @@ public final class NettyConstants {
     public static final String NETTY_SSL_CLIENT_CERT_NOT_AFTER = "CamelNettySSLClientCertNotAfter";
     public static final String NETTY_REQUEST_TIMEOUT = "CamelNettyRequestTimeout";
     public static final String NETTY_CHANNEL = "CamelNettyChannel";
+    public static final String NETTY_CLIENT_CONTINUE = "CamelClientContinue";
 
     private NettyConstants() {
         // Utility class

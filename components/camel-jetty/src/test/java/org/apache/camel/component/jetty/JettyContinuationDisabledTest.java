@@ -42,14 +42,12 @@ public class JettyContinuationDisabledTest extends BaseJettyTest {
                 JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
                 jetty.setUseContinuation(false);
 
-                from("jetty:http://localhost:{{port}}/myservice")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            Thread.sleep(1000);
-                            exchange.getOut().setBody("Bye World");
-                        }
-                    })
-                    .to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Thread.sleep(1000);
+                        exchange.getOut().setBody("Bye World");
+                    }
+                }).to("mock:result");
             }
         };
     }

@@ -263,6 +263,32 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default NettyHttpEndpointConsumerBuilder muteException(
+                boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default NettyHttpEndpointConsumerBuilder muteException(
+                String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * Whether to send back HTTP status code 503 when the consumer has been
          * suspended. If the option is false then the Netty Acceptor is unbound
          * when the consumer is suspended, so clients cannot connect anymore.

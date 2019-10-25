@@ -42,18 +42,14 @@ public class RestJettyPostNotMapHttpMessageHeadersTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use jetty on localhost with the given port
-                //ensure we don't extract key=value pairs from form bodies 
-                //(application/x-www-form-urlencoded)
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
-                    .endpointProperty("mapHttpMessageBody", "false")
+                // ensure we don't extract key=value pairs from form bodies
+                // (application/x-www-form-urlencoded)
+                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json).endpointProperty("mapHttpMessageBody", "false")
                     .endpointProperty("mapHttpMessageHeaders", "false");
-                    
+
                 // use the rest DSL to define the rest services
-                rest("/rest")
-                    .post("/test").produces("application/json")
-                        .to("direct:test");
-                from("direct:test").log("*** ${body}").removeHeaders("Content-Type*")
-                    .setBody().simple("OK");
+                rest("/rest").post("/test").produces("application/json").to("direct:test");
+                from("direct:test").log("*** ${body}").removeHeaders("Content-Type*").setBody().simple("OK");
             }
         };
     }

@@ -1,7 +1,7 @@
 [[ignite-messaging-component]]
 = Ignite Messaging Component
 
-*Available as of Camel version 2.17*
+*Since Camel 2.17*
 
 The Ignite Messaging endpoint is one of camel-ignite endpoints which allows you to send and consume messages from an https://apacheignite.readme.io/docs/messaging[Ignite topic].
 

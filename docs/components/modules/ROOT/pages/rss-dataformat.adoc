@@ -2,7 +2,7 @@
 = RSS DataFormat
 :page-source: components/camel-rss/src/main/docs/rss-dataformat.adoc
 
-*Available as of Camel version 2.1*
+*Since Camel 2.1*
 
 The RSS component ships with an RSS dataformat that can be used to
 convert between String (as XML) and ROME RSS model objects.

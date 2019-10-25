@@ -30,7 +30,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 /**
  * The flink component can be used to send DataSet jobs to Apache Flink cluster.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "flink", title = "Apache Flink", syntax = "flink:endpointType", producerOnly = true, label = "hadoop")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "flink", title = "Flink", syntax = "flink:endpointType", producerOnly = true, label = "hadoop")
 public class FlinkEndpoint extends DefaultEndpoint {
 
     @UriPath

@@ -1,7 +1,7 @@
 [[cql-component]]
 = Cassandra CQL Component
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 http://cassandra.apache.org[Apache Cassandra] is an open source NoSQL
 database designed to handle large amounts on commodity hardware. Like

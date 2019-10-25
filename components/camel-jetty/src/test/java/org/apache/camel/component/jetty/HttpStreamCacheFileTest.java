@@ -73,7 +73,8 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // enable stream caching and use a low threshold so its forced to write to file
+                // enable stream caching and use a low threshold so its forced
+                // to write to file
                 context.getStreamCachingStrategy().setSpoolThreshold(16);
                 context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
                 context.setStreamCaching(true);
@@ -81,18 +82,17 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
                 // use a route so we got an unit of work
                 from("direct:start").to("http://localhost:{{port}}/myserver");
 
-                from("jetty://http://localhost:{{port}}/myserver")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                if (ObjectHelper.isEmpty(body)) {
-                                    exchange.getOut().setBody(responseBody);
-                                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
-                                } else {
-                                    exchange.getOut().setBody("Bye World");
-                                }
-                            }
-                        });
+                from("jetty://http://localhost:{{port}}/myserver").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if (ObjectHelper.isEmpty(body)) {
+                            exchange.getOut().setBody(responseBody);
+                            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+                        } else {
+                            exchange.getOut().setBody("Bye World");
+                        }
+                    }
+                });
             }
         };
     }

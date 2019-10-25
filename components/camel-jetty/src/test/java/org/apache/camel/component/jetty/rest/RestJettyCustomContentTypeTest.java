@@ -36,7 +36,7 @@ public class RestJettyCustomContentTypeTest extends BaseJettyTest {
         assertEquals("application/foobar", out.getOut().getHeader(Exchange.CONTENT_TYPE));
         assertEquals("Some foobar stuff goes here", out.getOut().getBody(String.class));
     }
-    
+
     @Test
     public void testJSon() throws Exception {
         Exchange out = template.request("http://localhost:" + getPort() + "/users/lives", new Processor() {
@@ -57,14 +57,11 @@ public class RestJettyCustomContentTypeTest extends BaseJettyTest {
                 // enable json binding
                 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
 
-                rest("/users/").consumes("application/json").produces("application/json")
-                    .get("blob").to("direct:blob")
-                    .get("lives").to("direct:lives");
+                rest("/users/").consumes("application/json").produces("application/json").get("blob").to("direct:blob").get("lives").to("direct:lives");
 
                 from("direct:blob")
                     // but send back non json data
-                    .setHeader(Exchange.CONTENT_TYPE, constant("application/foobar"))
-                    .transform().constant("Some foobar stuff goes here");
+                    .setHeader(Exchange.CONTENT_TYPE, constant("application/foobar")).transform().constant("Some foobar stuff goes here");
 
                 CountryPojo country = new CountryPojo();
                 country.setIso("EN");

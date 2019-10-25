@@ -1,7 +1,7 @@
 [[flatpack-component]]
 = Flatpack Component
 
-*Available as of Camel version 1.4*
+*Since Camel 1.4*
 
 The Flatpack component supports fixed width and delimited file parsing
 via the http://flatpack.sourceforge.net[FlatPack library]. +

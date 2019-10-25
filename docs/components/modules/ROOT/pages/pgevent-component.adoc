@@ -2,7 +2,7 @@
 = PostgresSQL Event Component
 :page-source: components/camel-pgevent/src/main/docs/pgevent-component.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 This is a component for Apache Camel which allows for
 Producing/Consuming PostgreSQL events related to the LISTEN/NOTIFY

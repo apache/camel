@@ -2,7 +2,7 @@
 = OptaPlanner Component
 :page-source: components/camel-optaplanner/src/main/docs/optaplanner-component.adoc
 
-*Available as of Camel version 2.13*
+*Since Camel 2.13*
 
 The Optaplanner component solves the planning problem contained in a
 message with http://www.optaplanner.org/[OptaPlanner]. +

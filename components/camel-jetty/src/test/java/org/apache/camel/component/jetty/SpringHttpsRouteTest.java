@@ -55,10 +55,9 @@ public class SpringHttpsRouteTest {
     protected Properties originalValues = new Properties();
     protected transient Logger log = LoggerFactory.getLogger(TestSupport.class);
 
-
     @EndpointInject("mock:a")
     MockEndpoint mockEndpoint;
-    
+
     @Produce
     private ProducerTemplate template;
 
@@ -66,7 +65,8 @@ public class SpringHttpsRouteTest {
 
     @Before
     public void setUp() throws Exception {
-        // ensure jsse clients can validate the self signed dummy localhost cert, 
+        // ensure jsse clients can validate the self signed dummy localhost
+        // cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = Thread.currentThread().getContextClassLoader().getResource("jsse/localhost.p12");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.getPath());
@@ -86,9 +86,9 @@ public class SpringHttpsRouteTest {
         for (Object key : originalValues.keySet()) {
             Object value = originalValues.get(key);
             if (NULL_VALUE_MARKER.equals(value)) {
-                System.clearProperty((String) key);
+                System.clearProperty((String)key);
             } else {
-                System.setProperty((String) key, (String) value);
+                System.setProperty((String)key, (String)value);
             }
         }
     }

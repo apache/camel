@@ -1,7 +1,7 @@
 [[jbpm-component]]
 = JBPM Component
 
-*Available as of Camel version 2.6*
+*Since Camel 2.6*
 
 The JBPM component provides integration with Business Process
 Management http://www.jbpm.org/[jBPM]. It uses

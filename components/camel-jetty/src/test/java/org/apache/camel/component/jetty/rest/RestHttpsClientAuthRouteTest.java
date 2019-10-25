@@ -38,7 +38,6 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
     @Produce("direct:start")
     protected ProducerTemplate sender;
 
-
     @Test
     public void testGETClientRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -95,17 +94,12 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                RestConfigurationDefinition restConfig =
-                    restConfiguration("jetty").scheme("https").host("localhost").port(port);
+                RestConfigurationDefinition restConfig = restConfiguration("jetty").scheme("https").host("localhost").port(port);
                 decorateRestConfiguration(restConfig);
 
-                rest("/TestParams")
-                    .get().to("direct:get1")
-                    .post().to("direct:post1");
+                rest("/TestParams").get().to("direct:get1").post().to("direct:post1");
 
-                rest("/TestResource")
-                    .get("/{id}").to("direct:get1")
-                    .post("/{id}").to("direct:post1");
+                rest("/TestResource").get("/{id}").to("direct:get1").post("/{id}").to("direct:post1");
 
                 from("direct:get1").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -123,9 +117,7 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
                     }
                 });
 
-                from("direct:start")
-                    .toF(getClientURI(), port)
-                    .to("mock:result");
+                from("direct:start").toF(getClientURI(), port).to("mock:result");
             }
         };
     }

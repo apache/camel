@@ -2,7 +2,7 @@
 = Spring Batch Component
 :page-source: components/camel-spring-batch/src/main/docs/spring-batch-component.adoc
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
 
 The Spring Batch component and support classes provide integration
 bridge between Camel and http://www.springsource.org/spring-batch[Spring

@@ -25,7 +25,7 @@
 <!--
   =======================================================================
 
-   Copyright (c) 2018 The Apache Software Foundation.
+   Copyright (c) 2019 The Apache Software Foundation.
    All rights reserved.
 
   =======================================================================
@@ -34,14 +34,14 @@
     <created>2008-12-17</created>
     <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
     <name>Apache Camel</name>
-    <homepage rdf:resource="http://camel.apache.org/" />
-    <asfext:pmc rdf:resource="http://camel.apache.org/" />
+    <homepage rdf:resource="https://camel.apache.org/" />
+    <asfext:pmc rdf:resource="https://camel.apache.org/" />
     <shortdesc>Apache Camel is a powerful open source integration library.</shortdesc>
     <description>Apache Camel is a powerful open source integration library based on Enterprise Integration Patterns.
 Rules for Camel's routing engine can be defined in either a Java based DSL or XML.</description>
-    <bug-database rdf:resource="http://issues.apache.org/activemq/browse/CAMEL" />
-    <mailing-list rdf:resource="http://camel.apache.org/mailing-lists.html" />
-    <download-page rdf:resource="http://camel.apache.org/download.html" />
+    <bug-database rdf:resource="https://issues.apache.org/jira/browse/CAMEL" />
+    <mailing-list rdf:resource="https://camel.apache.org/mailing-lists.html" />
+    <download-page rdf:resource="https://camel.apache.org/download.html" />
 
     <programming-language>Java</programming-language>
     <programming-language>XML</programming-language>

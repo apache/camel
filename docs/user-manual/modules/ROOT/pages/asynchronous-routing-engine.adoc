@@ -25,7 +25,6 @@ and producer)
 Request Reply messaging over JMS). *Camel 2.9:*
 (consumer, if option `asyncConsumer=true` is used).
 * xref:components::jms-component.adoc[JMS] *Camel 2.9:* (also consumer)
-* xref:components::mqtt-component.adoc[MQTT] *Camel 2.10.2:* (only producer)
 * NMR (both consumer and producer)
 * xref:components::netty-component.adoc[Netty] only producer (*Camel 2.10:* also consumer)
 * xref:components::seda-component.adoc[SEDA] (both consumer and producer) SEDA was mistakenly

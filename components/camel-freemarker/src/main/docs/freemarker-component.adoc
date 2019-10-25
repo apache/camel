@@ -1,7 +1,7 @@
 [[freemarker-component]]
 = Freemarker Component
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
 
 The *freemarker:* component allows for processing a message using a
 http://freemarker.org/[FreeMarker] template. This can be ideal when

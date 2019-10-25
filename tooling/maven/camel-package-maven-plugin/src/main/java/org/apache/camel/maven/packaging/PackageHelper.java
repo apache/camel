@@ -172,7 +172,8 @@ public final class PackageHelper {
                 || "camel-linkedin".equals(name)
                 || "camel-olingo2".equals(name)
                 || "camel-olingo4".equals(name)
-                || "camel-salesforce".equals(name);
+                || "camel-salesforce".equals(name)
+                || "camel-debezium".equals(name);
             if (special || special2) {
                 return false;
             }
