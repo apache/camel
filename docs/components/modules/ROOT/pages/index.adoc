@@ -20,8 +20,6 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:amqp-component.adoc[AMQP] (camel-amqp) | 1.2 | Messaging with AMQP protocol using Apache QPid Client.
 
-| xref:pulsar-component.adoc[Apache Pulsar] (camel-pulsar) | 2.24 | Camel Apache Pulsar Component
-
 | xref:spark-component.adoc[Apache Spark] (camel-spark) | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
 
 | xref:apns-component.adoc[APNS] (camel-apns) | 2.8 | For sending notifications to Apple iOS devices.
@@ -463,6 +461,8 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 | xref:lpr-component.adoc[Printer] (camel-printer) | 2.1 | The printer component is used for sending messages to printers as print jobs.
 
 | xref:pubnub-component.adoc[PubNub] (camel-pubnub) | 2.19 | To send and receive messages to PubNub data stream network for connected devices.
+
+| xref:pulsar-component.adoc[Pulsar] (camel-pulsar) | 2.24 | Camel Apache Pulsar Component
 
 | xref:quartz-component.adoc[Quartz] (camel-quartz) | 2.12 | Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
 

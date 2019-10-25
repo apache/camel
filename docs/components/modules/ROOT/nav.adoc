@@ -276,7 +276,7 @@
 * xref:lpr-component.adoc[Printer Component]
 * xref:protobuf-dataformat.adoc[Protobuf DataFormat]
 * xref:pubnub-component.adoc[PubNub Component]
-* xref:pulsar-component.adoc[Apache Pulsar Component]
+* xref:pulsar-component.adoc[Pulsar Component]
 * xref:quartz-component.adoc[Quartz Component]
 * xref:quickfix-component.adoc[QuickFix Component]
 * xref:rabbitmq-component.adoc[RabbitMQ Component]
