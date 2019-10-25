@@ -32,8 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hdfs.HdfsTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -269,7 +268,7 @@ public class HdfsConsumerTest extends HdfsTestSupport {
         });
         ScheduledExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(null, "unitTestPool", 1);
         DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler(pool);
-        ((JndiRegistry)context.getRegistry()).bind("myScheduler", scheduler);
+        context.getRegistry().bind("myScheduler", scheduler);
         context.start();
 
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
