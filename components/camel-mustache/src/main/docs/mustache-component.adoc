@@ -203,7 +203,7 @@ confirmation email. The email template is laid out in Mustache as:
 
 [source,java]
 -------------------------------------------------
-Dear {{headers.lastName}}}, {{headers.firstName}}
+Dear {{headers.lastName}}, {{headers.firstName}}
 
 Thanks for the order of {{headers.item}}.
 
