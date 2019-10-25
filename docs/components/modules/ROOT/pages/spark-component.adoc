@@ -1,8 +1,9 @@
-[[spark-component]]
-= Apache Spark Component
+= Spark Component
 :page-source: components/camel-spark/src/main/docs/spark-component.adoc
 
 *Since Camel 2.17*
+*Since Camel 2.17*
+
 
 This documentation page covers the http://spark.apache.org/[Apache
 Spark] component for the Apache Camel. The main purpose of the Spark
@@ -53,7 +54,7 @@ spark:{rdd|dataframe|hive}
 
 
 // component options: START
-The Apache Spark component supports 3 options, which are listed below.
+The Spark component supports 3 options, which are listed below.
 
 
 
@@ -70,7 +71,7 @@ The Apache Spark component supports 3 options, which are listed below.
 
 
 // endpoint options: START
-The Apache Spark endpoint is configured using URI syntax:
+The Spark endpoint is configured using URI syntax:
 
 ----
 spark:endpointType
@@ -429,4 +430,3 @@ Dataset<Row> cars(HiveContext hiveContext) {
     return jsonCars;
 }
 ------------------------------------------------------------------------
-

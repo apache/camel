@@ -316,7 +316,7 @@
 * xref:solr-component.adoc[Solr Component]
 * xref:soroush-component.adoc[Soroush Component]
 * xref:spark-rest-component.adoc[Spark Rest Component]
-* xref:spark-component.adoc[Apache Spark Component]
+* xref:spark-component.adoc[Spark Component]
 * xref:splunk-component.adoc[Splunk Component]
 * xref:spring-batch-component.adoc[Spring Batch Component]
 * xref:spring-boot.adoc[Spring Boot]
