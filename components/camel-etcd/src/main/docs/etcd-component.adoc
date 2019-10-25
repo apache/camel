@@ -1,6 +1,8 @@
+[[etcd-component]]
 = Etcd Component
 
 *Since Camel 2.18*
+
 *Since Camel 2.18*
 
 
