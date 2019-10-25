@@ -762,7 +762,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 38 in 38 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 39 in 39 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -775,6 +775,8 @@ Number of Miscellaneous Components: 38 in 38 JAR artifacts (0 deprecated)
 | xref:blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
 
 | xref:cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
+
+| xref:consul.adoc[Consul] (camel-consul) |  | Camel Consul support
 
 | xref:cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
 

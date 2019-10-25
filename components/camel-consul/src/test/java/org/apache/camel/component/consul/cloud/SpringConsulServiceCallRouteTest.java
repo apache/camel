@@ -31,9 +31,9 @@ import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.test.testcontainers.spring.ContainerAwareSpringTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.testcontainers.spring.junit5.ContainerAwareSpringTestSupport;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 
 public abstract class SpringConsulServiceCallRouteTest extends ContainerAwareSpringTestSupport {
@@ -130,7 +130,7 @@ public abstract class SpringConsulServiceCallRouteTest extends ContainerAwareSpr
     protected List<DefaultServiceCallProcessor> findServiceCallProcessors() {
         Route route = context().getRoute("scall");
 
-        Assert.assertNotNull("ServiceCall Route should be present", route);
+        Assertions.assertNotNull(route, "ServiceCall Route should be present");
 
         return findServiceCallProcessors(new ArrayList<>(), route.navigate());
     }
