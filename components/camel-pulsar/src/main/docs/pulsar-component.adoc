@@ -1,6 +1,8 @@
+[[pulsar-component]]
 = Pulsar Component
 
 *Since Camel 2.24*
+
 *Since Camel 2.24*
 
 

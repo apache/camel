@@ -20,8 +20,6 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 
 | xref:amqp-component.adoc[AMQP] (camel-amqp) | 1.2 | Messaging with AMQP protocol using Apache QPid Client.
 
-| xref:spark-component.adoc[Apache Spark] (camel-spark) | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
-
 | xref:apns-component.adoc[APNS] (camel-apns) | 2.8 | For sending notifications to Apple iOS devices.
 
 | xref:as2-component.adoc[AS2] (camel-as2) | 2.22 | Component used for transferring data secure and reliable over the internet using the AS2 protocol.
@@ -523,6 +521,8 @@ Number of Components: 299 in 237 JAR artifacts (0 deprecated)
 | xref:solr-component.adoc[Solr] (camel-solr) | 2.9 | The solr component allows you to interface with an Apache Lucene Solr server.
 
 | xref:soroush-component.adoc[Soroush] (camel-soroush) | 3.0 | To integrate with the Soroush chat bot.
+
+| xref:spark-component.adoc[Spark] (camel-spark) | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
 
 | xref:spark-rest-component.adoc[Spark Rest] (camel-spark-rest) | 2.14 | The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
 

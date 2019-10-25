@@ -1,7 +1,9 @@
+[[pulsar-component]]
 = Pulsar Component
 :page-source: components/camel-pulsar/src/main/docs/pulsar-component.adoc
 
 *Since Camel 2.24*
+
 *Since Camel 2.24*
 
 
