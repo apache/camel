@@ -23,6 +23,7 @@ import java.util.Map;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -45,6 +46,12 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
     @Override
     protected Message getResponseMessage(Exchange exchange, ChannelHandlerContext ctx, Object message) throws Exception {
         FullHttpResponse response = (FullHttpResponse) message;
+
+        if (response.status().equals(HttpResponseStatus.CONTINUE)) {
+            // need to continue to send the body and will ignore this response
+            exchange.setProperty(NettyConstants.NETTY_CLIENT_CONTINUE, true);
+        }
+
         if (!HttpUtil.isKeepAlive(response)) {
             // just want to make sure we close the channel if the keepAlive is not true
             exchange.setProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);

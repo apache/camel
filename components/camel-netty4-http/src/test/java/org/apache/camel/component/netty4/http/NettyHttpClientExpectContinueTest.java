@@ -19,10 +19,8 @@ package org.apache.camel.component.netty4.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("TODO Fix it, need to send the response back")
 public class NettyHttpClientExpectContinueTest extends BaseNettyTest {
 
     @Test
