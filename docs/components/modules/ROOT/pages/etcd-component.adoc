@@ -1,7 +1,9 @@
+[[etcd-component]]
 = Etcd Component
 :page-source: components/camel-etcd/src/main/docs/etcd-component.adoc
 
 *Since Camel 2.18*
+
 *Since Camel 2.18*
 
 
