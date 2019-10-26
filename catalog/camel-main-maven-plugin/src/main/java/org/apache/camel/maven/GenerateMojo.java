@@ -38,7 +38,6 @@ import org.apache.camel.maven.model.AutowireData;
 import org.apache.camel.maven.model.SpringBootGroupData;
 import org.apache.camel.maven.model.SpringBootPropertyData;
 import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;

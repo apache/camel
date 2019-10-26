@@ -20,7 +20,6 @@ import java.util.List;
 
 import io.atomix.AtomixReplica;
 import io.atomix.catalyst.transport.Address;
-import io.atomix.catalyst.transport.Transport;
 import io.atomix.copycat.server.storage.StorageLevel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;

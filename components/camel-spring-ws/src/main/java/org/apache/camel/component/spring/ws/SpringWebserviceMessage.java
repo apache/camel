@@ -17,7 +17,6 @@
 package org.apache.camel.component.spring.ws;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultMessage;
 import org.springframework.ws.WebServiceMessage;
 

@@ -432,5 +432,5 @@ public class TradeExecutor {
         public double getBid(String symbol) {
             return defaultMarketPrice;
         }
-    };
+    }
 }

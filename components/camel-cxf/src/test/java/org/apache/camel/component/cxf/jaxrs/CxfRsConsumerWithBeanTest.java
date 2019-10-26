@@ -45,7 +45,7 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
             public void configure() {
                 from(CXF_RS_ENDPOINT_URI).to("bean://service?method=invoke(${body[0]}, ${body[1]})");
                 from(CXF_RS_ENDPOINT_URI_2).bean(ServiceUtil.class, "invoke(${body[0]}, ${body[1]})");
-            };
+            }
         };
     }
 

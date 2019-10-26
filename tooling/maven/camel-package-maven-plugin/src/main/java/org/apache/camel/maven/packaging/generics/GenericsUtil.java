@@ -589,7 +589,7 @@ public final class GenericsUtil {
     }
 
     public static Set<Type> getDirectTypeClosure(final Type type, final Type actualType) {
-        Set<Type> typeClosure = new HashSet<Type>();
+        Set<Type> typeClosure = new HashSet<>();
         typeClosure.add(Object.class);
         fillTypeHierarchy(typeClosure, type, actualType);
         return typeClosure;
@@ -611,7 +611,7 @@ public final class GenericsUtil {
     }
 
     private static Collection<TypeVariable<?>> newSeenList() {
-        return new ArrayList<TypeVariable<?>>();
+        return new ArrayList<>();
     }
 
     public static boolean hasTypeParameters(Type type) {
@@ -684,7 +684,7 @@ public final class GenericsUtil {
     }
 
     private static Class<?>[] getClassTypes(Class<?>[] rawTypes) {
-        List<Class<?>> classTypes = new ArrayList<Class<?>>();
+        List<Class<?>> classTypes = new ArrayList<>();
         for (Class<?> rawType : rawTypes) {
             if (!rawType.isInterface()) {
                 classTypes.add(rawType);

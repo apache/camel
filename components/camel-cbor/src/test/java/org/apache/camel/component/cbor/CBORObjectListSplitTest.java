@@ -38,7 +38,7 @@ public class CBORObjectListSplitTest extends CamelTestSupport {
         DummyObject d2 = new DummyObject();
         d2.setDummy("value2");
         
-        List<DummyObject> list = new ArrayList<DummyObject>();
+        List<DummyObject> list = new ArrayList<>();
         list.add(d1);
         list.add(d2);
 

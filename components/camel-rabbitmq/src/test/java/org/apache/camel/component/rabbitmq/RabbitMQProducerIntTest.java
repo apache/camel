@@ -122,8 +122,8 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     @Test
     public void producedMessageWithNotNullHeaders() throws InterruptedException, IOException, TimeoutException {
         final List<String> received = new ArrayList<>();
-        final Map<String, Object> receivedHeaders = new HashMap<String, Object>();
-        Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> receivedHeaders = new HashMap<>();
+        Map<String, Object> headers = new HashMap<>();
         
         headers.put(RabbitMQConstants.EXCHANGE_NAME, EXCHANGE);
         headers.put(CUSTOM_HEADER, CUSTOM_HEADER.toLowerCase());
@@ -138,8 +138,8 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     @Test
     public void producedMessageAllowNullHeaders() throws InterruptedException, IOException, TimeoutException {
         final List<String> received = new ArrayList<>();
-        final Map<String, Object> receivedHeaders = new HashMap<String, Object>();
-        Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> receivedHeaders = new HashMap<>();
+        Map<String, Object> headers = new HashMap<>();
         
         headers.put(RabbitMQConstants.EXCHANGE_NAME, null);
         headers.put(CUSTOM_HEADER, null);
@@ -231,7 +231,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         ArrayPopulatingConsumer(final List<String> received) {
             super(RabbitMQProducerIntTest.this.channel);
             this.received = received;
-            receivedHeaders = new HashMap<String, Object>();
+            receivedHeaders = new HashMap<>();
         }
         
         ArrayPopulatingConsumer(final List<String> received, Map<String, Object> receivedHeaders) {

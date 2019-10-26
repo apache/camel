@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
 import static org.apache.camel.component.corda.CordaConstants.STATE_MACHINE_FEED;
-import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK_BY;
 
 @Ignore("This integration test requires a locally running corda node such cordapp-template-java")
 public class CordaConsumerStateMachineFeedTest extends CordaConsumerTestSupport {

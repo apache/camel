@@ -43,7 +43,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.Metadata;
@@ -1236,7 +1236,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             try {
                 return latch.await(0, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                throw RuntimeExchangeException.wrapRuntimeException(e);
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         } else {
             return true;

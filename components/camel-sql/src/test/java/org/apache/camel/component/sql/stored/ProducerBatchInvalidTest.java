@@ -17,7 +17,6 @@
 package org.apache.camel.component.sql.stored;
 
 import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.PropertyBindingException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;

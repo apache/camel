@@ -18,10 +18,8 @@ package org.apache.camel.management;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Service;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;

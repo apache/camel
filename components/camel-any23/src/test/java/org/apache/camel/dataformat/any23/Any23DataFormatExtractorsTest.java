@@ -58,9 +58,9 @@ public class Any23DataFormatExtractorsTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                Map<String, String> conf = new HashMap<String, String>();
+                Map<String, String> conf = new HashMap<>();
                 conf.put("any23.extraction.metadata.nesting", "off");
-                List<String> extc = new ArrayList<String>();
+                List<String> extc = new ArrayList<>();
                 extc.add("html-head-title");
                 from("direct:start").unmarshal().any23(baseURI, Any23Type.TURTLE, conf, extc).to("mock:result");
             }

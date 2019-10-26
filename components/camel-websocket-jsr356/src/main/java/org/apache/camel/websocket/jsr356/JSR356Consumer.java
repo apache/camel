@@ -43,7 +43,7 @@ public class JSR356Consumer extends DefaultConsumer {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
         });
-    };;
+    };
 
     JSR356Consumer(final JSR356Endpoint jsr356Endpoint, final Processor processor, final int sessionCount) {
         super(jsr356Endpoint, processor);

@@ -17,8 +17,6 @@
 package org.apache.camel.component.milo.client;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.HashSet;
 import java.util.Set;

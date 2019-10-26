@@ -16,17 +16,13 @@
  */
 package org.apache.camel.parser.xml;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.camel.parser.RestDslParser;
 import org.apache.camel.parser.XmlRestDslParser;
 import org.apache.camel.parser.model.RestConfigurationDetails;
 import org.apache.camel.parser.model.RestServiceDetails;
-import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

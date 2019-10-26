@@ -21,7 +21,6 @@ import java.util.Properties;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelHelper;
-import org.apache.camel.spi.PropertiesComponent;
 import org.junit.Test;
 
 /**

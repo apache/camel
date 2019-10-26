@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.docker.consumer;
 
-import java.util.Date;
-
 import com.github.dockerjava.api.command.EventsCmd;
 import com.github.dockerjava.api.model.Event;
 import com.github.dockerjava.core.command.EventsResultCallback;

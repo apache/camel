@@ -17,7 +17,6 @@
 package org.apache.camel.component.telegram;
 
 import java.time.Instant;
-import java.util.Date;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;

@@ -76,6 +76,6 @@ public final class UndertowConstants {
     public static final String WSS_PROTOCOL = "wss";
 
     private UndertowConstants() {
-    };
+    }
 
 }

@@ -31,7 +31,6 @@ import java.util.stream.LongStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
 public class UndertowHttpStreamingTest extends BaseUndertowTest {

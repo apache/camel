@@ -234,7 +234,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     protected void injectBindToRegistryMethods(final Object bean, final String beanName) {
         // sort the methods so the simplest are used first
 
-        final List<Method> methods = new ArrayList<Method>();
+        final List<Method> methods = new ArrayList<>();
         ReflectionHelper.doWithMethods(bean.getClass(), method -> {
             BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
             if (bind != null) {

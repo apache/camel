@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.debezium.configuration;
 
+import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
 import io.debezium.connector.mysql.MySqlConnector;
 import io.debezium.connector.mysql.MySqlConnectorConfig;
@@ -40,7 +41,7 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("test_config", dbzMysqlConfigurations.getString(EmbeddedEngine.ENGINE_NAME));
         assertEquals("test_user", dbzMysqlConfigurations.getString(MySqlConnectorConfig.USER));
         assertTrue(dbzMysqlConfigurations.getBoolean(MySqlConnectorConfig.INCLUDE_SQL_QUERY));
-        assertEquals(1212, dbzMysqlConfigurations.getInteger(MySqlConnectorConfig.MAX_QUEUE_SIZE));
+        assertEquals(1212, dbzMysqlConfigurations.getInteger(CommonConnectorConfig.MAX_QUEUE_SIZE));
         assertEquals(30000,
                 dbzMysqlConfigurations.getLong(MySqlConnectorConfig.CONNECTION_TIMEOUT_MS));
         assertEquals(MySqlConnector.class.getName(), dbzMysqlConfigurations.getString(EmbeddedEngine.CONNECTOR_CLASS));

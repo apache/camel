@@ -41,7 +41,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.jms.core.JmsTemplate;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -82,7 +81,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                     }
                 });
         }
-    };
+    }
 
     public static class SingleNodeRouteBuilder extends RouteBuilder {
         @Override
@@ -94,7 +93,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 }
             });
         }
-    };
+    }
 
     public static class MultiNodeRouteBuilder extends RouteBuilder {
         @Override
@@ -107,7 +106,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 }
             });
         }
-    };
+    }
 
     public static class MultiNodeReplyToRouteBuilder extends RouteBuilder {
         @Override
@@ -124,7 +123,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 }
             });
         }
-    };
+    }
 
     public static class MultiNodeDiffCompRouteBuilder extends RouteBuilder {
         @Override
@@ -137,7 +136,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
                 }
             });
         }
-    };
+    }
 
     public static class ContextBuilderMessageID implements ContextBuilder {
         @Override
@@ -150,7 +149,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             context.addComponent(componentName, jmsComponent);
             return context;
         }
-    };
+    }
 
     protected static void init() {
         if (inited.compareAndSet(false, true)) {

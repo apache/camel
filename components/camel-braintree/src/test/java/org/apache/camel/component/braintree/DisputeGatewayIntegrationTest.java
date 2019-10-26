@@ -83,7 +83,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         assertEquals(Dispute.Status.OPEN, createdDispute.getStatus());
         DocumentUpload uploadedDocument = uploadDocument();
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelBraintree.disputeId", createdDispute.getId());
         headers.put("CamelBraintree.documentId", uploadedDocument.getId());
 
@@ -103,7 +103,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         assertEquals(Dispute.Status.OPEN, createdDispute.getStatus());
         DocumentUpload uploadedDocument = uploadDocument();
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelBraintree.disputeId", createdDispute.getId());
         FileEvidenceRequest fileEvidenceRequest = new FileEvidenceRequest().documentId(uploadedDocument.getId());
         headers.put("CamelBraintree.fileEvidenceRequest", fileEvidenceRequest);
@@ -125,7 +125,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         Dispute createdDispute = createDispute();
         assertEquals(Dispute.Status.OPEN, createdDispute.getStatus());
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelBraintree.id", createdDispute.getId());
         headers.put("CamelBraintree.content", textEvidence);
         final Result<DisputeEvidence> result = requestBodyAndHeaders(
@@ -148,7 +148,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         Dispute createdDispute = createDispute();
         assertEquals(Dispute.Status.OPEN, createdDispute.getStatus());
 
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelBraintree.id", createdDispute.getId());
         TextEvidenceRequest textEvidenceRequest = new TextEvidenceRequest().content(textEvidence);
         headers.put("CamelBraintree.textEvidenceRequest", textEvidenceRequest);
@@ -206,7 +206,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         Dispute createdDispute = createDispute();
         assertEquals(Dispute.Status.OPEN, createdDispute.getStatus());
 
-        final Map<String, Object> addTextEvidenceHeaders = new HashMap<String, Object>();
+        final Map<String, Object> addTextEvidenceHeaders = new HashMap<>();
         addTextEvidenceHeaders.put("CamelBraintree.id", createdDispute.getId());
         addTextEvidenceHeaders.put("CamelBraintree.content", textEvidence);
 
@@ -222,7 +222,7 @@ public class DisputeGatewayIntegrationTest extends AbstractBraintreeTestSupport 
         DisputeEvidence disputeEvidence = addTextEvidenceResult.getTarget();
         assertEquals(textEvidence, disputeEvidence.getComment());
 
-        final Map<String, Object> removeTextEvidenceHeaders = new HashMap<String, Object>();
+        final Map<String, Object> removeTextEvidenceHeaders = new HashMap<>();
         removeTextEvidenceHeaders.put("CamelBraintree.disputeId", createdDispute.getId());
         removeTextEvidenceHeaders.put("CamelBraintree.evidenceId", disputeEvidence.getId());
 

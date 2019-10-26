@@ -16,18 +16,12 @@
  */
 package org.apache.camel.component.file.remote.sftp;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.IOHelper;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -828,7 +828,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
      
     private DefaultNamespaceContext getNamespaceContext() {
         return this.nsContext;
-    };
+    }
 
     public String getXmlCipherAlgorithm() {
         return xmlCipherAlgorithm;

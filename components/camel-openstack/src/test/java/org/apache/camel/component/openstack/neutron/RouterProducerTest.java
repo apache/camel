@@ -38,7 +38,6 @@ import org.openstack4j.model.network.RouterInterface;
 import org.openstack4j.openstack.networking.domain.NeutronRouterInterface;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
