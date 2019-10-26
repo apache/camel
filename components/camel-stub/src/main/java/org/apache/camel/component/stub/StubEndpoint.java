@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.seda.BlockingQueueFactory;
-import org.apache.camel.component.vm.VmConsumer;
 import org.apache.camel.component.vm.VmEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 

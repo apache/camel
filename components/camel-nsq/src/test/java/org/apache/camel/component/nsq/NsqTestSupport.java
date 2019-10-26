@@ -39,7 +39,7 @@ public class NsqTestSupport extends ContainerAwareTestSupport {
     @Override
     protected List<GenericContainer<?>> createContainers() {
         network = Network.newNetwork();
-        return new ArrayList<GenericContainer<?>>(Arrays.asList(nsqlookupdContainer(network), nsqdContainer(network)));
+        return new ArrayList<>(Arrays.asList(nsqlookupdContainer(network), nsqdContainer(network)));
     }
 
     public static GenericContainer<?> nsqlookupdContainer(Network network) {

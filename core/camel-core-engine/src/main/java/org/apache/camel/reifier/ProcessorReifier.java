@@ -472,9 +472,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
             // resolve properties before we create the processor
             ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), output);
 
-            // also resolve properties and constant fields on embedded
-            // expressions
-            ProcessorDefinition<?> me = (ProcessorDefinition<?>)output;
+            // also resolve properties and constant fields on embedded expressions
+            ProcessorDefinition<?> me = output;
             if (me instanceof ExpressionNode) {
                 ExpressionNode exp = (ExpressionNode)me;
                 ExpressionDefinition expressionDefinition = exp.getExpression();

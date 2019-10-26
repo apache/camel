@@ -16,14 +16,9 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
-import org.apache.camel.api.management.mbean.ManagedBacklogTracerMBean;
 import org.apache.camel.api.management.mbean.ManagedTracerMBean;
-import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Tracer;
 

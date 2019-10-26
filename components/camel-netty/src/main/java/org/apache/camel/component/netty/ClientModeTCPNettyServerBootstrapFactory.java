@@ -192,7 +192,7 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
                     scheduleReconnect(channelFuture);
-                };
+                }
             });
         }
 

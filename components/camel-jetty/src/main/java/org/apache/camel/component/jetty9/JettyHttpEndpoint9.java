@@ -24,7 +24,6 @@ import org.apache.camel.component.jetty.JettyContentExchange;
 import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.http.common.HttpBinding;
-import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.spi.UriEndpoint;
 
 /**

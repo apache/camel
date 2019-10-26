@@ -22,8 +22,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Kubernetes Secrets component provides a producer to execute kubernetes

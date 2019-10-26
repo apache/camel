@@ -16,13 +16,6 @@
  */
 package org.apache.camel.example;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
-import org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory;
-import org.apache.camel.BindToRegistry;
-import org.apache.camel.PropertyInject;
-
 /**
  * Class to configure the Camel application.
  */

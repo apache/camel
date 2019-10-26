@@ -48,7 +48,7 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
                     .to("mock:result")
                     // respond with OK
                     .transform(constant(ok));
-            };
+            }
         };
     }
 

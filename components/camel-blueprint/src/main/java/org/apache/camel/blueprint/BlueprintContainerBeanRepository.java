@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.BeanRepository;
-import org.apache.camel.spi.Registry;
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.NoSuchComponentException;

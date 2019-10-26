@@ -42,7 +42,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 

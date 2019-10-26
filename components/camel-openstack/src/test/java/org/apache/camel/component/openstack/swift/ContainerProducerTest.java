@@ -37,9 +37,7 @@ import org.openstack4j.model.storage.object.options.ContainerListOptions;
 import org.openstack4j.model.storage.object.options.CreateUpdateContainerOptions;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;

@@ -28,7 +28,6 @@ import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
 import org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.spring.ws.filter.impl.BasicMessageFilter;
-import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;

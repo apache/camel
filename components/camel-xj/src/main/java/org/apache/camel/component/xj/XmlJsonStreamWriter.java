@@ -29,10 +29,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.events.XMLEvent;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -73,7 +72,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
 
     @Override
     public void writeStartElement(String prefix, String localName, String namespaceURI) {
-        final TreeElement treeElement = new TreeElement(currentTreeElement, XMLEvent.START_ELEMENT, localName);
+        final TreeElement treeElement = new TreeElement(currentTreeElement, XMLStreamConstants.START_ELEMENT, localName);
 
         currentTreeElement.addChild(treeElement);
         currentTreeElement = treeElement;
@@ -150,7 +149,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
             }
         }
 
-        final TreeElement treeElement = new TreeElement(currentTreeElement, XMLEvent.ATTRIBUTE, JsonToken.VALUE_STRING, localName);
+        final TreeElement treeElement = new TreeElement(currentTreeElement, XMLStreamConstants.ATTRIBUTE, JsonToken.VALUE_STRING, localName);
         treeElement.setValue(value);
 
         currentTreeElement.addChild(treeElement);
@@ -213,7 +212,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
 
     @Override
     public void writeStartDocument(String encoding, String version) {
-        final TreeElement treeElement = new TreeElement(null, XMLEvent.START_DOCUMENT, JsonToken.NOT_AVAILABLE);
+        final TreeElement treeElement = new TreeElement(null, XMLStreamConstants.START_DOCUMENT, JsonToken.NOT_AVAILABLE);
         this.treeRoot = treeElement;
         this.currentTreeElement = treeElement;
     }
@@ -224,14 +223,14 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
         final List<TreeElement> childs = currentTreeElement.childs;
         if (childs.size() > 0) {
             final TreeElement child = childs.get(childs.size() - 1);
-            if (child.getXmlEvent() == XMLEvent.CHARACTERS) {
+            if (child.getXmlEvent() == XMLStreamConstants.CHARACTERS) {
                 child.appendValue(text);
 
                 return;
             }
         }
 
-        final TreeElement treeElement = new TreeElement(currentTreeElement, XMLEvent.CHARACTERS, JsonToken.VALUE_STRING);
+        final TreeElement treeElement = new TreeElement(currentTreeElement, XMLStreamConstants.CHARACTERS, JsonToken.VALUE_STRING);
         treeElement.setValue(text);
 
         currentTreeElement.addChild(treeElement);
@@ -345,7 +344,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
         }
 
         private void writeEndNoTypeHints() {
-            if (xmlEvent == XMLEvent.START_ELEMENT) {
+            if (xmlEvent == XMLStreamConstants.START_ELEMENT) {
                 if (childs.isEmpty()) {
                     // empty root element
                     if (this.parent.jsonToken == JsonToken.NOT_AVAILABLE) {
@@ -357,7 +356,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                         treeElement.setValue("");
                         this.addChild(treeElement);
                     }
-                } else if (childs.size() == 1 && childs.get(0).xmlEvent == XMLEvent.CHARACTERS) {
+                } else if (childs.size() == 1 && childs.get(0).xmlEvent == XMLStreamConstants.CHARACTERS) {
                     // just character childs.
 
                     // empty root element
@@ -440,7 +439,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                                 treeElement.addChild(element);
                                 childs.set(childs.indexOf(element), treeElement);
                                 element.parent = treeElement;
-                                if (element.xmlEvent == XMLEvent.CHARACTERS) {
+                                if (element.xmlEvent == XMLStreamConstants.CHARACTERS) {
                                     element.jsonToken = jsonToken;
                                 }
                             }

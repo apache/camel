@@ -47,10 +47,10 @@ public class DebeziumTypeConverterTest {
 
     private Struct createTestStruct(final int id, final String name, final boolean valid) {
         final Schema schema = SchemaBuilder.struct()
-                                .field("id", SchemaBuilder.INT32_SCHEMA)
-                                .field("name", SchemaBuilder.STRING_SCHEMA)
-                                .field("valid", SchemaBuilder.BOOLEAN_SCHEMA)
-                                .field("extra", SchemaBuilder.STRING_SCHEMA)
+                                .field("id", Schema.INT32_SCHEMA)
+                                .field("name", Schema.STRING_SCHEMA)
+                                .field("valid", Schema.BOOLEAN_SCHEMA)
+                                .field("extra", Schema.STRING_SCHEMA)
                                 .build();
 
         final Struct value = new Struct(schema);

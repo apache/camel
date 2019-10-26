@@ -25,8 +25,6 @@ import javax.xml.transform.OutputKeys;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;

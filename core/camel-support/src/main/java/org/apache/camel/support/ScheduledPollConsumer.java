@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;

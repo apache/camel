@@ -20,7 +20,6 @@ import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 

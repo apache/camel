@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;

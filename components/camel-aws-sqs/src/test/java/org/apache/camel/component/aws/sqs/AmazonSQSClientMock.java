@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.http.SdkHttpMetadata;
 import com.amazonaws.services.sqs.AbstractAmazonSQS;
 import com.amazonaws.services.sqs.model.BatchResultErrorEntry;
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
@@ -45,7 +44,6 @@ import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.amazonaws.services.sqs.model.SendMessageBatchRequest;
-import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry;
 import com.amazonaws.services.sqs.model.SendMessageBatchResult;
 import com.amazonaws.services.sqs.model.SendMessageBatchResultEntry;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
@@ -75,7 +73,7 @@ public class AmazonSQSClientMock extends AbstractAmazonSQS {
     @Override
     public ListQueuesResult listQueues(ListQueuesRequest request) {
         ListQueuesResult result = new ListQueuesResult();
-        List<String> queues = new ArrayList<String>();
+        List<String> queues = new ArrayList<>();
         queues.add("queue1");
         queues.add("queue2");
         result.setQueueUrls(queues);
@@ -202,14 +200,14 @@ public class AmazonSQSClientMock extends AbstractAmazonSQS {
     @Override
     public SendMessageBatchResult sendMessageBatch(SendMessageBatchRequest request) {
         SendMessageBatchResult result = new SendMessageBatchResult();
-        Collection<SendMessageBatchResultEntry> entriesSuccess = new ArrayList<SendMessageBatchResultEntry>();
+        Collection<SendMessageBatchResultEntry> entriesSuccess = new ArrayList<>();
         SendMessageBatchResultEntry entry1 = new SendMessageBatchResultEntry();
         SendMessageBatchResultEntry entry2 = new SendMessageBatchResultEntry();
         entry1.setId("team1");
         entry2.setId("team2");
         entriesSuccess.add(entry1);
         entriesSuccess.add(entry2);
-        Collection<BatchResultErrorEntry> entriesFail = new ArrayList<BatchResultErrorEntry>();
+        Collection<BatchResultErrorEntry> entriesFail = new ArrayList<>();
         BatchResultErrorEntry entry3 = new BatchResultErrorEntry();
         BatchResultErrorEntry entry4 = new BatchResultErrorEntry();
         entry3.setId("team1");

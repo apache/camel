@@ -30,7 +30,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
-import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;

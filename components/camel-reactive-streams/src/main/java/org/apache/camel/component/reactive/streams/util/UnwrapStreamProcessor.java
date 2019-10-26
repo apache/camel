@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;

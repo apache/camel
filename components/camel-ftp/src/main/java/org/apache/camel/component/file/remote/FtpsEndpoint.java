@@ -229,7 +229,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
      * Returns the FtpsConfiguration. This method exists only for convenient.
      */
     public FtpsConfiguration getFtpsConfiguration() {
-        return (FtpsConfiguration) getConfiguration();
+        return getConfiguration();
     }
 
     public Map<String, Object> getFtpClientKeyStoreParameters() {

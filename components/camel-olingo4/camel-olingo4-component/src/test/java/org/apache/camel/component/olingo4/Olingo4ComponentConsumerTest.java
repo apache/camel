@@ -56,7 +56,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + PEOPLE + "?" + "$filter=LastName eq 'Whyte'&$expand=Trips").to("mock:consumer-query");
-            };
+            }
         };
         addRouteAndStartContext(builder);
 
@@ -99,7 +99,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
             public void configure() {
                 from("olingo4://read/" + PEOPLE + "?delay=2&sendEmptyMessageWhenIdle=true&splitResult=false&filterAlreadySeen=true")
                     .to("mock:consumer-alreadyseen");
-            };
+            }
         };
         addRouteAndStartContext(builder);
 
@@ -150,7 +150,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
             public void configure() {
                 from("olingo4://read/" + PEOPLE + "?delay=2&sendEmptyMessageWhenIdle=false&splitResult=false&filterAlreadySeen=true")
                     .to("mock:consumer-alreadyseen");
-            };
+            }
         };
         addRouteAndStartContext(builder);
 
@@ -188,7 +188,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
             public void configure() {
                 from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=true&"
                      + "splitResult=true").to("mock:consumer-splitresult-kp-airport");
-            };
+            }
         };
         addRouteAndStartContext(builder);
 
@@ -238,7 +238,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
             public void configure() {
                 from("olingo4://read/" + AIRPORTS + "('KSFO')" + "?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=false&"
                      + "splitResult=true").to("mock:consumer-splitresult-kp-airport");
-            };
+            }
         };
         addRouteAndStartContext(builder);
 
@@ -275,7 +275,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + PEOPLE + "?splitResult=true").to("mock:consumer-splitresult");
-            };
+            }
         };
         addRouteAndStartContext(builder);
 
@@ -318,7 +318,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + TEST_PEOPLE + "/FavoriteFeature?splitResult=true").to("mock:consumer-splitresult-value");
-            };
+            }
         };
         addRouteAndStartContext(builder);
 
@@ -344,7 +344,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?splitResult=true").to("mock:consumer-splitresult-collection-value");
-            };
+            }
         };
         addRouteAndStartContext(builder);
 
@@ -370,7 +370,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("olingo4://read/" + TEST_PEOPLE + "/AddressInfo?splitResult=false").to("mock:consumer-nosplitresult-colleciton-value");
-            };
+            }
         };
         addRouteAndStartContext(builder);
 

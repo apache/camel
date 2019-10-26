@@ -1,6 +1,8 @@
+[[spark-component]]
 = Spark Component
 
 *Since Camel 2.17*
+
 *Since Camel 2.17*
 
 

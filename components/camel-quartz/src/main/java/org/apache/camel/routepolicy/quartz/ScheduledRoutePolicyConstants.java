@@ -22,7 +22,7 @@ package org.apache.camel.routepolicy.quartz;
 public interface ScheduledRoutePolicyConstants {
     enum Action {
         START, STOP, SUSPEND, RESUME
-    };
+    }
 
     String SCHEDULED_ROUTE = "ScheduledRoute";
     String SCHEDULED_TRIGGER = "ScheduledTrigger";

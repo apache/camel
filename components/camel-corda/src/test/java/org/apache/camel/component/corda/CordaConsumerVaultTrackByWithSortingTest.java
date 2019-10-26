@@ -22,7 +22,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
-import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK_BY;
 import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK_BY_WITH_SORTING;
 
 @Ignore("This integration test requires a locally running corda node such cordapp-template-java")

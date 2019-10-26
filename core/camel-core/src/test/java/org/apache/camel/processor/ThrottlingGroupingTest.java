@@ -51,7 +51,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedBodiesReceived("Kaboom", "Saloon");
         getMockEndpoint("mock:resultdynamic").expectedBodiesReceived("Hello Dynamic World", "Bye Dynamic World");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
 
         template.sendBodyAndHeaders("seda:a", "Kaboom", headers);
         template.sendBodyAndHeaders("seda:a", "Saloon", headers);
@@ -75,7 +75,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(3);
         resultEndpoint.setResultWaitTime(2000);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         for (int i = 0; i < 9; i++) {
             if (i % 2 == 0) {
                 headers.put("key", "1");
@@ -116,7 +116,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
             for (int i = 0; i < messageCount; i++) {
                 executor.execute(new Runnable() {
                     public void run() {
-                        Map<String, Object> headers = new HashMap<String, Object>();
+                        Map<String, Object> headers = new HashMap<>();
                         if (messageCount % 2 == 0) {
                             headers.put("key", "1");
                         } else {
@@ -178,7 +178,7 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
         for (int i = 0; i < messageCount; i++) {
             executor.execute(new Runnable() {
                 public void run() {
-                    Map<String, Object> headers = new HashMap<String, Object>();
+                    Map<String, Object> headers = new HashMap<>();
                     headers.put("throttleValue", throttle);
                     if (messageCount % 2 == 0) {
                         headers.put("key", "1");

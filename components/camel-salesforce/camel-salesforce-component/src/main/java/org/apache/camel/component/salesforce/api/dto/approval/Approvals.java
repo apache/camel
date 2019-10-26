@@ -121,7 +121,7 @@ public final class Approvals implements Serializable {
      */
     public List<Info> approvalsFor(final String object) {
         return approvals.getOrDefault(object, Collections.emptyList());
-    };
+    }
 
     /**
      * Returns approvals by Salesforce object type. You might have approvals for

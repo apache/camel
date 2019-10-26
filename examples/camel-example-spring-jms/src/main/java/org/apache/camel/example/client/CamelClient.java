@@ -16,7 +16,6 @@
  */
 package org.apache.camel.example.client;
 
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;

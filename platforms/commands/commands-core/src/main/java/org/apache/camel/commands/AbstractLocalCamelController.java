@@ -591,7 +591,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         if (camelContextName != null) {
             CamelContext context = this.getLocalCamelContext(camelContextName);
             if (context != null) {
-                List<Transformer> transformers = new ArrayList<Transformer>(context.getTransformerRegistry().values());
+                List<Transformer> transformers = new ArrayList<>(context.getTransformerRegistry().values());
                 for (Transformer transformer : transformers) {
                     Map<String, String> row = new LinkedHashMap<>();
                     row.put("camelContextName", context.getName());
@@ -614,7 +614,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         if (camelContextName != null) {
             CamelContext context = this.getLocalCamelContext(camelContextName);
             if (context != null) {
-                List<Validator> validators = new ArrayList<Validator>(context.getValidatorRegistry().values());
+                List<Validator> validators = new ArrayList<>(context.getValidatorRegistry().values());
                 for (Validator validator : validators) {
                     Map<String, String> row = new LinkedHashMap<>();
                     row.put("camelContextName", context.getName());

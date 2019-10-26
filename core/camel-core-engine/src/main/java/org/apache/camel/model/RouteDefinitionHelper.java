@@ -214,7 +214,7 @@ public final class RouteDefinitionHelper {
                     FromDefinition fromDefinition = route.getInput();
                     String endpointUri = fromDefinition.getEndpointUri();
                     if (ObjectHelper.isNotEmpty(endpointUri) && (endpointUri.startsWith("rest:") || endpointUri.startsWith("rest-api:"))) {
-                        Map<String, Object> options = new HashMap<String, Object>(1);
+                        Map<String, Object> options = new HashMap<>(1);
                         options.put("routeId", route.getId());
                         endpointUri = URISupport.appendParametersToURI(endpointUri, options);
 

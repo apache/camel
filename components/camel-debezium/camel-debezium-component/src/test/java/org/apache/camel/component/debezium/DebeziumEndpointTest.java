@@ -257,7 +257,7 @@ public class DebeziumEndpointTest {
     }
 
     private SourceRecord createStringRecord() {
-        final Schema recordSchema = SchemaBuilder.STRING_SCHEMA;
+        final Schema recordSchema = Schema.STRING_SCHEMA;
         return new SourceRecord(new HashMap<>(), createSourceOffset(), "dummy", recordSchema, "test_record");
     }
 

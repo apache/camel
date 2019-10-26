@@ -21,7 +21,6 @@ import java.io.StringReader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.camel.support.dump.ProcessorStatDump;
 import org.apache.camel.support.dump.RouteStatDump;
 import org.apache.camel.support.dump.StepStatDump;
 

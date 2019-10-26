@@ -240,7 +240,7 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     @Override
     public ListEventSourceMappingsResult listEventSourceMappings(ListEventSourceMappingsRequest listEventSourceMappingsRequest) {
         ListEventSourceMappingsResult result = new ListEventSourceMappingsResult();
-        List<EventSourceMappingConfiguration> confList = new ArrayList<EventSourceMappingConfiguration>();
+        List<EventSourceMappingConfiguration> confList = new ArrayList<>();
         EventSourceMappingConfiguration conf = new EventSourceMappingConfiguration();
         conf.setBatchSize(100);
         conf.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + listEventSourceMappingsRequest.getFunctionName());

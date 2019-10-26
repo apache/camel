@@ -20,7 +20,6 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.spi.CamelEvent.CamelContextEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
 import org.apache.camel.support.EventNotifierSupport;
 

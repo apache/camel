@@ -28,7 +28,7 @@ import org.apache.camel.util.StringHelper;
 public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelBuilder> {
 
     public DeadLetterChannelReifier(ErrorHandlerFactory definition) {
-        super((DeadLetterChannelBuilder)definition);
+        super(definition);
     }
 
     @Override

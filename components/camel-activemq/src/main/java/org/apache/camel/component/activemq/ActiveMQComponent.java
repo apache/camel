@@ -49,8 +49,8 @@ public class ActiveMQComponent extends JmsComponent {
     private boolean exposeAllQueues;
     private CamelEndpointLoader endpointLoader;
     private EnhancedConnection connection;
-    private final CopyOnWriteArrayList<SingleConnectionFactory> singleConnectionFactoryList = new CopyOnWriteArrayList<SingleConnectionFactory>();
-    private final CopyOnWriteArrayList<Service> pooledConnectionFactoryServiceList = new CopyOnWriteArrayList<Service>();
+    private final CopyOnWriteArrayList<SingleConnectionFactory> singleConnectionFactoryList = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Service> pooledConnectionFactoryServiceList = new CopyOnWriteArrayList<>();
     
     public ActiveMQComponent() {
     }

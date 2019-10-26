@@ -19,14 +19,10 @@ package org.apache.camel.example;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.ExchangeTestSupport;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class JAXBConvertTest extends ExchangeTestSupport {

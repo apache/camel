@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.remote.strategy;
 
-import java.util.Date;
 import java.util.List;
 
 import com.jcraft.jsch.ChannelSftp;

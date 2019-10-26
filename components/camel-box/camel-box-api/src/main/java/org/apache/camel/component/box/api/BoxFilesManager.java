@@ -148,7 +148,7 @@ public class BoxFilesManager {
      * @return The uploaded file.
      */
     public BoxFile uploadFile(String parentFolderId, InputStream content, String fileName, Date created, Date modified,
-            Long size, boolean check, ProgressListener listener) {
+            Long size, Boolean check, ProgressListener listener) {
         try {
             LOG.debug("Uploading file with name '" + fileName + "' to parent_folder(id=" + parentFolderId + ")");
             if (parentFolderId == null) {
@@ -162,7 +162,7 @@ public class BoxFilesManager {
             }
             BoxFile boxFile = null;
             boolean uploadNewFile = true;
-            if (check) {
+            if (check != null && check) {
                 BoxSearchManager bsm = new BoxSearchManager(boxConnection);
                 Collection<BoxItem> res = bsm.searchFolder(parentFolderId, fileName);
                 if (!res.isEmpty()) {

@@ -43,7 +43,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
 
     @Test
     public void testOnInstance() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is org.hl7.fhir.instance.model.api.IIdType
         headers.put("CamelFhir.id", this.patient.getIdElement());
         // parameter type is String
@@ -70,7 +70,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
 
     @Test
     public void testOnInstanceVersion() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is org.hl7.fhir.instance.model.api.IIdType
         headers.put("CamelFhir.id", this.patient.getIdElement());
         // parameter type is String
@@ -120,7 +120,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
 
     @Test
     public void testOnType() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is Class
         headers.put("CamelFhir.resourceType", Patient.class);
         // parameter type is String
@@ -145,7 +145,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
     + " https://github.com/jamesagnew/hapi-fhir/blob/master/hapi-fhir-jpaserver-base/src/main/java/ca/uhn/fhir/jpa/dao/dstu3/FhirResourceDaoMessageHeaderDstu3.java#L33")
     @Test
     public void testProcessMessage() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelFhir.respondToUri", null);
         // parameter type is org.hl7.fhir.instance.model.api.IBaseBundle

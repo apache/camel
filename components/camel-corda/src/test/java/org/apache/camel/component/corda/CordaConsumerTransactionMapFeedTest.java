@@ -21,7 +21,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.apache.camel.component.corda.CordaConstants.NETWORK_MAP_FEED;
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
 import static org.apache.camel.component.corda.CordaConstants.STATE_MACHINE_RECORDED_TRANSACTION_MAPPING_FEED;
 

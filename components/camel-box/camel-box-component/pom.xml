@@ -343,6 +343,7 @@
                                         <nullableOption>unshareDate</nullableOption>
                                         <nullableOption>permissions</nullableOption>
                                         <nullableOption>typeName</nullableOption>
+                                        <nullableOption>check</nullableOption>
                                     </nullableOptions>
                                 </api>
                                 <api>

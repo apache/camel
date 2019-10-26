@@ -16,17 +16,10 @@
  */
 package org.apache.camel.component.mongodb;
 
-import java.util.Properties;
-
 import com.mongodb.MongoClient;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
 

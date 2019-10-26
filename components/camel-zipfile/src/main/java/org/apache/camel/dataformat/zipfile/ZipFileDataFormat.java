@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.zipfile;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,12 +27,9 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
-import org.apache.camel.support.InputStreamIterator;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;

@@ -48,7 +48,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
 
     @Test
     public void testPerformRequestReplyOverJms() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("cheese", 123);
         headers.put("JMSReplyTo", replyQueueName);
         headers.put("JMSCorrelationID", correlationID);
@@ -57,7 +57,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
         Exchange reply = template.request("activemq:test.server?replyTo=queue:test.reply", new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("James");
-                Map<String, Object> headers = new HashMap<String, Object>();
+                Map<String, Object> headers = new HashMap<>();
                 headers.put("cheese", 123);
                 headers.put("JMSReplyTo", replyQueueName);
                 headers.put("JMSCorrelationID", correlationID);
