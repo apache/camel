@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.ec2;
 
 import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.AmazonEC2Client;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;

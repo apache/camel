@@ -23,8 +23,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import io.debezium.config.CommonConnectorConfig;
 import io.debezium.connector.mysql.MySqlConnector;
 import io.debezium.connector.mysql.MySqlConnectorConfig;
+import io.debezium.relational.RelationalDatabaseConnectorConfig;
 import io.debezium.relational.history.FileDatabaseHistory;
 import org.apache.kafka.connect.source.SourceConnector;
 import org.junit.Test;
@@ -36,10 +38,10 @@ public class ConnectorConfigGeneratorTest {
 
     @Test
     public void testIfCorrectlyGeneratedMySQLFile() {
-        final Set<String> requiredFields = new HashSet<>(Arrays.asList(MySqlConnectorConfig.PASSWORD.name(), MySqlConnectorConfig.SERVER_NAME.name()));
+        final Set<String> requiredFields = new HashSet<>(Arrays.asList(MySqlConnectorConfig.PASSWORD.name(), RelationalDatabaseConnectorConfig.SERVER_NAME.name()));
         final Map<String, Object> overrideFields = new HashMap<>();
         overrideFields.put(MySqlConnectorConfig.DATABASE_HISTORY.name(), FileDatabaseHistory.class);
-        overrideFields.put(MySqlConnectorConfig.TOMBSTONES_ON_DELETE.name(), false);
+        overrideFields.put(CommonConnectorConfig.TOMBSTONES_ON_DELETE.name(), false);
         overrideFields.put(MySqlConnectorConfig.SERVER_ID.name(), 1111);
 
         testIfCorrectlyGeneratedFile(new MySqlConnector(), MySqlConnectorConfig.class, requiredFields, overrideFields);

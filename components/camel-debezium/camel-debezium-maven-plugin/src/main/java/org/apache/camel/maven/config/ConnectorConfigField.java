@@ -16,8 +16,6 @@
  */
 package org.apache.camel.maven.config;
 
-import java.util.List;
-
 import io.debezium.config.Field;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.text.CaseUtils;

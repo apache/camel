@@ -838,7 +838,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         if (instrumentationProcessor instanceof CamelInternalProcessor) {
             return (CamelInternalProcessorAdvice<T>) instrumentationProcessor;
         } else {
-            return new CamelInternalProcessorAdviceWrapper<T>(instrumentationProcessor);
+            return new CamelInternalProcessorAdviceWrapper<>(instrumentationProcessor);
         }
     }
 

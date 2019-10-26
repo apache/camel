@@ -17,7 +17,6 @@
 package org.apache.camel.test.blueprint.converter;
 
 import org.apache.camel.Converter;
-import org.apache.camel.TypeConverters;
 import org.apache.camel.test.blueprint.Foo;
 
 public class FooConverterRegression {

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.salesforce.api.dto.composite;
 
-import java.util.regex.Pattern;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;

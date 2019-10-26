@@ -22,7 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.StringHelper;
 

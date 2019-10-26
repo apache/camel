@@ -70,7 +70,7 @@ public class AmazonEKSClientMock extends AbstractAmazonEKS {
     @Override
     public ListClustersResult listClusters(ListClustersRequest request) {
         ListClustersResult res = new ListClustersResult();
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("Test");
         res.setClusters(list);
         return res;

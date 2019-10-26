@@ -18,7 +18,6 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;

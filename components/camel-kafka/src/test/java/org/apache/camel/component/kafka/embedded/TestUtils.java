@@ -18,8 +18,6 @@ package org.apache.camel.component.kafka.embedded;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.ServerSocket;
 
 import org.apache.commons.lang3.RandomStringUtils;
 

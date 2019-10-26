@@ -27,8 +27,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.Assert.assertEquals;
-
 public class FhirXmlDataformatErrorHandlerSpringTest extends CamelSpringTestSupport {
 
     private static final String INPUT = "<Patient><active value=\"true\"/><active value=\"false\"/></Patient>";

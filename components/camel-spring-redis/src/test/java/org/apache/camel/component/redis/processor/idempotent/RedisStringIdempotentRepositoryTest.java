@@ -17,7 +17,6 @@
 package org.apache.camel.component.redis.processor.idempotent;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;

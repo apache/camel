@@ -42,7 +42,7 @@ public class NamedCassandraIdempotentRepository extends CassandraIdempotentRepos
     }
 
     public String getName() {
-        return (String) getPrefixPKValues()[0];
+        return getPrefixPKValues()[0];
     }
 
     public final void setName(String name) {

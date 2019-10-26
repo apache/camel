@@ -21,33 +21,33 @@ public interface AS2MediaType {
     /**
      * Media Type for Multipart Signed Data
      */
-    public static final String MULTIPART_SIGNED = "multipart/signed; protocol=\"application/pkcs7-signature\"";
+    String MULTIPART_SIGNED = "multipart/signed; protocol=\"application/pkcs7-signature\"";
     /**
      * Media Type for Application PKCS7 Signature
      */
-    public static final String APPLICATION_PKCS7_SIGNATURE = "application/pkcs7-signature; name=smime.p7s; smime-type=signed-data";
+    String APPLICATION_PKCS7_SIGNATURE = "application/pkcs7-signature; name=smime.p7s; smime-type=signed-data";
     /**
      * Media Type for Application PKCS7 Enveloped Data
      */
-    public static final String APPLICATION_PKCS7_MIME_ENVELOPED = "application/pkcs7-mime; smime-type=enveloped-data; name=smime.p7m";
+    String APPLICATION_PKCS7_MIME_ENVELOPED = "application/pkcs7-mime; smime-type=enveloped-data; name=smime.p7m";
     /**
      * Media Type for Application PKCS7 Compressed Data
      */
-    public static final String APPLICATION_PKCS7_MIME_COMPRESSED = "application/pkcs7-mime; smime-type=compressed-data; name=smime.p7z";
+    String APPLICATION_PKCS7_MIME_COMPRESSED = "application/pkcs7-mime; smime-type=compressed-data; name=smime.p7z";
     /**
      * Media Type for Text/Plain Data
      */
-    public static final String TEXT_PLAIN = "text/plain";
+    String TEXT_PLAIN = "text/plain";
     /**
      * Media Type for Application/EDIFACT
      */
-    public static final String APPLICATION_EDIFACT = "application/edifact";
+    String APPLICATION_EDIFACT = "application/edifact";
     /**
      * Media Type for Application/EDI-X12
      */
-    public static final String APPLICATION_EDI_X12 = "application/edi-x12";
+    String APPLICATION_EDI_X12 = "application/edi-x12";
     /**
      * Media Type for Application/EDI-consent
      */
-    public static final String APPLICATION_EDI_CONSENT = "application/edi-consent";
+    String APPLICATION_EDI_CONSENT = "application/edi-consent";
 }

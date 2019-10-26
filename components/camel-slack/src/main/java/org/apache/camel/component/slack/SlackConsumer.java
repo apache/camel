@@ -60,7 +60,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
         HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost httpPost = new HttpPost(slackEndpoint.getServerUrl() + "/api/channels.history");
-        List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        List<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("channel", channelId));
         if (ObjectHelper.isNotEmpty(timestamp)) {
             params.add(new BasicNameValuePair("oldest", timestamp));
@@ -128,7 +128,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost httpPost = new HttpPost(slackEndpoint.getServerUrl() + "/api/channels.list");
 
-        List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        List<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("token", slackEndpoint.getToken()));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
 

@@ -33,7 +33,7 @@ public class CamelMessagingHeadersExtractAdapterTest {
 
     @Before
     public void before() {
-        map = new HashMap<String, Object>();
+        map = new HashMap<>();
     }
 
     @Test
