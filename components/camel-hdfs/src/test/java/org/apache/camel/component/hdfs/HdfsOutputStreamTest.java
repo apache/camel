@@ -47,7 +47,6 @@ public class HdfsOutputStreamTest {
     private HdfsInfoFactory hdfsInfoFactory;
     private HdfsConfiguration endpointConfig;
     private FileSystem fileSystem;
-    private Configuration configuration;
 
     private HdfsOutputStream underTest;
 
@@ -58,7 +57,7 @@ public class HdfsOutputStreamTest {
         endpointConfig = mock(HdfsConfiguration.class);
 
         fileSystem = mock(FileSystem.class);
-        configuration = mock(Configuration.class);
+        Configuration configuration = mock(Configuration.class);
         Path path = mock(Path.class);
 
         when(hdfsInfoFactory.newHdfsInfo(anyString())).thenReturn(hdfsInfo);

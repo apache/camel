@@ -19,6 +19,7 @@ package org.apache.camel.component.hdfs;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
@@ -35,6 +36,8 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class HdfsConsumerTest {
@@ -91,6 +94,7 @@ public class HdfsConsumerTest {
         underTest.doStart();
 
         // then
+        verify(hdfsInfoFactory, times(0)).newHdfsInfo(anyString());
 
     }
 
@@ -111,6 +115,7 @@ public class HdfsConsumerTest {
         underTest.doStart();
 
         // then
+        verify(hdfsInfoFactory, times(1)).newHdfsInfo(hdfsPath);
 
     }
 
@@ -125,6 +130,7 @@ public class HdfsConsumerTest {
         when(endpointConfig.isConnectOnStartup()).thenReturn(true);
         when(endpointConfig.getFileSystemLabel(anyString())).thenReturn("TEST_FS_LABEL");
         when(endpoint.getCamelContext()).thenReturn(context);
+        when(endpoint.createExchange()).thenReturn(new DefaultExchange(context));
         when(endpoint.getEndpointUri()).thenReturn(hdfsPath);
 
         when(fileSystem.isFile(any(Path.class))).thenReturn(true);

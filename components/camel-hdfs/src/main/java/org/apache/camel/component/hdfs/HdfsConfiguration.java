@@ -610,6 +610,11 @@ public class HdfsConfiguration {
         return streamDownload;
     }
 
+    /**
+     * Sets the download method to use when not using a local working directory.  If set to true,
+     * the remote files are streamed to the route as they are read.  When set to false, the remote files
+     * are loaded into memory before being sent into the route.
+     */
     public void setStreamDownload(boolean streamDownload) {
         this.streamDownload = streamDownload;
     }
