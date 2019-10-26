@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class BeanCreateBodyExceptionTest extends ContextTestSupport {

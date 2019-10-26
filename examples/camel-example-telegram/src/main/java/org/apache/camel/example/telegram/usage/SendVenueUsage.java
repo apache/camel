@@ -18,11 +18,8 @@ package org.apache.camel.example.telegram.usage;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
-import org.apache.camel.component.telegram.model.SendLocationMessage;
 import org.apache.camel.component.telegram.model.SendVenueMessage;
-import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 
 public class SendVenueUsage implements TelegramMethodUsage {
 

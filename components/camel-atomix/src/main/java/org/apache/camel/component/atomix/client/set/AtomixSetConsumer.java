@@ -25,8 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientConsumer;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class AtomixSetConsumer extends AbstractAtomixClientConsumer<AtomixSetEndpoint> {
 

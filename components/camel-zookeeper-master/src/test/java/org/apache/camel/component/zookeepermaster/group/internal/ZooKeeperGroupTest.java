@@ -18,7 +18,6 @@ package org.apache.camel.component.zookeepermaster.group.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.List;
 import java.util.Map;
 

@@ -74,7 +74,7 @@ public class GooglePubsubConnectionFactory {
 
     private Pubsub buildClient() throws Exception {
         return buildClient(GoogleNetHttpTransport.newTrustedTransport());
-    };
+    }
 
     private Pubsub buildClient(HttpTransport httpTransport) throws Exception {
 

@@ -37,7 +37,7 @@ public class GrapeProducer extends DefaultProducer {
         case grab:
             ClassLoader classLoader = exchange.getContext().getApplicationContextClassLoader();
             String rawCoordinates = exchange.getIn().getBody(String.class);
-            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>(5);
+            LinkedHashMap<String, Object> map = new LinkedHashMap<>(5);
             try {
                 MavenCoordinates coordinates = MavenCoordinates.parseMavenCoordinates(rawCoordinates);
                 map.put("classLoader", classLoader);

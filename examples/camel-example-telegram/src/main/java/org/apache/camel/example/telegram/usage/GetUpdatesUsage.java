@@ -17,11 +17,8 @@
 package org.apache.camel.example.telegram.usage;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.TelegramServiceProvider;
-import org.apache.camel.component.telegram.model.MessageResult;
-import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.example.telegram.Application;
 

@@ -21,17 +21,13 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 
-import io.undertow.client.ClientConnection;
 import io.undertow.client.ClientExchange;
 import io.undertow.client.ClientRequest;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.xnio.IoUtils;
 import org.xnio.channels.StreamSinkChannel;
 
 class UndertowStreamingClientCallback extends UndertowClientCallback {

@@ -78,7 +78,7 @@ public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
     @Override
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
         checkBeanType(bean, JAXRSClientFactoryBean.class);
-        return (RsClientBlueprintBean)newInstanceWithCommonProperties();
+        return newInstanceWithCommonProperties();
     }
 
     private RsClientBlueprintBean newInstanceWithCommonProperties() {

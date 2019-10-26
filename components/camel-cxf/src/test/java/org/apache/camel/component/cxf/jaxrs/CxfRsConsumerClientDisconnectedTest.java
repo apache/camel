@@ -68,7 +68,7 @@ public class CxfRsConsumerClientDisconnectedTest extends CamelTestSupport {
                         });
                     });
 
-            };
+            }
         };
     }
 

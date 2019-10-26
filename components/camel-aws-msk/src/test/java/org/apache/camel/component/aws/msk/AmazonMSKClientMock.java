@@ -40,7 +40,7 @@ public class AmazonMSKClientMock extends AbstractAWSKafka {
     @Override
     public ListClustersResult listClusters(ListClustersRequest request) {
         ListClustersResult result = new ListClustersResult();
-        List<ClusterInfo> info = new ArrayList<ClusterInfo>();
+        List<ClusterInfo> info = new ArrayList<>();
         ClusterInfo info1 = new ClusterInfo();
         info1.setClusterName("test-kafka");
         info.add(info1);

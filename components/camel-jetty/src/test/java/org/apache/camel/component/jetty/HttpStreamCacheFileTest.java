@@ -22,7 +22,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Before;

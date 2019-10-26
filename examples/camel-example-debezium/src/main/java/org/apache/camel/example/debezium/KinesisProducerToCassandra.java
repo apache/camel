@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.main.Main;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.slf4j.Logger;

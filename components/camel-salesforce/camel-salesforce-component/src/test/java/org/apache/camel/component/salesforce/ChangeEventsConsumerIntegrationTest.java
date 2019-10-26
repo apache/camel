@@ -69,7 +69,7 @@ public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestB
         final Message createEvent = capturedChangeEvents.getExchanges().get(0).getIn();
         Assert.assertNotNull(createEvent);
         Assert.assertEquals("CREATE", createEvent.getHeader("CamelSalesforceChangeType"));
-        final Map<String, Object> createEventBody = (Map<String, Object>)createEvent.getBody(Map.class);
+        final Map<String, Object> createEventBody = createEvent.getBody(Map.class);
         Assert.assertNotNull(createEventBody);
         Assert.assertEquals(ACCOUNT_NAME, createEventBody.get("Name"));
         Assert.assertFalse(createEventBody.containsKey("Description"));
@@ -77,7 +77,7 @@ public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestB
         final Message updateEvent = capturedChangeEvents.getExchanges().get(1).getIn();
         Assert.assertNotNull(updateEvent);
         Assert.assertEquals("UPDATE", updateEvent.getHeader("CamelSalesforceChangeType"));
-        final Map<String, Object> updateEventBody = (Map<String, Object>)updateEvent.getBody(Map.class);
+        final Map<String, Object> updateEventBody = updateEvent.getBody(Map.class);
         Assert.assertNotNull(updateEventBody);
         Assert.assertFalse(updateEventBody.containsKey("Name"));
         Assert.assertEquals(ACCOUNT_DESCRIPTION, updateEventBody.get("Description"));
@@ -85,7 +85,7 @@ public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestB
         final Message deleteEvent = capturedChangeEvents.getExchanges().get(2).getIn();
         Assert.assertNotNull(deleteEvent);
         Assert.assertEquals("DELETE", deleteEvent.getHeader("CamelSalesforceChangeType"));
-        final Map<String, Object> deleteEventBody = (Map<String, Object>)deleteEvent.getBody(Map.class);
+        final Map<String, Object> deleteEventBody = deleteEvent.getBody(Map.class);
         Assert.assertFalse(deleteEventBody.containsKey("Name"));
         Assert.assertFalse(deleteEventBody.containsKey("Description"));
     }

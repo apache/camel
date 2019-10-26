@@ -94,7 +94,7 @@ public class BillboardAggrTest extends CamelTestSupport {
     }
 
     public static class MyAggregationStrategy implements AggregationStrategy {
-        private static Map<String, Integer> map = new ConcurrentHashMap<String, Integer>();
+        private static Map<String, Integer> map = new ConcurrentHashMap<>();
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

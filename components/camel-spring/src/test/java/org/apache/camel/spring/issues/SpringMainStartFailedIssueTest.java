@@ -17,7 +17,6 @@
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.spring.Main;
 import org.junit.Test;

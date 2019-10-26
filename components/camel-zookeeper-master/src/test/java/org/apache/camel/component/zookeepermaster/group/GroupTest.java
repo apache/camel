@@ -17,7 +17,6 @@
 package org.apache.camel.component.zookeepermaster.group;
 
 import java.io.File;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

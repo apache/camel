@@ -17,7 +17,6 @@
 package org.apache.camel.management;
 
 import java.io.IOException;
-import java.util.Random;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;

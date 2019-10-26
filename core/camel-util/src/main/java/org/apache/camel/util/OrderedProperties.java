@@ -96,7 +96,7 @@ public final class OrderedProperties extends Properties {
     @SuppressWarnings("unchecked")
     public Set<Map.Entry<Object, Object>> entrySet() {
         Set entrySet = map.entrySet();
-        return (Set<Map.Entry<Object, Object>>) entrySet;
+        return entrySet;
     }
 
     @Override

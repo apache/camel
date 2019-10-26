@@ -24,7 +24,6 @@ import javax.activation.FileDataSource;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

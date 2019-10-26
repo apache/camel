@@ -16,9 +16,6 @@
  */
 package org.apache.camel;
 
-import java.util.List;
-
-import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**

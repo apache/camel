@@ -19,7 +19,6 @@ package org.apache.camel.component.salesforce.api.dto;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

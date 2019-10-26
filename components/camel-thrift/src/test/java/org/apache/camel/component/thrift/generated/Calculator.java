@@ -38,25 +38,25 @@ public class Calculator {
      * lists and exception lists are specified using the exact same syntax as
      * field lists in struct or exception definitions.
      */
-    public void ping() throws org.apache.thrift.TException;
+    void ping() throws org.apache.thrift.TException;
 
-    public int add(int num1, int num2) throws org.apache.thrift.TException;
+    int add(int num1, int num2) throws org.apache.thrift.TException;
 
-    public int calculate(int logid, Work w) throws InvalidOperation, org.apache.thrift.TException;
+    int calculate(int logid, Work w) throws InvalidOperation, org.apache.thrift.TException;
 
     /**
      * This method has a oneway modifier. That means the client only makes
      * a request and does not listen for any response at all. Oneway methods
      * must be void.
      */
-    public void zip() throws org.apache.thrift.TException;
+    void zip() throws org.apache.thrift.TException;
 
     /**
      * This method echoed input object as return value.
      * 
      * @param w
      */
-    public Work echo(Work w) throws org.apache.thrift.TException;
+    Work echo(Work w) throws org.apache.thrift.TException;
 
     /**
      * This method contains all possible simple, special, struct and container types as input parameters
@@ -74,23 +74,23 @@ public class Calculator {
      * @param v11
      * @param v12
      */
-    public int alltypes(boolean v1, byte v2, short v3, int v4, long v5, double v6, java.lang.String v7, java.nio.ByteBuffer v8, Work v9, java.util.List<java.lang.Integer> v10, java.util.Set<java.lang.String> v11, java.util.Map<java.lang.String,java.lang.Long> v12) throws org.apache.thrift.TException;
+    int alltypes(boolean v1, byte v2, short v3, int v4, long v5, double v6, java.lang.String v7, java.nio.ByteBuffer v8, Work v9, java.util.List<java.lang.Integer> v10, java.util.Set<java.lang.String> v11, java.util.Map<java.lang.String,java.lang.Long> v12) throws org.apache.thrift.TException;
 
   }
 
   public interface AsyncIface {
 
-    public void ping(org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws org.apache.thrift.TException;
+    void ping(org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws org.apache.thrift.TException;
 
-    public void add(int num1, int num2, org.apache.thrift.async.AsyncMethodCallback<java.lang.Integer> resultHandler) throws org.apache.thrift.TException;
+    void add(int num1, int num2, org.apache.thrift.async.AsyncMethodCallback<java.lang.Integer> resultHandler) throws org.apache.thrift.TException;
 
-    public void calculate(int logid, Work w, org.apache.thrift.async.AsyncMethodCallback<java.lang.Integer> resultHandler) throws org.apache.thrift.TException;
+    void calculate(int logid, Work w, org.apache.thrift.async.AsyncMethodCallback<java.lang.Integer> resultHandler) throws org.apache.thrift.TException;
 
-    public void zip(org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws org.apache.thrift.TException;
+    void zip(org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws org.apache.thrift.TException;
 
-    public void echo(Work w, org.apache.thrift.async.AsyncMethodCallback<Work> resultHandler) throws org.apache.thrift.TException;
+    void echo(Work w, org.apache.thrift.async.AsyncMethodCallback<Work> resultHandler) throws org.apache.thrift.TException;
 
-    public void alltypes(boolean v1, byte v2, short v3, int v4, long v5, double v6, java.lang.String v7, java.nio.ByteBuffer v8, Work v9, java.util.List<java.lang.Integer> v10, java.util.Set<java.lang.String> v11, java.util.Map<java.lang.String,java.lang.Long> v12, org.apache.thrift.async.AsyncMethodCallback<java.lang.Integer> resultHandler) throws org.apache.thrift.TException;
+    void alltypes(boolean v1, byte v2, short v3, int v4, long v5, double v6, java.lang.String v7, java.nio.ByteBuffer v8, Work v9, java.util.List<java.lang.Integer> v10, java.util.Set<java.lang.String> v11, java.util.Map<java.lang.String,java.lang.Long> v12, org.apache.thrift.async.AsyncMethodCallback<java.lang.Integer> resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -1024,7 +1024,7 @@ public class Calculator {
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 ;
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -1077,7 +1077,7 @@ public class Calculator {
     }
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(ping_args.class, metaDataMap);
     }
@@ -1274,7 +1274,7 @@ public class Calculator {
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 ;
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -1327,7 +1327,7 @@ public class Calculator {
     }
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(ping_result.class, metaDataMap);
     }
@@ -1529,7 +1529,7 @@ public class Calculator {
       NUM1((short)1, "num1"),
       NUM2((short)2, "num2");
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -1591,7 +1591,7 @@ public class Calculator {
     private byte __isset_bitfield = 0;
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       tmpMap.put(_Fields.NUM1, new org.apache.thrift.meta_data.FieldMetaData("num1", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       tmpMap.put(_Fields.NUM2, new org.apache.thrift.meta_data.FieldMetaData("num2", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -1980,7 +1980,7 @@ public class Calculator {
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       SUCCESS((short)0, "success");
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -2039,7 +2039,7 @@ public class Calculator {
     private byte __isset_bitfield = 0;
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
@@ -2343,7 +2343,7 @@ public class Calculator {
       LOGID((short)1, "logid"),
       W((short)2, "w");
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -2404,7 +2404,7 @@ public class Calculator {
     private byte __isset_bitfield = 0;
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       tmpMap.put(_Fields.LOGID, new org.apache.thrift.meta_data.FieldMetaData("logid", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       tmpMap.put(_Fields.W, new org.apache.thrift.meta_data.FieldMetaData("w", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -2810,7 +2810,7 @@ public class Calculator {
       SUCCESS((short)0, "success"),
       OUCH((short)1, "ouch");
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -2871,7 +2871,7 @@ public class Calculator {
     private byte __isset_bitfield = 0;
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       tmpMap.put(_Fields.OUCH, new org.apache.thrift.meta_data.FieldMetaData("ouch", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -3271,7 +3271,7 @@ public class Calculator {
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 ;
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -3324,7 +3324,7 @@ public class Calculator {
     }
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(zip_args.class, metaDataMap);
     }
@@ -3523,7 +3523,7 @@ public class Calculator {
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       W((short)1, "w");
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -3580,7 +3580,7 @@ public class Calculator {
     // isset id assignments
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       tmpMap.put(_Fields.W, new org.apache.thrift.meta_data.FieldMetaData("w", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Work.class)));
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
@@ -3890,7 +3890,7 @@ public class Calculator {
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       SUCCESS((short)0, "success");
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -3947,7 +3947,7 @@ public class Calculator {
     // isset id assignments
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Work.class)));
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
@@ -4290,7 +4290,7 @@ public class Calculator {
       V11((short)11, "v11"),
       V12((short)12, "v12");
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -4376,7 +4376,7 @@ public class Calculator {
     private byte __isset_bitfield = 0;
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       tmpMap.put(_Fields.V1, new org.apache.thrift.meta_data.FieldMetaData("v1", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
       tmpMap.put(_Fields.V2, new org.apache.thrift.meta_data.FieldMetaData("v2", org.apache.thrift.TFieldRequirementType.DEFAULT, 
@@ -4468,15 +4468,15 @@ public class Calculator {
         this.v9 = new Work(other.v9);
       }
       if (other.isSetV10()) {
-        java.util.List<java.lang.Integer> __this__v10 = new java.util.ArrayList<java.lang.Integer>(other.v10);
+        java.util.List<java.lang.Integer> __this__v10 = new java.util.ArrayList<>(other.v10);
         this.v10 = __this__v10;
       }
       if (other.isSetV11()) {
-        java.util.Set<java.lang.String> __this__v11 = new java.util.HashSet<java.lang.String>(other.v11);
+        java.util.Set<java.lang.String> __this__v11 = new java.util.HashSet<>(other.v11);
         this.v11 = __this__v11;
       }
       if (other.isSetV12()) {
-        java.util.Map<java.lang.String,java.lang.Long> __this__v12 = new java.util.HashMap<java.lang.String,java.lang.Long>(other.v12);
+        java.util.Map<java.lang.String,java.lang.Long> __this__v12 = new java.util.HashMap<>(other.v12);
         this.v12 = __this__v12;
       }
     }
@@ -4737,7 +4737,7 @@ public class Calculator {
 
     public void addToV10(int elem) {
       if (this.v10 == null) {
-        this.v10 = new java.util.ArrayList<java.lang.Integer>();
+        this.v10 = new java.util.ArrayList<>();
       }
       this.v10.add(elem);
     }
@@ -4776,7 +4776,7 @@ public class Calculator {
 
     public void addToV11(java.lang.String elem) {
       if (this.v11 == null) {
-        this.v11 = new java.util.HashSet<java.lang.String>();
+        this.v11 = new java.util.HashSet<>();
       }
       this.v11.add(elem);
     }
@@ -4811,7 +4811,7 @@ public class Calculator {
 
     public void putToV12(java.lang.String key, long val) {
       if (this.v12 == null) {
-        this.v12 = new java.util.HashMap<java.lang.String,java.lang.Long>();
+        this.v12 = new java.util.HashMap<>();
       }
       this.v12.put(key, val);
     }
@@ -5154,7 +5154,7 @@ public class Calculator {
 
       hashCode = hashCode * 8191 + ((v1) ? 131071 : 524287);
 
-      hashCode = hashCode * 8191 + (int) (v2);
+      hashCode = hashCode * 8191 + (v2);
 
       hashCode = hashCode * 8191 + v3;
 
@@ -5535,7 +5535,7 @@ public class Calculator {
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
                   org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
-                  struct.v10 = new java.util.ArrayList<java.lang.Integer>(_list0.size);
+                  struct.v10 = new java.util.ArrayList<>(_list0.size);
                   int _elem1;
                   for (int _i2 = 0; _i2 < _list0.size; ++_i2)
                   {
@@ -5553,7 +5553,7 @@ public class Calculator {
               if (schemeField.type == org.apache.thrift.protocol.TType.SET) {
                 {
                   org.apache.thrift.protocol.TSet _set3 = iprot.readSetBegin();
-                  struct.v11 = new java.util.HashSet<java.lang.String>(2*_set3.size);
+                  struct.v11 = new java.util.HashSet<>(2*_set3.size);
                   java.lang.String _elem4;
                   for (int _i5 = 0; _i5 < _set3.size; ++_i5)
                   {
@@ -5571,7 +5571,7 @@ public class Calculator {
               if (schemeField.type == org.apache.thrift.protocol.TType.MAP) {
                 {
                   org.apache.thrift.protocol.TMap _map6 = iprot.readMapBegin();
-                  struct.v12 = new java.util.HashMap<java.lang.String,java.lang.Long>(2*_map6.size);
+                  struct.v12 = new java.util.HashMap<>(2*_map6.size);
                   java.lang.String _key7;
                   long _val8;
                   for (int _i9 = 0; _i9 < _map6.size; ++_i9)
@@ -5828,7 +5828,7 @@ public class Calculator {
         if (incoming.get(9)) {
           {
             org.apache.thrift.protocol.TList _list16 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.I32, iprot.readI32());
-            struct.v10 = new java.util.ArrayList<java.lang.Integer>(_list16.size);
+            struct.v10 = new java.util.ArrayList<>(_list16.size);
             int _elem17;
             for (int _i18 = 0; _i18 < _list16.size; ++_i18)
             {
@@ -5841,7 +5841,7 @@ public class Calculator {
         if (incoming.get(10)) {
           {
             org.apache.thrift.protocol.TSet _set19 = new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
-            struct.v11 = new java.util.HashSet<java.lang.String>(2*_set19.size);
+            struct.v11 = new java.util.HashSet<>(2*_set19.size);
             java.lang.String _elem20;
             for (int _i21 = 0; _i21 < _set19.size; ++_i21)
             {
@@ -5854,7 +5854,7 @@ public class Calculator {
         if (incoming.get(11)) {
           {
             org.apache.thrift.protocol.TMap _map22 = new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.I64, iprot.readI32());
-            struct.v12 = new java.util.HashMap<java.lang.String,java.lang.Long>(2*_map22.size);
+            struct.v12 = new java.util.HashMap<>(2*_map22.size);
             java.lang.String _key23;
             long _val24;
             for (int _i25 = 0; _i25 < _map22.size; ++_i25)
@@ -5888,7 +5888,7 @@ public class Calculator {
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       SUCCESS((short)0, "success");
 
-      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+      private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<>();
 
       static {
         for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -5947,7 +5947,7 @@ public class Calculator {
     private byte __isset_bitfield = 0;
     public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
-      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);

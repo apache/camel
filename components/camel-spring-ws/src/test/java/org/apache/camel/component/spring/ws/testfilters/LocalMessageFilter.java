@@ -18,7 +18,6 @@ package org.apache.camel.component.spring.ws.testfilters;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.Message;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.spring.ws.filter.impl.BasicMessageFilter;
 import org.springframework.ws.soap.SoapMessage;

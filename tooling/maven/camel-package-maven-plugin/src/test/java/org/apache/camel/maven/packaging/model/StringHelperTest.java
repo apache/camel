@@ -41,7 +41,7 @@ public class StringHelperTest {
                          arguments("List", "java.util.List<Map<String,java.lang.Integer>>"),
                          arguments("List", "java.util.List<Map<java.lang.String,java.lang.Integer>>"),
                          arguments("List", "java.util.List<java.util.Map<java.lang.String,java.lang.Integer>>"));
-    };
+    }
 
     @ParameterizedTest
     @MethodSource("getClassShortNameTypeVarations")

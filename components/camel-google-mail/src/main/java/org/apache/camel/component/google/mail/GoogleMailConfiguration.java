@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.google.mail;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.google.api.services.gmail.GmailScopes;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;

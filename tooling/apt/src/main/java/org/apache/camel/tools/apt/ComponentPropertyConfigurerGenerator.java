@@ -28,7 +28,6 @@ import javax.tools.StandardLocation;
 
 import org.apache.camel.tools.apt.helper.IOHelper;
 import org.apache.camel.tools.apt.model.ComponentOption;
-import org.apache.camel.tools.apt.model.EndpointOption;
 
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
 

@@ -113,7 +113,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
             }
             return destination;
         }
-    };
+    }
 
     @Override
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
