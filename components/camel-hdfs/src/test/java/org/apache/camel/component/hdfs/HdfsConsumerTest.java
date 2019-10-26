@@ -138,7 +138,7 @@ public class HdfsConsumerTest {
         when(fileStatus.isDirectory()).thenReturn(false);
         when(fileStatus.getOwner()).thenReturn("spiderman");
 
-        String normalFile = CWD.getAbsolutePath() + "/src/test/resources/normal_file.txt";
+        String normalFile = CWD.getAbsolutePath() + "/src/test/resources/hdfs/normal_file.txt";
         FSDataInputStream fsDataInputStream = new FSDataInputStream(new MockDataInputStream(normalFile));
         when(fileSystem.rename(any(Path.class), any(Path.class))).thenReturn(true);
         when(fileSystem.open(any(Path.class))).thenReturn(fsDataInputStream);

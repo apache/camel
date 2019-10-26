@@ -30,13 +30,13 @@ import org.mockito.ArgumentCaptor;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyShort;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.booleanThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyShort;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -135,7 +135,7 @@ public class HdfsOutputStreamTest {
 
         // then
         assertThat(underTest, notNullValue());
-        verify(fileSystem, times(1)).delete(pathCaptor.capture(), booleanThat(is(true)));
+        verify(fileSystem, times(1)).delete(pathCaptor.capture(), eq(true));
         assertThat(pathCaptor.getValue().toString(), is(hdfsPath));
 
         assertThat(underTest.getNumOfWrittenBytes(), is(0L));
