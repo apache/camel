@@ -45,7 +45,7 @@ class HdfsNormalFileHandler extends DefaultHdfsFile {
                 rout = hdfsInfo.getFileSystem().append(
                         hdfsInfo.getPath(),
                         endpointConfig.getBufferSize(),
-                        () -> { }
+                    () -> { }
                 );
             } else {
                 rout = hdfsInfo.getFileSystem().create(
@@ -54,7 +54,7 @@ class HdfsNormalFileHandler extends DefaultHdfsFile {
                         endpointConfig.getBufferSize(),
                         endpointConfig.getReplication(),
                         endpointConfig.getBlockSize(),
-                        () -> { }
+                    () -> { }
                 );
             }
             return rout;
