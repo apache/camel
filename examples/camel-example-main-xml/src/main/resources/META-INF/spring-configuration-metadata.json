@@ -1,0 +1,1623 @@
+{
+	"groups":[
+		{
+			"name":"camel.main",
+			"description":"camel-main configurations.",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties"
+		},
+		{
+			"name":"camel.hystrix",
+			"description":"camel-hystrix configurations.",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties"
+		},
+		{
+			"name":"camel.rest",
+			"description":"camel-rest configurations.",
+			"sourceType":"org.apache.camel.spi.RestConfiguration"
+		},
+		{
+			"name":"camel.component.bean",
+			"description":"The bean component is for invoking Java beans from Camel.",
+			"sourceType":"org.apache.camel.component.bean.BeanComponent"
+		},
+		{
+			"name":"camel.component.browse",
+			"description":"The browse component is used for viewing the messages received on endpoints that supports BrowsableEndpoint.",
+			"sourceType":"org.apache.camel.component.browse.BrowseComponent"
+		},
+		{
+			"name":"camel.component.class",
+			"description":"The class component is for invoking Java classes (Java beans) from Camel.",
+			"sourceType":"org.apache.camel.component.beanclass.ClassComponent"
+		},
+		{
+			"name":"camel.component.controlbus",
+			"description":"The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.",
+			"sourceType":"org.apache.camel.component.controlbus.ControlBusComponent"
+		},
+		{
+			"name":"camel.component.dataformat",
+			"description":"The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.",
+			"sourceType":"org.apache.camel.component.dataformat.DataFormatComponent"
+		},
+		{
+			"name":"camel.component.dataset",
+			"description":"The dataset component provides a mechanism to easily perform load & soak testing of your system.",
+			"sourceType":"org.apache.camel.component.dataset.DataSetComponent"
+		},
+		{
+			"name":"camel.component.dataset-test",
+			"description":"The dataset-test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.",
+			"sourceType":"org.apache.camel.component.dataset.DataSetTestComponent"
+		},
+		{
+			"name":"camel.component.direct",
+			"description":"The direct component provides direct, synchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent"
+		},
+		{
+			"name":"camel.component.direct-vm",
+			"description":"The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent"
+		},
+		{
+			"name":"camel.component.file",
+			"description":"The file component is used for reading or writing files.",
+			"sourceType":"org.apache.camel.component.file.FileComponent"
+		},
+		{
+			"name":"camel.component.language",
+			"description":"The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.",
+			"sourceType":"org.apache.camel.component.language.LanguageComponent"
+		},
+		{
+			"name":"camel.component.log",
+			"description":"The log component logs message exchanges to the underlying logging mechanism.",
+			"sourceType":"org.apache.camel.component.log.LogComponent"
+		},
+		{
+			"name":"camel.component.mock",
+			"description":"The mock component is used for testing routes and mediation rules using mocks.",
+			"sourceType":"org.apache.camel.component.mock.MockComponent"
+		},
+		{
+			"name":"camel.component.properties",
+			"description":"The properties component is used for using property placeholders in endpoint uris.",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent"
+		},
+		{
+			"name":"camel.component.quartz",
+			"description":"Provides a scheduled delivery of messages using the Quartz 2.x scheduler.",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent"
+		},
+		{
+			"name":"camel.component.ref",
+			"description":"The ref component is used for lookup of existing endpoints bound in the Registry.",
+			"sourceType":"org.apache.camel.component.ref.RefComponent"
+		},
+		{
+			"name":"camel.component.rest",
+			"description":"The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).",
+			"sourceType":"org.apache.camel.component.rest.RestComponent"
+		},
+		{
+			"name":"camel.component.rest-api",
+			"description":"The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.",
+			"sourceType":"org.apache.camel.component.rest.RestApiComponent"
+		},
+		{
+			"name":"camel.component.saga",
+			"description":"The saga component provides access to advanced options for managing the flow in the Saga EIP.",
+			"sourceType":"org.apache.camel.component.saga.SagaComponent"
+		},
+		{
+			"name":"camel.component.scheduler",
+			"description":"The scheduler component is used for generating message exchanges when a scheduler fires.",
+			"sourceType":"org.apache.camel.component.scheduler.SchedulerComponent"
+		},
+		{
+			"name":"camel.component.seda",
+			"description":"The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent"
+		},
+		{
+			"name":"camel.component.stub",
+			"description":"The stub component provides a simple way to stub out any physical endpoints while in development or testing.",
+			"sourceType":"org.apache.camel.component.stub.StubComponent"
+		},
+		{
+			"name":"camel.component.timer",
+			"description":"The timer component is used for generating message exchanges when a timer fires.",
+			"sourceType":"org.apache.camel.component.timer.TimerComponent"
+		},
+		{
+			"name":"camel.component.validator",
+			"description":"Validates the payload of a message using XML Schema and JAXP Validation.",
+			"sourceType":"org.apache.camel.component.validator.ValidatorComponent"
+		},
+		{
+			"name":"camel.component.vm",
+			"description":"The vm component provides asynchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.vm.VmComponent"
+		},
+		{
+			"name":"camel.component.xslt",
+			"description":"Transforms the message using a XSLT template.",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent"
+		}
+	],
+	"properties":[
+		{
+			"name":"camel.main.allow-use-original-message",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether to allow access to the original message from Camel's error handler, or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage(). Turning this off can optimize performance, as defensive copy of the original message is not needed. Default is false."
+		},
+		{
+			"name":"camel.main.auto-configuration-enabled",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether auto configuration of components, dataformats, languages is enabled or not. When enabled the configuration parameters are loaded from the properties component and optionally from the classpath file META-INF\/services\/org\/apache\/camel\/autowire.properties. You can prefix the parameters in the properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as seda,direct,jaxb. The auto configuration also works for any options on components that is a complex type (not standard Java type) and there has been an explicit single bean instance registered to the Camel registry via the org.apache.camel.spi.Registry#bind(String,Object) method or by using the org.apache.camel.BindToRegistry annotation style. This option is default enabled.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.auto-configuration-environment-variables-enabled",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether auto configuration should include OS environment variables as well. When enabled this allows to overrule any configuration using an OS environment variable. For example to set a shutdown timeout of 5 seconds: CAMEL_MAIN_SHUTDOWNTIMEOUT=5. This option is default enabled.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.auto-configuration-fail-fast",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason such as a invalid property name, etc. This option is default enabled.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.auto-configuration-log-summary",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether auto configuration should log a summary with the configured properties. This option is default enabled.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.auto-startup",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes is started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.autowire-component-properties",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether autowiring components with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. This option is default enabled.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.autowire-component-properties-allow-private-setter",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether autowiring components allows to use private setter method when setting the value. This may be needed in some rare situations when some configuration classes may configure via constructors over setters. But constructor configuration is more cumbersome to use via .properties files etc.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.autowire-component-properties-deep",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed) with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. This option is default disabled."
+		},
+		{
+			"name":"camel.main.consumer-template-cache-size",
+			"type":"int",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Consumer template endpoints cache size.",
+			"defaultValue":"1000"
+		},
+		{
+			"name":"camel.main.duration-hit-exit-code",
+			"type":"int",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Sets the exit code for the application if duration was hit"
+		},
+		{
+			"name":"camel.main.duration-max-idle-seconds",
+			"type":"int",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this to run Camel for a short while."
+		},
+		{
+			"name":"camel.main.duration-max-messages",
+			"type":"int",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"To specify how many messages to process by Camel before automatic terminating the JVM. You can use this to run Camel for a short while."
+		},
+		{
+			"name":"camel.main.duration-max-seconds",
+			"type":"int",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use this to run Camel for a short while."
+		},
+		{
+			"name":"camel.main.endpoint-runtime-statistics-enabled",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints). The default value is false."
+		},
+		{
+			"name":"camel.main.file-configurations",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Directory to load additional configuration files that contains configuration values that takes precedence over any other configuration. This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers. You can specify a pattern to load from sub directories and a name pattern such as \/var\/app\/secret\/.properties, multiple directories can be separated by comma."
+		},
+		{
+			"name":"camel.main.handle-fault",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether fault handling is enabled or not. Default is false."
+		},
+		{
+			"name":"camel.main.hangup-interceptor-enabled",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether to use graceful hangup when Camel is stopping or when the JVM terminates.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.jmx-create-connector",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Whether JMX connector is created, allowing clients to connect remotely The default value is false."
+		},
+		{
+			"name":"camel.main.jmx-enabled",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Enable JMX in your Camel application.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.jmx-management-name-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"The naming pattern for creating the CamelContext JMX management name. The default pattern is #name#",
+			"defaultValue":"#name#"
+		},
+		{
+			"name":"camel.main.jmx-management-statistics-level",
+			"type":"org.apache.camel.ManagementStatisticsLevel",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets the JMX statistics level The level can be set to Extended to gather additional information The default value is Default.",
+			"defaultValue":"ManagementStatisticsLevel.Default"
+		},
+		{
+			"name":"camel.main.load-type-converters",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel 2.x. Its recommended to migrate to use fast type converter loading by setting Converter(loader = true) on your custom type converter classes.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.log-debug-max-chars",
+			"type":"int",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Is used to limit the maximum length of the logging Camel message bodies. If the message body is longer than the limit, the log message is clipped. Use -1 to have unlimited length. Use for example 1000 to log at most 1000 characters."
+		},
+		{
+			"name":"camel.main.log-exhausted-message-body",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether to log exhausted message body with message history. Default is false."
+		},
+		{
+			"name":"camel.main.log-mask",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether log mask is enabled or not. Default is false."
+		},
+		{
+			"name":"camel.main.message-history",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether message history is enabled or not. Default is true.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.name",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets the name of the CamelContext."
+		},
+		{
+			"name":"camel.main.producer-template-cache-size",
+			"type":"int",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Producer template endpoints cache size.",
+			"defaultValue":"1000"
+		},
+		{
+			"name":"camel.main.route-filter-exclude-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as documented by PatternHelper#matchPattern(String,String) . For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include."
+		},
+		{
+			"name":"camel.main.route-filter-include-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as documented by PatternHelper#matchPattern(String,String) . For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include."
+		},
+		{
+			"name":"camel.main.shutdown-log-inflight-exchanges-on-timeout",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether to log information about the inflight Exchanges which are still running during a shutdown which didn't complete without the given timeout.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.shutdown-now-on-timeout",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether to force shutdown of all consumers when a timeout occurred and thus not all consumers was shutdown within that period. You should have good reasons to set this option to false as it means that the routes keep running and is halted abruptly when CamelContext has been shutdown.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.shutdown-routes-in-reverse-order",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether routes should be shutdown in reverse or the same order as they where started.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.shutdown-suppress-logging-on-timeout",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Whether Camel should try to suppress logging during shutdown and timeout was triggered, meaning forced shutdown is happening. And during forced shutdown we want to avoid logging errors\/warnings et all in the logs as a side-effect of the forced timeout. Notice the suppress is a best effort as there may still be some logs coming from 3rd party libraries and whatnot, which Camel cannot control. This option is default false."
+		},
+		{
+			"name":"camel.main.shutdown-timeout",
+			"type":"int",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Timeout in seconds to graceful shutdown Camel.",
+			"defaultValue":"300"
+		},
+		{
+			"name":"camel.main.stream-caching-any-spool-rules",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true then shouldSpoolCache(long) returns true, to allow spooling to disk. If this option is false, then all the org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true. The default value is false which means that all the rules must return true."
+		},
+		{
+			"name":"camel.main.stream-caching-buffer-size",
+			"type":"int",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets the stream caching buffer size to use when allocating in-memory buffers used for in-memory stream caches. The default size is 4096."
+		},
+		{
+			"name":"camel.main.stream-caching-enabled",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether stream caching is enabled or not. Default is false."
+		},
+		{
+			"name":"camel.main.stream-caching-remove-spool-directory-when-stopping",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Whether to remove stream caching temporary directory when stopping. This option is default true.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.stream-caching-spool-cipher",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets a stream caching cipher name to use when spooling to disk to write with encryption. By default the data is not encrypted."
+		},
+		{
+			"name":"camel.main.stream-caching-spool-directory",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets the stream caching spool (temporary) directory to use for overflow and spooling to disk. If no spool directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir directory."
+		},
+		{
+			"name":"camel.main.stream-caching-spool-threshold",
+			"type":"long",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Stream caching threshold in bytes when overflow to disk is activated. The default threshold is 128kb. Use -1 to disable overflow to disk."
+		},
+		{
+			"name":"camel.main.stream-caching-spool-used-heap-memory-limit",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets what the upper bounds should be when streamCachingSpoolUsedHeapMemoryThreshold is in use."
+		},
+		{
+			"name":"camel.main.stream-caching-spool-used-heap-memory-threshold",
+			"type":"int",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets a percentage (1-99) of used heap memory threshold to activate stream caching spooling to disk."
+		},
+		{
+			"name":"camel.main.stream-caching-statistics-enabled",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether stream caching statistics is enabled."
+		},
+		{
+			"name":"camel.main.thread-name-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets the thread name pattern used for creating the full thread name. The default pattern is: Camel (#camelId#) thread ##counter# - #name# Where #camelId# is the name of the CamelContext. and #counter# is a unique incrementing counter. and #name# is the regular thread name. You can also use #longName# which is the long thread name which can includes endpoint parameters etc."
+		},
+		{
+			"name":"camel.main.tracing",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether tracing is enabled or not. Default is false."
+		},
+		{
+			"name":"camel.main.use-breadcrumb",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Set whether breadcrumb is enabled. The default value is false."
+		},
+		{
+			"name":"camel.main.use-data-type",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has been explicit configured with input and output types. Otherwise data type is default off."
+		},
+		{
+			"name":"camel.main.use-mdc-logging",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"To turn on MDC logging"
+		},
+		{
+			"name":"camel.hystrix.allow-maximum-size-to-diverge-from-core-size",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Allows the configuration for maximumSize to take effect. That value can then be equal to, or higher, than coreSize"
+		},
+		{
+			"name":"camel.hystrix.circuit-breaker-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Whether to use a HystrixCircuitBreaker or not. If false no circuit-breaker logic will be used and all requests permitted. This is similar in effect to circuitBreakerForceClosed() except that continues tracking metrics and knowing whether it should be open\/closed, this property results in not even instantiating a circuit-breaker."
+		},
+		{
+			"name":"camel.hystrix.circuit-breaker-error-threshold-percentage",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Error percentage threshold (as whole number such as 50) at which point the circuit breaker will trip open and reject requests. It will stay tripped for the duration defined in circuitBreakerSleepWindowInMilliseconds; The error percentage this is compared against comes from HystrixCommandMetrics.getHealthCounts()."
+		},
+		{
+			"name":"camel.hystrix.circuit-breaker-force-closed",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"If true the HystrixCircuitBreaker#allowRequest() will always return true to allow requests regardless of the error percentage from HystrixCommandMetrics.getHealthCounts(). The circuitBreakerForceOpen() property takes precedence so if it set to true this property does nothing."
+		},
+		{
+			"name":"camel.hystrix.circuit-breaker-force-open",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"If true the HystrixCircuitBreaker.allowRequest() will always return false, causing the circuit to be open (tripped) and reject all requests. This property takes precedence over circuitBreakerForceClosed();"
+		},
+		{
+			"name":"camel.hystrix.circuit-breaker-request-volume-threshold",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Minimum number of requests in the metricsRollingStatisticalWindowInMilliseconds() that must exist before the HystrixCircuitBreaker will trip. If below this number the circuit will not trip regardless of error percentage."
+		},
+		{
+			"name":"camel.hystrix.circuit-breaker-sleep-window-in-milliseconds",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"The time in milliseconds after a HystrixCircuitBreaker trips open that it should wait before trying requests again."
+		},
+		{
+			"name":"camel.hystrix.core-pool-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Core thread-pool size that gets passed to java.util.concurrent.ThreadPoolExecutor#setCorePoolSize(int)"
+		},
+		{
+			"name":"camel.hystrix.execution-isolation-semaphore-max-concurrent-requests",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Number of concurrent requests permitted to HystrixCommand.run(). Requests beyond the concurrent limit will be rejected. Applicable only when executionIsolationStrategy == SEMAPHORE."
+		},
+		{
+			"name":"camel.hystrix.execution-isolation-strategy",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"What isolation strategy HystrixCommand.run() will be executed with. If THREAD then it will be executed on a separate thread and concurrent requests limited by the number of threads in the thread-pool. If SEMAPHORE then it will be executed on the calling thread and concurrent requests limited by the semaphore count."
+		},
+		{
+			"name":"camel.hystrix.execution-isolation-thread-interrupt-on-timeout",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Whether the execution thread should attempt an interrupt (using Future#cancel ) when a thread times out. Applicable only when executionIsolationStrategy() == THREAD."
+		},
+		{
+			"name":"camel.hystrix.execution-timeout-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Whether the timeout mechanism is enabled for this command"
+		},
+		{
+			"name":"camel.hystrix.execution-timeout-in-milliseconds",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Time in milliseconds at which point the command will timeout and halt execution. If executionIsolationThreadInterruptOnTimeout == true and the command is thread-isolated, the executing thread will be interrupted. If the command is semaphore-isolated and a HystrixObservableCommand, that command will get unsubscribed."
+		},
+		{
+			"name":"camel.hystrix.fallback-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Whether HystrixCommand.getFallback() should be attempted when failure occurs."
+		},
+		{
+			"name":"camel.hystrix.fallback-isolation-semaphore-max-concurrent-requests",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Number of concurrent requests permitted to HystrixCommand.getFallback(). Requests beyond the concurrent limit will fail-fast and not attempt retrieving a fallback."
+		},
+		{
+			"name":"camel.hystrix.group-key",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Sets the group key to use. The default value is CamelHystrix."
+		},
+		{
+			"name":"camel.hystrix.keep-alive-time",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Keep-alive time in minutes that gets passed to ThreadPoolExecutor#setKeepAliveTime(long,TimeUnit)"
+		},
+		{
+			"name":"camel.hystrix.maximum-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Maximum thread-pool size that gets passed to ThreadPoolExecutor#setMaximumPoolSize(int) . This is the maximum amount of concurrency that can be supported without starting to reject HystrixCommands. Please note that this setting only takes effect if you also set allowMaximumSizeToDivergeFromCoreSize"
+		},
+		{
+			"name":"camel.hystrix.max-queue-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Max queue size that gets passed to BlockingQueue in HystrixConcurrencyStrategy.getBlockingQueue(int) This should only affect the instantiation of a threadpool - it is not eliglible to change a queue size on the fly. For that, use queueSizeRejectionThreshold()."
+		},
+		{
+			"name":"camel.hystrix.metrics-health-snapshot-interval-in-milliseconds",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Time in milliseconds to wait between allowing health snapshots to be taken that calculate success and error percentages and affect HystrixCircuitBreaker.isOpen() status. On high-volume circuits the continual calculation of error percentage can become CPU intensive thus this controls how often it is calculated."
+		},
+		{
+			"name":"camel.hystrix.metrics-rolling-percentile-bucket-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Maximum number of values stored in each bucket of the rolling percentile. This is passed into HystrixRollingPercentile inside HystrixCommandMetrics."
+		},
+		{
+			"name":"camel.hystrix.metrics-rolling-percentile-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Whether percentile metrics should be captured using HystrixRollingPercentile inside HystrixCommandMetrics."
+		},
+		{
+			"name":"camel.hystrix.metrics-rolling-percentile-window-buckets",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Number of buckets the rolling percentile window is broken into. This is passed into HystrixRollingPercentile inside HystrixCommandMetrics."
+		},
+		{
+			"name":"camel.hystrix.metrics-rolling-percentile-window-in-milliseconds",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Duration of percentile rolling window in milliseconds. This is passed into HystrixRollingPercentile inside HystrixCommandMetrics."
+		},
+		{
+			"name":"camel.hystrix.metrics-rolling-statistical-window-buckets",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Number of buckets the rolling statistical window is broken into. This is passed into HystrixRollingNumber inside HystrixCommandMetrics."
+		},
+		{
+			"name":"camel.hystrix.metrics-rolling-statistical-window-in-milliseconds",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"This property sets the duration of the statistical rolling window, in milliseconds. This is how long metrics are kept for the thread pool. The window is divided into buckets and rolls by those increments."
+		},
+		{
+			"name":"camel.hystrix.queue-size-rejection-threshold",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Queue size rejection threshold is an artificial max size at which rejections will occur even if maxQueueSize has not been reached. This is done because the maxQueueSize of a BlockingQueue can not be dynamically changed and we want to support dynamically changing the queue size that affects rejections. This is used by HystrixCommand when queuing a thread for execution."
+		},
+		{
+			"name":"camel.hystrix.request-log-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Whether HystrixCommand execution and events should be logged to HystrixRequestLog."
+		},
+		{
+			"name":"camel.hystrix.thread-pool-key",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Sets the thread pool key to use. Will by default use the same value as groupKey has been configured to use."
+		},
+		{
+			"name":"camel.hystrix.thread-pool-rolling-number-statistical-window-buckets",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Number of buckets the rolling statistical window is broken into. This is passed into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance."
+		},
+		{
+			"name":"camel.hystrix.thread-pool-rolling-number-statistical-window-in-milliseconds",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties",
+			"description":"Duration of statistical rolling window in milliseconds. This is passed into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance."
+		},
+		{
+			"name":"camel.rest.api-component",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets the name of the Camel component to use as the REST API (such as swagger)"
+		},
+		{
+			"name":"camel.rest.api-context-id-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern. The pattern #name# refers to the CamelContext name, to match on the current CamelContext only. For any other value, the pattern uses the rules from org.apache.camel.support.EndpointHelper#matchPattern(String,String)"
+		},
+		{
+			"name":"camel.rest.api-context-listing",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it allows to discover these contexts, if false then only the current CamelContext is in use."
+		},
+		{
+			"name":"camel.rest.api-context-path",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path."
+		},
+		{
+			"name":"camel.rest.api-context-route-id",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route id."
+		},
+		{
+			"name":"camel.rest.api-host",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"To use an specific hostname for the API documentation (eg swagger) This can be used to override the generated host with this configured hostname"
+		},
+		{
+			"name":"camel.rest.api-properties",
+			"type":"java.util.Map",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets additional options on api level"
+		},
+		{
+			"name":"camel.rest.api-vendor-extension",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs."
+		},
+		{
+			"name":"camel.rest.binding-mode",
+			"type":"org.apache.camel.spi.RestBindingMode",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets the binding mode to be used by the REST consumer",
+			"defaultValue":"RestBindingMode.off"
+		},
+		{
+			"name":"camel.rest.client-request-validation",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes\/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false."
+		},
+		{
+			"name":"camel.rest.component",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets the name of the Camel component to use as the REST consumer"
+		},
+		{
+			"name":"camel.rest.component-properties",
+			"type":"java.util.Map",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets additional options on component level"
+		},
+		{
+			"name":"camel.rest.consumer-properties",
+			"type":"java.util.Map",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets additional options on consumer level"
+		},
+		{
+			"name":"camel.rest.context-path",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets a leading context-path the REST services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. Or for components such as camel-jetty or camel-netty-http that includes a HTTP server."
+		},
+		{
+			"name":"camel.rest.cors-headers",
+			"type":"java.util.Map",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets the CORS headers to use if CORS has been enabled."
+		},
+		{
+			"name":"camel.rest.data-format-properties",
+			"type":"java.util.Map",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets additional options on data format level"
+		},
+		{
+			"name":"camel.rest.enable-cors",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the response. This option is default false"
+		},
+		{
+			"name":"camel.rest.endpoint-properties",
+			"type":"java.util.Map",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets additional options on endpoint level"
+		},
+		{
+			"name":"camel.rest.host",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets the hostname to use by the REST consumer"
+		},
+		{
+			"name":"camel.rest.host-name-resolver",
+			"type":"org.apache.camel.spi.RestHostNameResolver",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets the resolver to use for resolving hostname",
+			"defaultValue":"RestHostNameResolver.allLocalIp"
+		},
+		{
+			"name":"camel.rest.json-data-format",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets a custom json data format to be used Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance."
+		},
+		{
+			"name":"camel.rest.port",
+			"type":"int",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets the port to use by the REST consumer"
+		},
+		{
+			"name":"camel.rest.producer-api-doc",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document. This requires adding camel-swagger-java to the classpath, and any miss configuration will let Camel fail on startup and report the error(s). The location of the api document is loaded from classpath by default, but you can use file: or http: to refer to resources to load from file or http url."
+		},
+		{
+			"name":"camel.rest.producer-component",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets the name of the Camel component to use as the REST producer"
+		},
+		{
+			"name":"camel.rest.scheme",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets the scheme to use by the REST consumer"
+		},
+		{
+			"name":"camel.rest.skip-binding-on-error-code",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.rest.use-x-forward-headers",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"WWhether to use X-Forward headers to set host etc. for Swagger. This option is default true.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.rest.xml-data-format",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.spi.RestConfiguration",
+			"description":"Sets a custom xml data format to be used. Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance."
+		},
+		{
+			"name":"camel.component.bean.cache",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.bean.BeanComponent",
+			"description":"If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope."
+		},
+		{
+			"name":"camel.component.bean.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.bean.BeanComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.bean.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.bean.BeanComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.browse.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.browse.BrowseComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.browse.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.browse.BrowseComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.class.cache",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.beanclass.ClassComponent",
+			"description":"If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope."
+		},
+		{
+			"name":"camel.component.class.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.beanclass.ClassComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.class.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.beanclass.ClassComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.controlbus.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.controlbus.ControlBusComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.controlbus.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.controlbus.ControlBusComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.dataformat.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataformat.DataFormatComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.dataformat.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataformat.DataFormatComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.dataset.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataset.DataSetComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.dataset.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataset.DataSetComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.dataset-test.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataset.DataSetTestComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.dataset-test.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataset.DataSetTestComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.direct.block",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent",
+			"description":"If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.direct.timeout",
+			"type":"java.lang.Long",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent",
+			"description":"The timeout value to use if block is enabled.",
+			"defaultValue":"30000"
+		},
+		{
+			"name":"camel.component.direct.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.direct.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.direct-vm.block",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.direct-vm.timeout",
+			"type":"java.lang.Long",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"The timeout value to use if block is enabled.",
+			"defaultValue":"30000"
+		},
+		{
+			"name":"camel.component.direct-vm.header-filter-strategy",
+			"type":"org.apache.camel.spi.HeaderFilterStrategy",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none."
+		},
+		{
+			"name":"camel.component.direct-vm.propagate-properties",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"Whether to propagate or not properties from the producer side to the consumer side, and vice versa. Default value: true.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.direct-vm.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.direct-vm.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.file.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.file.FileComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.file.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.file.FileComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.language.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.language.LanguageComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.language.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.language.LanguageComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.log.exchange-formatter",
+			"type":"org.apache.camel.spi.ExchangeFormatter",
+			"sourceType":"org.apache.camel.component.log.LogComponent",
+			"description":"Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter."
+		},
+		{
+			"name":"camel.component.log.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.log.LogComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.log.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.log.LogComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.mock.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.mock.MockComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.mock.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.mock.MockComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.properties.locations",
+			"type":"java.util.List",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"A list of locations to load properties. This option will override any default locations and only use the locations from this option."
+		},
+		{
+			"name":"camel.component.properties.location",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option."
+		},
+		{
+			"name":"camel.component.properties.encoding",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by java.util.Properties#load(java.io.InputStream)"
+		},
+		{
+			"name":"camel.component.properties.properties-resolver",
+			"type":"org.apache.camel.component.properties.PropertiesResolver",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"To use a custom PropertiesResolver"
+		},
+		{
+			"name":"camel.component.properties.properties-parser",
+			"type":"org.apache.camel.component.properties.PropertiesParser",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"To use a custom PropertiesParser"
+		},
+		{
+			"name":"camel.component.properties.cache",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Whether or not to cache loaded properties. The default value is true.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.properties.property-prefix",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Optional prefix prepended to property names before resolution."
+		},
+		{
+			"name":"camel.component.properties.property-suffix",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Optional suffix appended to property names before resolution."
+		},
+		{
+			"name":"camel.component.properties.fallback-to-unaugmented-property",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false, only the augmented property name is searched.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.properties.default-fallback-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"If false, the component does not attempt to find a default for the key by looking after the colon separator.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.properties.ignore-missing-location",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Whether to silently ignore if a location cannot be located, such as a properties file not found.",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.properties.prefix-token",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_PREFIX_TOKEN).",
+			"defaultValue":"{{"
+		},
+		{
+			"name":"camel.component.properties.suffix-token",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_SUFFIX_TOKEN).",
+			"defaultValue":"}}"
+		},
+		{
+			"name":"camel.component.properties.initial-properties",
+			"type":"java.util.Properties",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Sets initial properties which will be used before any locations are resolved."
+		},
+		{
+			"name":"camel.component.properties.override-properties",
+			"type":"java.util.Properties",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Sets a special list of override properties that take precedence and will use first, if a property exist."
+		},
+		{
+			"name":"camel.component.properties.system-properties-mode",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Sets the system property mode. The default mode (override) is to use system properties if present, and override any existing properties.",
+			"defaultValue":"2"
+		},
+		{
+			"name":"camel.component.properties.environment-variable-mode",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Sets the OS environment variables mode. The default mode (override) is to use OS environment variables if present, and override any existing properties.",
+			"defaultValue":"1"
+		},
+		{
+			"name":"camel.component.properties.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.properties.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.properties.PropertiesComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.quartz.auto-start-scheduler",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"Whether or not the scheduler should be auto started. This options is default true",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.quartz.start-delayed-seconds",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"Seconds to wait before starting the quartz scheduler."
+		},
+		{
+			"name":"camel.component.quartz.prefix-job-name-with-endpoint-id",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"Whether to prefix the quartz job with the endpoint id. This option is default false.",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.quartz.enable-jmx",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.quartz.properties",
+			"type":"java.util.Properties",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"Properties to configure the Quartz scheduler."
+		},
+		{
+			"name":"camel.component.quartz.properties-file",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"File name of the properties to load from the classpath"
+		},
+		{
+			"name":"camel.component.quartz.prefix-instance-name",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.quartz.interrupt-jobs-on-shutdown",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted.",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.quartz.scheduler-factory",
+			"type":"org.quartz.SchedulerFactory",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"To use the custom SchedulerFactory which is used to create the Scheduler."
+		},
+		{
+			"name":"camel.component.quartz.scheduler",
+			"type":"org.quartz.Scheduler",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"To use the custom configured Quartz scheduler, instead of creating a new Scheduler."
+		},
+		{
+			"name":"camel.component.quartz.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.quartz.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.quartz.QuartzComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.ref.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.ref.RefComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.ref.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.ref.RefComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.rest.consumer-component-name",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used."
+		},
+		{
+			"name":"camel.component.rest.producer-component-name",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used."
+		},
+		{
+			"name":"camel.component.rest.component-name",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used.",
+			"deprecated":true,
+			"deprecation":{
+				
+			}
+		},
+		{
+			"name":"camel.component.rest.api-doc",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format."
+		},
+		{
+			"name":"camel.component.rest.host",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"Host and port of HTTP service to use (override host in swagger schema)"
+		},
+		{
+			"name":"camel.component.rest.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.rest.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.rest-api.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.rest.RestApiComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.rest-api.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.rest.RestApiComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.saga.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.saga.SagaComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.saga.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.saga.SagaComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.scheduler.concurrent-tasks",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.scheduler.SchedulerComponent",
+			"description":"Number of threads used by the scheduling thread pool. Is by default using a single thread",
+			"defaultValue":"1"
+		},
+		{
+			"name":"camel.component.scheduler.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.scheduler.SchedulerComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.scheduler.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.scheduler.SchedulerComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.seda.queue-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold).",
+			"defaultValue":"1000"
+		},
+		{
+			"name":"camel.component.seda.concurrent-consumers",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Sets the default number of concurrent threads processing exchanges.",
+			"defaultValue":"1"
+		},
+		{
+			"name":"camel.component.seda.default-queue-factory",
+			"type":"org.apache.camel.component.seda.BlockingQueueFactory",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Sets the default queue factory."
+		},
+		{
+			"name":"camel.component.seda.default-block-when-full",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted.",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.seda.default-offer-timeout",
+			"type":"java.lang.Long",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue"
+		},
+		{
+			"name":"camel.component.seda.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.seda.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.stub.queue-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold).",
+			"defaultValue":"1000"
+		},
+		{
+			"name":"camel.component.stub.concurrent-consumers",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Sets the default number of concurrent threads processing exchanges.",
+			"defaultValue":"1"
+		},
+		{
+			"name":"camel.component.stub.default-queue-factory",
+			"type":"org.apache.camel.component.seda.BlockingQueueFactory",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Sets the default queue factory."
+		},
+		{
+			"name":"camel.component.stub.default-block-when-full",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted.",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.stub.default-offer-timeout",
+			"type":"java.lang.Long",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue"
+		},
+		{
+			"name":"camel.component.stub.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.stub.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.timer.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.timer.TimerComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.timer.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.timer.TimerComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.validator.resource-resolver-factory",
+			"type":"org.apache.camel.component.validator.ValidatorResourceResolverFactory",
+			"sourceType":"org.apache.camel.component.validator.ValidatorComponent",
+			"description":"To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI"
+		},
+		{
+			"name":"camel.component.validator.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.validator.ValidatorComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.validator.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.validator.ValidatorComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.vm.queue-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold).",
+			"defaultValue":"1000"
+		},
+		{
+			"name":"camel.component.vm.concurrent-consumers",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Sets the default number of concurrent threads processing exchanges.",
+			"defaultValue":"1"
+		},
+		{
+			"name":"camel.component.vm.default-queue-factory",
+			"type":"org.apache.camel.component.seda.BlockingQueueFactory",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Sets the default queue factory."
+		},
+		{
+			"name":"camel.component.vm.default-block-when-full",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted.",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.vm.default-offer-timeout",
+			"type":"java.lang.Long",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue"
+		},
+		{
+			"name":"camel.component.vm.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.vm.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.xslt.uri-resolver-factory",
+			"type":"org.apache.camel.component.xslt.XsltUriResolverFactory",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'."
+		},
+		{
+			"name":"camel.component.xslt.uri-resolver",
+			"type":"javax.xml.transform.URIResolver",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'."
+		},
+		{
+			"name":"camel.component.xslt.content-cache",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.xslt.saxon",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.xslt.saxon-extension-functions",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup."
+		},
+		{
+			"name":"camel.component.xslt.saxon-configuration",
+			"type":"java.lang.Object",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"To use a custom Saxon configuration"
+		},
+		{
+			"name":"camel.component.xslt.saxon-configuration-properties",
+			"type":"java.util.Map",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"To set custom Saxon configuration properties"
+		},
+		{
+			"name":"camel.component.xslt.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.xslt.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		}
+	]
+}

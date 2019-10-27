@@ -44,6 +44,7 @@ import org.apache.camel.impl.engine.DefaultManagementNameStrategy;
 import org.apache.camel.impl.engine.DefaultMessageHistoryFactory;
 import org.apache.camel.impl.engine.DefaultNodeIdFactory;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
+import org.apache.camel.impl.engine.DefaultPackageScanResourceResolver;
 import org.apache.camel.impl.engine.DefaultProcessorFactory;
 import org.apache.camel.impl.engine.DefaultRouteController;
 import org.apache.camel.impl.engine.DefaultShutdownStrategy;
@@ -84,6 +85,7 @@ import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -277,6 +279,11 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
             packageScanClassResolver = new DefaultPackageScanClassResolver();
         }
         return packageScanClassResolver;
+    }
+
+    @Override
+    protected PackageScanResourceResolver createPackageScanResourceResolver() {
+        return new DefaultPackageScanResourceResolver();
     }
 
     @Override

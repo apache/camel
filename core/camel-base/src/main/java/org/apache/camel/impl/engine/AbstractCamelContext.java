@@ -116,6 +116,7 @@ import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -236,6 +237,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile BeanProcessorFactory beanProcessorFactory;
     private volatile ClassResolver classResolver;
     private volatile PackageScanClassResolver packageScanClassResolver;
+    private volatile PackageScanResourceResolver packageScanResourceResolver;
     private volatile ServicePool<Producer> producerServicePool;
     private volatile ServicePool<PollingConsumer> pollingConsumerServicePool;
     private volatile NodeIdFactory nodeIdFactory;
@@ -3470,6 +3472,23 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
+    public PackageScanResourceResolver getPackageScanResourceResolver() {
+        if (packageScanResourceResolver == null) {
+            synchronized (lock) {
+                if (packageScanResourceResolver == null) {
+                    setPackageScanResourceResolver(createPackageScanResourceResolver());
+                }
+            }
+        }
+        return packageScanResourceResolver;
+    }
+
+    @Override
+    public void setPackageScanResourceResolver(PackageScanResourceResolver packageScanResourceResolver) {
+        this.packageScanResourceResolver = doAddService(packageScanResourceResolver);
+    }
+
+    @Override
     public List<String> getComponentNames() {
         return new ArrayList<>(components.keySet());
     }
@@ -4172,6 +4191,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected abstract ShutdownStrategy createShutdownStrategy();
 
     protected abstract PackageScanClassResolver createPackageScanClassResolver();
+
+    protected abstract PackageScanResourceResolver createPackageScanResourceResolver();
 
     protected abstract ExecutorServiceManager createExecutorServiceManager();
 
