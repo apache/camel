@@ -41,6 +41,7 @@ import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteStartupOrder;
@@ -194,6 +195,20 @@ public interface ExtendedCamelContext extends CamelContext {
      * @param resolver the resolver
      */
     void setPackageScanClassResolver(PackageScanClassResolver resolver);
+
+    /**
+     * Returns the package scanning resource resolver
+     *
+     * @return the resolver
+     */
+    PackageScanResourceResolver getPackageScanResourceResolver();
+
+    /**
+     * Sets the package scanning resource resolver to use
+     *
+     * @param resolver the resolver
+     */
+    void setPackageScanResourceResolver(PackageScanResourceResolver resolver);
 
     /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
