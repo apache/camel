@@ -565,7 +565,7 @@ public class HdfsConfiguration {
     }
 
     public boolean hasClusterConfiguration() {
-        return !getNamedNodeList().isEmpty();
+        return !namedNodeList.isEmpty();
     }
 
     public String getKerberosConfigFileLocation() {
@@ -626,7 +626,11 @@ public class HdfsConfiguration {
      * @return HOST_NAME:PORT/PATH
      */
     String getFileSystemLabel(String path) {
-        return String.format("%s:%s/%s", getHostName(), getPort(), path);
+        if(hasClusterConfiguration()) {
+            return String.format("%s/%s", getHostName(), path);
+        } else {
+            return String.format("%s:%s/%s", getHostName(), getPort(), path);
+        }
     }
 
 }
