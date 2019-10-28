@@ -59,6 +59,8 @@ public class CamelBeanPostProcessor implements org.apache.camel.spi.CamelBeanPos
     private ApplicationContext applicationContext;
     @XmlTransient
     private String camelId;
+    @XmlTransient
+    private boolean bindToRegistrySupported;
 
     // must use a delegate, as we cannot extend DefaultCamelBeanPostProcessor, as this will cause the
     // XSD schema generator to include the DefaultCamelBeanPostProcessor as a type, which we do not want to
@@ -91,18 +93,13 @@ public class CamelBeanPostProcessor implements org.apache.camel.spi.CamelBeanPos
                 return false;
             }
 
-            if (beanName != null && beanName.startsWith("org.springframework")) {
-                // do not let camel post process spring beans
-                // (no point and there are some problems see CAMEL-14075)
-                return false;
-            }
-            if (bean.getClass().getTypeName().startsWith("org.springframework")) {
-                // do not let camel post process spring beans
-                // (no point and there are some problems see CAMEL-14075)
-                return false;
-            }
-
             return super.canPostProcessBean(bean, beanName);
+        }
+
+        @Override
+        protected boolean bindToRegistrySupported() {
+            // do not support @BindToRegistry as spring and spring-boot has its own set of annotations for this
+            return false;
         }
 
         @Override
@@ -209,4 +206,11 @@ public class CamelBeanPostProcessor implements org.apache.camel.spi.CamelBeanPos
         this.camelId = camelId;
     }
 
+    public boolean isBindToRegistrySupported() {
+        return bindToRegistrySupported;
+    }
+
+    public void setBindToRegistrySupported(boolean bindToRegistrySupported) {
+        this.bindToRegistrySupported = bindToRegistrySupported;
+    }
 }
