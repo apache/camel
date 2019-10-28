@@ -1,8 +1,9 @@
-[[netty4-http-component]]
 = Netty4 HTTP Component
 :page-source: components/camel-netty4-http/src/main/docs/netty4-http-component.adoc
 
 *Available as of Camel version 2.14*
+*Available as of Camel version 2.14*
+
 
 
 The *netty4-http* component is an extension to xref:netty4-component.adoc[Netty4]
