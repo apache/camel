@@ -1,7 +1,7 @@
 [[google-calendar-component]]
 = Google Calendar Component
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 The Google Calendar component provides access
 to http://google.com/calendar[Google Calendar] via

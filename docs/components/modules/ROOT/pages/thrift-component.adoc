@@ -2,7 +2,7 @@
 = Thrift Component
 :page-source: components/camel-thrift/src/main/docs/thrift-component.adoc
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
 
 The Thrift component allows you to call or expose Remote Procedure Call (RPC) services
 using https://thrift.apache.org/[Apache Thrift] binary communication protocol and serialization mechanism.

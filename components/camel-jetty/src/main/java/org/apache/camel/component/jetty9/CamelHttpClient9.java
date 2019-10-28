@@ -24,7 +24,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 @Deprecated
 public class CamelHttpClient9 extends CamelHttpClient {
-    
+
     public CamelHttpClient9(SslContextFactory sslContextFactory) {
         super(sslContextFactory);
     }
@@ -42,7 +42,7 @@ public class CamelHttpClient9 extends CamelHttpClient {
     protected void setThreadPoolOrExecutor(Executor pool) {
         setExecutor(pool);
     }
-    
+
     @Override
     public void setProxy(String host, int port) {
         getProxyConfiguration().getProxies().add(new org.eclipse.jetty.client.HttpProxy(host, port));
@@ -57,5 +57,5 @@ public class CamelHttpClient9 extends CamelHttpClient {
     public int getProxyPort() {
         return getProxyConfiguration().getProxies().get(0).getAddress().getPort();
     }
-    
+
 }

@@ -1,7 +1,7 @@
 [[splunk-component]]
 = Splunk Component
 
-*Available as of Camel version 2.13*
+*Since Camel 2.13*
 
 The Splunk component provides access to
 http://docs.splunk.com/Documentation/Splunk/latest[Splunk] using the

@@ -2,7 +2,7 @@
 = Bean Component
 :page-source: components/camel-bean/src/main/docs/bean-component.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
 
 The Bean component binds beans to Camel message exchanges.
 

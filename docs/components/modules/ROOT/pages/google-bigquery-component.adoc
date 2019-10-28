@@ -2,7 +2,7 @@
 = Google BigQuery Component
 :page-source: components/camel-google-bigquery/src/main/docs/google-bigquery-component.adoc
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
 
 The Google Bigquery component provides access
 to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via

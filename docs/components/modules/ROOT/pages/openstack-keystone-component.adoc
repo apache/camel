@@ -2,7 +2,7 @@
 = OpenStack Keystone Component
 :page-source: components/camel-openstack/src/main/docs/openstack-keystone-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The Openstack Keystone component allows messages to be sent to an OpenStack identity services.
 

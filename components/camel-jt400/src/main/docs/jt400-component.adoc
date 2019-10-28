@@ -1,7 +1,7 @@
 [[jt400-component]]
 = JT400 Component
 
-*Available as of Camel version 1.5*
+*Since Camel 1.5*
 
 The JT400 component allows you to exchanges messages with an AS/400
 system using data queues.

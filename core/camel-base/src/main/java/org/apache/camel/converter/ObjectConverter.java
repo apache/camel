@@ -123,9 +123,9 @@ public final class ObjectConverter {
     public static Class<?> toClass(String value, Exchange exchange) {
         // prefer to use class resolver API
         if (exchange != null) {
-            return exchange.getContext().getClassResolver().resolveClass((String) value);
+            return exchange.getContext().getClassResolver().resolveClass(value);
         } else {
-            return org.apache.camel.util.ObjectHelper.loadClass((String) value);
+            return org.apache.camel.util.ObjectHelper.loadClass(value);
         }
     }
 

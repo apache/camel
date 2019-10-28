@@ -28,12 +28,12 @@ public class JettySuspendResumeTest extends BaseJettyTest {
     @Test
     public void testJettySuspendResume() throws Exception {
         context.getShutdownStrategy().setTimeout(50);
-        
+
         String reply = template.requestBody(serverUri, "World", String.class);
         assertEquals("Bye World", reply);
 
         // now suspend jetty
-        HttpConsumer consumer = (HttpConsumer) context.getRoute("route1").getConsumer();
+        HttpConsumer consumer = (HttpConsumer)context.getRoute("route1").getConsumer();
         assertNotNull(consumer);
 
         // suspend
@@ -60,8 +60,7 @@ public class JettySuspendResumeTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://" + serverUri).id("route1")
-                    .transform(body().prepend("Bye "));
+                from("jetty://" + serverUri).id("route1").transform(body().prepend("Bye "));
             }
         };
     }

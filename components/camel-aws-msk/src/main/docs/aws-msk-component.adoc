@@ -1,7 +1,7 @@
 [[aws-msk-component]]
 = AWS MSK Component
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 The AWS MSK component supports create, run, start, stop and terminate
 https://aws.amazon.com/msk/[AWS MSK] instances.

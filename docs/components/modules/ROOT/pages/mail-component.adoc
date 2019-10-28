@@ -2,7 +2,7 @@
 = Mail Component
 :page-source: components/camel-mail/src/main/docs/mail-component.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
 
 The Mail component provides access to Email via Spring's Mail support
 and the underlying JavaMail system.

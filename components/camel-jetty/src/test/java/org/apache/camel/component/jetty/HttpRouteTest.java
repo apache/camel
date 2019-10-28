@@ -42,8 +42,7 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.junit.Test;
 
 public class HttpRouteTest extends BaseJettyTest {
-    protected static final String POST_MESSAGE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> "
-        + "<test>Hello World</test>";
+    protected static final String POST_MESSAGE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> " + "<test>Hello World</test>";
     protected String expectedBody = "<hello>world!</hello>";
 
     private int port1;
@@ -91,7 +90,7 @@ public class HttpRouteTest extends BaseJettyTest {
         String out = template.requestBody("http://localhost:" + port1 + "/echo", "HelloWorld", String.class);
         assertEquals("Get a wrong output ", "HelloWorld", out);
     }
-    
+
     @Test
     public void testEchoEndpointWithIgnoreResponseBody() throws Exception {
         String out = template.requestBody("http://localhost:" + port1 + "/echo?ignoreResponseBody=true", "HelloWorld", String.class);
@@ -100,8 +99,7 @@ public class HttpRouteTest extends BaseJettyTest {
 
     @Test
     public void testPostParameter() throws Exception {
-        NameValuePair[] data = {new NameValuePair("request", "PostParameter"),
-                                new NameValuePair("others", "bloggs")};
+        NameValuePair[] data = {new NameValuePair("request", "PostParameter"), new NameValuePair("others", "bloggs")};
         HttpClient client = new HttpClient();
         PostMethod post = new PostMethod("http://localhost:" + port1 + "/parameter");
         post.setRequestBody(data);
@@ -146,26 +144,23 @@ public class HttpRouteTest extends BaseJettyTest {
         String out = context.getTypeConverter().convertTo(String.class, response);
         assertEquals("Get a wrong output ", "PutParameter", out);
     }
-    
+
     @Test
     public void testDisableStreamCache() throws Exception {
-        String response = 
-            template.requestBodyAndHeader("http://localhost:" + port3 + "/noStreamCache",
-                                          new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
-        
+        String response = template.requestBodyAndHeader("http://localhost:" + port3 + "/noStreamCache", new ByteArrayInputStream("This is a test".getBytes()), "Content-Type",
+                                                        "application/xml", String.class);
+
         assertEquals("Get a wrong output ", "OK", response);
     }
-    
+
     @Test
     public void testRequestBufferSize() throws Exception {
         InputStream in = this.getClass().getResourceAsStream("/META-INF/LICENSE.txt");
         int fileSize = in.available();
-        String response = 
-            template.requestBodyAndHeader("http://localhost:" + port4 + "/requestBufferSize",
-                                          in, Exchange.CONTENT_TYPE, "application/txt", String.class);
-        assertEquals("Got a wrong response.", fileSize, response.length());        
+        String response = template.requestBodyAndHeader("http://localhost:" + port4 + "/requestBufferSize", in, Exchange.CONTENT_TYPE, "application/txt", String.class);
+        assertEquals("Got a wrong response.", fileSize, response.length());
     }
-    
+
     @Test
     public void testResponseCode() throws Exception {
         HttpClient client = new HttpClient();
@@ -174,7 +169,6 @@ public class HttpRouteTest extends BaseJettyTest {
         // just make sure we get the right
         assertEquals("Get a wrong status code.", 400, get.getStatusCode());
     }
-
 
     protected void invokeHttpEndpoint() throws IOException {
         template.requestBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
@@ -188,7 +182,6 @@ public class HttpRouteTest extends BaseJettyTest {
                 port2 = getNextPort();
                 port3 = getNextPort();
                 port4 = getNextPort();
-
 
                 // enable stream cache
                 context.setStreamCaching(true);
@@ -207,7 +200,7 @@ public class HttpRouteTest extends BaseJettyTest {
                         exchange.getOut().setBody("<b>Hello World</b>");
                     }
                 };
-                
+
                 from("jetty:http://localhost:" + port1 + "/responseCode").setHeader(Exchange.HTTP_RESPONSE_CODE, simple("400"));
 
                 Processor printProcessor = new Processor() {
@@ -226,8 +219,10 @@ public class HttpRouteTest extends BaseJettyTest {
 
                 Processor procParameters = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        // As the request input stream is cached by DefaultHttpBinding,
-                        // HttpServletRequest can't get the parameters of post message
+                        // As the request input stream is cached by
+                        // DefaultHttpBinding,
+                        // HttpServletRequest can't get the parameters of post
+                        // message
                         String value = exchange.getIn().getHeader("request", String.class);
                         if (value != null) {
                             assertNotNull("The value of the parameter should not be null", value);
@@ -247,17 +242,17 @@ public class HttpRouteTest extends BaseJettyTest {
                         exchange.getOut().setBody("OK");
                     }
                 });
-                
+
                 from("jetty:http://localhost:" + port3 + "/noStreamCache?disableStreamCache=true").noStreamCaching().process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        InputStream is = (InputStream)exchange.getIn().getBody();                        
+                        InputStream is = (InputStream)exchange.getIn().getBody();
                         assertTrue("It should be a raw inputstream", is instanceof org.eclipse.jetty.server.HttpInput);
                         String request = exchange.getIn().getBody(String.class);
                         assertEquals("Got a wrong request", "This is a test", request);
                         exchange.getOut().setBody("OK");
                     }
                 });
-                
+
                 from("jetty:http://localhost:" + port4 + "/requestBufferSize").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String string = exchange.getIn().getBody(String.class);
@@ -268,5 +263,3 @@ public class HttpRouteTest extends BaseJettyTest {
         };
     }
 }
-
-

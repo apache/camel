@@ -25,15 +25,11 @@ import org.apache.camel.model.rest.RestParamType;
 import org.junit.Test;
 
 public class RestJettyRequiredBodyTest extends BaseJettyTest {
-    
+
     @Test
     public void testJettyValid() throws Exception {
-        String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
-            .withHeader("Accept", "application/json")
-            .withHeader(Exchange.HTTP_METHOD, "post")
-            .withBody("{ \"name\": \"Donald Duck\" }")
-            .to("http://localhost:" + getPort() + "/users/123/update")
-            .request(String.class);
+        String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json").withHeader("Accept", "application/json").withHeader(Exchange.HTTP_METHOD, "post")
+            .withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update").request(String.class);
 
         assertEquals("{ \"status\": \"ok\" }", out);
     }
@@ -41,11 +37,8 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
     @Test
     public void testJettyInvalid() throws Exception {
         try {
-            fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
-                .withHeader("Accept", "application/json")
-                .withHeader(Exchange.HTTP_METHOD, "post")
-                .to("http://localhost:" + getPort() + "/users/123/update")
-                .request(String.class);
+            fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json").withHeader("Accept", "application/json").withHeader(Exchange.HTTP_METHOD, "post")
+                .to("http://localhost:" + getPort() + "/users/123/update").request(String.class);
 
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
@@ -66,11 +59,8 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
                     .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .post("{id}/update").consumes("application/json").produces("application/json")
-                    .param().name("body").required(true).type(RestParamType.body).endParam()
-                        .route()
-                        .setBody(constant("{ \"status\": \"ok\" }"));
+                rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").param().name("body").required(true).type(RestParamType.body)
+                    .endParam().route().setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }

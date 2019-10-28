@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jetty;
+
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class JettyEnableJmxTest extends BaseJettyTest {
-    
+
     private String serverUri0;
     private String serverUri1;
     private String serverUri2;
@@ -54,8 +55,8 @@ public class JettyEnableJmxTest extends BaseJettyTest {
         releaseMBeanServers();
         super.setUp();
         mbsc = getMBeanConnection();
-    }    
-    
+    }
+
     @Test
     public void testEnableJmxProperty() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -69,40 +70,40 @@ public class JettyEnableJmxTest extends BaseJettyTest {
         template.requestBody(serverUri3 + "&x=foo", null, Object.class);
 
         assertMockEndpointsSatisfied();
-        
+
         Set<ObjectName> s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 2 Jetty Server: " + s, 2, s.size());
     }
-    
+
     @Test
     public void testShutdown() throws Exception {
         Set<ObjectName> s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 2 Jetty Server: " + s, 2, s.size());
-        
+
         context.stop();
-        
+
         s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 0 Jetty Server: " + s, 0, s.size());
     }
-    
+
     @Test
     public void testEndpointDisconnect() throws Exception {
         Set<ObjectName> s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 2 Jetty Server: " + s, 2, s.size());
-        
+
         context.getRouteController().stopRoute("route0");
-        
+
         s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 1 Jetty Server: " + s, 1, s.size());
-        
+
         context.getRouteController().stopRoute("route2");
         context.getRouteController().stopRoute("route3");
-        
+
         s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 1 Jetty Server: " + s, 1, s.size());
-        
+
         context.getRouteController().stopRoute("route1");
-        
+
         s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 0 Jetty Server: " + s, 0, s.size());
     }
@@ -121,29 +122,17 @@ public class JettyEnableJmxTest extends BaseJettyTest {
                 serverUri2 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=false";
                 serverUri3 = "http://localhost:" + getNextPort() + "/myservice?enableJmx=false";
 
-                from("jetty:" + serverUri0)
-                    .routeId("route0")
-                    .setBody().simple("<html><body>${in.header.x}</body></html>")
-                    .to("mock:result");
-                
-                from("jetty:" + serverUri1)
-                    .routeId("route1")
-                    .setBody().simple("<html><body>${in.header.x}</body></html>")
-                    .to("mock:result");
-                
-                from("jetty:" + serverUri2)
-                    .routeId("route2")
-                    .setBody().simple("<html><body>${in.header.x}</body></html>")
-                    .to("mock:result");
-                
-                from("jetty:" + serverUri3)
-                    .routeId("route3")
-                    .setBody().simple("<html><body>${in.header.x}</body></html>")
-                    .to("mock:result");
+                from("jetty:" + serverUri0).routeId("route0").setBody().simple("<html><body>${in.header.x}</body></html>").to("mock:result");
+
+                from("jetty:" + serverUri1).routeId("route1").setBody().simple("<html><body>${in.header.x}</body></html>").to("mock:result");
+
+                from("jetty:" + serverUri2).routeId("route2").setBody().simple("<html><body>${in.header.x}</body></html>").to("mock:result");
+
+                from("jetty:" + serverUri3).routeId("route3").setBody().simple("<html><body>${in.header.x}</body></html>").to("mock:result");
             }
         };
     }
-    
+
     protected void releaseMBeanServers() {
         List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
 
@@ -151,7 +140,7 @@ public class JettyEnableJmxTest extends BaseJettyTest {
             MBeanServerFactory.releaseMBeanServer(server);
         }
     }
-    
+
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {
             mbsc = ManagementFactory.getPlatformMBeanServer();

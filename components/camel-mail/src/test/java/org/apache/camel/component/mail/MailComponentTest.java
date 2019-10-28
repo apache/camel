@@ -19,7 +19,6 @@ package org.apache.camel.component.mail;
 import javax.mail.Message;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.pollconsumer.quartz.QuartzScheduledPollConsumerScheduler;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

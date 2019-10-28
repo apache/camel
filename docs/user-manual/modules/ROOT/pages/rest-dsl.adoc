@@ -1,6 +1,6 @@
 = REST DSL Component
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 Apache Camel offers a REST styled DSL which can be used with Java or
 XML. The intention is to allow end users to define REST services using a

@@ -170,7 +170,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
                 public void onResponse(PNSetStateResult result, PNStatus status) {
                     log.debug("Got setState responsee [{}]", result);
                     processMessage(exchange, callback, status, result);
-                };
+                }
             });
     }
 
@@ -212,7 +212,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
                 public void onResponse(PNWhereNowResult result, PNStatus status) {
                     log.debug("Got whereNow message [{}]", result.getChannels());
                     processMessage(exchange, callback, status, result.getChannels());
-                };
+                }
             });
     }
 

@@ -148,7 +148,7 @@ public interface JettyHttpEndpointBuilder9Factory {
             return this;
         }
         /**
-         * Whether Jetty org.eclipse.jetty.servlets.MultiPartFilter is enabled
+         * Whether org.apache.camel.component.jetty.MultiPartFilter is enabled
          * or not. You should set this value to false when bridging endpoints,
          * to ensure multipart requests is proxied/bridged as well.
          * 
@@ -162,7 +162,7 @@ public interface JettyHttpEndpointBuilder9Factory {
             return this;
         }
         /**
-         * Whether Jetty org.eclipse.jetty.servlets.MultiPartFilter is enabled
+         * Whether org.apache.camel.component.jetty.MultiPartFilter is enabled
          * or not. You should set this value to false when bridging endpoints,
          * to ensure multipart requests is proxied/bridged as well.
          * 

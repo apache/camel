@@ -2,7 +2,7 @@
 = Grape Component
 :page-source: components/camel-grape/src/main/docs/grape-component.adoc
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 http://docs.groovy-lang.org/latest/html/documentation/grape.html[Grape]
 component allows you to fetch, load and manage additional jars when

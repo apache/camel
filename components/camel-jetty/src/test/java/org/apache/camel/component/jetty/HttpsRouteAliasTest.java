@@ -26,29 +26,29 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 public class HttpsRouteAliasTest extends HttpsRouteTest {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
                 JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
-                
+
                 KeyStoreParameters ksp = new KeyStoreParameters();
                 ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost-alias.p12").toString());
                 ksp.setPassword(pwd);
-                
+
                 KeyManagersParameters kmp = new KeyManagersParameters();
                 kmp.setKeyPassword(pwd);
                 kmp.setKeyStore(ksp);
-                
+
                 SSLContextParameters sslContextParameters = new SSLContextParameters();
                 sslContextParameters.setKeyManagers(kmp);
-                
+
                 // Specify "server" cert alias
                 sslContextParameters.setCertAlias("server");
-                
+
                 jetty.setSslContextParameters(sslContextParameters);
-                
+
                 setSSLProps(jetty, "", "asdfasdfasdfdasfs", "sadfasdfasdfas");
 
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");

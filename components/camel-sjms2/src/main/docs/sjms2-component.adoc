@@ -1,7 +1,7 @@
 [[sjms2-component]]
 = Simple JMS2 Component
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The Simple JMS 2.0 Component, or SJMS2, is a JMS client for use with Camel
 that uses well known best practices when it comes to JMS client creation

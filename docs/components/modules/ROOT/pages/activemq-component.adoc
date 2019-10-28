@@ -2,7 +2,7 @@
 = ActiveMQ Component
 :page-source: components/camel-activemq/src/main/docs/activemq-component.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
 
 The ActiveMQ component is an extension to the JMS component and has been pre-configured for using Apache ActiveMQ 5.x (not Artemis).
 Users of Apache ActiveMQ Artemis should use the JMS component.

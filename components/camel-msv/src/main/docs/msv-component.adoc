@@ -1,7 +1,7 @@
 [[msv-component]]
 = MSV Component
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
 
 The MSV component performs XML validation of the message body using the
 https://msv.dev.java.net/[MSV Library] and any of the supported XML

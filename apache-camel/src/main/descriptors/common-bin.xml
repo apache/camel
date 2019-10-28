@@ -327,6 +327,7 @@
         <include>org.apache.camel:camel-testcontainers</include>
         <include>org.apache.camel:camel-testcontainers-junit5</include>
         <include>org.apache.camel:camel-testcontainers-spring</include>
+        <include>org.apache.camel:camel-testcontainers-spring-junit5</include>
         <include>org.apache.camel:camel-thrift</include>
         <include>org.apache.camel:camel-tika</include>
         <include>org.apache.camel:camel-timer</include>

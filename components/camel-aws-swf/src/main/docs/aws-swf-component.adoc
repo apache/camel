@@ -1,7 +1,7 @@
 [[aws-swf-component]]
 = AWS Simple Workflow Component
 
-*Available as of Camel version 2.13*
+*Since Camel 2.13*
 
 The Simple Workflow component supports managing workflows from
 https://aws.amazon.com/swf/[Amazon's Simple Workflow] service.

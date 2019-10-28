@@ -17,11 +17,11 @@
 package org.apache.camel.component.as2.api;
 
 interface Constants {
-    static final String SHA_1_AS2_ALGORITHM_NAME = "sha1";
-    static final String SHA_1_JDK_ALGORITHM_NAME = "SHA-1";
+    String SHA_1_AS2_ALGORITHM_NAME = "sha1";
+    String SHA_1_JDK_ALGORITHM_NAME = "SHA-1";
 
-    static final String MD5_AS2_ALGORITHM_NAME = "md5";
-    static final String MD5_JDK_ALGORITHM_NAME = "MD5";
+    String MD5_AS2_ALGORITHM_NAME = "md5";
+    String MD5_JDK_ALGORITHM_NAME = "MD5";
 }
 
 public enum AS2MicAlgorithm {

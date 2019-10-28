@@ -264,7 +264,7 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
                             
                                 @Override
                                 public void process(Exchange exchange) throws Exception {
-                                    RuntimeCamelException exceptionWrapper = new RuntimeCamelException(exchange.EXCEPTION_CAUGHT);        
+                                    RuntimeCamelException exceptionWrapper = new RuntimeCamelException(Exchange.EXCEPTION_CAUGHT);        
                                     throw exceptionWrapper;
                                 }
                             })

@@ -55,7 +55,7 @@ public class JettyContentTypeTest extends BaseJettyTest {
         sendMessageWithContentType(null, false);
         sendMessageWithContentType("UTF-8", false);
     }
-    
+
     @Test
     public void testContentTypeWithGZipEncoding() throws Exception {
         sendMessageWithContentType(null, true);

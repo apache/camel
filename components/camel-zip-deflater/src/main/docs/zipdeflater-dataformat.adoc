@@ -1,7 +1,7 @@
 [[zipdeflater-dataformat]]
 = Zip Deflate Compression DataFormat
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 
 The Zip Deflater Data Format is a message compression and

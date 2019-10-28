@@ -49,9 +49,7 @@ public class RestJettyBindingModeAutoWithXmlTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .post("new").consumes("application/xml").type(UserJaxbPojo.class)
-                        .to("mock:input");
+                rest("/users/").post("new").consumes("application/xml").type(UserJaxbPojo.class).to("mock:input");
             }
         };
     }

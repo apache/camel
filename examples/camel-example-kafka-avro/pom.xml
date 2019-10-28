@@ -28,7 +28,7 @@
     </parent>
 
   <artifactId>camel-example-kafka-avro</artifactId>
-  <name>Camel :: Example :: Kafka :: avro</name>
+  <name>Camel :: Example :: Kafka :: Avro</name>
   <description>An example for Kafka avro</description>
 
     <properties>

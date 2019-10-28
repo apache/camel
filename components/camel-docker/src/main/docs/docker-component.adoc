@@ -1,7 +1,7 @@
 [[docker-component]]
 = Docker Component
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 Camel component for communicating with Docker.
 

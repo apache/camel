@@ -1,7 +1,7 @@
 [[asn1-dataformat]]
 = ASN.1 File DataFormat
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
 
 The ASN.1 Data Format Data Format [Intoduction to ASN.1](https://www.itu.int/en/ITU-T/asn1/Pages/introduction.aspx) is a Camel Frameworks's data format implementation based on Bouncy Castle's bcprov-jdk15on library and jASN.1's java compiler for the formal notation used for describing data transmitted by telecommunications protocols, regardless of language implementation and physical representation of these data, whatever the application, whether complex or very simple. Messages can be unmarshalled (conversion to simple Java POJO(s)) to plain Java objects. By the help of Camel's routing engine and data transformations you can then play with POJO(s) and apply customised formatting and call other Camel Component's to convert and send messages to upstream systems.
 

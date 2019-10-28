@@ -62,7 +62,7 @@ public class AutoExposeQueuesInCamelTest extends EmbeddedBrokerTestSupport {
     }
 
     public <T> List<T> getEndpoints(CamelContext camelContext, Class<T> type) {
-        List<T> answer = new ArrayList<T>();
+        List<T> answer = new ArrayList<>();
         Collection<Endpoint> endpoints = camelContext.getEndpoints();
         for (Endpoint endpoint : endpoints) {
             if (type.isInstance(endpoint)) {

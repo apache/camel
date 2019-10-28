@@ -39,6 +39,7 @@ import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper.findMetric;
+import static org.eclipse.microprofile.metrics.MetricRegistry.Type;
 
 public class MicroProfileMetricsTestSupport extends CamelTestSupport {
 
@@ -117,6 +118,6 @@ public class MicroProfileMetricsTestSupport extends CamelTestSupport {
     }
 
     protected void dumpMetrics() {
-        System.out.println(new JsonExporter().exportAllScopes());
+        System.out.println(new JsonExporter().exportOneScope(Type.APPLICATION));
     }
 }

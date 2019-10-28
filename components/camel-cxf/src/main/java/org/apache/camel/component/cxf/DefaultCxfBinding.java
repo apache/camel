@@ -332,7 +332,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
         
         // create response context
-        Map<String, Object> responseContext = new HashMap<String, Object>();
+        Map<String, Object> responseContext = new HashMap<>();
         
         org.apache.camel.Message response;
         if (camelExchange.getPattern().isOutCapable()) {

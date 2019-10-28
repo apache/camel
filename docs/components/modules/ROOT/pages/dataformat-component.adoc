@@ -2,7 +2,7 @@
 = Data Format Component
 :page-source: components/camel-dataformat/src/main/docs/dataformat-component.adoc
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 The Dataformat component allows to use xref:manual::data-format.adoc[Data
 Format] as a Camel Component.

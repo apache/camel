@@ -29,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.Customer;
-import org.apache.camel.examples.MultiSteps;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.service.ServiceHelper;

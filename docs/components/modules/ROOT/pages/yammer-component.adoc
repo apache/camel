@@ -2,7 +2,7 @@
 = Yammer Component
 :page-source: components/camel-yammer/src/main/docs/yammer-component.adoc
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 The Yammer component allows you to interact with the
 https://www.yammer.com[Yammer] enterprise social network. Consuming

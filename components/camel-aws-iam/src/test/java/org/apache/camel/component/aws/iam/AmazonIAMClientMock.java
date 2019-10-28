@@ -709,7 +709,7 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     @Override
     public ListAccessKeysResult listAccessKeys() {
         ListAccessKeysResult result = new ListAccessKeysResult();
-        Collection<AccessKeyMetadata> accessKeyMetadata = new ArrayList<AccessKeyMetadata>();
+        Collection<AccessKeyMetadata> accessKeyMetadata = new ArrayList<>();
         AccessKeyMetadata meta = new AccessKeyMetadata();
         meta.setAccessKeyId("1");
         meta.setCreateDate(new Date());

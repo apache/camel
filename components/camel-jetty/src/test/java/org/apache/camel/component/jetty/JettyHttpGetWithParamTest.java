@@ -24,7 +24,8 @@ import org.apache.camel.http.common.HttpMessage;
 import org.junit.Test;
 
 /**
- * Unit test to verify that we can have URI options for external system (endpoint is lenient)
+ * Unit test to verify that we can have URI options for external system
+ * (endpoint is lenient)
  */
 public class JettyHttpGetWithParamTest extends BaseJettyTest {
 
@@ -66,14 +67,13 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
     }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("jetty:" + serverUri).process(processor).to("mock:result");
-                from("direct:start")
-                    .setHeader(Exchange.HTTP_METHOD, constant("GET"))
-                    .setHeader(Exchange.HTTP_URI, simple(serverUri + "?${in.headers.parameters}"))
+                from("direct:start").setHeader(Exchange.HTTP_METHOD, constant("GET")).setHeader(Exchange.HTTP_URI, simple(serverUri + "?${in.headers.parameters}"))
                     .to("http://example");
             }
         };

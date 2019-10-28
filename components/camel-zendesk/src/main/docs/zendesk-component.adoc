@@ -1,7 +1,7 @@
 [[zendesk-component]]
 = Zendesk Component
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The Zendesk component provides access to all of the zendesk.com APIs accessible
 using https://github.com/cloudbees/zendesk-java-client[zendesk-java-client]. It

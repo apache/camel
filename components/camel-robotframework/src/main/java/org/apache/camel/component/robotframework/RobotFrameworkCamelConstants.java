@@ -18,8 +18,8 @@ package org.apache.camel.component.robotframework;
 
 public interface RobotFrameworkCamelConstants {
 
-    public final String CAMEL_ROBOT_VARIABLES = "CamelRobotVariables";
-    public final String CAMEL_ROBOT_RETURN_CODE = "CamelRobotReturnCode";
-    public final String CAMEL_ROBOT_RESOURCE_URI = "CamelRobotResourceUri";
+    String CAMEL_ROBOT_VARIABLES = "CamelRobotVariables";
+    String CAMEL_ROBOT_RETURN_CODE = "CamelRobotReturnCode";
+    String CAMEL_ROBOT_RESOURCE_URI = "CamelRobotResourceUri";
 
 }

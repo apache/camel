@@ -2,7 +2,7 @@
 = DigitalOcean Component
 :page-source: components/camel-digitalocean/src/main/docs/digitalocean-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud with **Camel** by encapsulating https://www.digitalocean.com/community/projects/api-client-in-java[digitalocean-api-java]. All of the functionality that you are familiar with in the DigitalOcean control panel is also available through this Camel component.
 

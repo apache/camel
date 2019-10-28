@@ -1,7 +1,7 @@
 [[rest-component]]
 = REST Component
 
-*Available as of Camel version 2.14*
+*Since Camel 2.14*
 
 The REST component allows to define REST endpoints (consumer) using the
 Rest DSL and plugin to other Camel components as the

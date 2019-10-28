@@ -38,8 +38,8 @@ public class HttpBridgeEncodedPathTest extends BaseJettyTest {
 
     @Test
     public void testEncodedQuery() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/test/hello?param1=%2B447777111222",
-                new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "text/plain", String.class);
+        String response = template.requestBodyAndHeader("http://localhost:" + port2 + "/test/hello?param1=%2B447777111222", new ByteArrayInputStream("This is a test".getBytes()),
+                                                        "Content-Type", "text/plain", String.class);
         assertEquals("Get a wrong response", "param1=+447777111222", response);
     }
 
@@ -52,7 +52,8 @@ public class HttpBridgeEncodedPathTest extends BaseJettyTest {
         mock.message(0).header(Exchange.HTTP_QUERY).isNull();
         mock.message(0).header(Exchange.HTTP_RAW_QUERY).isNull();
 
-        // cannot use template as it automatically decodes some chars in the path
+        // cannot use template as it automatically decodes some chars in the
+        // path
         HttpClient httpClient = new HttpClient();
         GetMethod httpGet = new GetMethod("http://localhost:" + port4 + "/test/" + path);
         int status = httpClient.executeMethod(httpGet);
@@ -83,12 +84,10 @@ public class HttpBridgeEncodedPathTest extends BaseJettyTest {
                         exchange.getOut().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
                     }
                 };
-                from("jetty:http://localhost:" + port2 + "/test/hello")
-                    .to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                from("jetty:http://localhost:" + port2 + "/test/hello").to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
                 from("jetty:http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
 
-                from("jetty:http://localhost:" + port4 + "/test?matchOnUriPrefix=true")
-                    .to("http://localhost:" + port3 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                from("jetty:http://localhost:" + port4 + "/test?matchOnUriPrefix=true").to("http://localhost:" + port3 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
                 from("jetty:http://localhost:" + port3 + "?matchOnUriPrefix=true").to("mock:encodedPath");
             }
         };

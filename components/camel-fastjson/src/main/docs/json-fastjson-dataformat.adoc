@@ -1,7 +1,7 @@
 [[json-fastjson-dataformat]]
 = JSon Fastjson DataFormat
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
 
 Fastjson is a Data Format which uses the
 https://github.com/alibaba/fastjson[Fastjson Library]

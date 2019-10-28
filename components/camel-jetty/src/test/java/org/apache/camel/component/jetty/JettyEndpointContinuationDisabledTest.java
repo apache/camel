@@ -38,14 +38,12 @@ public class JettyEndpointContinuationDisabledTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myservice?useContinuation=false")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            Thread.sleep(1000);
-                            exchange.getOut().setBody("Bye World");
-                        }
-                    })
-                    .to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice?useContinuation=false").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Thread.sleep(1000);
+                        exchange.getOut().setBody("Bye World");
+                    }
+                }).to("mock:result");
             }
         };
     }

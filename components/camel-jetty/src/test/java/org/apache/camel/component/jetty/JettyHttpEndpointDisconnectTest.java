@@ -20,7 +20,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * Unit test to verify that the Jetty HTTP connector is correctly disconnected on shutdown
+ * Unit test to verify that the Jetty HTTP connector is correctly disconnected
+ * on shutdown
  */
 public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
 

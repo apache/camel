@@ -2,7 +2,7 @@
 = JPA Component
 :page-source: components/camel-jpa/src/main/docs/jpa-component.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
 
 The JPA component enables you to store and retrieve Java objects from
 persistent storage using EJB 3's Java Persistence Architecture (JPA),

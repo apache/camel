@@ -230,7 +230,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
 
     @Override
     public Object getManagedObjectForRouteController(CamelContext context) {
-        ManagedRouteController mrc = new ManagedRouteController((ModelCamelContext) context);
+        ManagedRouteController mrc = new ManagedRouteController(context);
         mrc.init(context.getManagementStrategy());
         return mrc;
     }
@@ -239,9 +239,9 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     public Object getManagedObjectForRoute(CamelContext context, Route route) {
         ManagedRoute mr;
         if (route.supportsSuspension()) {
-            mr = new ManagedSuspendableRoute((ModelCamelContext)context, route);
+            mr = new ManagedSuspendableRoute(context, route);
         } else {
-            mr = new ManagedRoute((ModelCamelContext)context, route);
+            mr = new ManagedRoute(context, route);
         }
         mr.init(context.getManagementStrategy());
         return mr;

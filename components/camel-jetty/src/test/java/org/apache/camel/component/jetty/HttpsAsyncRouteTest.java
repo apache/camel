@@ -37,7 +37,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
     @Override
@@ -45,9 +44,10 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     public void setUp() throws Exception {
         port1 = getNextPort();
         port2 = getNextPort();
-        
+
         super.setUp();
-        // ensure jsse clients can validate the self signed dummy localhost cert, 
+        // ensure jsse clients can validate the self signed dummy localhost
+        // cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
@@ -73,7 +73,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         for (Object key : originalValues.keySet()) {
             Object value = originalValues.get(key);
             if (NULL_VALUE_MARKER.equals(value)) {
-                System.clearProperty((String) key);
+                System.clearProperty((String)key);
             } else {
                 System.setProperty((String)key, (String)value);
             }
@@ -110,7 +110,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
     }
-    
+
     @Override
     @Test
     public void testEndpointWithoutHttps() throws Exception {
@@ -138,7 +138,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         URL url = new URL("https://localhost:" + port1 + "/hello");
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
         SSLContext ssl = SSLContext.getInstance("TLSv1.2");
         ssl.init(null, null, null);
         connection.setSSLSocketFactory(ssl.getSocketFactory());
@@ -151,7 +151,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         String data = new String(os.toByteArray());
         assertEquals("<b>Hello World</b>", data);
     }
-    
+
     @Override
     @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
@@ -166,7 +166,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         } catch (SocketException expected) {
         }
     }
-    
+
     @Override
     protected void invokeHttpEndpoint() throws IOException {
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
@@ -177,12 +177,12 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
+                JettyHttpComponent componentJetty = (JettyHttpComponent)context.getComponent("jetty");
                 componentJetty.setSslPassword(pwd);
                 componentJetty.setSslKeyPassword(pwd);
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
                 componentJetty.setKeystore(keyStoreUrl.toURI().getPath());
-                
+
                 from("jetty:https://localhost:" + port1 + "/test?async=true&useContinuation=false").to("mock:a");
 
                 Processor proc = new Processor() {
@@ -191,10 +191,9 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
                     }
                 };
                 from("jetty:https://localhost:" + port1 + "/hello?async=true&useContinuation=false").process(proc);
-                
+
                 from("jetty:https://localhost:" + port2 + "/test?async=true&useContinuation=false").to("mock:b");
             }
         };
     }
 }
-

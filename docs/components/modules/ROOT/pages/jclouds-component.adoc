@@ -2,7 +2,7 @@
 = JClouds Component
 :page-source: components/camel-jclouds/src/main/docs/jclouds-component.adoc
 
-*Available as of Camel version 2.9*
+*Since Camel 2.9*
 
 This component allows interaction with cloud provider key-value engines
 (blobstores) and compute services. The component uses

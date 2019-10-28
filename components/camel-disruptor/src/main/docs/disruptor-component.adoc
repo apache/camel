@@ -1,7 +1,7 @@
 [[disruptor-component]]
 = Disruptor Component
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 The Disruptor component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior much as the

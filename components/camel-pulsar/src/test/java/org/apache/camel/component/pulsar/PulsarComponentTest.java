@@ -21,8 +21,8 @@ import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 
+import org.mockito.ArgumentMatchers;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -74,7 +74,7 @@ public class PulsarComponentTest extends CamelTestSupport {
 
         component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
 
-        verify(autoConfiguration).ensureNameSpaceAndTenant(Matchers.anyString());
+        verify(autoConfiguration).ensureNameSpaceAndTenant(ArgumentMatchers.anyString());
     }
 
     @Test

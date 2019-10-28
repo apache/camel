@@ -1,7 +1,7 @@
 [[saga-component]]
 = Saga Component
 
-*Available as of Camel version 2.21*
+*Since Camel 2.21*
 
 The Saga component provides a bridge to execute custom actions within a route using the Saga EIP.
 

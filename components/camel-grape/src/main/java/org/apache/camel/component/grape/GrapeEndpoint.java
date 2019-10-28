@@ -54,7 +54,7 @@ public class GrapeEndpoint extends DefaultEndpoint {
         return DefaultGroovyMethods.each(patchesRepository.listPatches(), new Closure<Object>(null, null) {
             public void doCall(String it) {
                 MavenCoordinates coordinates = MavenCoordinates.parseMavenCoordinates(it);
-                LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>(5);
+                LinkedHashMap<String, Object> map = new LinkedHashMap<>(5);
                 map.put("classLoader", classLoader);
                 map.put("group", coordinates.getGroupId());
                 map.put("module", coordinates.getArtifactId());

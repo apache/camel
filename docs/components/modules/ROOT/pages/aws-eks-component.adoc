@@ -2,7 +2,7 @@
 = AWS EKS Component
 :page-source: components/camel-aws-eks/src/main/docs/aws-eks-component.adoc
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 The EKS component supports create, delete, describe and list
 https://aws.amazon.com/eks/[AWS EKS] clusters instances.

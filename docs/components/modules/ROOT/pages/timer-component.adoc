@@ -2,7 +2,7 @@
 = Timer Component
 :page-source: components/camel-timer/src/main/docs/timer-component.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
 
 The Timer component is used to generate message exchanges when a
 timer fires You can only consume events from this endpoint.

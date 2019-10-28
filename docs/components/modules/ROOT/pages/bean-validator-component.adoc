@@ -2,7 +2,7 @@
 = Bean Validator Component
 :page-source: components/camel-bean-validator/src/main/docs/bean-validator-component.adoc
 
-*Available as of Camel version 2.3*
+*Since Camel 2.3*
 
 The Validator component performs bean validation of the message body
 using the Java Bean Validation API

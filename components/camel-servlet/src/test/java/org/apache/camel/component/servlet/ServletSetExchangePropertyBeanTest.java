@@ -20,7 +20,6 @@ import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -32,7 +31,7 @@ public class ServletSetExchangePropertyBeanTest extends ServletCamelRouterTestSu
         ServletUnitClient client = newClient();
         WebResponse response = client.getResponse(req);
 
-        assertEquals(200, response.getResponseCode());
+        assertEquals(204, response.getResponseCode());
         assertEquals("The response message is wrong ", "", response.getText());
     }
     

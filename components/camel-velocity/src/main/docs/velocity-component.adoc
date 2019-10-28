@@ -1,7 +1,7 @@
 [[velocity-component]]
 = Velocity Component
 
-*Available as of Camel version 1.2*
+*Since Camel 1.2*
 
 The Velocity component allows you to process a message using an
 http://velocity.apache.org/[Apache Velocity] template. This can be ideal

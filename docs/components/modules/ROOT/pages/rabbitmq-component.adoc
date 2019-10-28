@@ -2,7 +2,7 @@
 = RabbitMQ Component
 :page-source: components/camel-rabbitmq/src/main/docs/rabbitmq-component.adoc
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 The RabbitMQ component allows you produce and consume messages from
 http://www.rabbitmq.com/[RabbitMQ] instances. Using the RabbitMQ AMQP

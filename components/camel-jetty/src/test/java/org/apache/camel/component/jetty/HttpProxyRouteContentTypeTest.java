@@ -27,7 +27,7 @@ public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
     @Test
     public void testHttpProxyWithContentType() throws Exception {
 
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/hello", "test",  "Content-Type", "application/xml", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/hello", "test", "Content-Type", "application/xml", String.class);
 
         assertEquals("Get a wrong response ", "application/xml", out);
     }

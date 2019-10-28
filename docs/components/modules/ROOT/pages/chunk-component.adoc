@@ -2,7 +2,7 @@
 = Chunk Component
 :page-source: components/camel-chunk/src/main/docs/chunk-component.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 The Chunk component allows for processing a message using a
 http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.

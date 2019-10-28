@@ -115,7 +115,7 @@ public class HandlerTest extends BaseJettyTest {
                         exchange.getOut().setBody(htmlResponse);
                     }
                 });
-            };
+            }
         };
     }
 }

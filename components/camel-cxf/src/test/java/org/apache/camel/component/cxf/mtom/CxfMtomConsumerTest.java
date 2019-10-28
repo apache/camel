@@ -27,7 +27,6 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;

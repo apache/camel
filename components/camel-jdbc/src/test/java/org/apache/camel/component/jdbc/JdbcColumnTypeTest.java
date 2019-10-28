@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +23,6 @@ import java.util.Set;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.logging.log4j.core.util.IOUtils;
 import org.junit.Test;
 
 public class JdbcColumnTypeTest extends AbstractJdbcTestSupport {

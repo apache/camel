@@ -18,7 +18,6 @@ package org.apache.camel.component.sjms2;
 
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Component;
-import org.apache.camel.component.sjms.SjmsConsumer;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms2.jms.Jms2ObjectFactory;
 import org.apache.camel.spi.UriEndpoint;

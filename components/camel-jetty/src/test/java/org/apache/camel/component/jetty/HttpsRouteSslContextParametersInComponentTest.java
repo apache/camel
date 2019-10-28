@@ -26,21 +26,21 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 public class HttpsRouteSslContextParametersInComponentTest extends HttpsRouteTest {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
                 JettyHttpComponent jetty = getContext().getComponent("jetty", JettyHttpComponent.class);
-                
+
                 KeyStoreParameters ksp = new KeyStoreParameters();
                 ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
                 ksp.setPassword(pwd);
-                
+
                 KeyManagersParameters kmp = new KeyManagersParameters();
                 kmp.setKeyPassword(pwd);
                 kmp.setKeyStore(ksp);
-                
+
                 SSLContextParameters sslContextParameters = new SSLContextParameters();
                 sslContextParameters.setKeyManagers(kmp);
                 jetty.setSslContextParameters(sslContextParameters);

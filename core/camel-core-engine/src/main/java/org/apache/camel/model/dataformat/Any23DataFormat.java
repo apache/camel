@@ -43,7 +43,7 @@ public class Any23DataFormat extends DataFormatDefinition {
     @Metadata(defaultValue = "RDF4JMODEL")
     private Any23Type outputFormat;
     @XmlJavaTypeAdapter(PropertyDescriptionsAdapter.class)
-    private Map<String, String> configuration = new HashMap<String, String>();
+    private Map<String, String> configuration = new HashMap<>();
     @XmlElement
     private List<String> extractors;
     @XmlAttribute

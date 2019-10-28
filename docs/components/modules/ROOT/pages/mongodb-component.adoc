@@ -2,7 +2,7 @@
 = MongoDB Component
 :page-source: components/camel-mongodb/src/main/docs/mongodb-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 Note: MongoDB Camel component Use the Mongo Driver for Java 3.x.
 

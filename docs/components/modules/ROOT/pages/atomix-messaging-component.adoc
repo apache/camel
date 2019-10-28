@@ -2,7 +2,7 @@
 = Atomix Messaging Component
 :page-source: components/camel-atomix/src/main/docs/atomix-messaging-component.adoc
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
 
 The camel Atomix-Messaging component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/cluster-communication/direct-messaging[Group Messaging].
 

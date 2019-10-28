@@ -2,7 +2,7 @@
 = Bindy DataFormat
 :page-source: components/camel-bindy/src/main/docs/bindy-dataformat.adoc
 
-*Available as of Camel version 2.0*
+*Since Camel 2.0*
 
 The goal of this component is to allow the parsing/binding of
 non-structured data (or to be more precise non-XML data) +

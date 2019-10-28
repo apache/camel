@@ -19,7 +19,6 @@ package org.apache.camel.component.jetty;
 import java.io.File;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
@@ -91,8 +90,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
                 HttpEndpoint epOut = getContext().getEndpoint("http://localhost:" + port1 + "?bridgeEndpoint=true&throwExceptionOnFailure=false", HttpEndpoint.class);
                 epOut.setHeaderFilterStrategy(new MultipartHeaderFilterStrategy());
 
-                from("jetty:http://localhost:" + port2 + "/test/hello?enableMultipartFilter=false")
-                    .to(epOut);
+                from("jetty:http://localhost:" + port2 + "/test/hello?enableMultipartFilter=false").to(epOut);
 
                 from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
             }

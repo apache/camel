@@ -1,7 +1,7 @@
 [[http-component]]
 = HTTP Component
 
-*Available as of Camel version 2.3*
+*Since Camel 2.3*
 
 The HTTP component provides HTTP based endpoints
 for calling external HTTP resources (as a client to call external

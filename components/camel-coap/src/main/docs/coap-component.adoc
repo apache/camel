@@ -1,7 +1,7 @@
 [[coap-component]]
 = CoAP Component
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 Camel-CoAP is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with CoAP, a lightweight REST-type protocol for machine-to-machine operation. 

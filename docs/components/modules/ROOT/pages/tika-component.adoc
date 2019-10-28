@@ -2,7 +2,7 @@
 = Tika Component
 :page-source: components/camel-tika/src/main/docs/tika-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The *Tika*: components provides the ability to detect and parse documents with 
 Apache Tika. This component uses

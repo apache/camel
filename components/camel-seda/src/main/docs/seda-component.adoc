@@ -1,7 +1,7 @@
 [[seda-component]]
 = SEDA Component
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
 
 The SEDA component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, so that
@@ -236,7 +236,74 @@ async queue to be able to send a fire-and-forget message for further
 processing in another thread, and return a constant reply in this thread
 to the original caller.
 
+[source,java]
+----
+    @Test
+    public void testSendAsync() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        // START SNIPPET: e2
+        Object out = template.requestBody("direct:start", "Hello World");
+        assertEquals("OK", out);
+        // END SNIPPET: e2
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            // START SNIPPET: e1
+            public void configure() throws Exception {
+                from("direct:start")
+                    // send it to the seda queue that is async
+                    .to("seda:next")
+                    // return a constant response
+                    .transform(constant("OK"));
+
+                from("seda:next").to("mock:result");
+            }
+            // END SNIPPET: e1
+        };
+    }
+----
+
 Here we send a Hello World message and expects the reply to be OK.
+
+[source,java]
+----
+    @Test
+    public void testSendAsync() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        // START SNIPPET: e2
+        Object out = template.requestBody("direct:start", "Hello World");
+        assertEquals("OK", out);
+        // END SNIPPET: e2
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            // START SNIPPET: e1
+            public void configure() throws Exception {
+                from("direct:start")
+                    // send it to the seda queue that is async
+                    .to("seda:next")
+                    // return a constant response
+                    .transform(constant("OK"));
+
+                from("seda:next").to("mock:result");
+            }
+            // END SNIPPET: e1
+        };
+    }
+----
+
 
 The "Hello World" message will be consumed from the SEDA queue from
 another thread for further processing. Since this is from a unit test,

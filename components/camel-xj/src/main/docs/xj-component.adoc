@@ -1,7 +1,7 @@
 [[xj-component]]
 = XJ Component
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 The XJ component allows you to convert XML and JSON documents directly forth and back without the need of
 intermediate java objects. You can even specify an XSLT stylesheet to convert directly to the target

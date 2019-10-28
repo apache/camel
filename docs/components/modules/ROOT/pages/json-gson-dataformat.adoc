@@ -2,7 +2,7 @@
 = JSon GSon DataFormat
 :page-source: components/camel-gson/src/main/docs/json-gson-dataformat.adoc
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
 
 Gson is a Data Format which uses the
 https://github.com/google/gson[Gson Library]

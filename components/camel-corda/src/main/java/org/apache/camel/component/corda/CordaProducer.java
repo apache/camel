@@ -204,13 +204,13 @@ public class CordaProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY)
     void vaultQuery(Message message) throws Exception {
-        Class<ContractState> contractStateClass = (Class<ContractState>) message.getBody(Class.class);
+        Class<ContractState> contractStateClass = message.getBody(Class.class);
         message.setBody(cordaRPCOps.vaultQuery(contractStateClass));
     }
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY)
     void vaultQueryBy(Message message) throws Exception {
-        Class<ContractState> contractStateClass = (Class<ContractState>) message.getBody(Class.class);
+        Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         PageSpecification pageSpec = message.getHeader(PAGE_SPECIFICATION, PageSpecification.class);
         Sort sorting = message.getHeader(SORT, Sort.class);
@@ -219,14 +219,14 @@ public class CordaProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY_CRITERIA)
     void vaultQueryByCriteria(Message message) throws Exception {
-        Class<ContractState> contractStateClass = (Class<ContractState>) message.getBody(Class.class);
+        Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         message.setBody(cordaRPCOps.vaultQueryByCriteria(criteria, contractStateClass));
     }
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY_WITH_PAGING_SPEC)
     void vaultQueryByWithPagingSpec(Message message) throws Exception {
-        Class<ContractState> contractStateClass = (Class<ContractState>) message.getBody(Class.class);
+        Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         PageSpecification pageSpec = message.getHeader(PAGE_SPECIFICATION, PageSpecification.class);
         message.setBody(cordaRPCOps.vaultQueryByWithPagingSpec(contractStateClass, criteria, pageSpec));
@@ -234,7 +234,7 @@ public class CordaProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY_WITH_SORTING)
     void vaultQueryByWithSorting(Message message) throws Exception {
-        Class<ContractState> contractStateClass = (Class<ContractState>) message.getBody(Class.class);
+        Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         Sort sorting = message.getHeader(SORT, Sort.class);
         message.setBody(cordaRPCOps.vaultQueryByWithSorting(contractStateClass, criteria, sorting));

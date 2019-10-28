@@ -1,7 +1,7 @@
 [[cm-sms-component]]
 = CM SMS Gateway Component
 
-*Available as of Camel version 2.18*
+*Since Camel 2.18*
 
 *Camel-Cm-Sms* is an http://camel.apache.org/[Apache Camel] component 
 for the [CM SMS Gateway](https://www.cmtelecom.com). 

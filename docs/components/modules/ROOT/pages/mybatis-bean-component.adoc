@@ -2,7 +2,7 @@
 = MyBatis Bean Component
 :page-source: components/camel-mybatis/src/main/docs/mybatis-bean-component.adoc
 
-*Available as of Camel version 2.22*
+*Since Camel 2.22*
 
 The MyBatis Bean component allows you to query, insert, update and
 delete data in a relational database using http://mybatis.org/[MyBatis] bean annotations.

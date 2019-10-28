@@ -21,7 +21,6 @@ import javax.activation.FileDataSource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.mock.MockEndpoint;

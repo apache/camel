@@ -2,7 +2,7 @@
 = Consul Component
 :page-source: components/camel-consul/src/main/docs/consul-component.adoc
 
-*Available as of Camel version 2.18*
+*Since Camel 2.18*
 
 The Consul**** component is a component for integrating your application with Consul.
 

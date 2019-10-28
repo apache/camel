@@ -2,7 +2,7 @@
 = Infinispan Component
 :page-source: components/camel-infinispan/src/main/docs/infinispan-component.adoc
 
-*Available as of Camel version 2.13*
+*Since Camel 2.13*
 
 This component allows you to interact with
 http://infinispan.org/[Infinispan] distributed data grid / cache.

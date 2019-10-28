@@ -1,7 +1,7 @@
 [[solr-component]]
 = Solr Component
 
-*Available as of Camel version 2.9*
+*Since Camel 2.9*
 
 The Solr component allows you to interface with an
 http://lucene.apache.org/solr/[Apache Lucene Solr] server (based on

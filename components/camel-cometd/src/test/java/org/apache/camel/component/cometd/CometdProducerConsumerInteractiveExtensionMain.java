@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cometd;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;

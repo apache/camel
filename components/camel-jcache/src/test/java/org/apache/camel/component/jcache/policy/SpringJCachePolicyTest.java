@@ -18,9 +18,7 @@ package org.apache.camel.component.jcache.policy;
 
 import javax.cache.Cache;
 
-import com.hazelcast.cache.HazelcastCachingProvider;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.AfterClass;
 import org.junit.Before;

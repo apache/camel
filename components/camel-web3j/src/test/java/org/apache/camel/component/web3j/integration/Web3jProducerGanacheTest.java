@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.web3j.Web3jConstants;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.web3j.protocol.core.methods.response.EthBlock;

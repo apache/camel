@@ -29,13 +29,12 @@ public class HttpAcceptHeaderTest extends BaseJettyTest {
         String out = template.requestBodyAndHeader("http://localhost:{{port}}/myaccept", null, "Accept", "application/myjson", String.class);
         assertEquals("You called me as GET and accepted: application/myjson", out);
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myaccept")
-                    .transform().simple("You called me as ${header.CamelHttpMethod} and accepted: ${header.Accept}");
+                from("jetty:http://localhost:{{port}}/myaccept").transform().simple("You called me as ${header.CamelHttpMethod} and accepted: ${header.Accept}");
             }
         };
     }

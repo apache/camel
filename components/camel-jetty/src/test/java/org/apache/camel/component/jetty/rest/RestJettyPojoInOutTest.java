@@ -31,7 +31,7 @@ public class RestJettyPojoInOutTest extends BaseJettyTest {
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
     }
-    
+
     @Test
     public void testJettyGetRequest() throws Exception {
         String out = template.requestBody("http://localhost:" + getPort() + "/users/lives", null, String.class);
@@ -52,11 +52,8 @@ public class RestJettyPojoInOutTest extends BaseJettyTest {
                 // use the rest DSL to define the rest services
                 rest("/users/")
                     // just return the default country here
-                    .get("lives").to("direct:start")
-                    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
-                        .route()
-                        .bean(new UserService(), "livesWhere");
-                
+                    .get("lives").to("direct:start").post("lives").type(UserPojo.class).outType(CountryPojo.class).route().bean(new UserService(), "livesWhere");
+
                 CountryPojo country = new CountryPojo();
                 country.setIso("EN");
                 country.setCountry("England");

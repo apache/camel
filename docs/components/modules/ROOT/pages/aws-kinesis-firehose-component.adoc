@@ -2,7 +2,7 @@
 = AWS Kinesis Firehose Component
 :page-source: components/camel-aws-kinesis/src/main/docs/aws-kinesis-firehose-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The Kinesis Firehose component supports sending messages to Amazon Kinesis Firehose service.
 

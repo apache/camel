@@ -24,15 +24,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
 
 public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
-        // ensure jsse clients can validate the self signed dummy localhost cert,
+        // ensure jsse clients can validate the self signed dummy localhost
+        // cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.getPath());
-        
+
         // START SNIPPET: e1
         // setup SSL using system properties
         setSystemProp("org.eclipse.jetty.ssl.keystore", trustStoreUrl.getPath());
@@ -41,9 +42,9 @@ public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
         setSystemProp("jdk.tls.client.protocols", "TLSv1.2");
         // END SNIPPET: e1
 
-        super.setUp();     
+        super.setUp();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -56,7 +57,7 @@ public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
                     }
                 };
                 from("jetty:https://localhost:" + port1 + "/hello").process(proc);
-                
+
                 from("jetty:https://localhost:" + port2 + "/test").to("mock:b");
             }
         };

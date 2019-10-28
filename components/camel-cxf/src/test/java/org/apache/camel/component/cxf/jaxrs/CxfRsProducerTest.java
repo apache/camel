@@ -452,7 +452,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         public void initialize(Bus bus) {
             //Do nothing
         }
-    };
+    }
 
     @Test
     public void testProducerWithFeature() {

@@ -1,7 +1,7 @@
 [[hbase-component]]
 = HBase Component
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
 
 This component provides an idemptotent repository, producers and
 consumers for http://hbase.apache.org/[Apache HBase].

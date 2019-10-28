@@ -1,7 +1,7 @@
 [[metrics-component]]
 = Metrics Component
 ifdef::env-github[]
-*Available as of Camel version 2.14.0*
+*Since Camel 2.14.0*
 
 :caution-caption: :boom:
 :important-caption: :exclamation:

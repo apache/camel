@@ -2,7 +2,7 @@
 = Spring Event Component
 :page-source: components/camel-spring/src/main/docs/spring-event-component.adoc
 
-*Available as of Camel version 1.4*
+*Since Camel 1.4*
 
 The Spring Event component provides access to the Spring
 `ApplicationEvent` objects. This allows you to publish

@@ -36,7 +36,7 @@ public class CamelMessagingHeadersInjectAdapterTest {
 
     @Before
     public void before() {
-        map = new HashMap<String, Object>();
+        map = new HashMap<>();
     }
 
     @Test

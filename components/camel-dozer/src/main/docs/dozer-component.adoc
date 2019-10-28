@@ -1,7 +1,7 @@
 [[dozer-component]]
 = Dozer Component
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 The Dozer component provides the ability to map between Java beans
 using the http://camel.apache.org/dozer-type-conversion.html[Dozer]

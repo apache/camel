@@ -39,7 +39,7 @@ public interface EtcdEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the etcd component.
+     * Builder for endpoint consumers for the Etcd component.
      */
     public interface EtcdEndpointConsumerBuilder
             extends
@@ -606,7 +606,7 @@ public interface EtcdEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the etcd component.
+     * Advanced builder for endpoint consumers for the Etcd component.
      */
     public interface AdvancedEtcdEndpointConsumerBuilder
             extends
@@ -780,7 +780,7 @@ public interface EtcdEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the etcd component.
+     * Builder for endpoint producers for the Etcd component.
      */
     public interface EtcdEndpointProducerBuilder
             extends
@@ -968,7 +968,7 @@ public interface EtcdEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the etcd component.
+     * Advanced builder for endpoint producers for the Etcd component.
      */
     public interface AdvancedEtcdEndpointProducerBuilder
             extends
@@ -1031,7 +1031,7 @@ public interface EtcdEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the etcd component.
+     * Builder for endpoint for the Etcd component.
      */
     public interface EtcdEndpointBuilder
             extends
@@ -1156,7 +1156,7 @@ public interface EtcdEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the etcd component.
+     * Advanced builder for endpoint for the Etcd component.
      */
     public interface AdvancedEtcdEndpointBuilder
             extends
@@ -1216,7 +1216,7 @@ public interface EtcdEndpointBuilderFactory {
         }
     }
     /**
-     * etcd (camel-etcd)
+     * Etcd (camel-etcd)
      * The camel etcd component allows you to work with Etcd, a distributed
      * reliable key-value store.
      * 

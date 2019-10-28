@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jetty;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -44,12 +43,9 @@ public class JettyMuteExceptionTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/foo?muteException=true")
-                        .to("mock:destination")
-                        .throwException(new IllegalArgumentException("Camel cannot do this"));
+                from("jetty:http://localhost:{{port}}/foo?muteException=true").to("mock:destination").throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }
-
 
 }

@@ -2,7 +2,7 @@
 = Syslog DataFormat
 :page-source: components/camel-syslog/src/main/docs/syslog-dataformat.adoc
 
-*Available as of Camel version 2.6*
+*Since Camel 2.6*
 
 The Syslog dataformat is used for working with
 http://www.ietf.org/rfc/rfc3164.txt[RFC3164] and RFC5424 messages.

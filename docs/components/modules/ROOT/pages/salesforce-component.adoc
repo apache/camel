@@ -2,7 +2,7 @@
 = Salesforce Component
 :page-source: components/camel-salesforce/camel-salesforce-component/src/main/docs/salesforce-component.adoc
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 This component supports producer and consumer endpoints to communicate
 with Salesforce using Java DTOs.  +

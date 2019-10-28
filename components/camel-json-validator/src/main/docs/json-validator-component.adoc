@@ -1,7 +1,7 @@
 [[json-validator-component]]
 = JSON Schema Validator Component
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
 
 The JSON Schema Validator component performs bean validation of the message body
 against JSON Schemas v4 draft using the NetworkNT JSON Schema library

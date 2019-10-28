@@ -1,7 +1,7 @@
 [[smpp-component]]
 = SMPP Component
 
-*Available as of Camel version 2.2*
+*Since Camel 2.2*
 
 This component provides access to an SMSC (Short Message Service Center)
 over the http://smsforum.net/SMPP_v3_4_Issue1_2.zip[SMPP] protocol to

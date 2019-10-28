@@ -61,8 +61,8 @@ public class SlackConsumerTest extends CamelTestSupport {
     }
 
     private void assumeCredentials() {
-        Assume.assumeThat("You should specified access token", token, CoreMatchers.notNullValue());
-        Assume.assumeThat("You should specified slack application hook", hook, CoreMatchers.notNullValue());
+        Assume.assumeThat("Please specify a Slack access token", token, CoreMatchers.notNullValue());
+        Assume.assumeThat("Please specify a Slack application webhook URL", hook, CoreMatchers.notNullValue());
     }
 
     private void sendMessage(String message) throws IOException {
@@ -71,7 +71,7 @@ public class SlackConsumerTest extends CamelTestSupport {
         post.setHeader("Content-type", "application/json");
         post.setEntity(new StringEntity(String.format("{ 'text': '%s'}", message)));
         HttpResponse response = client.execute(post);
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), HttpStatus.SC_OK);
+        Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
     }
 
     @Override

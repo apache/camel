@@ -66,11 +66,9 @@ public class HttpClientProxyTransferExceptionTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:cool")
-                    .to("http://localhost:{{port}}/myapp/myservice?transferException=true");
+                from("direct:cool").to("http://localhost:{{port}}/myapp/myservice?transferException=true");
 
-                from("jetty:http://localhost:{{port}}/myapp/myservice?transferException=true")
-                    .bean(MyCoolServiceBean.class);
+                from("jetty:http://localhost:{{port}}/myapp/myservice?transferException=true").bean(MyCoolServiceBean.class);
             }
         };
     }

@@ -2,7 +2,7 @@
 = Simple Language
 :page-source: core/camel-base/src/main/docs/simple-language.adoc
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
 
 The Simple Expression Language was a really simple language when it was
 created, but has since grown more powerful. It is primarily intended for

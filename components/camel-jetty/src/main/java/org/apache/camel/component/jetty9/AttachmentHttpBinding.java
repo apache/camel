@@ -33,10 +33,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
+import org.apache.camel.component.jetty.MultiPartFilter;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpMessage;
-import org.eclipse.jetty.util.MultiPartInputStreamParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,12 +53,11 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
     @Override
     protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
-        Object object = request.getAttribute("org.eclipse.jetty.servlet.MultiPartFile.multiPartInputStream");
-        if (object instanceof MultiPartInputStreamParser) {
-            MultiPartInputStreamParser parser = (MultiPartInputStreamParser)object;
+        Boolean object = (Boolean)request.getAttribute(MultiPartFilter.MULTIPART);
+        if (object != null && object) {
             Collection<Part> parts;
             try {
-                parts = parser.getParts();
+                parts = request.getParts();
                 for (Part part : parts) {
                     DataSource ds = new PartDataSource(part);
                     Attachment attachment = new DefaultAttachment(ds);
@@ -69,6 +68,15 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                     }
                     AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
                     am.addAttachmentObject(part.getName(), attachment);
+                    String name = part.getSubmittedFileName();
+                    Object value = am.getAttachment(name);
+                    Map<String, Object> headers = message.getHeaders();
+                    if (getHeaderFilterStrategy() != null
+                        && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())
+                        && name != null) {
+                        HttpHelper.appendHeader(headers, name, value);
+                    }
+
                 }
             } catch (Exception e) {
                 throw new RuntimeCamelException("Cannot populate attachments", e);
@@ -78,9 +86,10 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
     @Override
     protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
-        //we populate the http request parameters without checking the request method
+        // we populate the http request parameters without checking the request
+        // method
         Map<String, Object> headers = message.getHeaders();
-        //remove Content-Encoding from request
+        // remove Content-Encoding from request
         if (request instanceof org.eclipse.jetty.server.Request) {
             org.eclipse.jetty.server.Request jettyRequest = (org.eclipse.jetty.server.Request)request;
             jettyRequest.getHttpFields().remove(Exchange.CONTENT_ENCODING);
@@ -97,8 +106,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                 if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {
                     value = request.getParameter(name);
                 }
-                if (getHeaderFilterStrategy() != null
-                    && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                if (getHeaderFilterStrategy() != null && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
                     HttpHelper.appendHeader(headers, name, value);
                 }
                 continue;
@@ -110,15 +118,14 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
             if (values != null) {
                 for (String value : values) {
-                    if (getHeaderFilterStrategy() != null
-                        && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                    if (getHeaderFilterStrategy() != null && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
                         HttpHelper.appendHeader(headers, name, value);
                     }
                 }
             }
         }
     }
-    
+
     final class PartDataSource implements DataSource {
         private final Part part;
 

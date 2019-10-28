@@ -2,7 +2,7 @@
 = Azure Storage Blob Service Component
 :page-source: components/camel-azure/src/main/docs/azure-blob-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The Azure Blob component supports storing and retrieving the blobs to/from
 https://azure.microsoft.com/services/storage/blobs/[Azure Storage Blob] service.

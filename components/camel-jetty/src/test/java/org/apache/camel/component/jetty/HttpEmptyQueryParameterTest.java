@@ -41,9 +41,7 @@ public class HttpEmptyQueryParameterTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().simple("Header: ${header.id}");
+                from("jetty:http://0.0.0.0:{{port}}/foo").to("mock:input").transform().simple("Header: ${header.id}");
             }
         };
     }

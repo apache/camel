@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.xslt;
 
-import javax.xml.transform.TransformerException;
-
 import net.sf.saxon.trans.UncheckedXPathException;
 
 import org.apache.camel.CamelExecutionException;

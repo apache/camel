@@ -1,7 +1,7 @@
 = RxJava Component
 :page-source: components/camel-rxjava/src/main/docs/rxjava.adoc
 
-*Available as of Camel version 2.22*
+*Since Camel 2.22*
 
 RxJava based back-end for Camel's reactive streams component.
 

@@ -2,7 +2,7 @@
 = LDAP Component
 :page-source: components/camel-ldap/src/main/docs/ldap-component.adoc
 
-*Available as of Camel version 1.5*
+*Since Camel 1.5*
 
 The LDAP component allows you to perform searches in LDAP servers
 using filters as the message payload. +

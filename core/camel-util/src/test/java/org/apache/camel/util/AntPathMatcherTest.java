@@ -55,4 +55,16 @@ public class AntPathMatcherTest extends Assert {
         assertFalse(matcher.match("FOO/**/*.txt", "foo/blah.txt", true));
     }
 
+    @Test
+    public void testDetermineRoot() {
+        AntPathMatcher matcher = new AntPathMatcher();
+        assertEquals("org/apache/camel", matcher.determineRootDir("org/apache/camel"));
+        assertEquals("org/apache/camel/", matcher.determineRootDir("org/apache/camel/"));
+        assertEquals("org/apache/camel/", matcher.determineRootDir("org/apache/camel/*.xml"));
+        assertEquals("WEB-INF/", matcher.determineRootDir("WEB-INF/*.xml"));
+
+        // this is not a pattern
+        assertEquals("org/apache/camel/mycamel.xml", matcher.determineRootDir("org/apache/camel/mycamel.xml"));
+    }
+
 }

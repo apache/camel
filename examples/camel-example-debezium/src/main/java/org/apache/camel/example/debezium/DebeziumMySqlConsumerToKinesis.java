@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.kinesis.KinesisConstants;
 import org.apache.camel.component.debezium.DebeziumConstants;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.main.Main;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.kafka.connect.data.Struct;

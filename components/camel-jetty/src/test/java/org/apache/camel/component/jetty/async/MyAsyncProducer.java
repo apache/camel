@@ -37,7 +37,7 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
 
     @Override
     public MyAsyncEndpoint getEndpoint() {
-        return (MyAsyncEndpoint) super.getEndpoint();
+        return (MyAsyncEndpoint)super.getEndpoint();
     }
 
     @Override

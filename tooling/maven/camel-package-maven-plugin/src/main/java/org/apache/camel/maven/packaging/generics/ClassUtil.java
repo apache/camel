@@ -36,7 +36,7 @@ public final class ClassUtil {
     public static final Map<Class<?>, Class<?>> PRIMITIVE_TO_WRAPPERS_MAP;
 
     static {
-        Map<Class<?>, Class<?>> primitiveToWrappersMap = new HashMap<Class<?>, Class<?>>();
+        Map<Class<?>, Class<?>> primitiveToWrappersMap = new HashMap<>();
         primitiveToWrappersMap.put(Integer.TYPE, Integer.class);
         primitiveToWrappersMap.put(Float.TYPE, Float.class);
         primitiveToWrappersMap.put(Double.TYPE, Double.class);

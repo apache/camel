@@ -1,7 +1,7 @@
 [[vertx-component]]
 = Vert.x Component
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 The Vert.x component is for working with the http://vertx.io/[Vertx]
 https://vertx.io/docs/vertx-core/java/#event_bus[EventBus].

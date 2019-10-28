@@ -2,7 +2,7 @@
 = Direct VM Component
 :page-source: components/camel-directvm/src/main/docs/direct-vm-component.adoc
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
 
 The Direct-Vm component provides direct, synchronous invocation of
 any consumers in the JVM when a producer sends a message exchange. +

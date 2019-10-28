@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.openstack.common;
 
-import org.apache.camel.Exchange;
-
 public class OpenstackException extends Exception {
 
     public OpenstackException(String message) {

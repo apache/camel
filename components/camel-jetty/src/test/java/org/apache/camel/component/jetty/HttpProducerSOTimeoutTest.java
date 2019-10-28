@@ -38,7 +38,7 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testSendWithSOTimeoutTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -62,8 +62,7 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/myservice")
                     // but we wait for 2 sec before reply is sent back
-                    .delay(2000)
-                    .transform().constant("Bye World").to("mock:result");
+                    .delay(2000).transform().constant("Bye World").to("mock:result");
             }
         };
     }

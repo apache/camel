@@ -19,8 +19,6 @@ package org.apache.camel.component.fhir.api;
 import java.util.Map;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IClientExecutable;
-import ca.uhn.fhir.rest.gclient.IMeta;
-import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseMetaType;
 import org.hl7.fhir.instance.model.api.IIdType;
 

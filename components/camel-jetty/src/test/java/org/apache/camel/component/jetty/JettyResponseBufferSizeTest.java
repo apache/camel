@@ -31,8 +31,7 @@ public class JettyResponseBufferSizeTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp?responseBufferSize=65536")
-                    .transform(body().prepend("Hello "));
+                from("jetty:http://localhost:{{port}}/myapp?responseBufferSize=65536").transform(body().prepend("Hello "));
             }
         };
     }

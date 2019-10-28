@@ -2,7 +2,7 @@
 = JSon Jackson DataFormat
 :page-source: components/camel-jackson/src/main/docs/json-jackson-dataformat.adoc
 
-*Available as of Camel version 2.0*
+*Since Camel 2.0*
 
 Jackson is a Data Format which uses the
 https://github.com/FasterXML/jackson-core[Jackson Library]

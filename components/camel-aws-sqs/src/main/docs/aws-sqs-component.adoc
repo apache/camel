@@ -1,7 +1,7 @@
 [[aws-sqs-component]]
 = AWS Simple Queue Service Component
 
-*Available as of Camel version 2.6*
+*Since Camel 2.6*
 
 The sqs component supports sending and receiving messages to
 https://aws.amazon.com/sqs[Amazon's SQS] service.

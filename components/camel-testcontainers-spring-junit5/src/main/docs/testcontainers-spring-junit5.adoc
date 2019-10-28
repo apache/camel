@@ -1,0 +1,9 @@
+= Testcontainers Spring
+
+*Available since 2.22.0*
+
+Testing camel components is sometime complex because the 3th party system a component interacts with does not provide testing facilities and/or is only available as a native application. To reduce this complexity, *Camel Testcontainers Spring* extends camel spring test support providing a way to create and interact with containerized applications.
+
+This module is an extension to the camel-testcontainers component to add support for Spring.
+Therefore see the documentation for testcontainers for more details.
+

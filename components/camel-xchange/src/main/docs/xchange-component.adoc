@@ -1,7 +1,7 @@
 [[xchange-component]]
 = XChange Component
 
-*Available as of Camel version 2.21*
+*Since Camel 2.21*
 
 The XChange component uses the https://knowm.org/open-source/xchange/[XChange] Java library to provide access to 60+ Bitcoin and Altcoin exchanges.
 It comes with a consistent interface for trading and accessing market data. 

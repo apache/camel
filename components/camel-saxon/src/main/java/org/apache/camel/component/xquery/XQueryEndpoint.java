@@ -17,7 +17,6 @@
 package org.apache.camel.component.xquery;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;

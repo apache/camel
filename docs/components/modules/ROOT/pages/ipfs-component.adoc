@@ -2,7 +2,7 @@
 = IPFS Component
 :page-source: components/camel-ipfs/src/main/docs/ipfs-component.adoc
 
-*Available as of Camel version 2.23*
+*Since Camel 2.23*
 
 The IPFS component provides access to the Interplanetary File System https://ipfs.io/[(IPFS)].
 

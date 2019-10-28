@@ -2,7 +2,7 @@
 = Openshift Build Config Component
 :page-source: components/camel-kubernetes/src/main/docs/openshift-build-configs-component.adoc
 
-*Available as of Camel version 2.17*
+*Since Camel 2.17*
 
 The OpenShift Build Config component is one of xref:kubernetes.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes build config operations. 

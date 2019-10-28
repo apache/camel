@@ -1,7 +1,7 @@
 [[ref-component]]
 = Ref Component
 
-*Available as of Camel version 1.2*
+*Since Camel 1.2*
 
 The Ref component is used for lookup of existing endpoints bound in
 the Registry.

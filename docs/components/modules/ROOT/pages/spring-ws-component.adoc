@@ -2,7 +2,7 @@
 = Spring WebService Component
 :page-source: components/camel-spring-ws/src/main/docs/spring-ws-component.adoc
 
-*Available as of Camel version 2.6*
+*Since Camel 2.6*
 
 The Spring WS component allows you to integrate with
 http://static.springsource.org/spring-ws/sites/1.5/[Spring Web

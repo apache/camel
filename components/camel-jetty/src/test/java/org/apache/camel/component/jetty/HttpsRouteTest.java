@@ -56,15 +56,16 @@ public class HttpsRouteTest extends BaseJettyTest {
     public String getHttpProducerScheme() {
         return "https://";
     }
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
         port1 = getNextPort();
         port2 = getNextPort();
-        
+
         super.setUp();
-        // ensure jsse clients can validate the self signed dummy localhost cert, 
+        // ensure jsse clients can validate the self signed dummy localhost
+        // cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
@@ -85,7 +86,7 @@ public class HttpsRouteTest extends BaseJettyTest {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setSecureSocketProtocol("TLSv1.2");
         context.setSSLContextParameters(sslContextParameters);
-        ((SSLContextParametersAware) context.getComponent("https")).setUseGlobalSslContextParameters(true);
+        ((SSLContextParametersAware)context.getComponent("https")).setUseGlobalSslContextParameters(true);
         return context;
     }
 
@@ -98,7 +99,7 @@ public class HttpsRouteTest extends BaseJettyTest {
         for (Object key : originalValues.keySet()) {
             Object value = originalValues.get(key);
             if (NULL_VALUE_MARKER.equals(value)) {
-                System.clearProperty((String) key);
+                System.clearProperty((String)key);
             } else {
                 System.setProperty((String)key, (String)value);
             }
@@ -134,7 +135,7 @@ public class HttpsRouteTest extends BaseJettyTest {
 
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
     }
-    
+
     @Test
     public void testEndpointWithoutHttps() throws Exception {
         // these tests does not run well on Windows
@@ -160,7 +161,7 @@ public class HttpsRouteTest extends BaseJettyTest {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         URL url = new URL("https://localhost:" + port1 + "/hello");
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
         SSLContext ssl = SSLContext.getInstance("TLSv1.2");
         ssl.init(null, null, null);
         connection.setSSLSocketFactory(ssl.getSocketFactory());
@@ -173,7 +174,7 @@ public class HttpsRouteTest extends BaseJettyTest {
         String data = new String(os.toByteArray());
         assertEquals("<b>Hello World</b>", data);
     }
-    
+
     @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
         // these tests does not run well on Windows
@@ -187,12 +188,12 @@ public class HttpsRouteTest extends BaseJettyTest {
         } catch (SocketException expected) {
         }
     }
-    
+
     protected void invokeHttpEndpoint() throws IOException {
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type", "application/xml");
     }
-    
+
     protected void configureSslContextFactory(SslContextFactory sslContextFactory) {
         sslContextFactory.setKeyManagerPassword(pwd);
         sslContextFactory.setKeyStorePassword(pwd);
@@ -205,17 +206,17 @@ public class HttpsRouteTest extends BaseJettyTest {
         sslContextFactory.setTrustStoreType("PKCS12");
         sslContextFactory.setProtocol("TLSv1.2");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
+                JettyHttpComponent componentJetty = (JettyHttpComponent)context.getComponent("jetty");
                 componentJetty.setSslPassword(pwd);
                 componentJetty.setSslKeyPassword(pwd);
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
                 componentJetty.setKeystore(keyStoreUrl.toURI().getPath());
-                
+
                 from("jetty:https://localhost:" + port1 + "/test").to("mock:a");
 
                 Processor proc = new Processor() {
@@ -224,10 +225,9 @@ public class HttpsRouteTest extends BaseJettyTest {
                     }
                 };
                 from("jetty:https://localhost:" + port1 + "/hello").process(proc);
-                
+
                 from("jetty:https://localhost:" + port2 + "/test").to("mock:b");
             }
         };
     }
 }
-

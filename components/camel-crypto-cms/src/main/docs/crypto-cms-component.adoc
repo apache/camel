@@ -1,7 +1,7 @@
 [[crypto-cms-component]]
 = Crypto CMS Component
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
 
 http://tools.ietf.org/html/rfc5652[Cryptographic Message Syntax (CMS)] is a well established standard for signing and encrypting messages. The Apache Crypto CMS component supports the following parts of this standard:
 * Content Type "Enveloped Data" with Key Transport (asymmetric key),

@@ -2,7 +2,7 @@
 = JAXB DataFormat
 :page-source: components/camel-jaxb/src/main/docs/jaxb-dataformat.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
 
 JAXB is a Data Format which uses the JAXB2 XML
 marshalling standard which is included in Java 6 to unmarshal an XML

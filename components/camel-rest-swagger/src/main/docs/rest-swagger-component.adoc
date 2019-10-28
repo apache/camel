@@ -1,7 +1,7 @@
 [[rest-swagger-component]]
 = REST Swagger Component
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 The REST Swagger* configures rest producers from
 http://swagger.io/[Swagger] (Open API) specification document and

@@ -2,7 +2,7 @@
 = Google Calendar Component
 :page-source: components/camel-google-calendar/src/main/docs/google-calendar-component.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 The Google Calendar component provides access
 to http://google.com/calendar[Google Calendar] via

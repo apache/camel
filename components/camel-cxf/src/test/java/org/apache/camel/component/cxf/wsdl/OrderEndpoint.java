@@ -31,5 +31,5 @@ public class OrderEndpoint {
     public String doOrder(Order order) {
         LOG.info("Processing order");
         return "Order processed " + order;
-    };
+    }
 }

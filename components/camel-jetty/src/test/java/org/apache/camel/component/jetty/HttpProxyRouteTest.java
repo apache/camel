@@ -40,25 +40,26 @@ public class HttpProxyRouteTest extends BaseJettyTest {
 
         log.info("Time taken: " + TimeUtils.printDuration(watch.taken()));
     }
-    
+
     @Test
     public void testHttpProxyWithDifferentPath() throws Exception {
         String out = template.requestBody("http://localhost:{{port}}/proxy", null, String.class);
         assertEquals("/otherEndpoint", out);
-        
+
         out = template.requestBody("http://localhost:{{port}}/proxy/path", null, String.class);
         assertEquals("/otherEndpoint/path", out);
     }
-    
+
     @Test
     public void testHttpProxyHostHeader() throws Exception {
         String out = template.requestBody("http://localhost:{{port}}/proxyServer", null, String.class);
         assertEquals("Get a wrong host header", "localhost:" + getPort2(), out);
     }
-    
+
     @Test
     public void testHttpProxyFormHeader() throws Exception {
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/form", "username=abc&pass=password", Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/form", "username=abc&pass=password", Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded",
+                                                   String.class);
         assertEquals("Get a wrong response message", "username=abc&pass=password", out);
     }
 
@@ -66,35 +67,32 @@ public class HttpProxyRouteTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty://http://localhost:{{port}}")
-                    .to("http://localhost:{{port}}/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
-                
+                from("jetty://http://localhost:{{port}}").to("http://localhost:{{port}}/bye?throwExceptionOnFailure=false&bridgeEndpoint=true");
+
                 from("jetty://http://localhost:{{port}}/proxy?matchOnUriPrefix=true")
                     .to("http://localhost:{{port}}/otherEndpoint?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("jetty://http://localhost:{{port}}/bye").transform(header("foo").prepend("Bye "));
-                
+
                 from("jetty://http://localhost:{{port}}/otherEndpoint?matchOnUriPrefix=true").transform(header(Exchange.HTTP_URI));
-                
-                from("jetty://http://localhost:{{port}}/proxyServer")
-                    .to("http://localhost:{{port2}}/host?bridgeEndpoint=true");
-                
+
+                from("jetty://http://localhost:{{port}}/proxyServer").to("http://localhost:{{port2}}/host?bridgeEndpoint=true");
+
                 from("jetty://http://localhost:{{port2}}/host").transform(header("host"));
-                
+
                 // check the from request
-                from("jetty://http://localhost:{{port}}/form?bridgeEndpoint=true")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // just take out the message body and send it back
-                            Message in = exchange.getIn();
-                            String request = in.getBody(String.class);
-                            exchange.getOut().setBody(request);
-                        }
-                        
-                    });
+                from("jetty://http://localhost:{{port}}/form?bridgeEndpoint=true").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        // just take out the message body and send it back
+                        Message in = exchange.getIn();
+                        String request = in.getBody(String.class);
+                        exchange.getOut().setBody(request);
+                    }
+
+                });
             }
         };
-    }    
+    }
 
 }

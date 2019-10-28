@@ -51,8 +51,7 @@ public class HttpPollingConsumerTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/test")
-                    .delay(2000).transform(constant("Bye World"));
+                from("jetty://http://localhost:{{port}}/test").delay(2000).transform(constant("Bye World"));
             }
         };
     }

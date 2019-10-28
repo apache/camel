@@ -42,9 +42,7 @@ public class RestBridgeEndpointTest extends BaseJettyTest {
 
                 rest("/api/").get("/{id}/").to("http://localhost:" + getPort2() + "?bridgeEndpoint=true");
 
-                from("jetty:http://localhost:" + getPort2() + "?matchOnUriPrefix=true")
-                    .to("mock:result")
-                    .transform().simple("Bye ${header.id}");
+                from("jetty:http://localhost:" + getPort2() + "?matchOnUriPrefix=true").to("mock:result").transform().simple("Bye ${header.id}");
             }
         };
     }

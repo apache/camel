@@ -25,7 +25,8 @@ import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
 
 /**
- * Based on end user on forum how to get the 404 error code in his enrich aggregator
+ * Based on end user on forum how to get the 404 error code in his enrich
+ * aggregator
  */
 public class JettyHandle404Test extends BaseJettyTest {
 
@@ -43,7 +44,7 @@ public class JettyHandle404Test extends BaseJettyTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testCustomerErrorHandler() throws Exception {
         String response = template.requestBody("http://localhost:{{port}}/myserver1?throwExceptionOnFailure=false", null, String.class);
@@ -60,7 +61,7 @@ public class JettyHandle404Test extends BaseJettyTest {
                 // setup the jetty component with the customx error handler
                 JettyHttpComponent jettyComponent = (JettyHttpComponent)context.getComponent("jetty");
                 jettyComponent.setErrorHandler(new MyErrorHandler());
-                
+
                 // disable error handling
                 errorHandler(noErrorHandler());
 
@@ -73,32 +74,29 @@ public class JettyHandle404Test extends BaseJettyTest {
                     }
                 }).to("mock:result");
 
-                // use this sub route as indirection to handle the HttpOperationFailedException
-                // and set the data back as data on the exchange to not cause the exception to be thrown
-                from("direct:tohttp")
-                        .doTry()
-                            .to(getProducerUrl())
-                        .doCatch(HttpOperationFailedException.class)
-                            .process(new Processor() {
-                                public void process(Exchange exchange) {
-                                    // copy the caused exception values to the exchange as we want the response in the regular exchange
-                                    // instead as an exception that will get thrown and thus the route breaks
-                                    HttpOperationFailedException cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, HttpOperationFailedException.class);
-                                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
-                                    exchange.getOut().setBody(cause.getResponseBody());
-                                }
-                            })
-                        .end();
-
+                // use this sub route as indirection to handle the
+                // HttpOperationFailedException
+                // and set the data back as data on the exchange to not cause
+                // the exception to be thrown
+                from("direct:tohttp").doTry().to(getProducerUrl()).doCatch(HttpOperationFailedException.class).process(new Processor() {
+                    public void process(Exchange exchange) {
+                        // copy the caused exception values to the exchange as
+                        // we want the response in the regular exchange
+                        // instead as an exception that will get thrown and thus
+                        // the route breaks
+                        HttpOperationFailedException cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, HttpOperationFailedException.class);
+                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
+                        exchange.getOut().setBody(cause.getResponseBody());
+                    }
+                }).end();
 
                 // this is our jetty server where we simulate the 404
-                from("jetty://http://localhost:{{port}}/myserver")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody("Page not found");
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                            }
-                        });
+                from("jetty://http://localhost:{{port}}/myserver").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setBody("Page not found");
+                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                    }
+                });
             }
         };
     }

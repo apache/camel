@@ -1,7 +1,7 @@
 [[spring-integration-component]]
 = Spring Integration Component
 
-*Available as of Camel version 1.4*
+*Since Camel 1.4*
 
 The Spring Integration component provides a bridge for Camel
 components to talk to

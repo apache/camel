@@ -1,7 +1,7 @@
 [[validator-component]]
 = Validator Component
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
 
 The Validation component performs XML validation of the message body
 using the JAXP Validation API and based on any of the supported XML

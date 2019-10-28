@@ -2,7 +2,7 @@
 = file-watch Component
 :page-source: components/camel-file-watch/src/main/docs/file-watch-component.adoc
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 This component can be used to watch file modification events in folder. It is based on https://github.com/gmethvin/directory-watcher[gmethvin/directory-watcher].
 

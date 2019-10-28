@@ -2,7 +2,7 @@
 = Scheduler Component
 :page-source: components/camel-scheduler/src/main/docs/scheduler-component.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
 The Scheduler component is used to generate message exchanges when a
 scheduler fires. This component is similar to the

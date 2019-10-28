@@ -104,4 +104,4 @@ public class SimpleTypeConverter implements TypeConverter {
         }
     }
 
-};
+}

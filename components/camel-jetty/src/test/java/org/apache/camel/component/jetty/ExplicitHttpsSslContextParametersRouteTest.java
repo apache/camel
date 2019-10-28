@@ -37,20 +37,22 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(pwd);
-        
+
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setKeyPassword(pwd);
         kmp.setKeyStore(ksp);
-        
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
-        
-        // From Camel 2.5.0 Camel-Jetty is using SslSelectChannelConnector instead of SslSocketConnector
-        //SslSelectChannelConnector sslSocketConnector = new SslSelectChannelConnector();
-        //sslSocketConnector.getSslContextFactory().setSslContext(sslContextParameters.createSSLContext());
-        //sslSocketConnector.setPort(port);
-        
-        //return sslSocketConnector;
+
+        // From Camel 2.5.0 Camel-Jetty is using SslSelectChannelConnector
+        // instead of SslSocketConnector
+        // SslSelectChannelConnector sslSocketConnector = new
+        // SslSelectChannelConnector();
+        // sslSocketConnector.getSslContextFactory().setSslContext(sslContextParameters.createSSLContext());
+        // sslSocketConnector.setPort(port);
+
+        // return sslSocketConnector;
         return null;
     }
     // END SNIPPET: e2
@@ -77,7 +79,7 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
                     }
                 };
                 from("jetty:https://localhost:" + port1 + "/hello").process(proc);
-                
+
                 from("jetty:https://localhost:" + port2 + "/test").to("mock:b");
             }
         };

@@ -27,7 +27,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.FailedToCreateProducerException;
-import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.StatefulService;
 import org.apache.camel.processor.CamelInternalProcessor;

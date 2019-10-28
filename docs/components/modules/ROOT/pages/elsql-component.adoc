@@ -2,7 +2,7 @@
 = ElSQL Component
 :page-source: components/camel-elsql/src/main/docs/elsql-component.adoc
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 The ELSQL component is an extension to the existing
 xref:sql-component.adoc[SQL Component] that uses

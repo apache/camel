@@ -25,7 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class RobotFrameworkArguments {
 
-    private final List<String> arguments = new ArrayList<String>();
+    private final List<String> arguments = new ArrayList<>();
 
     public void addFileToArguments(File file, String flag) {
         if (isFileValid(file)) {
@@ -59,7 +59,7 @@ public class RobotFrameworkArguments {
             return;
         }
         String[] splittedVariablesToAdd = variablesToAdd.split(",");
-        addListToArguments(new ArrayList<String>(Arrays.asList(splittedVariablesToAdd)), flag);
+        addListToArguments(new ArrayList<>(Arrays.asList(splittedVariablesToAdd)), flag);
     }
 
     public void addListToArguments(List<String> variablesToAdd, String flag) {

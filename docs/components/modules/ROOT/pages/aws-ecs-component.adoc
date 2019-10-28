@@ -2,7 +2,7 @@
 = AWS ECS Component
 :page-source: components/camel-aws-ecs/src/main/docs/aws-ecs-component.adoc
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 The ECS component supports create, delete, describe and list
 https://aws.amazon.com/ecs/[AWS ECS] clusters instances.

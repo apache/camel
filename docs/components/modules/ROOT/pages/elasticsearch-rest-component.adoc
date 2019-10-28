@@ -2,9 +2,9 @@
 = Elastichsearch Rest Component
 :page-source: components/camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc
 
-*Available as of Camel version 2.21*
+*Since Camel 2.21*
 
-*Available as of Camel version 2.21*
+*Since Camel 2.21*
 
 
 

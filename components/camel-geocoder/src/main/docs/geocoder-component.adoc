@@ -1,7 +1,7 @@
 [[geocoder-component]]
 = Geocoder Component
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
 
 The Geocoder component is used for looking up geocodes (latitude and
 longitude) for a given address, or reverse lookup. The component uses

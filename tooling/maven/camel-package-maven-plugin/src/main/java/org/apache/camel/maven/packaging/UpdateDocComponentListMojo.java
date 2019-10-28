@@ -50,7 +50,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
 /**
- * Updates the documentation with the component list to be up to date with all the artifacts that Apache Camel ships.
+ * Updates the website docs with the component list to be up to date with all the artifacts that Apache Camel ships.
  */
 @Mojo(name = "update-doc-component-list", threadSafe = true)
 public class UpdateDocComponentListMojo extends AbstractMojo {
@@ -60,12 +60,6 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
      */
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
-
-    /**
-     * The directory for EIPs (model) catalog
-     */
-    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/models")
-    protected File eipsDir;
 
     /**
      * The directory for components catalog
@@ -92,18 +86,6 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
     protected File othersDir;
 
     /**
-     * The directory for camel-core
-     */
-    @Parameter(defaultValue = "${project.directory}/../../../core/camel-core-engine")
-    protected File readmeCoreDir;
-
-    /**
-     * The directory for components
-     */
-    @Parameter(defaultValue = "${project.directory}/../../../components")
-    protected File readmeComponentsDir;
-
-    /**
      * The website doc for components
      */
     @Parameter(defaultValue = "${project.directory}/../../../docs/components/modules/ROOT/pages/index.adoc")
@@ -124,70 +106,13 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        executeEipsList();
-        executeComponentsList(true);
-        executeDataFormatsList(true);
-        executeLanguagesList(true);
-        executeComponentsList(false);
-        executeDataFormatsList(false);
-        executeLanguagesList(false);
+        executeComponentsList();
+        executeDataFormatsList();
+        executeLanguagesList();
         executeOthersReadme();
     }
 
-    protected void executeEipsList() throws MojoExecutionException, MojoFailureException {
-        Set<File> eipFiles = new TreeSet<>();
-
-        if (eipsDir != null && eipsDir.isDirectory()) {
-            File[] files = eipsDir.listFiles();
-            if (files != null) {
-                eipFiles.addAll(Arrays.asList(files));
-            }
-        }
-
-        try {
-            List<EipModel> models = new ArrayList<>();
-            for (File file : eipFiles) {
-                String json = loadText(new FileInputStream(file));
-                EipModel model = generateEipModel(json);
-
-                // we only want actual EIPs from the models
-                if (model.getLabel().startsWith("eip")) {
-                    models.add(model);
-                }
-            }
-
-            // re-order the EIPs so we have them in different categories
-
-            // sort the models
-            Collections.sort(models, new EipComparator());
-
-            // how many deprecated
-            long deprecated = models.stream()
-                    .filter(EipModel::isDeprecated)
-                    .count();
-
-            // update the big readme file in the core dir
-            File file = new File(readmeCoreDir, "readme-eip.adoc");
-
-            // update regular components
-            boolean exists = file.exists();
-            String changed = templateEips(models, deprecated);
-            boolean updated = updateEips(file, changed);
-
-            if (updated) {
-                getLog().info("Updated readme-eip.adoc file: " + file);
-            } else if (exists) {
-                getLog().debug("No changes to readme-eip.adoc file: " + file);
-            } else {
-                getLog().warn("No readme-eip.adoc file: " + file);
-            }
-
-        } catch (IOException e) {
-            throw new MojoFailureException("Error due " + e.getMessage(), e);
-        }
-    }
-
-    protected void executeComponentsList(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
+    protected void executeComponentsList() throws MojoExecutionException, MojoFailureException {
         Set<File> componentFiles = new TreeSet<>();
 
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -201,7 +126,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             List<ComponentModel> models = new ArrayList<>();
             for (File file : componentFiles) {
                 String json = loadText(new FileInputStream(file));
-                ComponentModel model = generateComponentModel(json, coreOnly);
+                ComponentModel model = generateComponentModel(json);
 
                 // filter out alternative schemas which reuses documentation
                 boolean add = true;
@@ -225,56 +150,21 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             // sort the models
             Collections.sort(models, new ComponentComparator());
 
-            // filter out unwanted components
-            List<ComponentModel> components = new ArrayList<>();
-            for (ComponentModel model : models) {
-                if (coreOnly) {
-                    if ("camel-core".equals(model.getArtifactId())) {
-                        // only include core components
-                        components.add(model);
-                    }
-                } else {
-                    // we want to include everything in the big file (also from camel-core)
-                    components.add(model);
-                }
-            }
-
             // how many different artifacts
-            int count = components.stream()
+            int count = models.stream()
                     .map(ComponentModel::getArtifactId)
                     .collect(toSet()).size();
 
             // how many deprecated
-            long deprecated = components.stream()
+            long deprecated = models.stream()
                     .filter(c -> "true".equals(c.getDeprecated()))
                     .count();
 
-            // update the big readme file in the core/components dir
-            File file;
-            if (coreOnly) {
-                file = new File(readmeCoreDir, "readme.adoc");
-            } else {
-                file = new File(readmeComponentsDir, "readme.adoc");
-            }
-
-            // update regular components
-            boolean exists = file.exists();
-            String changed = templateComponents(components, count, deprecated, false);
-            boolean updated = updateComponents(file, changed);
-
-            if (updated) {
-                getLog().info("Updated readme.adoc file: " + file);
-            } else if (exists) {
-                getLog().debug("No changes to readme.adoc file: " + file);
-            } else {
-                getLog().warn("No readme.adoc file: " + file);
-            }
-
             // update doc in the website dir
-            file = websiteDocFile;
-            exists = file.exists();
-            changed = templateComponents(components, count, deprecated, true);
-            updated = updateComponents(file, changed);
+            File file = websiteDocFile;
+            boolean exists = file.exists();
+            String changed = templateComponents(models, count, deprecated);
+            boolean updated = updateComponents(file, changed);
             if (updated) {
                 getLog().info("Updated website doc file: " + file);
             } else if (exists) {
@@ -318,27 +208,11 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
                     .filter(o -> "true".equals(o.getDeprecated()))
                     .count();
 
-            // update the big readme file in the components dir
-            File file = new File(readmeComponentsDir, "readme.adoc");
-
-            // update regular components
-            boolean exists = file.exists();
-            String changed = templateOthers(others, count, deprecated, false);
-            boolean updated = updateOthers(file, changed);
-
-            if (updated) {
-                getLog().info("Updated readme.adoc file: " + file);
-            } else if (exists) {
-                getLog().debug("No changes to readme.adoc file: " + file);
-            } else {
-                getLog().warn("No readme.adoc file: " + file);
-            }
-
             // update doc in the website dir
-            file = websiteDocFile;
-            exists = file.exists();
-            changed = templateOthers(others, count, deprecated, true);
-            updated = updateOthers(file, changed);
+            File file = websiteDocFile;
+            boolean exists = file.exists();
+            String changed = templateOthers(others, count, deprecated);
+            boolean updated = updateOthers(file, changed);
             if (updated) {
                 getLog().info("Updated website doc file: " + file);
             } else if (exists) {
@@ -352,7 +226,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
     }
 
-    protected void executeDataFormatsList(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
+    protected void executeDataFormatsList() throws MojoExecutionException, MojoFailureException {
         Set<File> dataFormatFiles = new TreeSet<>();
 
         if (dataFormatsDir != null && dataFormatsDir.isDirectory()) {
@@ -366,7 +240,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             List<DataFormatModel> models = new ArrayList<>();
             for (File file : dataFormatFiles) {
                 String json = loadText(new FileInputStream(file));
-                DataFormatModel model = generateDataFormatModel(json, coreOnly);
+                DataFormatModel model = generateDataFormatModel(json);
 
                 // special for bindy as we have one common file
                 if (model.getName().startsWith("bindy")) {
@@ -380,60 +254,20 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             Collections.sort(models, new DataFormatComparator());
 
             // how many different artifacts
-            int count;
-            if (coreOnly) {
-                count = 1;
-            } else {
-                count = models.stream()
-                            .map(DataFormatModel::getArtifactId)
-                            .collect(toSet()).size();
-            }
+            int count = models.stream()
+                    .map(DataFormatModel::getArtifactId)
+                    .collect(toSet()).size();
 
             // how many deprecated
             long deprecated = models.stream()
                     .filter(m -> "true".equals(m.getDeprecated()))
                     .count();
 
-            // filter out camel-core
-            List<DataFormatModel> dataFormats = new ArrayList<>();
-            for (DataFormatModel model : models) {
-                if (coreOnly) {
-                    if ("camel-core".equals(model.getArtifactId())) {
-                        // only include core components
-                        dataFormats.add(model);
-                    }
-                } else {
-                    // we want to include everything in the big file (also from camel-core)
-                    dataFormats.add(model);
-                }
-            }
-
-            // update the big readme file in the core/components dir
-            File file;
-            if (coreOnly) {
-                file = new File(readmeCoreDir, "readme.adoc");
-            } else {
-                file = new File(readmeComponentsDir, "readme.adoc");
-            }
-
-            // update regular data formats
-            boolean exists = file.exists();
-            String changed = templateDataFormats(dataFormats, count, deprecated, false);
-            boolean updated = updateDataFormats(file, changed);
-
-            if (updated) {
-                getLog().info("Updated readme.adoc file: " + file);
-            } else if (exists) {
-                getLog().debug("No changes to readme.adoc file: " + file);
-            } else {
-                getLog().warn("No readme.adoc file: " + file);
-            }
-
             // update doc in the website dir
-            file = websiteDocFile;
-            exists = file.exists();
-            changed = templateDataFormats(dataFormats, count, deprecated, true);
-            updated = updateDataFormats(file, changed);
+            File file = websiteDocFile;
+            boolean exists = file.exists();
+            String changed = templateDataFormats(models, count, deprecated);
+            boolean updated = updateDataFormats(file, changed);
             if (updated) {
                 getLog().info("Updated website doc file: " + file);
             } else if (exists) {
@@ -447,7 +281,7 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
     }
 
-    protected void executeLanguagesList(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
+    protected void executeLanguagesList() throws MojoExecutionException, MojoFailureException {
         Set<File> languageFiles = new TreeSet<>();
 
         if (languagesDir != null && languagesDir.isDirectory()) {
@@ -461,63 +295,28 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             List<LanguageModel> models = new ArrayList<>();
             for (File file : languageFiles) {
                 String json = loadText(new FileInputStream(file));
-                LanguageModel model = generateLanguageModel(json, coreOnly);
+                LanguageModel model = generateLanguageModel(json);
                 models.add(model);
             }
 
             // sort the models
             Collections.sort(models, new LanguageComparator());
 
-            // filter out camel-core
-            List<LanguageModel> languages = new ArrayList<>();
-            for (LanguageModel model : models) {
-                if (coreOnly) {
-                    if ("camel-core".equals(model.getArtifactId())) {
-                        // only include core components
-                        languages.add(model);
-                    }
-                } else {
-                    // we want to include everything in the big file (also from camel-core)
-                    languages.add(model);
-                }
-            }
-
             // how many different artifacts
-            int count = languages.stream()
+            int count = models.stream()
                     .map(LanguageModel::getArtifactId)
                     .collect(toSet()).size();
 
             // how many deprecated
-            long deprecated = languages.stream()
+            long deprecated = models.stream()
                     .filter(l -> "true".equals(l.getDeprecated()))
                     .count();
 
-            // update the big readme file in the core/components dir
-            File file;
-            if (coreOnly) {
-                file = new File(readmeCoreDir, "readme.adoc");
-            } else {
-                file = new File(readmeComponentsDir, "readme.adoc");
-            }
-
-            // update regular data formats
-            boolean exists = file.exists();
-            String changed = templateLanguages(languages, count, deprecated, false);
-            boolean updated = updateLanguages(file, changed);
-
-            if (updated) {
-                getLog().info("Updated readme.adoc file: " + file);
-            } else if (exists) {
-                getLog().debug("No changes to readme.adoc file: " + file);
-            } else {
-                getLog().warn("No readme.adoc file: " + file);
-            }
-
             // update doc in the website dir
-            file = websiteDocFile;
-            exists = file.exists();
-            changed = templateLanguages(languages, count, deprecated, true);
-            updated = updateLanguages(file, changed);
+            File file = websiteDocFile;
+            boolean exists = file.exists();
+            String changed = templateLanguages(models, count, deprecated);
+            boolean updated = updateLanguages(file, changed);
             if (updated) {
                 getLog().info("Updated website doc file: " + file);
             } else if (exists) {
@@ -531,27 +330,9 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
     }
 
-    private String templateEips(List<EipModel> models, long deprecated) throws MojoExecutionException {
+    private String templateComponents(List<ComponentModel> models, int artifacts, long deprecated) throws MojoExecutionException {
         try {
-            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-eips.mvel"));
-            Map<String, Object> map = new HashMap<>();
-            map.put("eips", models);
-            map.put("numberOfDeprecated", deprecated);
-            String out = (String) TemplateRuntime.eval(template, map, Collections.singletonMap("util", MvelHelper.INSTANCE));
-            return out;
-        } catch (Exception e) {
-            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
-        }
-    }
-
-    private String templateComponents(List<ComponentModel> models, int artifacts, long deprecated, boolean website) throws MojoExecutionException {
-        try {
-            String template;
-            if (website) {
-                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-components-list.mvel"));
-            } else {
-                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-components.mvel"));
-            }
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-components-list.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("components", models);
             map.put("numberOfArtifacts", artifacts);
@@ -563,14 +344,9 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
     }
 
-    private String templateOthers(List<OtherModel> models, int artifacts, long deprecated, boolean website) throws MojoExecutionException {
+    private String templateOthers(List<OtherModel> models, int artifacts, long deprecated) throws MojoExecutionException {
         try {
-            String template;
-            if (website) {
-                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-others-list.mvel"));
-            } else {
-                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-others.mvel"));
-            }
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-others-list.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("others", models);
             map.put("numberOfArtifacts", artifacts);
@@ -582,14 +358,9 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
     }
 
-    private String templateDataFormats(List<DataFormatModel> models, int artifacts, long deprecated, boolean website) throws MojoExecutionException {
+    private String templateDataFormats(List<DataFormatModel> models, int artifacts, long deprecated) throws MojoExecutionException {
         try {
-            String template;
-            if (website) {
-                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-dataformats-list.mvel"));
-            } else {
-                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-dataformats.mvel"));
-            }
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-dataformats-list.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("dataformats", models);
             map.put("numberOfArtifacts", artifacts);
@@ -601,14 +372,9 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         }
     }
 
-    private String templateLanguages(List<LanguageModel> models, int artifacts, long deprecated, boolean website) throws MojoExecutionException {
+    private String templateLanguages(List<LanguageModel> models, int artifacts, long deprecated) throws MojoExecutionException {
         try {
-            String template;
-            if (website) {
-                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-languages-list.mvel"));
-            } else {
-                template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-languages.mvel"));
-            }
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("website-languages-list.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("languages", models);
             map.put("numberOfArtifacts", artifacts);
@@ -617,40 +383,6 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
-        }
-    }
-
-    private boolean updateEips(File file, String changed) throws MojoExecutionException {
-        if (!file.exists()) {
-            return false;
-        }
-
-        try {
-            String text = loadText(new FileInputStream(file));
-
-            String existing = StringHelper.between(text, "// eips: START", "// eips: END");
-            if (existing != null) {
-                // remove leading line breaks etc
-                existing = existing.trim();
-                changed = changed.trim();
-                if (existing.equals(changed)) {
-                    return false;
-                } else {
-                    String before = StringHelper.before(text, "// eips: START");
-                    String after = StringHelper.after(text, "// eips: END");
-                    text = before + "// eips: START\n" + changed + "\n// eips: END" + after;
-                    writeText(file, text);
-                    return true;
-                }
-            } else {
-                getLog().warn("Cannot find markers in file " + file);
-                getLog().warn("Add the following markers");
-                getLog().warn("\t// eips: START");
-                getLog().warn("\t// eips: END");
-                return false;
-            }
-        } catch (Exception e) {
-            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
         }
     }
 
@@ -852,10 +584,10 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         return eip;
     }
 
-    private ComponentModel generateComponentModel(String json, boolean coreOnly) {
+    private ComponentModel generateComponentModel(String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
 
-        ComponentModel component = new ComponentModel(coreOnly);
+        ComponentModel component = new ComponentModel();
         component.setScheme(JSonSchemaHelper.getSafeValue("scheme", rows));
         component.setSyntax(JSonSchemaHelper.getSafeValue("syntax", rows));
         component.setAlternativeSyntax(JSonSchemaHelper.getSafeValue("alternativeSyntax", rows));
@@ -894,10 +626,10 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         return other;
     }
 
-    private DataFormatModel generateDataFormatModel(String json, boolean coreOnly) {
+    private DataFormatModel generateDataFormatModel(String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
 
-        DataFormatModel dataFormat = new DataFormatModel(coreOnly);
+        DataFormatModel dataFormat = new DataFormatModel();
         dataFormat.setName(JSonSchemaHelper.getSafeValue("name", rows));
         dataFormat.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
         dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
@@ -914,10 +646,10 @@ public class UpdateDocComponentListMojo extends AbstractMojo {
         return dataFormat;
     }
 
-    private LanguageModel generateLanguageModel(String json, boolean coreOnly) {
+    private LanguageModel generateLanguageModel(String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
 
-        LanguageModel language = new LanguageModel(coreOnly);
+        LanguageModel language = new LanguageModel();
         language.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
         language.setName(JSonSchemaHelper.getSafeValue("name", rows));
         language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));

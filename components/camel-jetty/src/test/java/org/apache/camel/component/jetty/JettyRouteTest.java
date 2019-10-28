@@ -35,7 +35,7 @@ public class JettyRouteTest extends BaseJettyTest {
         String body = context.getTypeConverter().convertTo(String.class, response);
         assertEquals("<html><body>Book 123 is Camel in Action</body></html>", body);
     }
-    
+
     @Test
     public void testHttpProxyHostHeader() throws Exception {
         String out = template.requestBody("http://localhost:{{port}}/proxyServer", null, String.class);
@@ -49,10 +49,9 @@ public class JettyRouteTest extends BaseJettyTest {
                 // START SNIPPET: e1
                 from("jetty:http://localhost:{{port}}/myapp/myservice").process(new MyBookService());
                 // END SNIPPET: e1
-                
-                from("jetty://http://localhost:{{port}}/proxyServer")
-                    .to("http://localhost:{{port2}}/host?bridgeEndpoint=true");
-            
+
+                from("jetty://http://localhost:{{port}}/proxyServer").to("http://localhost:{{port2}}/host?bridgeEndpoint=true");
+
                 from("jetty://http://localhost:{{port2}}/host").transform(header("host"));
             }
         };
@@ -65,7 +64,8 @@ public class JettyRouteTest extends BaseJettyTest {
             // just get the body as a string
             String body = exchange.getIn().getBody(String.class);
 
-            // we have access to the HttpServletRequest here and we can grab it if we need it
+            // we have access to the HttpServletRequest here and we can grab it
+            // if we need it
             HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
             assertNotNull(req);
 

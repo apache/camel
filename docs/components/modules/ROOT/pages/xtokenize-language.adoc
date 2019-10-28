@@ -2,7 +2,7 @@
 = XML Tokenize Language
 :page-source: core/camel-jaxp/src/main/docs/xtokenize-language.adoc
 
-*Available as of Camel version 2.14*
+*Since Camel 2.14*
 
 The xml tokenizer language is a built-in language in camel-core, which
 is a truly XML-aware tokenizer that can be used with the Splitter as the

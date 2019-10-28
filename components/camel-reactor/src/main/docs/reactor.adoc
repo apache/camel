@@ -1,6 +1,6 @@
 = Reactor Component
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

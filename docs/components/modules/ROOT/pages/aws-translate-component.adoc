@@ -2,7 +2,7 @@
 = AWS Translate Component
 :page-source: components/camel-aws-translate/src/main/docs/aws-translate-component.adoc
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 The Translate component supports translate a text in multiple languages.
 https://aws.amazon.com/translate/[AWS Translate] clusters instances.

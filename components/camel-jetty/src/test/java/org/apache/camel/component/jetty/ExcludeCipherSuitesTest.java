@@ -33,11 +33,11 @@ public class ExcludeCipherSuitesTest extends BaseJettyTest {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(pwd);
-        
+
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setKeyPassword(pwd);
         kmp.setKeyStore(ksp);
-        
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
 

@@ -2,7 +2,7 @@
 = Language Component
 :page-source: components/camel-language/src/main/docs/language-component.adoc
 
-*Available as of Camel version 2.5*
+*Since Camel 2.5*
 
 The Language component allows you to send Exchange
 to an endpoint which executes a script by any of the supported

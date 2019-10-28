@@ -58,7 +58,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;

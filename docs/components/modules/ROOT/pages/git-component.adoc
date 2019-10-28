@@ -2,7 +2,7 @@
 = Git Component
 :page-source: components/camel-git/src/main/docs/git-component.adoc
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 The Git component allows you to work with a generic Git repository. 
 

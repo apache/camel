@@ -2,7 +2,7 @@
 = Printer Component
 :page-source: components/camel-printer/src/main/docs/lpr-component.adoc
 
-*Available as of Camel version 2.1*
+*Since Camel 2.1*
 
 The Printer component provides a way to direct payloads on a route to
 a printer. Obviously the payload has to be a formatted piece of payload

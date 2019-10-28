@@ -1,7 +1,7 @@
 [[twilio-component]]
 = Twilio Component
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
 
 The Twilio component provides access to Version 2010-04-01 of Twilio REST APIs accessible
 using https://github.com/twilio/twilio-java[Twilio Java SDK].

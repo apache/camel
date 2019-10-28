@@ -1,7 +1,7 @@
 [[rest-api-component]]
 = REST API Component
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
 
 The REST API component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
 

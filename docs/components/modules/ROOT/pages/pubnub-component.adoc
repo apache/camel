@@ -2,7 +2,7 @@
 = PubNub Component
 :page-source: components/camel-pubnub/src/main/docs/pubnub-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
 
 Camel PubNub component can be used to communicate with the https://www.pubnub.com/[PubNub] data stream network for connected devices.
 This component uses pubnub https://github.com/pubnub/java[java library].

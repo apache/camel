@@ -2,7 +2,7 @@
 = OSGi PAX Logging Component
 :page-source: components/camel-paxlogging/src/main/docs/paxlogging-component.adoc
 
-*Available as of Camel version 2.6*
+*Since Camel 2.6*
 
 The PAX Logging component can be used in an OSGi environment to receive
 http://wiki.ops4j.org/display/paxlogging/Pax+Logging[PaxLogging] events

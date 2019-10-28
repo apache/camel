@@ -2,7 +2,7 @@
 = SNMP Component
 :page-source: components/camel-snmp/src/main/docs/snmp-component.adoc
 
-*Available as of Camel version 2.1*
+*Since Camel 2.1*
 
 The SNMP component gives you the ability to poll SNMP capable devices
 or receiving traps

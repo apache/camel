@@ -2,7 +2,7 @@
 = AWS KMS Component
 :page-source: components/camel-aws-kms/src/main/docs/aws-kms-component.adoc
 
-*Available as of Camel version 2.21*
+*Since Camel 2.21*
 
 The KMS component supports the ability to work with keys stored in
 https://aws.amazon.com/kms/[AWS KMS] instances.

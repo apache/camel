@@ -37,11 +37,11 @@ public class InterfacesTest extends BaseJettyTest {
 
     public InterfacesTest() throws IOException {
         // Retrieve an address of some remote network interface
-        Enumeration<NetworkInterface> interfaces =  NetworkInterface.getNetworkInterfaces();
-        
+        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+
         while (remoteInterfaceAddress == null && interfaces.hasMoreElements()) {
             NetworkInterface interfaze = interfaces.nextElement();
-            Enumeration<InetAddress> addresses =  interfaze.getInetAddresses();
+            Enumeration<InetAddress> addresses = interfaze.getInetAddresses();
             if (addresses.hasMoreElements()) {
                 InetAddress nextAddress = addresses.nextElement();
                 try {
@@ -59,16 +59,16 @@ public class InterfacesTest extends BaseJettyTest {
             }
         }
     }
-    
+
     @Test
     public void testLocalInterfaceHandled() throws IOException, InterruptedException {
         int expectedMessages = (remoteInterfaceAddress != null) ? 3 : 2;
         getMockEndpoint("mock:endpoint").expectedMessageCount(expectedMessages);
-        
+
         URL localUrl = new URL("http://localhost:" + port1 + "/testRoute");
         String localResponse = context.getTypeConverter().convertTo(String.class, localUrl.openStream());
         assertEquals("local", localResponse);
-       
+
         if (!isMacOS) {
             localUrl = new URL("http://127.0.0.1:" + port2 + "/testRoute");
         } else {
@@ -76,38 +76,38 @@ public class InterfacesTest extends BaseJettyTest {
         }
         localResponse = context.getTypeConverter().convertTo(String.class, localUrl.openStream());
         assertEquals("local-differentPort", localResponse);
-        
-        if (remoteInterfaceAddress != null) {            
+
+        if (remoteInterfaceAddress != null) {
             URL url = new URL("http://" + remoteInterfaceAddress + ":" + port3 + "/testRoute");
             String remoteResponse = context.getTypeConverter().convertTo(String.class, url.openStream());
             assertEquals("remote", remoteResponse);
         }
-        
+
         assertMockEndpointsSatisfied();
-    }    
-      
+    }
+
     @Test
     public void testAllInterfaces() throws Exception {
         int expectedMessages = (remoteInterfaceAddress != null) ? 2 : 1;
         getMockEndpoint("mock:endpoint").expectedMessageCount(expectedMessages);
-        
+
         URL localUrl = new URL("http://localhost:" + port4 + "/allInterfaces");
         String localResponse = context.getTypeConverter().convertTo(String.class, localUrl.openStream());
         assertEquals("allInterfaces", localResponse);
-        
+
         if (remoteInterfaceAddress != null) {
             URL url = new URL("http://" + remoteInterfaceAddress + ":" + port4 + "/allInterfaces");
             String remoteResponse = context.getTypeConverter().convertTo(String.class, url.openStream());
             assertEquals("allInterfaces", remoteResponse);
         }
-        
+
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-        
+
             @Override
             public void configure() throws Exception {
                 port1 = getNextPort();
@@ -115,24 +115,16 @@ public class InterfacesTest extends BaseJettyTest {
                 port3 = getNextPort();
                 port4 = getNextPort();
 
-                from("jetty:http://localhost:" + port1 + "/testRoute")
-                    .setBody().constant("local")
-                    .to("mock:endpoint");
-                
-                from("jetty:http://localhost:" + port2 + "/testRoute")
-                    .setBody().constant("local-differentPort")
-                    .to("mock:endpoint");
-                
+                from("jetty:http://localhost:" + port1 + "/testRoute").setBody().constant("local").to("mock:endpoint");
+
+                from("jetty:http://localhost:" + port2 + "/testRoute").setBody().constant("local-differentPort").to("mock:endpoint");
+
                 if (remoteInterfaceAddress != null) {
-                    from("jetty:http://" + remoteInterfaceAddress + ":" + port3 + "/testRoute")
-                        .setBody().constant("remote")
-                        .to("mock:endpoint");
+                    from("jetty:http://" + remoteInterfaceAddress + ":" + port3 + "/testRoute").setBody().constant("remote").to("mock:endpoint");
                 }
-                
-                from("jetty:http://0.0.0.0:" + port4 + "/allInterfaces")
-                    .setBody().constant("allInterfaces")
-                    .to("mock:endpoint");
-                
+
+                from("jetty:http://0.0.0.0:" + port4 + "/allInterfaces").setBody().constant("allInterfaces").to("mock:endpoint");
+
             }
         };
     }

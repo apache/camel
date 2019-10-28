@@ -24,16 +24,15 @@ import org.apache.camel.component.jetty.JettyContentExchange;
 import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.http.common.HttpBinding;
-import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
+ * The jetty component provides HTTP-based endpoints for consuming and producing
+ * HTTP requests.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "jetty", extendsScheme = "http", title = "Jetty",
-        syntax = "jetty:httpUri", label = "http", consumerOnly = true, lenientProperties = true,
-        excludeProperties = "authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"
-            + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "jetty", extendsScheme = "http", title = "Jetty", syntax = "jetty:httpUri", label = "http", consumerOnly = true, lenientProperties = true, 
+excludeProperties = "authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"
++ "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain")
 public class JettyHttpEndpoint9 extends JettyHttpEndpoint implements AsyncEndpoint {
 
     private HttpBinding binding;
@@ -66,9 +65,9 @@ public class JettyHttpEndpoint9 extends JettyHttpEndpoint implements AsyncEndpoi
         super.setHttpBinding(binding);
         this.binding = binding;
     }
-    
+
     @Override
     public JettyContentExchange createContentExchange() {
         return new JettyContentExchange9();
-    } 
+    }
 }

@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
 import org.eclipse.microprofile.metrics.MetricID;
+import org.eclipse.microprofile.metrics.MetricRegistry.Type;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
 import org.junit.Test;
@@ -72,7 +73,7 @@ public class MicroProfileMetricsMessageHistoryTest extends MicroProfileMetricsTe
         assertNotNull(service);
 
         JsonExporter exporter = new JsonExporter();
-        String json = exporter.exportAllScopes().toString();
+        String json = exporter.exportOneScope(Type.APPLICATION).toString();
         assertNotNull(json);
         assertTrue(json.contains("nodeId=foo"));
         assertTrue(json.contains("nodeId=bar"));

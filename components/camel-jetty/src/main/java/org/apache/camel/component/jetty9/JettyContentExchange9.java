@@ -52,7 +52,6 @@ import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Jetty specific exchange which keeps track of the request and response.
  */
@@ -74,8 +73,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
     private boolean supportRedirect;
 
     @Override
-    public void init(Exchange exchange, JettyHttpBinding jettyBinding,
-                     final HttpClient client, AsyncCallback callback) {
+    public void init(Exchange exchange, JettyHttpBinding jettyBinding, final HttpClient client, AsyncCallback callback) {
         this.exchange = exchange;
         this.jettyBinding = jettyBinding;
         this.client = client;
@@ -151,7 +149,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
     private void tryClose(Object obj) {
         if (obj instanceof Closeable) {
             try {
-                ((Closeable) obj).close();
+                ((Closeable)obj).close();
             } catch (IOException e) {
                 // Ignore
             }
@@ -262,9 +260,9 @@ public class JettyContentExchange9 implements JettyContentExchange {
                     try {
                         Object content = osb.build();
                         if (content instanceof byte[]) {
-                            onResponseComplete(result, (byte[]) content);
+                            onResponseComplete(result, (byte[])content);
                         } else {
-                            StreamCache cos = (StreamCache) content;
+                            StreamCache cos = (StreamCache)content;
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             cos.writeTo(baos);
                             onResponseComplete(result, baos.toByteArray());
@@ -301,11 +299,12 @@ public class JettyContentExchange9 implements JettyContentExchange {
             return fields.getFieldNamesCollection();
         } catch (NoSuchMethodError e) {
             try {
-                // In newer versions of Jetty the return type has been changed to Set.
+                // In newer versions of Jetty the return type has been changed
+                // to Set.
                 // This causes problems at byte-code level. Try recovering.
                 Method reflGetFieldNamesCollection = HttpFields.class.getMethod("getFieldNamesCollection");
                 Object result = reflGetFieldNamesCollection.invoke(fields);
-                return (Collection<String>) result;
+                return (Collection<String>)result;
             } catch (Exception reflectionException) {
                 // Suppress, throwing the original exception
                 throw e;

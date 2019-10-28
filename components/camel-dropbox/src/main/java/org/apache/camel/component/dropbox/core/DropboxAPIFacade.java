@@ -38,7 +38,6 @@ import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 import com.dropbox.core.v2.files.SearchMatch;
 import com.dropbox.core.v2.files.SearchResult;
-import com.dropbox.core.v2.files.UploadUploader;
 import com.dropbox.core.v2.files.WriteMode;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.dto.DropboxDelResult;

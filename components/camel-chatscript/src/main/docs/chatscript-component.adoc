@@ -1,7 +1,7 @@
 [[chatscript-component]]
 = ChatScript Component
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 The ChatScript component allows you to interact with ChatScript Server and have conversations. This component is stateless and relies on ChatScript to maintain chat history.
 

@@ -2,7 +2,7 @@
 = Nagios Component
 :page-source: components/camel-nagios/src/main/docs/nagios-component.adoc
 
-*Available as of Camel version 2.3*
+*Since Camel 2.3*
 
 The xref:nagios-component.adoc[Nagios] component allows you to send passive checks
 to http://nagios.org[Nagios].

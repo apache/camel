@@ -1,7 +1,7 @@
 [[header-language]]
 = Header Language
 
-*Available as of Camel version 1.5*
+*Since Camel 1.5*
 
 The Header Expression Language allows you to extract values of named
 headers.

@@ -16,19 +16,12 @@
  */
 package org.apache.camel.component.salesforce.dto.generated;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-import org.apache.camel.component.salesforce.api.MultiSelectPicklistConverter;
-import org.apache.camel.component.salesforce.api.MultiSelectPicklistDeserializer;
-import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
 import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistConverter;
 import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistDeserializer;
 import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistSerializer;
