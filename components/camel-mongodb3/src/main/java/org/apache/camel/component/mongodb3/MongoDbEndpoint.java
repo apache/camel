@@ -30,6 +30,7 @@ import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoIterable;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -40,26 +41,24 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.mongodb3.MongoDbOperation.command;
 import static org.apache.camel.component.mongodb3.MongoDbOperation.findAll;
 import static org.apache.camel.component.mongodb3.MongoDbOperation.getDbStats;
-import static org.apache.camel.component.mongodb3.MongoDbOperation.valueOf;
-import static org.apache.camel.component.mongodb3.MongoDbOutputType.Document;
 import static org.apache.camel.component.mongodb3.MongoDbOutputType.DocumentList;
-import static org.apache.camel.component.mongodb3.MongoDbOutputType.MongoIterable;
 
 /**
  * Component for working with documents stored in MongoDB database.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb3", title = "MongoDB", syntax = "mongodb3:connectionBean",
-    consumerClass = MongoDbTailableCursorConsumer.class, label = "database,nosql")
+    label = "database,nosql")
 public class MongoDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
@@ -84,12 +83,15 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private boolean dynamicity;
     @UriParam(label = "advanced")
     private boolean writeResultAsHeader;
-    // tailable cursor consumer by default
-    private MongoDbConsumerType consumerType;
+    @UriParam(label = "consumer")
+    private String consumerType;
     @UriParam(label = "advanced", defaultValue = "1000")
     private long cursorRegenerationDelay = 1000L;
     @UriParam(label = "tail")
     private String tailTrackIncreasingField;
+
+    @UriParam(label = "changeStream")
+    private String streamFilter;
 
     // persistent tail tracking
     @UriParam(label = "tail")
@@ -104,13 +106,14 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private String tailTrackField;
     @UriParam(label = "common")
     private MongoDbOutputType outputType;
-    
+
+    // tailable cursor consumer by default
+    private MongoDbConsumerType dbConsumerType;
+
     private MongoDbTailTrackingConfig tailTrackingConfig;
 
     private MongoDatabase mongoDatabase;
     private MongoCollection<Document> mongoCollection;
-
-    // ======= Constructors ===============================================
 
     public MongoDbEndpoint() {
     }
@@ -119,14 +122,14 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         super(uri, component);
     }
 
-    // ======= Implementation methods =====================================
-
-    public Producer createProducer() throws Exception {
+    @Override
+    public Producer createProducer() {
         validateProducerOptions();
         initializeConnection();
         return new MongoDbProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         validateConsumerOptions();
 
@@ -135,15 +138,25 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         initializeConnection();
 
         // select right consumer type
-        if (consumerType == null) {
-            consumerType = MongoDbConsumerType.tailable;
+        try {
+            dbConsumerType = ObjectHelper.isEmpty(consumerType)
+                    ? MongoDbConsumerType.tailable
+                    : MongoDbConsumerType.valueOf(consumerType);
+        } catch (Exception e) {
+            throw new CamelMongoDbException("Consumer type not supported: " + consumerType, e);
         }
 
         Consumer consumer;
-        if (consumerType == MongoDbConsumerType.tailable) {
+
+        switch (dbConsumerType) {
+        case tailable:
             consumer = new MongoDbTailableCursorConsumer(this, processor);
-        } else {
-            throw new CamelMongoDbException("Consumer type not supported: " + consumerType);
+            break;
+        case changeStreams:
+            consumer = new MongoDbChangeStreamsConsumer(this, processor);
+            break;
+        default:
+            throw new CamelMongoDbException("Consumer type not supported: " + dbConsumerType);
         }
 
         configureConsumer(consumer);
@@ -161,10 +174,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             if (DocumentList.equals(outputType) && !(findAll.equals(operation))) {
                 throw new IllegalArgumentException("outputType DocumentList is only compatible with operation findAll");
             }
-            if (MongoIterable.equals(outputType) && !(findAll.equals(operation))) {
+            if (MongoDbOutputType.MongoIterable.equals(outputType) && !(findAll.equals(operation))) {
                 throw new IllegalArgumentException("outputType MongoIterable is only compatible with operation findAll");
             }
-            if (Document.equals(outputType) && (findAll.equals(operation))) {
+            if (MongoDbOutputType.Document.equals(outputType) && (findAll.equals(operation))) {
                 throw new IllegalArgumentException("outputType Document is not compatible with operation findAll");
             }
         }
@@ -174,9 +187,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         // make our best effort to validate, options with defaults are checked
         // against their defaults, which is not always a guarantee that
         // they haven't been explicitly set, but it is enough
-        if (!ObjectHelper.isEmpty(consumerType) || persistentTailTracking || !ObjectHelper.isEmpty(tailTrackDb) || !ObjectHelper.isEmpty(tailTrackCollection)
+        if (!ObjectHelper.isEmpty(dbConsumerType) || persistentTailTracking || !ObjectHelper.isEmpty(tailTrackDb) || !ObjectHelper.isEmpty(tailTrackCollection)
             || !ObjectHelper.isEmpty(tailTrackField) || cursorRegenerationDelay != 1000L) {
-            throw new IllegalArgumentException("consumerType, tailTracking, cursorRegenerationDelay options cannot appear on a producer endpoint");
+            throw new IllegalArgumentException("dbConsumerType, tailTracking, cursorRegenerationDelay options cannot appear on a producer endpoint");
         }
     }
 
@@ -187,7 +200,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         if (!ObjectHelper.isEmpty(operation) || dynamicity || outputType != null) {
             throw new IllegalArgumentException("operation, dynamicity, outputType " + "options cannot appear on a consumer endpoint");
         }
-        if (consumerType == MongoDbConsumerType.tailable) {
+        if (dbConsumerType == MongoDbConsumerType.tailable) {
             if (tailTrackIncreasingField == null) {
                 throw new IllegalArgumentException("tailTrackIncreasingField option must be set for tailable cursor MongoDB consumer endpoint");
             }
@@ -209,7 +222,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      */
     public void initializeConnection() throws CamelMongoDbException {
         LOG.info("Initialising MongoDb endpoint: {}", this);
-        if (database == null || (collection == null && !(getDbStats.equals(operation) || command.equals(operation)))) {
+        if (database == null || (collection == null && !(getDbStats.equals(operation) || MongoDbOperation.command.equals(operation)))) {
             throw new CamelMongoDbException("Missing required endpoint configuration: database and/or collection");
         }
         mongoDatabase = mongoConnection.getDatabase(database);
@@ -301,7 +314,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         LOG.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
         super.doStart();
     }
-    
+
     // ======= Getters and setters
     // ===============================================
 
@@ -350,7 +363,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      */
     public void setOperation(String operation) throws CamelMongoDbException {
         try {
-            this.operation = valueOf(operation);
+            this.operation = MongoDbOperation.valueOf(operation);
         } catch (IllegalArgumentException e) {
             throw new CamelMongoDbException("Operation not supported", e);
         }
@@ -456,19 +469,30 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     /**
      * Reserved for future use, when more consumer types are supported.
      *
-     * @param consumerType key of the consumer type
-     * @throws CamelMongoDbException
+     * @param dbConsumerType key of the consumer type
+     * @throws CamelMongoDbException if consumer type is not supported
      */
-    public void setConsumerType(String consumerType) throws CamelMongoDbException {
+    public void setDbConsumerType(String dbConsumerType) throws CamelMongoDbException {
         try {
-            this.consumerType = MongoDbConsumerType.valueOf(consumerType);
+            this.dbConsumerType = MongoDbConsumerType.valueOf(dbConsumerType);
         } catch (IllegalArgumentException e) {
             throw new CamelMongoDbException("Consumer type not supported", e);
         }
     }
 
-    public MongoDbConsumerType getConsumerType() {
+    public MongoDbConsumerType getDbConsumerType() {
+        return dbConsumerType;
+    }
+
+    public String getConsumerType() {
         return consumerType;
+    }
+
+    /**
+     * Consumer type.
+     */
+    public void setConsumerType(String consumerType) {
+        this.consumerType = consumerType;
     }
 
     public String getTailTrackDb() {
@@ -536,7 +560,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * Correlation field in the incoming record which is of increasing nature
      * and will be used to position the tailing cursor every time it is
      * generated. The cursor will be (re)created with a query of type:
-     * tailTrackIncreasingField > lastValue (possibly recovered from persistent
+     * tailTrackIncreasingField greater than lastValue (possibly recovered from persistent
      * tail tracking). Can be of type Integer, Date, String, etc. NOTE: No
      * support for dot notation at the current time, so the field should be at
      * the top level of the document.
@@ -628,4 +652,16 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public MongoCollection<Document> getMongoCollection() {
         return mongoCollection;
     }
+
+    public String getStreamFilter() {
+        return streamFilter;
+    }
+
+    /**
+     * Filter condition for change streams consumer.
+     */
+    public void setStreamFilter(String streamFilter) {
+        this.streamFilter = streamFilter;
+    }
+
 }

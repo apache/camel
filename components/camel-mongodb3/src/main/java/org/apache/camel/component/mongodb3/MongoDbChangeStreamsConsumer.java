@@ -16,20 +16,28 @@
  */
 package org.apache.camel.component.mongodb3;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
+
+import static java.util.Collections.singletonList;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
+import org.bson.BsonDocument;
 
 /**
- * The MongoDb consumer.
+ * The MongoDb Change Streams consumer.
  */
-public class MongoDbTailableCursorConsumer extends DefaultConsumer {
+public class MongoDbChangeStreamsConsumer extends DefaultConsumer {
+
+    private static final String STREAM_FILTER_PROPERTY = "streamFilter";
+
     private final MongoDbEndpoint endpoint;
     private ExecutorService executor;
-    private MongoDbTailingThread tailingThread;
+    private MongoDbChangeStreamsThread changeStreamsThread;
 
-    public MongoDbTailableCursorConsumer(MongoDbEndpoint endpoint, Processor processor) {
+    public MongoDbChangeStreamsConsumer(MongoDbEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }
@@ -37,8 +45,8 @@ public class MongoDbTailableCursorConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (tailingThread != null) {
-            tailingThread.stop();
+        if (changeStreamsThread != null) {
+            changeStreamsThread.stop();
         }
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
@@ -49,16 +57,15 @@ public class MongoDbTailableCursorConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), 1);
-        MongoDbTailTrackingManager trackingManager = initTailTracking();
-        tailingThread = new MongoDbTailingThread(endpoint, this, trackingManager);
-        tailingThread.init();
-        executor.execute(tailingThread);
-    }
+        String streamFilter = (String) getRoute().getProperties().get(STREAM_FILTER_PROPERTY);
+        List<BsonDocument> bsonFilter = null;
+        if (ObjectHelper.isNotEmpty(streamFilter)) {
+            bsonFilter = singletonList(BsonDocument.parse(streamFilter));
+        }
 
-    protected MongoDbTailTrackingManager initTailTracking() throws Exception {
-        MongoDbTailTrackingManager answer = new MongoDbTailTrackingManager(endpoint.getMongoConnection(), endpoint.getTailTrackingConfig());
-        answer.initialize();
-        return answer;
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), 1);
+        changeStreamsThread = new MongoDbChangeStreamsThread(endpoint, this, bsonFilter);
+        changeStreamsThread.init();
+        executor.execute(changeStreamsThread);
     }
 }
