@@ -91,6 +91,17 @@ public class CamelBeanPostProcessor implements org.apache.camel.spi.CamelBeanPos
                 return false;
             }
 
+            if (beanName != null && beanName.startsWith("org.springframework")) {
+                // do not let camel post process spring beans
+                // (no point and there are some problems see CAMEL-14075)
+                return false;
+            }
+            if (bean.getClass().getTypeName().startsWith("org.springframework")) {
+                // do not let camel post process spring beans
+                // (no point and there are some problems see CAMEL-14075)
+                return false;
+            }
+
             return super.canPostProcessBean(bean, beanName);
         }
 
