@@ -898,6 +898,7 @@
     <bundle>mvn:org.apache.camel/camel-debezium/${project.version}</bundle>
   </feature>
   <feature name='camel-ehcache' version='${project.version}' start-level='50'>
+    <feature>scr</feature>
     <feature version="${project.version}">camel-core</feature>
     <bundle dependency="true">mvn:org.ehcache/ehcache/${ehcache3-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ehcache/${project.version}</bundle>
