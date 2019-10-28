@@ -19,11 +19,11 @@ package org.apache.camel.component.kudu;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.kudu.client.KuduClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,15 +44,15 @@ public class KuduEndpoint extends DefaultEndpoint {
     private KuduClient kuduClient;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String type;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String host;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String port;
 
     @UriParam

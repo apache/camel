@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.client.KuduClient;
 import org.apache.kudu.client.KuduException;
@@ -30,7 +30,7 @@ import org.apache.kudu.client.KuduTable;
 /**
  * The Kudu consumer.
  *
- * @see org.apache.camel.impl.ScheduledPollConsumer
+ * @see org.apache.camel.support.ScheduledPollConsumer
  * @see org.apache.camel.component.kudu.KuduEndpoint
  */
 public class KuduConsumer extends ScheduledPollConsumer {

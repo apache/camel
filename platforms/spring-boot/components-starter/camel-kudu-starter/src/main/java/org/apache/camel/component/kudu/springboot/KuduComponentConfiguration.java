@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,18 +39,16 @@ public class KuduComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * Whether the component should resolve property placeholders on itself when
-     * starting. Only properties which are of String type can use property
-     * placeholders.
+     * Whether the component should use basic property binding (Camel 2.x) or
+     * the newer property binding with additional capabilities
      */
-    private Boolean resolvePropertyPlaceholders = true;
+    private Boolean basicPropertyBinding = false;
 
-    public Boolean getResolvePropertyPlaceholders() {
-        return resolvePropertyPlaceholders;
+    public Boolean getBasicPropertyBinding() {
+        return basicPropertyBinding;
     }
 
-    public void setResolvePropertyPlaceholders(
-            Boolean resolvePropertyPlaceholders) {
-        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    public void setBasicPropertyBinding(Boolean basicPropertyBinding) {
+        this.basicPropertyBinding = basicPropertyBinding;
     }
 }
