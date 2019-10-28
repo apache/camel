@@ -85,10 +85,13 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
             return bean;
         }
 
-        injectClass(bean, beanName);
-        injectNestedClasses(bean, beanName);
-        injectBindToRegistryFields(bean, beanName);
-        injectBindToRegistryMethods(bean, beanName);
+        if (bindToRegistrySupported()) {
+            injectClass(bean, beanName);
+            injectNestedClasses(bean, beanName);
+            injectBindToRegistryFields(bean, beanName);
+            injectBindToRegistryMethods(bean, beanName);
+        }
+
         injectFields(bean, beanName);
         injectMethods(bean, beanName);
 
@@ -143,6 +146,14 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
 
     protected boolean canPostProcessBean(Object bean, String beanName) {
         return bean != null;
+    }
+
+    /**
+     * Whether support for the annotation {@link BindToRegistry} is supported.
+     * This is only intended for standalone runtimes such as camel-main, camel-quarkus, etc.
+     */
+    protected boolean bindToRegistrySupported() {
+        return true;
     }
 
     protected boolean canSetCamelContext(Object bean, String beanName) {
