@@ -65,7 +65,7 @@ public @interface DataField {
     String timezone() default "";
 
     /**
-     * Length of the data block if the record is set to a fixed length
+     * Length of the data block (number of characters) if the record is set to a fixed length
      */
     int length() default 0;
     
