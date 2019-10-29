@@ -157,7 +157,8 @@
         <module>camel-dozer</module>
         <module>camel-drill</module>
         <module>camel-dropbox</module>
-        <module>camel-debezium</module>
+        <module>camel-debezium-common</module>
+        <module>camel-debezium-mysql</module>
         <module>camel-ehcache</module>
         <module>camel-elasticsearch-rest</module>
         <module>camel-elsql</module>

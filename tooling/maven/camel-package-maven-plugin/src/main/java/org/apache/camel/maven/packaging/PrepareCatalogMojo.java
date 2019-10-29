@@ -60,7 +60,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final String[] EXCLUDE_DOC_FILES = {
         "camel-core-osgi", "camel-core-xml",
-        "camel-http-common", "camel-jetty-common"
+        "camel-http-common", "camel-jetty-common",
+        "camel-debezium-common"
     };
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
@@ -354,8 +355,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-servicenow-component/target/classes");
                         } else if ("camel-fhir".equals(dir.getName())) {
                             target = new File(dir, "camel-fhir-component/target/classes");
-                        } else if ("camel-debezium".equals(dir.getName())) {
-                            target = new File(dir, "camel-debezium-component/target/classes");
                         } else {
                             // this module must be active with a source folder
                             File src = new File(dir, "src");
@@ -1048,8 +1047,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-servicenow-component/src/main/docs");
                         } else if ("camel-fhir".equals(dir.getName())) {
                             target = new File(dir, "camel-fhir-component/src/main/docs");
-                        } else if ("camel-debezium".equals(dir.getName())) {
-                            target = new File(dir, "camel-debezium-component/src/main/docs");
                         } else {
                             // this module must be active with a source folder
                             File src = new File(dir, "src");
