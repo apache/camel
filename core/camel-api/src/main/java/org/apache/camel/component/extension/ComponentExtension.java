@@ -19,10 +19,10 @@ package org.apache.camel.component.extension;
 /**
  * Marker interface for component extensions.
  * <p/>
- * An extension is a feature provided by the component such as ComponentVerifier,
- * ServiceMetaData.
+ * An extension is a feature provided by the component such as ComponentVerifier.
  */
 public interface ComponentExtension {
+
     /**
      * Access the underlying concrete ComponentExtension implementation to
      * provide access to further features.
