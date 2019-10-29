@@ -35,6 +35,10 @@ public class CamelCordaTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelCordaTest.class))
+                // spring boot 2.2 now find artemis-server JAR and think it can do JMS so we need these extra JARs
+                // artemis-server is pulled in from corda as it has a dependency on that
+                .dependency("org.apache.activemq:artemis-jms-server")
+                .dependency("org.apache.geronimo.specs:geronimo-json_1.0_spec:jar:1.0-alpha-1")
                 .build();
     }
 

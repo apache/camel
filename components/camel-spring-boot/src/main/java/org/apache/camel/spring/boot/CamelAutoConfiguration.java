@@ -240,9 +240,7 @@ public class CamelAutoConfiguration {
      */
     @Bean
     CamelBeanPostProcessor camelBeanPostProcessor(ApplicationContext applicationContext) {
-        CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
-        processor.setApplicationContext(applicationContext);
-        return processor;
+        return new CamelSpringBootBeanPostProcessor(applicationContext);
     }
 
 }

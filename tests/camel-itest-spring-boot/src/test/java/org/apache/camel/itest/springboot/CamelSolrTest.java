@@ -34,6 +34,8 @@ public class CamelSolrTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelSolrTest.class))
+                .dependency("org.apache.zookeeper:zookeeper-jute:3.5.5")
+                .dependency("org.apache.zookeeper:zookeeper:3.5.5")
                 .build();
     }
 

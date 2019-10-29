@@ -31,16 +31,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
-import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
+@Testcontainers
 public class ConsulClusteredRoutePolicyFactoryTest {
 
-    @ClassRule
+    @Container
     public static GenericContainer container = ConsulTestSupport.consulContainer();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyFactoryTest.class);
@@ -62,8 +64,8 @@ public class ConsulClusteredRoutePolicyFactoryTest {
         LATCH.await(1, TimeUnit.MINUTES);
         SCHEDULER.shutdownNow();
 
-        Assert.assertEquals(CLIENTS.size(), RESULTS.size());
-        Assert.assertTrue(RESULTS.containsAll(CLIENTS));
+        Assertions.assertEquals(CLIENTS.size(), RESULTS.size());
+        Assertions.assertTrue(RESULTS.containsAll(CLIENTS));
     }
 
     // ************************************

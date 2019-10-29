@@ -3774,11 +3774,6 @@
         <version>3.4.14</version>
       </dependency>
       <dependency>
-        <groupId>org.awaitility</groupId>
-        <artifactId>awaitility</artifactId>
-        <version>4.0.1</version>
-      </dependency>
-      <dependency>
         <groupId>org.cassandraunit</groupId>
         <artifactId>cassandra-unit</artifactId>
         <version>3.1.3.2</version>
@@ -3839,11 +3834,6 @@
         <groupId>org.eclipse.rdf4j</groupId>
         <artifactId>rdf4j-rio-api</artifactId>
         <version>2.4.4</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest</artifactId>
-        <version>2.2</version>
       </dependency>
       <dependency>
         <groupId>org.jruby</groupId>

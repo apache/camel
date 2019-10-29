@@ -50,7 +50,7 @@ public final class ConsulClusteredRoutePolicyFactoryMain {
             }
         });
 
-        main.addRouteBuilder(new RouteBuilder() {
+        main.addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("timer:clustered?delay=1s&period=1s")

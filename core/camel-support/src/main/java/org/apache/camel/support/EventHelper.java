@@ -73,6 +73,30 @@ public final class EventHelper {
             EventNotifier::isIgnoreCamelContextEvents);
     }
 
+    public static boolean notifyCamelContextRoutesStarting(CamelContext context) {
+        return doNotify(context,
+            factory -> factory.createCamelContextRoutesStartingEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
+    }
+
+    public static boolean notifyCamelContextRoutesStarted(CamelContext context) {
+        return doNotify(context,
+            factory -> factory.createCamelContextRoutesStartedEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
+    }
+
+    public static boolean notifyCamelContextRoutesStopping(CamelContext context) {
+        return doNotify(context,
+            factory -> factory.createCamelContextRoutesStoppingEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
+    }
+
+    public static boolean notifyCamelContextRoutesStopped(CamelContext context) {
+        return doNotify(context,
+            factory -> factory.createCamelContextRoutesStoppedEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
+    }
+
     public static boolean notifyCamelContextStopFailure(CamelContext context, Throwable cause) {
         return doNotify(context,
             factory -> factory.createCamelContextStopFailureEvent(context, cause),

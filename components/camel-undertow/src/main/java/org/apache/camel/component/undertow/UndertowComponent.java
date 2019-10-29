@@ -337,6 +337,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         host.validateEndpointURI(uri);
         handlers.add(registrationInfo);
+
         return host.registerHandler(registrationInfo, handler);
     }
 
@@ -344,8 +345,15 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
         final UndertowHost host = undertowRegistry.get(key);
+
         handlers.remove(registrationInfo);
-        host.unregisterHandler(registrationInfo);
+
+        // if the route is not automatically started, then the undertow registry
+        // may not have any instance of UndertowHost associated to the given
+        // registrationInfo
+        if (host != null) {
+            host.unregisterHandler(registrationInfo);
+        }
     }
 
     protected UndertowHost createUndertowHost(UndertowHostKey key) {
