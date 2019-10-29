@@ -33,20 +33,17 @@
     <packaging>pom</packaging>
 
     <name>Camel</name>
-    <description>Camel build POM</description>
-    <url>http://camel.apache.org</url>
+    <description>Camel Root POM</description>
+    <url>https://camel.apache.org</url>
     <inceptionYear>2007</inceptionYear>
 
     <developers>
         <developer>
             <name>The Apache Camel Team</name>
             <email>dev@camel.apache.org</email>
-            <url>http://camel.apache.org</url>
+            <url>https://camel.apache.org</url>
             <organization>Apache Software Foundation</organization>
             <organizationUrl>http://apache.org/</organizationUrl>
-            <properties>
-                <picUrl>http://camel.apache.org/banner.data/apache-camel-7.png</picUrl>
-            </properties>
         </developer>
     </developers>
 
