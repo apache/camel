@@ -17,7 +17,6 @@
 package org.apache.camel.cdi.test;
 
 import java.util.EventObject;
-
 import javax.inject.Inject;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,11 +25,6 @@ import org.apache.camel.cdi.CdiEventEndpoint;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
-import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
-import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
-import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
-import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
-import org.apache.camel.spi.CamelEvent.RouteStartedEvent;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -41,7 +35,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
@@ -68,64 +61,6 @@ public class CamelEventEndpointTest {
                     hasProperty("body", instanceOf(CamelContextStartedEvent.class)))));
     }
 
-    @Test
-    public void camelAllEvents(@Uri("mock:events") MockEndpoint events) {
-        assertThat("Events fired are incorrect!", events.getExchanges(),
-            // We cannot rely on the delivery order of the camel context started event being fired and observed by both CDI event endpoints
-            either(
-                contains(
-                    // Started route: route1
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCreatedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSendingEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(RouteStartedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSentEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCompletedEvent.class))),
-                    // Started route: route2
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCreatedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSendingEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(RouteStartedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSentEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCompletedEvent.class))),
-                    // Started CamelContext: camel-cdi
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCreatedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSendingEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(CamelContextStartedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSentEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCompletedEvent.class))),
-                    // Started CamelContext: camel-cdi (for CdiEventEndpoint<CamelContextStartedEvent> started)
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCreatedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSendingEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSentEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCompletedEvent.class)))
-            )).or(
-                contains(
-                    // Started route: route1
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCreatedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSendingEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(RouteStartedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSentEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCompletedEvent.class))),
-                    // Started route: route2
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCreatedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSendingEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(RouteStartedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSentEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCompletedEvent.class))),
-                    // Started CamelContext: camel-cdi (for CdiEventEndpoint<CamelContextStartedEvent> started)
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCreatedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSendingEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSentEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCompletedEvent.class))),
-                    // Started CamelContext: camel-cdi
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCreatedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSendingEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(CamelContextStartedEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeSentEvent.class))),
-                    hasProperty("in", hasProperty("body", instanceOf(ExchangeCompletedEvent.class)))
-                )
-            )
-        );
-    }
 }
 
 class CamelEventRoute extends RouteBuilder {

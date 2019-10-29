@@ -2629,7 +2629,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         }
 
         // invoke this logic to warmup the routes and if possible also start the routes
+        EventHelper.notifyCamelContextRoutesStarting(this);
         doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
+        EventHelper.notifyCamelContextRoutesStarted(this);
 
         long cacheCounter = getBeanIntrospection().getCachedClassesCounter();
         if (cacheCounter > 0) {
@@ -2655,6 +2657,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         stopWatch.restart();
         log.info("Apache Camel {} (CamelContext: {}) is shutting down", getVersion(), getName());
         EventHelper.notifyCamelContextStopping(this);
+        EventHelper.notifyCamelContextRoutesStopping(this);
 
         // Stop the route controller
         ServiceHelper.stopAndShutdownService(this.routeController);
@@ -2694,6 +2697,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // do not clear route services or startup listeners as we can start
         // Camel again and get the route back as before
         routeStartupOrder.clear();
+
+        EventHelper.notifyCamelContextRoutesStopped(this);
 
         // but clear any suspend routes
         suspendedRouteServices.clear();

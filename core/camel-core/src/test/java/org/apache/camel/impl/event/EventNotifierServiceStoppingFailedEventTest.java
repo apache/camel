@@ -63,13 +63,17 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
 
         assertEquals("CBA", stopOrder);
 
-        assertEquals(5, events.size());
+        assertEquals(9, events.size());
 
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
-        assertIsInstanceOf(CamelContextStartedEvent.class, events.get(1));
-        assertIsInstanceOf(CamelContextStoppingEvent.class, events.get(2));
-        ServiceStopFailureEvent event = assertIsInstanceOf(ServiceStopFailureEvent.class, events.get(3));
-        assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(4));
+        assertIsInstanceOf(CamelContextRoutesStartingEvent.class, events.get(1));
+        assertIsInstanceOf(CamelContextRoutesStartedEvent.class, events.get(2));
+        assertIsInstanceOf(CamelContextStartedEvent.class, events.get(3));
+        assertIsInstanceOf(CamelContextStoppingEvent.class, events.get(4));
+        assertIsInstanceOf(CamelContextRoutesStoppingEvent.class, events.get(5));
+        assertIsInstanceOf(CamelContextRoutesStoppedEvent.class, events.get(6));
+        ServiceStopFailureEvent event = assertIsInstanceOf(ServiceStopFailureEvent.class, events.get(7));
+        assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(8));
 
         assertEquals("Fail B", event.getCause().getMessage());
         assertEquals("Failure to stop service: B due to Fail B", event.toString());

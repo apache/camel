@@ -80,6 +80,38 @@ public interface EventFactory {
     CamelEvent createCamelContextStoppedEvent(CamelContext context);
 
     /**
+     * Creates an {@link CamelEvent} for Camel routes starting.
+     *
+     * @param context camel context
+     * @return the created event
+     */
+    CamelEvent createCamelContextRoutesStartingEvent(CamelContext context);
+
+    /**
+     * Creates an {@link CamelEvent} for Camel routes started.
+     *
+     * @param context camel context
+     * @return the created event
+     */
+    CamelEvent createCamelContextRoutesStartedEvent(CamelContext context);
+
+    /**
+     * Creates an {@link CamelEvent} for Camel routes stopping.
+     *
+     * @param context camel context
+     * @return the created event
+     */
+    CamelEvent createCamelContextRoutesStoppingEvent(CamelContext context);
+
+    /**
+     * Creates an {@link CamelEvent} for Camel routes stopped.
+     *
+     * @param context camel context
+     * @return the created event
+     */
+    CamelEvent createCamelContextRoutesStoppedEvent(CamelContext context);
+
+    /**
      * Creates an {@link CamelEvent} for a Service failed to start cleanly
      *
      * @param context camel context
