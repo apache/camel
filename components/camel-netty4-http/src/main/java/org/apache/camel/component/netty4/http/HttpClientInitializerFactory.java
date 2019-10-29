@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.SNIHostName;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -174,8 +178,12 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
         if (producer.getConfiguration().getSslHandler() != null) {
             return producer.getConfiguration().getSslHandler();
         } else if (sslContext != null) {
-            SSLEngine engine = sslContext.createSSLEngine();
+            URI uri = new URI(producer.getEndpoint().getEndpointUri());
+            SSLEngine engine = sslContext.createSSLEngine(uri.getHost(), uri.getPort());
             engine.setUseClientMode(true);
+            SSLParameters sslParameters = engine.getSSLParameters();
+            sslParameters.setServerNames(Arrays.asList(new SNIHostName(uri.getHost())));
+            engine.setSSLParameters(sslParameters);
             if (producer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
