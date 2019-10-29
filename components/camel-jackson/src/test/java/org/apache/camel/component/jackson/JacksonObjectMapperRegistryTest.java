@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jackson;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,11 +26,12 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 public class JacksonObjectMapperRegistryTest extends CamelTestSupport {
 
-    private JacksonDataFormat df = new JacksonDataFormat();
+    private JacksonDataFormat df;
    
     @BindToRegistry("myMapper")
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -60,6 +62,9 @@ public class JacksonObjectMapperRegistryTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+            	df = new JacksonDataFormat();
+            	df.setAutoDiscoverObjectMapper(true);
+            	
                 from("direct:in").marshal(df);
                 from("direct:back").unmarshal(df).to("mock:reverse");
             }
