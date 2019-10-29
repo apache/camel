@@ -323,7 +323,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Group: experimental
+         * Group: consumer
          */
         default HdfsEndpointConsumerBuilder streamDownload(
                 boolean streamDownload) {
@@ -338,7 +338,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Group: experimental
+         * Group: consumer
          */
         default HdfsEndpointConsumerBuilder streamDownload(String streamDownload) {
             doSetProperty("streamDownload", streamDownload);
