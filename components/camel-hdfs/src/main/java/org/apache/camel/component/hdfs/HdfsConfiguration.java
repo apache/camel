@@ -86,7 +86,7 @@ public class HdfsConfiguration {
     @UriParam
     private String owner;
 
-    @UriParam(label = "consumer,experimental", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false")
     private boolean streamDownload = false;
 
     @UriParam
