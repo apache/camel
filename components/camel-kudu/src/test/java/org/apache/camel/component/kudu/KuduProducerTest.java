@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,35 +50,19 @@ public class KuduProducerTest extends AbstractKuduTest {
 
                 //integration test route
                 from("direct:create")
-                    .to("kudu:create?host=localhost"
-                            + "&port=7051"
-                            + "&tableName=TestTable"
-                            + "&operation=create_table"
-                    )
+                    .to("kudu:localhost:7051/TestTable?operation=create_table")
                     .to("mock:result");
 
                 from("direct:scan")
-                    .to("kudu:scan?host=localhost"
-                            + "&port=7051"
-                            + "&tableName=TestTable"
-                            + "&operation=scan"
-                    )
+                    .to("kudu:localhost:7051/TestTable?operation=scan")
                     .to("mock:result");
 
                 from("direct:insert")
-                    .to("kudu:insert?host=localhost"
-                            + "&port=7051"
-                            + "&tableName=TestTable"
-                            + "&operation=insert"
-                    )
+                    .to("kudu:localhost:7051/TestTable?operation=insert")
                     .to("mock:result");
 
                 from("direct:data")
-                    .to("kudu:insert?host=localhost"
-                            + "&port=7051"
-                            + "&tableName=TestTable"
-                            + "&operation=insert"
-                    )
+                    .to("kudu:localhost:7051/TestTable?operation=insert")
                     .to("mock:result");
             }
         };

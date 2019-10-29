@@ -44,18 +44,6 @@ public interface KuduEndpointBuilderFactory {
             return (AdvancedKuduEndpointConsumerBuilder) this;
         }
         /**
-         * Kudu master to connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         */
-        default KuduEndpointConsumerBuilder host(String host) {
-            doSetProperty("host", host);
-            return this;
-        }
-        /**
          * What kind of operation is to be performed in the table.
          * 
          * The option is a:
@@ -77,29 +65,6 @@ public interface KuduEndpointBuilderFactory {
          */
         default KuduEndpointConsumerBuilder operation(String operation) {
             doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Port where kudu service is listening.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         */
-        default KuduEndpointConsumerBuilder port(String port) {
-            doSetProperty("port", port);
-            return this;
-        }
-        /**
-         * The name of the table where the rows are stored.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KuduEndpointConsumerBuilder tableName(String tableName) {
-            doSetProperty("tableName", tableName);
             return this;
         }
         /**
@@ -270,18 +235,6 @@ public interface KuduEndpointBuilderFactory {
             return (AdvancedKuduEndpointProducerBuilder) this;
         }
         /**
-         * Kudu master to connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         */
-        default KuduEndpointProducerBuilder host(String host) {
-            doSetProperty("host", host);
-            return this;
-        }
-        /**
          * What kind of operation is to be performed in the table.
          * 
          * The option is a:
@@ -303,29 +256,6 @@ public interface KuduEndpointBuilderFactory {
          */
         default KuduEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Port where kudu service is listening.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         */
-        default KuduEndpointProducerBuilder port(String port) {
-            doSetProperty("port", port);
-            return this;
-        }
-        /**
-         * The name of the table where the rows are stored.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KuduEndpointProducerBuilder tableName(String tableName) {
-            doSetProperty("tableName", tableName);
             return this;
         }
         /**
@@ -443,18 +373,6 @@ public interface KuduEndpointBuilderFactory {
             return (AdvancedKuduEndpointBuilder) this;
         }
         /**
-         * Kudu master to connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         */
-        default KuduEndpointBuilder host(String host) {
-            doSetProperty("host", host);
-            return this;
-        }
-        /**
          * What kind of operation is to be performed in the table.
          * 
          * The option is a:
@@ -476,29 +394,6 @@ public interface KuduEndpointBuilderFactory {
          */
         default KuduEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Port where kudu service is listening.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Required: true
-         * Group: common
-         */
-        default KuduEndpointBuilder port(String port) {
-            doSetProperty("port", port);
-            return this;
-        }
-        /**
-         * The name of the table where the rows are stored.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KuduEndpointBuilder tableName(String tableName) {
-            doSetProperty("tableName", tableName);
             return this;
         }
     }
@@ -579,14 +474,14 @@ public interface KuduEndpointBuilderFactory {
      * Apache Kudu, a free and open source column-oriented data store of the
      * Apache Hadoop ecosystem.
      * 
-     * Category: database,iot
+     * Category: cloud,database,iot
      * Available as of version: 2.25
      * Maven coordinates: org.apache.camel:camel-kudu
      * 
-     * Syntax: <code>kudu:type</code>
+     * Syntax: <code>kudu:host:port/tableName</code>
      * 
-     * Path parameter: type (required)
-     * Kudu type
+     * Path parameter: uri
+     * Connection string to Kudu
      */
     default KuduEndpointBuilder kudu(String path) {
         class KuduEndpointBuilderImpl extends AbstractEndpointBuilder implements KuduEndpointBuilder, AdvancedKuduEndpointBuilder {

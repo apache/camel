@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kudu;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,34 +37,42 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.25.0",
     scheme = "kudu",
-    title = "Apache Kudu", syntax = "kudu:type",
+    title = "Apache Kudu", syntax = "kudu:host:port/tableName",
     consumerClass = KuduConsumer.class,
-    label = "database,iot")
+    label = "cloud,database,iot")
 public class KuduEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuduEndpoint.class);
     private KuduClient kuduClient;
 
-    @UriPath
-    @Metadata(required = true)
-    private String type;
-
-    @UriParam
-    @Metadata(required = true)
+    @Metadata(required = true, description = "Host of the server to connect to")
     private String host;
 
-    @UriParam
+    @UriPath(description = "Connection string to Kudu")
+    private String uri;
+
     @Metadata(required = true)
     private String port;
 
-    @UriParam
-    private KuduOperations operation = KuduOperations.INSERT;
+    @UriParam(description = "Operation to perform")
+    private KuduOperations operation;
 
-    @UriParam
+    @Metadata(description = "Table to connect to")
     private String tableName;
 
     public KuduEndpoint(String uri, KuduComponent component) {
         super(uri, component);
+        this.setEndpointUri(uri);
+        Pattern p = Pattern.compile("^(\\S+)\\:(\\d+)\\/(\\S+)$");
+        Matcher m = p.matcher(uri);
+
+        if (uri == null || uri.isEmpty() || !m.matches()) {
+            throw new RuntimeException("Unrecognizable url: " + uri);
+        }
+
+        this.setHost(m.group(1));
+        this.setPort(m.group(2));
+        this.setTableName(m.group(3));
     }
 
     @Override
@@ -152,23 +162,18 @@ public class KuduEndpoint extends DefaultEndpoint {
         return operation;
     }
 
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
     /**
      * What kind of operation is to be performed in the table
-     *
      */
     public void setOperation(KuduOperations operation) {
         this.operation = operation;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Kudu type
-     *
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 }

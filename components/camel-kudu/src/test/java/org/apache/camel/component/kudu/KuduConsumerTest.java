@@ -36,7 +36,7 @@ public class KuduConsumerTest extends AbstractKuduTest {
             @Override
             public void configure() {
                 //integration test route
-                from("kudu:scan?host=localhost&port=7051&tableName=ConsumerTable&operation=scan")
+                from("kudu:localhost:7051/ConsumerTable?operation=scan")
                     .to("mock:result");
             }
         };
