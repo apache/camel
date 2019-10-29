@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -221,24 +222,43 @@ public class JpaProducer extends DefaultProducer {
 
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[])values;
-                        for (Object element : array) {
+                        // need to create an array to store returned values as they can be updated
+                        // by JPA such as setting auto assigned ids
+                        Object[] managedArray = new Object[array.length];
+                        Object managedEntity;
+                        for (int i = 0; i < array.length; i++) {
+                            Object element = array[i];
                             if (!getEndpoint().isRemove()) {
-                                save(element);
+                                managedEntity = save(element);
                             } else {
-                                remove(element);
+                                managedEntity = remove(element);
                             }
+                            managedArray[i] = managedEntity;
+                        }
+                        if (!getEndpoint().isUsePersist()) {
+                            // and copy back to original array
+                            System.arraycopy(managedArray, 0, array, 0, array.length);
+                            exchange.getIn().setBody(array);
                         }
                     } else if (values instanceof Collection) {
                         Collection<?> collection = (Collection<?>)values;
+                        // need to create a list to store returned values as they can be updated
+                        // by JPA such as setting auto assigned ids
+                        Collection managedCollection = new ArrayList<>(collection.size());
+                        Object managedEntity;
                         for (Object entity : collection) {
                             if (!getEndpoint().isRemove()) {
-                                save(entity);
+                                managedEntity = save(entity);
                             } else {
-                                remove(entity);
+                                managedEntity = remove(entity);
                             }
+                            managedCollection.add(managedEntity);
+                        }
+                        if (!getEndpoint().isUsePersist()) {
+                            exchange.getIn().setBody(managedCollection);
                         }
                     } else {
-                        Object managedEntity = null;
+                        Object managedEntity;
                         if (!getEndpoint().isRemove()) {
                             managedEntity = save(values);
                         } else {
