@@ -17,7 +17,7 @@
 #
 
 
-CONSUL_VER="1.5.1"
+CONSUL_VER="1.6.1"
 CONSUL_ZIP="consul_${CONSUL_VER}_linux_amd64.zip"
 
 # cleanup
