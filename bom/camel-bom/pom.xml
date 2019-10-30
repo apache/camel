@@ -814,7 +814,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-debezium</artifactId>
+        <artifactId>camel-debezium-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-common-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -824,12 +829,17 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-debezium-parent</artifactId>
+        <artifactId>camel-debezium-mysql</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-debezium-starter</artifactId>
+        <artifactId>camel-debezium-mysql-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-debezium-parent</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
