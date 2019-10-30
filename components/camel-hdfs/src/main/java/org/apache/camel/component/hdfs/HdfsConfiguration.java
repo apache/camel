@@ -87,7 +87,7 @@ public class HdfsConfiguration {
     private String owner;
 
     @UriParam(label = "consumer", defaultValue = "false")
-    private boolean streamDownload = false;
+    private boolean streamDownload;
 
     @UriParam
     private String namedNodes;
@@ -622,11 +622,11 @@ public class HdfsConfiguration {
     /**
      * Get the label of the hdfs file system like: HOST_NAME:PORT/PATH
      *
-     * @param path
+     * @param path the file path
      * @return HOST_NAME:PORT/PATH
      */
     String getFileSystemLabel(String path) {
-        if(hasClusterConfiguration()) {
+        if (hasClusterConfiguration()) {
             return String.format("%s/%s", getHostName(), path);
         } else {
             return String.format("%s:%s/%s", getHostName(), getPort(), path);
