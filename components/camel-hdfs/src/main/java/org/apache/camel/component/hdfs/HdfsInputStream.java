@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class HdfsInputStream implements Closeable {
     private final AtomicLong numOfReadBytes = new AtomicLong(0L);
     private final AtomicLong numOfReadMessages = new AtomicLong(0L);
 
-    private HdfsConfiguration config;
+    private HdfsInfoFactory hdfsInfoFactory;
 
     protected HdfsInputStream() {
     }
@@ -49,7 +50,6 @@ public class HdfsInputStream implements Closeable {
      * @param hdfsPath
      * @param hdfsInfoFactory
      * @return
-     * @throws IOException
      */
     public static HdfsInputStream createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
@@ -64,13 +64,13 @@ public class HdfsInputStream implements Closeable {
             if (info.getFileSystem().rename(new Path(iStream.actualPath), new Path(iStream.suffixedPath))) {
                 iStream.in = iStream.fileType.createInputStream(iStream.suffixedPath, hdfsInfoFactory);
                 iStream.opened = true;
-                iStream.config = endpointConfig;
+                iStream.hdfsInfoFactory = hdfsInfoFactory;
             } else {
                 LOG.debug("Failed to open file [{}] because it doesn't exist", hdfsPath);
                 iStream = null;
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
 
         return iStream;
@@ -80,7 +80,6 @@ public class HdfsInputStream implements Closeable {
     public final void close() throws IOException {
         if (opened) {
             IOUtils.closeStream(in);
-            HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(config);
             HdfsInfo info = hdfsInfoFactory.newHdfsInfo(actualPath);
             info.getFileSystem().rename(new Path(suffixedPath), new Path(suffixedReadPath));
             opened = false;
@@ -133,4 +132,7 @@ public class HdfsInputStream implements Closeable {
         return opened;
     }
 
+    HdfsInfoFactory getHdfsInfoFactory() {
+        return hdfsInfoFactory;
+    }
 }

@@ -29,35 +29,6 @@ import org.apache.hadoop.util.ReflectionUtils;
 
 class HdfsArrayFileTypeHandler extends DefaultHdfsFile {
 
-    @Override
-    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
-        try {
-            Holder<Integer> valueSize = new Holder<>();
-            Writable valueWritable = getWritable(value, typeConverter, valueSize);
-            ((ArrayFile.Writer) hdfsOutputStream.getOut()).append(valueWritable);
-            return valueSize.value;
-        } catch (Exception ex) {
-            throw new RuntimeCamelException(ex);
-        }
-    }
-
-    @Override
-    public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
-        try {
-            ArrayFile.Reader reader = (ArrayFile.Reader) hdfsInputStream.getIn();
-            Holder<Integer> valueSize = new Holder<>();
-            Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
-            if (reader.next(valueWritable) != null) {
-                value.value = getObject(valueWritable, valueSize);
-                return valueSize.value;
-            } else {
-                return 0;
-            }
-        } catch (Exception ex) {
-            throw new RuntimeCamelException(ex);
-        }
-    }
-
     @SuppressWarnings("rawtypes")
     @Override
     public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
@@ -75,6 +46,18 @@ class HdfsArrayFileTypeHandler extends DefaultHdfsFile {
     }
 
     @Override
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
+        try {
+            Holder<Integer> valueSize = new Holder<>();
+            Writable valueWritable = getWritable(value, typeConverter, valueSize);
+            ((ArrayFile.Writer) hdfsOutputStream.getOut()).append(valueWritable);
+            return valueSize.value;
+        } catch (Exception ex) {
+            throw new RuntimeCamelException(ex);
+        }
+    }
+
+    @Override
     public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rin;
@@ -82,6 +65,23 @@ class HdfsArrayFileTypeHandler extends DefaultHdfsFile {
             rin = new ArrayFile.Reader(hdfsInfo.getFileSystem(), hdfsPath, hdfsInfo.getConfiguration());
             return rin;
         } catch (IOException ex) {
+            throw new RuntimeCamelException(ex);
+        }
+    }
+
+    @Override
+    public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
+        try {
+            ArrayFile.Reader reader = (ArrayFile.Reader) hdfsInputStream.getIn();
+            Holder<Integer> valueSize = new Holder<>();
+            Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
+            if (reader.next(valueWritable) != null) {
+                value.value = getObject(valueWritable, valueSize);
+                return valueSize.value;
+            } else {
+                return 0;
+            }
+        } catch (Exception ex) {
             throw new RuntimeCamelException(ex);
         }
     }

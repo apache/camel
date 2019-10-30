@@ -148,15 +148,8 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         Holder<Object> key = new Holder<>();
         Holder<Object> value = new Holder<>();
 
-        if (this.endpointConfig.isStreamDownload()) {
-            key.value = null;
-            value.value = inputStream;
-            // use the input stream as the body
+        while (inputStream.next(key, value) >= 0) {
             processHdfsInputStream(inputStream, key, value, messageCount, totalFiles);
-        } else {
-            while (inputStream.next(key, value) >= 0) {
-                processHdfsInputStream(inputStream, key, value, messageCount, totalFiles);
-            }
         }
     }
 
@@ -201,7 +194,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
                     return false;
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeCamelException(e);
             }
         }
         return true;
