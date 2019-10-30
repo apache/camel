@@ -33,18 +33,63 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 
-class HdfsNormalFileType extends DefaultHdfsFileType {
+class HdfsNormalFileHandler extends DefaultHdfsFile {
 
     @Override
-    public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
+    public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+        try {
+            FSDataOutputStream rout;
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
+            HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
+            if (endpointConfig.isAppend()) {
+                rout = hdfsInfo.getFileSystem().append(
+                        hdfsInfo.getPath(),
+                        endpointConfig.getBufferSize(),
+                    () -> { }
+                );
+            } else {
+                rout = hdfsInfo.getFileSystem().create(
+                        hdfsInfo.getPath(),
+                        endpointConfig.isOverwrite(),
+                        endpointConfig.getBufferSize(),
+                        endpointConfig.getReplication(),
+                        endpointConfig.getBlockSize(),
+                    () -> { }
+                );
+            }
+            return rout;
+        } catch (IOException ex) {
+            throw new RuntimeCamelException(ex);
+        }
+    }
+
+    @Override
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
         InputStream is = null;
         try {
             is = typeConverter.convertTo(InputStream.class, value);
-            return copyBytes(is, (FSDataOutputStream) hdfsostr.getOut(), HdfsConstants.DEFAULT_BUFFERSIZE, false);
+            return copyBytes(is, (FSDataOutputStream) hdfsOutputStream.getOut(), HdfsConstants.DEFAULT_BUFFERSIZE, false);
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
         } finally {
             IOHelper.close(is);
+        }
+    }
+
+    @Override
+    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+        try {
+            Closeable rin;
+            HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
+            if (endpointConfig.getFileSystemType().equals(HdfsFileSystemType.LOCAL)) {
+                HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
+                rin = hdfsInfo.getFileSystem().open(hdfsInfo.getPath());
+            } else {
+                rin = new FileInputStream(getHdfsFileToTmpFile(hdfsPath, endpointConfig));
+            }
+            return rin;
+        } catch (IOException ex) {
+            throw new RuntimeCamelException(ex);
         }
     }
 
@@ -70,40 +115,7 @@ class HdfsNormalFileType extends DefaultHdfsFileType {
         }
     }
 
-    @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
-        try {
-            Closeable rout;
-            HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
-            if (!configuration.isAppend()) {
-                rout = hdfsInfo.getFileSystem().create(hdfsInfo.getPath(), configuration.isOverwrite(), configuration.getBufferSize(),
-                        configuration.getReplication(), configuration.getBlockSize(), () -> { });
-            } else {
-                rout = hdfsInfo.getFileSystem().append(hdfsInfo.getPath(), configuration.getBufferSize(), () -> { });
-            }
-            return rout;
-        } catch (IOException ex) {
-            throw new RuntimeCamelException(ex);
-        }
-    }
-
-    @Override
-    public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
-        try {
-            Closeable rin;
-            if (configuration.getFileSystemType().equals(HdfsFileSystemType.LOCAL)) {
-                HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
-                rin = hdfsInfo.getFileSystem().open(hdfsInfo.getPath());
-            } else {
-                rin = new FileInputStream(getHfdsFileToTmpFile(hdfsPath, configuration));
-            }
-            return rin;
-        } catch (IOException ex) {
-            throw new RuntimeCamelException(ex);
-        }
-    }
-
-    private File getHfdsFileToTmpFile(String hdfsPath, HdfsConfiguration configuration) {
+    private File getHdfsFileToTmpFile(String hdfsPath, HdfsConfiguration configuration) {
         try {
             String fname = hdfsPath.substring(hdfsPath.lastIndexOf('/'));
 
@@ -123,7 +135,8 @@ class HdfsNormalFileType extends DefaultHdfsFileType {
                 outputDest.delete();
             }
 
-            HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
+            HdfsInfoFactory hdfsInfoFactory = new HdfsInfoFactory(configuration);
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
             FileSystem fileSystem = hdfsInfo.getFileSystem();
             FileUtil.copy(fileSystem, new Path(hdfsPath), outputDest, false, fileSystem.getConf());
             try {

@@ -25,13 +25,27 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-public final class HdfsInfoFactory {
+class HdfsInfoFactory {
 
-    private HdfsInfoFactory() {
-        // hidden
+    private final HdfsConfiguration endpointConfig;
+
+    HdfsInfoFactory(HdfsConfiguration endpointConfig) {
+        this.endpointConfig = endpointConfig;
     }
 
-    static HdfsInfo newHdfsInfo(String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
+    HdfsInfo newHdfsInfo(String hdfsPath) throws IOException {
+        return newHdfsInfo(hdfsPath, endpointConfig);
+    }
+
+    HdfsInfo newHdfsInfoWithoutAuth(String hdfsPath) throws IOException {
+        return newHdfsInfoWithoutAuth(hdfsPath, endpointConfig);
+    }
+
+    HdfsConfiguration getEndpointConfig() {
+        return endpointConfig;
+    }
+
+    private static HdfsInfo newHdfsInfo(String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
         // need to remember auth as Hadoop will override that, which otherwise means the Auth is broken afterwards
         javax.security.auth.login.Configuration auth = HdfsComponent.getJAASConfiguration();
         try {
@@ -41,7 +55,7 @@ public final class HdfsInfoFactory {
         }
     }
 
-    static HdfsInfo newHdfsInfoWithoutAuth(String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
+    private static HdfsInfo newHdfsInfoWithoutAuth(String hdfsPath, HdfsConfiguration endpointConfig) throws IOException {
         Configuration configuration = newConfiguration(endpointConfig);
 
         authenticate(configuration, endpointConfig);

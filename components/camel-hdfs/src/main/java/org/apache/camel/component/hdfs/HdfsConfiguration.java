@@ -86,6 +86,9 @@ public class HdfsConfiguration {
     @UriParam
     private String owner;
 
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean streamDownload = false;
+
     @UriParam
     private String namedNodes;
     private List<String> namedNodeList = Collections.emptyList();
@@ -562,7 +565,7 @@ public class HdfsConfiguration {
     }
 
     public boolean hasClusterConfiguration() {
-        return !getNamedNodeList().isEmpty();
+        return !namedNodeList.isEmpty();
     }
 
     public String getKerberosConfigFileLocation() {
@@ -603,6 +606,19 @@ public class HdfsConfiguration {
         return isNotEmpty(kerberosConfigFileLocation) && isNotEmpty(kerberosUsername) && isNotEmpty(kerberosKeytabLocation);
     }
 
+    public boolean isStreamDownload() {
+        return streamDownload;
+    }
+
+    /**
+     * Sets the download method to use when not using a local working directory.  If set to true,
+     * the remote files are streamed to the route as they are read.  When set to false, the remote files
+     * are loaded into memory before being sent into the route.
+     */
+    public void setStreamDownload(boolean streamDownload) {
+        this.streamDownload = streamDownload;
+    }
+
     /**
      * Get the label of the hdfs file system like: HOST_NAME:PORT/PATH
      *
@@ -610,7 +626,11 @@ public class HdfsConfiguration {
      * @return HOST_NAME:PORT/PATH
      */
     String getFileSystemLabel(String path) {
-        return String.format("%s:%s/%s", getHostName(), getPort(), path);
+        if(hasClusterConfiguration()) {
+            return String.format("%s/%s", getHostName(), path);
+        } else {
+            return String.format("%s:%s/%s", getHostName(), getPort(), path);
+        }
     }
 
 }
