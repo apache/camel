@@ -93,11 +93,11 @@ public class HdfsConfiguration {
     private String namedNodes;
     private List<String> namedNodeList = Collections.emptyList();
 
-    @UriParam
+    @UriParam(label = "security")
     private String kerberosConfigFileLocation;
-    @UriParam
+    @UriParam(label = "security")
     private String kerberosUsername;
-    @UriParam
+    @UriParam(label = "security")
     private String kerberosKeytabLocation;
 
     public HdfsConfiguration() {
