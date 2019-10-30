@@ -209,7 +209,7 @@ HTML page
 </html>
 ------------------------------------------------------------------------
 
-When running the application you get sampel output:
+When running the application you get sample output:
 
 [source,java]
 -------------------------------
