@@ -37,8 +37,9 @@ public enum HdfsFileSystemType {
             StringBuilder hpath = new StringBuilder();
             hpath.append("hdfs://");
             hpath.append(config.getHostName());
-            hpath.append(':');
-            hpath.append(config.getPort());
+            if(!config.hasClusterConfiguration()) {
+                hpath.append(':').append(config.getPort());
+            }
             hpath.append(config.getPath());
             if (config.hasSplitStrategies()) {
                 hpath.append('/');
