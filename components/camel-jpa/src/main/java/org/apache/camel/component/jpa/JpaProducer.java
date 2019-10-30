@@ -85,7 +85,7 @@ public class JpaProducer extends DefaultProducer {
     public void setParameters(Map<String, Object> params) {
         this.parameters = params;
     }
-    
+
     public Map<String, Object> getParameters() {
         return parameters;
     }
@@ -310,7 +310,7 @@ public class JpaProducer extends DefaultProducer {
                 }
 
                 /**
-                 * Save the given entity end return the managed entity
+                 * Save the given entity and return the managed entity
                  *
                  * @return the managed entity
                  */
@@ -323,9 +323,9 @@ public class JpaProducer extends DefaultProducer {
                         return entityManager.merge(entity);
                     }
                 }
-                
+
                 /**
-                 * Remove the given entity end return the managed entity
+                 * Remove the given entity and return the managed entity
                  *
                  * @return the managed entity
                  */
