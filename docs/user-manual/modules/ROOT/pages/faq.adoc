@@ -5,7 +5,7 @@ Here are a list of commonly asked questions and answers. If you have any
 questions which are not on this list, please talk to us on the
 xref:mailing-lists.adoc[Mailing Lists].
 
-We https://github.com/apache/camel/blob/master/CONTRIBUTING.md[welcome contributions] and
+We xref:contributing.adoc[welcome contributions] and
 this entire website is in
 xref:faq/how-does-the-website-work.adoc[the GitHub repository you can send a pull request],
 so please join in and help us make the documentation better!
@@ -165,4 +165,3 @@ Common Problems that people have when riding the Camel
 * xref:faq/why-do-camel-throw-so-many-noclassdeffoundexception-on-startup.adoc[Why do Camel throw so many NoClassDefFoundException on startup?]
 * xref:faq/why-does-camel-use-too-many-threads-with-producertemplate.adoc[Why does Camel use too many threads with ProducerTemplate?]
 * xref:faq/why-does-maven-not-download-dependencies.adoc[Why does maven not download dependencies?]
-
