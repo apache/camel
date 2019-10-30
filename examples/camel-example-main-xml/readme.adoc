@@ -1,0 +1,34 @@
+== Camel Example Main XML
+
+This example shows how to run Camel standalone (XML routes) via the built-in Main class.
+The example also demonstrates how you can configure the Camel application
+via Camel built-in dependency-injection that supports binding via the
+`@BindToRegistry`, `@BeanInject` and `@PropertyInject` annotations.
+
+Also notice how you can configure Camel in the `application.properties` file.
+
+
+=== Generating tooling meta-data
+
+The `camel-main-maven-plugin` is used for pre-scanning your project and prepare
+autowiring and sprint boot tooling support by classpath scanning.
+
+You can run this via
+
+    mvn camel-main:generate
+
+=== How to run
+
+You can run this example using
+
+    mvn camel:run
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

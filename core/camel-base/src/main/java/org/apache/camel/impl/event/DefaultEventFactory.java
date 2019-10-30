@@ -51,6 +51,26 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     @Override
+    public CamelEvent createCamelContextRoutesStartingEvent(CamelContext context) {
+        return new CamelContextRoutesStartingEvent(context);
+    }
+
+    @Override
+    public CamelEvent createCamelContextRoutesStartedEvent(CamelContext context) {
+        return new CamelContextRoutesStartedEvent(context);
+    }
+
+    @Override
+    public CamelEvent createCamelContextRoutesStoppingEvent(CamelContext context) {
+        return new CamelContextRoutesStoppingEvent(context);
+    }
+
+    @Override
+    public CamelEvent createCamelContextRoutesStoppedEvent(CamelContext context) {
+        return new CamelContextRoutesStoppedEvent(context);
+    }
+
+    @Override
     public CamelEvent createCamelContextStartupFailureEvent(CamelContext context, Throwable cause) {
         return new CamelContextStartupFailureEvent(context, cause);
     }

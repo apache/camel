@@ -34,7 +34,7 @@ public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
     public void testOsgiResolverFindAnnotatedTest() throws IOException {
         BundleContext context = getBundleContext();
         assertNotNull("The BundleContext should not be null", context);
-        OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
+        OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(context);
              
         String[] packageNames = {"org.apache.camel.core.osgi.test"};
         Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);
@@ -46,7 +46,7 @@ public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
     public void testOsgiResolverFindImplementationTest() {
         BundleContext context = getBundleContext();
         assertNotNull("The BundleContext should not be null", context);
-        OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
+        OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(context);
         String[] packageNames = {"org.apache.camel.core.osgi.test"};
         Set<Class<?>> classes = resolver.findImplementations(RoutesBuilder.class, packageNames);
         assertEquals("There should find a class", classes.size(), 1);
@@ -57,7 +57,7 @@ public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
     public void testOsgiResolverFindAnnotatedWithFallbackClassLoaderTest() throws IOException {
         BundleContext context = getBundleContext();
         assertNotNull("The BundleContext should not be null", context);
-        OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
+        OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(context);
              
         String[] packageNames = {"org.apache.camel.core.osgi.other"};
         Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);
@@ -69,7 +69,7 @@ public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
     public void testOsgiResolverFindImplementationWithFallbackClassLoaderTest() {
         BundleContext context = getBundleContext();
         assertNotNull("The BundleContext should not be null", context);
-        OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
+        OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(context);
         String[] packageNames = {"org.apache.camel.core.osgi.other"};
         Set<Class<?>> classes = resolver.findImplementations(RoutesBuilder.class, packageNames);
         assertEquals("There should find a class", classes.size(), 1);

@@ -24,12 +24,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -96,14 +97,18 @@ public class DefaultRoutesCollector implements RoutesCollector {
     public List<RoutesDefinition> collectXmlRoutesFromDirectory(CamelContext camelContext, String directory) {
         List<RoutesDefinition> answer = new ArrayList<>();
 
+        PackageScanResourceResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver();
+
         String[] parts = directory.split(",");
         for (String part : parts) {
             log.info("Loading additional Camel XML routes from: {}", part);
             try {
-                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, part);
-                log.debug("Found XML route: {}", is);
-                RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camelContext, is);
-                answer.add(routes);
+                Set<InputStream> set = resolver.findResources(part);
+                for (InputStream is : set) {
+                    log.debug("Found XML route: {}", is);
+                    RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camelContext, is);
+                    answer.add(routes);
+                }
             } catch (FileNotFoundException e) {
                 log.debug("No XML routes found in {}. Skipping XML routes detection.", part);
             } catch (Exception e) {
@@ -118,14 +123,18 @@ public class DefaultRoutesCollector implements RoutesCollector {
     public List<RestsDefinition> collectXmlRestsFromDirectory(CamelContext camelContext, String directory) {
         List<RestsDefinition> answer = new ArrayList<>();
 
+        PackageScanResourceResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver();
+
         String[] parts = directory.split(",");
         for (String part : parts) {
             log.info("Loading additional Camel XML rests from: {}", part);
             try {
-                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, part);
-                log.debug("Found XML rest: {}", is);
-                RestsDefinition rests = ModelHelper.loadRestsDefinition(camelContext, is);
-                answer.add(rests);
+                Set<InputStream> set = resolver.findResources(part);
+                for (InputStream is : set) {
+                    log.debug("Found XML rest: {}", is);
+                    RestsDefinition rests = ModelHelper.loadRestsDefinition(camelContext, is);
+                    answer.add(rests);
+                }
             } catch (FileNotFoundException e) {
                 log.debug("No XML rests found in {}. Skipping XML rests detection.", part);
             } catch (Exception e) {

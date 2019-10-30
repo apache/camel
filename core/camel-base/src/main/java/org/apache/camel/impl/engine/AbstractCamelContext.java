@@ -116,6 +116,7 @@ import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -236,6 +237,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile BeanProcessorFactory beanProcessorFactory;
     private volatile ClassResolver classResolver;
     private volatile PackageScanClassResolver packageScanClassResolver;
+    private volatile PackageScanResourceResolver packageScanResourceResolver;
     private volatile ServicePool<Producer> producerServicePool;
     private volatile ServicePool<PollingConsumer> pollingConsumerServicePool;
     private volatile NodeIdFactory nodeIdFactory;
@@ -2627,7 +2629,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         }
 
         // invoke this logic to warmup the routes and if possible also start the routes
+        EventHelper.notifyCamelContextRoutesStarting(this);
         doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
+        EventHelper.notifyCamelContextRoutesStarted(this);
 
         long cacheCounter = getBeanIntrospection().getCachedClassesCounter();
         if (cacheCounter > 0) {
@@ -2653,6 +2657,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         stopWatch.restart();
         log.info("Apache Camel {} (CamelContext: {}) is shutting down", getVersion(), getName());
         EventHelper.notifyCamelContextStopping(this);
+        EventHelper.notifyCamelContextRoutesStopping(this);
 
         // Stop the route controller
         ServiceHelper.stopAndShutdownService(this.routeController);
@@ -2692,6 +2697,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // do not clear route services or startup listeners as we can start
         // Camel again and get the route back as before
         routeStartupOrder.clear();
+
+        EventHelper.notifyCamelContextRoutesStopped(this);
 
         // but clear any suspend routes
         suspendedRouteServices.clear();
@@ -3470,6 +3477,23 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     @Override
+    public PackageScanResourceResolver getPackageScanResourceResolver() {
+        if (packageScanResourceResolver == null) {
+            synchronized (lock) {
+                if (packageScanResourceResolver == null) {
+                    setPackageScanResourceResolver(createPackageScanResourceResolver());
+                }
+            }
+        }
+        return packageScanResourceResolver;
+    }
+
+    @Override
+    public void setPackageScanResourceResolver(PackageScanResourceResolver packageScanResourceResolver) {
+        this.packageScanResourceResolver = doAddService(packageScanResourceResolver);
+    }
+
+    @Override
     public List<String> getComponentNames() {
         return new ArrayList<>(components.keySet());
     }
@@ -4172,6 +4196,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected abstract ShutdownStrategy createShutdownStrategy();
 
     protected abstract PackageScanClassResolver createPackageScanClassResolver();
+
+    protected abstract PackageScanResourceResolver createPackageScanResourceResolver();
 
     protected abstract ExecutorServiceManager createExecutorServiceManager();
 

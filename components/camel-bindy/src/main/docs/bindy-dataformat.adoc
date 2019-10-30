@@ -463,7 +463,7 @@ from 1 to ... - See the position parameter.
 
 |pattern |string |optional - default value = "" - will be used to format Decimal, Date,
 
-|length |int |optional - represents the length of the field for fixed length format
+|length |int |optional - represents the length of the field (number of characters) for fixed length format
 
 |precision |int |optional - represents the precision to be used when the Decimal number
 will be formatted/parsed
@@ -762,8 +762,8 @@ This attribute is only applicable to optional fields.
 
 The FixedLengthRecord annotation is used to identified the root class of
 the model. It represents a record = a line of a file/message containing
-data fixed length formatted and can be linked to several children model
-classes. This format is a bit particular beause data of a field can be
+data fixed length (number of characters) formatted and can be linked to several children model
+classes. This format is a bit particular because data of a field can be
 aligned to the right or to the left. +
  When the size of the data does not fill completely the length of the
 field, we can then add 'padd' characters.
@@ -793,7 +793,7 @@ provided line delimiter as "WINDOWS" unless any other value is provided
 
 |paddingChar |char |mandatory - default value = ' '
 
-|length |int |mandatory = size of the fixed length record
+|length |int |mandatory = size of the fixed length record (number of characters)
 
 |hasHeader |boolean |optional - Indicates that the record(s) of this type may
 be preceded by a single header record at the beginning of the file /

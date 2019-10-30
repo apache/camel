@@ -92,8 +92,8 @@ public class EhcacheManager implements Service {
                             .withClassLoader(cacheConfiguration.getClassLoader())
                             .withEvictionAdvisor(cacheConfiguration.getEvictionAdvisor())
                             .withExpiry(cacheConfiguration.getExpiryPolicy());
-                    for (ServiceConfiguration<?> serviceConfig : cacheConfiguration.getServiceConfigurations()) {
-                        builder = builder.add(serviceConfig);
+                    for (ServiceConfiguration<?, ?> serviceConfig : cacheConfiguration.getServiceConfigurations()) {
+                        builder = builder.withService(serviceConfig);
                     }
                     cacheConfiguration = builder.build();
                 }

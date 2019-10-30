@@ -20,7 +20,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-final class HdfsInfo {
+class HdfsInfo {
 
     private final Configuration configuration;
     private final FileSystem fileSystem;

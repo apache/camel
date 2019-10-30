@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.netty.http;
 
+import io.netty.channel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
@@ -32,12 +34,13 @@ public class NettyHttpPostDataTest extends BaseNettyTest {
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED);
         exchange.getIn().setBody(body);
 
-        Exchange result = template.send("netty-http:http://localhost:{{port}}/foo", exchange);
+        Exchange result = template.send("netty-http:http://localhost:{{port}}/foo?reuseChannel=true", exchange);
 
         assertFalse(result.isFailed());
         assertEquals("expect the x is 1", "1", result.getIn().getHeader("x", String.class));
         assertEquals("expect the y is 2", "2", result.getIn().getHeader("y", String.class));
         assertMockEndpointsSatisfied();
+        assertTrue(result.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class).isActive());
     }
 
     @Override

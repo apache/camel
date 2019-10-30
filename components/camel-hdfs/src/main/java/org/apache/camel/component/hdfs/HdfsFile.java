@@ -22,12 +22,12 @@ import org.apache.camel.TypeConverter;
 
 interface HdfsFile {
 
-    long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter);
+    Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory);
+
+    long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter);
+
+    Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory);
 
     long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value);
-
-    Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration);
-
-    Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration);
 
 }

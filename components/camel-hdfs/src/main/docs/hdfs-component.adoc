@@ -93,7 +93,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (45 parameters):
+=== Query Parameters (46 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -102,9 +102,6 @@ with the following path and query parameters:
 | *connectOnStartup* (common) | Whether to connect to the HDFS file system on starting the producer/consumer. If false then the connection is created on-demand. Notice that HDFS may take up till 15 minutes to establish a connection, as it has hardcoded 45 x 20 sec redelivery. By setting this option to false allows your application to startup, and not block for up till 15 minutes. | true | boolean
 | *fileSystemType* (common) | Set to LOCAL to not use HDFS but local java.io.File instead. | HDFS | HdfsFileSystemType
 | *fileType* (common) | The file type to use. For more details see Hadoop HDFS documentation about the various files types. | NORMAL_FILE | HdfsFileType
-| *kerberosConfigFileLocation* (common) | The location of the kerb5.conf file (\https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html) |  | String
-| *kerberosKeytabLocation* (common) | The location of the keytab file used to authenticate with the kerberos nodes (contains pairs of kerberos principals and encrypted keys (which are derived from the Kerberos password)) |  | String
-| *kerberosUsername* (common) | The username used to authenticate with the kerberos nodes |  | String
 | *keyType* (common) | The type for the key in case of sequence or map files. | NULL | WritableType
 | *namedNodes* (common) | A comma separated list of named nodes (e.g. srv11.example.com:8020,srv12.example.com:8020) |  | String
 | *owner* (common) | The file owner must match this owner for the consumer to pickup the file. Otherwise the file is skipped. |  | String
@@ -112,6 +109,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *pattern* (consumer) | The pattern used for scanning the directory | * | String
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *streamDownload* (consumer) | Sets the download method to use when not using a local working directory. If set to true, the remote files are streamed to the route as they are read. When set to false, the remote files are loaded into memory before being sent into the route. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
@@ -144,6 +142,9 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *kerberosConfigFileLocation* (security) | The location of the kerb5.conf file (\https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html) |  | String
+| *kerberosKeytabLocation* (security) | The location of the keytab file used to authenticate with the kerberos nodes (contains pairs of kerberos principals and encrypted keys (which are derived from the Kerberos password)) |  | String
+| *kerberosUsername* (security) | The username used to authenticate with the kerberos nodes |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START

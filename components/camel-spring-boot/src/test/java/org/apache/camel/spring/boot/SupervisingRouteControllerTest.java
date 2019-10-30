@@ -68,8 +68,11 @@ public class SupervisingRouteControllerTest {
 
         SupervisingRouteController controller = context.getRouteController().unwrap(SupervisingRouteController.class);
 
-        Assert.assertEquals(3, controller.getControlledRoutes().size());
-        Assert.assertEquals(2, controller.getInitialDelay().getSeconds());
+        // Wait for the controller to start the routes
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
+            Assert.assertEquals(3, controller.getControlledRoutes().size());
+            Assert.assertEquals(2, controller.getInitialDelay().getSeconds());
+        });
 
         // Route foo
         BackOff foo = controller.getBackOff("foo");

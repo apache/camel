@@ -22,22 +22,22 @@ import java.io.IOException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.SequenceFile;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.MapFile;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.util.ReflectionUtils;
 
-class HdfsSequenceFileType extends DefaultHdfsFileType {
+class HdfsMapFileHandler extends DefaultHdfsFile {
 
     @Override
-    public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
+    public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
         try {
             Holder<Integer> keySize = new Holder<>();
             Writable keyWritable = getWritable(key, typeConverter, keySize);
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = getWritable(value, typeConverter, valueSize);
-            SequenceFile.Writer writer = (SequenceFile.Writer) hdfsostr.getOut();
-            writer.append(keyWritable, valueWritable);
-            writer.sync();
+            ((MapFile.Writer) hdfsOutputStream.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
             return Long.sum(keySize.value, valueSize.value);
         } catch (Exception ex) {
             throw new RuntimeCamelException(ex);
@@ -45,11 +45,11 @@ class HdfsSequenceFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public long next(HdfsInputStream hdfsistr, Holder<Object> key, Holder<Object> value) {
+    public long next(HdfsInputStream hdfsInputStream, Holder<Object> key, Holder<Object> value) {
         try {
-            SequenceFile.Reader reader = (SequenceFile.Reader) hdfsistr.getIn();
+            MapFile.Reader reader = (MapFile.Reader) hdfsInputStream.getIn();
             Holder<Integer> keySize = new Holder<>();
-            Writable keyWritable = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
+            WritableComparable<?> keyWritable = (WritableComparable<?>) ReflectionUtils.newInstance(reader.getKeyClass(), new Configuration());
             Holder<Integer> valueSize = new Holder<>();
             Writable valueWritable = (Writable) ReflectionUtils.newInstance(reader.getValueClass(), new Configuration());
             if (reader.next(keyWritable, valueWritable)) {
@@ -65,18 +65,18 @@ class HdfsSequenceFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createOutputStream(String hdfsPath, HdfsConfiguration configuration) {
+    @SuppressWarnings("rawtypes")
+    public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rout;
-            HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
-            Class<?> keyWritableClass = configuration.getKeyType().getWritableClass();
-            Class<?> valueWritableClass = configuration.getValueType().getWritableClass();
-            rout = SequenceFile.createWriter(hdfsInfo.getConfiguration(), SequenceFile.Writer.file(hdfsInfo.getPath()), SequenceFile.Writer.keyClass(keyWritableClass),
-                    SequenceFile.Writer.valueClass(valueWritableClass), SequenceFile.Writer.bufferSize(configuration.getBufferSize()),
-                    SequenceFile.Writer.replication(configuration.getReplication()), SequenceFile.Writer.blockSize(configuration.getBlockSize()),
-                    SequenceFile.Writer.compression(configuration.getCompressionType(), configuration.getCompressionCodec().getCodec()),
-                    SequenceFile.Writer.progressable(() -> {
-                    }), SequenceFile.Writer.metadata(new SequenceFile.Metadata()));
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
+            HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
+            Class<? extends WritableComparable> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
+            Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
+            rout = new MapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass), MapFile.Writer.valueClass(valueWritableClass),
+                    MapFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
+                    MapFile.Writer.progressable(() -> {
+                    }));
             return rout;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
@@ -84,11 +84,11 @@ class HdfsSequenceFileType extends DefaultHdfsFileType {
     }
 
     @Override
-    public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
+    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
         try {
             Closeable rin;
-            HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath, configuration);
-            rin = new SequenceFile.Reader(hdfsInfo.getConfiguration(), SequenceFile.Reader.file(hdfsInfo.getPath()));
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
+            rin = new MapFile.Reader(new Path(hdfsPath), hdfsInfo.getConfiguration());
             return rin;
         } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
