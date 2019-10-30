@@ -32,7 +32,7 @@ import org.junit.Test;
 public class JacksonObjectMapperRegistryTest extends CamelTestSupport {
 
     private JacksonDataFormat df;
-   
+
     @BindToRegistry("myMapper")
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -62,9 +62,9 @@ public class JacksonObjectMapperRegistryTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-            	df = new JacksonDataFormat();
-            	df.setAutoDiscoverObjectMapper(true);
-            	
+                df = new JacksonDataFormat();
+                df.setAutoDiscoverObjectMapper(true);
+
                 from("direct:in").marshal(df);
                 from("direct:back").unmarshal(df).to("mock:reverse");
             }

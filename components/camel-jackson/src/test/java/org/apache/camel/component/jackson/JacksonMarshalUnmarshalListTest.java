@@ -40,9 +40,9 @@ public class JacksonMarshalUnmarshalListTest extends CamelTestSupport {
         assertNotNull(list);
         assertEquals(2, list.size());
 
-        TestPojo pojo = (TestPojo) list.get(0);
+        TestPojo pojo = (TestPojo)list.get(0);
         assertEquals("Camel", pojo.getName());
-        pojo = (TestPojo) list.get(1);
+        pojo = (TestPojo)list.get(1);
         assertEquals("World", pojo.getName());
     }
 
@@ -61,7 +61,7 @@ public class JacksonMarshalUnmarshalListTest extends CamelTestSupport {
         assertNotNull(list);
         assertEquals(1, list.size());
 
-        TestPojo pojo = (TestPojo) list.get(0);
+        TestPojo pojo = (TestPojo)list.get(0);
         assertEquals("Camel", pojo.getName());
     }
 
