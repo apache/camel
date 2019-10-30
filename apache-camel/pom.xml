@@ -108,7 +108,7 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
         </dependency>
-        
+
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
     <dependency>
@@ -468,7 +468,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-debezium</artifactId>
+      <artifactId>camel-debezium-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-debezium-mysql</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2032,7 +2037,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-debezium-starter</artifactId>
+      <artifactId>camel-debezium-common-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-debezium-mysql-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

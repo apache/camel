@@ -229,13 +229,17 @@ public final class ArquillianPackager {
         resolvedScopes.addAll(scopes);
 
         List<MavenResolvedArtifact> runtimeDependencies = new LinkedList<>();
-        runtimeDependencies.addAll(Arrays.asList(resolver(config)
-                .loadPomFromFile(moduleSpringBootPom)
-                .importDependencies(resolvedScopes.toArray(new ScopeType[0]))
-                .addDependencies(additionalDependencies)
-                .resolve()
-                .withTransitivity()
-                .asResolvedArtifact()));
+        try {
+            runtimeDependencies.addAll(Arrays.asList(resolver(config)
+                    .loadPomFromFile(moduleSpringBootPom)
+                    .importDependencies(resolvedScopes.toArray(new ScopeType[0]))
+                    .addDependencies(additionalDependencies)
+                    .resolve()
+                    .withTransitivity()
+                    .asResolvedArtifact()));
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
 
 
         List<MavenResolvedArtifact> dependencyArtifacts = runtimeDependencies; //merge(config, runtimeDependencies, testDependencies);
