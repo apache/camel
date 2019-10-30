@@ -114,7 +114,7 @@ public class HdfsProducer extends DefaultProducer {
         } catch (Exception e) {
             log.warn("Failed to start the HDFS producer. Caused by: [{}]", e.getMessage());
             log.debug("", e);
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         } finally {
             HdfsComponent.setJAASConfiguration(auth);
         }

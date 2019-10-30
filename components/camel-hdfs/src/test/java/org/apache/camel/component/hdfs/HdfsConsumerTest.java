@@ -16,7 +16,14 @@
  */
 package org.apache.camel.component.hdfs;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
@@ -27,11 +34,14 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.apache.camel.component.hdfs.HdfsConstants.DEFAULT_OPENED_SUFFIX;
 import static org.apache.camel.component.hdfs.HdfsConstants.DEFAULT_READ_SUFFIX;
 import static org.apache.camel.component.hdfs.HdfsTestSupport.CWD;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -129,6 +139,7 @@ public class HdfsConsumerTest {
         when(endpointConfig.getOwner()).thenReturn("spiderman");
         when(endpointConfig.isConnectOnStartup()).thenReturn(true);
         when(endpointConfig.getFileSystemLabel(anyString())).thenReturn("TEST_FS_LABEL");
+        when(endpointConfig.getChunkSize()).thenReturn(100*1000);
         when(endpoint.getCamelContext()).thenReturn(context);
         when(endpoint.createExchange()).thenReturn(new DefaultExchange(context));
         when(endpoint.getEndpointUri()).thenReturn(hdfsPath);
@@ -149,6 +160,8 @@ public class HdfsConsumerTest {
         when(fileSystem.rename(any(Path.class), any(Path.class))).thenReturn(true);
         when(fileSystem.open(any(Path.class))).thenReturn(fsDataInputStream);
 
+        ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
+
         underTest = new HdfsConsumer(endpoint, processor, endpointConfig, hdfsInfoFactory, new StringBuilder(hdfsPath));
 
         // when
@@ -156,6 +169,69 @@ public class HdfsConsumerTest {
 
         // then
         assertThat(actual, is(1));
+        verify(processor, times(1)).process(exchangeCaptor.capture());
+        Exchange exchange = exchangeCaptor.getValue();
+        assertThat(exchange, notNullValue());
+
+        ByteArrayOutputStream body = exchange.getIn().getBody(ByteArrayOutputStream.class);
+        assertThat(body, notNullValue());
+        assertThat(body.toString(), startsWith("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget fermentum arcu, vel dignissim ipsum."));
+
+    }
+
+    @Test
+    public void doPollFromExistingLocalFileWithStreamDownload() throws Exception {
+        // given
+        String hdfsPath = "hdfs://localhost/target/test/multiple-consumers";
+        when(endpointConfig.getFileSystemType()).thenReturn(HdfsFileSystemType.LOCAL);
+        when(endpointConfig.getFileType()).thenReturn(HdfsFileType.NORMAL_FILE);
+        when(endpointConfig.getPath()).thenReturn(hdfsPath);
+        when(endpointConfig.getOwner()).thenReturn("spiderman");
+        when(endpointConfig.isConnectOnStartup()).thenReturn(true);
+        when(endpointConfig.getFileSystemLabel(anyString())).thenReturn("TEST_FS_LABEL");
+        when(endpointConfig.getChunkSize()).thenReturn(100*1000);
+        when(endpointConfig.isStreamDownload()).thenReturn(true);
+        when(endpoint.getCamelContext()).thenReturn(context);
+        when(endpoint.createExchange()).thenReturn(new DefaultExchange(context));
+        when(endpoint.getEndpointUri()).thenReturn(hdfsPath);
+
+        when(fileSystem.isFile(any(Path.class))).thenReturn(true);
+
+        FileStatus[] fileStatuses = new FileStatus[1];
+        FileStatus fileStatus = mock(FileStatus.class);
+        fileStatuses[0] = fileStatus;
+        when(fileSystem.globStatus(any(Path.class))).thenReturn(fileStatuses);
+        when(fileStatus.getPath()).thenReturn(new Path(hdfsPath));
+        when(fileStatus.isFile()).thenReturn(true);
+        when(fileStatus.isDirectory()).thenReturn(false);
+        when(fileStatus.getOwner()).thenReturn("spiderman");
+
+        String normalFile = CWD.getAbsolutePath() + "/src/test/resources/hdfs/normal_file.txt";
+        FSDataInputStream fsDataInputStream = new FSDataInputStream(new MockDataInputStream(normalFile));
+        when(fileSystem.rename(any(Path.class), any(Path.class))).thenReturn(true);
+        when(fileSystem.open(any(Path.class))).thenReturn(fsDataInputStream);
+
+        ArgumentCaptor<Exchange> exchangeCaptor = ArgumentCaptor.forClass(Exchange.class);
+
+        underTest = new HdfsConsumer(endpoint, processor, endpointConfig, hdfsInfoFactory, new StringBuilder(hdfsPath));
+
+        // when
+        int actual = underTest.doPoll();
+
+        // then
+        assertThat(actual, is(1));
+        verify(processor, times(1)).process(exchangeCaptor.capture());
+        Exchange exchange = exchangeCaptor.getValue();
+        assertThat(exchange, notNullValue());
+
+        //Object body = exchange.getIn().getBody();
+        //HdfsInputStream body = exchange.getIn().getBody(HdfsInputStream.class);
+        InputStream body = (InputStream) exchange.getIn().getBody();
+        assertThat(body, notNullValue());
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(body, StandardCharsets.UTF_8));
+        assertThat(br.readLine(), startsWith("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget fermentum arcu, vel dignissim ipsum."));
+
     }
 
 }

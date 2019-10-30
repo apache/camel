@@ -31,6 +31,25 @@ import org.apache.hadoop.util.ReflectionUtils;
 class HdfsMapFileHandler extends DefaultHdfsFile {
 
     @Override
+    @SuppressWarnings("rawtypes")
+    public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+        try {
+            Closeable rout;
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
+            HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
+            Class<? extends WritableComparable> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
+            Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
+            rout = new MapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass), MapFile.Writer.valueClass(valueWritableClass),
+                    MapFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
+                    MapFile.Writer.progressable(() -> {
+                    }));
+            return rout;
+        } catch (IOException ex) {
+            throw new RuntimeCamelException(ex);
+        }
+    }
+
+    @Override
     public long append(HdfsOutputStream hdfsOutputStream, Object key, Object value, TypeConverter typeConverter) {
         try {
             Holder<Integer> keySize = new Holder<>();
@@ -40,6 +59,18 @@ class HdfsMapFileHandler extends DefaultHdfsFile {
             ((MapFile.Writer) hdfsOutputStream.getOut()).append((WritableComparable<?>) keyWritable, valueWritable);
             return Long.sum(keySize.value, valueSize.value);
         } catch (Exception ex) {
+            throw new RuntimeCamelException(ex);
+        }
+    }
+
+    @Override
+    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
+        try {
+            Closeable rin;
+            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
+            rin = new MapFile.Reader(new Path(hdfsPath), hdfsInfo.getConfiguration());
+            return rin;
+        } catch (IOException ex) {
             throw new RuntimeCamelException(ex);
         }
     }
@@ -64,34 +95,4 @@ class HdfsMapFileHandler extends DefaultHdfsFile {
         }
     }
 
-    @Override
-    @SuppressWarnings("rawtypes")
-    public Closeable createOutputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
-        try {
-            Closeable rout;
-            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
-            HdfsConfiguration endpointConfig = hdfsInfoFactory.getEndpointConfig();
-            Class<? extends WritableComparable> keyWritableClass = endpointConfig.getKeyType().getWritableClass();
-            Class<? extends WritableComparable> valueWritableClass = endpointConfig.getValueType().getWritableClass();
-            rout = new MapFile.Writer(hdfsInfo.getConfiguration(), new Path(hdfsPath), MapFile.Writer.keyClass(keyWritableClass), MapFile.Writer.valueClass(valueWritableClass),
-                    MapFile.Writer.compression(endpointConfig.getCompressionType(), endpointConfig.getCompressionCodec().getCodec()),
-                    MapFile.Writer.progressable(() -> {
-                    }));
-            return rout;
-        } catch (IOException ex) {
-            throw new RuntimeCamelException(ex);
-        }
-    }
-
-    @Override
-    public Closeable createInputStream(String hdfsPath, HdfsInfoFactory hdfsInfoFactory) {
-        try {
-            Closeable rin;
-            HdfsInfo hdfsInfo = hdfsInfoFactory.newHdfsInfo(hdfsPath);
-            rin = new MapFile.Reader(new Path(hdfsPath), hdfsInfo.getConfiguration());
-            return rin;
-        } catch (IOException ex) {
-            throw new RuntimeCamelException(ex);
-        }
-    }
 }
