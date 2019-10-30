@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,6 @@ package org.apache.camel.component.kudu;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Schema;
@@ -38,6 +37,8 @@ import org.slf4j.LoggerFactory;
 
 public class AbstractKuduTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKuduTest.class);
+
+    private Integer id = 1;
 
     @Rule
     /**
@@ -107,7 +108,7 @@ public class AbstractKuduTest extends CamelTestSupport {
             Insert insert = table.newInsert();
             PartialRow row = insert.getRow();
 
-            row.addInt("id", ThreadLocalRandom.current().nextInt(1, 99));
+            row.addInt("id", id++);
             row.addString("title", "Mr.");
             row.addString("name", "Samuel");
             row.addString("lastname", "Smith");

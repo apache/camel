@@ -1,13 +1,13 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,11 +34,11 @@ import org.junit.Test;
 
 public class KuduProducerTest extends AbstractKuduTest {
 
-    @EndpointInject(uri = "mock:result")
-    MockEndpoint successEndpoint;
+    @EndpointInject(value = "mock:result")
+    public MockEndpoint successEndpoint;
 
-    @EndpointInject(uri = "mock:error")
-    MockEndpoint errorEndpoint;
+    @EndpointInject(value = "mock:error")
+    public MockEndpoint errorEndpoint;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -87,7 +87,6 @@ public class KuduProducerTest extends AbstractKuduTest {
         final List<String> columnNames = Arrays.asList("id", "title", "name", "lastname", "address");
 
         for (int i = 0; i < columnNames.size(); i++) {
-            Type type = i == 0 ? Type.INT32 : Type.STRING;
             columns.add(
                 new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), Type.STRING)
                     .key(i == 0)
@@ -98,8 +97,8 @@ public class KuduProducerTest extends AbstractKuduTest {
         List<String> rangeKeys = new ArrayList<>();
         rangeKeys.add("id");
 
-        headers.put("Schema", new Schema(columns));
-        headers.put("TableOptions", new CreateTableOptions().setRangePartitionColumns(rangeKeys));
+        headers.put(KuduConstants.CamelKuduSchema, new Schema(columns));
+        headers.put(KuduConstants.CamelKuduTableOptions, new CreateTableOptions().setRangePartitionColumns(rangeKeys));
 
         template().requestBodyAndHeaders("direct://create", null, headers);
 
@@ -159,5 +158,21 @@ public class KuduProducerTest extends AbstractKuduTest {
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
+
+        List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
+                                                                            .get(0).getIn().getBody(List.class);
+
+        assertEquals("Wrong number of results.", results.size(), 1);
+
+        Map<String, Object> row = results.get(0);
+
+        // INT32 id=??, STRING title=Mr.,
+        // STRING name=Samuel, STRING lastname=Smith,
+        // STRING address=4359  Plainfield Avenue
+        assertTrue(row.containsKey("id"));
+        assertEquals("Mr.", row.get("title"));
+        assertEquals("Samuel", row.get("name"));
+        assertEquals("Smith", row.get("lastname"));
+        assertEquals("4359  Plainfield Avenue", row.get("address"));
     }
 }

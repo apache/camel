@@ -16,31 +16,7 @@
  */
 package org.apache.camel.component.kudu;
 
-import java.util.Map;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
-
-/**
- * Represents the component that manages {@link KuduEndpoint}.
- */
-@Component("kudu")
-public class KuduComponent extends DefaultComponent {
-    public KuduComponent(CamelContext context) {
-        super(context);
-    }
-
-    public KuduComponent() {
-        super();
-    }
-
-
-
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new KuduEndpoint(remaining, this);
-        setProperties(endpoint, parameters);
-        return endpoint;
-    }
+public class KuduConstants {
+    public static String CamelKuduSchema = "CamelKuduSchema";
+    public static String CamelKuduTableOptions = "CamelKuduTableOptions";
 }

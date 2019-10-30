@@ -1,13 +1,13 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.25.0",
     scheme = "kudu",
     title = "Apache Kudu", syntax = "kudu:host:port/tableName",
-    consumerClass = KuduConsumer.class,
     label = "cloud,database,iot")
 public class KuduEndpoint extends DefaultEndpoint {
 
@@ -62,11 +61,12 @@ public class KuduEndpoint extends DefaultEndpoint {
 
     public KuduEndpoint(String uri, KuduComponent component) {
         super(uri, component);
+        this.setUri(uri);
         this.setEndpointUri(uri);
         Pattern p = Pattern.compile("^(\\S+)\\:(\\d+)\\/(\\S+)$");
         Matcher m = p.matcher(uri);
 
-        if (uri == null || uri.isEmpty() || !m.matches()) {
+        if (!m.matches()) {
             throw new RuntimeException("Unrecognizable url: " + uri);
         }
 
@@ -160,10 +160,6 @@ public class KuduEndpoint extends DefaultEndpoint {
 
     public KuduOperations getOperation() {
         return operation;
-    }
-
-    public String getUri() {
-        return uri;
     }
 
     public void setUri(String uri) {

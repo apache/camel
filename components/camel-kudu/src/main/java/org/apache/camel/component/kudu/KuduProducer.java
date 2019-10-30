@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,18 +16,14 @@
  */
 package org.apache.camel.component.kudu;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Schema;
 import org.apache.kudu.client.CreateTableOptions;
 import org.apache.kudu.client.Insert;
 import org.apache.kudu.client.KuduClient;
 import org.apache.kudu.client.KuduException;
-import org.apache.kudu.client.KuduScanner;
 import org.apache.kudu.client.KuduTable;
 import org.apache.kudu.client.PartialRow;
 import org.slf4j.Logger;
@@ -72,43 +68,43 @@ public class KuduProducer extends DefaultProducer {
     }
 
     private void doInsert(Exchange exchange, String tableName) throws KuduException {
+        LOG.trace("Insert on table {}", tableName);
         KuduClient connection = endpoint.getKuduClient();
         KuduTable table = connection.openTable(tableName);
+
 
         Insert insert = table.newInsert();
         PartialRow row = insert.getRow();
 
         Map<?, ?> rows = exchange.getIn().getBody(Map.class);
         for (Map.Entry<?, ?> entry : rows.entrySet()) {
-            row.addObject(entry.getKey().toString(), entry.getValue());
+            final String colName = entry.getKey().toString();
+            final Object value = entry.getValue();
+            //Add only if column exist
+            //If not, this will throw an IllegalArgumentException
+            if (table.getSchema().getColumn(colName) != null) {
+                row.addObject(colName, value);
+            }
         }
 
         connection.newSession().apply(insert);
     }
 
     private void doCreateTable(Exchange exchange, String tableName) throws KuduException {
+        LOG.trace("Creating table {}", tableName);
         KuduClient connection = endpoint.getKuduClient();
-        LOG.debug("Creating table {}", tableName);
 
-        Schema schema = (Schema) exchange.getIn().getHeader("Schema");
-        CreateTableOptions builder = (CreateTableOptions) exchange.getIn().getHeader("TableOptions");
-        connection.createTable(tableName, schema, builder);
+        try {
+            Schema schema = (Schema) exchange.getIn().getHeader(KuduConstants.CamelKuduSchema);
+            CreateTableOptions builder = (CreateTableOptions) exchange.getIn().getHeader(KuduConstants.CamelKuduTableOptions);
+            connection.createTable(tableName, schema, builder);
+        }catch(Throwable t) {
+            t.printStackTrace();
+            throw t;
+        }
     }
 
     private void doScan(Exchange exchange, String tableName) throws KuduException {
-        KuduClient connection = endpoint.getKuduClient();
-        KuduTable table = connection.openTable(tableName);
-
-        List<String> projectColumns = new ArrayList<>(1);
-
-        for (ColumnSchema columnSchema : table.getSchema().getColumns()) {
-            projectColumns.add(columnSchema.getName());
-        }
-
-        KuduScanner scanner = connection.newScannerBuilder(table)
-                                  .setProjectedColumnNames(projectColumns)
-                                  .build();
-
-        exchange.getIn().setBody(scanner);
+        exchange.getIn().setBody(KuduUtils.doScan(tableName, endpoint.getKuduClient()));
     }
 }

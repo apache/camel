@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,16 +16,11 @@
  */
 package org.apache.camel.component.kudu;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledPollConsumer;
-import org.apache.kudu.ColumnSchema;
-import org.apache.kudu.client.KuduClient;
-import org.apache.kudu.client.KuduException;
-import org.apache.kudu.client.KuduScanner;
-import org.apache.kudu.client.KuduTable;
 
 /**
  * The Kudu consumer.
@@ -46,36 +41,12 @@ public class KuduConsumer extends ScheduledPollConsumer {
         Exchange exchange = endpoint.createExchange();
 
         // create a message body
-        KuduScanner scanner = doScan(endpoint.getTableName());
+        List<Map<String, Object>> body = KuduUtils.doScan(endpoint.getTableName(), endpoint.getKuduClient());
+        exchange.getIn().setBody(body);
 
-        exchange.getIn().setBody(scanner);
+        // send message to next processor in the route
+        getProcessor().process(exchange);
+        return 1; // number of messages polled
 
-        try {
-            // send message to next processor in the route
-            getProcessor().process(exchange);
-            return 1; // number of messages polled
-        } finally {
-            // log exception if an exception occurred and was not handled
-            if (exchange.getException() != null) {
-                exchange.getException().printStackTrace();
-                getExceptionHandler().handleException("Error processing exchange",
-                    exchange, exchange.getException());
-            }
-        }
-    }
-
-    private KuduScanner doScan(String tableName) throws KuduException {
-        KuduClient connection = endpoint.getKuduClient();
-        KuduTable table = connection.openTable(tableName);
-
-        List<String> projectColumns = new ArrayList<>(1);
-
-        for (ColumnSchema columnSchema : table.getSchema().getColumns()) {
-            projectColumns.add(columnSchema.getName());
-        }
-
-        return connection.newScannerBuilder(table)
-                   .setProjectedColumnNames(projectColumns)
-                   .build();
     }
 }

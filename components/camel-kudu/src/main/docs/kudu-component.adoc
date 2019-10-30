@@ -1,7 +1,7 @@
 [[kudu-component]]
 = Apache Kudu Component
 
-*Since Camel 2.25*
+*Since Camel 3.0*
 
 *Available as of Camel version 3.0*
 
