@@ -23,7 +23,7 @@ Steps to edit a file:
 
 == In local repositories
 
-To edit files locally, it's important to understand how the website is generated and where the files are located. The https://github.com/apache/camel-website[site generator] is located in its own repository. The documentation is located in the main https://github.com/apache/camel[Apache Camel] repository and sub-project repositories, such as https://github.com/apache/camel-k[Camel-K] and https://github.com/apache/camel-quarkus[Camel Quarkus]. Have a look at the xref:how-does-the-website-work.adoc[How does the website work?] page for more details.
+To edit files locally, it's important to understand how the website is generated and where the files are located. The https://github.com/apache/camel-website[site generator] is located in its own repository. The documentation is located in the main https://github.com/apache/camel[Apache Camel] repository and sub-project repositories, such as https://github.com/apache/camel-k[Camel-K] and https://github.com/apache/camel-quarkus[Camel Quarkus]. Have a look at the xref:faq/how-does-the-website-work.adoc[How does the website work?] page for more details.
 
 Steps to edit a file:
 
