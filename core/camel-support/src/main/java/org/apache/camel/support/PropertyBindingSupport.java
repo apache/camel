@@ -359,6 +359,16 @@ public final class PropertyBindingSupport {
             }
 
             Class<?> type = getGetterType(camelContext, target, key, false);
+            if (type != null && CamelContext.class.isAssignableFrom(type)) {
+                // the camel context is usually bound by other means so don't bind it to the target object
+                // and most important do not walk it down and re-configure it.
+                //
+                // In some cases, such as Camel Quarkus, the Registry and the Context itself are added to
+                // the IoC Container and an attempt to auto re-wire the Context may ends up in a circular
+                // reference and a subsequent stack overflow.
+                continue;
+            }
+
             if (isComplexUserType(type)) {
                 // if the property has not been set and its a complex type (not simple or string etc)
                 if (!bindNullOnly || value == null) {
