@@ -183,14 +183,6 @@ public final class ConnectorConfigGenerator {
                     field.setLiteralInitializer(fieldConfig.getDefaultValueAsString());
                 }
 
-                String description = fieldConfig.getDescription();
-
-                if (description == null || description.isEmpty()) {
-                    description = String.format("Description is not available here, please check Debezium website for corresponding key '%s' description.", fieldName);
-                }
-
-                field.getJavaDoc().setText(description);
-
                 final Annotation annotation = field.addAnnotation(UriParam.class)
                         .setLiteralValue("label", "LABEL_NAME");
 
@@ -211,12 +203,20 @@ public final class ConnectorConfigGenerator {
         dbzConfigFields.forEach((fieldName, fieldConfig) -> {
             if (!isFieldInternalOrDeprecated(fieldConfig)) {
                 // setters with javaDoc
-                javaClass.addMethod()
+                final Method method = javaClass.addMethod()
                         .setName(fieldConfig.getFieldSetterMethodName())
                         .addParameter(fieldConfig.getRawType(), fieldConfig.getFieldName())
                         .setPublic()
                         .setReturnType(Void.TYPE)
                         .setBody(String.format("this.%1$s = %1$s;", fieldConfig.getFieldName()));
+
+                String description = fieldConfig.getDescription();
+
+                if (description == null || description.isEmpty()) {
+                    description = String.format("Description is not available here, please check Debezium website for corresponding key '%s' description.", fieldName);
+                }
+
+                method.getJavaDoc().setFullText(description);
 
                 // getters
                 javaClass.addMethod()

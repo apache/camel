@@ -270,7 +270,7 @@ public abstract class EmbeddedDebeziumConfiguration {
      * The name of the Java class of the commit policy. It defines when offsets
      * commit has to be triggered based on the number of events processed and the
      * time elapsed since the last commit. This class must implement the interface
-     * <…​>.OffsetCommitPolicy. The default is a periodic commit policy based upon
+     * 'OffsetCommitPolicy'. The default is a periodic commit policy based upon
      * time intervals.
      */
     public String getOffsetCommitPolicy() {
@@ -308,7 +308,7 @@ public abstract class EmbeddedDebeziumConfiguration {
 
     /**
      * The number of partitions used when creating the offset storage topic.
-     * Required when offset.storage is set to the <…​>.KafkaOffsetBackingStore.
+     * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
      */
     public int getOffsetStoragePartitions() {
         return offsetStoragePartitions;
