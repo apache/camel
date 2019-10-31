@@ -27,7 +27,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autoConfigurationLogSummary = true;
     private boolean autowireComponentProperties = true;
     private boolean autowireComponentPropertiesDeep;
-    private boolean autowireNonNullOnlyComponentProperties;
+    private boolean autowireComponentPropertiesNonNullOnly;
     private boolean autowireComponentPropertiesAllowPrivateSetter = true;
     private int durationHitExitCode;
     private boolean hangupInterceptorEnabled = true;
@@ -156,8 +156,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
     }
 
-    public boolean  isAutowireNonNullOnlyComponentProperties() {
-        return autowireNonNullOnlyComponentProperties;
+    public boolean isAutowireComponentPropertiesNonNullOnly() {
+        return autowireComponentPropertiesNonNullOnly;
     }
 
     /**
@@ -165,8 +165,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * <p/>
      * This option is default disabled.
      */
-    public void setAutowireNonNullOnlyComponentProperties(boolean autowireNonNullOnlyComponentProperties) {
-        this.autowireNonNullOnlyComponentProperties = autowireNonNullOnlyComponentProperties;
+    public void setAutowireComponentPropertiesNonNullOnly(boolean autowireComponentPropertiesNonNullOnly) {
+        this.autowireComponentPropertiesNonNullOnly = autowireComponentPropertiesNonNullOnly;
     }
 
     public boolean isAutowireComponentPropertiesAllowPrivateSetter() {

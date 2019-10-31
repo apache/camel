@@ -38,9 +38,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 
-public class MainIoCAutowireTest {
+public class MainIoCAutowireTest extends Assert {
     @Test
     public void autowireNonNullOnlyDisabledTest() {
         Main main = new Main();
@@ -48,12 +47,12 @@ public class MainIoCAutowireTest {
         try {
             main.bind("seda", createSedaComponent());
             main.addConfigurationClass(MyConfiguration.class);
-            main.configure().setAutowireNonNullOnlyComponentProperties(false);
+            main.configure().setAutowireComponentPropertiesNonNullOnly(false);
             main.setPropertyPlaceholderLocations("empty.properties");
             main.start();
 
             BlockingQueueFactory qf = main.getCamelContext().getComponent("seda", SedaComponent.class).getDefaultQueueFactory();
-            assertThat(qf).isInstanceOf(PriorityBlockingQueueFactory.class);
+            assertTrue(qf instanceof PriorityBlockingQueueFactory);
         } finally {
             main.stop();
         }
@@ -66,12 +65,12 @@ public class MainIoCAutowireTest {
         try {
             main.bind("seda", createSedaComponent());
             main.addConfigurationClass(MyConfiguration.class);
-            main.configure().setAutowireNonNullOnlyComponentProperties(true);
+            main.configure().setAutowireComponentPropertiesNonNullOnly(true);
             main.setPropertyPlaceholderLocations("empty.properties");
             main.start();
 
             BlockingQueueFactory qf = main.getCamelContext().getComponent("seda", SedaComponent.class).getDefaultQueueFactory();
-            assertThat(qf).isInstanceOf(MySedaBlockingQueueFactory.class);
+            assertTrue(qf instanceof MySedaBlockingQueueFactory);
         } finally {
             main.stop();
         }
@@ -89,15 +88,15 @@ public class MainIoCAutowireTest {
             main.bind("context", otherContext);
             main.addConfigurationClass(MyConfiguration.class);
             main.configure().setName("main");
-            main.configure().setAutowireNonNullOnlyComponentProperties(true);
+            main.configure().setAutowireComponentPropertiesNonNullOnly(true);
             main.setPropertyPlaceholderLocations("empty.properties");
             main.start();
 
             MyDummyComponent component = main.getCamelContext().getComponent("dummy", MyDummyComponent.class);
             // the camel context is bound to the component upon initialization
-            assertThat(component.getCamelContext()).isSameAs(main.getCamelContext());
+            assertEquals(main.getCamelContext(), component.getCamelContext());
             // the camel context should not be set by auto wiring
-            assertThat(component.getConfig().getCamelContext()).isNull();
+            assertEquals(null, component.getConfig().getCamelContext());
         } finally {
             main.stop();
         }
