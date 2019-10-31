@@ -115,6 +115,7 @@
         <include>org.apache.camel:camel-dataformat</include>
         <include>org.apache.camel:camel-dataset</include>
         <include>org.apache.camel:camel-debezium-common</include>
+        <include>org.apache.camel:camel-debezium-mongodb</include>
         <include>org.apache.camel:camel-debezium-mysql</include>
         <include>org.apache.camel:camel-debezium-postgres</include>
         <include>org.apache.camel:camel-digitalocean</include>
@@ -469,6 +470,7 @@
         <include>org.apache.camel:camel-dataformat-starter</include>
         <include>org.apache.camel:camel-dataset-starter</include>
         <include>org.apache.camel:camel-debezium-common-starter</include>
+        <include>org.apache.camel:camel-debezium-mongodb-starter</include>
         <include>org.apache.camel:camel-debezium-mysql-starter</include>
         <include>org.apache.camel:camel-debezium-postgres-starter</include>
         <include>org.apache.camel:camel-digitalocean-starter</include>

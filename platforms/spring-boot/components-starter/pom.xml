@@ -169,6 +169,7 @@
     <module>camel-dataformat-starter</module>
     <module>camel-dataset-starter</module>
     <module>camel-debezium-common-starter</module>
+    <module>camel-debezium-mongodb-starter</module>
     <module>camel-debezium-mysql-starter</module>
     <module>camel-debezium-postgres-starter</module>
     <module>camel-digitalocean-starter</module>
