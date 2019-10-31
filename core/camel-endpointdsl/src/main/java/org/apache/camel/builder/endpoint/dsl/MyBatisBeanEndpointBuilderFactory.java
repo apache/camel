@@ -40,6 +40,108 @@ public interface MyBatisBeanEndpointBuilderFactory {
         default AdvancedMyBatisBeanEndpointBuilder advanced() {
             return (AdvancedMyBatisBeanEndpointBuilder) this;
         }
+        /**
+         * The executor type to be used while executing statements. simple -
+         * executor does nothing special. reuse - executor reuses prepared
+         * statements. batch - executor reuses statements and batches updates.
+         * 
+         * The option is a: <code>org.apache.ibatis.session.ExecutorType</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default MyBatisBeanEndpointBuilder executorType(
+                ExecutorType executorType) {
+            doSetProperty("executorType", executorType);
+            return this;
+        }
+        /**
+         * The executor type to be used while executing statements. simple -
+         * executor does nothing special. reuse - executor reuses prepared
+         * statements. batch - executor reuses statements and batches updates.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.ibatis.session.ExecutorType</code> type.
+         * 
+         * Group: producer
+         */
+        default MyBatisBeanEndpointBuilder executorType(String executorType) {
+            doSetProperty("executorType", executorType);
+            return this;
+        }
+        /**
+         * User the header value for input parameters instead of the message
+         * body. By default, inputHeader == null and the input parameters are
+         * taken from the message body. If outputHeader is set, the value is
+         * used and query parameters will be taken from the header instead of
+         * the body.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default MyBatisBeanEndpointBuilder inputHeader(String inputHeader) {
+            doSetProperty("inputHeader", inputHeader);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default MyBatisBeanEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default MyBatisBeanEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Store the query result in a header instead of the message body. By
+         * default, outputHeader == null and the query result is stored in the
+         * message body, any existing content in the message body is discarded.
+         * If outputHeader is set, the value is used as the name of the header
+         * to store the query result and the original message body is preserved.
+         * Setting outputHeader will also omit populating the default
+         * CamelMyBatisResult header since it would be the same as outputHeader
+         * all the time.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default MyBatisBeanEndpointBuilder outputHeader(String outputHeader) {
+            doSetProperty("outputHeader", outputHeader);
+            return this;
+        }
     }
 
     /**

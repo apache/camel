@@ -17,9 +17,11 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
@@ -122,6 +124,64 @@ public interface ServletEndpointBuilderFactory {
             return this;
         }
         /**
+         * Configure the consumer to work in async mode.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder async(boolean async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
+         * Configure the consumer to work in async mode.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder async(String async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder bridgeErrorHandler(
+                String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
@@ -143,6 +203,104 @@ public interface ServletEndpointBuilderFactory {
          */
         default ServletEndpointBuilder chunked(String chunked) {
             doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
+         * Used to only allow consuming if the HttpMethod matches, such as
+         * GET/POST/PUT etc. Multiple methods can be specified separated by
+         * comma.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder httpMethodRestrict(
+                String httpMethodRestrict) {
+            doSetProperty("httpMethodRestrict", httpMethodRestrict);
+            return this;
+        }
+        /**
+         * Whether or not the consumer should try to find a target consumer by
+         * matching the URI prefix if no exact match is found.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder matchOnUriPrefix(boolean matchOnUriPrefix) {
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
+            return this;
+        }
+        /**
+         * Whether or not the consumer should try to find a target consumer by
+         * matching the URI prefix if no exact match is found.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder matchOnUriPrefix(String matchOnUriPrefix) {
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder muteException(String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * To use a custom buffer size on the javax.servlet.ServletResponse.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder responseBufferSize(
+                Integer responseBufferSize) {
+            doSetProperty("responseBufferSize", responseBufferSize);
+            return this;
+        }
+        /**
+         * To use a custom buffer size on the javax.servlet.ServletResponse.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder responseBufferSize(
+                String responseBufferSize) {
+            doSetProperty("responseBufferSize", responseBufferSize);
+            return this;
+        }
+        /**
+         * Name of the servlet to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default ServletEndpointBuilder servletName(String servletName) {
+            doSetProperty("servletName", servletName);
             return this;
         }
         /**
@@ -220,6 +378,189 @@ public interface ServletEndpointBuilderFactory {
          */
         default AdvancedServletEndpointBuilder httpBinding(String httpBinding) {
             doSetProperty("httpBinding", httpBinding);
+            return this;
+        }
+        /**
+         * Whether to automatic bind multipart/form-data as attachments on the
+         * Camel Exchange. The options attachmentMultipartBinding=true and
+         * disableStreamCache=false cannot work together. Remove
+         * disableStreamCache to use AttachmentMultipartBinding. This is turn
+         * off by default as this may require servlet specific configuration to
+         * enable this when using Servlet's.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder attachmentMultipartBinding(
+                boolean attachmentMultipartBinding) {
+            doSetProperty("attachmentMultipartBinding", attachmentMultipartBinding);
+            return this;
+        }
+        /**
+         * Whether to automatic bind multipart/form-data as attachments on the
+         * Camel Exchange. The options attachmentMultipartBinding=true and
+         * disableStreamCache=false cannot work together. Remove
+         * disableStreamCache to use AttachmentMultipartBinding. This is turn
+         * off by default as this may require servlet specific configuration to
+         * enable this when using Servlet's.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder attachmentMultipartBinding(
+                String attachmentMultipartBinding) {
+            doSetProperty("attachmentMultipartBinding", attachmentMultipartBinding);
+            return this;
+        }
+        /**
+         * Whether to eager check whether the HTTP requests has content if the
+         * content-length header is 0 or not present. This can be turned on in
+         * case HTTP clients do not send streamed data.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder eagerCheckContentAvailable(
+                boolean eagerCheckContentAvailable) {
+            doSetProperty("eagerCheckContentAvailable", eagerCheckContentAvailable);
+            return this;
+        }
+        /**
+         * Whether to eager check whether the HTTP requests has content if the
+         * content-length header is 0 or not present. This can be turned on in
+         * case HTTP clients do not send streamed data.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder eagerCheckContentAvailable(
+                String eagerCheckContentAvailable) {
+            doSetProperty("eagerCheckContentAvailable", eagerCheckContentAvailable);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder exceptionHandler(
+                ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder exceptionHandler(
+                String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder exchangePattern(
+                ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder exchangePattern(
+                String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Whitelist of accepted filename extensions for accepting uploaded
+         * files. Multiple extensions can be separated by comma, such as
+         * txt,xml.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder fileNameExtWhitelist(
+                String fileNameExtWhitelist) {
+            doSetProperty("fileNameExtWhitelist", fileNameExtWhitelist);
+            return this;
+        }
+        /**
+         * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
+         * By default OPTIONS is turned off.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder optionsEnabled(
+                boolean optionsEnabled) {
+            doSetProperty("optionsEnabled", optionsEnabled);
+            return this;
+        }
+        /**
+         * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
+         * By default OPTIONS is turned off.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder optionsEnabled(
+                String optionsEnabled) {
+            doSetProperty("optionsEnabled", optionsEnabled);
+            return this;
+        }
+        /**
+         * Specifies whether to enable HTTP TRACE for this Servlet consumer. By
+         * default TRACE is turned off.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder traceEnabled(boolean traceEnabled) {
+            doSetProperty("traceEnabled", traceEnabled);
+            return this;
+        }
+        /**
+         * Specifies whether to enable HTTP TRACE for this Servlet consumer. By
+         * default TRACE is turned off.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedServletEndpointBuilder traceEnabled(String traceEnabled) {
+            doSetProperty("traceEnabled", traceEnabled);
             return this;
         }
         /**
