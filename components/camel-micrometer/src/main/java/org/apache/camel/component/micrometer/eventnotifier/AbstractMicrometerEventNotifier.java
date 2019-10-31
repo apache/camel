@@ -41,7 +41,6 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
 
     public AbstractMicrometerEventNotifier(Class<T> eventType) {
-        super();
         this.eventType = eventType;
     }
 

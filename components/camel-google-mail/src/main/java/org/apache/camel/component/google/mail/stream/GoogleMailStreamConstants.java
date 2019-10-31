@@ -32,6 +32,5 @@ public final class GoogleMailStreamConstants {
      * Prevent instantiation.
      */
     private GoogleMailStreamConstants() {
-        super();
     }
 }

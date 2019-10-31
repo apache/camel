@@ -60,7 +60,6 @@ public class ActiveMQComponent extends JmsComponent {
     }
 
     public ActiveMQComponent(ActiveMQConfiguration configuration) {
-        super();
         setConfiguration(configuration);
     }
 

@@ -24,7 +24,6 @@ public class ReachedClosedStatusException extends Exception {
     private final String shardId;
 
     public ReachedClosedStatusException(String streamName, String shardId) {
-        super();
         this.streamName = streamName;
         this.shardId = shardId;
     }

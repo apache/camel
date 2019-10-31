@@ -26,7 +26,6 @@ public class DefaultCryptoCmsUnMarshallerConfiguration extends DefaultCryptoCmsC
     private boolean fromBase64;
 
     public DefaultCryptoCmsUnMarshallerConfiguration() {
-        super();
     }
 
     @Override

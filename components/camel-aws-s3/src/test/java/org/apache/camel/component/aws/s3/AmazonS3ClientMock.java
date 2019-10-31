@@ -89,7 +89,6 @@ public class AmazonS3ClientMock extends AbstractAmazonS3 {
     private int maxCapacity = 100;
     
     public AmazonS3ClientMock() {
-        super();
     }
 
     @Override

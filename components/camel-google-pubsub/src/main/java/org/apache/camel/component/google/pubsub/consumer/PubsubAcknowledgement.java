@@ -34,7 +34,6 @@ public abstract class PubsubAcknowledgement {
     private final GooglePubsubEndpoint endpoint;
 
     public PubsubAcknowledgement(GooglePubsubEndpoint endpoint) {
-        super();
         this.endpoint = endpoint;
         this.subscriptionFullName = String.format("projects/%s/subscriptions/%s", endpoint.getProjectId(), endpoint.getDestinationName());
 

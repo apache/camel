@@ -31,6 +31,5 @@ public final class GoogleDriveConstants {
      * Prevent instantiation.
      */
     private GoogleDriveConstants() {
-        super();
     }
 }

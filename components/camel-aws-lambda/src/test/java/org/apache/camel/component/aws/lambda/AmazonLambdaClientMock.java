@@ -96,7 +96,6 @@ import org.joda.time.DateTime;
 public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     public AmazonLambdaClientMock() {
-        super();
     }
 
 

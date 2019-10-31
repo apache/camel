@@ -44,7 +44,6 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
     }
 
     protected DebeziumEndpoint() {
-        super();
     }
 
     @Override

@@ -33,7 +33,6 @@ import org.apache.camel.support.jndi.JndiBeanRepository;
 public class JndiRegistry extends JndiBeanRepository implements Registry {
 
     public JndiRegistry() {
-        super();
     }
 
     public JndiRegistry(Map environment) {

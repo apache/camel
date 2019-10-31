@@ -70,7 +70,6 @@ public class AmazonDDBClientMock extends AbstractAmazonDynamoDB {
     QueryRequest queryRequest;
 
     public AmazonDDBClientMock() {
-        super();
     }
 
     @Override
