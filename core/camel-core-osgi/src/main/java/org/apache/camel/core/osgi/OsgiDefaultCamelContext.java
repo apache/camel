@@ -29,7 +29,6 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
     private final BundleContext bundleContext;
 
     public OsgiDefaultCamelContext(BundleContext bundleContext) {
-        super();
         this.bundleContext = bundleContext;
 
         // inject common osgi

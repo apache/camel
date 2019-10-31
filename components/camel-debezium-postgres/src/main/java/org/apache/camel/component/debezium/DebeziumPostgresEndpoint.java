@@ -35,7 +35,6 @@ public final class DebeziumPostgresEndpoint extends DebeziumEndpoint<PostgresCon
     }
 
     public DebeziumPostgresEndpoint() {
-        super();
     }
 
     @Override

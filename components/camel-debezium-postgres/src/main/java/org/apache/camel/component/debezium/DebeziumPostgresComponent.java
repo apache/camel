@@ -26,7 +26,6 @@ public final class DebeziumPostgresComponent extends DebeziumComponent<PostgresC
     private PostgresConnectorEmbeddedDebeziumConfiguration configuration;
 
     public DebeziumPostgresComponent() {
-        super();
     }
 
     public DebeziumPostgresComponent(final CamelContext context) {

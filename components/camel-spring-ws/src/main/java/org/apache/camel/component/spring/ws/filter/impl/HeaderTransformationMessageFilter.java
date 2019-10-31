@@ -53,7 +53,6 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
      * @param xslt
      */
     public HeaderTransformationMessageFilter(String xslt) {
-        super();
         this.xslt = xslt;
     }
 

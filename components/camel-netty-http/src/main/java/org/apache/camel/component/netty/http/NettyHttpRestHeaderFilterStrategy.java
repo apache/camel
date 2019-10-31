@@ -28,7 +28,6 @@ public class NettyHttpRestHeaderFilterStrategy extends NettyHttpHeaderFilterStra
     private final String queryParameters;
 
     public NettyHttpRestHeaderFilterStrategy(String templateUri, String queryParameters) {
-        super();
         this.templateUri = templateUri;
         this.queryParameters = queryParameters;
     }

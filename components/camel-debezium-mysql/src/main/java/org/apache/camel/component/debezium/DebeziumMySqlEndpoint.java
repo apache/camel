@@ -35,7 +35,6 @@ public final class DebeziumMySqlEndpoint extends DebeziumEndpoint<MySqlConnector
     }
 
     public DebeziumMySqlEndpoint() {
-        super();
     }
 
     @Override

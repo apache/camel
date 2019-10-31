@@ -40,7 +40,6 @@ public class BonitaAPI {
     private WebTarget webTarget;
 
     protected BonitaAPI(BonitaAPIConfig bonitaApiConfig, WebTarget webTarget) {
-        super();
         this.bonitaApiConfig = bonitaApiConfig;
         this.webTarget = webTarget;
 

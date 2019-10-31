@@ -33,7 +33,6 @@ public abstract class AbstractMicroProfileMetricsEventNotifier <T extends CamelE
     private MetricRegistry metricRegistry;
 
     public AbstractMicroProfileMetricsEventNotifier(Class<T> eventType) {
-        super();
         this.eventType = eventType;
     }
 

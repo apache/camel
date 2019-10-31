@@ -22,7 +22,6 @@ import org.apache.avro.specific.SpecificData;
 public class SpecificDataNoCache extends SpecificData {
 
     public SpecificDataNoCache() {
-        super();
     }
 
     public SpecificDataNoCache(ClassLoader classLoader) {

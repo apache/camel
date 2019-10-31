@@ -30,7 +30,6 @@ public final class DebeziumTestEndpoint extends DebeziumEndpoint<FileConnectorEm
     }
 
     public DebeziumTestEndpoint() {
-        super();
     }
 
     @Override

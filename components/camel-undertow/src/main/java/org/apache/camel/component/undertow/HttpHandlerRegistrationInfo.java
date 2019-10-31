@@ -26,7 +26,6 @@ public class HttpHandlerRegistrationInfo {
     private final URI uri;
 
     public HttpHandlerRegistrationInfo(URI uri, String methodRestrict, Boolean matchOnUriPrefix) {
-        super();
         this.matchOnUriPrefix = matchOnUriPrefix;
         this.methodRestrict = methodRestrict;
         this.uri = uri;
